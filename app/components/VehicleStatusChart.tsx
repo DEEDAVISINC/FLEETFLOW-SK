@@ -59,12 +59,12 @@ const VehicleStatusChart = () => {
   }, [])
 
   return (
-    <div className="card">
-      <h3 className="mb-4" style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1e293b' }}>
+    <div className="card"">
+      <h3 className="mb-4"" style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1e293b' }}>
         Vehicle Status Distribution
       </h3>
       
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-6"">
         <canvas 
           ref={canvasRef} 
           width={200} 
@@ -72,8 +72,8 @@ const VehicleStatusChart = () => {
           style={{ maxWidth: '200px', maxHeight: '200px' }}
         />
         
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-4"">
+          <div className="flex items-center gap-2"">
             <div 
               style={{ 
                 width: '12px', 
@@ -82,9 +82,9 @@ const VehicleStatusChart = () => {
                 borderRadius: '50%' 
               }}
              />
-            <span className="text-gray-600">Active (134)</span>
+            <span className="text-gray-600"">Active (134)</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2"">
             <div 
               style={{ 
                 width: '12px', 
@@ -93,9 +93,9 @@ const VehicleStatusChart = () => {
                 borderRadius: '50%' 
               }}
              />
-            <span className="text-gray-600">Maintenance (22)</span>
+            <span className="text-gray-600"">Maintenance (22)</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2"">
             <div 
               style={{ 
                 width: '12px', 
@@ -104,7 +104,7 @@ const VehicleStatusChart = () => {
                 borderRadius: '50%' 
               }}
              />
-            <span className="text-gray-600">Inactive (8)</span>
+            <span className="text-gray-600"">Inactive (8)</span>
           </div>
         </div>
       </div>

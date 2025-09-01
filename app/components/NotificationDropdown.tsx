@@ -104,7 +104,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          console.log('🔔 Real-time notification update:', payload);
+          console.info('🔔 Real-time notification update:', payload);
           loadData();
         }
       )
@@ -117,7 +117,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           filter: `to_user_ids.cs.{${userId}}`,
         },
         (payload) => {
-          console.log('📬 Real-time message update:', payload);
+          console.info('📬 Real-time message update:', payload);
           loadData();
         }
       )

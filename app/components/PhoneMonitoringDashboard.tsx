@@ -59,7 +59,7 @@ export default function PhoneMonitoringDashboard() {
     // Subscribe to real-time call events
     const unsubscribe = phoneMonitoringService.subscribeToCallEvents(
       (event: RealTimeCallEvent) => {
-        console.log('📞 Real-time call event:', event);
+        console.info('📞 Real-time call event:', event);
         handleRealTimeEvent(event);
       }
     );
@@ -907,18 +907,3 @@ export default function PhoneMonitoringDashboard() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

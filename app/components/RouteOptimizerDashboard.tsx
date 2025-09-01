@@ -73,7 +73,7 @@ export default function RouteOptimizerDashboard({
         },
       };
 
-      console.log(
+      console.info(
         '🚀 Starting optimization...',
         quantumEnabled ? 'Quantum Mode' : 'Classical Mode'
       );
@@ -102,7 +102,7 @@ export default function RouteOptimizerDashboard({
       setOptimizationResults(result);
       onOptimizationComplete?.(result.routes);
 
-      console.log('✅ Route optimization completed successfully!');
+      console.info('✅ Route optimization completed successfully!');
     } catch (error) {
       console.error('❌ Route optimization failed:', error);
       alert('Route optimization failed. Please try again.');
@@ -113,12 +113,12 @@ export default function RouteOptimizerDashboard({
 
   const handleQuantumToggle = (enabled: boolean) => {
     setQuantumEnabled(enabled);
-    console.log('🔬 Quantum optimization:', enabled ? 'enabled' : 'disabled');
+    console.info('🔬 Quantum optimization:', enabled ? 'enabled' : 'disabled');
   };
 
   const handleQuantumParametersChange = (params: QuantumParameters) => {
     setQuantumParameters(params);
-    console.log('⚙️ Quantum parameters updated:', params);
+    console.info('⚙️ Quantum parameters updated:', params);
   };
 
   const addVehicle = (vehicle: Omit<Vehicle, 'id'>) => {

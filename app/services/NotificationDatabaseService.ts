@@ -130,8 +130,8 @@ export class NotificationDatabaseService {
     try {
       // For client-side usage, we'll simulate database operations
       // In a real implementation, this would connect to PostgreSQL
-      console.log('🔗 Notification Database Service initialized');
-      console.log(
+      console.info('🔗 Notification Database Service initialized');
+      console.info(
         '📍 Connection string:',
         this.connectionString.replace(/\/\/.*@/, '//<credentials>@')
       );
@@ -181,7 +181,7 @@ export class NotificationDatabaseService {
       ]);
       */
 
-      console.log(`📝 Created notification in database: ${notification.id}`);
+      console.info(`📝 Created notification in database: ${notification.id}`);
 
       // Create actions if present
       if (notification.actions) {
@@ -229,7 +229,7 @@ export class NotificationDatabaseService {
       }
       */
 
-      console.log(
+      console.info(
         `🎯 Created ${actions.length} actions for notification ${notificationId}`
       );
     } catch (error) {
@@ -276,7 +276,7 @@ export class NotificationDatabaseService {
       }
       */
 
-      console.log(
+      console.info(
         `👥 Created ${recipients.length} recipients for notification ${notification.id}`
       );
     } catch (error) {
@@ -381,7 +381,7 @@ export class NotificationDatabaseService {
       `, [notificationId, userId, portal]);
       */
 
-      console.log(
+      console.info(
         `✅ Marked notification ${notificationId} as read for ${userId}`
       );
       return true;
@@ -406,7 +406,7 @@ export class NotificationDatabaseService {
       `, [notificationId]);
       */
 
-      console.log(`🗑️ Deleted notification ${notificationId}`);
+      console.info(`🗑️ Deleted notification ${notificationId}`);
       return true;
     } catch (error) {
       console.error('❌ Failed to delete notification:', error);
@@ -451,7 +451,7 @@ export class NotificationDatabaseService {
       ]);
       */
 
-      console.log(
+      console.info(
         `⚙️ Saved preferences for user ${userId} in portal ${portal}`
       );
       return true;
@@ -612,7 +612,7 @@ export class NotificationDatabaseService {
       ]);
       */
 
-      console.log(`🔗 Tracked WebSocket connection: ${connection.client_id}`);
+      console.info(`🔗 Tracked WebSocket connection: ${connection.client_id}`);
       return connection.client_id || 'tracked-connection';
     } catch (error) {
       console.error('❌ Failed to track WebSocket connection:', error);
@@ -634,7 +634,7 @@ export class NotificationDatabaseService {
       `, [clientId]);
       */
 
-      console.log(`💓 Updated ping for WebSocket: ${clientId}`);
+      console.info(`💓 Updated ping for WebSocket: ${clientId}`);
     } catch (error) {
       console.error('❌ Failed to update WebSocket ping:', error);
     }
@@ -654,7 +654,7 @@ export class NotificationDatabaseService {
       `, [clientId]);
       */
 
-      console.log(`🔌 Disconnected WebSocket: ${clientId}`);
+      console.info(`🔌 Disconnected WebSocket: ${clientId}`);
     } catch (error) {
       console.error('❌ Failed to disconnect WebSocket:', error);
     }
@@ -693,7 +693,7 @@ export class NotificationDatabaseService {
       `);
       */
 
-      console.log('🧹 Cleanup completed for expired notification data');
+      console.info('🧹 Cleanup completed for expired notification data');
     } catch (error) {
       console.error('❌ Failed to cleanup expired data:', error);
     }

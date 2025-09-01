@@ -297,7 +297,7 @@ export default function TestErrorHandling() {
           ✅ Success Indicators:
         </h3>
         <ul style={{ color: '#15803d', marginBottom: '0' }}>
-          <li>All API tests return "PASS"</li>
+          <li>All API tests return ""PASS""</li>
           <li>Unhandled promise rejection is caught and logged properly</li>
           <li>No DOM nesting violations found</li>
           <li>

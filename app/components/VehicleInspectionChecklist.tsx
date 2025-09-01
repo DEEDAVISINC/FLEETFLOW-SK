@@ -123,7 +123,7 @@ const VehicleInspectionChecklist: React.FC<VehicleInspectionChecklistProps> = ({
       const data = await response.json();
       if (data.success) {
         setInspection(data.inspection);
-        console.log('✅ Inspection initialized:', data.inspection.id);
+        console.info('✅ Inspection initialized:', data.inspection.id);
       } else {
         console.error('Failed to create inspection:', data.error);
         alert('Failed to initialize inspection');
@@ -159,7 +159,7 @@ const VehicleInspectionChecklist: React.FC<VehicleInspectionChecklistProps> = ({
       const data = await response.json();
       if (data.success) {
         setInspection(data.inspection);
-        console.log('✅ Item updated:', itemId);
+        console.info('✅ Item updated:', itemId);
       } else {
         console.error('Failed to update item:', data.error);
         alert('Failed to update inspection item');
@@ -217,7 +217,7 @@ const VehicleInspectionChecklist: React.FC<VehicleInspectionChecklistProps> = ({
 
       const data = await response.json();
       if (data.success) {
-        console.log('✅ Inspection completed:', data.inspection.overallStatus);
+        console.info('✅ Inspection completed:', data.inspection.overallStatus);
 
         if (data.alerts && data.alerts.length > 0) {
           alert(`INSPECTION ALERT:\n${data.alerts.join('\n')}`);

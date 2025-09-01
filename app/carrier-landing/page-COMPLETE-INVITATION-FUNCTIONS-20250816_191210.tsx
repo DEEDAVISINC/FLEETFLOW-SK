@@ -56,7 +56,7 @@ export default function CarrierLandingPage() {
       if (ref) {
         const invitationService = CarrierInvitationService.getInstance();
         invitationService.updateInvitationStatus(ref, 'opened');
-        console.log(`Invitation ${ref} marked as opened`);
+        console.info(`Invitation ${ref} marked as opened`);
       }
     }
   }, [searchParams]);
@@ -67,7 +67,7 @@ export default function CarrierLandingPage() {
       try {
         const invitationService = CarrierInvitationService.getInstance();
         const analytics = await invitationService.getInvitationAnalytics();
-        
+
         setInviteStats({
           sentToday: analytics.totalSent,
           opened: analytics.totalOpened,
@@ -88,7 +88,7 @@ export default function CarrierLandingPage() {
     if (invitationData.ref) {
       const invitationService = CarrierInvitationService.getInstance();
       invitationService.updateInvitationStatus(invitationData.ref, 'started');
-      console.log(`Invitation ${invitationData.ref} marked as started`);
+      console.info(`Invitation ${invitationData.ref} marked as started`);
     }
 
     // Build the onboarding URL with pre-filled data
@@ -132,9 +132,9 @@ export default function CarrierLandingPage() {
       if (invitation) {
         await invitationService.sendInvitation(invitation.id);
         alert(`Invitation sent successfully to ${inviteForm.email}!`);
-        
+
         // Update stats
-        setInviteStats(prev => ({
+        setInviteStats((prev) => ({
           ...prev,
           sentToday: prev.sentToday + 1,
         }));
@@ -161,27 +161,32 @@ export default function CarrierLandingPage() {
     try {
       const invitationService = CarrierInvitationService.getInstance();
       const baseUrl = window.location.origin;
-      
+
       // Generate shareable link with pre-filled data
       const params = new URLSearchParams();
       params.set('carrier', encodeURIComponent(inviteForm.companyName));
       if (inviteForm.mcNumber) params.set('mc', inviteForm.mcNumber);
       params.set('inviter', encodeURIComponent('FleetFlow Team'));
-      
+
       const inviteUrl = `${baseUrl}/carrier-landing?${params.toString()}`;
-      
-      navigator.clipboard.writeText(inviteUrl).then(() => {
-        alert(`Invitation link copied to clipboard!\n\nShare this link: ${inviteUrl}`);
-        
-        // Update stats
-        setInviteStats(prev => ({
-          ...prev,
-          sentToday: prev.sentToday + 1,
-        }));
-      }).catch(() => {
-        // Fallback for browsers that don't support clipboard API
-        prompt('Copy this invitation link:', inviteUrl);
-      });
+
+      navigator.clipboard
+        .writeText(inviteUrl)
+        .then(() => {
+          alert(
+            `Invitation link copied to clipboard!\n\nShare this link: ${inviteUrl}`
+          );
+
+          // Update stats
+          setInviteStats((prev) => ({
+            ...prev,
+            sentToday: prev.sentToday + 1,
+          }));
+        })
+        .catch(() => {
+          // Fallback for browsers that don't support clipboard API
+          prompt('Copy this invitation link:', inviteUrl);
+        });
     } catch (error) {
       console.error('Error generating link:', error);
       alert('Failed to generate invitation link. Please try again.');
@@ -912,7 +917,12 @@ export default function CarrierLandingPage() {
       </section>
 
       {/* Carrier Invitation Management */}
-      <section style={{ padding: '20px 20px', background: 'rgba(255, 255, 255, 0.03)' }}>
+      <section
+        style={{
+          padding: '20px 20px',
+          background: 'rgba(255, 255, 255, 0.03)',
+        }}
+      >
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <h2
             style={{
@@ -925,7 +935,7 @@ export default function CarrierLandingPage() {
           >
             📧 Carrier Invitation Hub
           </h2>
-          
+
           {/* Quick Invite Form */}
           <div
             style={{
@@ -937,15 +947,34 @@ export default function CarrierLandingPage() {
               marginBottom: '20px',
             }}
           >
-            <h3 style={{ color: 'white', fontSize: '1.1rem', fontWeight: '600', marginBottom: '15px' }}>
+            <h3
+              style={{
+                color: 'white',
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                marginBottom: '15px',
+              }}
+            >
               Quick Carrier Invitation
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '15px',
+                marginBottom: '15px',
+              }}
+            >
               <input
-                type="text"
-                placeholder="Company Name"
+                type='text'
+                placeholder='Company Name'
                 value={inviteForm.companyName}
-                onChange={(e) => setInviteForm(prev => ({ ...prev, companyName: e.target.value }))}
+                onChange={(e) =>
+                  setInviteForm((prev) => ({
+                    ...prev,
+                    companyName: e.target.value,
+                  }))
+                }
                 style={{
                   padding: '12px',
                   borderRadius: '8px',
@@ -956,10 +985,12 @@ export default function CarrierLandingPage() {
                 }}
               />
               <input
-                type="email"
-                placeholder="Email Address"
+                type='email'
+                placeholder='Email Address'
                 value={inviteForm.email}
-                onChange={(e) => setInviteForm(prev => ({ ...prev, email: e.target.value }))}
+                onChange={(e) =>
+                  setInviteForm((prev) => ({ ...prev, email: e.target.value }))
+                }
                 style={{
                   padding: '12px',
                   borderRadius: '8px',
@@ -970,10 +1001,15 @@ export default function CarrierLandingPage() {
                 }}
               />
               <input
-                type="text"
-                placeholder="MC Number (Optional)"
+                type='text'
+                placeholder='MC Number (Optional)'
                 value={inviteForm.mcNumber}
-                onChange={(e) => setInviteForm(prev => ({ ...prev, mcNumber: e.target.value }))}
+                onChange={(e) =>
+                  setInviteForm((prev) => ({
+                    ...prev,
+                    mcNumber: e.target.value,
+                  }))
+                }
                 style={{
                   padding: '12px',
                   borderRadius: '8px',
@@ -984,7 +1020,14 @@ export default function CarrierLandingPage() {
                 }}
               />
             </div>
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
               <button
                 onClick={handleSendInvitation}
                 style={{
@@ -1000,7 +1043,8 @@ export default function CarrierLandingPage() {
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(20, 184, 166, 0.3)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 15px rgba(20, 184, 166, 0.3)';
                 }}
                 onMouseOut={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
@@ -1037,12 +1081,38 @@ export default function CarrierLandingPage() {
           </div>
 
           {/* Invitation Analytics */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '15px',
+            }}
+          >
             {[
-              { label: 'Sent Today', value: inviteStats.sentToday.toString(), color: '#14b8a6', icon: '📧' },
-              { label: 'Opened', value: inviteStats.opened.toString(), color: '#3b82f6', icon: '👁️' },
-              { label: 'Started', value: inviteStats.started.toString(), color: '#f59e0b', icon: '🚀' },
-              { label: 'Completed', value: inviteStats.completed.toString(), color: '#10b981', icon: '✅' },
+              {
+                label: 'Sent Today',
+                value: inviteStats.sentToday.toString(),
+                color: '#14b8a6',
+                icon: '📧',
+              },
+              {
+                label: 'Opened',
+                value: inviteStats.opened.toString(),
+                color: '#3b82f6',
+                icon: '👁️',
+              },
+              {
+                label: 'Started',
+                value: inviteStats.started.toString(),
+                color: '#f59e0b',
+                icon: '🚀',
+              },
+              {
+                label: 'Completed',
+                value: inviteStats.completed.toString(),
+                color: '#10b981',
+                icon: '✅',
+              },
             ].map((stat, idx) => (
               <div
                 key={idx}
@@ -1055,9 +1125,23 @@ export default function CarrierLandingPage() {
                   backdropFilter: 'blur(10px)',
                 }}
               >
-                <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>{stat.icon}</div>
-                <div style={{ color: stat.color, fontSize: '1.2rem', fontWeight: '800' }}>{stat.value}</div>
-                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.7rem' }}>{stat.label}</div>
+                <div style={{ fontSize: '1.5rem', marginBottom: '5px' }}>
+                  {stat.icon}
+                </div>
+                <div
+                  style={{
+                    color: stat.color,
+                    fontSize: '1.2rem',
+                    fontWeight: '800',
+                  }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.7rem' }}
+                >
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>

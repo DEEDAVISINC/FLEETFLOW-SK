@@ -52,11 +52,20 @@ export default function AICostMonitor() {
 
   const fetchUsageStats = async () => {
     try {
-      const response = await fetch('/api/ai/claude-batch');
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
+      // Try to get enhanced stats from the batch service first
+      const batchResponse = await fetch('/api/ai/claude-batch');
+      if (batchResponse.ok) {
+        const batchData = await batchResponse.json();
+        setStats(batchData);
         setLastUpdate(new Date().toLocaleTimeString());
+      } else {
+        // Fallback to basic stats
+        const response = await fetch('/api/ai/claude-batch');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+          setLastUpdate(new Date().toLocaleTimeString());
+        }
       }
     } catch (error) {
       console.error('Failed to fetch usage stats:', error);
@@ -103,7 +112,7 @@ export default function AICostMonitor() {
             <p className='text-xs text-gray-600'>
               Daily: ${stats.usage.cost.toFixed(2)}/${stats.limits.cost} •
               Saved: ${monthlySavings.saved}/month ({monthlySavings.percentage}
-              %)
+              %) • Cache: {stats.cacheStats?.hitRate || 0}%
             </p>
           </div>
           <div className='flex items-center space-x-2'>
@@ -211,6 +220,56 @@ export default function AICostMonitor() {
                 </p>
               </div>
             </div>
+
+            {/* Enhanced Cost Savings Breakdown */}
+            {stats.costSavings && (
+              <div className='rounded-lg border bg-green-50 p-3'>
+                <h4 className='mb-2 text-sm font-semibold text-green-800'>
+                  Advanced Cost Optimizations
+                </h4>
+                <div className='grid grid-cols-2 gap-3 text-xs'>
+                  <div>
+                    <p className='text-gray-600'>Caching Savings:</p>
+                    <p className='font-semibold text-green-700'>
+                      ${stats.costSavings.caching}/month
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-gray-600'>Tiered Processing:</p>
+                    <p className='font-semibold text-green-700'>
+                      ${stats.costSavings.tieredProcessing}/month
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-gray-600'>Off-Peak Discount:</p>
+                    <p className='font-semibold text-green-700'>
+                      ${stats.costSavings.offPeak}/month
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-gray-600'>Model Optimization:</p>
+                    <p className='font-semibold text-green-700'>
+                      ${stats.costSavings.modelOptimization}/month
+                    </p>
+                  </div>
+                  <div>
+                    <p className='text-gray-600'>Predictive Batching:</p>
+                    <p className='font-semibold text-green-700'>
+                      ${stats.costSavings.predictiveBatching}/month
+                    </p>
+                  </div>
+                </div>
+                <div className='mt-2 border-t border-green-200 pt-2'>
+                  <p className='font-bold text-green-800'>
+                    🎯 Total Advanced Savings: ${stats.costSavings.total}/month
+                  </p>
+                  <p className='mt-1 text-xs text-green-700'>
+                    Cache Hit Rate: {stats.cacheStats?.hitRate || 0}% (
+                    {stats.cacheStats?.totalHits || 0} hits)
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Token Usage */}
             <div>

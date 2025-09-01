@@ -396,7 +396,7 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
   };
 
   const handleCertificationComplete = (certification: any) => {
-    console.log('Certification completed:', certification);
+    console.info('Certification completed:', certification);
     setActiveTab('certifications');
     setSelectedCourse(null);
   };

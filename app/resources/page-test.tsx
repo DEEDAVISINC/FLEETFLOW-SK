@@ -24,7 +24,7 @@ export default function ResourcesPageTest() {
     }}>
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+        <Link href="/"" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
@@ -198,7 +198,7 @@ export default function ResourcesPageTest() {
                         </span>
                       ))}
                     </div>
-                    <a href={hotel.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={hotel.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#ffffff',
                       background: 'rgba(59, 130, 246, 0.6)',
                       textDecoration: 'none',

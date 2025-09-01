@@ -69,7 +69,7 @@ export default function BrokerDashboard() {
   };
 
   const handleLoadCreated = (load: Load) => {
-    console.log('New load created:', load);
+    console.info('New load created:', load);
     setShowCreateForm(false);
     // Refresh the load board by switching tabs and back
     setSelectedTab('bids');
@@ -100,7 +100,7 @@ export default function BrokerDashboard() {
           alignItems: 'center',
           justifyContent: 'center',
           fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         }}
       >
         <div
@@ -139,7 +139,7 @@ export default function BrokerDashboard() {
         backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Back Button */}
@@ -253,7 +253,7 @@ export default function BrokerDashboard() {
                         boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                         animation: 'pulse 2s infinite',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.9)',

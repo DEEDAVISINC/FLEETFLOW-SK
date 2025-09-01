@@ -116,12 +116,12 @@ export default function HazmatRouteComplianceWidget() {
   const isEnabled = useFeatureFlag('HAZMAT_ROUTE_COMPLIANCE');
 
   // Debug logging
-  console.log('HazmatRouteComplianceWidget - isEnabled:', isEnabled);
-  console.log(
+  console.info('HazmatRouteComplianceWidget - isEnabled:', isEnabled);
+  console.info(
     'HazmatRouteComplianceWidget - process.env.ENABLE_HAZMAT_ROUTE_COMPLIANCE:',
     process.env.ENABLE_HAZMAT_ROUTE_COMPLIANCE
   );
-  console.log(
+  console.info(
     'HazmatRouteComplianceWidget - process.env.NEXT_PUBLIC_ENABLE_HAZMAT_ROUTE_COMPLIANCE:',
     process.env.NEXT_PUBLIC_ENABLE_HAZMAT_ROUTE_COMPLIANCE
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCurrentUser } from '../../../config/access';
 import { companyAccountingService } from '../../../services/TenantAccountingService';
 import AccountingNavigation from '../components/AccountingNavigation';
@@ -15,11 +15,7 @@ export default function InvoicesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const { user } = getCurrentUser();
 
-  useEffect(() => {
-    loadInvoices();
-  }, [activeRole]);
-
-  const loadInvoices = async () => {
+  const loadInvoices = useCallback(async () => {
     setLoading(true);
     try {
       // Load invoices based on the active role
@@ -34,7 +30,11 @@ export default function InvoicesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeRole]);
+
+  useEffect(() => {
+    loadInvoices();
+  }, [activeRole, loadInvoices]);
 
   // Filter invoices based on search term and status filter
   const filteredInvoices = invoices.filter((invoice) => {

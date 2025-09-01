@@ -787,7 +787,8 @@ export default function OpenELDPage() {
                   margin: 0,
                 }}
               >
-                "The smoothest ELD inspection process we've ever experienced."
+                ""The smoothest ELD inspection process we've ever
+                experienced.""
               </p>
               <p
                 style={{
@@ -983,10 +984,10 @@ export default function OpenELDPage() {
               lineHeight: '1.6',
             }}
           >
-            OpenELD is integrated directly into FleetFlow's platform, providing
-            FMCSA-compliant electronic logging without additional hardware or
-            subscription costs. Enable ELD compliance through your FleetFlow
-            settings or contact support for implementation assistance.
+            OpenELD is integrated directly into FleetFlow's platform,
+            providing FMCSA-compliant electronic logging without additional
+            hardware or subscription costs. Enable ELD compliance through your
+            FleetFlow settings or contact support for implementation assistance.
           </p>
 
           <div

@@ -253,7 +253,7 @@ export default function AIVoiceDemoPage() {
           <div className='mb-6 max-h-96 space-y-4 overflow-y-auto'>
             {conversation.length === 0 ? (
               <div className='py-8 text-center text-white/50'>
-                Click "Start AI Call Demo" to begin conversation
+                Click ""Start AI Call Demo"" to begin conversation
               </div>
             ) : (
               conversation.map((msg, index) => (
@@ -359,7 +359,7 @@ export default function AIVoiceDemoPage() {
                 <div>
                   <div className='font-medium'>Start a Call</div>
                   <div className='text-sm text-white/60'>
-                    Click "🎙️ Start Conversation" to begin
+                    Click ""🎙️ Start Conversation"" to begin
                   </div>
                 </div>
               </div>
@@ -403,8 +403,8 @@ export default function AIVoiceDemoPage() {
               <div className='rounded border border-blue-500/20 bg-blue-500/10 p-2'>
                 <div className='font-medium text-blue-400'>AI:</div>
                 <div className='text-white/80'>
-                  "Hello John! I can verify MC-123456... Great! Your authority
-                  is active. What can I help you with?"
+                  ""Hello John! I can verify MC-123456... Great! Your authority
+                  is active. What can I help you with?""
                 </div>
               </div>
               <div className='rounded border border-green-500/20 bg-green-500/10 p-2'>
@@ -416,8 +416,8 @@ export default function AIVoiceDemoPage() {
               <div className='rounded border border-blue-500/20 bg-blue-500/10 p-2'>
                 <div className='font-medium text-blue-400'>AI:</div>
                 <div className='text-white/80'>
-                  "Perfect! I have electronics loads Chicago to LA, $2,850
-                  all-in. Interested?"
+                  ""Perfect! I have electronics loads Chicago to LA, $2,850
+                  all-in. Interested?""
                 </div>
               </div>
             </div>

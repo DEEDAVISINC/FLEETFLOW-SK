@@ -136,7 +136,7 @@ export class NOAAPortsService {
   ]);
 
   constructor() {
-    console.log(
+    console.info(
       '🌊 NOAA PORTS Service initialized - Real-time port conditions ready'
     );
   }

@@ -82,13 +82,13 @@ export default function ForceMajeurePlanningWidget() {
   const forceEnabled = true;
 
   // Debug logging
-  console.log('🚨 ForceMajeurePlanningWidget - isEnabled:', isEnabled);
-  console.log('🚨 ForceMajeurePlanningWidget - forceEnabled:', forceEnabled);
-  console.log(
+  console.info('🚨 ForceMajeurePlanningWidget - isEnabled:', isEnabled);
+  console.info('🚨 ForceMajeurePlanningWidget - forceEnabled:', forceEnabled);
+  console.info(
     '🚨 ForceMajeurePlanningWidget - process.env.ENABLE_FORCE_MAJEURE_PLANNING:',
     process.env.ENABLE_FORCE_MAJEURE_PLANNING
   );
-  console.log(
+  console.info(
     '🚨 ForceMajeurePlanningWidget - process.env.NEXT_PUBLIC_ENABLE_FORCE_MAJEURE_PLANNING:',
     process.env.NEXT_PUBLIC_ENABLE_FORCE_MAJEURE_PLANNING
   );
@@ -113,7 +113,7 @@ export default function ForceMajeurePlanningWidget() {
   // Load force majeure data when mounted and enabled
   useEffect(() => {
     if (mounted && (isEnabled || forceEnabled)) {
-      console.log(
+      console.info(
         'Force Majeure component mounted and enabled - loading data...'
       );
       loadForceMajeureData();
@@ -121,22 +121,22 @@ export default function ForceMajeurePlanningWidget() {
   }, [mounted, isEnabled]);
 
   const loadForceMajeureData = async () => {
-    console.log('🚨 loadForceMajeureData called');
+    console.info('🚨 loadForceMajeureData called');
     setLoading(true);
     try {
-      console.log(
+      console.info(
         '🚨 Fetching force majeure data from /api/force-majeure/monitoring'
       );
       const response = await fetch('/api/force-majeure/monitoring');
-      console.log('🚨 Response status:', response.status);
+      console.info('🚨 Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
-        console.log('🚨 Force majeure data received:', data);
+        console.info('🚨 Force majeure data received:', data);
         setDisasterEvents(data.events || []);
         setContingencyPlans(data.plans || []);
         setEmergencyResources(data.resources || []);
         setBusinessImpact(data.businessImpact || []);
-        console.log(
+        console.info(
           '🚨 State updated with events:',
           data.events?.length,
           'plans:',

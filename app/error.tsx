@@ -24,7 +24,7 @@ export default function GlobalError({
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       <div

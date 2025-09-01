@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       additionalNotes,
     } = body;
 
-    console.log('🚛 BOL completion request received for load:', loadId);
+    console.info('🚛 BOL completion request received for load:', loadId);
 
     // Validate required fields
     if (!loadId || !driverId || !receiverName || !receiverSignature) {
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       brokerId: body.brokerId || 'unknown',
     };
 
-    console.log('📋 Completing delivery_completion step with BOL signing...');
+    console.info('📋 Completing delivery_completion step with BOL signing...');
 
     // Complete the delivery_completion workflow step
     // This will automatically trigger the WorkflowIntegrationService cascade
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('✅ BOL completion workflow cascade completed successfully!');
+    console.info('✅ BOL completion workflow cascade completed successfully!');
 
     // Return success response with workflow status
     return NextResponse.json({

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       searchFilters = {},
     } = body;
 
-    console.log(
+    console.info(
       '🚛 Automotive RFP Discovery API - Starting comprehensive search...'
     );
 
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId') || 'automotive-get-user';
     const immediate = searchParams.get('immediate') === 'true';
 
-    console.log(
+    console.info(
       '🚛 Automotive RFP Discovery GET - Retrieving opportunities...'
     );
 

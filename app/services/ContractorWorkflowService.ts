@@ -180,7 +180,7 @@ export class ContractorWorkflowService {
    * Trigger contractor onboarding workflow when dispatch/broker user is created
    */
   static async triggerOnboarding(trigger: ContractorWorkflowTrigger): Promise<ContractorWorkflowSession> {
-    console.log(`🚀 Triggering contractor onboarding for user: ${trigger.userId}`)
+    console.info(`🚀 Triggering contractor onboarding for user: ${trigger.userId}`)
     
     const session: ContractorWorkflowSession = {
       id: this.generateSessionId(),
@@ -245,7 +245,7 @@ export class ContractorWorkflowService {
     )
 
     if (!dependenciesComplete) {
-      console.log(`⏳ Dependencies not met for step: ${currentStep.id}`)
+      console.info(`⏳ Dependencies not met for step: ${currentStep.id}`)
       return
     }
 
@@ -343,7 +343,7 @@ export class ContractorWorkflowService {
 
     session.trigger.userData.userIdentifiers = identifiers
     
-    console.log(`✅ User verified: ${userData.firstName} ${userData.lastName} (${identifiers.userId})`)
+    console.info(`✅ User verified: ${userData.firstName} ${userData.lastName} (${identifiers.userId})`)
   }
 
   /**
@@ -365,7 +365,7 @@ export class ContractorWorkflowService {
       generatedAt: new Date()
     }
     
-    console.log(`📄 Documents generated for user: ${userData.email}`)
+    console.info(`📄 Documents generated for user: ${userData.email}`)
   }
 
   /**
@@ -403,7 +403,7 @@ export class ContractorWorkflowService {
       message: `Please sign your contractor documents. Contractor Agreement: ${contractorSignatureRequest.signatureUrl}, NDA: ${ndaSignatureRequest.signatureUrl}`
     })
     
-    console.log(`📧 Signature requests sent to: ${userData.email}`)
+    console.info(`📧 Signature requests sent to: ${userData.email}`)
   }
 
   /**
@@ -428,7 +428,7 @@ export class ContractorWorkflowService {
 
     // In a real implementation, this would call the signature API
     // For now, we'll simulate the signature system
-    console.log(`🔐 Signature request created: ${signatureRequest.id}`)
+    console.info(`🔐 Signature request created: ${signatureRequest.id}`)
     
     return signatureRequest
   }
@@ -473,10 +473,10 @@ export class ContractorWorkflowService {
       }
       
       // Additional validation logic would go here
-      console.log(`✅ Signature validated: ${signature.documentType}`)
+      console.info(`✅ Signature validated: ${signature.documentType}`)
     }
     
-    console.log(`✅ All signatures validated for user: ${session.userId}`)
+    console.info(`✅ All signatures validated for user: ${session.userId}`)
   }
 
   /**
@@ -494,7 +494,7 @@ export class ContractorWorkflowService {
     session.systemAccess.grantedAt = new Date()
     session.systemAccess.restrictions = ['training_required']
     
-    console.log(`🔐 Initial section access created for ${userRole}: ${basePermissions.initial.join(', ')}`)
+    console.info(`🔐 Initial section access created for ${userRole}: ${basePermissions.initial.join(', ')}`)
     
     await this.sendNotification(session, {
       type: 'email',
@@ -514,7 +514,7 @@ export class ContractorWorkflowService {
     session.trainingRequirements.required = requiredTraining
     session.trainingRequirements.inProgress = requiredTraining // Mark all as in progress
     
-    console.log(`📚 Training assigned for ${userRole}: ${requiredTraining.join(', ')}`)
+    console.info(`📚 Training assigned for ${userRole}: ${requiredTraining.join(', ')}`)
     
     await this.sendNotification(session, {
       type: 'email',
@@ -535,7 +535,7 @@ export class ContractorWorkflowService {
     session.systemAccess.sectionsAccess = fullPermissions.full
     session.systemAccess.restrictions = []
     
-    console.log(`🔓 Full access granted for ${userRole}: ${fullPermissions.full.join(', ')}`)
+    console.info(`🔓 Full access granted for ${userRole}: ${fullPermissions.full.join(', ')}`)
     
     await this.sendNotification(session, {
       type: 'email',
@@ -550,7 +550,7 @@ export class ContractorWorkflowService {
     session.status = 'completed'
     session.completedAt = new Date()
     
-    console.log(`🎉 Contractor onboarding completed for user: ${session.userId}`)
+    console.info(`🎉 Contractor onboarding completed for user: ${session.userId}`)
     
     await this.sendNotification(session, {
       type: 'system',
@@ -581,13 +581,13 @@ export class ContractorWorkflowService {
     )
 
     if (!session) {
-      console.log(`⚠️ Session not found for signature: ${payload.signatureId}`)
+      console.info(`⚠️ Session not found for signature: ${payload.signatureId}`)
       return
     }
 
     const signatureRequest = session.signatureRequests.find(req => req.id === payload.signatureId)
     if (!signatureRequest) {
-      console.log(`⚠️ Signature request not found: ${payload.signatureId}`)
+      console.info(`⚠️ Signature request not found: ${payload.signatureId}`)
       return
     }
 
@@ -622,7 +622,7 @@ export class ContractorWorkflowService {
     const session = sessions.find(s => s.userId === userId)
 
     if (!session) {
-      console.log(`⚠️ Active session not found for user: ${userId}`)
+      console.info(`⚠️ Active session not found for user: ${userId}`)
       return
     }
 
@@ -750,7 +750,7 @@ export class ContractorWorkflowService {
     session.notifications.push(notificationRecord)
     
     // In a real implementation, this would send actual notifications
-    console.log(`📧 Notification sent (${notification.type}): ${notification.message}`)
+    console.info(`📧 Notification sent (${notification.type}): ${notification.message}`)
   }
 
   /**

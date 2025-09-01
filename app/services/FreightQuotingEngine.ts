@@ -88,14 +88,14 @@ export class FreightQuotingEngine {
     this.financialMarkets = new FinancialMarketsService();
     this.rfxService = new RFxResponseService();
     
-    console.log('🧠 Advanced FreightQuotingEngine initialized');
+    console.info('🧠 Advanced FreightQuotingEngine initialized');
   }
 
   /**
    * Generate AI-powered freight quote with market intelligence
    */
   async generateQuote(request: QuoteRequest): Promise<AIQuoteResponse> {
-    console.log(`🎯 Generating AI quote for ${request.type} shipment`);
+    console.info(`🎯 Generating AI quote for ${request.type} shipment`);
     
     try {
       // Step 1: Gather market intelligence
@@ -131,7 +131,7 @@ export class FreightQuotingEngine {
    * Gather comprehensive market intelligence
    */
   private async gatherMarketIntelligence(request: QuoteRequest) {
-    console.log('📊 Gathering market intelligence...');
+    console.info('📊 Gathering market intelligence...');
     
     const [marketIntel, fuelData, consortiumData] = await Promise.all([
       this.rfxService.getMarketIntelligence(request.origin, request.destination, request.equipmentType || 'Dry Van'),
@@ -170,7 +170,7 @@ export class FreightQuotingEngine {
       return this.competitiveCache.get(cacheKey)!;
     }
 
-    console.log('🎯 Analyzing competitive landscape...');
+    console.info('🎯 Analyzing competitive landscape...');
     
     // Simulate competitive analysis
     const analysis: CompetitiveAnalysis = {
@@ -200,7 +200,7 @@ export class FreightQuotingEngine {
    * Calculate base pricing with AI optimization
    */
   private async calculateBasePricing(request: QuoteRequest, marketData: any) {
-    console.log('💰 Calculating AI-optimized base pricing...');
+    console.info('💰 Calculating AI-optimized base pricing...');
     
     let baseRate = 0;
     
@@ -239,7 +239,7 @@ export class FreightQuotingEngine {
    * Apply dynamic pricing adjustments
    */
   private async applyDynamicPricing(basePricing: any, request: QuoteRequest, marketData: any) {
-    console.log('⚡ Applying dynamic pricing adjustments...');
+    console.info('⚡ Applying dynamic pricing adjustments...');
     
     let adjustedRate = basePricing.subtotal;
     
@@ -284,7 +284,7 @@ export class FreightQuotingEngine {
    * Calculate win probability using AI analysis
    */
   private async calculateWinProbability(pricing: any, request: QuoteRequest, competitive: CompetitiveAnalysis): Promise<number> {
-    console.log('🎲 Calculating win probability...');
+    console.info('🎲 Calculating win probability...');
     
     // Use AI dispatcher for intelligent probability calculation
     const aiAnalysis = await this.aiDispatcher.optimizeRates(

@@ -1,7 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import GlobalNotificationBell from '../../components/GlobalNotificationBell';
 import {
   FinancialMarketsService,
@@ -363,10 +364,8 @@ export default function AdminDriverOTRFlow() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [fuelPrice, setFuelPrice] = useState<FuelPriceData | null>(null);
 
-  // 🔒 Access Control Check
-  if (!checkPermission('hasManagementAccess')) {
-    return <AccessRestricted />;
-  }
+  // 🔒 Access Control Check - moved after hooks to comply with Rules of Hooks
+  const hasAccess = checkPermission('hasManagementAccess');
 
   // 🚀 Get Driver Data
   const allDrivers = onboardingIntegration.getAllDrivers();
@@ -441,9 +440,11 @@ export default function AdminDriverOTRFlow() {
   const renderVehicleImage = (size: string = '32px') => {
     if (currentUser.photos.vehicleEquipment) {
       return (
-        <img
+        <Image
           src={currentUser.photos.vehicleEquipment}
           alt=''
+          width={32}
+          height={32}
           style={{
             width: size,
             height: size,
@@ -467,7 +468,7 @@ export default function AdminDriverOTRFlow() {
       audio.volume = 0.3;
       audio.play().catch(() => {
         // Fallback for browsers that block autoplay
-        console.log('Audio notification blocked');
+        console.info('Audio notification blocked');
       });
     }
   };
@@ -510,7 +511,7 @@ export default function AdminDriverOTRFlow() {
     }));
 
     // Add to active loads (this would integrate with your load management system)
-    console.log('Load accepted:', alert.load);
+    console.info('Load accepted:', alert.load);
   };
 
   const declineLoadAlert = (alertId: string) => {
@@ -529,7 +530,7 @@ export default function AdminDriverOTRFlow() {
       ],
     }));
 
-    console.log('Load alert declined:', alert.load.id);
+    console.info('Load alert declined:', alert.load.id);
   };
 
   const generateDemoAlert = () => {
@@ -568,7 +569,7 @@ export default function AdminDriverOTRFlow() {
 
     // DATA CLEARED - NO LONGER GENERATING DEMO ALERTS
     if (demoLoads.length === 0) {
-      console.log(
+      console.info(
         'Demo alert generation disabled - no demo load data available'
       );
       return;
@@ -613,7 +614,7 @@ export default function AdminDriverOTRFlow() {
   };
 
   // 🗺️ GPS LOCATION TRACKING & NEARBY LOADS FUNCTIONS
-  const requestLocationPermission = async () => {
+  const requestLocationPermission = useCallback(async () => {
     if (!navigator.geolocation) {
       setLocationError('Geolocation is not supported by this browser');
       setLocationPermission('denied');
@@ -652,7 +653,7 @@ export default function AdminDriverOTRFlow() {
         maximumAge: 300000, // 5 minutes
       }
     );
-  };
+  }, []);
 
   const startLocationTracking = () => {
     if (!navigator.geolocation) return;
@@ -671,7 +672,7 @@ export default function AdminDriverOTRFlow() {
         loadNearbyLoads(newLocation);
       },
       (error) => {
-        console.log('Location tracking error:', error.message);
+        console.info('Location tracking error:', error.message);
       },
       {
         enableHighAccuracy: false,
@@ -810,7 +811,7 @@ export default function AdminDriverOTRFlow() {
     setLoadInterests((prev) => [...prev, newInterest]);
 
     // Mock notification to dispatcher
-    console.log('Interest submitted:', {
+    console.info('Interest submitted:', {
       loadId,
       driverName: currentUser.name,
       distance: load.distanceFromDriver,
@@ -832,11 +833,11 @@ export default function AdminDriverOTRFlow() {
   };
 
   // Initialize location tracking on component mount
-  React.useEffect(() => {
+  useEffect(() => {
     if (locationPermission === 'pending') {
       requestLocationPermission();
     }
-  }, []);
+  }, [locationPermission, requestLocationPermission]);
 
   // 📊 COMPREHENSIVE BUSINESS METRICS - DATA CLEARED
   const businessMetrics = {
@@ -1052,7 +1053,7 @@ export default function AdminDriverOTRFlow() {
   useEffect(() => {
     // Ensure all load alerts are cleared on mount
     setLoadAlerts([]);
-    console.log('All load alerts have been cleared - dashboard data cleared');
+    console.info('All load alerts have been cleared - dashboard data cleared');
   }, []);
 
   // Demo: Generate alert every 30 seconds for testing - DISABLED (DATA CLEARED)
@@ -1075,7 +1076,7 @@ export default function AdminDriverOTRFlow() {
     //   clearTimeout(initialAlert);
     // };
 
-    console.log(
+    console.info(
       'Demo alert generation is disabled - no automatic load alerts will be created'
     );
   }, [loadAlerts.length]);
@@ -1472,6 +1473,11 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
   const workflowTasks = workflowManager.getActiveWorkflowTasks(
     demoDriver?.driverId || 'driver-001'
   );
+
+  // Access control check - must be after all hooks
+  if (!hasAccess) {
+    return <AccessRestricted />;
+  }
 
   return (
     <>

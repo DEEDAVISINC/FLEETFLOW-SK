@@ -1211,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', function() {
     phoneLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             // Track phone call analytics
-            console.log('Emergency call initiated:', this.href);
+            console.info('Emergency call initiated:', this.href);
         });
     });
 });
@@ -1297,18 +1297,3 @@ document.addEventListener('DOMContentLoaded', initMap);
 
 export const professionalRouteDocumentService =
   new ProfessionalRouteDocumentService();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

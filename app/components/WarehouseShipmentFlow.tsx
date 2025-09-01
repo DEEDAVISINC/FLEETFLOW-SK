@@ -484,7 +484,7 @@ export default function WarehouseShipmentFlow({
             value={currentShipper?.id || ''}
             onChange={(e) => {
               // This would be handled by parent component in real implementation
-              console.log('Selected shipper:', e.target.value);
+              console.info('Selected shipper:', e.target.value);
             }}
             style={{
               width: '100%',

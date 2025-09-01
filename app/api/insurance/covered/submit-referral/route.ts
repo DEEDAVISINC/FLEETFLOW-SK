@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 
     if (response.ok) {
       // Log successful submission for revenue tracking
-      console.log('Covered referral submitted successfully:', {
+      console.info('Covered referral submitted successfully:', {
         referralId: result.referral_id,
         trackingNumber: result.tracking_number,
         companyName: payload.referral.business_info.name,

@@ -182,7 +182,7 @@ export class NotificationIntegrationService {
     };
 
     // In a real implementation, this would be saved to database
-    console.log('Test compliance alert created:', alert);
+    console.info('Test compliance alert created:', alert);
   }
 
   /**
@@ -228,7 +228,7 @@ export class NotificationIntegrationService {
 
         // If there are new critical issues, create urgent notifications
         if (summary.critical > 0) {
-          console.log(
+          console.info(
             `🚨 ${summary.critical} critical compliance issues detected`
           );
 
@@ -242,7 +242,7 @@ export class NotificationIntegrationService {
 
         // If there are expiring items, create warning notifications
         if (summary.expiringSoon > 0) {
-          console.log(
+          console.info(
             `⚠️ ${summary.expiringSoon} compliance items expiring soon`
           );
 

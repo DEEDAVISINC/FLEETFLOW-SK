@@ -902,7 +902,7 @@ class OpenELDIntegrationService {
     driverLogs.push(logEntry);
     this.weightComplianceLogs.set(driverId, driverLogs);
 
-    console.log(
+    console.info(
       `📋 Weight compliance log created for driver ${driverId}, load ${loadAssignmentData.loadId}`
     );
 
@@ -987,7 +987,7 @@ class OpenELDIntegrationService {
       log.exportedAt = new Date().toISOString();
     });
 
-    console.log(
+    console.info(
       `📊 Exported ${logs.length} weight compliance logs for driver ${driverId}`
     );
 
@@ -1034,7 +1034,7 @@ class OpenELDIntegrationService {
       this.violations.set(inspection.driverId, driverViolations);
     }
 
-    console.log(
+    console.info(
       `🚔 Weight inspection recorded for driver ${inspection.driverId} at ${inspection.location.stationName}`
     );
 

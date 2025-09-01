@@ -319,13 +319,13 @@ export const validateSupabaseConfig = () => {
 // ================================================================
 
 export const initializeSupabase = async () => {
-  console.log('🔧 Initializing FleetFlow Supabase configuration...');
+  console.info('🔧 Initializing FleetFlow Supabase configuration...');
 
   const validation = validateSupabaseConfig();
   const env = getEnvironment();
 
-  console.log(`📊 Environment: ${env}`);
-  console.log(`🔍 Configuration:`, validation.config);
+  console.info(`📊 Environment: ${env}`);
+  console.info(`🔍 Configuration:`, validation.config);
 
   if (!validation.valid) {
     console.error('❌ Supabase configuration errors:', validation.errors);
@@ -336,8 +336,8 @@ export const initializeSupabase = async () => {
 
   try {
     const dbInfo = await getDatabaseInfo();
-    console.log('✅ Database connection successful');
-    console.log(`📈 Connected to: ${dbInfo.url}`);
+    console.info('✅ Database connection successful');
+    console.info(`📈 Connected to: ${dbInfo.url}`);
     return dbInfo;
   } catch (error) {
     console.error('❌ Database connection failed:', error);

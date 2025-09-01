@@ -29,7 +29,7 @@ class ComplianceNotifier {
     notification: ComplianceNotification
   ): Promise<boolean> {
     try {
-      console.log(`🚨 Sending compliance alert: ${notification.title}`);
+      console.info(`🚨 Sending compliance alert: ${notification.title}`);
 
       // Send in-app notification
       await this.sendInAppNotification(notification);
@@ -109,7 +109,7 @@ class ComplianceNotifier {
   ): Promise<void> {
     // In production, this would use the app's notification system
     // For now just log it
-    console.log('📱 In-app notification sent:', {
+    console.info('📱 In-app notification sent:', {
       userId: notification.carrierId,
       title:
         this.getPriorityEmoji(notification.priority) + ' ' + notification.title,
@@ -129,7 +129,7 @@ class ComplianceNotifier {
     const recipients = await this.getRecipientNumbers(notification.carrierId);
 
     if (recipients.length === 0) {
-      console.log(
+      console.info(
         '⚠️ No SMS recipients found for carrier:',
         notification.carrierId
       );
@@ -156,7 +156,7 @@ class ComplianceNotifier {
             priority: notification.priority,
           },
         });
-        console.log(`📱 SMS alert sent to ${recipient}`);
+        console.info(`📱 SMS alert sent to ${recipient}`);
       } catch (error) {
         console.error(`Failed to send SMS to ${recipient}:`, error);
       }

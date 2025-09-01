@@ -210,11 +210,11 @@ export default function HealthcareTaskAssignment({
   const handleTemplateSelect = (templateKey: string) => {
     const template = HEALTHCARE_TASK_TEMPLATES[templateKey];
     if (!template) {
-      console.log('❌ Template not found:', templateKey);
+      console.info('❌ Template not found:', templateKey);
       return;
     }
 
-    console.log('📋 Template selected:', templateKey, template);
+    console.info('📋 Template selected:', templateKey, template);
     setSelectedTemplate(templateKey);
 
     const taskData = {
@@ -228,18 +228,18 @@ export default function HealthcareTaskAssignment({
       revenueTarget: template.revenueTarget,
     };
 
-    console.log('📝 Setting task data:', taskData);
+    console.info('📝 Setting task data:', taskData);
     setCustomTask(taskData);
   };
 
   const handleStaffToggle = (staffId: string) => {
-    console.log('👤 Staff toggle clicked:', staffId);
+    console.info('👤 Staff toggle clicked:', staffId);
     setCustomTask((prev) => {
       const newAssignedTo = prev.assignedTo?.includes(staffId)
         ? prev.assignedTo.filter((id) => id !== staffId)
         : [...(prev.assignedTo || []), staffId];
 
-      console.log('👥 Updated assigned staff:', newAssignedTo);
+      console.info('👥 Updated assigned staff:', newAssignedTo);
 
       return {
         ...prev,
@@ -249,8 +249,8 @@ export default function HealthcareTaskAssignment({
   };
 
   const handleSubmit = () => {
-    console.log('🚀 Submit clicked - customTask:', customTask);
-    console.log(
+    console.info('🚀 Submit clicked - customTask:', customTask);
+    console.info(
       '📋 Validation - Title:',
       customTask.title,
       'AssignedTo:',
@@ -258,7 +258,7 @@ export default function HealthcareTaskAssignment({
     );
 
     if (!customTask.title || !customTask.assignedTo?.length) {
-      console.log('❌ Validation failed - missing title or staff assignment');
+      console.info('❌ Validation failed - missing title or staff assignment');
       alert(
         'Please ensure the task has a title and at least one staff member assigned.'
       );
@@ -289,7 +289,7 @@ export default function HealthcareTaskAssignment({
         : undefined,
     };
 
-    console.log('✅ Task created:', task);
+    console.info('✅ Task created:', task);
     onTaskAssign(task);
     onClose();
   };

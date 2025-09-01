@@ -912,7 +912,7 @@ const RFxResponseDashboard: React.FC<RFxResponseDashboardProps> = ({
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔍</div>
                 <p style={{ color: '#6b7280', fontSize: '16px' }}>
                   No opportunities found. Try adjusting your search criteria or
-                  click "Search Opportunities" to start.
+                  click ""Search Opportunities"" to start.
                 </p>
               </div>
             ) : (

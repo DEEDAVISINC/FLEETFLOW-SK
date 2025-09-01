@@ -325,7 +325,7 @@ export const assignLoadToDriver = async (
     });
 
     if (scheduleResult.success) {
-      console.log(
+      console.info(
         `✅ Load ${load.id} added to driver ${driverName}'s schedule`
       );
 
@@ -557,7 +557,7 @@ export const handleDriverEvent = async (
   }
 ) => {
   try {
-    console.log(`👨‍💼 Driver event for ${loadId}: ${eventType}`);
+    console.info(`👨‍💼 Driver event for ${loadId}: ${eventType}`);
 
     // Update load status if needed
     if (eventType === 'breakdown' || eventType === 'accident') {
@@ -574,7 +574,7 @@ export const handleDriverEvent = async (
       eventData
     );
 
-    console.log(`✅ Driver event communication triggered for load ${loadId}`);
+    console.info(`✅ Driver event communication triggered for load ${loadId}`);
   } catch (error) {
     console.error(
       `❌ Failed to handle driver event for load ${loadId}:`,
@@ -602,7 +602,7 @@ export const handleCustomerInquiry = async (
   }
 ) => {
   try {
-    console.log(`📞 Customer inquiry: ${inquiryType}`);
+    console.info(`📞 Customer inquiry: ${inquiryType}`);
 
     // Trigger automated communication with smart escalation
     await DispatchCommunicationIntegration.handleCustomerInquiry(
@@ -611,7 +611,7 @@ export const handleCustomerInquiry = async (
       inquiryData
     );
 
-    console.log(
+    console.info(
       `✅ Customer inquiry communication triggered for ${customerId}`
     );
   } catch (error) {
@@ -848,7 +848,7 @@ export const addAIExpeditedLoad = (loadData: {
   // Notify dispatch central
   notifyDispatchCentral(newLoad, 'create');
 
-  console.log(`🚀 AI-generated expedited load added: ${newLoad.id}`);
+  console.info(`🚀 AI-generated expedited load added: ${newLoad.id}`);
   return newLoad;
 };
 
@@ -905,7 +905,7 @@ const notifyDispatchCentral = (
   load: Load,
   action: 'create' | 'update' | 'assignment' = 'create'
 ) => {
-  console.log(`🚨 Dispatch Central Notification: Load ${load.id} ${action}`, {
+  console.info(`🚨 Dispatch Central Notification: Load ${load.id} ${action}`, {
     loadId: load.id,
     broker: load.brokerName,
     dispatcher: load.dispatcherName,
@@ -922,7 +922,7 @@ const notifyBrokerBox = (
   load: Load,
   action: 'create' | 'update' = 'create'
 ) => {
-  console.log(`📦 Broker Box Notification: Load ${load.id} ${action}`, {
+  console.info(`📦 Broker Box Notification: Load ${load.id} ${action}`, {
     loadId: load.id,
     dispatcher: load.dispatcherName,
     status: load.status,
@@ -1394,7 +1394,7 @@ export const notifyShipperStatusUpdate = async (
   };
 
   // In production, send via SMS, email, or push notification
-  console.log(`📱 Shipper Notification: ${messages[milestone]}`);
+  console.info(`📱 Shipper Notification: ${messages[milestone]}`);
 
   // Could integrate with existing notification services
   return {

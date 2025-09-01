@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     if (!sendGridApiKey) {
       // Fallback to console logging for development
-      console.log('📧 Email Confirmation (Dev Mode):', {
+      console.info('📧 Email Confirmation (Dev Mode):', {
         to: emailData.to,
         from: fromEmail,
         subject: emailData.subject,
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
         response.headers.get('X-Message-Id') || `sg-${Date.now()}`;
 
       // Log successful send for tracking
-      console.log('✅ Insurance confirmation email sent:', {
+      console.info('✅ Insurance confirmation email sent:', {
         to: emailData.to,
         messageId,
         submissionId: emailData.submissionId,

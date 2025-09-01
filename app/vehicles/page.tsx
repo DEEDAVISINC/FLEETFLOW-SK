@@ -210,7 +210,7 @@ export default function VehiclesPage() {
   };
 
   const handleScheduleDOTInspection = (vehicleId: string) => {
-    console.log(`Scheduling DOT inspection for vehicle ${vehicleId}`);
+    console.info(`Scheduling DOT inspection for vehicle ${vehicleId}`);
     // TODO: Integrate with DOT inspection scheduling API
   };
 
@@ -4470,7 +4470,7 @@ export default function VehiclesPage() {
                     address: selectedVehicleForInspection.location,
                   }}
                   onComplete={(inspection) => {
-                    console.log('✅ Inspection completed:', inspection);
+                    console.info('✅ Inspection completed:', inspection);
 
                     // Update vehicle inspection status
                     setVehicles((prev) =>

@@ -139,7 +139,7 @@ class AISupportService extends EventEmitter {
     setInterval(() => this.updateMetrics(), 60000); // 1 minute
     setInterval(() => this.processActiveChatbots(), 10000); // 10 seconds
 
-    console.log(
+    console.info(
       '🎯 AI Customer Support Service initialized - Superior to SalesAI.com!'
     );
   }
@@ -405,7 +405,7 @@ class AISupportService extends EventEmitter {
     setTimeout(() => this.processTicketWithAI(ticketId), 1000);
 
     this.emit('ticketCreated', ticket);
-    console.log(`🎯 New support ticket created: ${ticketId}`);
+    console.info(`🎯 New support ticket created: ${ticketId}`);
 
     return ticket;
   }

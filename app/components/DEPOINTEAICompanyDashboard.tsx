@@ -7,6 +7,7 @@ import {
   Calendar,
   CheckCircle,
   DollarSign,
+  FileText,
   Play,
   Plus,
   Settings,
@@ -17,8 +18,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { TruckingPlanetDashboard } from '../ai-company-dashboard-enhanced';
+import AICommunicationScripts from './AICommunicationScripts';
 import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
+import ShipperVendorQuestionnaireTemplate from './ShipperVendorQuestionnaireTemplate';
 import TaskCreationInterface from './TaskCreationInterface';
 
 interface CompanyStats {
@@ -56,7 +59,7 @@ interface Task {
 
 export default function DEPOINTEAICompanyDashboard() {
   const [activeView, setActiveView] = useState<
-    'overview' | 'scheduler' | 'assignments' | 'performance'
+    'overview' | 'scheduler' | 'assignments' | 'performance' | 'templates'
   >('overview');
   const [stats, setStats] = useState<CompanyStats>({
     totalRevenue: 847500,
@@ -142,7 +145,7 @@ export default function DEPOINTEAICompanyDashboard() {
 
   const assignPreset = async (presetId: string) => {
     // Here you would integrate with your backend to actually assign the preset
-    console.log(`Assigning preset: ${presetId}`);
+    console.info(`Assigning preset: ${presetId}`);
 
     // Show success message
     const preset = quickPresets.find((p) => p.id === presetId);
@@ -307,7 +310,7 @@ export default function DEPOINTEAICompanyDashboard() {
       totalRevenue: prev.totalRevenue + taskData.estimatedRevenue,
     }));
 
-    console.log('✅ Task created successfully:', newTask);
+    console.info('✅ Task created successfully:', newTask);
   };
 
   return (
@@ -419,6 +422,7 @@ export default function DEPOINTEAICompanyDashboard() {
               { id: 'overview', label: 'Command Center', icon: BarChart3 },
               { id: 'scheduler', label: 'AI Staff Scheduler', icon: Calendar },
               { id: 'assignments', label: 'Task Assignments', icon: Target },
+              { id: 'templates', label: 'Templates', icon: FileText },
               {
                 id: 'performance',
                 label: 'Performance Analytics',
@@ -618,6 +622,64 @@ export default function DEPOINTEAICompanyDashboard() {
         {activeView === 'assignments' && (
           <div className='rounded-xl bg-slate-800 p-6'>
             <AITaskAssignmentSystem />
+          </div>
+        )}
+
+        {activeView === 'templates' && (
+          <div className='rounded-xl bg-slate-800 p-6'>
+            <div className='mb-6'>
+              <h2 className='mb-2 text-2xl font-bold text-white'>
+                📄 Professional Templates
+              </h2>
+              <p className='text-slate-400'>
+                Generate professional questionnaires and templates for your
+                logistics operations
+              </p>
+            </div>
+
+            <div className='space-y-6'>
+              {/* Shipper/Vendor Questionnaire */}
+              <div className='rounded-lg border border-slate-600 bg-slate-700 p-6'>
+                <h3 className='mb-2 text-lg font-semibold text-white'>
+                  📋 Shipper/Vendor Questionnaire
+                </h3>
+                <p className='mb-4 text-sm text-slate-300'>
+                  Professional questionnaire template for gathering
+                  comprehensive logistics requirements from potential shippers
+                  and vendors.
+                </p>
+                <ShipperVendorQuestionnaireTemplate companyName='DEPOINTE/Freight 1st Direct' />
+              </div>
+
+              {/* AI Communication Scripts */}
+              <div className='rounded-lg border border-slate-600 bg-slate-700 p-6'>
+                <h3 className='mb-2 text-lg font-semibold text-white'>
+                  💬 AI Communication Scripts
+                </h3>
+                <p className='mb-4 text-sm text-slate-300'>
+                  Natural conversation templates designed for authentic,
+                  human-like AI interactions with customers and carriers.
+                </p>
+                <AICommunicationScripts companyName='DEPOINTE/Freight 1st Direct' />
+              </div>
+
+              {/* Carrier Onboarding Template */}
+              <div className='rounded-lg border border-slate-600 bg-slate-700 p-6'>
+                <h3 className='mb-2 text-lg font-semibold text-white'>
+                  🚛 Carrier Onboarding Template
+                </h3>
+                <p className='text-sm text-slate-300'>
+                  Comprehensive questionnaire for gathering essential carrier
+                  information including equipment, service areas, insurance, and
+                  compliance details.
+                </p>
+                <div className='mt-4 text-center'>
+                  <span className='text-xs text-slate-400'>
+                    Coming Soon - Currently in Development
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

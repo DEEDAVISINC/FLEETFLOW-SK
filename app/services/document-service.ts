@@ -554,7 +554,7 @@ This electronic signature has the same legal effect as a handwritten signature.
   ): Promise<DocumentDistribution> {
     try {
       // In production, this would integrate with email service
-      console.log(`📧 Sending signed ${document.title} to carrier: ${email}`);
+      console.info(`📧 Sending signed ${document.title} to carrier: ${email}`);
 
       const emailSubject = `Signed Agreement: ${document.title}`;
       const emailBody = `
@@ -602,7 +602,7 @@ This electronic signature has the same legal effect as a handwritten signature.
     email: string
   ): Promise<DocumentDistribution> {
     try {
-      console.log(
+      console.info(
         `📧 Sending signed ${document.title} copy to requester: ${email}`
       );
 
@@ -1069,7 +1069,7 @@ Security Level: CONFIDENTIAL - Authorized Personnel Only
   public async storeAgreement(document: AgreementDocument): Promise<string> {
     // In production, this would upload to cloud storage
     const storageUrl = `https://documents.fleetflow.com/agreements/${document.id}.pdf`;
-    console.log(`💾 Storing agreement: ${storageUrl}`);
+    console.info(`💾 Storing agreement: ${storageUrl}`);
     return storageUrl;
   }
 }

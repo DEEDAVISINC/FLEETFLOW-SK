@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'track_usage':
         // Track load board usage for analytics
-        console.log('Load board usage tracked:', body);
+        console.info('Load board usage tracked:', body);
         return NextResponse.json({
           success: true,
           message: 'Usage tracked successfully',

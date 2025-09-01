@@ -249,7 +249,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const priority = searchParams.get('priority');
 
-    console.log(`🎯 AI Recruiting Prospects API - Action: ${action}`);
+    console.info(`🎯 AI Recruiting Prospects API - Action: ${action}`);
 
     switch (action) {
       case 'get_prospects':
@@ -330,7 +330,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, prospectId, approvalData } = body;
 
-    console.log(`🎯 AI Recruiting Prospects API - POST Action: ${action}`);
+    console.info(`🎯 AI Recruiting Prospects API - POST Action: ${action}`);
 
     switch (action) {
       case 'approve_onboarding':

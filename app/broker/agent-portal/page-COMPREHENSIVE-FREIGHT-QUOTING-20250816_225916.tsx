@@ -115,7 +115,7 @@ export default function AgentPortal() {
 
   // Calculation Functions
   const calculateLTL = () => {
-    console.log('🔄 Calculating LTL Quote...');
+    console.info('🔄 Calculating LTL Quote...');
     const weight = parseFloat(ltlData.weight) || 0;
     const pallets = parseInt(ltlData.pallets) || 1;
     const freightClass = parseInt(ltlData.freightClass) || 50;
@@ -152,13 +152,13 @@ export default function AgentPortal() {
       },
     };
 
-    console.log('✅ LTL Quote calculated:', quote);
+    console.info('✅ LTL Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
 
   const calculateFTL = () => {
-    console.log('🔄 Calculating FTL Quote...');
+    console.info('🔄 Calculating FTL Quote...');
     const miles = parseFloat(ftlData.miles) || 0;
     const weight = parseFloat(ftlData.weight) || 0;
 
@@ -193,13 +193,13 @@ export default function AgentPortal() {
       },
     };
 
-    console.log('✅ FTL Quote calculated:', quote);
+    console.info('✅ FTL Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
 
   const calculateSpecialized = () => {
-    console.log('🔄 Calculating Specialized Quote...');
+    console.info('🔄 Calculating Specialized Quote...');
     const weight = parseFloat(specializedData.weight) || 0;
     const value = parseFloat(specializedData.value) || 0;
 
@@ -225,7 +225,7 @@ export default function AgentPortal() {
       data: specializedData,
     };
 
-    console.log('✅ Specialized Quote calculated:', quote);
+    console.info('✅ Specialized Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
@@ -426,7 +426,7 @@ export default function AgentPortal() {
           backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
           backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
           fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         }}
       >
         {/* Header */}
@@ -1249,7 +1249,7 @@ export default function AgentPortal() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('🎯 LTL Calculate Button Clicked!');
+                      console.info('🎯 LTL Calculate Button Clicked!');
                       calculateLTL();
                     }}
                     style={{
@@ -1544,7 +1544,7 @@ export default function AgentPortal() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('🎯 FTL Calculate Button Clicked!');
+                      console.info('🎯 FTL Calculate Button Clicked!');
                       calculateFTL();
                     }}
                     style={{
@@ -1788,7 +1788,7 @@ export default function AgentPortal() {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      console.log('🎯 Specialized Calculate Button Clicked!');
+                      console.info('🎯 Specialized Calculate Button Clicked!');
                       calculateSpecialized();
                     }}
                     style={{

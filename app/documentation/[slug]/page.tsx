@@ -435,7 +435,7 @@ export default function DocumentViewer({ params }: DocumentViewerProps) {
 ## 📈 Strategic Market Position & Competitive Analysis
 
 ### **Market Position Strategy**
-**FleetFlow positions itself as the "Complete Transportation Intelligence Platform" - the first and only solution that combines:**
+**FleetFlow positions itself as the ""Complete Transportation Intelligence Platform"" - the first and only solution that combines:**
 1. **Operational Excellence**: Best-in-class TMS with AI optimization
 2. **Regulatory Mastery**: Automated DOT compliance with expert support
 3. **Financial Intelligence**: Real-time market data and cost optimization
@@ -2266,18 +2266,18 @@ The FreightFlow Quoting Engine is a revolutionary unified pricing system that co
 
 **Method 1: Direct Access**
 1. Navigate to \`http://localhost:3000/quoting\`
-2. Select the "🎯 AI Workflow" tab
+2. Select the ""🎯 AI Workflow"" tab
 3. Begin the unified quoting process
 
 **Method 2: From Broker Dashboard**
 1. Login to Broker Portal
-2. Go to "Freight Quotes" section
-3. Click "🚀 Open Full Quoting System"
+2. Go to ""Freight Quotes"" section
+3. Click ""🚀 Open Full Quoting System""
 4. Access complete unified workflow
 
 **Method 3: Quick Links**
-- Main navigation → "FreightFlow RFx℠" → "Quoting Engine"
-- Search bar → Type "quoting" → Select "Freight Quoting"
+- Main navigation → ""FreightFlow RFx℠"" → ""Quoting Engine""
+- Search bar → Type ""quoting"" → Select ""Freight Quoting""
 
 ### Module 3: The Unified AI Workflow (20 min)
 
@@ -2307,13 +2307,13 @@ Enter comprehensive load information to trigger appropriate pricing engines.
 - **Urgency Level**: Standard, Urgent, Critical, Emergency
 
 **Engine Triggers:**
-- **Emergency Pricing**: Triggered by "Critical" or "Emergency" urgency, or "Expedited" equipment
+- **Emergency Pricing**: Triggered by ""Critical"" or ""Emergency"" urgency, or ""Expedited"" equipment
 - **Spot Rate**: Always enabled for market intelligence
 - **Volume Discount**: Automatically applied based on customer tier
-- **Warehousing**: Triggered by "Warehousing" or "Cross-Dock" equipment selection
+- **Warehousing**: Triggered by ""Warehousing"" or ""Cross-Dock"" equipment selection
 
 **Step 3: AI Analysis**
-Click "🧠 Analyze with AI" to run the unified calculation.
+Click ""🧠 Analyze with AI"" to run the unified calculation.
 
 **Sample Calculation:**
 \`\`\`
@@ -2333,13 +2333,13 @@ The system generates three professional quote options:
 - **Economy Quote**: 15% discount from standard, 5-day delivery
 
 **Step 5: Quote Selection**
-Click "🎯 Select Quote" on your preferred option to create the official quote.
+Click ""🎯 Select Quote"" on your preferred option to create the official quote.
 
 ### Module 4: Understanding the Four Pricing Engines (25 min)
 
 **🚨 Engine 1: Emergency Load Pricing**
 - **Purpose**: Premium pricing for time-sensitive and critical deliveries
-- **Activation**: "Critical"/"Emergency" urgency or "Expedited" equipment
+- **Activation**: ""Critical""/""Emergency"" urgency or ""Expedited"" equipment
 - **Pricing**: 25% premium above standard rate
 - **Best Practice**: Use for immediate pickup/delivery requirements
 
@@ -2359,7 +2359,7 @@ Click "🎯 Select Quote" on your preferred option to create the official quote.
 - **Purpose**: Cross-docking, storage, and distribution services
 - **Services**: Cross-docking, temporary storage, distribution, specialized handling
 - **Pricing**: $500 base fee plus duration and handling charges
-- **Triggers**: "Warehousing" or "Cross-Dock" equipment selection
+- **Triggers**: ""Warehousing"" or ""Cross-Dock"" equipment selection
 
 ### Module 5: Quote Management and Broker Integration (12 min)
 
@@ -2500,7 +2500,7 @@ Upon successful completion:
           break;
         default:
           documentContent = `# 📄 Document Not Found
-The requested document "${params.slug}" could not be found.
+The requested document ""${params.slug}"" could not be found.
 
 ## Available Documents:
 - **Business Plan** - Comprehensive business strategy and financial projections

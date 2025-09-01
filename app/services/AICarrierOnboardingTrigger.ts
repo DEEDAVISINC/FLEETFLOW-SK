@@ -54,7 +54,7 @@ export class AICarrierOnboardingTrigger {
   async processAILeadsAndStartOnboarding(): Promise<void> {
     await ServiceErrorHandler.handleAsyncOperation(
       async () => {
-        // console.log('🤖 AI processing leads and starting carrier onboarding...');
+        // console.info('🤖 AI processing leads and starting carrier onboarding...');
 
         try {
           // Get AI-generated leads for owner operators
@@ -68,7 +68,7 @@ export class AICarrierOnboardingTrigger {
           const carrierLeads =
             this.identifyCarrierLeadsNeedingDispatchers(aiLeads);
 
-          // console.log(`🎯 Found ${carrierLeads.length} AI leads needing dispatchers`);
+          // console.info(`🎯 Found ${carrierLeads.length} AI leads needing dispatchers`);
 
           // Start onboarding for each qualified lead
           const onboardingPromises = carrierLeads.map((lead) =>
@@ -89,7 +89,7 @@ export class AICarrierOnboardingTrigger {
             );
           }
 
-          // console.log(`✅ Started onboarding for ${successful} AI-generated carriers`);
+          // console.info(`✅ Started onboarding for ${successful} AI-generated carriers`);
           return undefined; // Explicit void return
         } catch (error) {
           console.error('❌ AI onboarding trigger failed:', error);
@@ -174,7 +174,7 @@ export class AICarrierOnboardingTrigger {
       async () => {
         const carrierId = `AI-CARRIER-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 
-        // console.log(
+        // console.info(
         //   `🚛 Starting AI onboarding for: ${lead.companyName} (${carrierId})`
         // );
 
@@ -235,7 +235,7 @@ export class AICarrierOnboardingTrigger {
           aiOnboardingData.status = 'onboarding_started';
           this.aiInitiatedOnboardings.set(carrierId, aiOnboardingData);
 
-          // console.log(`✅ Onboarding workflow started for ${lead.companyName}`);
+          // console.info(`✅ Onboarding workflow started for ${lead.companyName}`);
           return carrierId;
         } else {
           console.error(
@@ -278,7 +278,7 @@ export class AICarrierOnboardingTrigger {
     workflowInitData: any
   ): Promise<{ success: boolean; message: string }> {
     try {
-      // console.log('🔄 Starting onboarding workflow with AI data...');
+      // console.info('🔄 Starting onboarding workflow with AI data...');
 
       // Use the onboarding integration service to start the workflow
       const result =
@@ -315,7 +315,7 @@ export class AICarrierOnboardingTrigger {
           return;
         }
 
-        // console.log(
+        // console.info(
         //   `🎉 AI-initiated onboarding completed for: ${aiOnboardingData.prePopulatedData.carrierInfo.companyName}`
         // );
 
@@ -340,7 +340,7 @@ export class AICarrierOnboardingTrigger {
             priority: aiOnboardingData.aiConfidence > 85 ? 'high' : 'medium',
           });
 
-          // console.log(
+          // console.info(
           //   `✅ Management notified - DISPATCHER NEEDED for ${aiOnboardingData.prePopulatedData.carrierInfo.companyName}`
           // );
         } catch (notificationError) {

@@ -504,7 +504,7 @@ export class ContractLifecycleService {
     workflow.status = 'in_progress';
     workflow.updatedAt = new Date().toISOString();
 
-    console.log(
+    console.info(
       `🔄 Starting contract workflow: ${workflow.workflowType} for ${workflow.vendorId}`
     );
 
@@ -525,14 +525,14 @@ export class ContractLifecycleService {
 
     // Check dependencies
     if (!this.areDependenciesMet(workflow, currentStep)) {
-      console.log(`⏳ Dependencies not met for step: ${currentStep.name}`);
+      console.info(`⏳ Dependencies not met for step: ${currentStep.name}`);
       return;
     }
 
     currentStep.status = 'in_progress';
     currentStep.startedAt = new Date().toISOString();
 
-    console.log(`▶️ Executing step: ${currentStep.name}`);
+    console.info(`▶️ Executing step: ${currentStep.name}`);
 
     if (currentStep.automatable) {
       await this.executeAutomatableStep(workflow, currentStep);
@@ -563,7 +563,7 @@ export class ContractLifecycleService {
           await this.sendStepNotifications(workflow, step);
           break;
         default:
-          console.log(`⚠️ Unknown automatable step type: ${step.type}`);
+          console.info(`⚠️ Unknown automatable step type: ${step.type}`);
       }
 
       await this.completeStep(workflow, step);
@@ -596,7 +596,7 @@ export class ContractLifecycleService {
       timestamp: new Date().toISOString(),
     });
 
-    console.log(`📊 Performance analysis completed for ${vendor.name}`);
+    console.info(`📊 Performance analysis completed for ${vendor.name}`);
   }
 
   private async generateContractAnalytics(
@@ -714,7 +714,7 @@ export class ContractLifecycleService {
       try {
         if (notification.type === 'email') {
           // In production, integrate with actual email service
-          console.log(
+          console.info(
             `📧 Email sent to ${notification.recipient}: ${notification.subject}`
           );
         } else if (notification.type === 'sms') {
@@ -899,7 +899,7 @@ export class ContractLifecycleService {
   ): Promise<void> {
     // Send assignment notifications to users
     for (const assignee of step.assignedTo) {
-      console.log(`👤 Step "${step.name}" assigned to ${assignee}`);
+      console.info(`👤 Step "${step.name}" assigned to ${assignee}`);
 
       // In production, send actual assignment notifications
       workflow.communications.push({
@@ -922,7 +922,7 @@ export class ContractLifecycleService {
     step.completedAt = new Date().toISOString();
     workflow.currentStepIndex++;
 
-    console.log(`✅ Step completed: ${step.name}`);
+    console.info(`✅ Step completed: ${step.name}`);
 
     // Continue to next step
     setTimeout(() => this.executeNextStep(workflow), 1000);
@@ -932,7 +932,7 @@ export class ContractLifecycleService {
     workflow.status = 'completed';
     workflow.updatedAt = new Date().toISOString();
 
-    console.log(
+    console.info(
       `🎉 Workflow completed: ${workflow.workflowType} for ${workflow.vendorId}`
     );
 
@@ -945,7 +945,7 @@ export class ContractLifecycleService {
     step: WorkflowStep
   ): Promise<void> {
     // Simulate system integration tasks
-    console.log(`🔗 Performing system integration for ${step.name}`);
+    console.info(`🔗 Performing system integration for ${step.name}`);
 
     step.outputs.push({
       type: 'data',
@@ -963,7 +963,7 @@ export class ContractLifecycleService {
     step: WorkflowStep
   ): Promise<void> {
     // In production, integrate with DocuSign API
-    console.log(
+    console.info(
       `✍️ Initiating digital signature collection for contract ${workflow.contractId}`
     );
 
@@ -982,7 +982,7 @@ export class ContractLifecycleService {
     workflow: ContractWorkflow,
     step: WorkflowStep
   ): Promise<void> {
-    console.log(`📢 Sending notifications for step: ${step.name}`);
+    console.info(`📢 Sending notifications for step: ${step.name}`);
 
     step.outputs.push({
       type: 'data',
@@ -1009,7 +1009,7 @@ export class ContractLifecycleService {
   }
 
   private async monitorActiveContracts(): Promise<void> {
-    console.log('🔍 Monitoring contract lifecycle events...');
+    console.info('🔍 Monitoring contract lifecycle events...');
 
     const vendors = vendorManagementService.getAllVendors();
 
@@ -1027,7 +1027,7 @@ export class ContractLifecycleService {
         );
 
         if (!existingWorkflow) {
-          console.log(
+          console.info(
             `⚠️ Contract expiring in ${daysUntilExpiry} days: ${vendor.name}`
           );
           await this.initiateRenewalWorkflow(
@@ -1054,7 +1054,7 @@ export class ContractLifecycleService {
 
   private setupPerformanceReviews(): void {
     // TEMPORARILY DISABLED - Performance reviews were causing console spam
-    console.log(
+    console.info(
       '📊 Performance reviews scheduled for quarterly execution (currently disabled)'
     );
     // TODO: Re-enable with proper singleton pattern
@@ -1069,7 +1069,7 @@ export class ContractLifecycleService {
   }
 
   private async initiatePerformanceReviews(): Promise<void> {
-    console.log('📊 Initiating quarterly performance reviews...');
+    console.info('📊 Initiating quarterly performance reviews...');
 
     const vendors = vendorManagementService
       .getAllVendors()
@@ -1083,7 +1083,7 @@ export class ContractLifecycleService {
       );
       this.analytics.set(vendor.contract.id, analytics);
 
-      console.log(
+      console.info(
         `📈 Performance review completed for ${vendor.name}: ${analytics.performanceScore}%`
       );
     }

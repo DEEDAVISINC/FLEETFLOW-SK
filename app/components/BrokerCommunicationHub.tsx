@@ -1513,8 +1513,8 @@ export default function BrokerCommunicationHub({
                       Action:{' '}
                     </span>
                     <span style={{ color: 'white' }}>
-                      Send {rule.action.type} - "
-                      {rule.action.message || 'Template message'}"
+                      Send {rule.action.type} - ""
+                      {rule.action.message || 'Template message'}""
                     </span>
                   </div>
                 </div>

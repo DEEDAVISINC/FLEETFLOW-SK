@@ -170,7 +170,7 @@ export class SquareSubscriptionService {
       this.userSubscriptions.set(userId, userSubs);
 
       // In a real implementation, this would process payment with Square
-      console.log('Square subscription created:', subscriptionId);
+      console.info('Square subscription created:', subscriptionId);
 
       return { success: true, subscription };
     } catch (error) {
@@ -433,7 +433,7 @@ export class SquareSubscriptionService {
           await this.handlePaymentFailed(data);
           break;
         default:
-          console.log(`Unhandled webhook event: ${type}`);
+          console.info(`Unhandled webhook event: ${type}`);
       }
 
       return true;
@@ -444,7 +444,7 @@ export class SquareSubscriptionService {
   }
 
   private async handleSubscriptionActivated(data: any) {
-    console.log('Subscription activated:', data);
+    console.info('Subscription activated:', data);
     // Update subscription status to active
     if (data.subscriptionId) {
       await this.updateSubscriptionStatus(data.subscriptionId, 'active');
@@ -452,7 +452,7 @@ export class SquareSubscriptionService {
   }
 
   private async handleSubscriptionDeactivated(data: any) {
-    console.log('Subscription deactivated:', data);
+    console.info('Subscription deactivated:', data);
     // Update subscription status to canceled
     if (data.subscriptionId) {
       await this.updateSubscriptionStatus(data.subscriptionId, 'canceled');
@@ -460,12 +460,12 @@ export class SquareSubscriptionService {
   }
 
   private async handlePaymentCompleted(data: any) {
-    console.log('Payment completed:', data);
+    console.info('Payment completed:', data);
     // Extend subscription period or activate service
   }
 
   private async handlePaymentFailed(data: any) {
-    console.log('Payment failed:', data);
+    console.info('Payment failed:', data);
     // Update subscription to past_due status
     if (data.subscriptionId) {
       await this.updateSubscriptionStatus(data.subscriptionId, 'past_due');

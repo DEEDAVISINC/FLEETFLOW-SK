@@ -85,7 +85,7 @@ class BrokerContractService {
       };
 
       // Mock email notification - in production would use email service
-      console.log('Sending approval request:', approvalRequest);
+      console.info('Sending approval request:', approvalRequest);
 
       // Simulate email sending delay
       await new Promise((resolve) => setTimeout(resolve, 1000));

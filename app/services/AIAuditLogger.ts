@@ -603,7 +603,7 @@ export class AIAuditLogger {
     } else if (event.eventType === 'access_denied') {
       console.info(`[AI Security] ACCESS DENIED: ${event.operation}`, logData);
     } else {
-      console.log(`[AI Security] ${event.eventType}`, logData);
+      console.info(`[AI Security] ${event.eventType}`, logData);
     }
   }
 
@@ -726,7 +726,7 @@ export class AIAuditLogger {
         }
 
         if (removedCount > 0) {
-          console.log(`🗑️ Cleaned up ${removedCount} old audit events`);
+          console.info(`🗑️ Cleaned up ${removedCount} old audit events`);
         }
       },
       24 * 60 * 60 * 1000

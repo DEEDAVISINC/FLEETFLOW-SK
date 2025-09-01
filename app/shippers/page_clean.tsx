@@ -78,7 +78,7 @@ export default function ShippersPage() {
     ]);
 
     const csvContent = [headers, ...csvData]
-      .map((row) => row.map((cell) => `"${cell}"`).join(','))
+      .map((row) => row.map((cell) => `""${cell}""`).join(','))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -570,7 +570,7 @@ export default function ShippersPage() {
               </h3>
               <p style={{ margin: 0 }}>
                 {searchTerm
-                  ? `No shippers match "${searchTerm}"`
+                  ? `No shippers match ""${searchTerm}""`
                   : 'No shippers in database'}
               </p>
             </div>

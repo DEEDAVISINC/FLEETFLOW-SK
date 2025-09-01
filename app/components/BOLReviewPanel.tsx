@@ -50,7 +50,7 @@ export default function BOLReviewPanel({
   brokerId,
   brokerName,
 }: BOLReviewPanelProps) {
-  console.log(
+  console.info(
     '🏗️ BOLReviewPanel initialized with brokerId:',
     brokerId,
     'brokerName:',
@@ -93,7 +93,7 @@ export default function BOLReviewPanel({
   const loadSubmissions = async () => {
     try {
       setLoading(true);
-      console.log('🔍 Loading BOL submissions for broker:', brokerId);
+      console.info('🔍 Loading BOL submissions for broker:', brokerId);
 
       const response = await fetch('/api/bol-workflow', {
         method: 'POST',
@@ -106,8 +106,8 @@ export default function BOLReviewPanel({
         }),
       });
 
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response headers:', response.headers.get('content-type'));
+      console.info('📡 Response status:', response.status);
+      console.info('📡 Response headers:', response.headers.get('content-type'));
 
       // Check if response is actually JSON
       const contentType = response.headers.get('content-type');
@@ -121,14 +121,14 @@ export default function BOLReviewPanel({
       }
 
       const result = await response.json();
-      console.log('📊 API result:', result);
+      console.info('📊 API result:', result);
 
       if (result.success) {
         const filteredSubmissions = result.submissions.filter(
           (sub: BOLSubmission) =>
             sub.status === 'broker_review' || sub.status === 'submitted'
         );
-        console.log(
+        console.info(
           '✅ Loaded',
           filteredSubmissions.length,
           'submissions for review'

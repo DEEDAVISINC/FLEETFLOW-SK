@@ -48,7 +48,7 @@ export default function RootLayout({
                 console.error = function(...args) {
                   const msg = args.join(' ');
                   if (REACT_PATTERNS.some(p => msg.includes(p))) {
-                    console.log('🚫 React error blocked:', msg.substring(0, 80) + '...');
+                    console.info('🚫 React error blocked:', msg.substring(0, 80) + '...');
                     return;
                   }
                   originalError.apply(console, args);
@@ -60,7 +60,7 @@ export default function RootLayout({
                   originalWarn.apply(console, args);
                 };
 
-                console.log('🛡️ IMMEDIATE React error suppression activated');
+                console.info('🛡️ IMMEDIATE React error suppression activated');
               }
             `,
           }}
@@ -72,4 +72,3 @@ export default function RootLayout({
     </html>
   );
 }
-

@@ -849,7 +849,7 @@ export default function VolumeDiscountWidget() {
             </>
           ) : (
             <div className='text-center text-gray-500'>
-              Click "Project Volume" to see volume growth projections for your
+              Click ""Project Volume"" to see volume growth projections for your
               customer
             </div>
           )}

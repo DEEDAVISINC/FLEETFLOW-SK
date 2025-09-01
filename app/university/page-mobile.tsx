@@ -109,7 +109,7 @@ export default function UniversityPageMobile() {
       id: 'ai-flow-system-training',
       title: 'AI Flow System Mastery',
       description:
-        "Comprehensive training on FleetFlow's AI-powered automation systems and intelligent workflow optimization.",
+        ""Comprehensive training on FleetFlow's AI-powered automation systems and intelligent workflow optimization."",
       duration: '120 minutes',
       difficulty: 'Intermediate',
       category: 'Technology',
@@ -583,7 +583,7 @@ export default function UniversityPageMobile() {
                           <div
                             className='h-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 transition-all'
                             style={{ width: `${course.progress}%` }}
-                          ></div>
+                          />
                         </div>
                         <div className='mt-1 text-xs text-white/70'>
                           {course.progress}% Complete

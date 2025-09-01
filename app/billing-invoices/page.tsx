@@ -1554,7 +1554,7 @@ const BillingInvoicesPage = () => {
           .map((header) => {
             const value = row[header];
             return typeof value === 'string' && value.includes(',')
-              ? `"${value}"`
+              ? `""${value}""`
               : value;
           })
           .join(',')

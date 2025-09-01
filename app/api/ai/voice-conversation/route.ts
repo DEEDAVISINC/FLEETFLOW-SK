@@ -17,14 +17,14 @@ export async function POST(request: NextRequest) {
 
     // Handle landing page narration requests
     if (conversationId === 'landing-page-narration' && message) {
-      console.log(
+      console.info(
         `🎙️ Landing page narration request: voice=${voiceId}, text="${message.substring(0, 50)}..."`
       );
 
       try {
         const result = await elevenLabsVoice.textToSpeech(message, voiceId);
         if (result.success && result.audioUrl) {
-          console.log(`✅ ElevenLabs success for voice: ${voiceId}`);
+          console.info(`✅ ElevenLabs success for voice: ${voiceId}`);
           return NextResponse.json({
             success: true,
             response: message,
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Always return success so browser TTS can handle it
-      console.log(
+      console.info(
         `🔊 Falling back to enhanced browser TTS for voice: ${voiceId}`
       );
       return NextResponse.json({
@@ -211,7 +211,7 @@ export async function PUT(request: NextRequest) {
     activeCallContexts.set(callId, context);
 
     // Log transfer reason for analytics
-    console.log(`Call ${callId} transferred to human. Reason: ${reason}`);
+    console.info(`Call ${callId} transferred to human. Reason: ${reason}`);
 
     return NextResponse.json({
       success: true,

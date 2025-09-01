@@ -288,7 +288,7 @@ export default function ApiStatusPage() {
         }}
       >
         <h3>🚀 Deployment Readiness</h3>
-        <p>All APIs should show "healthy" status for production deployment.</p>
+        <p>All APIs should show ""healthy"" status for production deployment.</p>
         <ul style={{ marginTop: '12px' }}>
           <li>
             <strong>Health Check:</strong> Tests overall system health

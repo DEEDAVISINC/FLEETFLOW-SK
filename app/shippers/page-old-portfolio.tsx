@@ -111,7 +111,7 @@ export default function ShippersPage() {
     ]);
 
     const csvContent = [headers, ...csvData]
-      .map((row) => row.map((cell) => `"${cell}"`).join(','))
+      .map((row) => row.map((cell) => `""${cell}""`).join(','))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -785,7 +785,7 @@ export default function ShippersPage() {
                 currentUser.user.role === 'broker'
                   ? 'No shippers in your portfolio yet. Contact your dispatcher or add new shipper relationships to start posting loads.'
                   : searchTerm
-                    ? `No shippers match "${searchTerm}"`
+                    ? `No shippers match ""${searchTerm}""`
                     : currentUser.user.role === 'broker'
                       ? 'Build your shipper portfolio to start posting loads to the board.'
                       : 'No shippers in database'}
@@ -834,7 +834,7 @@ export default function ShippersPage() {
             Displaying {filteredAndSortedShippers.length} of{' '}
             {userFilteredShippers.length} shippers
             {currentUser.user.role === 'broker' && ' in your portfolio'}
-            {currentUser.user.role === 'admin' && " (all brokers' shippers)"}
+            {currentUser.user.role === 'admin' && "" (all brokers' shippers)""}
           </div>
           <div>
             {selectedShippers.length > 0 &&

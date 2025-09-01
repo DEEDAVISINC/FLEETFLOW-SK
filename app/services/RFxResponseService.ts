@@ -1110,7 +1110,7 @@ INDUSTRY CERTIFICATIONS:
         );
         notificationsSent = rfxOpportunities.length;
 
-        console.log(
+        console.info(
           `📨 Universal notifications sent for ${opportunities.length} RFx opportunities across ${[...new Set(opportunities.map((o) => this.mapSourceToOpportunityType(o.source || '')))].length} platforms`
         );
       }
@@ -3443,7 +3443,7 @@ INDUSTRY CERTIFICATIONS:
     searchParams: any
   ): Promise<RFxRequest[]> {
     try {
-      console.log('🔍 Searching InstantMarkets.com for RFP opportunities...');
+      console.info('🔍 Searching InstantMarkets.com for RFP opportunities...');
 
       const instantMarketsOpportunities: RFxRequest[] = [];
 
@@ -3640,7 +3640,7 @@ INDUSTRY CERTIFICATIONS:
     searchParams: any
   ): Promise<RFxRequest[]> {
     try {
-      console.log('🏭 Searching for Warehousing & 3PL RFP opportunities...');
+      console.info('🏭 Searching for Warehousing & 3PL RFP opportunities...');
 
       const warehousingOpportunities: RFxRequest[] = [];
 

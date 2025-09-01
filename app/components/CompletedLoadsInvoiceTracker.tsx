@@ -709,7 +709,7 @@ export default function CompletedLoadsInvoiceTracker({
           <div style={{ fontSize: '14px' }}>
             {filterStatus === 'all'
               ? 'Complete some loads to see them here'
-              : `No loads with status "${getStatusText(filterStatus)}"`}
+              : `No loads with status ""${getStatusText(filterStatus)}""`}
           </div>
         </div>
       )}

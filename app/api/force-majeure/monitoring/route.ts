@@ -521,7 +521,7 @@ export async function POST(request: NextRequest) {
     switch (action) {
       case 'activate_plan':
         // Activate emergency contingency plan
-        console.log(`Activating emergency plan: ${planId}`);
+        console.info(`Activating emergency plan: ${planId}`);
         return NextResponse.json({
           success: true,
           message: `Emergency plan ${planId} activated successfully`,
@@ -530,7 +530,7 @@ export async function POST(request: NextRequest) {
 
       case 'update_event_status':
         // Update disaster event status
-        console.log(`Updating event ${eventId} status`);
+        console.info(`Updating event ${eventId} status`);
         return NextResponse.json({
           success: true,
           message: `Event ${eventId} status updated`,
@@ -539,7 +539,7 @@ export async function POST(request: NextRequest) {
 
       case 'deploy_resources':
         // Deploy emergency resources
-        console.log(`Deploying emergency resources for event: ${eventId}`);
+        console.info(`Deploying emergency resources for event: ${eventId}`);
         return NextResponse.json({
           success: true,
           message: 'Emergency resources deployed successfully',
@@ -548,7 +548,7 @@ export async function POST(request: NextRequest) {
 
       case 'send_alert':
         // Send emergency alert to drivers/customers
-        console.log(`Sending emergency alert for event: ${eventId}`);
+        console.info(`Sending emergency alert for event: ${eventId}`);
         return NextResponse.json({
           success: true,
           message: 'Emergency alerts sent successfully',

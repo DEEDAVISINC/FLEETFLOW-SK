@@ -263,7 +263,7 @@ class WorkflowManager {
     // Save to backend
     workflowBackendService.createWorkflow(loadId, driverId, dispatcherId);
 
-    console.log(
+    console.info(
       `🔄 Workflow initialized for load ${loadId} with ${config.pickupPhotosRequired || config.deliveryPhotosRequired ? 'photo requirements' : 'no photo requirements'}`
     );
 
@@ -694,7 +694,7 @@ class WorkflowManager {
           case 'load_confirmed':
             if (partner.supportedTransactions.includes('990')) {
               // EDI 990 - Response to Load Tender
-              console.log(
+              console.info(
                 `📡 Generating EDI 990 for load confirmation: ${loadId} → ${partner.name}`
               );
             }
@@ -721,7 +721,7 @@ class WorkflowManager {
                 partnerId
               );
               await ediService.sendEDI(message.id);
-              console.log(
+              console.info(
                 `📡 EDI 204 sent for rate confirmation: ${loadId} → ${partner.name}`
               );
             }
@@ -773,7 +773,7 @@ class WorkflowManager {
                 partnerId
               );
               await ediService.sendEDI(message.id);
-              console.log(
+              console.info(
                 `📡 EDI 214 sent for ${eventType}: ${loadId} → ${partner.name}`
               );
             }
@@ -782,7 +782,7 @@ class WorkflowManager {
           case 'pod_complete':
             if (partner.supportedTransactions.includes('210')) {
               // EDI 210 - Invoice (if auto-invoicing is enabled)
-              console.log(
+              console.info(
                 `📡 Auto-invoicing available for: ${loadId} → ${partner.name}`
               );
               // Invoice generation would require additional billing logic
@@ -848,7 +848,7 @@ class WorkflowManager {
     loadId: string
   ) {
     // Implementation for dispatcher notification
-    console.log(`Dispatcher ${dispatcherId}: ${message} (Load: ${loadId})`);
+    console.info(`Dispatcher ${dispatcherId}: ${message} (Load: ${loadId})`);
   }
 
   /**
@@ -856,7 +856,7 @@ class WorkflowManager {
    */
   private notifyBroker(loadId: string, message: string) {
     // Implementation for broker notification
-    console.log(`Broker notification: ${message} (Load: ${loadId})`);
+    console.info(`Broker notification: ${message} (Load: ${loadId})`);
   }
 
   /**

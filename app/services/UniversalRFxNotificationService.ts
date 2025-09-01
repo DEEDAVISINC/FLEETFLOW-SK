@@ -523,7 +523,7 @@ class UniversalRFxNotificationService {
   private async sendEmail(emailData: any): Promise<void> {
     try {
       // Integrate with email service (Twilio SendGrid, etc.)
-      console.log('Sending email:', emailData.subject);
+      console.info('Sending email:', emailData.subject);
     } catch (error) {
       console.error('Error sending email:', error);
     }
@@ -532,7 +532,7 @@ class UniversalRFxNotificationService {
   private async sendSMS(phone: string, message: string): Promise<void> {
     try {
       // Integrate with Twilio SMS
-      console.log('Sending SMS to', phone, ':', message);
+      console.info('Sending SMS to', phone, ':', message);
     } catch (error) {
       console.error('Error sending SMS:', error);
     }

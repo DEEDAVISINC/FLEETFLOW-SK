@@ -1429,7 +1429,7 @@ export default function UserManagement() {
     setUserPermissions(newPermissions);
 
     // Here you would typically save to database
-    console.log(`Updated permissions for ${subPageKey}:`, newPermissions);
+    console.info(`Updated permissions for ${subPageKey}:`, newPermissions);
   };
 
   const toggleSectionPermission = (sectionKey: string) => {
@@ -1441,12 +1441,12 @@ export default function UserManagement() {
     setUserPermissions(newPermissions);
 
     // Here you would typically save to database
-    console.log(`Toggled ${sectionKey} to ${newPermissions[sectionKey]}`);
+    console.info(`Toggled ${sectionKey} to ${newPermissions[sectionKey]}`);
   };
 
   const savePermissions = () => {
     // Here you would save to database
-    console.log('Saving permissions:', userPermissions);
+    console.info('Saving permissions:', userPermissions);
     alert('Permissions saved successfully!');
   };
 
@@ -1515,7 +1515,7 @@ export default function UserManagement() {
   };
 
   const handleContractorOnboardingComplete = (finalData: any) => {
-    console.log('Contractor onboarding completed:', finalData);
+    console.info('Contractor onboarding completed:', finalData);
 
     // Store signed documents in user's profile
     if (onboardingUser && finalData) {

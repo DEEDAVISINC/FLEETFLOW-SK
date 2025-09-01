@@ -70,11 +70,11 @@ export class DataRetentionScheduler {
     ServiceErrorHandler.handleOperation(
       () => {
         if (this.isRunning) {
-          console.log('📅 Data retention scheduler is already running');
+          console.info('📅 Data retention scheduler is already running');
           return;
         }
 
-        console.log('🚀 Starting data retention scheduler...');
+        console.info('🚀 Starting data retention scheduler...');
         this.isRunning = true;
 
         // Schedule all enabled jobs
@@ -84,7 +84,7 @@ export class DataRetentionScheduler {
           }
         });
 
-        console.log(
+        console.info(
           `✅ Data retention scheduler started with ${this.scheduledJobs.size} jobs`
         );
       },
@@ -97,21 +97,21 @@ export class DataRetentionScheduler {
     ServiceErrorHandler.handleOperation(
       () => {
         if (!this.isRunning) {
-          console.log('📅 Data retention scheduler is not running');
+          console.info('📅 Data retention scheduler is not running');
           return;
         }
 
-        console.log('🛑 Stopping data retention scheduler...');
+        console.info('🛑 Stopping data retention scheduler...');
         this.isRunning = false;
 
         // Clear all scheduled intervals
         this.intervalHandles.forEach((handle, jobId) => {
           clearInterval(handle);
-          console.log(`⏹️ Stopped job: ${jobId}`);
+          console.info(`⏹️ Stopped job: ${jobId}`);
         });
         this.intervalHandles.clear();
 
-        console.log('✅ Data retention scheduler stopped');
+        console.info('✅ Data retention scheduler stopped');
       },
       'DataRetentionScheduler',
       'stop'
@@ -185,7 +185,7 @@ export class DataRetentionScheduler {
           }, intervalMs);
 
           this.intervalHandles.set(jobId, handle);
-          console.log(
+          console.info(
             `📅 Scheduled job ${job.name} to run every ${intervalMs / 1000} seconds`
           );
         }
@@ -246,7 +246,7 @@ export class DataRetentionScheduler {
         const job = this.scheduledJobs.get(jobId);
         if (!job) return null;
 
-        console.log(`🔄 Executing job: ${job.name}`);
+        console.info(`🔄 Executing job: ${job.name}`);
         const startTime = new Date();
 
         try {
@@ -328,7 +328,7 @@ export class DataRetentionScheduler {
             history.splice(0, history.length - 100);
           }
 
-          console.log(`✅ Job completed: ${job.name} (${executionTime}ms)`);
+          console.info(`✅ Job completed: ${job.name} (${executionTime}ms)`);
           return executionResult;
         } catch (error) {
           const endTime = new Date();
@@ -367,7 +367,7 @@ export class DataRetentionScheduler {
   }
 
   private async executeDailyCleanup(tenantId?: string): Promise<any> {
-    console.log('🧹 Running daily cleanup job');
+    console.info('🧹 Running daily cleanup job');
     this.dataGovernanceService.runDailyCleanupJob();
     return {
       expired_records_found: Math.floor(Math.random() * 500) + 100,
@@ -377,7 +377,7 @@ export class DataRetentionScheduler {
   }
 
   private async executeWeeklyCompliance(tenantId?: string): Promise<any> {
-    console.log('📋 Running weekly compliance job');
+    console.info('📋 Running weekly compliance job');
     this.dataGovernanceService.runWeeklyComplianceReview();
     return {
       pending_requests_processed: Math.floor(Math.random() * 20) + 5,
@@ -387,7 +387,7 @@ export class DataRetentionScheduler {
   }
 
   private async executeMonthlyAudit(tenantId?: string): Promise<any> {
-    console.log('📊 Running monthly audit job');
+    console.info('📊 Running monthly audit job');
     return {
       retention_rules_reviewed:
         this.dataGovernanceService.getRetentionRules(tenantId).length,
@@ -397,7 +397,7 @@ export class DataRetentionScheduler {
   }
 
   private async executeRetentionEnforcement(tenantId?: string): Promise<any> {
-    console.log('⚖️ Running retention enforcement job');
+    console.info('⚖️ Running retention enforcement job');
     return {
       rules_enforced: Math.floor(Math.random() * 20) + 10,
       corrections_applied: Math.floor(Math.random() * 5),
@@ -406,7 +406,7 @@ export class DataRetentionScheduler {
   }
 
   private async executePrivacyReview(tenantId?: string): Promise<any> {
-    console.log('👤 Running privacy review job');
+    console.info('👤 Running privacy review job');
     const pendingRequests = this.privacyService.getDataSubjectRequests(
       tenantId,
       'processing'
@@ -666,7 +666,7 @@ export class DataRetentionScheduler {
           throw new Error(`Job not found: ${jobId}`);
         }
 
-        console.log(`🚀 Manually executing job: ${job.name}`);
+        console.info(`🚀 Manually executing job: ${job.name}`);
         return await this.executeJob(jobId);
       },
       'DataRetentionScheduler',
@@ -685,7 +685,7 @@ export class DataRetentionScheduler {
             ? jobs.filter((job) => job.type === jobType)
             : jobs;
 
-          console.log(`🚀 Manually executing ${filteredJobs.length} jobs`);
+          console.info(`🚀 Manually executing ${filteredJobs.length} jobs`);
 
           const results: JobExecutionResult[] = [];
           for (const job of filteredJobs) {

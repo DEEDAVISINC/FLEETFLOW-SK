@@ -260,10 +260,10 @@ export default function ContractManagement() {
           </style>
         </head>
         <body>
-          <div class="header">
+          <div class=""header"">
             <h1>Transportation Broker Contract Agreement</h1>
           </div>
-          <div class="section">
+          <div class=""section"">
             <h3>Contract Details</h3>
             <p><strong>Client:</strong> ${contractData.clientName}</p>
             <p><strong>Broker:</strong> ${contractData.brokerName}</p>
@@ -272,7 +272,7 @@ export default function ContractManagement() {
             <p><strong>Commission Rate:</strong> ${contractData.commissionRate}%</p>
             <p><strong>Contract Value:</strong> ${formatCurrency(contractData.contractValue)}</p>
           </div>
-          <div class="section">
+          <div class=""section"">
             <h3>Warehousing Services</h3>
             <ul>
               ${contractData.warehouseServices.storage ? '<li>Storage Services</li>' : ''}
@@ -282,15 +282,15 @@ export default function ContractManagement() {
               ${contractData.warehouseServices.customsHandling ? '<li>Customs Handling</li>' : ''}
             </ul>
           </div>
-          <div class="section">
+          <div class=""section"">
             <h3>Terms and Conditions</h3>
             <p>${contractData.termsConditions}</p>
           </div>
-          <div class="section">
+          <div class=""section"">
             <h3>Special Provisions</h3>
             <p>${contractData.specialProvisions}</p>
           </div>
-          <div class="signature-section">
+          <div class=""signature-section"">
             <p>Client Signature: ___________________________ Date: ___________</p>
             <br>
             <p>Broker Signature: ___________________________ Date: ___________</p>
@@ -371,7 +371,7 @@ export default function ContractManagement() {
         paddingTop: '100px',
         color: '#ffffff',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       <div

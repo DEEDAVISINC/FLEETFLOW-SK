@@ -10,26 +10,33 @@ interface W9FormData {
   disregardedEntityName?: string;
   exemptFromBackupWithholding: boolean;
   fatcaReporting: boolean;
-  
+
   // Tax Classification
-  taxClassification: 'individual' | 'c_corp' | 's_corp' | 'partnership' | 'trust_estate' | 'llc' | 'other';
+  taxClassification:
+    | 'individual'
+    | 'c_corp'
+    | 's_corp'
+    | 'partnership'
+    | 'trust_estate'
+    | 'llc'
+    | 'other';
   llcTaxClassification?: 'c' | 's' | 'p' | 'disregarded';
   otherTaxClassification?: string;
-  
+
   // Address
   address: string;
   city: string;
   state: string;
   zipCode: string;
-  
+
   // Account Numbers (optional)
   accountNumbers?: string;
-  
+
   // Taxpayer Identification
   tinType: 'ssn' | 'ein';
   ssn?: string;
   ein?: string;
-  
+
   // Certification
   certified: boolean;
   signature: string;
@@ -42,7 +49,11 @@ interface W9FormProps {
   carrierInfo?: any;
 }
 
-export const W9Form: React.FC<W9FormProps> = ({ onFormCompleted, onCancel, carrierInfo }) => {
+export const W9Form: React.FC<W9FormProps> = ({
+  onFormCompleted,
+  onCancel,
+  carrierInfo,
+}) => {
   const [formData, setFormData] = useState<W9FormData>({
     businessName: carrierInfo?.legalName || '',
     businessType: 'llc',
@@ -52,55 +63,108 @@ export const W9Form: React.FC<W9FormProps> = ({ onFormCompleted, onCancel, carri
     taxClassification: 'llc',
     address: carrierInfo?.physicalAddress?.split(',')[0] || '',
     city: carrierInfo?.physicalAddress?.split(',')[1]?.trim() || '',
-    state: carrierInfo?.physicalAddress?.split(',')[2]?.trim()?.split(' ')[0] || '',
-    zipCode: carrierInfo?.physicalAddress?.split(',')[2]?.trim()?.split(' ')[1] || '',
+    state:
+      carrierInfo?.physicalAddress?.split(',')[2]?.trim()?.split(' ')[0] || '',
+    zipCode:
+      carrierInfo?.physicalAddress?.split(',')[2]?.trim()?.split(' ')[1] || '',
     tinType: 'ein',
     certified: false,
     signature: '',
-    signatureDate: new Date().toISOString().split('T')[0]
+    signatureDate: new Date().toISOString().split('T')[0],
   });
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const businessTypes = [
-    { value: 'individual', label: 'Individual/sole proprietor or single-member LLC' },
+    {
+      value: 'individual',
+      label: 'Individual/sole proprietor or single-member LLC',
+    },
     { value: 'corporation', label: 'C Corporation' },
     { value: 'partnership', label: 'S Corporation' },
     { value: 'llc', label: 'Partnership' },
-    { value: 'other', label: 'Limited liability company (LLC)' }
+    { value: 'other', label: 'Limited liability company (LLC)' },
   ];
 
   const taxClassifications = [
-    { value: 'individual', label: 'Individual/sole proprietor or single-member LLC' },
+    {
+      value: 'individual',
+      label: 'Individual/sole proprietor or single-member LLC',
+    },
     { value: 'c_corp', label: 'C Corporation' },
     { value: 's_corp', label: 'S Corporation' },
     { value: 'partnership', label: 'Partnership' },
     { value: 'trust_estate', label: 'Trust/estate' },
     { value: 'llc', label: 'Limited liability company' },
-    { value: 'other', label: 'Other' }
+    { value: 'other', label: 'Other' },
   ];
 
   const llcClassifications = [
     { value: 'c', label: 'C Corporation' },
     { value: 's', label: 'S Corporation' },
     { value: 'p', label: 'Partnership' },
-    { value: 'disregarded', label: 'Disregarded entity' }
+    { value: 'disregarded', label: 'Disregarded entity' },
   ];
 
   const states = [
-    'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-    'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-    'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-    'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-    'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+    'AL',
+    'AK',
+    'AZ',
+    'AR',
+    'CA',
+    'CO',
+    'CT',
+    'DE',
+    'FL',
+    'GA',
+    'HI',
+    'ID',
+    'IL',
+    'IN',
+    'IA',
+    'KS',
+    'KY',
+    'LA',
+    'ME',
+    'MD',
+    'MA',
+    'MI',
+    'MN',
+    'MS',
+    'MO',
+    'MT',
+    'NE',
+    'NV',
+    'NH',
+    'NJ',
+    'NM',
+    'NY',
+    'NC',
+    'ND',
+    'OH',
+    'OK',
+    'OR',
+    'PA',
+    'RI',
+    'SC',
+    'SD',
+    'TN',
+    'TX',
+    'UT',
+    'VT',
+    'VA',
+    'WA',
+    'WV',
+    'WI',
+    'WY',
   ];
 
   const updateFormData = (field: keyof W9FormData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -115,7 +179,10 @@ export const W9Form: React.FC<W9FormProps> = ({ onFormCompleted, onCancel, carri
         if (!formData.businessType) {
           newErrors.businessType = 'Business type selection is required';
         }
-        if (formData.businessType === 'other' && !formData.otherBusinessType?.trim()) {
+        if (
+          formData.businessType === 'other' &&
+          !formData.otherBusinessType?.trim()
+        ) {
           newErrors.otherBusinessType = 'Please specify the business type';
         }
         break;
@@ -130,8 +197,12 @@ export const W9Form: React.FC<W9FormProps> = ({ onFormCompleted, onCancel, carri
         if (!formData.state) {
           newErrors.state = 'State is required';
         }
-        if (!formData.zipCode.trim() || !/^\d{5}(-\d{4})?$/.test(formData.zipCode)) {
-          newErrors.zipCode = 'Valid ZIP code is required (12345 or 12345-6789)';
+        if (
+          !formData.zipCode.trim() ||
+          !/^\d{5}(-\d{4})?$/.test(formData.zipCode)
+        ) {
+          newErrors.zipCode =
+            'Valid ZIP code is required (12345 or 12345-6789)';
         }
         break;
 
@@ -149,7 +220,8 @@ export const W9Form: React.FC<W9FormProps> = ({ onFormCompleted, onCancel, carri
 
       case 4:
         if (!formData.certified) {
-          newErrors.certified = 'You must certify the accuracy of the information';
+          newErrors.certified =
+            'You must certify the accuracy of the information';
         }
         if (!formData.signature.trim()) {
           newErrors.signature = 'Digital signature is required';
@@ -191,641 +263,15 @@ export const W9Form: React.FC<W9FormProps> = ({ onFormCompleted, onCancel, carri
   };
 
   const renderStep1 = () => (
-    <div style={{ display: 'grid', gap: '20px' }}>
-      <h3 style={{ color: 'white', fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '16px' }}>
-        Step 1: Business Information
-      </h3>
-      
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-          Name (as shown on your income tax return) *
-        </label>
-        <input
-          type="text"
-          value={formData.businessName}
-          onChange={(e) => updateFormData('businessName', e.target.value)}
-          placeholder="Enter business name exactly as shown on tax return"
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: '8px',
-            border: errors.businessName ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            fontSize: '1rem'
-          }}
-        />
-        {errors.businessName && (
-          <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-            {errors.businessName}
-          </div>
-        )}
-      </div>
-
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-          Business Name/Disregarded Entity Name (if different from above)
-        </label>
-        <input
-          type="text"
-          value={formData.disregardedEntityName || ''}
-          onChange={(e) => updateFormData('disregardedEntityName', e.target.value)}
-          placeholder="Enter if different from tax return name"
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            fontSize: '1rem'
-          }}
-        />
-      </div>
-
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '12px' }}>
-          Federal Tax Classification *
-        </label>
-        <div style={{ display: 'grid', gap: '12px' }}>
-          {taxClassifications.map((classification) => (
-            <label
-              key={classification.value}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                color: 'white',
-                cursor: 'pointer',
-                padding: '8px',
-                borderRadius: '6px',
-                background: formData.taxClassification === classification.value 
-                  ? 'rgba(59, 130, 246, 0.3)' 
-                  : 'transparent'
-              }}
-            >
-              <input
-                type="radio"
-                name="taxClassification"
-                value={classification.value}
-                checked={formData.taxClassification === classification.value}
-                onChange={(e) => updateFormData('taxClassification', e.target.value)}
-                style={{ transform: 'scale(1.2)' }}
-              />
-              {classification.label}
-            </label>
-          ))}
-        </div>
-        {errors.businessType && (
-          <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-            {errors.businessType}
-          </div>
-        )}
-      </div>
-
-      {formData.taxClassification === 'llc' && (
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '12px' }}>
-            LLC Tax Classification
-          </label>
-          <div style={{ display: 'grid', gap: '8px' }}>
-            {llcClassifications.map((classification) => (
-              <label
-                key={classification.value}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  color: 'white',
-                  cursor: 'pointer',
-                  padding: '6px'
-                }}
-              >
-                <input
-                  type="radio"
-                  name="llcTaxClassification"
-                  value={classification.value}
-                  checked={formData.llcTaxClassification === classification.value}
-                  onChange={(e) => updateFormData('llcTaxClassification', e.target.value)}
-                  style={{ transform: 'scale(1.1)' }}
-                />
-                {classification.label}
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {formData.taxClassification === 'other' && (
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-            Specify Other Tax Classification *
-          </label>
-          <input
-            type="text"
-            value={formData.otherTaxClassification || ''}
-            onChange={(e) => updateFormData('otherTaxClassification', e.target.value)}
-            placeholder="Specify the tax classification"
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '8px',
-              border: errors.otherTaxClassification ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              fontSize: '1rem'
-            }}
-          />
-          {errors.otherTaxClassification && (
-            <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-              {errors.otherTaxClassification}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  const renderStep2 = () => (
-    <div style={{ display: 'grid', gap: '20px' }}>
-      <h3 style={{ color: 'white', fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '16px' }}>
-        Step 2: Address Information
-      </h3>
-      
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-          Address (number, street, and apt. or suite no.) *
-        </label>
-        <input
-          type="text"
-          value={formData.address}
-          onChange={(e) => updateFormData('address', e.target.value)}
-          placeholder="123 Main Street, Suite 100"
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: '8px',
-            border: errors.address ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            fontSize: '1rem'
-          }}
-        />
-        {errors.address && (
-          <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-            {errors.address}
-          </div>
-        )}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px 120px', gap: '16px' }}>
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-            City *
-          </label>
-          <input
-            type="text"
-            value={formData.city}
-            onChange={(e) => updateFormData('city', e.target.value)}
-            placeholder="City"
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '8px',
-              border: errors.city ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              fontSize: '1rem'
-            }}
-          />
-          {errors.city && (
-            <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-              {errors.city}
-            </div>
-          )}
-        </div>
-
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-            State *
-          </label>
-          <select
-            value={formData.state}
-            onChange={(e) => updateFormData('state', e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '8px',
-              border: errors.state ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              fontSize: '1rem'
-            }}
-          >
-            <option value="">Select</option>
-            {states.map(state => (
-              <option key={state} value={state} style={{ background: '#1f2937', color: 'white' }}>
-                {state}
-              </option>
-            ))}
-          </select>
-          {errors.state && (
-            <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-              {errors.state}
-            </div>
-          )}
-        </div>
-
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-            ZIP Code *
-          </label>
-          <input
-            type="text"
-            value={formData.zipCode}
-            onChange={(e) => updateFormData('zipCode', e.target.value)}
-            placeholder="12345"
-            style={{
-              width: '100%',
-              padding: '12px',
-              borderRadius: '8px',
-              border: errors.zipCode ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              fontSize: '1rem'
-            }}
-          />
-          {errors.zipCode && (
-            <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-              {errors.zipCode}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-          List account number(s) here (optional)
-        </label>
-        <input
-          type="text"
-          value={formData.accountNumbers || ''}
-          onChange={(e) => updateFormData('accountNumbers', e.target.value)}
-          placeholder="Account numbers if required by requestor"
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            fontSize: '1rem'
-          }}
-        />
-      </div>
-    </div>
-  );
-
-  const renderStep3 = () => (
-    <div style={{ display: 'grid', gap: '20px' }}>
-      <h3 style={{ color: 'white', fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '16px' }}>
-        Step 3: Taxpayer Identification Number
-      </h3>
-      
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '12px' }}>
-          Taxpayer Identification Number Type *
-        </label>
-        <div style={{ display: 'flex', gap: '24px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white', cursor: 'pointer' }}>
-            <input
-              type="radio"
-              name="tinType"
-              value="ssn"
-              checked={formData.tinType === 'ssn'}
-              onChange={(e) => updateFormData('tinType', e.target.value)}
-              style={{ transform: 'scale(1.2)' }}
-            />
-            Social Security Number (SSN)
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white', cursor: 'pointer' }}>
-            <input
-              type="radio"
-              name="tinType"
-              value="ein"
-              checked={formData.tinType === 'ein'}
-              onChange={(e) => updateFormData('tinType', e.target.value)}
-              style={{ transform: 'scale(1.2)' }}
-            />
-            Employer Identification Number (EIN)
-          </label>
-        </div>
-      </div>
-
-      {formData.tinType === 'ssn' ? (
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-            Social Security Number *
-          </label>
-          <input
-            type="text"
-            value={formData.ssn || ''}
-            onChange={(e) => updateFormData('ssn', formatSSN(e.target.value))}
-            placeholder="XXX-XX-XXXX"
-            maxLength={11}
-            style={{
-              width: '200px',
-              padding: '12px',
-              borderRadius: '8px',
-              border: errors.ssn ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              fontSize: '1rem',
-              letterSpacing: '1px'
-            }}
-          />
-          {errors.ssn && (
-            <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-              {errors.ssn}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div>
-          <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-            Employer Identification Number *
-          </label>
-          <input
-            type="text"
-            value={formData.ein || ''}
-            onChange={(e) => updateFormData('ein', formatEIN(e.target.value))}
-            placeholder="XX-XXXXXXX"
-            maxLength={10}
-            style={{
-              width: '200px',
-              padding: '12px',
-              borderRadius: '8px',
-              border: errors.ein ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-              background: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              fontSize: '1rem',
-              letterSpacing: '1px'
-            }}
-          />
-          {errors.ein && (
-            <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-              {errors.ein}
-            </div>
-          )}
-        </div>
-      )}
-
-      <div style={{
-        background: 'rgba(59, 130, 246, 0.1)',
-        border: '1px solid rgba(59, 130, 246, 0.3)',
-        borderRadius: '8px',
-        padding: '16px'
-      }}>
-        <h4 style={{ color: 'white', fontWeight: 'bold', marginBottom: '12px' }}>
-          Exemptions (if applicable)
-        </h4>
-        
-        <label style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '12px',
-          color: 'rgba(255, 255, 255, 0.9)',
-          cursor: 'pointer',
-          marginBottom: '8px'
-        }}>
-          <input
-            type="checkbox"
-            checked={formData.exemptFromBackupWithholding}
-            onChange={(e) => updateFormData('exemptFromBackupWithholding', e.target.checked)}
-            style={{ transform: 'scale(1.2)', marginTop: '2px' }}
-          />
-          <span>Exempt from backup withholding</span>
-        </label>
-
-        <label style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '12px',
-          color: 'rgba(255, 255, 255, 0.9)',
-          cursor: 'pointer'
-        }}>
-          <input
-            type="checkbox"
-            checked={formData.fatcaReporting}
-            onChange={(e) => updateFormData('fatcaReporting', e.target.checked)}
-            style={{ transform: 'scale(1.2)', marginTop: '2px' }}
-          />
-          <span>Exempt from FATCA reporting</span>
-        </label>
-      </div>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div style={{ display: 'grid', gap: '20px' }}>
-      <h3 style={{ color: 'white', fontSize: '1.3rem', fontWeight: 'bold', marginBottom: '16px' }}>
-        Step 4: Certification and Signature
-      </h3>
-      
-      <div style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        borderRadius: '8px',
-        padding: '20px'
-      }}>
-        <h4 style={{ color: 'white', fontWeight: 'bold', marginBottom: '12px' }}>
-          Certification
-        </h4>
-        <p style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.5', marginBottom: '16px' }}>
-          Under penalties of perjury, I certify that:
-        </p>
-        <ol style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.6', paddingLeft: '20px' }}>
-          <li>The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me)</li>
-          <li>I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the Internal Revenue Service (IRS) that I am subject to backup withholding as a result of a failure to report all interest or dividends, or (c) the IRS has notified me that I am no longer subject to backup withholding</li>
-          <li>I am a U.S. citizen or other U.S. person (defined below)</li>
-          <li>The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct</li>
-        </ol>
-
-        <label style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '12px',
-          color: 'white',
-          cursor: 'pointer',
-          marginTop: '16px',
-          padding: '12px',
-          borderRadius: '6px',
-          background: errors.certified ? 'rgba(239, 68, 68, 0.1)' : 'transparent'
-        }}>
-          <input
-            type="checkbox"
-            checked={formData.certified}
-            onChange={(e) => updateFormData('certified', e.target.checked)}
-            style={{ transform: 'scale(1.2)', marginTop: '2px' }}
-          />
-          <span>
-            I certify that the information above is correct and complete
-          </span>
-        </label>
-        {errors.certified && (
-          <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-            {errors.certified}
-          </div>
-        )}
-      </div>
-
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-          Digital Signature *
-        </label>
-        <input
-          type="text"
-          value={formData.signature}
-          onChange={(e) => updateFormData('signature', e.target.value)}
-          placeholder="Type your full legal name as your digital signature"
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: '8px',
-            border: errors.signature ? '2px solid #ef4444' : '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            fontSize: '1rem'
-          }}
-        />
-        {errors.signature && (
-          <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>
-            {errors.signature}
-          </div>
-        )}
-      </div>
-
-      <div>
-        <label style={{ display: 'block', color: 'white', fontWeight: 'bold', marginBottom: '8px' }}>
-          Date
-        </label>
-        <input
-          type="date"
-          value={formData.signatureDate}
-          onChange={(e) => updateFormData('signatureDate', e.target.value)}
-          style={{
-            width: '200px',
-            padding: '12px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            background: 'rgba(255, 255, 255, 0.1)',
-            color: 'white',
-            fontSize: '1rem'
-          }}
-        />
-      </div>
+    <div>
+      <h3>Step 1: Business Information</h3>
     </div>
   );
 
   return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.1)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '16px',
-      padding: '32px',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-      maxWidth: '800px',
-      margin: '0 auto'
-    }}>
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <h2 style={{ 
-          fontSize: '2rem', 
-          fontWeight: 'bold', 
-          color: 'white', 
-          marginBottom: '12px' 
-        }}>
-          📄 W-9 Tax Form
-        </h2>
-        <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem' }}>
-          Request for Taxpayer Identification Number and Certification
-        </p>
-      </div>
-
-      {/* Progress Indicator */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        marginBottom: '32px',
-        gap: '8px'
-      }}>
-        {[1, 2, 3, 4].map((step) => (
-          <div
-            key={step}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              background: step <= currentStep 
-                ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
-                : 'rgba(255, 255, 255, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '1.1rem'
-            }}
-          >
-            {step < currentStep ? '✓' : step}
-          </div>
-        ))}
-      </div>
-
-      {/* Form Content */}
-      <div style={{ marginBottom: '32px' }}>
-        {currentStep === 1 && renderStep1()}
-        {currentStep === 2 && renderStep2()}
-        {currentStep === 3 && renderStep3()}
-        {currentStep === 4 && renderStep4()}
-      </div>
-
-      {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <button
-          onClick={currentStep === 1 ? onCancel : handleBack}
-          style={{
-            background: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
-        >
-          {currentStep === 1 ? 'Cancel' : '← Back'}
-        </button>
-
-        <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.9rem' }}>
-          Step {currentStep} of 4
-        </div>
-
-        <button
-          onClick={handleNext}
-          style={{
-            background: 'linear-gradient(135deg, #10b981, #059669)',
-            color: 'white',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            border: 'none',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
-        >
-          {currentStep === 4 ? '📄 Complete W-9 Form' : 'Next →'}
-        </button>
-      </div>
+    <div>
+      <h1>W9 Form</h1>
+      {renderStep1()}
     </div>
   );
 };

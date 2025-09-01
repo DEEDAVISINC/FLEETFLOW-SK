@@ -324,7 +324,7 @@ export default function CRMDashboard() {
       // Mock AI analysis
       await new Promise((resolve) => setTimeout(resolve, 2000));
       // In production, this would call the real AI analysis API
-      console.log('AI analysis completed for contact:', contactId);
+      console.info('AI analysis completed for contact:', contactId);
     } catch (err) {
       console.error('Contact analysis error:', err);
     } finally {
@@ -1734,7 +1734,7 @@ export default function CRMDashboard() {
 
   const renderTransfers = () => {
     const handleTransferComplete = (transferId: string) => {
-      console.log(`✅ Transfer completed: ${transferId}`);
+      console.info(`✅ Transfer completed: ${transferId}`);
       // Refresh dashboard metrics or show success message
       setLastRefresh(new Date());
     };
@@ -3126,7 +3126,7 @@ export default function CRMDashboard() {
           backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
           backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
           fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         }}
       >
         <div
@@ -3200,7 +3200,7 @@ export default function CRMDashboard() {
         backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         paddingTop: '0px',
       }}
     >

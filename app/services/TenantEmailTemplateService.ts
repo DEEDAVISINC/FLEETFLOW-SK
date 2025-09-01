@@ -13,14 +13,14 @@ export class TenantEmailTemplateService {
       );
 
       if (customTemplate) {
-        console.log(
+        console.info(
           `✅ Using custom template for tenant ${tenantId}: ${templateType}`
         );
         return customTemplate;
       }
 
       // Fallback to default template
-      console.log(
+      console.info(
         `📋 Using default template for tenant ${tenantId}: ${templateType}`
       );
       return this.getDefaultTemplate(templateType);
@@ -78,7 +78,7 @@ export class TenantEmailTemplateService {
       };
 
       await this.storeTenantTemplate(tenantTemplate);
-      console.log(
+      console.info(
         `💾 Saved custom template for tenant ${tenantId}: ${templateType}`
       );
       return true;
@@ -365,7 +365,7 @@ export class TenantEmailTemplateService {
   private async storeTenantTemplate(
     template: TenantEmailTemplate
   ): Promise<void> {
-    console.log('💾 Storing tenant template:', template.id);
+    console.info('💾 Storing tenant template:', template.id);
     // Replace with actual database storage
   }
 

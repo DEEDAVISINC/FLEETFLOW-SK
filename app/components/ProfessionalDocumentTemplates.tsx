@@ -33,8 +33,8 @@ export default function ProfessionalDocumentTemplates() {
     try {
       const availableTemplates = documentTemplateEngine.getAvailableTemplates();
       setTemplates(availableTemplates);
-      console.log('📄 Loaded templates:', availableTemplates.length);
-      console.log(
+      console.info('📄 Loaded templates:', availableTemplates.length);
+      console.info(
         '📄 Template details:',
         availableTemplates.map((t) => ({
           id: t.id,
@@ -86,7 +86,7 @@ export default function ProfessionalDocumentTemplates() {
       setGenerationResult(result);
 
       if (result.success) {
-        console.log('✅ Document generated successfully:', result.filename);
+        console.info('✅ Document generated successfully:', result.filename);
       }
     } catch (error) {
       console.error('Document generation failed:', error);

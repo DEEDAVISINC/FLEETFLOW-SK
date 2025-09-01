@@ -51,7 +51,7 @@ export class VinVerificationService {
         };
       }
 
-      console.log(`🔍 Verifying VIN with NHTSA: ${cleanVin}`);
+      console.info(`🔍 Verifying VIN with NHTSA: ${cleanVin}`);
 
       // Call NHTSA free VIN decoder API
       const response = await fetch(
@@ -86,7 +86,7 @@ export class VinVerificationService {
         );
       }
 
-      console.log(
+      console.info(
         `✅ VIN verification complete: ${decodedData.valid ? 'VALID' : 'INVALID'}`
       );
       return decodedData;
@@ -116,7 +116,7 @@ export class VinVerificationService {
     try {
       const cleanVin = vin.replace(/[^A-HJ-NPR-Z0-9]/gi, '').toUpperCase();
 
-      console.log(`🚨 Checking VIN for recalls: ${cleanVin}`);
+      console.info(`🚨 Checking VIN for recalls: ${cleanVin}`);
 
       const response = await fetch(
         `${this.NHTSA_API_BASE}/GetRecallsForVIN/${cleanVin}?format=json`,
@@ -136,7 +136,7 @@ export class VinVerificationService {
       const data = await response.json();
       const recalls = data.Results || [];
 
-      console.log(`📋 Found ${recalls.length} recall(s) for VIN`);
+      console.info(`📋 Found ${recalls.length} recall(s) for VIN`);
       return recalls;
     } catch (error) {
       console.error('VIN recall check error:', error);
@@ -360,10 +360,10 @@ export class VinVerificationService {
     let confidence = 1.0;
 
     try {
-      console.log('🔍 Starting comprehensive vehicle verification...');
+      console.info('🔍 Starting comprehensive vehicle verification...');
 
       // 1. FREE NHTSA VIN Verification
-      console.log('📋 Step 1: NHTSA VIN Verification');
+      console.info('📋 Step 1: NHTSA VIN Verification');
       const vinData = await this.verifyVinWithNHTSA(vin);
 
       if (!vinData.valid) {
@@ -372,7 +372,7 @@ export class VinVerificationService {
       }
 
       // 2. FREE VIN Recall Check
-      console.log('🚨 Step 2: Safety Recall Check');
+      console.info('🚨 Step 2: Safety Recall Check');
       const recalls = await this.checkVinRecalls(vin);
 
       if (recalls.length > 0) {
@@ -386,7 +386,7 @@ export class VinVerificationService {
       }
 
       // 3. CRITICAL: Insurance Certificate Verification
-      console.log('📋 Step 3: Insurance Certificate Verification');
+      console.info('📋 Step 3: Insurance Certificate Verification');
       const insuranceVerification = this.verifyVehicleOnInsurance(
         vinData,
         insuranceCertificate
@@ -395,14 +395,14 @@ export class VinVerificationService {
       if (!insuranceVerification.onInsurance) {
         issues.push(...insuranceVerification.issues);
         confidence = 0; // CRITICAL FAILURE - Cannot proceed without insurance
-        console.log(
+        console.info(
           '🚫 CRITICAL FAILURE: Vehicle not on insurance certificate'
         );
       }
 
       // 4. FMCSA Cross-Reference (if available)
       if (fmcsaData && fmcsaData.vehicles) {
-        console.log('📋 Step 4: FMCSA Cross-Reference');
+        console.info('📋 Step 4: FMCSA Cross-Reference');
         const fmcsaMatch = fmcsaData.vehicles.some(
           (vehicle: any) =>
             vehicle.vin === vin ||
@@ -420,7 +420,7 @@ export class VinVerificationService {
       }
 
       // 5. License Plate Validation
-      console.log('📋 Step 5: License Plate Validation');
+      console.info('📋 Step 5: License Plate Validation');
       const plateValid = this.validateLicensePlateFormat(licensePlate, state);
       if (!plateValid) {
         issues.push(`⚠️ Invalid license plate format for ${state}`);
@@ -431,7 +431,7 @@ export class VinVerificationService {
       const approved =
         insuranceVerification.onInsurance && vinData.valid && confidence > 0.5;
 
-      console.log(
+      console.info(
         `✅ Verification complete: ${approved ? 'APPROVED' : 'REJECTED'} (Confidence: ${confidence})`
       );
 

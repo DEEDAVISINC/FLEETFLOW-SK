@@ -118,8 +118,11 @@ export default function TestConsoleSuppression() {
         <strong>How to test:</strong>
         <ol style={{ marginTop: '8px', paddingLeft: '20px' }}>
           <li>Open browser DevTools console</li>
-          <li>Click "Test Console Suppression" button</li>
-          <li>You should see "Regular error" but NOT "createConsoleError@"</li>
+          <li>Click ""Test Console Suppression"" button</li>
+          <li>
+            You should see ""Regular error"" but NOT
+            ""createConsoleError@""
+          </li>
           <li>Navigate to /freightflow-rfx to test real React errors</li>
         </ol>
       </div>

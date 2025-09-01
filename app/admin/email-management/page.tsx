@@ -129,7 +129,7 @@ export default function EmailManagementPage() {
   };
 
   const deleteAlias = async (alias: string) => {
-    if (!confirm(`Are you sure you want to delete the alias "${alias}"?`)) {
+    if (!confirm(`Are you sure you want to delete the alias ""${alias}""?`)) {
       return;
     }
 

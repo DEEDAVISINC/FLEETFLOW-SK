@@ -243,7 +243,7 @@ export class AutomotiveRelationshipTracker {
       this.contacts.set(contact.id, contact);
     });
 
-    console.log(
+    console.info(
       `✅ Initialized ${targetContacts.length} high-priority automotive contacts`
     );
   }
@@ -260,7 +260,7 @@ export class AutomotiveRelationshipTracker {
     };
 
     this.contacts.set(id, newContact);
-    console.log(`📇 Added new contact: ${contact.name} at ${contact.company}`);
+    console.info(`📇 Added new contact: ${contact.name} at ${contact.company}`);
     return id;
   }
 
@@ -284,7 +284,7 @@ export class AutomotiveRelationshipTracker {
       this.contacts.set(contact.id, contact);
     }
 
-    console.log(
+    console.info(
       `📧 Recorded ${campaign.type} outreach to ${campaign.contactId}`
     );
     return id;
@@ -313,7 +313,7 @@ export class AutomotiveRelationshipTracker {
       }
 
       this.campaigns.set(campaignId, campaign);
-      console.log(
+      console.info(
         `📈 Updated campaign ${campaignId} with response: ${responseData.status}`
       );
     }
@@ -344,7 +344,7 @@ export class AutomotiveRelationshipTracker {
       this.campaigns.set(contactCampaigns[0].id, contactCampaigns[0]);
     }
 
-    console.log(
+    console.info(
       `🎯 Created opportunity: ${opportunity.opportunityName} - $${opportunity.estimatedValue.toLocaleString()}`
     );
     return id;
@@ -520,7 +520,7 @@ export class AutomotiveRelationshipTracker {
     updatedContacts: number;
     discoveredRFPs: number;
   }> {
-    console.log('🔄 Syncing with automotive RFP discovery system...');
+    console.info('🔄 Syncing with automotive RFP discovery system...');
 
     const discoveryResult =
       await this.rfpDiscoveryService.discoverAutomotiveOpportunities(userId);
@@ -589,7 +589,7 @@ export class AutomotiveRelationshipTracker {
       }
     });
 
-    console.log(
+    console.info(
       `✅ Sync complete: ${newOpportunities} new opportunities, ${updatedContacts} updated contacts`
     );
 

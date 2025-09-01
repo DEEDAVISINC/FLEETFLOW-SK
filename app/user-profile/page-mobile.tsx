@@ -219,7 +219,8 @@ export default function UserProfilePageMobile() {
                     </div>
                     <div
                       className={`h-4 w-4 ${getStatusColor(demoUser.status)} -mt-2 mr-auto ml-auto rounded-full border-2 border-white shadow-lg sm:ml-16`}
-                    ></div>
+                    />
+                  </div>
                   </div>
 
                   {/* Profile Info */}
@@ -279,7 +280,7 @@ export default function UserProfilePageMobile() {
                       key={index}
                       className='flex items-center rounded-lg bg-white/10 p-3'
                     >
-                      <div className='mr-3 h-2 w-2 rounded-full bg-green-500'></div>
+                      <div className='mr-3 h-2 w-2 rounded-full bg-green-500' />
                       <span className='text-sm text-white'>{system}</span>
                     </div>
                   ))}
@@ -432,7 +433,8 @@ export default function UserProfilePageMobile() {
                               ? 'translate-x-6'
                               : 'translate-x-0.5'
                           }`}
-                        ></div>
+                        />
+                      </div>
                       </div>
                     </div>
                   ))}
@@ -511,7 +513,8 @@ export default function UserProfilePageMobile() {
                           <div
                             className='h-3 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 transition-all'
                             style={{ width: `${training.progress}%` }}
-                          ></div>
+                          />
+                        </div>
                         </div>
                         <div className='mt-2 flex items-center justify-between'>
                           <span className='text-sm text-white/70'>

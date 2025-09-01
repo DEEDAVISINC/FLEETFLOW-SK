@@ -354,7 +354,7 @@ export default function FleetFlowCommunicationsHub({
             <PhoneConnectionSetup
               user={user}
               onSetupComplete={(setupData) => {
-                console.log('Phone setup completed:', setupData);
+                console.info('Phone setup completed:', setupData);
                 // In production, this would save the setup data
               }}
             />
@@ -405,7 +405,7 @@ export default function FleetFlowCommunicationsHub({
                 e.currentTarget.style.color = '#3b82f6';
               }}
               onClick={() => {
-                console.log(`Communications Hub action: ${item.action}`);
+                console.info(`Communications Hub action: ${item.action}`);
                 // Add action handlers here
               }}
             >

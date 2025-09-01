@@ -61,7 +61,7 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
     carrierPhone: string,
     initialMessage?: string
   ): Promise<AICallSession> {
-    console.log(`📞 Incoming carrier call: ${callId} from ${carrierPhone}`);
+    console.info(`📞 Incoming carrier call: ${callId} from ${carrierPhone}`);
 
     // Create AI call session
     const session: AICallSession = {
@@ -198,7 +198,7 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
       const ttsCommand = `uuid_broadcast ${callId} say::en-us:PERSON:${response.response}`;
       await this.connection.api(ttsCommand);
 
-      console.log(`🤖 AI Response sent to ${callId}: ${response.response}`);
+      console.info(`🤖 AI Response sent to ${callId}: ${response.response}`);
 
       // Update analytics
       this.callAnalytics.recordAIResponse(callId, response);
@@ -217,7 +217,7 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
     const session = this.activeSessions.get(callId);
     if (!session || !this.connection) return;
 
-    console.log(`🔄 Transferring call ${callId} to human: ${reason}`);
+    console.info(`🔄 Transferring call ${callId} to human: ${reason}`);
 
     session.aiHandling = false;
     session.transferReason = reason;
@@ -257,7 +257,7 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
 
     // Send context to agent dashboard/CRM
     // This would integrate with your agent interface
-    console.log(
+    console.info(
       `📋 Context provided to agent for call ${callId}:`,
       contextSummary
     );
@@ -308,7 +308,7 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
     const session = this.activeSessions.get(callId);
     if (!session) return;
 
-    console.log(`📅 Scheduling callback for call ${callId}:`, callbackData);
+    console.info(`📅 Scheduling callback for call ${callId}:`, callbackData);
 
     // This would integrate with your scheduling system
     // For now, just log and end the call
@@ -328,7 +328,7 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
 
     session.outcome = outcome;
 
-    console.log(`📞 Ending call ${callId} with outcome:`, outcome);
+    console.info(`📞 Ending call ${callId} with outcome:`, outcome);
 
     // Disconnect call
     if (this.connection) {

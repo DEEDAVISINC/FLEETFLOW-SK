@@ -28,9 +28,9 @@ export async function GET() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZXFwbHd3b3RoaHhncm92bmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNzczODcsImV4cCI6MjA2Nzk1MzM4N30.SewQx-DIRXaKLtPHbxnmRWvdx96_VtMu5sjoKpaBWjg';
 
-    console.log('🔍 Testing Supabase connection...');
-    console.log('URL:', supabaseUrl);
-    console.log('Key configured:', !!supabaseKey);
+    console.info('🔍 Testing Supabase connection...');
+    console.info('URL:', supabaseUrl);
+    console.info('Key configured:', !!supabaseKey);
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 

@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   try {
     const integrationConfig: AIFlowIntegrationRequest = await request.json();
 
-    console.log('🔗 AI Flow Integration Started:', {
+    console.info('🔗 AI Flow Integration Started:', {
       config: integrationConfig,
       timestamp: new Date().toISOString(),
     });
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Log successful integration
-    console.log('✅ AI Flow Integration Completed:', {
+    console.info('✅ AI Flow Integration Completed:', {
       aiAgents: aiAgentsConnected.length,
       dataSources: dataSourcesActive.length,
       automationEnabled,

@@ -360,9 +360,9 @@ export default function OnboardingComplianceDemo() {
                   <strong>CARRIER AGREEMENT</strong>
                 </p>
                 <p>
-                  This Carrier Agreement (the "Agreement") is entered into by
-                  and between FleetFlow ("Company") and the undersigned carrier
-                  ("Carrier").
+                  This Carrier Agreement (the ""Agreement"") is entered into by
+                  and between FleetFlow (""Company"") and the undersigned carrier
+                  (""Carrier"").
                 </p>
                 <p>
                   <strong>1. COMPLIANCE WITH REGULATIONS</strong>

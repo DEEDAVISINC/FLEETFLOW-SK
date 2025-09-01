@@ -1,0 +1,229 @@
+import React, { useState } from 'react';
+
+const US_STATES = [
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+];
+
+const TRAILER_TYPES = [
+  'Dry Van', 'Reefer', 'Flatbed', 'Step Deck', 'Lowboy', 'Tanker',
+  'Car Hauler', 'Box Truck', 'Container', 'Power Only', 'Other'
+];
+
+const COMMODITY_TYPES = [
+  'General Freight', 'Household Goods', 'Metals', 'Machinery', 'Automotive',
+  'Electronics', 'Food & Beverage', 'Pharmaceuticals', 'Chemicals', 'Hazardous Materials',
+  'Oversized Loads', 'Temperature Controlled', 'Livestock', 'Construction Materials',
+  'Retail Goods', 'Agricultural Products', 'Paper Products', 'Textiles', 'Furniture', 'Medical Supplies'
+];
+
+export interface TravelLimitsCommoditiesData {
+  travelLimits: {
+    maxDistance: number;
+    preferredStates: string[];
+    restrictedStates: string[];
+    maxDaysAway: number;
+    homeBaseRadius: number;
+    overnightRestrictions: boolean;
+    weekendRestrictions: boolean;
+  };
+  commodities: {
+    approved: string[];
+    restricted: string[];
+    hazmatCertified: boolean;
+    temperatureControlled: boolean;
+    oversizedCapable: boolean;
+    specializedEquipment: string[];
+  };
+  equipment: {
+    maxWeight: number;
+    maxLength: number;
+    maxHeight: number;
+    maxWidth: number;
+    trailerTypes: string[];
+    powerUnits: number;
+  };
+}
+
+interface Props {
+  onDataConfigured: (data: TravelLimitsCommoditiesData) => void;
+  onNext: () => void;
+  onBack: () => void;
+}
+
+export const TravelLimitsCommodities: React.FC<Props> = ({ onDataConfigured, onNext, onBack }) => {
+  const [travelLimits, setTravelLimits] = useState({
+    maxDistance: 500,
+    preferredStates: [],
+    restrictedStates: [],
+    maxDaysAway: 7,
+    homeBaseRadius: 100,
+    overnightRestrictions: false,
+    weekendRestrictions: false
+  });
+  const [commodities, setCommodities] = useState({
+    approved: ['General Freight'],
+    restricted: [],
+    hazmatCertified: false,
+    temperatureControlled: false,
+    oversizedCapable: false,
+    specializedEquipment: []
+  });
+  const [equipment, setEquipment] = useState({
+    maxWeight: 80000,
+    maxLength: 53,
+    maxHeight: 13.5,
+    maxWidth: 8.5,
+    trailerTypes: ['Dry Van'],
+    powerUnits: 1
+  });
+  const [tab, setTab] = useState<'travel'|'commodities'|'equipment'>('travel');
+
+  const handleNext = () => {
+    onDataConfigured({ travelLimits, commodities, equipment });
+    onNext();
+  };
+
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.1)',
+      backdropFilter: 'blur(10px)',
+      borderRadius: '16px',
+      padding: '32px',
+      border: '1px solid rgba(255,255,255,0.2)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+    }}>
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '12px' }}>
+          🗺️ Travel Limits & Commodities
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem' }}>
+          Configure carrier travel restrictions, approved commodities, and equipment capabilities
+        </p>
+      </div>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', borderBottom: '2px solid #e5e7eb' }}>
+        <button onClick={() => setTab('travel')} style={{ padding: '12px 24px', borderRadius: '8px 8px 0 0', border: 'none', background: tab==='travel' ? '#1e40af' : 'transparent', color: tab==='travel' ? 'white' : '#6b7280', fontWeight: '600', cursor: 'pointer' }}>🗺️ Travel Limits</button>
+        <button onClick={() => setTab('commodities')} style={{ padding: '12px 24px', borderRadius: '8px 8px 0 0', border: 'none', background: tab==='commodities' ? '#1e40af' : 'transparent', color: tab==='commodities' ? 'white' : '#6b7280', fontWeight: '600', cursor: 'pointer' }}>📦 Commodities</button>
+        <button onClick={() => setTab('equipment')} style={{ padding: '12px 24px', borderRadius: '8px 8px 0 0', border: 'none', background: tab==='equipment' ? '#1e40af' : 'transparent', color: tab==='equipment' ? 'white' : '#6b7280', fontWeight: '600', cursor: 'pointer' }}>🚛 Equipment</button>
+      </div>
+      {tab==='travel' && (
+        <div style={{ display: 'grid', gap: '24px' }}>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ color: '#1e40af', marginBottom: '16px', fontSize: '1.25rem' }}>Distance & Time Limits</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Maximum Distance (miles)</label>
+                <input type="number"" value={travelLimits.maxDistance} onChange={e => setTravelLimits(prev => ({ ...prev, maxDistance: parseInt(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Maximum Days Away</label>
+                <input type="number"" value={travelLimits.maxDaysAway} onChange={e => setTravelLimits(prev => ({ ...prev, maxDaysAway: parseInt(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Home Base Radius (miles)</label>
+                <input type="number"" value={travelLimits.homeBaseRadius} onChange={e => setTravelLimits(prev => ({ ...prev, homeBaseRadius: parseInt(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+            </div>
+            <div style={{ marginTop: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <input type="checkbox"" checked={travelLimits.overnightRestrictions} onChange={e => setTravelLimits(prev => ({ ...prev, overnightRestrictions: e.target.checked }))} /> Overnight Travel Restrictions
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox"" checked={travelLimits.weekendRestrictions} onChange={e => setTravelLimits(prev => ({ ...prev, weekendRestrictions: e.target.checked }))} /> Weekend Travel Restrictions
+              </label>
+            </div>
+          </div>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ color: '#1e40af', marginBottom: '16px', fontSize: '1.25rem' }}>Geographic Restrictions</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Preferred States</label>
+                <select multiple value={travelLimits.preferredStates} onChange={e => { const selected = Array.from(e.target.selectedOptions, option => option.value); setTravelLimits(prev => ({ ...prev, preferredStates: selected })); }} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem', minHeight: '120px' }}>{US_STATES.map(state => (<option key={state} value={state}>{state}</option>))}</select>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>Hold Ctrl/Cmd to select multiple states</p>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Restricted States</label>
+                <select multiple value={travelLimits.restrictedStates} onChange={e => { const selected = Array.from(e.target.selectedOptions, option => option.value); setTravelLimits(prev => ({ ...prev, restrictedStates: selected })); }} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem', minHeight: '120px' }}>{US_STATES.map(state => (<option key={state} value={state}>{state}</option>))}</select>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>Hold Ctrl/Cmd to select multiple states</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {tab==='commodities' && (
+        <div style={{ display: 'grid', gap: '24px' }}>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ color: '#1e40af', marginBottom: '16px', fontSize: '1.25rem' }}>Approved Commodities</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Approved Commodities</label>
+                <select multiple value={commodities.approved} onChange={e => { const selected = Array.from(e.target.selectedOptions, option => option.value); setCommodities(prev => ({ ...prev, approved: selected })); }} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem', minHeight: '200px' }}>{COMMODITY_TYPES.map(commodity => (<option key={commodity} value={commodity}>{commodity}</option>))}</select>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>Hold Ctrl/Cmd to select multiple commodities</p>
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Restricted Commodities</label>
+                <select multiple value={commodities.restricted} onChange={e => { const selected = Array.from(e.target.selectedOptions, option => option.value); setCommodities(prev => ({ ...prev, restricted: selected })); }} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem', minHeight: '200px' }}>{COMMODITY_TYPES.map(commodity => (<option key={commodity} value={commodity}>{commodity}</option>))}</select>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>Hold Ctrl/Cmd to select multiple commodities</p>
+              </div>
+            </div>
+          </div>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ color: '#1e40af', marginBottom: '16px', fontSize: '1.25rem' }}>Specialized Capabilities</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox"" checked={commodities.hazmatCertified} onChange={e => setCommodities(prev => ({ ...prev, hazmatCertified: e.target.checked }))} /> Hazmat Certified
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox"" checked={commodities.temperatureControlled} onChange={e => setCommodities(prev => ({ ...prev, temperatureControlled: e.target.checked }))} /> Temperature Controlled
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox"" checked={commodities.oversizedCapable} onChange={e => setCommodities(prev => ({ ...prev, oversizedCapable: e.target.checked }))} /> Oversized Loads
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+      {tab==='equipment' && (
+        <div style={{ display: 'grid', gap: '24px' }}>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ color: '#1e40af', marginBottom: '16px', fontSize: '1.25rem' }}>Equipment Specifications</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Maximum Weight (lbs)</label>
+                <input type="number"" value={equipment.maxWeight} onChange={e => setEquipment(prev => ({ ...prev, maxWeight: parseInt(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Maximum Length (ft)</label>
+                <input type="number"" value={equipment.maxLength} onChange={e => setEquipment(prev => ({ ...prev, maxLength: parseInt(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Maximum Height (ft)</label>
+                <input type="number"" value={equipment.maxHeight} onChange={e => setEquipment(prev => ({ ...prev, maxHeight: parseFloat(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Maximum Width (ft)</label>
+                <input type="number"" value={equipment.maxWidth} onChange={e => setEquipment(prev => ({ ...prev, maxWidth: parseFloat(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Number of Power Units</label>
+                <input type="number"" value={equipment.powerUnits} onChange={e => setEquipment(prev => ({ ...prev, powerUnits: parseInt(e.target.value) }))} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem' }} />
+              </div>
+            </div>
+          </div>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ color: '#1e40af', marginBottom: '16px', fontSize: '1.25rem' }}>Trailer Types</h3>
+            <select multiple value={equipment.trailerTypes} onChange={e => { const selected = Array.from(e.target.selectedOptions, option => option.value); setEquipment(prev => ({ ...prev, trailerTypes: selected })); }} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #d1d5db', fontSize: '1rem', minHeight: '150px' }}>{TRAILER_TYPES.map(type => (<option key={type} value={type}>{type}</option>))}</select>
+            <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>Hold Ctrl/Cmd to select multiple trailer types</p>
+          </div>
+        </div>
+      )}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid #e5e7eb' }}>
+        <button onClick={onBack} style={{ background: '#6b7280', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '1rem', fontWeight: '600', cursor: 'pointer' }}>← Back</button>
+        <button onClick={handleNext} style={{ background: '#1e40af', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', fontSize: '1rem', fontWeight: '600', cursor: 'pointer' }}>Next →</button>
+      </div>
+    </div>
+  );
+};

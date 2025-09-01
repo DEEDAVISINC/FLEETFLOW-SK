@@ -93,7 +93,7 @@ export const EnhancedNotificationBell: React.FC<
   useEffect(() => {
     if (!isHydrated) return;
 
-    console.log('🔔 EnhancedNotificationBell mounted with:', {
+    console.info('🔔 EnhancedNotificationBell mounted with:', {
       userId,
       position,
       currentUserId,
@@ -148,7 +148,7 @@ export const EnhancedNotificationBell: React.FC<
           filter: `user_id=eq.${currentUserId}`,
         },
         (payload) => {
-          console.log('🔔 Real-time notification update:', payload);
+          console.info('🔔 Real-time notification update:', payload);
 
           if (payload.eventType === 'INSERT') {
             const newNotification = mapDatabaseNotification(payload.new);
@@ -194,13 +194,13 @@ export const EnhancedNotificationBell: React.FC<
     preview.className =
       'fixed top-4 right-4 bg-white border-l-4 border-blue-500 rounded-lg shadow-lg p-4 max-w-sm z-50 transform translate-x-full transition-transform duration-300';
     preview.innerHTML = `
-      <div class="flex items-start gap-3">
-        <div class="p-2 bg-blue-100 rounded-full">
+      <div class=""flex items-start gap-3"">
+        <div class=""p-2 bg-blue-100 rounded-full"">
           ${notification.priority === 'critical' ? '🚨' : notification.priority === 'high' ? '⚠️' : '🔔'}
         </div>
-        <div class="flex-1">
-          <h4 class="font-medium text-gray-900 text-sm">${notification.title}</h4>
-          <p class="text-sm text-gray-600 mt-1">${notification.message}</p>
+        <div class=""flex-1"">
+          <h4 class=""font-medium text-gray-900 text-sm"">${notification.title}</h4>
+          <p class=""text-sm text-gray-600 mt-1"">${notification.message}</p>
         </div>
       </div>
     `;
@@ -436,7 +436,7 @@ export const EnhancedNotificationBell: React.FC<
   // COMPONENT RENDER
   // ============================================================================
 
-  console.log(
+  console.info(
     '🎯 EnhancedNotificationBell RENDER - userId:',
     userId,
     'position:',
@@ -449,11 +449,11 @@ export const EnhancedNotificationBell: React.FC<
 
   // Don't render anything on server side to prevent hydration mismatch
   if (!isHydrated) {
-    console.log('🔔 NotificationBell: Not hydrated yet, returning null');
+    console.info('🔔 NotificationBell: Not hydrated yet, returning null');
     return null;
   }
 
-  console.log('🔔 NotificationBell: RENDERING with styles:', {
+  console.info('🔔 NotificationBell: RENDERING with styles:', {
     position: 'fixed',
     bottom:
       position === 'bottom-right' || position === 'bottom-left'

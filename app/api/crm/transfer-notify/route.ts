@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       to: to,
     });
 
-    console.log(`📱 Transfer SMS sent to ${to}: ${smsResult.sid}`);
+    console.info(`📱 Transfer SMS sent to ${to}: ${smsResult.sid}`);
 
     // For urgent transfers, also attempt a voice call
     if (urgency === 'immediate') {
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
           url: `${process.env.NEXT_PUBLIC_APP_URL}/api/crm/transfer-twiml?message=${encodeURIComponent('You have an immediate transfer notification. Please check your FleetFlow dashboard.')}`,
           timeout: 20,
         });
-        console.log(`📞 Urgent transfer call initiated: ${callResult.sid}`);
+        console.info(`📞 Urgent transfer call initiated: ${callResult.sid}`);
       } catch (callError) {
         console.error('Voice call failed:', callError);
         // SMS was successful, so don't fail the whole request

@@ -103,7 +103,7 @@ export class LinearProgrammingSolver {
   ): Promise<OptimizationResult> {
     const startTime = Date.now();
 
-    console.log(
+    console.info(
       `🎯 Starting linear programming optimization for ${loads.length} loads and ${drivers.length} drivers...`
     );
 
@@ -136,7 +136,7 @@ export class LinearProgrammingSolver {
       Date.now() - startTime
     );
 
-    console.log(
+    console.info(
       `✅ Optimization complete. Quality: ${result.solutionQuality}, Total Profit: $${result.totalProfit.toLocaleString()}`
     );
 

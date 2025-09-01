@@ -12,7 +12,7 @@ export default function DebugButtons() {
       {/* Basic HTML button */}
       <button
         onClick={() => {
-          console.log('HTML button clicked!');
+          console.info('HTML button clicked!');
           alert('HTML button works!');
         }}
         style={{
@@ -30,7 +30,7 @@ export default function DebugButtons() {
       {/* React state button */}
       <button
         onClick={() => {
-          console.log('React button clicked!');
+          console.info('React button clicked!');
           setCount((c) => c + 1);
         }}
         style={{
@@ -47,9 +47,9 @@ export default function DebugButtons() {
 
       {/* Inline event handler */}
       <button
-        onMouseDown={() => console.log('Mouse down')}
-        onMouseUp={() => console.log('Mouse up')}
-        onClick={() => console.log('Click event')}
+        onMouseDown={() => console.info('Mouse down')}
+        onMouseUp={() => console.info('Mouse up')}
+        onClick={() => console.info('Click event')}
         style={{
           padding: '10px 20px',
           margin: '10px',

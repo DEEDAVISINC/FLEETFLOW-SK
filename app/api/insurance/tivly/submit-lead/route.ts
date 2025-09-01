@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     if (response.ok) {
       // Log successful submission for commission tracking
-      console.log('Tivly lead submitted successfully:', {
+      console.info('Tivly lead submitted successfully:', {
         leadId: result.lead_id,
         referenceNumber: result.reference_number,
         companyName: payload.business.company_name,

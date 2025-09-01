@@ -245,7 +245,7 @@ export class AcquisitionStrategyService {
       buyer.lastEngagement = new Date().toISOString();
 
       // Log engagement update
-      console.log(
+      console.info(
         `Strategic buyer engagement updated: ${buyer.name} -> ${engagementLevel}`
       );
     }

@@ -119,7 +119,7 @@ export class FreightEmailAI {
 
     // ✅ Register with Platform AI Manager
     platformAIManager.registerService('FreightEmailAI', this);
-    console.log('📧 FreightEmailAI registered with Platform AI Manager');
+    console.info('📧 FreightEmailAI registered with Platform AI Manager');
   }
 
   /**
@@ -198,7 +198,7 @@ Your trusted freight partner since 2023!
   async processFreightEmailEnhanced(
     emailContext: EmailContext
   ): Promise<EmailResponse> {
-    console.log('📧 Processing freight email with Platform AI enhancements');
+    console.info('📧 Processing freight email with Platform AI enhancements');
 
     try {
       // Use Platform AI for initial email analysis
@@ -224,13 +224,13 @@ Your trusted freight partner since 2023!
         }
       );
 
-      console.log(
+      console.info(
         `✅ Email analyzed: Quality=${aiAnalysis.quality}, Human-like=${aiAnalysis.humanLike}, Cost=$${aiAnalysis.cost}`
       );
 
       // If Platform AI escalated, fall back to original processing
       if (aiAnalysis.escalated) {
-        console.log(
+        console.info(
           '🔄 Complex email escalated - using comprehensive processing'
         );
         return await this.processFreightEmail(emailContext);
@@ -245,7 +245,7 @@ Your trusted freight partner since 2023!
       return enhancedResponse;
     } catch (error) {
       console.error('❌ Platform AI email processing failed:', error);
-      console.log('🔄 Falling back to original email processing');
+      console.info('🔄 Falling back to original email processing');
       return await this.processFreightEmail(emailContext);
     }
   }
@@ -1716,7 +1716,7 @@ Your trusted freight partner since 2023!
     const callId = `VOICE-${Date.now()}`;
     const scheduledTime = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour from now
 
-    console.log(
+    console.info(
       `Voice follow-up scheduled for ${emailContext.from} at ${scheduledTime}`
     );
 
@@ -1824,7 +1824,7 @@ Sarah - FleetFlow Load Desk
     error?: string;
   }> {
     // In production, integrate with your email service (SendGrid, etc.)
-    console.log('Sending AI email response:', {
+    console.info('Sending AI email response:', {
       to: emailContext.from,
       subject: response.subject,
       message: response.message,
@@ -1852,7 +1852,7 @@ Sarah - FleetFlow Load Desk
     const voiceSchedule = await this.scheduleVoiceFollowup(emailContext, delay);
 
     if (voiceSchedule.scheduled) {
-      console.log(`Email-to-Voice pipeline activated for ${emailContext.from}`);
+      console.info(`Email-to-Voice pipeline activated for ${emailContext.from}`);
 
       return {
         voiceCallScheduled: true,

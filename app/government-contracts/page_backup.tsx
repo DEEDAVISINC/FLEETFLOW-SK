@@ -224,7 +224,7 @@ export default function GovernmentContractsPage() {
     }}>
       {/* Header with back navigation */}
       <div style={{ padding: '20px' }}>
-        <Link href="/freightflow-rfx" style={{ textDecoration: 'none' }}>
+        <Link href="/freightflow-rfx"" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             color: 'white',
@@ -251,7 +251,7 @@ export default function GovernmentContractsPage() {
           </button>
         </Link>
         
-        <Link href="/analytics" style={{ textDecoration: 'none' }}>
+        <Link href="/analytics"" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.15)',
             color: 'white',
@@ -345,8 +345,8 @@ export default function GovernmentContractsPage() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <input
-              type="text"
-              placeholder="🔍 Search contracts, agencies, locations..."
+              type="text""
+              placeholder="🔍 Search contracts, agencies, locations...""
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -371,10 +371,10 @@ export default function GovernmentContractsPage() {
                 outline: 'none'
               }}
             >
-              <option value="">All Status</option>
-              <option value="Open">Open</option>
-              <option value="Closing Soon">Closing Soon</option>
-              <option value="Closed">Closed</option>
+              <option value=">All Status</option>
+              <option value="Open"">Open</option>
+              <option value="Closing Soon"">Closing Soon</option>
+              <option value="Closed"">Closed</option>
             </select>
             <select
               value={competitionFilter}
@@ -387,17 +387,17 @@ export default function GovernmentContractsPage() {
                 outline: 'none'
               }}
             >
-              <option value="">All Competition</option>
-              <option value="Low">Low Competition</option>
-              <option value="Medium">Medium Competition</option>
-              <option value="High">High Competition</option>
+              <option value=">All Competition</option>
+              <option value="Low"">Low Competition</option>
+              <option value="Medium"">Medium Competition</option>
+              <option value="High"">High Competition</option>
             </select>
             <span style={{ fontSize: '14px', color: '#666' }}>
               {filteredAndSortedContracts.length} of {contracts.length} contracts
             </span>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <Link href="/freightflow-rfx" style={{ textDecoration: 'none' }}>
+            <Link href="/freightflow-rfx"" style={{ textDecoration: 'none' }}>
               <button style={{
                 background: '#8b5cf6',
                 color: 'white',
@@ -447,32 +447,32 @@ export default function GovernmentContractsPage() {
           }}>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', textAlign: 'center' }}>
               <input
-                type="checkbox"
+                type="checkbox""
                 checked={selectedContracts.length === filteredAndSortedContracts.length && filteredAndSortedContracts.length > 0}
                 onChange={toggleSelectAll}
                 style={{ cursor: 'pointer' }}
               />
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('agency')}>
-              AGENCY <SortIcon field="agency" />
+              AGENCY <SortIcon field=""agency"" />
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('title')}>
-              CONTRACT TITLE <SortIcon field="title" />
+              CONTRACT TITLE <SortIcon field=""title"" />
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('amount')}>
-              VALUE <SortIcon field="amount" />
+              VALUE <SortIcon field=""amount"" />
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0' }}>
               LOCATION
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('deadline')}>
-              DEADLINE <SortIcon field="deadline" />
+              DEADLINE <SortIcon field=""deadline"" />
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('competitionLevel')}>
-              COMPETITION <SortIcon field="competitionLevel" />
+              COMPETITION <SortIcon field=""competitionLevel"" />
             </div>
             <div style={{ padding: '15px 10px', borderRight: '1px solid #e0e0e0', cursor: 'pointer' }} onClick={() => handleSort('matchScore')}>
-              MATCH <SortIcon field="matchScore" />
+              MATCH <SortIcon field=""matchScore"" />
             </div>
             <div style={{ padding: '15px 10px', textAlign: 'center' }}>
               ACTIONS
@@ -498,7 +498,7 @@ export default function GovernmentContractsPage() {
               >
                 <div style={{ padding: '12px 10px', borderRight: '1px solid #e0e0e0', textAlign: 'center' }}>
                   <input
-                    type="checkbox"
+                    type="checkbox""
                     checked={selectedContracts.includes(contract.id)}
                     onChange={() => toggleContractSelection(contract.id)}
                     style={{ cursor: 'pointer' }}
@@ -555,7 +555,7 @@ export default function GovernmentContractsPage() {
                 </div>
                 <div style={{ padding: '12px 10px', textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
-                    <Link href="/freightflow-rfx" style={{ textDecoration: 'none' }}>
+                    <Link href="/freightflow-rfx"" style={{ textDecoration: 'none' }}>
                       <button style={{
                         padding: '4px 8px',
                         background: '#8b5cf6',
@@ -597,7 +597,7 @@ export default function GovernmentContractsPage() {
               <div style={{ fontSize: '48px', marginBottom: '20px' }}>🏛️</div>
               <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>No contracts found</h3>
               <p style={{ margin: 0 }}>
-                {searchTerm ? `No contracts match "${searchTerm}"` : 'No contracts available'}
+                {searchTerm ? `No contracts match ""${searchTerm}""` : 'No contracts available'}
               </p>
             </div>
           )}

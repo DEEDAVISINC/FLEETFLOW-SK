@@ -1,28 +1,31 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { createLoad, Load } from '../services/loadService'
-import { getAvailableDispatchers, getCurrentUser } from '../config/access'
+import { useState } from 'react';
+import { getAvailableDispatchers, getCurrentUser } from '../config/access';
+import { Load, createLoad } from '../services/loadService';
 
 interface LoadFormData {
-  origin: string
-  destination: string
-  rate: number
-  distance: string
-  weight: string
-  equipment: string
-  pickupDate: string
-  deliveryDate: string
-  dispatcherId: string
-  specialInstructions: string
+  origin: string;
+  destination: string;
+  rate: number;
+  distance: string;
+  weight: string;
+  equipment: string;
+  pickupDate: string;
+  deliveryDate: string;
+  dispatcherId: string;
+  specialInstructions: string;
 }
 
 interface CreateLoadFormProps {
-  onLoadCreated?: (load: Load) => void
-  onCancel?: () => void
+  onLoadCreated?: (load: Load) => void;
+  onCancel?: () => void;
 }
 
-export default function CreateLoadForm({ onLoadCreated, onCancel }: CreateLoadFormProps) {
+export default function CreateLoadForm({
+  onLoadCreated,
+  onCancel,
+}: CreateLoadFormProps) {
   const [formData, setFormData] = useState<LoadFormData>({
     origin: '',
     destination: '',
@@ -33,38 +36,50 @@ export default function CreateLoadForm({ onLoadCreated, onCancel }: CreateLoadFo
     pickupDate: '',
     deliveryDate: '',
     dispatcherId: '',
-    specialInstructions: ''
-  })
+    specialInstructions: '',
+  });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    'idle' | 'success' | 'error'
+  >('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const { user } = getCurrentUser()
-  const availableDispatchers = getAvailableDispatchers()
+  const { user } = getCurrentUser();
+  const availableDispatchers = getAvailableDispatchers();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === 'rate' ? parseFloat(value) || 0 : value
-    }))
-  }
+      [name]: name === 'rate' ? parseFloat(value) || 0 : value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus('idle')
-    setErrorMessage('')
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setErrorMessage('');
 
     try {
       // Validate required fields
-      if (!formData.origin || !formData.destination || !formData.rate || !formData.pickupDate || !formData.deliveryDate) {
-        throw new Error('Please fill in all required fields')
+      if (
+        !formData.origin ||
+        !formData.destination ||
+        !formData.rate ||
+        !formData.pickupDate ||
+        !formData.deliveryDate
+      ) {
+        throw new Error('Please fill in all required fields');
       }
 
       if (!formData.dispatcherId) {
-        throw new Error('Please select a dispatcher for this load')
+        throw new Error('Please select a dispatcher for this load');
       }
 
       // Create the load
@@ -80,11 +95,11 @@ export default function CreateLoadForm({ onLoadCreated, onCancel }: CreateLoadFo
         deliveryDate: formData.deliveryDate,
         dispatcherId: formData.dispatcherId,
         specialInstructions: formData.specialInstructions,
-        status: 'Available'
-      })
+        status: 'Available',
+      });
 
-      setSubmitStatus('success')
-      
+      setSubmitStatus('success');
+
       // Reset form
       setFormData({
         origin: '',
@@ -96,257 +111,31 @@ export default function CreateLoadForm({ onLoadCreated, onCancel }: CreateLoadFo
         pickupDate: '',
         deliveryDate: '',
         dispatcherId: '',
-        specialInstructions: ''
-      })
+        specialInstructions: '',
+      });
 
       // Notify parent component
       if (onLoadCreated) {
-        onLoadCreated(newLoad)
+        onLoadCreated(newLoad);
       }
 
       // Show success message
       setTimeout(() => {
-        setSubmitStatus('idle')
-      }, 3000)
-
+        setSubmitStatus('idle');
+      }, 3000);
     } catch (error) {
-      setSubmitStatus('error')
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to create load')
+      setSubmitStatus('error');
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Failed to create load'
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900 flex items-center">
-          <span className="mr-2">➕</span>
-          Create New Load
-        </h2>
-        {onCancel && (
-          <button
-            onClick={onCancel}
-            className="text-gray-500 hover:text-gray-700 text-xl"
-          >
-            ✕
-          </button>
-        )}
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Route Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Origin <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="origin"
-              value={formData.origin}
-              onChange={handleInputChange}
-              placeholder="e.g., Atlanta, GA"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Destination <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="destination"
-              value={formData.destination}
-              onChange={handleInputChange}
-              placeholder="e.g., Miami, FL"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Load Details */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rate ($) <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              name="rate"
-              value={formData.rate || ''}
-              onChange={handleInputChange}
-              placeholder="0"
-              min="0"
-              step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Distance
-            </label>
-            <input
-              type="text"
-              name="distance"
-              value={formData.distance}
-              onChange={handleInputChange}
-              placeholder="e.g., 647 mi"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Weight
-            </label>
-            <input
-              type="text"
-              name="weight"
-              value={formData.weight}
-              onChange={handleInputChange}
-              placeholder="e.g., 45,000 lbs"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-
-        {/* Equipment and Dispatcher */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Equipment Type
-            </label>
-            <select
-              name="equipment"
-              value={formData.equipment}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="Dry Van">Dry Van</option>
-              <option value="Reefer">Reefer</option>
-              <option value="Flatbed">Flatbed</option>
-              <option value="Box Truck">Box Truck</option>
-              <option value="Step Deck">Step Deck</option>
-              <option value="Lowboy">Lowboy</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Assign Dispatcher <span className="text-red-500">*</span>
-            </label>
-            <select
-              name="dispatcherId"
-              value={formData.dispatcherId}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            >
-              <option value="">Select a dispatcher...</option>
-              {availableDispatchers.map((dispatcher) => (
-                <option key={dispatcher.id} value={dispatcher.id}>
-                  {dispatcher.name} ({dispatcher.email})
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Dates */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Pickup Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="pickupDate"
-              value={formData.pickupDate}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Delivery Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              name="deliveryDate"
-              value={formData.deliveryDate}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
-
-        {/* Special Instructions */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Special Instructions
-          </label>
-          <textarea
-            name="specialInstructions"
-            value={formData.specialInstructions}
-            onChange={handleInputChange}
-            rows={3}
-            placeholder="Any special handling requirements or notes..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Status Messages */}
-        {submitStatus === 'success' && (
-          <div className="bg-green-50 border border-green-200 rounded-md p-4">
-            <div className="flex">
-              <span className="text-green-400 text-xl mr-3">✓</span>
-              <div>
-                <div className="text-green-800 font-semibold">Load Created Successfully!</div>
-                <div className="text-green-700 text-sm">
-                  The load has been created and assigned to the selected dispatcher. 
-                  Notifications have been sent to Dispatch Central and Broker Box.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {submitStatus === 'error' && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <div className="flex">
-              <span className="text-red-400 text-xl mr-3">✗</span>
-              <div>
-                <div className="text-red-800 font-semibold">Error Creating Load</div>
-                <div className="text-red-700 text-sm">{errorMessage}</div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Form Actions */}
-        <div className="flex space-x-3">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-md font-medium transition-colors"
-          >
-            {isSubmitting ? 'Creating Load...' : 'Create Load & Assign Dispatcher'}
-          </button>
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </form>
+    <div>
+      <h1>Create Load Form</h1>
     </div>
-  )
+  );
 }

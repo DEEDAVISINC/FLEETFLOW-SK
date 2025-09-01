@@ -102,7 +102,7 @@ export class AICompanyDashboardIntegration {
     this.documentService = new DocumentFlowService();
     this.lastUpdate = new Date();
 
-    console.log('🤖 AI Company Dashboard Integration Service initialized');
+    console.info('🤖 AI Company Dashboard Integration Service initialized');
   }
 
   /**
@@ -447,7 +447,7 @@ export class AICompanyDashboardIntegration {
    */
   async getComprehensiveDashboardData() {
     try {
-      console.log('📊 Fetching comprehensive dashboard data...');
+      console.info('📊 Fetching comprehensive dashboard data...');
 
       // Fetch all data in parallel for better performance
       const [
@@ -468,7 +468,7 @@ export class AICompanyDashboardIntegration {
 
       this.lastUpdate = new Date();
 
-      console.log('✅ Dashboard data fetched successfully');
+      console.info('✅ Dashboard data fetched successfully');
 
       return {
         realTimeMetrics,
@@ -564,7 +564,7 @@ export class AICompanyDashboardIntegration {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('🗑️ Dashboard cache cleared');
+    console.info('🗑️ Dashboard cache cleared');
   }
 
   /**

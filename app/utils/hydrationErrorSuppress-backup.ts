@@ -71,7 +71,7 @@ if (typeof window !== 'undefined' && typeof console !== 'undefined') {
 
     if (isReactError) {
       // Show we caught it instead of the full React error
-      console.log(
+      console.info(
         '🚫 React error suppressed:',
         message.substring(0, 100) + '...'
       );
@@ -102,11 +102,10 @@ if (typeof window !== 'undefined' && typeof console !== 'undefined') {
   };
 
   // Immediate confirmation this loaded
-  console.log(
+  console.info(
     '🛡️ AGGRESSIVE React error suppression ACTIVE - All React console errors will be blocked'
   );
 
   // Also set a flag so we know it's active
   (window as any).__REACT_ERROR_SUPPRESSION_ACTIVE__ = true;
 }
-

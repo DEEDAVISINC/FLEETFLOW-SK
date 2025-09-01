@@ -451,7 +451,7 @@ class UserDataService {
     });
 
     // In real app, this would save to database
-    console.log('User profile updated:', this.currentUser);
+    console.info('User profile updated:', this.currentUser);
     return true;
   }
 

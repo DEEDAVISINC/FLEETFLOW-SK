@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type') || 'summary';
     const port = searchParams.get('port');
 
-    console.log(`🚢 Maritime API Request: type=${type}, port=${port}`);
+    console.info(`🚢 Maritime API Request: type=${type}, port=${port}`);
 
     switch (type) {
       case 'summary':
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, data } = body;
 
-    console.log(`🚢 Maritime API POST Request: action=${action}`);
+    console.info(`🚢 Maritime API POST Request: action=${action}`);
 
     switch (action) {
       case 'submit_noad':
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
         const noticeId = `NOAD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
         // In production, this would submit to USCG NVMC API
-        console.log('NOAD Notice submitted:', noticeId, data);
+        console.info('NOAD Notice submitted:', noticeId, data);
 
         return NextResponse.json({
           success: true,
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
         // Update vessel status (for real-time tracking)
         const { vesselId, status, location } = data;
 
-        console.log('Vessel status update:', { vesselId, status, location });
+        console.info('Vessel status update:', { vesselId, status, location });
 
         return NextResponse.json({
           success: true,

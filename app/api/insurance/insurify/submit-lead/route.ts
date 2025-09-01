@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
 
     if (response.ok) {
       // Log successful submission for commission tracking
-      console.log('Insurify lead submitted successfully:', {
+      console.info('Insurify lead submitted successfully:', {
         leadId: result.lead_id,
         caseNumber: result.case_number,
         companyName: payload.lead.business.company_name,

@@ -17,7 +17,7 @@ export default function Logo({
   const [imageError, setImageError] = useState(false);
   const [useCustomLogo] = useState(true);
 
-  console.log('FleetFlowLogo render:', { useCustomLogo, imageError, size });
+  console.info('FleetFlowLogo render:', { useCustomLogo, imageError, size });
   const sizes = {
     small: { width: 32, height: 32, text: 'text-sm' },
     medium: { width: 40, height: 40, text: 'text-base' },

@@ -122,7 +122,7 @@ async function handleBOLApproval(body: any) {
  */
 async function handleGetSubmissions(body: any) {
   try {
-    console.log(
+    console.info(
       '🔍 handleGetSubmissions called with body:',
       JSON.stringify(body, null, 2)
     );
@@ -137,9 +137,9 @@ async function handleGetSubmissions(body: any) {
       );
     }
 
-    console.log('📋 Getting submissions for broker:', brokerId);
+    console.info('📋 Getting submissions for broker:', brokerId);
     const submissions = BOLWorkflowService.getBrokerSubmissions(brokerId);
-    console.log('📊 Found submissions:', submissions.length);
+    console.info('📊 Found submissions:', submissions.length);
 
     const response = {
       success: true,
@@ -158,7 +158,7 @@ async function handleGetSubmissions(body: any) {
       })),
     };
 
-    console.log(
+    console.info(
       '✅ Returning response with',
       response.submissions.length,
       'submissions'

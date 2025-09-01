@@ -67,7 +67,7 @@ export default function LinkVerificationPage() {
 
       const data = await response.json();
       setVerificationData(data);
-      console.log('✅ Link verification completed:', data);
+      console.info('✅ Link verification completed:', data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Verification failed');
       console.error('❌ Link verification error:', err);

@@ -17,7 +17,7 @@ export default function VendorPortalSimple() {
 
   // Super simple reload approach - guarantee scroll to top
   const handleTabClick = (tabId: string) => {
-    console.log('Tab clicked:', tabId);
+    console.info('Tab clicked:', tabId);
     setActiveTab(tabId);
 
     // Force page reload - simplest guaranteed solution

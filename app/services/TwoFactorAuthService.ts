@@ -243,8 +243,8 @@ export class TwoFactorAuthService {
     // For now, we'll log it (in production, integrate with TwilioService)
     const message = `FleetFlow Security Code: ${code}\n\nDo not share this code. Expires in 10 minutes.\n\n- FleetFlow Security Team`;
 
-    console.log(`📱 SMS Code for ${contact.name} (${contact.phone}): ${code}`);
-    console.log(`📱 SMS Message: ${message}`);
+    console.info(`📱 SMS Code for ${contact.name} (${contact.phone}): ${code}`);
+    console.info(`📱 SMS Message: ${message}`);
 
     // TODO: Integrate with existing TwilioService:
     // await twilioService.sendSMS(contact.phone, message);

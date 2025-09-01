@@ -125,7 +125,7 @@ export default function DispatchCentral() {
     }}>
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+        <Link href="/"" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
@@ -352,8 +352,8 @@ export default function DispatchCentral() {
                   📋 Load Management
                 </h2>
                 <input
-                  type="text"
-                  placeholder="Search loads..."
+                  type="text""
+                  placeholder="Search loads...""
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{

@@ -385,7 +385,7 @@ export default function AddShipperForm({
                   fontWeight: 'bold',
                   margin: 0,
                   fontFamily:
-                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 }}
               >
                 Create Vendor Profile
@@ -397,7 +397,7 @@ export default function AddShipperForm({
                 fontSize: '16px',
                 margin: 0,
                 fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                  '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
               }}
             >
               Create a new vendor profile that will be managed in the Vendor
@@ -425,7 +425,7 @@ export default function AddShipperForm({
                   fontWeight: '600',
                   marginBottom: '20px',
                   fontFamily:
-                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 }}
               >
                 🏢 Company Information
@@ -446,7 +446,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     Company Name *
@@ -466,7 +466,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -492,7 +492,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     Tax ID *
@@ -512,7 +512,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -538,7 +538,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     MC Number (Optional)
@@ -558,7 +558,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -583,7 +583,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     Assigned Broker *
@@ -605,7 +605,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -644,7 +644,7 @@ export default function AddShipperForm({
                         fontSize: '12px',
                         marginTop: '4px',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       You are automatically assigned as the broker for this
@@ -672,7 +672,7 @@ export default function AddShipperForm({
                   fontWeight: '600',
                   marginBottom: '20px',
                   fontFamily:
-                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 }}
               >
                 💰 Financial Information
@@ -693,7 +693,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     Payment Terms
@@ -712,7 +712,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -761,7 +761,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     Credit Limit ($)
@@ -781,7 +781,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -806,7 +806,7 @@ export default function AddShipperForm({
                       fontWeight: '500',
                       marginBottom: '8px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     }}
                   >
                     Credit Rating
@@ -828,7 +828,7 @@ export default function AddShipperForm({
                       color: 'white',
                       fontSize: '14px',
                       fontFamily:
-                        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                        '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       outline: 'none',
                       transition: 'all 0.3s ease',
                     }}
@@ -896,7 +896,7 @@ export default function AddShipperForm({
                     fontWeight: '600',
                     margin: 0,
                     fontFamily:
-                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                   }}
                 >
                   📞 Contacts
@@ -914,7 +914,7 @@ export default function AddShipperForm({
                     fontWeight: '500',
                     cursor: 'pointer',
                     fontFamily:
-                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
@@ -963,7 +963,7 @@ export default function AddShipperForm({
                         fontWeight: '600',
                         margin: 0,
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       Contact {index + 1}
@@ -1009,7 +1009,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Name *
@@ -1029,7 +1029,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1057,7 +1057,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Title
@@ -1077,7 +1077,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1104,7 +1104,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Email *
@@ -1124,7 +1124,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1152,7 +1152,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Phone *
@@ -1172,7 +1172,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1201,7 +1201,7 @@ export default function AddShipperForm({
                         fontSize: '13px',
                         fontWeight: '500',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       <input
@@ -1249,7 +1249,7 @@ export default function AddShipperForm({
                     fontWeight: '600',
                     margin: 0,
                     fontFamily:
-                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                   }}
                 >
                   📍 Locations
@@ -1267,7 +1267,7 @@ export default function AddShipperForm({
                     fontWeight: '500',
                     cursor: 'pointer',
                     fontFamily:
-                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
@@ -1316,7 +1316,7 @@ export default function AddShipperForm({
                         fontWeight: '600',
                         margin: 0,
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       Location {index + 1}
@@ -1362,7 +1362,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Location Name *
@@ -1382,7 +1382,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1410,7 +1410,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Address *
@@ -1430,7 +1430,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1458,7 +1458,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         City *
@@ -1478,7 +1478,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1506,7 +1506,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         State *
@@ -1526,7 +1526,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1555,7 +1555,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         ZIP Code *
@@ -1575,7 +1575,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1603,7 +1603,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Operating Hours
@@ -1627,7 +1627,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1655,7 +1655,7 @@ export default function AddShipperForm({
                         fontWeight: '500',
                         marginBottom: '4px',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       Special Instructions
@@ -1679,7 +1679,7 @@ export default function AddShipperForm({
                         color: 'white',
                         fontSize: '13px',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         outline: 'none',
                         transition: 'all 0.3s ease',
                         resize: 'vertical',
@@ -1725,7 +1725,7 @@ export default function AddShipperForm({
                     fontWeight: '600',
                     margin: 0,
                     fontFamily:
-                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                   }}
                 >
                   🚚 Commodities
@@ -1743,7 +1743,7 @@ export default function AddShipperForm({
                     fontWeight: '500',
                     cursor: 'pointer',
                     fontFamily:
-                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                      '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '8px',
@@ -1792,7 +1792,7 @@ export default function AddShipperForm({
                         fontWeight: '600',
                         margin: 0,
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       Commodity {index + 1}
@@ -1838,7 +1838,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Commodity Name *
@@ -1858,7 +1858,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -1886,7 +1886,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Freight Class *
@@ -1905,7 +1905,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -2047,7 +2047,7 @@ export default function AddShipperForm({
                           fontWeight: '500',
                           marginBottom: '4px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         }}
                       >
                         Temperature Requirements
@@ -2066,7 +2066,7 @@ export default function AddShipperForm({
                           color: 'white',
                           fontSize: '13px',
                           fontFamily:
-                            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                           outline: 'none',
                           transition: 'all 0.3s ease',
                         }}
@@ -2110,7 +2110,7 @@ export default function AddShipperForm({
                         fontSize: '13px',
                         fontWeight: '500',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       <input
@@ -2138,7 +2138,7 @@ export default function AddShipperForm({
                         fontWeight: '500',
                         marginBottom: '4px',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                       }}
                     >
                       Description
@@ -2158,7 +2158,7 @@ export default function AddShipperForm({
                         color: 'white',
                         fontSize: '13px',
                         fontFamily:
-                          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                         outline: 'none',
                         transition: 'all 0.3s ease',
                         resize: 'vertical',
@@ -2196,7 +2196,7 @@ export default function AddShipperForm({
                   fontWeight: '600',
                   marginBottom: '20px',
                   fontFamily:
-                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 }}
               >
                 📝 Notes
@@ -2216,7 +2216,7 @@ export default function AddShipperForm({
                   color: 'white',
                   fontSize: '14px',
                   fontFamily:
-                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                   outline: 'none',
                   transition: 'all 0.3s ease',
                   resize: 'vertical',
@@ -2252,7 +2252,7 @@ export default function AddShipperForm({
                 fontWeight: '600',
                 marginBottom: '20px',
                 fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                  '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
@@ -2596,7 +2596,7 @@ export default function AddShipperForm({
                 fontWeight: '500',
                 cursor: 'pointer',
                 fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                  '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 transition: 'all 0.3s ease',
               }}
               onMouseEnter={(e) => {
@@ -2620,7 +2620,7 @@ export default function AddShipperForm({
                 fontWeight: '500',
                 cursor: 'pointer',
                 fontFamily:
-                  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                  '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
                 transition: 'all 0.3s ease',
                 boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
               }}

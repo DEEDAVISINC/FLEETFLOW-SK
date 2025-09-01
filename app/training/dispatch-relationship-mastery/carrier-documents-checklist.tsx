@@ -55,7 +55,7 @@ export const CarrierDocumentsChecklist = () => {
           name: 'Safety Rating Verification',
           description: 'FMCSA safety rating and CSA scores',
           required: true,
-          notes: 'No "Unsatisfactory" rating, check CSA percentiles',
+          notes: 'No ""Unsatisfactory"" rating, check CSA percentiles',
         },
         {
           name: 'Equipment List & Photos',

@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (result.success) {
-      console.log('✅ Universal email sent:', {
+      console.info('✅ Universal email sent:', {
         type: emailRequest.type,
         recipient: emailRequest.recipient.email,
         messageId: result.messageId,
@@ -242,7 +242,7 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    console.log('📧 Bulk email operation completed:', {
+    console.info('📧 Bulk email operation completed:', {
       total: emails.length,
       successful: successCount,
       failed: failureCount,
@@ -311,6 +311,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+
+
 
 
 

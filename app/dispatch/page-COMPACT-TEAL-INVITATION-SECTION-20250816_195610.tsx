@@ -1670,7 +1670,7 @@ export default function DispatchCentral() {
                </div>
                <div style={{ display: 'flex', gap: '8px', fontSize: '0.8rem' }}>
                  <input
-                   placeholder="Company Name"
+                   placeholder="Company Name""
                    style={{
                      flex: 1,
                      padding: '6px 8px',
@@ -1682,7 +1682,7 @@ export default function DispatchCentral() {
                    }}
                  />
                  <input
-                   placeholder="Email"
+                   placeholder="Email""
                    style={{
                      flex: 1,
                      padding: '6px 8px',
@@ -2009,11 +2009,11 @@ export default function DispatchCentral() {
             <div style={{ marginTop: '25px' }}>
               <AILoadOptimizationPanel
                 onOptimizationComplete={(result) => {
-                  console.log('Optimization completed:', result);
+                  console.info('Optimization completed:', result);
                   // Could integrate with other dispatch systems here
                 }}
                 onAssignmentSelected={(assignment) => {
-                  console.log('Assignment selected:', assignment);
+                  console.info('Assignment selected:', assignment);
                   // Could auto-fill load assignment forms here
                 }}
               />
@@ -4252,7 +4252,7 @@ export default function DispatchCentral() {
                     fontWeight: '500',
                   }}
                 >
-                  Click "Open Full Tracking Dashboard" to access the interactive
+                  Click ""Open Full Tracking Dashboard"" to access the interactive
                   map with live driver locations, detailed route information,
                   and real-time shipment monitoring for all your loads.
                 </p>

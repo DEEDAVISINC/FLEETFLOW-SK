@@ -93,7 +93,7 @@ export class UnifiedLeadGenerationService {
     this.thomasNetService = new ThomasNetService(thomasNetCredentials);
     this.fmcsaService = new FMCSAService();
 
-    console.log('🔄 Unified Lead Generation Service initialized');
+    console.info('🔄 Unified Lead Generation Service initialized');
   }
 
   /**
@@ -102,18 +102,18 @@ export class UnifiedLeadGenerationService {
   async generateLeads(
     filters: LeadGenerationFilters = {}
   ): Promise<LeadGenerationResults> {
-    console.log('🎯 Starting unified lead generation with filters:', filters);
+    console.info('🎯 Starting unified lead generation with filters:', filters);
 
     const startTime = Date.now();
     const allLeads: UnifiedLead[] = [];
-    let sourceStats = {
+    const sourceStats = {
       truckingPlanet: 0,
       thomasNet: 0,
       combined: 0,
     };
 
     // Step 1: Get TruckingPlanet leads (always available)
-    console.log('🌐 Fetching TruckingPlanet leads...');
+    console.info('🌐 Fetching TruckingPlanet leads...');
     try {
       const tpFilters = this.convertToTruckingPlanetFilters(filters);
       const tpShippers = await truckingPlanetService.searchShippers(tpFilters);
@@ -129,13 +129,13 @@ export class UnifiedLeadGenerationService {
         sourceStats.truckingPlanet++;
       }
 
-      console.log(`✅ TruckingPlanet: ${tpLeads.length} leads found`);
+      console.info(`✅ TruckingPlanet: ${tpLeads.length} leads found`);
     } catch (error) {
       console.error('❌ TruckingPlanet error:', error);
     }
 
     // Step 2: Get ThomasNet leads (if available)
-    console.log('🏭 Attempting ThomasNet leads...');
+    console.info('🏭 Attempting ThomasNet leads...');
     try {
       await this.thomasNetService.initialize();
       const tnFilters = this.convertToThomasNetFilters(filters);
@@ -149,7 +149,7 @@ export class UnifiedLeadGenerationService {
         sourceStats.thomasNet++;
       }
 
-      console.log(`✅ ThomasNet: ${tnManufacturers.length} leads found`);
+      console.info(`✅ ThomasNet: ${tnManufacturers.length} leads found`);
     } catch (error) {
       console.warn('⚠️ ThomasNet unavailable (expected):', error.message);
     } finally {
@@ -159,7 +159,7 @@ export class UnifiedLeadGenerationService {
     }
 
     // Step 3: Enhance all leads with FMCSA data
-    console.log('🏛️ Enhancing leads with FMCSA data...');
+    console.info('🏛️ Enhancing leads with FMCSA data...');
     let fmcsaMatches = 0;
 
     for (const lead of allLeads) {
@@ -176,7 +176,7 @@ export class UnifiedLeadGenerationService {
     }
 
     // Step 4: Apply filters and scoring
-    let filteredLeads = this.applyFilters(allLeads, filters);
+    const filteredLeads = this.applyFilters(allLeads, filters);
 
     // Step 5: Sort by enhanced score (highest first)
     filteredLeads.sort((a, b) => b.enhancedScore - a.enhancedScore);
@@ -200,7 +200,7 @@ export class UnifiedLeadGenerationService {
     };
 
     const duration = Date.now() - startTime;
-    console.log(
+    console.info(
       `🎉 Unified lead generation completed in ${duration}ms:`,
       stats
     );

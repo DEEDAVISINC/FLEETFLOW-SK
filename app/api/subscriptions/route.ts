@@ -337,7 +337,7 @@ export async function PUT(request: NextRequest) {
         }
 
         // Update payment method (placeholder - would integrate with Stripe)
-        console.log(
+        console.info(
           `Updating payment method for user ${userId} to ${paymentMethodId}`
         );
 

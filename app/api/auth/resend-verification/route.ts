@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     await sendVerificationEmail(user.email, user.id);
 
     // Log resend attempt
-    console.log('📧 Verification email resent:', {
+    console.info('📧 Verification email resent:', {
       userId: user.id,
       email: user.email,
       name: user.name,
@@ -74,8 +74,8 @@ async function sendVerificationEmail(
   const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${verificationToken}`;
 
   // In production, integrate with email service like SendGrid, Mailgun, or Resend
-  console.log('📧 Verification email sent to:', email);
-  console.log('🔗 Verification link:', verificationUrl);
+  console.info('📧 Verification email sent to:', email);
+  console.info('🔗 Verification link:', verificationUrl);
 
   // Mock email content
   const emailContent = `
@@ -92,7 +92,7 @@ async function sendVerificationEmail(
     The FleetFlow Team
   `;
 
-  console.log('📝 Email content:', emailContent);
+  console.info('📝 Email content:', emailContent);
 
   // Simulate email sending delay
   await new Promise((resolve) => setTimeout(resolve, 100));

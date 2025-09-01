@@ -333,8 +333,8 @@ export default function SMSTrainingGuide() {
                     color: 'rgba(59, 130, 246, 0.1)',
                     border: 'rgba(59, 130, 246, 0.2)',
                     triggers: [
-                      'Driver SMS: "📋 New load assigned: LOAD-123. Route document ready!"',
-                      'Carrier SMS: "✅ Load LOAD-123 dispatched successfully. Driver assigned."',
+                      'Driver SMS: ""📋 New load assigned: LOAD-123. Route document ready!""',
+                      'Carrier SMS: ""✅ Load LOAD-123 dispatched successfully. Driver assigned.""',
                     ],
                   },
                   {
@@ -354,7 +354,7 @@ export default function SMSTrainingGuide() {
                     color: 'rgba(245, 158, 11, 0.1)',
                     border: 'rgba(245, 158, 11, 0.2)',
                     triggers: [
-                      'Pickup reminders: "⏰ PICKUP REMINDER - Load: LOAD-123, Today"',
+                      'Pickup reminders: ""⏰ PICKUP REMINDER - Load: LOAD-123, Today""',
                       'Location confirmations and arrival notifications',
                       'Documentation requirements alerts',
                     ],
@@ -365,7 +365,7 @@ export default function SMSTrainingGuide() {
                     color: 'rgba(139, 92, 246, 0.1)',
                     border: 'rgba(139, 92, 246, 0.2)',
                     triggers: [
-                      'Customer updates: "📦 Your shipment LOAD-123 is in transit"',
+                      'Customer updates: ""📦 Your shipment LOAD-123 is in transit""',
                       'Milestone notifications and progress updates',
                       'Emergency alerts for delays or issues',
                     ],
@@ -376,7 +376,7 @@ export default function SMSTrainingGuide() {
                     color: 'rgba(236, 72, 153, 0.1)',
                     border: 'rgba(236, 72, 153, 0.2)',
                     triggers: [
-                      'Delivery reminders: "🎯 DELIVERY REMINDER - Expected Today"',
+                      'Delivery reminders: ""🎯 DELIVERY REMINDER - Expected Today""',
                       'Completion confirmations and POD notifications',
                       'Invoice and payment processing alerts',
                     ],

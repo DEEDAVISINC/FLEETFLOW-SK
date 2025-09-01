@@ -174,7 +174,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Handle metrics tracking or updates
-    console.log('Metrics tracking request:', body);
+    console.info('Metrics tracking request:', body);
 
     return NextResponse.json({
       success: true,

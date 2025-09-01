@@ -10,62 +10,62 @@ const DEMO_CONFIG = {
 
 // Demo function to initialize FreeSWITCH and implement lead generation
 export async function demonstrateFreeSWITCHLeadGeneration() {
-  console.log('🚀 Starting FreeSWITCH Call Center & Lead Generation Demo');
-  console.log('='.repeat(60));
+  console.info('🚀 Starting FreeSWITCH Call Center & Lead Generation Demo');
+  console.info('='.repeat(60));
   
   // Initialize FreeSWITCH Call Center
   const callCenter = new FreeSWITCHCallCenter(DEMO_CONFIG);
   
   try {
     // Step 1: Connect to FreeSWITCH
-    console.log('📞 Connecting to FreeSWITCH...');
+    console.info('📞 Connecting to FreeSWITCH...');
     const connected = await callCenter.connect();
     
     if (!connected) {
-      console.log('❌ Failed to connect to FreeSWITCH');
-      console.log('💡 Make sure FreeSWITCH is running on localhost:8021');
+      console.info('❌ Failed to connect to FreeSWITCH');
+      console.info('💡 Make sure FreeSWITCH is running on localhost:8021');
       return;
     }
     
-    console.log('✅ Successfully connected to FreeSWITCH');
+    console.info('✅ Successfully connected to FreeSWITCH');
     
     // Step 2: Initialize Lead Generation Strategies
-    console.log('\n🎯 Initializing Lead Generation Strategies...');
+    console.info('\n🎯 Initializing Lead Generation Strategies...');
     const leadStrategy = new LeadGenerationStrategy(callCenter);
     
     // Step 3: Demonstrate Government Contract Lead Generation
-    console.log('\n🏛️ Implementing Government Contract Strategy...');
+    console.info('\n🏛️ Implementing Government Contract Strategy...');
     await leadStrategy.implementGovernmentContractStrategy();
     
     // Step 4: Demonstrate Freight Marketplace Lead Generation
-    console.log('\n🚛 Implementing Freight Marketplace Strategy...');
+    console.info('\n🚛 Implementing Freight Marketplace Strategy...');
     await leadStrategy.implementMarketplaceStrategy();
     
     // Step 5: Demonstrate RFx Intelligence Lead Generation
-    console.log('\n📊 Implementing RFx Intelligence Strategy...');
+    console.info('\n📊 Implementing RFx Intelligence Strategy...');
     await leadStrategy.implementRFxIntelligenceStrategy();
     
     // Step 6: Demonstrate Manual Lead Routing
-    console.log('\n📞 Demonstrating Manual Lead Routing...');
+    console.info('\n📞 Demonstrating Manual Lead Routing...');
     await demonstrateManualLeadRouting(callCenter);
     
     // Step 7: Show Call Center Metrics
-    console.log('\n📈 Fetching Call Center Metrics...');
+    console.info('\n📈 Fetching Call Center Metrics...');
     await displayCallCenterMetrics(callCenter);
     
     // Step 8: Demonstrate Lead Sources Analysis
-    console.log('\n🔍 Analyzing Lead Sources Performance...');
+    console.info('\n🔍 Analyzing Lead Sources Performance...');
     await demonstrateLeadSourcesAnalysis();
     
-    console.log('\n✨ FreeSWITCH Call Center Demo Complete!');
-    console.log('='.repeat(60));
+    console.info('\n✨ FreeSWITCH Call Center Demo Complete!');
+    console.info('='.repeat(60));
     
   } catch (error) {
     console.error('❌ Demo failed:', error);
   } finally {
     // Cleanup
     await callCenter.disconnect();
-    console.log('👋 Disconnected from FreeSWITCH');
+    console.info('👋 Disconnected from FreeSWITCH');
   }
 }
 
@@ -116,17 +116,17 @@ async function demonstrateManualLeadRouting(callCenter: FreeSWITCHCallCenter) {
   for (const lead of sampleLeads) {
     try {
       const result = await callCenter.routeLeadCall(lead);
-      console.log(`  ✅ ${lead.contactName} (${lead.companyName}): ${result.status}`);
+      console.info(`  ✅ ${lead.contactName} (${lead.companyName}): ${result.status}`);
       
       if (result.status === 'connected') {
-        console.log(`     📞 Connected to agent: ${result.agent}`);
-        console.log(`     📋 Scripts: ${result.scripts?.join(', ')}`);
+        console.info(`     📞 Connected to agent: ${result.agent}`);
+        console.info(`     📋 Scripts: ${result.scripts?.join(', ')}`);
       } else if (result.status === 'queued') {
-        console.log(`     ⏳ Queued in: ${result.queue} (position: ${result.position})`);
-        console.log(`     ⏱️ Est. wait time: ${result.estimatedWait}s`);
+        console.info(`     ⏳ Queued in: ${result.queue} (position: ${result.position})`);
+        console.info(`     ⏱️ Est. wait time: ${result.estimatedWait}s`);
       }
     } catch (error) {
-      console.log(`  ❌ Failed to route ${lead.contactName}: ${error}`);
+      console.info(`  ❌ Failed to route ${lead.contactName}: ${error}`);
     }
   }
 }
@@ -136,17 +136,17 @@ async function displayCallCenterMetrics(callCenter: FreeSWITCHCallCenter) {
   try {
     const metrics = await callCenter.getCallCenterMetrics();
     
-    console.log('📊 Call Center Performance Metrics:');
-    console.log(`  📞 Total Calls: ${metrics.totalCalls}`);
-    console.log(`  ✅ Connected Calls: ${metrics.connectedCalls}`);
-    console.log(`  ⏱️ Average Call Time: ${metrics.averageCallTime.toFixed(1)} minutes`);
-    console.log(`  📈 Conversion Rate: ${(metrics.conversionRate * 100).toFixed(1)}%`);
-    console.log(`  ⭐ Lead Quality Score: ${metrics.leadQuality}/100`);
-    console.log(`  💰 Monthly Revenue: $${metrics.revenue.toLocaleString()}`);
-    console.log(`  📊 Projected Annual: $${(metrics.revenue * 12).toLocaleString()}`);
+    console.info('📊 Call Center Performance Metrics:');
+    console.info(`  📞 Total Calls: ${metrics.totalCalls}`);
+    console.info(`  ✅ Connected Calls: ${metrics.connectedCalls}`);
+    console.info(`  ⏱️ Average Call Time: ${metrics.averageCallTime.toFixed(1)} minutes`);
+    console.info(`  📈 Conversion Rate: ${(metrics.conversionRate * 100).toFixed(1)}%`);
+    console.info(`  ⭐ Lead Quality Score: ${metrics.leadQuality}/100`);
+    console.info(`  💰 Monthly Revenue: $${metrics.revenue.toLocaleString()}`);
+    console.info(`  📊 Projected Annual: $${(metrics.revenue * 12).toLocaleString()}`);
     
   } catch (error) {
-    console.log('❌ Failed to fetch metrics:', error);
+    console.info('❌ Failed to fetch metrics:', error);
   }
 }
 
@@ -195,23 +195,23 @@ async function demonstrateLeadSourcesAnalysis() {
     }
   ];
   
-  console.log('🎯 Lead Sources Performance Analysis:');
+  console.info('🎯 Lead Sources Performance Analysis:');
   leadSources.forEach(source => {
     const conversionRate = (source.conversions / source.leads * 100).toFixed(1);
     const totalValue = source.conversions * source.avgValue;
     
-    console.log(`\n  📊 ${source.name}:`);
-    console.log(`     📈 Leads: ${source.leads} | Conversions: ${source.conversions} (${conversionRate}%)`);
-    console.log(`     💰 Avg Value: $${source.avgValue.toLocaleString()}`);
-    console.log(`     🏆 Total Revenue: $${totalValue.toLocaleString()}`);
-    console.log(`     ⚡ Priority: ${source.priority} | Automation: ${source.automation}`);
+    console.info(`\n  📊 ${source.name}:`);
+    console.info(`     📈 Leads: ${source.leads} | Conversions: ${source.conversions} (${conversionRate}%)`);
+    console.info(`     💰 Avg Value: $${source.avgValue.toLocaleString()}`);
+    console.info(`     🏆 Total Revenue: $${totalValue.toLocaleString()}`);
+    console.info(`     ⚡ Priority: ${source.priority} | Automation: ${source.automation}`);
   });
 }
 
 // Revenue impact calculator
 export function calculateLeadGenerationROI() {
-  console.log('\n💰 Lead Generation ROI Calculator:');
-  console.log('='.repeat(50));
+  console.info('\n💰 Lead Generation ROI Calculator:');
+  console.info('='.repeat(50));
   
   const scenarios = [
     {
@@ -249,21 +249,21 @@ export function calculateLeadGenerationROI() {
     totalMonthlyRevenue += revenue;
     totalMonthlyCost += cost;
     
-    console.log(`\n📊 ${scenario.name}:`);
-    console.log(`  📈 Monthly Leads: ${scenario.leadsPerMonth}`);
-    console.log(`  ✅ Conversions: ${conversions.toFixed(1)}`);
-    console.log(`  💰 Revenue: $${revenue.toLocaleString()}`);
-    console.log(`  💸 Cost: $${cost.toLocaleString()}`);
-    console.log(`  📊 ROI: ${roi.toFixed(1)}%`);
+    console.info(`\n📊 ${scenario.name}:`);
+    console.info(`  📈 Monthly Leads: ${scenario.leadsPerMonth}`);
+    console.info(`  ✅ Conversions: ${conversions.toFixed(1)}`);
+    console.info(`  💰 Revenue: $${revenue.toLocaleString()}`);
+    console.info(`  💸 Cost: $${cost.toLocaleString()}`);
+    console.info(`  📊 ROI: ${roi.toFixed(1)}%`);
   });
   
   const totalROI = ((totalMonthlyRevenue - totalMonthlyCost) / totalMonthlyCost) * 100;
   
-  console.log(`\n🏆 TOTAL PERFORMANCE:`);
-  console.log(`  💰 Monthly Revenue: $${totalMonthlyRevenue.toLocaleString()}`);
-  console.log(`  💸 Monthly Cost: $${totalMonthlyCost.toLocaleString()}`);
-  console.log(`  📈 Total ROI: ${totalROI.toFixed(1)}%`);
-  console.log(`  🎯 Annual Revenue: $${(totalMonthlyRevenue * 12).toLocaleString()}`);
+  console.info(`\n🏆 TOTAL PERFORMANCE:`);
+  console.info(`  💰 Monthly Revenue: $${totalMonthlyRevenue.toLocaleString()}`);
+  console.info(`  💸 Monthly Cost: $${totalMonthlyCost.toLocaleString()}`);
+  console.info(`  📈 Total ROI: ${totalROI.toFixed(1)}%`);
+  console.info(`  🎯 Annual Revenue: $${(totalMonthlyRevenue * 12).toLocaleString()}`);
 }
 
 // Export demo functions

@@ -695,7 +695,7 @@ export class MultiTenantPaymentService {
     config: TenantPaymentConfig
   ): Promise<void> {
     // Mock implementation - replace with actual database save
-    console.log(
+    console.info(
       `Saving payment config for tenant ${config.tenantId} to database`
     );
   }

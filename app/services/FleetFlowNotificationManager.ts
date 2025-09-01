@@ -124,9 +124,9 @@ export class FleetFlowNotificationManager {
 
     // DISABLED: Auto-sync completely disabled to prevent console spam
     // setInterval(() => this.syncWithFleetFlowServices(), 30000);
-    console.log('🔇 FleetFlow sync disabled to prevent console spam');
+    console.info('🔇 FleetFlow sync disabled to prevent console spam');
 
-    console.log('✅ FleetFlowNotificationManager initialized');
+    console.info('✅ FleetFlowNotificationManager initialized');
   }
 
   public static getInstance(): FleetFlowNotificationManager {
@@ -147,7 +147,7 @@ export class FleetFlowNotificationManager {
 
       this.websocket.onopen = () => {
         this.isConnected = true;
-        console.log('🔗 FleetFlow Notification WebSocket connected');
+        console.info('🔗 FleetFlow Notification WebSocket connected');
 
         // Send initial handshake
         this.websocket?.send(
@@ -170,7 +170,7 @@ export class FleetFlowNotificationManager {
 
       this.websocket.onclose = () => {
         this.isConnected = false;
-        console.log('🔌 WebSocket disconnected, attempting reconnection...');
+        console.info('🔌 WebSocket disconnected, attempting reconnection...');
 
         // Auto-reconnect after 30 seconds (reduced frequency)
         setTimeout(() => this.initializeWebSocket(), 30000);
@@ -223,7 +223,7 @@ export class FleetFlowNotificationManager {
     const filteredTargets = await this.filterByPreferences(notification);
 
     if (filteredTargets.length === 0) {
-      console.log(
+      console.info(
         `📋 Notification ${notification.id} filtered out by preferences`
       );
       return;
@@ -247,7 +247,7 @@ export class FleetFlowNotificationManager {
     this.notifySubscribers('notification_added', notification);
 
     // Reduced logging to prevent console spam
-    // console.log(`✅ Notification created: ${notification.title}`);
+    // console.info(`✅ Notification created: ${notification.title}`);
   }
 
   // 🎯 FILTER NOTIFICATIONS BY USER PREFERENCES
@@ -330,23 +330,23 @@ export class FleetFlowNotificationManager {
       try {
         // SMS Channel (using console for now - will be connected to SMS service)
         if (channels.sms && notification.channels.sms) {
-          console.log(
+          console.info(
             `📱 SMS to ${target}: 🚨 FleetFlow: ${notification.title}\n${notification.message.substring(0, 140)}...`
           );
         }
 
         // Email Channel (using console for now - will be connected to email service)
         if (channels.email && notification.channels.email) {
-          console.log(
+          console.info(
             `📧 Email to ${target}: FleetFlow Alert: ${notification.title}`
           );
-          console.log(
+          console.info(
             `Email Content: ${this.generateEmailTemplate(notification)}`
           );
         }
 
         // Reduced logging for production
-        // console.log(`📤 Notification sent to ${target} via enabled channels`);
+        // console.info(`📤 Notification sent to ${target} via enabled channels`);
       } catch (error) {
         console.error(`❌ Failed to send notification to ${target}:`, error);
       }
@@ -410,7 +410,7 @@ export class FleetFlowNotificationManager {
   // 🔄 SYNC WITH FLEETFLOW SERVICES - TEMPORARILY DISABLED
   private async syncWithFleetFlowServices(): Promise<void> {
     // COMPLETELY DISABLED TO FIX KPI RENDERING ISSUES
-    console.log('🔇 FleetFlow sync completely disabled for stability');
+    console.info('🔇 FleetFlow sync completely disabled for stability');
     return;
 
     // Original sync code commented out to prevent execution
@@ -436,7 +436,7 @@ export class FleetFlowNotificationManager {
     systemStatus: any
   ): Promise<void> {
     // COMPLETELY DISABLED TO FIX KPI RENDERING ISSUES
-    console.log('🔇 Intelligent notifications disabled for stability');
+    console.info('🔇 Intelligent notifications disabled for stability');
     return;
 
     // Original notification code commented out
@@ -633,7 +633,7 @@ export class FleetFlowNotificationManager {
     const updated = { ...existing, ...preferences };
     this.preferences.set(userId, updated);
 
-    console.log(`✅ Notification preferences updated for user ${userId}`);
+    console.info(`✅ Notification preferences updated for user ${userId}`);
   }
 
   // 📊 GET NOTIFICATION STATS

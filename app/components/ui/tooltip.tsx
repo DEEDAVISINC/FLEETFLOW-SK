@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TooltipProps {
   content: string | React.ReactNode;
@@ -6,16 +6,23 @@ interface TooltipProps {
   position?: 'top' | 'bottom' | 'left' | 'right';
   delay?: number;
   maxWidth?: number;
-  theme?: 'default' | 'dispatch' | 'driver' | 'broker' | 'success' | 'warning' | 'error';
+  theme?:
+    | 'default'
+    | 'dispatch'
+    | 'driver'
+    | 'broker'
+    | 'success'
+    | 'warning'
+    | 'error';
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({ 
-  content, 
-  children, 
-  position = 'top', 
+export const Tooltip: React.FC<TooltipProps> = ({
+  content,
+  children,
+  position = 'top',
   delay = 500,
   maxWidth = 250,
-  theme = 'default'
+  theme = 'default',
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -94,20 +101,14 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative inline-block"
+      className='relative inline-block'
       onMouseEnter={showWithDelay}
       onMouseLeave={hideTooltip}
     >
       {children}
       {isVisible && (
         <div
-          className={`
-            absolute z-50 px-3 py-2 text-xs font-medium rounded-md shadow-lg border
-            transition-all duration-150 ease-in-out pointer-events-none
-            ${getThemeClasses()}
-            ${getPositionClasses()}
-            ${showTooltip ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
-          `}
+          className={`pointer-events-none absolute z-50 rounded-md border px-3 py-2 text-xs font-medium shadow-lg transition-all duration-150 ease-in-out ${getThemeClasses()} ${getPositionClasses()} ${showTooltip ? 'scale-100 opacity-100' : 'scale-95 opacity-0'} `}
           style={{ maxWidth: `${maxWidth}px` }}
         >
           {content}
@@ -119,29 +120,34 @@ export const Tooltip: React.FC<TooltipProps> = ({
 };
 
 // Quick tooltip for simple text
-export const QuickTooltip: React.FC<{ text: string; children: React.ReactNode; theme?: string }> = ({ 
-  text, 
-  children, 
-  theme = 'default' 
-}) => (
+export const QuickTooltip: React.FC<{
+  text: string;
+  children: React.ReactNode;
+  theme?: string;
+}> = ({ text, children, theme = 'default' }) => (
   <Tooltip content={text} theme={theme as any} delay={300} maxWidth={200}>
     {children}
   </Tooltip>
 );
 
 // Info icon with tooltip
-export const InfoTooltip: React.FC<{ content: string | React.ReactNode; theme?: string }> = ({ 
-  content, 
-  theme = 'default' 
-}) => (
-  <Tooltip content={content} theme={theme as any} position="top" delay={200}>
-    <svg 
-      className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-help ml-1 inline-block" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
+export const InfoTooltip: React.FC<{
+  content: string | React.ReactNode;
+  theme?: string;
+}> = ({ content, theme = 'default' }) => (
+  <Tooltip content={content} theme={theme as any} position='top' delay={200}>
+    <svg
+      className='ml-1 inline-block h-4 w-4 cursor-help text-gray-400 hover:text-gray-600'
+      fill='none'
+      stroke='currentColor'
+      viewBox='0 0 24 24'
     >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <path
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth={2}
+        d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+      />
     </svg>
   </Tooltip>
-); 
+);

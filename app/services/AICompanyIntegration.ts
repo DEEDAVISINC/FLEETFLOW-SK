@@ -25,7 +25,7 @@ export class AICompanyIntegration {
       priority,
     });
 
-    console.log(`📤 Task queued for batch processing: ${taskId}`);
+    console.info(`📤 Task queued for batch processing: ${taskId}`);
     return taskId;
   }
 
@@ -54,7 +54,7 @@ export class AICompanyIntegration {
   async analyzeEmails(
     emails: Array<{ id: string; content: string }>
   ): Promise<Array<{ id: string; analysis: any }>> {
-    console.log(
+    console.info(
       `🔄 Batching ${emails.length} emails for analysis (was ${emails.length} individual calls)`
     );
 
@@ -98,7 +98,7 @@ export class AICompanyIntegration {
   async qualifyLeads(
     leads: Array<{ id: string; data: string }>
   ): Promise<Array<{ id: string; qualification: any }>> {
-    console.log(
+    console.info(
       `🎯 Batching ${leads.length} leads for qualification (was ${leads.length} individual calls)`
     );
 
@@ -140,7 +140,7 @@ export class AICompanyIntegration {
   async reviewContracts(
     contracts: Array<{ id: string; content: string }>
   ): Promise<Array<{ id: string; review: any }>> {
-    console.log(
+    console.info(
       `📄 Batching ${contracts.length} contracts for review (was ${contracts.length} individual calls)`
     );
 
@@ -181,7 +181,7 @@ export class AICompanyIntegration {
   async analyzeScheduling(
     requests: Array<{ id: string; details: string }>
   ): Promise<Array<{ id: string; analysis: any }>> {
-    console.log(
+    console.info(
       `📅 Batching ${requests.length} scheduling requests (was ${requests.length} individual calls)`
     );
 
@@ -220,7 +220,7 @@ export class AICompanyIntegration {
 
   // Force process current batch (for urgent tasks)
   async forceProcessBatch(): Promise<void> {
-    console.log('⚡ Force processing current batch');
+    console.info('⚡ Force processing current batch');
     await aiBatchService.forceProcessBatch();
   }
 
@@ -297,11 +297,11 @@ export class AICompanyIntegration {
 
       const saved = oldCost - newCost;
 
-      console.log(`✅ AI Staff Activity Complete:`);
-      console.log(
+      console.info(`✅ AI Staff Activity Complete:`);
+      console.info(
         `📧 Emails: ${dailyWorkload.emails}, 🎯 Leads: ${dailyWorkload.leads}, 📄 Contracts: ${dailyWorkload.contracts}, 📅 Scheduling: ${dailyWorkload.scheduling}`
       );
-      console.log(
+      console.info(
         `💰 Cost: $${newCost.toFixed(2)} (was $${oldCost.toFixed(2)}) - Saved: $${saved.toFixed(2)}`
       );
 

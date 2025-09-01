@@ -337,8 +337,8 @@ export default function EnhancedNewCarrierButton({
 
               <div style={{ marginBottom: '12px' }}>
                 <input
-                  type="text"
-                  placeholder="Carrier Company Name *"
+                  type="text""
+                  placeholder="Carrier Company Name *""
                   value={quickInviteForm.carrierName}
                   onChange={(e) => setQuickInviteForm({...quickInviteForm, carrierName: e.target.value})}
                   style={{
@@ -354,8 +354,8 @@ export default function EnhancedNewCarrierButton({
                 />
                 
                 <input
-                  type="email"
-                  placeholder="Email Address *"
+                  type="email""
+                  placeholder="Email Address *""
                   value={quickInviteForm.email}
                   onChange={(e) => setQuickInviteForm({...quickInviteForm, email: e.target.value})}
                   style={{
@@ -371,8 +371,8 @@ export default function EnhancedNewCarrierButton({
                 />
                 
                 <input
-                  type="text"
-                  placeholder="MC Number (Optional)"
+                  type="text""
+                  placeholder="MC Number (Optional)""
                   value={quickInviteForm.mcNumber}
                   onChange={(e) => setQuickInviteForm({...quickInviteForm, mcNumber: e.target.value})}
                   style={{

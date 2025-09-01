@@ -294,7 +294,7 @@ export class RFxAutomationService {
 
   constructor() {
     this.rfxService = new RFxResponseService();
-    console.log('🤖 RFx Automation Service initialized');
+    console.info('🤖 RFx Automation Service initialized');
   }
 
   /**
@@ -307,7 +307,7 @@ export class RFxAutomationService {
     declined: AutomatedRFxOpportunity[];
     metrics: AutomationMetrics;
   }> {
-    console.log('🔍 Running automated RFx opportunity discovery...');
+    console.info('🔍 Running automated RFx opportunity discovery...');
 
     try {
       // Step 1: Discover new opportunities from all sources
@@ -323,7 +323,7 @@ export class RFxAutomationService {
       // Step 4: Generate metrics and reporting
       const metrics = this.calculateMetrics();
 
-      console.log(
+      console.info(
         `✅ RFx automation completed: ${results.autoSubmitted.length} auto-submitted, ${results.queuedForReview.length} queued for review`
       );
 
@@ -341,7 +341,7 @@ export class RFxAutomationService {
    * Discover RFx opportunities from multiple sources
    */
   private async discoverOpportunities(): Promise<RFxRequest[]> {
-    console.log('🌐 Discovering RFx opportunities from multiple sources...');
+    console.info('🌐 Discovering RFx opportunities from multiple sources...');
 
     try {
       const discoveryResults = await Promise.all([
@@ -356,7 +356,7 @@ export class RFxAutomationService {
       ]);
 
       const allOpportunities = discoveryResults.flat();
-      console.log(
+      console.info(
         `📋 Discovered ${allOpportunities.length} total opportunities`
       );
 
@@ -373,7 +373,7 @@ export class RFxAutomationService {
   private async analyzeOpportunities(
     opportunities: RFxRequest[]
   ): Promise<AutomatedRFxOpportunity[]> {
-    console.log('🧠 AI analyzing RFx opportunities...');
+    console.info('🧠 AI analyzing RFx opportunities...');
 
     const analyzedOpportunities = await Promise.all(
       opportunities.map(async (rfx) => {
@@ -439,7 +439,7 @@ export class RFxAutomationService {
     queuedForReview: AutomatedRFxOpportunity[];
     declined: AutomatedRFxOpportunity[];
   }> {
-    console.log('⚡ Processing opportunities with automation rules...');
+    console.info('⚡ Processing opportunities with automation rules...');
 
     const autoSubmitted: AutomatedRFxOpportunity[] = [];
     const queuedForReview: AutomatedRFxOpportunity[] = [];
@@ -489,7 +489,7 @@ export class RFxAutomationService {
   private async autoSubmitBid(
     opportunity: AutomatedRFxOpportunity
   ): Promise<boolean> {
-    console.log(`🚀 Auto-submitting bid for ${opportunity.title}...`);
+    console.info(`🚀 Auto-submitting bid for ${opportunity.title}...`);
 
     try {
       // Convert to RFxRequest format
@@ -532,7 +532,7 @@ export class RFxAutomationService {
       // Submit the response
       await this.rfxService.submitRFxResponse(response);
 
-      console.log(
+      console.info(
         `✅ Successfully auto-submitted bid for ${opportunity.title}`
       );
       return true;
@@ -634,7 +634,7 @@ export class RFxAutomationService {
     tenantRules?: SmartAutoBiddingRules,
     tenantCapabilities?: TenantRFxCapabilities
   ): Promise<void> {
-    console.log(
+    console.info(
       `🔍 Processing RFx opportunity ${opportunity.id} for tenant ${tenantId}`
     );
 
@@ -669,7 +669,7 @@ export class RFxAutomationService {
     if (eligibility.eligible && eligibility.riskLevel === 'low') {
       // AUTO-SUBMIT: Low risk, meets all criteria
       opportunity.automationStatus = 'submitted';
-      console.log(
+      console.info(
         `🚀 AUTO-SUBMITTED: RFx ${opportunity.id} - ${eligibility.reasons.join(', ')}`
       );
 
@@ -678,17 +678,17 @@ export class RFxAutomationService {
     } else if (eligibility.riskLevel === 'medium' && autoBiddingRules.enabled) {
       // QUEUE FOR REVIEW: Medium risk or specific issues
       opportunity.automationStatus = 'queued_for_review';
-      console.log(
+      console.info(
         `📋 QUEUED FOR REVIEW: RFx ${opportunity.id} - Risk: ${eligibility.riskLevel}`
       );
-      console.log(`   Reasons: ${eligibility.reasons.join(', ')}`);
+      console.info(`   Reasons: ${eligibility.reasons.join(', ')}`);
     } else {
       // MANUAL REVIEW REQUIRED: High risk or auto-bidding disabled
       opportunity.automationStatus = 'queued_for_review';
-      console.log(
+      console.info(
         `⚠️  MANUAL REVIEW REQUIRED: RFx ${opportunity.id} - Risk: ${eligibility.riskLevel}`
       );
-      console.log(`   Reasons: ${eligibility.reasons.join(', ')}`);
+      console.info(`   Reasons: ${eligibility.reasons.join(', ')}`);
     }
 
     this.processedOpportunities.set(opportunity.id, opportunity);
@@ -699,7 +699,7 @@ export class RFxAutomationService {
     opportunity: AutomatedRFxOpportunity,
     rules: SmartAutoBiddingRules
   ): Promise<boolean> {
-    console.log(`🤖 Executing auto-bid for ${opportunity.title}...`);
+    console.info(`🤖 Executing auto-bid for ${opportunity.title}...`);
 
     try {
       // Determine bid strategy based on rules
@@ -716,10 +716,10 @@ export class RFxAutomationService {
       const requiredRevenue = estimatedCosts * (1 + rules.minimumMargin / 100);
       const finalBidRate = Math.max(bidRate, requiredRevenue);
 
-      console.log(
+      console.info(
         `💰 Auto-bid submitted: $${finalBidRate} (AI Confidence: ${opportunity.aiScore.confidence}%)`
       );
-      console.log(
+      console.info(
         `   Strategy: ${
           bidRate === rules.rateThresholds.aggressive
             ? 'Aggressive'

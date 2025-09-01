@@ -4,8 +4,6 @@
  * Updated to send invoices to vendors via EMAIL ONLY
  */
 
-import LoadIdentificationService from '../LoadIdentificationService';
-
 export interface BOLSubmission {
   id: string;
   loadId: string;
@@ -17,7 +15,7 @@ export interface BOLSubmission {
   shipperId: string;
   shipperName: string;
   shipperEmail: string;
-  
+
   // BOL Data
   bolData: {
     bolNumber: string;
@@ -35,15 +33,21 @@ export interface BOLSubmission {
     damages: string[];
     notes: string;
   };
-  
+
   // Workflow Status
-  status: 'submitted' | 'broker_review' | 'broker_approved' | 'invoice_generated' | 'invoice_sent' | 'completed';
+  status:
+    | 'submitted'
+    | 'broker_review'
+    | 'broker_approved'
+    | 'invoice_generated'
+    | 'invoice_sent'
+    | 'completed';
   submittedAt: string;
   brokerReviewedAt?: string;
   invoiceGeneratedAt?: string;
   invoiceSentAt?: string;
   completedAt?: string;
-  
+
   // Generated Documents
   invoiceId?: string;
   invoiceAmount?: number;
@@ -53,7 +57,12 @@ export interface BOLSubmission {
 export interface BOLWorkflowNotification {
   id: string;
   bolSubmissionId: string;
-  type: 'driver_submission' | 'broker_review_request' | 'broker_approval' | 'invoice_generated' | 'invoice_sent';
+  type:
+    | 'driver_submission'
+    | 'broker_review_request'
+    | 'broker_approval'
+    | 'invoice_generated'
+    | 'invoice_sent';
   recipientId: string;
   recipientType: 'broker' | 'shipper' | 'driver';
   recipientName: string;
@@ -71,19 +80,21 @@ export class BOLWorkflowService {
   /**
    * STEP 1: Driver submits BOL via driver portal
    */
-  static async submitBOL(submission: Omit<BOLSubmission, 'id' | 'status' | 'submittedAt'>): Promise<{
+  static async submitBOL(
+    submission: Omit<BOLSubmission, 'id' | 'status' | 'submittedAt'>
+  ): Promise<{
     success: boolean;
     submissionId?: string;
     error?: string;
   }> {
     try {
       const submissionId = `BOL-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const bolSubmission: BOLSubmission = {
         ...submission,
         id: submissionId,
         status: 'submitted',
-        submittedAt: new Date().toISOString()
+        submittedAt: new Date().toISOString(),
       };
 
       // Store submission
@@ -92,21 +103,20 @@ export class BOLWorkflowService {
       // Notify broker for review
       await this.notifyBrokerForReview(bolSubmission);
 
-      console.log(`📋 BOL submitted successfully: ${submissionId}`);
-      console.log(`🚛 Driver: ${submission.driverName}`);
-      console.log(`📦 Load: ${submission.loadIdentifierId}`);
-      console.log(`👔 Broker notified: ${submission.brokerName}`);
+      console.info(`📋 BOL submitted successfully: ${submissionId}`);
+      console.info(`🚛 Driver: ${submission.driverName}`);
+      console.info(`📦 Load: ${submission.loadIdentifierId}`);
+      console.info(`👔 Broker notified: ${submission.brokerName}`);
 
       return {
         success: true,
-        submissionId
+        submissionId,
       };
-
     } catch (error) {
       console.error('BOL submission failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -114,9 +124,11 @@ export class BOLWorkflowService {
   /**
    * STEP 2: Notify broker for BOL review (SMS + Email)
    */
-  private static async notifyBrokerForReview(submission: BOLSubmission): Promise<void> {
+  private static async notifyBrokerForReview(
+    submission: BOLSubmission
+  ): Promise<void> {
     const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-    
+
     const brokerNotification: BOLWorkflowNotification = {
       id: notificationId,
       bolSubmissionId: submission.id,
@@ -128,7 +140,7 @@ export class BOLWorkflowService {
       recipientPhone: this.getBrokerPhone(submission.brokerId),
       message: this.generateBrokerReviewMessage(submission),
       sentAt: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending',
     };
 
     this.notifications.push(brokerNotification);
@@ -144,15 +156,19 @@ export class BOLWorkflowService {
   /**
    * STEP 3: Broker approves BOL and triggers invoice generation
    */
-  static async approveBOL(submissionId: string, brokerId: string, approvalData: {
-    approved: boolean;
-    reviewNotes?: string;
-    adjustments?: {
-      rate?: number;
-      additionalCharges?: Array<{ description: string; amount: number }>;
-      deductions?: Array<{ description: string; amount: number }>;
-    };
-  }): Promise<{
+  static async approveBOL(
+    submissionId: string,
+    brokerId: string,
+    approvalData: {
+      approved: boolean;
+      reviewNotes?: string;
+      adjustments?: {
+        rate?: number;
+        additionalCharges?: Array<{ description: string; amount: number }>;
+        deductions?: Array<{ description: string; amount: number }>;
+      };
+    }
+  ): Promise<{
     success: boolean;
     invoiceId?: string;
     error?: string;
@@ -174,8 +190,11 @@ export class BOLWorkflowService {
 
       if (approvalData.approved) {
         // Generate and send invoice via EMAIL to vendor
-        const invoiceResult = await this.generateAndSendInvoice(submission, approvalData.adjustments);
-        
+        const invoiceResult = await this.generateAndSendInvoice(
+          submission,
+          approvalData.adjustments
+        );
+
         if (invoiceResult.success) {
           submission.invoiceId = invoiceResult.invoiceId;
           submission.invoiceAmount = invoiceResult.amount;
@@ -186,31 +205,37 @@ export class BOLWorkflowService {
           submission.completedAt = new Date().toISOString();
           this.submissions.set(submissionId, submission);
 
-          console.log(`✅ BOL approved and invoice sent via EMAIL: ${invoiceResult.invoiceId}`);
-          console.log(`💰 Invoice amount: $${invoiceResult.amount}`);
-          console.log(`📧 Email sent to vendor: ${submission.shipperName} (${submission.shipperEmail})`);
+          console.info(
+            `✅ BOL approved and invoice sent via EMAIL: ${invoiceResult.invoiceId}`
+          );
+          console.info(`💰 Invoice amount: $${invoiceResult.amount}`);
+          console.info(
+            `📧 Email sent to vendor: ${submission.shipperName} (${submission.shipperEmail})`
+          );
 
           return {
             success: true,
-            invoiceId: invoiceResult.invoiceId
+            invoiceId: invoiceResult.invoiceId,
           };
         } else {
           throw new Error(`Invoice generation failed: ${invoiceResult.error}`);
         }
       } else {
         // BOL rejected - notify driver
-        await this.notifyDriverOfRejection(submission, approvalData.reviewNotes || 'BOL rejected by broker');
+        await this.notifyDriverOfRejection(
+          submission,
+          approvalData.reviewNotes || 'BOL rejected by broker'
+        );
         return {
           success: false,
-          error: 'BOL rejected by broker'
+          error: 'BOL rejected by broker',
         };
       }
-
     } catch (error) {
       console.error('BOL approval failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -219,7 +244,7 @@ export class BOLWorkflowService {
    * STEP 4: Generate and send invoice to vendor via EMAIL
    */
   private static async generateAndSendInvoice(
-    submission: BOLSubmission, 
+    submission: BOLSubmission,
     adjustments?: {
       rate?: number;
       additionalCharges?: Array<{ description: string; amount: number }>;
@@ -235,24 +260,30 @@ export class BOLWorkflowService {
     try {
       // Generate invoice ID using load identifier system
       const invoiceId = `INV-${submission.loadIdentifierId}-${Date.now().toString().slice(-6)}`;
-      
+
       // Calculate invoice amount
       let baseAmount = this.getLoadRate(submission.loadId);
-      
+
       if (adjustments?.rate) {
         baseAmount = adjustments.rate;
       }
-      
+
       let totalAmount = baseAmount;
-      
+
       // Add additional charges
       if (adjustments?.additionalCharges) {
-        totalAmount += adjustments.additionalCharges.reduce((sum, charge) => sum + charge.amount, 0);
+        totalAmount += adjustments.additionalCharges.reduce(
+          (sum, charge) => sum + charge.amount,
+          0
+        );
       }
-      
+
       // Subtract deductions
       if (adjustments?.deductions) {
-        totalAmount -= adjustments.deductions.reduce((sum, deduction) => sum + deduction.amount, 0);
+        totalAmount -= adjustments.deductions.reduce(
+          (sum, deduction) => sum + deduction.amount,
+          0
+        );
       }
 
       // Generate invoice document
@@ -270,12 +301,12 @@ export class BOLWorkflowService {
         adjustments: adjustments || {},
         generatedAt: new Date().toISOString(),
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-        status: 'sent'
+        status: 'sent',
       };
 
       // Store invoice (in production, this would go to a database)
-      console.log(`📄 Generated Invoice: ${invoiceId}`);
-      console.log(`💰 Amount: $${totalAmount.toLocaleString()}`);
+      console.info(`📄 Generated Invoice: ${invoiceId}`);
+      console.info(`💰 Amount: $${totalAmount.toLocaleString()}`);
 
       // Send invoice to vendor via EMAIL ONLY
       await this.sendInvoiceToVendor(submission, invoice);
@@ -287,14 +318,13 @@ export class BOLWorkflowService {
         success: true,
         invoiceId,
         amount: totalAmount,
-        invoiceUrl
+        invoiceUrl,
       };
-
     } catch (error) {
       console.error('Invoice generation failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -302,9 +332,12 @@ export class BOLWorkflowService {
   /**
    * Send professional invoice email to vendor/shipper
    */
-  private static async sendInvoiceToVendor(submission: BOLSubmission, invoice: any): Promise<void> {
+  private static async sendInvoiceToVendor(
+    submission: BOLSubmission,
+    invoice: any
+  ): Promise<void> {
     const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-    
+
     const vendorNotification: BOLWorkflowNotification = {
       id: notificationId,
       bolSubmissionId: submission.id,
@@ -315,13 +348,17 @@ export class BOLWorkflowService {
       recipientEmail: submission.shipperEmail,
       message: this.generateProfessionalInvoiceEmail(submission, invoice),
       sentAt: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending',
     };
 
     this.notifications.push(vendorNotification);
 
     // Send EMAIL-ONLY notification to vendor
-    await this.sendVendorEmailNotification(vendorNotification, submission, invoice);
+    await this.sendVendorEmailNotification(
+      vendorNotification,
+      submission,
+      invoice
+    );
   }
 
   /**
@@ -346,34 +383,37 @@ export class BOLWorkflowService {
             destination: 'Vendor Email',
             rate: `$${invoice.amount}`,
             pickupDate: submission.bolData.deliveryDate,
-            equipment: 'Professional Invoice'
+            equipment: 'Professional Invoice',
           },
-          recipients: [{
-            id: notification.recipientId,
-            email: notification.recipientEmail,
-            name: notification.recipientName,
-            type: 'shipper'
-          }],
+          recipients: [
+            {
+              id: notification.recipientId,
+              email: notification.recipientEmail,
+              name: notification.recipientName,
+              type: 'shipper',
+            },
+          ],
           notificationType: 'email', // EMAIL-ONLY for vendor invoices
           messageTemplate: 'custom',
           customMessage: notification.message,
-          urgency: 'normal'
+          urgency: 'normal',
         }),
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         notification.status = 'sent';
-        console.log(`📧 Professional invoice EMAIL sent to vendor: ${notification.recipientName}`);
-        console.log(`📧 Email address: ${notification.recipientEmail}`);
-        console.log(`�� Invoice amount: $${invoice.amount.toLocaleString()}`);
-        console.log(`📄 Invoice ID: ${invoice.invoiceId}`);
+        console.info(
+          `📧 Professional invoice EMAIL sent to vendor: ${notification.recipientName}`
+        );
+        console.info(`📧 Email address: ${notification.recipientEmail}`);
+        console.info(`�� Invoice amount: $${invoice.amount.toLocaleString()}`);
+        console.info(`📄 Invoice ID: ${invoice.invoiceId}`);
       } else {
         notification.status = 'failed';
         console.error(`❌ Invoice email failed: ${result.error}`);
       }
-
     } catch (error) {
       notification.status = 'failed';
       console.error('Invoice email sending error:', error);
@@ -384,7 +424,9 @@ export class BOLWorkflowService {
    * Send notification using existing notification system
    * Uses SMS+Email for brokers, Email-only for vendors
    */
-  private static async sendNotification(notification: BOLWorkflowNotification): Promise<void> {
+  private static async sendNotification(
+    notification: BOLWorkflowNotification
+  ): Promise<void> {
     try {
       // Use existing notification API
       const response = await fetch('/api/notifications/send', {
@@ -399,33 +441,38 @@ export class BOLWorkflowService {
             destination: 'System',
             rate: '$0',
             pickupDate: new Date().toLocaleDateString(),
-            equipment: 'BOL Processing'
+            equipment: 'BOL Processing',
           },
-          recipients: [{
-            id: notification.recipientId,
-            phone: notification.recipientPhone,
-            email: notification.recipientEmail,
-            name: notification.recipientName,
-            type: notification.recipientType
-          }],
+          recipients: [
+            {
+              id: notification.recipientId,
+              phone: notification.recipientPhone,
+              email: notification.recipientEmail,
+              name: notification.recipientName,
+              type: notification.recipientType,
+            },
+          ],
           // Email-only for shippers/vendors, both SMS+Email for brokers
-          notificationType: notification.recipientType === 'shipper' ? 'email' : 'both',
+          notificationType:
+            notification.recipientType === 'shipper' ? 'email' : 'both',
           messageTemplate: 'custom',
           customMessage: notification.message,
-          urgency: notification.type === 'broker_review_request' ? 'high' : 'normal'
+          urgency:
+            notification.type === 'broker_review_request' ? 'high' : 'normal',
         }),
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         notification.status = 'sent';
-        console.log(`📧 Notification sent: ${notification.type} to ${notification.recipientName}`);
+        console.info(
+          `📧 Notification sent: ${notification.type} to ${notification.recipientName}`
+        );
       } else {
         notification.status = 'failed';
         console.error(`❌ Notification failed: ${result.error}`);
       }
-
     } catch (error) {
       notification.status = 'failed';
       console.error('Notification sending error:', error);
@@ -435,7 +482,9 @@ export class BOLWorkflowService {
   /**
    * Generate broker review message (SMS + Email)
    */
-  private static generateBrokerReviewMessage(submission: BOLSubmission): string {
+  private static generateBrokerReviewMessage(
+    submission: BOLSubmission
+  ): string {
     return `🚛 BOL REVIEW REQUIRED
 
 📋 Load: ${submission.loadIdentifierId}
@@ -455,7 +504,10 @@ BOL ID: ${submission.id}`;
   /**
    * Generate professional invoice email for vendor
    */
-  private static generateProfessionalInvoiceEmail(submission: BOLSubmission, invoice: any): string {
+  private static generateProfessionalInvoiceEmail(
+    submission: BOLSubmission,
+    invoice: any
+  ): string {
     return `Dear ${submission.shipperName} Accounts Payable,
 
 Your shipment has been successfully delivered and is ready for payment processing.
@@ -481,16 +533,32 @@ Amount Due: $${invoice.amount.toLocaleString()}
 Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}
 Payment Terms: Net 30 Days
 
-${invoice.baseRate !== invoice.amount ? `
+${
+  invoice.baseRate !== invoice.amount
+    ? `
 RATE BREAKDOWN:
 Base Rate: $${invoice.baseRate.toLocaleString()}
-${invoice.adjustments?.additionalCharges?.map((charge: any) => 
-  `${charge.description}: +$${charge.amount.toLocaleString()}`).join('\n') || ''}
-${invoice.adjustments?.deductions?.map((deduction: any) => 
-  `${deduction.description}: -$${deduction.amount.toLocaleString()}`).join('\n') || ''}
+${
+  invoice.adjustments?.additionalCharges
+    ?.map(
+      (charge: any) =>
+        `${charge.description}: +$${charge.amount.toLocaleString()}`
+    )
+    .join('\n') || ''
+}
+${
+  invoice.adjustments?.deductions
+    ?.map(
+      (deduction: any) =>
+        `${deduction.description}: -$${deduction.amount.toLocaleString()}`
+    )
+    .join('\n') || ''
+}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Total Amount: $${invoice.amount.toLocaleString()}
-` : ''}
+`
+    : ''
+}
 
 REMIT PAYMENT TO:
 FleetFlow Transportation Services
@@ -509,9 +577,12 @@ Professional Freight & Logistics Solutions`;
   /**
    * Notify driver of BOL rejection
    */
-  private static async notifyDriverOfRejection(submission: BOLSubmission, reason: string): Promise<void> {
+  private static async notifyDriverOfRejection(
+    submission: BOLSubmission,
+    reason: string
+  ): Promise<void> {
     const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-    
+
     const driverNotification: BOLWorkflowNotification = {
       id: notificationId,
       bolSubmissionId: submission.id,
@@ -522,7 +593,7 @@ Professional Freight & Logistics Solutions`;
       recipientPhone: this.getDriverPhone(submission.driverId),
       message: `❌ BOL REJECTED - Load ${submission.loadIdentifierId}\n\nReason: ${reason}\n\nPlease contact dispatch for next steps.`,
       sentAt: new Date().toISOString(),
-      status: 'pending'
+      status: 'pending',
     };
 
     this.notifications.push(driverNotification);
@@ -540,7 +611,9 @@ Professional Freight & Logistics Solutions`;
    * Get all submissions for a broker
    */
   static getBrokerSubmissions(brokerId: string): BOLSubmission[] {
-    return Array.from(this.submissions.values()).filter(sub => sub.brokerId === brokerId);
+    return Array.from(this.submissions.values()).filter(
+      (sub) => sub.brokerId === brokerId
+    );
   }
 
   /**

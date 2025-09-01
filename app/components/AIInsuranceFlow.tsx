@@ -874,7 +874,7 @@ export default function AIInsuranceFlow() {
                     color: 'rgba(255, 255, 255, 0.5)',
                   }}
                 >
-                  Click "Discover Partners" to find new partnership
+                  Click ""Discover Partners"" to find new partnership
                   opportunities using AI analysis
                 </div>
               )}

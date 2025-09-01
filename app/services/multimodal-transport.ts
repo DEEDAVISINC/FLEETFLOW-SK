@@ -1474,7 +1474,7 @@ export class MultimodalTransportService {
   ): Promise<void> {
     // Initialize tracking based on transport modes
     // This would integrate with various carrier tracking systems
-    console.log(
+    console.info(
       `Initializing tracking for shipment ${shipment.id} with ${shipment.segments.length} segments`
     );
   }
@@ -1486,4 +1486,3 @@ export class MultimodalTransportService {
     return null; // Placeholder
   }
 }
-

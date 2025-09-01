@@ -245,7 +245,7 @@ export async function POST(request: NextRequest) {
     }
 
     // AI-powered lead generation simulation
-    console.log('🤖 AI Lead Generation Started:', {
+    console.info('🤖 AI Lead Generation Started:', {
       strategy: requestData.strategy,
       count: requestData.count,
       timestamp: new Date().toISOString(),
@@ -412,7 +412,7 @@ export async function POST(request: NextRequest) {
               : 0.12),
     };
 
-    console.log('✅ AI Lead Generation Completed:', {
+    console.info('✅ AI Lead Generation Completed:', {
       strategy: requestData.strategy,
       leadsGenerated: leads.length,
       avgScore: strategyMetrics.avgLeadScore,

@@ -180,7 +180,7 @@ export default function DispatchTaskPrioritizationPanel() {
         },
       };
 
-      console.log(
+      console.info(
         '🎯 Starting task prioritization request...',
         prioritizationRequest
       );
@@ -197,7 +197,7 @@ export default function DispatchTaskPrioritizationPanel() {
         }
       );
 
-      console.log('🎯 API Response status:', prioritizeResponse.status);
+      console.info('🎯 API Response status:', prioritizeResponse.status);
 
       if (!prioritizeResponse.ok) {
         const errorText = await prioritizeResponse.text();
@@ -208,7 +208,7 @@ export default function DispatchTaskPrioritizationPanel() {
       }
 
       const prioritizeData = await prioritizeResponse.json();
-      console.log('🎯 API Response data:', prioritizeData);
+      console.info('🎯 API Response data:', prioritizeData);
 
       if (prioritizeData.success) {
         // Enhance with dispatch-specific metrics and fix data structure
@@ -273,7 +273,7 @@ export default function DispatchTaskPrioritizationPanel() {
             prioritizeData.data.lastUpdated || new Date().toISOString(),
         };
         setPrioritizedTasks(enhancedData);
-        console.log(
+        console.info(
           '🎯 Task prioritization completed successfully!',
           enhancedData
         );
@@ -322,7 +322,7 @@ export default function DispatchTaskPrioritizationPanel() {
 
       setPrioritizedTasks(fallbackData);
       setError(null); // Clear error since we have fallback data
-      console.log('🎯 Using fallback task prioritization data');
+      console.info('🎯 Using fallback task prioritization data');
     } finally {
       setLoading(false);
     }

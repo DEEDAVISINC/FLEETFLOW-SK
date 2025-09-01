@@ -82,21 +82,21 @@ const VendorManagementPage: React.FC = () => {
   // Real vendor data integration - restored to call API
   useEffect(() => {
     const fetchVendorMetrics = async () => {
-      console.log('🔄 Starting vendor data fetch...');
+      console.info('🔄 Starting vendor data fetch...');
       try {
         setLoading(true);
-        console.log('📡 Fetching from /api/vendor-management...');
+        console.info('📡 Fetching from /api/vendor-management...');
 
         // Fetch real vendor data from API
         const response = await fetch('/api/vendor-management');
-        console.log('📦 Response status:', response.status);
+        console.info('📦 Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch vendor data: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('✅ Data received:', data);
+        console.info('✅ Data received:', data);
 
         // Map API data to component structure - RESTORED FUNCTIONALITY
         setVendorMetrics({
@@ -125,7 +125,7 @@ const VendorManagementPage: React.FC = () => {
             recentWorkflows: data.contractWorkflows?.recentWorkflows || [],
           },
         });
-        console.log('✅ State updated successfully');
+        console.info('✅ State updated successfully');
       } catch (error) {
         console.error('❌ Error fetching vendor metrics:', error);
         // Fallback to empty state if API fails
@@ -152,7 +152,7 @@ const VendorManagementPage: React.FC = () => {
           },
         });
       } finally {
-        console.log('🔄 Setting loading to false...');
+        console.info('🔄 Setting loading to false...');
         setLoading(false);
       }
     };

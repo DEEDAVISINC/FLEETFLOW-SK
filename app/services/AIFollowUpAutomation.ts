@@ -90,7 +90,7 @@ export class AIFollowUpAutomation {
   private constructor() {
     this.initializeDefaultRules();
     this.startProcessing();
-    console.log('🤖 AI Follow-Up Automation Service initialized');
+    console.info('🤖 AI Follow-Up Automation Service initialized');
   }
 
   public static getInstance(): AIFollowUpAutomation {
@@ -387,7 +387,7 @@ export class AIFollowUpAutomation {
     customerType?: string;
     industry?: string;
   }): Promise<void> {
-    console.log(
+    console.info(
       `🔄 Processing call outcome: ${callData.outcome} for ${callData.contactName}`
     );
 
@@ -400,13 +400,13 @@ export class AIFollowUpAutomation {
       .sort((a, b) => a.priority - b.priority);
 
     if (matchingRules.length === 0) {
-      console.log(`No follow-up rules match outcome: ${callData.outcome}`);
+      console.info(`No follow-up rules match outcome: ${callData.outcome}`);
       return;
     }
 
     // Use the highest priority rule
     const rule = matchingRules[0];
-    console.log(`📋 Applying follow-up rule: ${rule.name}`);
+    console.info(`📋 Applying follow-up rule: ${rule.name}`);
 
     // Schedule all actions for this rule
     for (const action of rule.actions) {
@@ -447,7 +447,7 @@ export class AIFollowUpAutomation {
     };
 
     this.scheduledFollowUps.set(followUp.id, followUp);
-    console.log(
+    console.info(
       `⏰ Scheduled ${action.type} follow-up for ${callData.contactName} at ${scheduledTime.toLocaleString()}`
     );
   }
@@ -461,7 +461,7 @@ export class AIFollowUpAutomation {
       this.processScheduledFollowUps();
     }, 60000);
 
-    console.log('⚡ Follow-up processing started - checking every minute');
+    console.info('⚡ Follow-up processing started - checking every minute');
   }
 
   /**
@@ -488,7 +488,7 @@ export class AIFollowUpAutomation {
    * Execute a specific follow-up action
    */
   private async executeFollowUp(followUp: ScheduledFollowUp): Promise<void> {
-    console.log(
+    console.info(
       `📬 Executing ${followUp.action.type} follow-up for ${followUp.contactName}`
     );
 
@@ -515,7 +515,7 @@ export class AIFollowUpAutomation {
       }
 
       followUp.status = 'sent';
-      console.log(
+      console.info(
         `✅ Follow-up ${followUp.action.type} sent to ${followUp.contactName}`
       );
     } catch (error) {
@@ -546,7 +546,7 @@ export class AIFollowUpAutomation {
     );
 
     // In production, this would integrate with actual email service
-    console.log(`📧 Email sent to ${followUp.contactName}:`, {
+    console.info(`📧 Email sent to ${followUp.contactName}:`, {
       subject: followUp.action.content.subject,
       content: emailContent,
     });
@@ -572,7 +572,7 @@ export class AIFollowUpAutomation {
     );
 
     // In production, this would integrate with Twilio
-    console.log(`📱 SMS sent to ${followUp.contactName}: ${smsContent}`);
+    console.info(`📱 SMS sent to ${followUp.contactName}: ${smsContent}`);
   }
 
   /**
@@ -592,7 +592,7 @@ export class AIFollowUpAutomation {
         'Scheduled follow-up call',
     });
 
-    console.log(`📞 Follow-up call scheduled for ${followUp.contactName}`);
+    console.info(`📞 Follow-up call scheduled for ${followUp.contactName}`);
   }
 
   /**
@@ -606,7 +606,7 @@ export class AIFollowUpAutomation {
       followUp
     );
 
-    console.log(`✅ Task created for ${followUp.contactName}: ${taskContent}`);
+    console.info(`✅ Task created for ${followUp.contactName}: ${taskContent}`);
   }
 
   /**
@@ -620,7 +620,7 @@ export class AIFollowUpAutomation {
       nextFollowUpDate: followUp.action.content.personalization?.follow_up_date,
     });
 
-    console.log(`📊 CRM updated for ${followUp.contactName}`);
+    console.info(`📊 CRM updated for ${followUp.contactName}`);
   }
 
   /**

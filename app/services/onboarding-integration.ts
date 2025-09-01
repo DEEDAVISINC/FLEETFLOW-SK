@@ -290,7 +290,7 @@ export class OnboardingIntegrationService {
     return (
       ServiceErrorHandler.handleAsyncOperation(
         async () => {
-          // console.log(`🤖 Initiating AI carrier onboarding for: ${aiData.prePopulatedData.carrierInfo.companyName}`);
+          // console.info(`🤖 Initiating AI carrier onboarding for: ${aiData.prePopulatedData.carrierInfo.companyName}`);
 
           // Create onboarding record with AI pre-populated data
           const onboardingRecord: OnboardingRecord = {
@@ -368,7 +368,7 @@ export class OnboardingIntegrationService {
 
             if (standardResult.success) {
               // Additional AI-specific completion steps
-              // console.log(
+              // console.info(
               //   `🤖 Completing AI-initiated onboarding for: ${standardResult.carrierProfile.companyInfo.legalName}`
               // );
 
@@ -563,10 +563,10 @@ export class OnboardingIntegrationService {
     driverProfiles: DriverPortalProfile[]
   ): Promise<void> {
     // In a real implementation, this would send emails/SMS
-    // console.log(
+    // console.info(
     //   `Welcome notifications sent to carrier ${carrierProfile.companyInfo.legalName}`
     // );
-    // console.log(
+    // console.info(
     //   `Welcome notifications sent to ${driverProfiles.length} drivers`
     // );
   }

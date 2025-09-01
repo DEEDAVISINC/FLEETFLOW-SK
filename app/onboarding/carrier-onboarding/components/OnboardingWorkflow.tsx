@@ -185,12 +185,12 @@ export const OnboardingWorkflow: React.FC<OnboardingWorkflowProps> = ({
         await onboardingIntegration.completeOnboarding(onboardingRecord);
 
       if (integrationResult.success) {
-        console.log('✅ Integration successful:', integrationResult.message);
-        console.log(
+        console.info('✅ Integration successful:', integrationResult.message);
+        console.info(
           '📋 Carrier Profile Created:',
           integrationResult.carrierProfile
         );
-        console.log(
+        console.info(
           '👥 Driver Profiles Created:',
           integrationResult.driverProfiles
         );

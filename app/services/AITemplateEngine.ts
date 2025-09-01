@@ -561,7 +561,7 @@ export class AITemplateEngine {
     template: AITemplate
   ): Promise<void> {
     // This would save to PostgreSQL database
-    console.log(`Saving template ${template.id} to database`);
+    console.info(`Saving template ${template.id} to database`);
   }
 
   /**
@@ -571,7 +571,7 @@ export class AITemplateEngine {
     templateId: string
   ): Promise<AITemplate | null> {
     // This would load from PostgreSQL database
-    console.log(`Loading template ${templateId} from database`);
+    console.info(`Loading template ${templateId} from database`);
     return null;
   }
 }

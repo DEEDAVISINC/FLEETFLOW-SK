@@ -521,7 +521,7 @@ export class CommunicationService {
   private async checkRateLimit(tenantId: string, type: string): Promise<void> {
     // Implementation would check database rate limits
     // For now, just log the check
-    console.log(`Checking rate limit for tenant ${tenantId}, type ${type}`);
+    console.info(`Checking rate limit for tenant ${tenantId}, type ${type}`);
   }
 
   private async recordUsage(
@@ -530,7 +530,7 @@ export class CommunicationService {
     count: number
   ): Promise<void> {
     // Implementation would record usage in database
-    console.log(`Recording usage for tenant ${tenantId}: ${count} ${type}(s)`);
+    console.info(`Recording usage for tenant ${tenantId}: ${count} ${type}(s)`);
   }
 
   private async logCommunication(logData: {
@@ -546,7 +546,7 @@ export class CommunicationService {
     timestamp: Date;
   }): Promise<void> {
     // Implementation would log to conversation_logs table
-    console.log('Logging communication:', logData);
+    console.info('Logging communication:', logData);
   }
 
   private calculateEmailCost(recipientCount: number): number {
@@ -577,7 +577,7 @@ export class CommunicationService {
     limit: number = 50
   ): Promise<any[]> {
     // Implementation would query conversation_logs table
-    console.log(`Getting communication history for tenant ${tenantId}`);
+    console.info(`Getting communication history for tenant ${tenantId}`);
     return [];
   }
 
@@ -596,7 +596,7 @@ export class CommunicationService {
     successRate: number;
   }> {
     // Implementation would aggregate from conversation_logs table
-    console.log(`Getting communication stats for tenant ${tenantId}`);
+    console.info(`Getting communication stats for tenant ${tenantId}`);
 
     return {
       totalEmails: 0,

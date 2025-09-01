@@ -110,7 +110,7 @@ export class UserCreationTriggerService {
     };
 
     try {
-      console.log(`🔄 User creation trigger fired for: ${event.userData.email} (${event.userData.role})`);
+      console.info(`🔄 User creation trigger fired for: ${event.userData.email} (${event.userData.role})`);
 
       // Check if trigger is enabled
       if (!this.config.enabled) {
@@ -119,7 +119,7 @@ export class UserCreationTriggerService {
 
       // Check if user role requires contractor onboarding
       if (!this.shouldTriggerOnboarding(event.userData.role)) {
-        console.log(`⏭️ Skipping onboarding for role: ${event.userData.role}`);
+        console.info(`⏭️ Skipping onboarding for role: ${event.userData.role}`);
         logEntry.success = true;
         logEntry.metadata.skipped = true;
         logEntry.metadata.reason = 'Role does not require contractor onboarding';
@@ -147,8 +147,8 @@ export class UserCreationTriggerService {
       // Send notifications
       await this.sendNotifications(event, workflowSession);
 
-      console.log(`✅ Contractor onboarding triggered successfully for: ${event.userData.email}`);
-      console.log(`📋 Workflow session ID: ${workflowSession.id}`);
+      console.info(`✅ Contractor onboarding triggered successfully for: ${event.userData.email}`);
+      console.info(`📋 Workflow session ID: ${workflowSession.id}`);
 
     } catch (error: any) {
       console.error(`❌ Failed to trigger contractor onboarding for: ${event.userData.email}`, error);
@@ -184,7 +184,7 @@ export class UserCreationTriggerService {
     };
 
     try {
-      console.log(`🔄 Manual trigger fired for user: ${userId} by: ${triggeredBy}`);
+      console.info(`🔄 Manual trigger fired for user: ${userId} by: ${triggeredBy}`);
 
       // Get user data (this would typically come from a database)
       const userData = await this.getUserData(userId);
@@ -215,7 +215,7 @@ export class UserCreationTriggerService {
       // Send notifications
       await this.sendNotifications(event, workflowSession);
 
-      console.log(`✅ Manual contractor onboarding triggered for: ${userData.email}`);
+      console.info(`✅ Manual contractor onboarding triggered for: ${userData.email}`);
 
     } catch (error: any) {
       console.error(`❌ Manual trigger failed for user: ${userId}`, error);
@@ -276,7 +276,7 @@ export class UserCreationTriggerService {
    */
   private static async requestApproval(workflowTrigger: ContractorWorkflowTrigger): Promise<void> {
     // This would send approval request to administrators
-    console.log(`📋 Approval requested for contractor onboarding: ${workflowTrigger.userData.email}`);
+    console.info(`📋 Approval requested for contractor onboarding: ${workflowTrigger.userData.email}`);
     
     // In a real implementation, this would:
     // 1. Create an approval request record
@@ -331,7 +331,7 @@ export class UserCreationTriggerService {
       FleetFlow Transportation Team
     `;
 
-    console.log(`📧 User notification sent to: ${userData.email}`);
+    console.info(`📧 User notification sent to: ${userData.email}`);
     // In a real implementation, this would send actual email
   }
 
@@ -356,7 +356,7 @@ export class UserCreationTriggerService {
       Monitor progress in the admin panel.
     `;
 
-    console.log(`📧 Admin notification sent for: ${userData.email}`);
+    console.info(`📧 Admin notification sent for: ${userData.email}`);
     // In a real implementation, this would send to admin users
   }
 
@@ -377,7 +377,7 @@ export class UserCreationTriggerService {
       Workflow ID: ${workflowSession.id}
     `;
 
-    console.log(`📧 HR notification sent for: ${userData.email}`);
+    console.info(`📧 HR notification sent for: ${userData.email}`);
     // In a real implementation, this would send to HR users
   }
 
@@ -424,7 +424,7 @@ export class UserCreationTriggerService {
    */
   static updateConfiguration(newConfig: Partial<TriggerConfiguration>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('🔧 Trigger configuration updated:', this.config);
+    console.info('🔧 Trigger configuration updated:', this.config);
   }
 
   /**
@@ -490,7 +490,7 @@ export class UserCreationTriggerService {
    */
   static setEnabled(enabled: boolean): void {
     this.config.enabled = enabled;
-    console.log(`🔧 Trigger system ${enabled ? 'enabled' : 'disabled'}`);
+    console.info(`🔧 Trigger system ${enabled ? 'enabled' : 'disabled'}`);
   }
 
   /**

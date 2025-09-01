@@ -864,7 +864,7 @@ export class PrivacyComplianceService {
     tenantId?: string
   ): void {
     // Implement processing restriction logic
-    console.log(`Processing restricted for ${dataSubjectId}: ${reason}`);
+    console.info(`Processing restricted for ${dataSubjectId}: ${reason}`);
   }
 
   private sendAcknowledgmentEmail(request: DataSubjectRequest): void {

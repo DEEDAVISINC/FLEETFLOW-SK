@@ -1387,7 +1387,7 @@ export default function SchedulingDashboard() {
                       <button
                         onClick={() => {
                           const today = new Date().toISOString().split('T')[0];
-                          const csv = `Schedule ID,Title,Status,Priority,Driver,Start Time,End Time,Route\n${schedules.map((s) => `${s.id},"${s.title}",${s.status},${s.priority},"${s.driverName}",${s.startTime},${s.endTime},"${s.origin} → ${s.destination}"`).join('\n')}`;
+                          const csv = `Schedule ID,Title,Status,Priority,Driver,Start Time,End Time,Route\n${schedules.map((s) => `${s.id},""${s.title}"",${s.status},${s.priority},""${s.driverName}"",${s.startTime},${s.endTime},""${s.origin} → ${s.destination}""`).join('\n')}`;
                           const blob = new Blob([csv], { type: 'text/csv' });
                           const url = URL.createObjectURL(blob);
                           const a = document.createElement('a');
@@ -2746,11 +2746,11 @@ export default function SchedulingDashboard() {
                 </p>
                 <AILoadOptimizationPanel
                   onOptimizationComplete={(result) => {
-                    console.log('Schedule optimization completed:', result);
+                    console.info('Schedule optimization completed:', result);
                     // Could integrate with schedule creation here
                   }}
                   onAssignmentSelected={(assignment) => {
-                    console.log('Schedule assignment selected:', assignment);
+                    console.info('Schedule assignment selected:', assignment);
                     // Could auto-create schedules from optimized assignments
                   }}
                 />
@@ -2793,7 +2793,7 @@ export default function SchedulingDashboard() {
                     },
                   }}
                   onRouteOptimized={(route) => {
-                    console.log('Route optimized:', route);
+                    console.info('Route optimized:', route);
                     // Here you would integrate with the scheduling system
                     // to create actual schedules from the optimized route
                   }}

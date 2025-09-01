@@ -189,10 +189,10 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
             Title *
           </label>
           <input
-            type="text"
+            type="text""
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter note title..."
+            placeholder="Enter note title...""
             style={{
               width: '100%',
               padding: '10px',
@@ -215,7 +215,7 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Enter note content..."
+            placeholder="Enter note content...""
             rows={4}
             style={{
               width: '100%',
@@ -254,10 +254,10 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
                 fontSize: '1rem'
               }}
             >
-              <option value="low">Low</option>
-              <option value="normal">Normal</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
+              <option value="low"">Low</option>
+              <option value="normal"">Normal</option>
+              <option value="high"">High</option>
+              <option value="urgent"">Urgent</option>
             </select>
           </div>
 
@@ -270,7 +270,7 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
               cursor: 'pointer'
             }}>
               <input
-                type="checkbox"
+                type="checkbox""
                 checked={isPrivate}
                 onChange={(e) => setIsPrivate(e.target.checked)}
                 style={{ transform: 'scale(1.2)' }}
@@ -297,10 +297,10 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
             marginBottom: '8px'
           }}>
             <input
-              type="text"
+              type="text""
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
-              placeholder="Add tag..."
+              placeholder="Add tag...""
               style={{
                 flex: 1,
                 padding: '8px',
@@ -450,7 +450,7 @@ export default function ContextMenu({ x, y, onClose, subjectId, subjectType, sub
 
   const handleSaveNote = (noteData: Partial<Note>) => {
     // In a real app, this would save to database
-    console.log('Saving note:', noteData)
+    console.info('Saving note:', noteData)
     // Here you would typically call an API to save the note
     // For now, we'll just log it and close the modal
     setShowNoteModal(false)
@@ -459,7 +459,7 @@ export default function ContextMenu({ x, y, onClose, subjectId, subjectType, sub
   const handleDeleteNote = (noteId: string) => {
     if (confirm('Are you sure you want to delete this note?')) {
       // In a real app, this would delete from database
-      console.log('Deleting note:', noteId)
+      console.info('Deleting note:', noteId)
     }
   }
 

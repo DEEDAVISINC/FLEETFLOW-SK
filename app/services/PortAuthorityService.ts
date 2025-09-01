@@ -192,7 +192,7 @@ export class PortAuthorityService {
 
   constructor() {
     this.noadService = new NOADService();
-    console.log(
+    console.info(
       '🚢 Enhanced Port Authority Maritime Intelligence Service initialized with NOAD integration'
     );
   }

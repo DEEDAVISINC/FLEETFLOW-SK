@@ -232,7 +232,7 @@ export default function DispatchCentral() {
           };
         }
       } catch (error) {
-        console.log('No workflow found for load', load.id);
+        console.info('No workflow found for load', load.id);
       }
     }
 
@@ -344,7 +344,7 @@ export default function DispatchCentral() {
             });
 
           if (integrationResult.success) {
-            console.log(
+            console.info(
               '✅ Load assignment integrated with schedule management'
             );
             if (

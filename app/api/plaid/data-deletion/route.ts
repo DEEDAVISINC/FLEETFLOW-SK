@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        console.log(
+        console.info(
           `🗑️ Processing Plaid data deletion request for user: ${user_id}`
         );
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
           request_id: deletionRecord.request_id,
         };
 
-        console.log(`✅ Plaid data deletion completed for user ${user_id}`);
+        console.info(`✅ Plaid data deletion completed for user ${user_id}`);
 
         return NextResponse.json(response);
       },
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest) {
         const userId = searchParams.get('user_id');
         const tenantId = searchParams.get('tenant_id');
 
-        console.log(
+        console.info(
           `📊 Checking deletion status for user: ${userId || 'all users'}`
         );
 

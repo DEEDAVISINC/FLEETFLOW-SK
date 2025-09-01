@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
+import { useEffect, useState } from 'react';
 import { useLoad } from '../contexts/LoadContext';
 
 interface BOLInfo {
@@ -11,7 +11,7 @@ interface BOLInfo {
   loadNumber: string;
   billDate: string;
   pageNumber: string;
-  
+
   // Shipper Information
   shipperName: string;
   shipperAddress: string;
@@ -22,7 +22,7 @@ interface BOLInfo {
   shipperEmail: string;
   shipperContact: string;
   shipperFax: string;
-  
+
   // Consignee Information
   consigneeName: string;
   consigneeAddress: string;
@@ -33,7 +33,7 @@ interface BOLInfo {
   consigneeEmail: string;
   consigneeContact: string;
   consigneeFax: string;
-  
+
   // Third Party/Bill To Information
   billToName: string;
   billToAddress: string;
@@ -41,7 +41,7 @@ interface BOLInfo {
   billToState: string;
   billToZip: string;
   billToPhone: string;
-  
+
   // Carrier Information
   carrierName: string;
   carrierAddress: string;
@@ -52,13 +52,13 @@ interface BOLInfo {
   carrierDOT: string;
   carrierPhone: string;
   carrierSCAC: string;
-  
+
   // Driver Information
   driverName: string;
   driverLicense: string;
   driverPhone: string;
   driverSignature: string;
-  
+
   // Equipment Information
   trailerNumber: string;
   truckNumber: string;
@@ -66,21 +66,21 @@ interface BOLInfo {
   equipmentType: string;
   equipmentLength: string;
   equipmentOwner: string;
-  
+
   // Shipment Information
   shipDate: string;
   deliveryDate: string;
   originTerminal: string;
   destinationTerminal: string;
   routeInstructions: string;
-  
+
   // Freight Information
   freightChargeTerms: string;
   freightCharges: number;
   advanceCharges: number;
   codAmount: number;
   codCharges: number;
-  
+
   // Commodity Information
   commodityDescription: string;
   commodityClass: string;
@@ -90,7 +90,7 @@ interface BOLInfo {
   commodityCharges: number;
   commodityValue: string;
   packageType: string;
-  
+
   // Hazmat Information
   hazmat: boolean;
   hazmatClass: string;
@@ -99,18 +99,18 @@ interface BOLInfo {
   hazmatProperName: string;
   hazmatContactName: string;
   hazmatContactPhone: string;
-  
+
   // Special Services
   appointmentDelivery: boolean;
   insideDelivery: boolean;
   liftgateService: boolean;
   residentialDelivery: boolean;
   sortAndSegregate: boolean;
-  
+
   // Terms and Conditions
   carrierInstructions: string;
   specialInstructions: string;
-  
+
   // Signatures
   shipperSignature: string;
   shipperDate: string;
@@ -120,13 +120,13 @@ interface BOLInfo {
   consigneeDate: string;
   driverDeliverySignature: string;
   driverDeliveryDate: string;
-  
+
   // Legal
   prepaid: boolean;
   collect: boolean;
   thirdParty: boolean;
   masterBill: boolean;
-  
+
   // Insurance
   declaredValue: string;
   cargoInsurance: boolean;
@@ -135,7 +135,7 @@ interface BOLInfo {
 
 export default function BillOfLading() {
   const { selectedLoad } = useLoad();
-  
+
   const [bolInfo, setBolInfo] = useState<BOLInfo>({
     // Document Information
     bolNumber: '',
@@ -143,7 +143,7 @@ export default function BillOfLading() {
     loadNumber: '',
     billDate: new Date().toISOString().split('T')[0],
     pageNumber: '1 of 1',
-    
+
     // Shipper Information
     shipperName: '',
     shipperAddress: '',
@@ -154,7 +154,7 @@ export default function BillOfLading() {
     shipperEmail: '',
     shipperContact: '',
     shipperFax: '',
-    
+
     // Consignee Information
     consigneeName: '',
     consigneeAddress: '',
@@ -165,7 +165,7 @@ export default function BillOfLading() {
     consigneeEmail: '',
     consigneeContact: '',
     consigneeFax: '',
-    
+
     // Third Party/Bill To Information
     billToName: '',
     billToAddress: '',
@@ -173,7 +173,7 @@ export default function BillOfLading() {
     billToState: '',
     billToZip: '',
     billToPhone: '',
-    
+
     // Carrier Information
     carrierName: '',
     carrierAddress: '',
@@ -184,13 +184,13 @@ export default function BillOfLading() {
     carrierDOT: '',
     carrierPhone: '',
     carrierSCAC: '',
-    
+
     // Driver Information
     driverName: '',
     driverLicense: '',
     driverPhone: '',
     driverSignature: '',
-    
+
     // Equipment Information
     trailerNumber: '',
     truckNumber: '',
@@ -198,21 +198,21 @@ export default function BillOfLading() {
     equipmentType: 'Dry Van',
     equipmentLength: '53',
     equipmentOwner: 'Carrier',
-    
+
     // Shipment Information
     shipDate: '',
     deliveryDate: '',
     originTerminal: '',
     destinationTerminal: '',
     routeInstructions: '',
-    
+
     // Freight Information
     freightChargeTerms: 'Prepaid',
     freightCharges: 0,
     advanceCharges: 0,
     codAmount: 0,
     codCharges: 0,
-    
+
     // Commodity Information
     commodityDescription: '',
     commodityClass: '',
@@ -222,7 +222,7 @@ export default function BillOfLading() {
     commodityCharges: 0,
     commodityValue: '',
     packageType: 'Pallets',
-    
+
     // Hazmat Information
     hazmat: false,
     hazmatClass: '',
@@ -231,18 +231,18 @@ export default function BillOfLading() {
     hazmatProperName: '',
     hazmatContactName: '',
     hazmatContactPhone: '',
-    
+
     // Special Services
     appointmentDelivery: false,
     insideDelivery: false,
     liftgateService: false,
     residentialDelivery: false,
     sortAndSegregate: false,
-    
+
     // Terms and Conditions
     carrierInstructions: '',
     specialInstructions: '',
-    
+
     // Signatures
     shipperSignature: '',
     shipperDate: '',
@@ -252,22 +252,22 @@ export default function BillOfLading() {
     consigneeDate: '',
     driverDeliverySignature: '',
     driverDeliveryDate: '',
-    
+
     // Legal
     prepaid: true,
     collect: false,
     thirdParty: false,
     masterBill: false,
-    
+
     // Insurance
     declaredValue: '',
     cargoInsurance: false,
-    insuranceAmount: ''
+    insuranceAmount: '',
   });
 
   useEffect(() => {
     if (selectedLoad) {
-      setBolInfo(prev => ({
+      setBolInfo((prev) => ({
         ...prev,
         bolNumber: `BOL-${selectedLoad.id}-${new Date().getFullYear()}`,
         proNumber: `PRO-${selectedLoad.id}`,
@@ -293,17 +293,19 @@ export default function BillOfLading() {
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
-      format: 'letter'
+      format: 'letter',
     });
-    
+
     const pageWidth = pdf.internal.pageSize.width;
     const pageHeight = pdf.internal.pageSize.height;
     let yPosition = 10;
-    
+
     // Header
     pdf.setFontSize(20);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('UNIFORM STRAIGHT BILL OF LADING', pageWidth / 2, yPosition, { align: 'center' });
+    pdf.text('UNIFORM STRAIGHT BILL OF LADING', pageWidth / 2, yPosition, {
+      align: 'center',
+    });
     yPosition += 8;
 
     // Document Info Header
@@ -326,7 +328,11 @@ export default function BillOfLading() {
     yPosition += 4;
     pdf.text(bolInfo.shipperAddress, 10, yPosition);
     yPosition += 4;
-    pdf.text(`${bolInfo.shipperCity}, ${bolInfo.shipperState} ${bolInfo.shipperZip}`, 10, yPosition);
+    pdf.text(
+      `${bolInfo.shipperCity}, ${bolInfo.shipperState} ${bolInfo.shipperZip}`,
+      10,
+      yPosition
+    );
     yPosition += 4;
     pdf.text(`Phone: ${bolInfo.shipperPhone}`, 10, yPosition);
     yPosition += 4;
@@ -344,7 +350,11 @@ export default function BillOfLading() {
     yPosition += 4;
     pdf.text(bolInfo.consigneeAddress, 110, yPosition);
     yPosition += 4;
-    pdf.text(`${bolInfo.consigneeCity}, ${bolInfo.consigneeState} ${bolInfo.consigneeZip}`, 110, yPosition);
+    pdf.text(
+      `${bolInfo.consigneeCity}, ${bolInfo.consigneeState} ${bolInfo.consigneeZip}`,
+      110,
+      yPosition
+    );
     yPosition += 4;
     pdf.text(`Phone: ${bolInfo.consigneePhone}`, 110, yPosition);
     yPosition += 4;
@@ -354,21 +364,25 @@ export default function BillOfLading() {
     // Third Party Bill To (if applicable)
     if (bolInfo.thirdParty) {
       pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
+      pdf.setFont('helvetica', 'bold');
       pdf.text('BILL TO (Third Party)', 10, yPosition);
       yPosition += 5;
       pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
+      pdf.setFont('helvetica', 'normal');
       pdf.text(bolInfo.billToName, 10, yPosition);
       yPosition += 4;
       pdf.text(bolInfo.billToAddress, 10, yPosition);
       yPosition += 4;
-      pdf.text(`${bolInfo.billToCity}, ${bolInfo.billToState} ${bolInfo.billToZip}`, 10, yPosition);
+      pdf.text(
+        `${bolInfo.billToCity}, ${bolInfo.billToState} ${bolInfo.billToZip}`,
+        10,
+        yPosition
+      );
       yPosition += 4;
       pdf.text(`Phone: ${bolInfo.billToPhone}`, 10, yPosition);
       yPosition += 8;
     }
-    
+
     // Carrier Information
     pdf.setFontSize(12);
     pdf.setFont('helvetica', 'bold');
@@ -380,9 +394,17 @@ export default function BillOfLading() {
     yPosition += 4;
     pdf.text(`Address: ${bolInfo.carrierAddress}`, 10, yPosition);
     yPosition += 4;
-    pdf.text(`${bolInfo.carrierCity}, ${bolInfo.carrierState} ${bolInfo.carrierZip}`, 10, yPosition);
+    pdf.text(
+      `${bolInfo.carrierCity}, ${bolInfo.carrierState} ${bolInfo.carrierZip}`,
+      10,
+      yPosition
+    );
     yPosition += 4;
-    pdf.text(`MC: ${bolInfo.carrierMC} | DOT: ${bolInfo.carrierDOT} | SCAC: ${bolInfo.carrierSCAC}`, 10, yPosition);
+    pdf.text(
+      `MC: ${bolInfo.carrierMC} | DOT: ${bolInfo.carrierDOT} | SCAC: ${bolInfo.carrierSCAC}`,
+      10,
+      yPosition
+    );
     yPosition += 8;
 
     // Equipment Information
@@ -392,11 +414,23 @@ export default function BillOfLading() {
     yPosition += 5;
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    pdf.text(`Driver: ${bolInfo.driverName} | License: ${bolInfo.driverLicense}`, 10, yPosition);
+    pdf.text(
+      `Driver: ${bolInfo.driverName} | License: ${bolInfo.driverLicense}`,
+      10,
+      yPosition
+    );
     yPosition += 4;
-    pdf.text(`Truck: ${bolInfo.truckNumber} | Trailer: ${bolInfo.trailerNumber}`, 10, yPosition);
+    pdf.text(
+      `Truck: ${bolInfo.truckNumber} | Trailer: ${bolInfo.trailerNumber}`,
+      10,
+      yPosition
+    );
     yPosition += 4;
-    pdf.text(`Equipment: ${bolInfo.equipmentType} ${bolInfo.equipmentLength}' | Seals: ${bolInfo.sealNumbers}`, 10, yPosition);
+    pdf.text(
+      `Equipment: ${bolInfo.equipmentType} ${bolInfo.equipmentLength}' | Seals: ${bolInfo.sealNumbers}`,
+      10,
+      yPosition
+    );
     yPosition += 8;
 
     // Commodity Description Table Header
@@ -438,13 +472,21 @@ export default function BillOfLading() {
       yPosition += 5;
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      pdf.text(`Class: ${bolInfo.hazmatClass} | ID: ${bolInfo.hazmatID}`, 10, yPosition);
+      pdf.text(
+        `Class: ${bolInfo.hazmatClass} | ID: ${bolInfo.hazmatID}`,
+        10,
+        yPosition
+      );
       yPosition += 4;
       pdf.text(`Proper Name: ${bolInfo.hazmatProperName}`, 10, yPosition);
       yPosition += 4;
       pdf.text(`Packing Group: ${bolInfo.hazmatPackingGroup}`, 10, yPosition);
       yPosition += 4;
-      pdf.text(`Emergency Contact: ${bolInfo.hazmatContactName} - ${bolInfo.hazmatContactPhone}`, 10, yPosition);
+      pdf.text(
+        `Emergency Contact: ${bolInfo.hazmatContactName} - ${bolInfo.hazmatContactPhone}`,
+        10,
+        yPosition
+      );
       yPosition += 8;
     }
 
@@ -455,14 +497,14 @@ export default function BillOfLading() {
     yPosition += 5;
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    
+
     const services = [];
     if (bolInfo.appointmentDelivery) services.push('Appointment Delivery');
     if (bolInfo.insideDelivery) services.push('Inside Delivery');
     if (bolInfo.liftgateService) services.push('Liftgate Service');
     if (bolInfo.residentialDelivery) services.push('Residential Delivery');
     if (bolInfo.sortAndSegregate) services.push('Sort & Segregate');
-    
+
     if (services.length > 0) {
       pdf.text(services.join(', '), 10, yPosition);
       yPosition += 4;
@@ -481,10 +523,18 @@ export default function BillOfLading() {
     pdf.setFont('helvetica', 'normal');
     pdf.text(`Terms: ${bolInfo.freightChargeTerms}`, 10, yPosition);
     yPosition += 4;
-    pdf.text(`Freight Charges: $${bolInfo.freightCharges.toFixed(2)}`, 10, yPosition);
+    pdf.text(
+      `Freight Charges: $${bolInfo.freightCharges.toFixed(2)}`,
+      10,
+      yPosition
+    );
     yPosition += 4;
     if (bolInfo.advanceCharges > 0) {
-      pdf.text(`Advance Charges: $${bolInfo.advanceCharges.toFixed(2)}`, 10, yPosition);
+      pdf.text(
+        `Advance Charges: $${bolInfo.advanceCharges.toFixed(2)}`,
+        10,
+        yPosition
+      );
       yPosition += 4;
     }
     if (bolInfo.codAmount > 0) {
@@ -492,7 +542,7 @@ export default function BillOfLading() {
       yPosition += 4;
     }
     yPosition += 4;
-    
+
     // Special Instructions
     if (bolInfo.specialInstructions) {
       pdf.setFontSize(12);
@@ -501,7 +551,10 @@ export default function BillOfLading() {
       yPosition += 5;
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'normal');
-      const instructions = pdf.splitTextToSize(bolInfo.specialInstructions, 180);
+      const instructions = pdf.splitTextToSize(
+        bolInfo.specialInstructions,
+        180
+      );
       pdf.text(instructions, 10, yPosition);
       yPosition += instructions.length * 4 + 4;
     }
@@ -519,7 +572,7 @@ export default function BillOfLading() {
     yPosition += 5;
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'normal');
-    
+
     const legalTerms = [
       'This contract is subject to the terms and conditions of the National Motor Freight Classification and applicable tariffs.',
       'The carrier shall not be liable for any loss or damage exceeding the declared value shown herein.',
@@ -527,10 +580,10 @@ export default function BillOfLading() {
       'The shipper certifies that the above-named materials are properly classified, described, packaged, marked, and labeled.',
       'If this shipment is to be delivered to the consignee without recourse on the consignor, the consignor shall sign the following statement: The carrier shall not make delivery of this shipment without payment of freight and all other lawful charges.',
       'Subject to Section 7 of conditions, if this shipment is to be delivered to the consignee without recourse on the consignor, the consignor shall sign the following statement: The carrier may deliver this shipment without obtaining payment of freight and all other lawful charges from the consignee.',
-      'Carrier acknowledges receipt of packages and contents unknown.'
+      'Carrier acknowledges receipt of packages and contents unknown.',
     ];
 
-    legalTerms.forEach(term => {
+    legalTerms.forEach((term) => {
       const splitText = pdf.splitTextToSize(term, 190);
       pdf.text(splitText, 10, yPosition);
       yPosition += splitText.length * 3.5;
@@ -550,13 +603,13 @@ export default function BillOfLading() {
     pdf.text('Date:', 10, yPosition + 10);
     pdf.text('_________________________', 60, yPosition);
     pdf.text('____________', 60, yPosition + 10);
-    
+
     // Driver Pickup Signature
     pdf.text('Driver Signature (Pickup):', 120, yPosition);
     pdf.text('Date:', 120, yPosition + 10);
     pdf.text('_________________________', 170, yPosition);
     pdf.text('____________', 170, yPosition + 10);
-    
+
     yPosition += 25;
 
     // Consignee Signature
@@ -564,7 +617,7 @@ export default function BillOfLading() {
     pdf.text('Date:', 10, yPosition + 10);
     pdf.text('_________________________', 60, yPosition);
     pdf.text('____________', 60, yPosition + 10);
-    
+
     // Driver Delivery Signature
     pdf.text('Driver Signature (Delivery):', 120, yPosition);
     pdf.text('Date:', 120, yPosition + 10);
@@ -574,10 +627,17 @@ export default function BillOfLading() {
     // Footer
     pdf.setFontSize(8);
     pdf.setFont('helvetica', 'normal');
-    pdf.text('This document was generated electronically by FleetFlow Logistics System', pageWidth / 2, pageHeight - 10, { align: 'center' });
-    
+    pdf.text(
+      'This document was generated electronically by FleetFlow Logistics System',
+      pageWidth / 2,
+      pageHeight - 10,
+      { align: 'center' }
+    );
+
     // Save the PDF
-    pdf.save(`Bill_of_Lading_${bolInfo.bolNumber}_${new Date().toISOString().split('T')[0]}.pdf`);
+    pdf.save(
+      `Bill_of_Lading_${bolInfo.bolNumber}_${new Date().toISOString().split('T')[0]}.pdf`
+    );
   };
 
   const inputStyle = {
@@ -588,7 +648,7 @@ export default function BillOfLading() {
     borderRadius: '8px',
     color: 'white',
     fontSize: '14px',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
   };
 
   const sectionStyle = {
@@ -596,755 +656,19 @@ export default function BillOfLading() {
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px',
-    border: '1px solid rgba(255, 255, 255, 0.1)'
+    border: '1px solid rgba(255, 255, 255, 0.1)',
   };
 
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '16px',
-    marginBottom: '16px'
+    marginBottom: '16px',
   };
 
   return (
-    <div style={{ color: 'white' }}>
-      {/* Document Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Document Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>BOL Number</label>
-            <input
-              type="text"
-              value={bolInfo.bolNumber}
-              onChange={(e) => setBolInfo({...bolInfo, bolNumber: e.target.value})}
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>PRO Number</label>
-            <input
-              type="text"
-              value={bolInfo.proNumber}
-              onChange={(e) => setBolInfo({...bolInfo, proNumber: e.target.value})}
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Load Number</label>
-            <input
-              type="text"
-              value={bolInfo.loadNumber}
-              onChange={(e) => setBolInfo({...bolInfo, loadNumber: e.target.value})}
-              style={inputStyle}
-            />
-              </div>
-              <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Bill Date</label>
-            <input
-              type="date"
-              value={bolInfo.billDate}
-              onChange={(e) => setBolInfo({...bolInfo, billDate: e.target.value})}
-              style={inputStyle}
-            />
-              </div>
-            </div>
-          </div>
-
-      {/* Shipper Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Shipper Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Company Name</label>
-            <input
-              type="text"
-              value={bolInfo.shipperName}
-              onChange={(e) => setBolInfo({...bolInfo, shipperName: e.target.value})}
-              style={inputStyle}
-            />
-              </div>
-              <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Contact Person</label>
-            <input
-              type="text"
-              value={bolInfo.shipperContact}
-              onChange={(e) => setBolInfo({...bolInfo, shipperContact: e.target.value})}
-              style={inputStyle}
-            />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Phone</label>
-            <input
-              type="text"
-              value={bolInfo.shipperPhone}
-              onChange={(e) => setBolInfo({...bolInfo, shipperPhone: e.target.value})}
-              style={inputStyle}
-            />
-            </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Email</label>
-            <input
-              type="email"
-              value={bolInfo.shipperEmail}
-              onChange={(e) => setBolInfo({...bolInfo, shipperEmail: e.target.value})}
-              style={inputStyle}
-            />
-          </div>
-      </div>
-        <div style={{ marginTop: '16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Address</label>
-                <input
-                  type="text"
-                value={bolInfo.shipperAddress}
-                onChange={(e) => setBolInfo({...bolInfo, shipperAddress: e.target.value})}
-                style={inputStyle}
-                />
-              </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>City</label>
-                <input
-                  type="text"
-                value={bolInfo.shipperCity}
-                onChange={(e) => setBolInfo({...bolInfo, shipperCity: e.target.value})}
-                style={inputStyle}
-                />
-              </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>State</label>
-                <input
-                type="text"
-                value={bolInfo.shipperState}
-                onChange={(e) => setBolInfo({...bolInfo, shipperState: e.target.value})}
-                style={inputStyle}
-                />
-              </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>ZIP</label>
-                <input
-                type="text"
-                value={bolInfo.shipperZip}
-                onChange={(e) => setBolInfo({...bolInfo, shipperZip: e.target.value})}
-                style={inputStyle}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-      {/* Consignee Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Consignee Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Company Name</label>
-              <input
-                type="text"
-              value={bolInfo.consigneeName}
-              onChange={(e) => setBolInfo({...bolInfo, consigneeName: e.target.value})}
-              style={inputStyle}
-              />
-            </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Contact Person</label>
-                <input
-                  type="text"
-              value={bolInfo.consigneeContact}
-              onChange={(e) => setBolInfo({...bolInfo, consigneeContact: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Phone</label>
-                <input
-                  type="text"
-              value={bolInfo.consigneePhone}
-              onChange={(e) => setBolInfo({...bolInfo, consigneePhone: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Email</label>
-            <input
-              type="email"
-              value={bolInfo.consigneeEmail}
-              onChange={(e) => setBolInfo({...bolInfo, consigneeEmail: e.target.value})}
-              style={inputStyle}
-            />
-            </div>
-        </div>
-        <div style={{ marginTop: '16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Address</label>
-                <input
-                  type="text"
-                value={bolInfo.consigneeAddress}
-                onChange={(e) => setBolInfo({...bolInfo, consigneeAddress: e.target.value})}
-                style={inputStyle}
-                />
-              </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>City</label>
-                <input
-                  type="text"
-                value={bolInfo.consigneeCity}
-                onChange={(e) => setBolInfo({...bolInfo, consigneeCity: e.target.value})}
-                style={inputStyle}
-                />
-              </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>State</label>
-              <input
-                type="text"
-                value={bolInfo.consigneeState}
-                onChange={(e) => setBolInfo({...bolInfo, consigneeState: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>ZIP</label>
-              <input
-                type="text"
-                value={bolInfo.consigneeZip}
-                onChange={(e) => setBolInfo({...bolInfo, consigneeZip: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Carrier Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Carrier Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Carrier Name</label>
-            <input
-              type="text"
-              value={bolInfo.carrierName}
-              onChange={(e) => setBolInfo({...bolInfo, carrierName: e.target.value})}
-              style={inputStyle}
-            />
-            </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>MC Number</label>
-            <input
-              type="text"
-              value={bolInfo.carrierMC}
-              onChange={(e) => setBolInfo({...bolInfo, carrierMC: e.target.value})}
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>DOT Number</label>
-              <input
-                type="text"
-              value={bolInfo.carrierDOT}
-              onChange={(e) => setBolInfo({...bolInfo, carrierDOT: e.target.value})}
-              style={inputStyle}
-              />
-            </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>SCAC Code</label>
-              <input
-                type="text"
-              value={bolInfo.carrierSCAC}
-              onChange={(e) => setBolInfo({...bolInfo, carrierSCAC: e.target.value})}
-              style={inputStyle}
-              />
-            </div>
-        </div>
-      </div>
-
-      {/* Equipment Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Equipment Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Driver Name</label>
-                <input
-                  type="text"
-              value={bolInfo.driverName}
-              onChange={(e) => setBolInfo({...bolInfo, driverName: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Driver License</label>
-                <input
-                  type="text"
-              value={bolInfo.driverLicense}
-              onChange={(e) => setBolInfo({...bolInfo, driverLicense: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Truck Number</label>
-                <input
-                  type="text"
-              value={bolInfo.truckNumber}
-              onChange={(e) => setBolInfo({...bolInfo, truckNumber: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Trailer Number</label>
-              <input
-                type="text"
-              value={bolInfo.trailerNumber}
-              onChange={(e) => setBolInfo({...bolInfo, trailerNumber: e.target.value})}
-              style={inputStyle}
-              />
-            </div>
-          </div>
-        <div style={{ marginTop: '16px' }}>
-          <div style={gridStyle}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Equipment Type</label>
-              <select
-                value={bolInfo.equipmentType}
-                onChange={(e) => setBolInfo({...bolInfo, equipmentType: e.target.value})}
-                style={inputStyle}
-              >
-                <option value="Dry Van">Dry Van</option>
-                <option value="Reefer">Reefer</option>
-                <option value="Flatbed">Flatbed</option>
-                <option value="Step Deck">Step Deck</option>
-                <option value="Lowboy">Lowboy</option>
-                <option value="Tanker">Tanker</option>
-              </select>
-        </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Equipment Length</label>
-              <input
-                type="text"
-                value={bolInfo.equipmentLength}
-                onChange={(e) => setBolInfo({...bolInfo, equipmentLength: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Seal Numbers</label>
-              <input
-                type="text"
-                value={bolInfo.sealNumbers}
-                onChange={(e) => setBolInfo({...bolInfo, sealNumbers: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Equipment Owner</label>
-              <select
-                value={bolInfo.equipmentOwner}
-                onChange={(e) => setBolInfo({...bolInfo, equipmentOwner: e.target.value})}
-                style={inputStyle}
-              >
-                <option value="Carrier">Carrier</option>
-                <option value="Shipper">Shipper</option>
-                <option value="Consignee">Consignee</option>
-                <option value="Third Party">Third Party</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Shipment Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Shipment Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Ship Date</label>
-                <input
-              type="date"
-              value={bolInfo.shipDate}
-              onChange={(e) => setBolInfo({...bolInfo, shipDate: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Delivery Date</label>
-                <input
-              type="date"
-              value={bolInfo.deliveryDate}
-              onChange={(e) => setBolInfo({...bolInfo, deliveryDate: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Origin Terminal</label>
-                <input
-                  type="text"
-              value={bolInfo.originTerminal}
-              onChange={(e) => setBolInfo({...bolInfo, originTerminal: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Destination Terminal</label>
-              <input
-                type="text"
-              value={bolInfo.destinationTerminal}
-              onChange={(e) => setBolInfo({...bolInfo, destinationTerminal: e.target.value})}
-              style={inputStyle}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Commodity Information */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Commodity Information</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Description</label>
-            <input
-              type="text"
-                value={bolInfo.commodityDescription}
-              onChange={(e) => setBolInfo({...bolInfo, commodityDescription: e.target.value})}
-              style={inputStyle}
-              />
-            </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Weight (lbs)</label>
-                <input
-                  type="text"
-              value={bolInfo.commodityWeight}
-              onChange={(e) => setBolInfo({...bolInfo, commodityWeight: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Pieces</label>
-                <input
-                  type="text"
-              value={bolInfo.commodityPieces}
-              onChange={(e) => setBolInfo({...bolInfo, commodityPieces: e.target.value})}
-              style={inputStyle}
-                />
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Class</label>
-            <input
-              type="text"
-              value={bolInfo.commodityClass}
-              onChange={(e) => setBolInfo({...bolInfo, commodityClass: e.target.value})}
-              style={inputStyle}
-            />
-            </div>
-          </div>
-        <div style={{ marginTop: '16px' }}>
-          <div style={gridStyle}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Package Type</label>
-              <select
-                value={bolInfo.packageType}
-                onChange={(e) => setBolInfo({...bolInfo, packageType: e.target.value})}
-                style={inputStyle}
-              >
-                <option value="Pallets">Pallets</option>
-                <option value="Cartons">Cartons</option>
-                <option value="Crates">Crates</option>
-                <option value="Drums">Drums</option>
-                <option value="Bags">Bags</option>
-                <option value="Loose">Loose</option>
-                <option value="Skids">Skids</option>
-                <option value="Bundles">Bundles</option>
-              </select>
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Declared Value</label>
-              <input
-                type="text"
-                value={bolInfo.commodityValue}
-                onChange={(e) => setBolInfo({...bolInfo, commodityValue: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Rate</label>
-              <input
-                type="number"
-                value={bolInfo.commodityRate}
-                onChange={(e) => setBolInfo({...bolInfo, commodityRate: parseFloat(e.target.value) || 0})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Charges</label>
-              <input
-                type="number"
-                value={bolInfo.commodityCharges}
-                onChange={(e) => setBolInfo({...bolInfo, commodityCharges: parseFloat(e.target.value) || 0})}
-                style={inputStyle}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Freight Charges */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Freight Charges</h3>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Freight Charge Terms</label>
-                <select
-                  value={bolInfo.freightChargeTerms}
-              onChange={(e) => setBolInfo({...bolInfo, freightChargeTerms: e.target.value})}
-              style={inputStyle}
-                >
-                  <option value="Prepaid">Prepaid</option>
-                  <option value="Collect">Collect</option>
-                  <option value="Third Party">Third Party</option>
-                </select>
-              </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Freight Charges</label>
-            <input
-              type="number"
-              value={bolInfo.freightCharges}
-              onChange={(e) => setBolInfo({...bolInfo, freightCharges: parseFloat(e.target.value) || 0})}
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Advance Charges</label>
-            <input
-              type="number"
-              value={bolInfo.advanceCharges}
-              onChange={(e) => setBolInfo({...bolInfo, advanceCharges: parseFloat(e.target.value) || 0})}
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>COD Amount</label>
-            <input
-              type="number"
-              value={bolInfo.codAmount}
-              onChange={(e) => setBolInfo({...bolInfo, codAmount: parseFloat(e.target.value) || 0})}
-              style={inputStyle}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Hazmat Section */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#f59e0b', fontSize: '18px' }}>⚠️ Hazardous Materials</h3>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-                  <input
-                    type="checkbox"
-                    checked={bolInfo.hazmat}
-              onChange={(e) => setBolInfo({...bolInfo, hazmat: e.target.checked})}
-              style={{ width: '16px', height: '16px' }}
-                  />
-            Contains Hazardous Materials
-                </label>
-              </div>
-        {bolInfo.hazmat && (
-          <div style={gridStyle}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Hazmat Class</label>
-              <input
-                type="text"
-                value={bolInfo.hazmatClass}
-                onChange={(e) => setBolInfo({...bolInfo, hazmatClass: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>UN ID Number</label>
-              <input
-                type="text"
-                value={bolInfo.hazmatID}
-                onChange={(e) => setBolInfo({...bolInfo, hazmatID: e.target.value})}
-                style={inputStyle}
-              />
-          </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Proper Shipping Name</label>
-              <input
-                type="text"
-                value={bolInfo.hazmatProperName}
-                onChange={(e) => setBolInfo({...bolInfo, hazmatProperName: e.target.value})}
-                style={inputStyle}
-              />
-        </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Packing Group</label>
-              <input
-                type="text"
-                value={bolInfo.hazmatPackingGroup}
-                onChange={(e) => setBolInfo({...bolInfo, hazmatPackingGroup: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Emergency Contact</label>
-              <input
-                type="text"
-                value={bolInfo.hazmatContactName}
-                onChange={(e) => setBolInfo({...bolInfo, hazmatContactName: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Emergency Phone</label>
-              <input
-                type="text"
-                value={bolInfo.hazmatContactPhone}
-                onChange={(e) => setBolInfo({...bolInfo, hazmatContactPhone: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Special Services */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Special Services</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-          {[
-            { key: 'appointmentDelivery', label: 'Appointment Delivery' },
-            { key: 'insideDelivery', label: 'Inside Delivery' },
-            { key: 'liftgateService', label: 'Liftgate Service' },
-            { key: 'residentialDelivery', label: 'Residential Delivery' },
-            { key: 'sortAndSegregate', label: 'Sort & Segregate' }
-          ].map(service => (
-            <label key={service.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-              <input
-                type="checkbox"
-                checked={bolInfo[service.key as keyof BOLInfo] as boolean}
-                onChange={(e) => setBolInfo({...bolInfo, [service.key]: e.target.checked})}
-                style={{ width: '16px', height: '16px' }}
-              />
-              {service.label}
-            </label>
-          ))}
-          </div>
-        </div>
-
-      {/* Legal Terms */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Legal Terms</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-          {[
-            { key: 'prepaid', label: 'Prepaid' },
-            { key: 'collect', label: 'Collect' },
-            { key: 'thirdParty', label: 'Third Party' },
-            { key: 'masterBill', label: 'Master Bill' }
-          ].map(term => (
-            <label key={term.key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-              <input
-                type="checkbox"
-                checked={bolInfo[term.key as keyof BOLInfo] as boolean}
-                onChange={(e) => setBolInfo({...bolInfo, [term.key]: e.target.checked})}
-                style={{ width: '16px', height: '16px' }}
-              />
-              {term.label}
-            </label>
-          ))}
-        </div>
-        <div style={gridStyle}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Declared Value</label>
-            <input
-              type="text"
-              value={bolInfo.declaredValue}
-              onChange={(e) => setBolInfo({...bolInfo, declaredValue: e.target.value})}
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px' }}>
-              <input
-                type="checkbox"
-                checked={bolInfo.cargoInsurance}
-                onChange={(e) => setBolInfo({...bolInfo, cargoInsurance: e.target.checked})}
-                style={{ width: '16px', height: '16px' }}
-              />
-              Cargo Insurance
-            </label>
-          </div>
-          {bolInfo.cargoInsurance && (
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Insurance Amount</label>
-              <input
-                type="text"
-                value={bolInfo.insuranceAmount}
-                onChange={(e) => setBolInfo({...bolInfo, insuranceAmount: e.target.value})}
-                style={inputStyle}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Special Instructions */}
-      <div style={sectionStyle}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#4ade80', fontSize: '18px' }}>Special Instructions</h3>
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Special Instructions</label>
-          <textarea
-            value={bolInfo.specialInstructions}
-            onChange={(e) => setBolInfo({...bolInfo, specialInstructions: e.target.value})}
-            style={{
-              ...inputStyle,
-              height: '100px',
-              resize: 'vertical'
-            }}
-            placeholder="Enter any special handling instructions, delivery requirements, or additional notes..."
-          />
-        </div>
-        <div>
-          <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px' }}>Carrier Instructions</label>
-          <textarea
-            value={bolInfo.carrierInstructions}
-            onChange={(e) => setBolInfo({...bolInfo, carrierInstructions: e.target.value})}
-            style={{
-              ...inputStyle,
-              height: '100px',
-              resize: 'vertical'
-            }}
-            placeholder="Enter specific instructions for the carrier..."
-          />
-        </div>
-      </div>
-
-      {/* Generate Button */}
-      <div style={{ textAlign: 'center', marginTop: '32px' }}>
-        <button
-          onClick={generateBillOfLading}
-          style={{
-            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-            color: 'white',
-            padding: '16px 48px',
-            borderRadius: '12px',
-            border: 'none',
-            fontSize: '18px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.3)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
-        >
-          📋 Generate Bill of Lading
-        </button>
-      </div>
+    <div>
+      <h1>Bill of Lading</h1>
     </div>
   );
 }

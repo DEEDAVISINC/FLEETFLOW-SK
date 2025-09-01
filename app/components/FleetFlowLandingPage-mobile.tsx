@@ -28,7 +28,7 @@ export default function FleetFlowLandingPageMobile() {
 
   const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Demo booking submitted:', demoForm);
+    console.info('Demo booking submitted:', demoForm);
     alert(
       'Thank you! We will contact you within 24 hours to schedule your enterprise demo.'
     );

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   // Create a readable stream for Server-Sent Events
   const stream = new ReadableStream({
     start(controller) {
-      console.log(`📡 SSE connection opened for tenant: ${tenantId}`);
+      console.info(`📡 SSE connection opened for tenant: ${tenantId}`);
 
       // Send initial connection event
       const encoder = new TextEncoder();
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
             activeConnections.delete(tenantId);
           }
         }
-        console.log(`📡 SSE connection closed for tenant: ${tenantId}`);
+        console.info(`📡 SSE connection closed for tenant: ${tenantId}`);
       };
 
       // Handle client disconnect
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      console.log(
+      console.info(
         `📡 Broadcasted ${event} to ${successCount} connections for tenant ${tenantId}`
       );
 
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
         connectionsCount: connections.size,
       });
     } else {
-      console.log(`📡 No active connections for tenant ${tenantId}`);
+      console.info(`📡 No active connections for tenant ${tenantId}`);
       return NextResponse.json({
         success: true,
         message: 'No active connections',

@@ -204,10 +204,10 @@ class OnboardingUserIntegrationService {
         );
         managementNotifications.push(notification);
 
-        console.log(
+        console.info(
           `✅ User Profile Created: ${userProfile.userId} (${userProfile.firstName} ${userProfile.lastName})`
         );
-        console.log(`📧 Management Notification Created: ${notification.id}`);
+        console.info(`📧 Management Notification Created: ${notification.id}`);
       }
 
       // In production, these would be saved to database
@@ -235,12 +235,12 @@ class OnboardingUserIntegrationService {
   private async saveUserProfiles(userProfiles: UserProfile[]): Promise<void> {
     // In production, this would save to database
     // For now, we'll simulate the API call
-    console.log('💾 Saving user profiles to User Management system...');
+    console.info('💾 Saving user profiles to User Management system...');
 
     for (const profile of userProfiles) {
       // Simulate API call to user management
       await new Promise((resolve) => setTimeout(resolve, 100));
-      console.log(
+      console.info(
         `   - Saved: ${profile.userId} (${profile.firstName} ${profile.lastName})`
       );
     }
@@ -251,12 +251,12 @@ class OnboardingUserIntegrationService {
     notifications: ManagementNotification[]
   ): Promise<void> {
     // In production, this would send actual notifications (email, SMS, in-app)
-    console.log('📧 Sending management notifications...');
+    console.info('📧 Sending management notifications...');
 
     for (const notification of notifications) {
       // Simulate notification sending
       await new Promise((resolve) => setTimeout(resolve, 50));
-      console.log(
+      console.info(
         `   - Notification sent: ${notification.userName} (${notification.userId}) needs access approval`
       );
     }
@@ -306,11 +306,11 @@ class OnboardingUserIntegrationService {
   }> {
     try {
       // In production, this would update database records
-      console.log(
+      console.info(
         `🔑 Processing access request: ${notificationId} - ${action.toUpperCase()}`
       );
-      console.log(`   - Reviewed by: ${reviewedBy}`);
-      if (notes) console.log(`   - Notes: ${notes}`);
+      console.info(`   - Reviewed by: ${reviewedBy}`);
+      if (notes) console.info(`   - Notes: ${notes}`);
 
       // Simulate database update
       await new Promise((resolve) => setTimeout(resolve, 200));

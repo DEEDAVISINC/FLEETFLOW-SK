@@ -155,7 +155,7 @@ export class LiveCallAIAssistant {
   };
 
   private constructor() {
-    console.log(
+    console.info(
       '🤖 Live Call AI Assistant initialized with freight industry knowledge'
     );
   }
@@ -174,7 +174,7 @@ export class LiveCallAIAssistant {
     this.activeCalls.set(callContext.callId, callContext);
     this.liveRecommendations.set(callContext.callId, []);
 
-    console.log(
+    console.info(
       `🎯 AI assistance started for call ${callContext.callId} with ${callContext.contactName}`
     );
 
@@ -375,7 +375,7 @@ export class LiveCallAIAssistant {
     this.activeCalls.delete(callId);
     this.liveRecommendations.delete(callId);
 
-    console.log(
+    console.info(
       `✅ AI assistance completed for call ${callId} - Analysis generated`
     );
     return analysis;

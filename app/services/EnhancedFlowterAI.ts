@@ -108,7 +108,7 @@ export class EnhancedFlowterAI {
 
   constructor() {
     this.searchEngine = new FlowterIntelligentSearch();
-    console.log('🤖 Enhanced Flowter AI initialized with search capabilities');
+    console.info('🤖 Enhanced Flowter AI initialized with search capabilities');
   }
 
   // ============================================================================
@@ -119,7 +119,7 @@ export class EnhancedFlowterAI {
     message: string,
     context?: FlowterSecurityContext
   ): Promise<FlowterResponse> {
-    console.log(`🤖 Flowter AI processing: "${message}"`);
+    console.info(`🤖 Flowter AI processing: "${message}"`);
 
     try {
       // Get user context if not provided
@@ -134,7 +134,7 @@ export class EnhancedFlowterAI {
 
       // Step 1: Determine if this is a search/navigation request
       if (this.isSearchQuery(message)) {
-        console.log('🔍 Detected search/navigation request');
+        console.info('🔍 Detected search/navigation request');
         const searchResults = await this.searchEngine.search(
           message,
           userContext
@@ -153,14 +153,14 @@ export class EnhancedFlowterAI {
 
       // Step 2: Check if this is a help/tutorial request
       if (this.isHelpQuery(message)) {
-        console.log('❓ Detected help/tutorial request');
+        console.info('❓ Detected help/tutorial request');
         const helpResponse = await this.handleHelpQuery(message, userContext);
         this.addAssistantMessage(helpResponse.message, helpResponse.type);
         return helpResponse;
       }
 
       // Step 3: Handle general AI queries (existing functionality)
-      console.log('💬 Processing as general AI query');
+      console.info('💬 Processing as general AI query');
       const generalResponse = await this.handleGeneralAIQuery(
         message,
         userContext
@@ -542,7 +542,7 @@ What would you like help with?`,
 
   public clearHistory(): void {
     this.conversationHistory = [];
-    console.log('🗑️ Flowter AI conversation history cleared');
+    console.info('🗑️ Flowter AI conversation history cleared');
   }
 
   public async getQuickSuggestions(): Promise<string[]> {

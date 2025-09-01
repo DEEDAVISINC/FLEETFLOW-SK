@@ -83,7 +83,7 @@ export class AIFlowSystem extends EventEmitter {
 
   private async initialize(): Promise<void> {
     try {
-      console.log('Starting AI Flow System initialization...');
+      console.info('Starting AI Flow System initialization...');
       
       // For demo purposes, make initialization more robust
       await this.voiceInfrastructure.initialize().catch(err => {
@@ -103,7 +103,7 @@ export class AIFlowSystem extends EventEmitter {
       });
       
       this.isInitialized = true;
-      console.log('AI Flow System initialization completed successfully');
+      console.info('AI Flow System initialization completed successfully');
       this.emit('system:initialized');
     } catch (error) {
       console.error('Critical AI Flow System initialization error:', error);
@@ -242,11 +242,11 @@ class VoiceInfrastructure {
 
   async initialize(): Promise<void> {
     // Initialize FreeSWITCH connection
-    console.log('Initializing FreeSWITCH at:', this.config.freeSwitchUrl);
+    console.info('Initializing FreeSWITCH at:', this.config.freeSwitchUrl);
     // Setup SIP endpoint
-    console.log('Setting up SIP endpoint:', this.config.sipEndpoint);
+    console.info('Setting up SIP endpoint:', this.config.sipEndpoint);
     // Load call center modules
-    console.log('Loading modules:', this.config.callCenterModules);
+    console.info('Loading modules:', this.config.callCenterModules);
   }
 
   async getSystemStats(): Promise<VoiceStats> {
@@ -290,10 +290,10 @@ class BusinessIntelligence {
   }
 
   async initialize(): Promise<void> {
-    console.log('Initializing Business Intelligence APIs...');
-    console.log('OpenCorporates API:', this.config.openCorporatesApi);
-    console.log('SEC EDGAR API:', this.config.secEdgarApi);
-    console.log('Census API:', this.config.censusApi);
+    console.info('Initializing Business Intelligence APIs...');
+    console.info('OpenCorporates API:', this.config.openCorporatesApi);
+    console.info('SEC EDGAR API:', this.config.secEdgarApi);
+    console.info('Census API:', this.config.censusApi);
   }
 
   async analyzeCompany(companyName: string): Promise<CompanyAnalysis> {
@@ -412,7 +412,7 @@ class FreightOperations {
   }
 
   async initialize(): Promise<void> {
-    console.log('Initializing Freight Operations...');
+    console.info('Initializing Freight Operations...');
     // Initialize BTS, FMCSA, Port Authority APIs
     this.dailyRevenue = Math.floor(Math.random() * 50000) + 10000;
   }
@@ -509,7 +509,7 @@ class ProspectingAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Prospecting Agent ${this.id}`);
+    console.info(`Initializing Prospecting Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 1247,
       successRate: 0.73,
@@ -560,7 +560,7 @@ class ColdCallingAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Cold Calling Agent ${this.id}`);
+    console.info(`Initializing Cold Calling Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 892,
       successRate: 0.34,
@@ -601,7 +601,7 @@ class RateQuotingAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Rate Quoting Agent ${this.id}`);
+    console.info(`Initializing Rate Quoting Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 2134,
       successRate: 0.89,
@@ -631,7 +631,7 @@ class LoadCoordinatorAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Load Coordinator Agent ${this.id}`);
+    console.info(`Initializing Load Coordinator Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 1567,
       successRate: 0.96,
@@ -671,7 +671,7 @@ class CustomerServiceAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Customer Service Agent ${this.id}`);
+    console.info(`Initializing Customer Service Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 3421,
       successRate: 0.94,
@@ -709,7 +709,7 @@ class ComplianceAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Compliance Agent ${this.id}`);
+    console.info(`Initializing Compliance Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 756,
       successRate: 0.98,
@@ -728,7 +728,7 @@ class MarketAnalystAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Market Analyst Agent ${this.id}`);
+    console.info(`Initializing Market Analyst Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 234,
       successRate: 0.91,
@@ -772,7 +772,7 @@ class DispatchAgent extends AIAgent {
   }
 
   async initialize(): Promise<void> {
-    console.log(`Initializing Dispatch Agent ${this.id}`);
+    console.info(`Initializing Dispatch Agent ${this.id}`);
     this.performance = {
       tasksCompleted: 1876,
       successRate: 0.97,

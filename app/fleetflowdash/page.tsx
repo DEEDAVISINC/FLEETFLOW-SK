@@ -311,7 +311,7 @@ export default function HomePage() {
         color: '#ffffff',
         position: 'relative',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Professional Header */}

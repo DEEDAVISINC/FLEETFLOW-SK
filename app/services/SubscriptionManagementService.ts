@@ -535,10 +535,10 @@ export class SubscriptionManagementService {
 
     this.subscriptions.set(subscription.id, subscription);
 
-    console.log(
+    console.info(
       `✅ Created subscription ${subscription.id} for user ${userName} (${userEmail})`
     );
-    console.log(`🎯 Tier: ${tier.name} - $${tier.price}/${tier.billingCycle}`);
+    console.info(`🎯 Tier: ${tier.name} - $${tier.price}/${tier.billingCycle}`);
 
     return subscription;
   }
@@ -614,7 +614,7 @@ export class SubscriptionManagementService {
       );
     }
 
-    console.log(
+    console.info(
       `🔄 Updated subscription for user ${currentSubscription.userName} to ${newTier.name}`
     );
 
@@ -645,7 +645,7 @@ export class SubscriptionManagementService {
       );
     }
 
-    console.log(
+    console.info(
       `❌ ${cancelAtPeriodEnd ? 'Scheduled cancellation' : 'Cancelled'} subscription for ${subscription.userName}`
     );
   }
@@ -812,7 +812,7 @@ export class SubscriptionManagementService {
       });
 
       if (customerResult.success && customerResult.customerId) {
-        console.log(
+        console.info(
           `✅ Square subscription created for ${name} (${email}) - ${tier.name}`
         );
         return {
@@ -841,7 +841,7 @@ export class SubscriptionManagementService {
     subscriptionId: string,
     newTier: SubscriptionTier
   ): Promise<void> {
-    console.log(
+    console.info(
       `🔄 Updating Square subscription ${subscriptionId} to ${newTier.name}`
     );
     // Square subscription updates would be implemented here
@@ -854,7 +854,7 @@ export class SubscriptionManagementService {
     subscriptionId: string,
     atPeriodEnd: boolean
   ): Promise<void> {
-    console.log(
+    console.info(
       `❌ Cancelling Square subscription ${subscriptionId} ${atPeriodEnd ? 'at period end' : 'immediately'}`
     );
     // Square subscription cancellation would be implemented here
@@ -1016,9 +1016,9 @@ export class SubscriptionManagementService {
 
     this.usage.set(userId, usage);
 
-    console.log(`📞 Phone usage tracked for user ${userId}: ${minutes} minutes, ${smsCount} SMS`);
+    console.info(`📞 Phone usage tracked for user ${userId}: ${minutes} minutes, ${smsCount} SMS`);
     if (overageCost > 0) {
-      console.log(`💰 Overage charges: $${overageCost.toFixed(2)}`);
+      console.info(`💰 Overage charges: $${overageCost.toFixed(2)}`);
     }
 
     return {
@@ -1085,7 +1085,7 @@ export class SubscriptionManagementService {
       usage.documentsGenerated = 0;
       usage.aiInteractions = 0;
       this.usage.set(userId, usage);
-      console.log(`🔄 Monthly usage reset for user ${userId}`);
+      console.info(`🔄 Monthly usage reset for user ${userId}`);
     }
   }
 

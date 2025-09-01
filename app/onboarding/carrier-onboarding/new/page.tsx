@@ -180,7 +180,7 @@ This agreement was executed during carrier onboarding.`,
               carrierData
             );
 
-            console.log(
+            console.info(
               `✅ Stored carrier onboarding documents for ${carrierId}`
             );
           }
@@ -192,10 +192,10 @@ This agreement was executed during carrier onboarding.`,
 
     // Log integration results if available
     if (data.integrationResult) {
-      console.log('🎉 Onboarding Integration Success:', data.integrationResult);
+      console.info('🎉 Onboarding Integration Success:', data.integrationResult);
     }
 
-    console.log('Onboarding completed:', data);
+    console.info('Onboarding completed:', data);
   };
 
   const handleOnboardingCancel = () => {

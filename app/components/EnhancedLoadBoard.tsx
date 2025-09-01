@@ -280,7 +280,7 @@ export default function EnhancedLoadBoard() {
 
         alert(message);
 
-        console.log('✅ Load accepted and integrated with schedule:', {
+        console.info('✅ Load accepted and integrated with schedule:', {
           load: result.load,
           schedule: result.schedule,
         });
@@ -675,7 +675,7 @@ export default function EnhancedLoadBoard() {
           💡 <strong>Load Actions:</strong> 🚛 <strong>Accept Load</strong>{' '}
           button allows drivers to accept loads directly and add them to their
           schedule. <strong>Dispatcher Assignment:</strong> dropdown assigns
-          loads to dispatchers. Once assigned, loads move to "Assigned" status.
+          loads to dispatchers. Once assigned, loads move to ""Assigned"" status.
         </div>
         {filteredLoads.length === 0 ? (
           <div

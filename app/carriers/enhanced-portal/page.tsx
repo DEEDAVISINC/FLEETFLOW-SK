@@ -829,7 +829,7 @@ export default function EnhancedCarrierPortal() {
       if (ref) {
         const invitationService = CarrierInvitationService.getInstance();
         invitationService.updateInvitationStatus(ref, 'opened');
-        console.log(`Invitation ${ref} marked as opened`);
+        console.info(`Invitation ${ref} marked as opened`);
       }
     }
 
@@ -874,7 +874,7 @@ export default function EnhancedCarrierPortal() {
     if (invitationData.ref) {
       const invitationService = CarrierInvitationService.getInstance();
       invitationService.updateInvitationStatus(invitationData.ref, 'started');
-      console.log(`Invitation ${invitationData.ref} marked as started`);
+      console.info(`Invitation ${invitationData.ref} marked as started`);
     }
 
     // Build the onboarding URL with pre-filled data
@@ -1083,7 +1083,7 @@ export default function EnhancedCarrierPortal() {
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%, 0 0',
         backgroundAttachment: 'fixed',
         position: 'relative',
-        fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
+        fontFamily: 'system-ui, -apple-system, ""Segoe UI"", sans-serif',
       }}
     >
       {/* Portal Header */}

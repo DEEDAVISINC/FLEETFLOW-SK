@@ -306,7 +306,7 @@ By: ${ndaAcknowledgment?.acknowledgedBy}`,
       });
     }
 
-    console.log(
+    console.info(
       `✅ Stored ${icaData ? 1 : 0} ICA + ${ndaAcknowledgment ? 1 : 0} NDA documents for user ${userId}`
     );
   }
@@ -370,7 +370,7 @@ This document represents a legally binding agreement between FleetFlow and the c
       });
     });
 
-    console.log(
+    console.info(
       `✅ Stored ${signedAgreements.length} carrier agreement(s) for user ${userId}`
     );
   }

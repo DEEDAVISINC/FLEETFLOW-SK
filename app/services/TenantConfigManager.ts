@@ -432,11 +432,11 @@ export class TenantConfigManager {
     aiTenantContextService.registerTenant(specializedHaulConfig);
     aiTenantContextService.registerTenant(regionalLTLConfig);
 
-    console.log('✅ Initialized sample tenant configurations:');
-    console.log('   🏢 ABC Freight Brokers - Established Premium Broker');
-    console.log('   🚀 Rapid Logistics - Tech-Enabled Growth Broker');
-    console.log('   🏗️ Titan Heavy Haul - Specialized Carrier');
-    console.log('   🚛 Midwest Express LTL - Regional LTL Carrier');
+    console.info('✅ Initialized sample tenant configurations:');
+    console.info('   🏢 ABC Freight Brokers - Established Premium Broker');
+    console.info('   🚀 Rapid Logistics - Tech-Enabled Growth Broker');
+    console.info('   🏗️ Titan Heavy Haul - Specialized Carrier');
+    console.info('   🚛 Midwest Express LTL - Regional LTL Carrier');
   }
 
   /**
@@ -453,27 +453,27 @@ export class TenantConfigManager {
       'tenant_regional_ltl_004',
     ];
 
-    console.log('\n🔍 DEMONSTRATING TENANT-SPECIFIC AI RESPONSES:');
-    console.log(`Query: "${sampleQuery}"\n`);
+    console.info('\n🔍 DEMONSTRATING TENANT-SPECIFIC AI RESPONSES:');
+    console.info(`Query: "${sampleQuery}"\n`);
 
     for (const tenantId of tenants) {
       const config = aiTenantContextService.getTenantAIConfig(tenantId);
 
-      console.log(`🏢 ${config.organizationName} (${config.businessType}):`);
-      console.log(
+      console.info(`🏢 ${config.organizationName} (${config.businessType}):`);
+      console.info(
         `   Business Strategy: ${config.businessContext.competitiveStrategy}`
       );
-      console.log(
+      console.info(
         `   Target Margin: ${config.businessContext.profitTargets.targetMargin}%`
       );
-      console.log(`   Risk Tolerance: ${config.businessContext.riskTolerance}`);
+      console.info(`   Risk Tolerance: ${config.businessContext.riskTolerance}`);
 
       // This would generate different responses based on tenant context
       const contextualResponse = await this.generateSampleResponse(
         tenantId,
         sampleQuery
       );
-      console.log(`   AI Response: ${contextualResponse}\n`);
+      console.info(`   AI Response: ${contextualResponse}\n`);
     }
   }
 
@@ -507,7 +507,7 @@ export class TenantConfigManager {
    * Show tenant data boundary enforcement
    */
   static demonstrateDataBoundaries(): void {
-    console.log('\n🔒 TENANT DATA BOUNDARY DEMONSTRATION:');
+    console.info('\n🔒 TENANT DATA BOUNDARY DEMONSTRATION:');
 
     const tenants = [
       { id: 'tenant_abc_freight_001', name: 'ABC Freight Brokers' },
@@ -516,24 +516,24 @@ export class TenantConfigManager {
 
     tenants.forEach((tenant) => {
       const summary = aiTenantContextService.getTenantContextSummary(tenant.id);
-      console.log(`\n🏢 ${tenant.name}:`);
-      console.log(`   ✅ Can access: ${summary.activeFeatures.join(', ')}`);
-      console.log(`   🔒 Data classification: ${summary.dataClassification}`);
-      console.log(
+      console.info(`\n🏢 ${tenant.name}:`);
+      console.info(`   ✅ Can access: ${summary.activeFeatures.join(', ')}`);
+      console.info(`   🔒 Data classification: ${summary.dataClassification}`);
+      console.info(
         `   🚫 Cannot access: Other tenants' customer data, rates, or business intelligence`
       );
-      console.log(
+      console.info(
         `   🛡️ AI responses filtered for: ${tenant.name}'s business context only`
       );
     });
 
-    console.log(
+    console.info(
       `\n⚠️  CRITICAL: Each tenant's AI operates in complete isolation.`
     );
-    console.log(`   • ABC Freight's AI never sees Rapid Logistics' data`);
-    console.log(`   • Rate recommendations based on tenant's specific margins`);
-    console.log(`   • Carrier suggestions limited to tenant's network`);
-    console.log(`   • Business advice tailored to tenant's strategy`);
+    console.info(`   • ABC Freight's AI never sees Rapid Logistics' data`);
+    console.info(`   • Rate recommendations based on tenant's specific margins`);
+    console.info(`   • Carrier suggestions limited to tenant's network`);
+    console.info(`   • Business advice tailored to tenant's strategy`);
   }
 }
 

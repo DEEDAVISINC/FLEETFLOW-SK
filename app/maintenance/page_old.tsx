@@ -136,18 +136,18 @@ export default function MaintenancePage() {
   const avgCost = totalCost / maintenanceRecords.length
 
   return (
-    <div className="container py-6">
+    <div className="container py-6"">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6"">
         <div>
-          <h1 className="text-gray-900 mb-2" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
+          <h1 className="text-gray-900 mb-2"" style={{ fontSize: '2rem', fontWeight: 'bold' }}>
             Maintenance Management
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600"">
             Schedule, track, and manage vehicle maintenance
           </p>
         </div>
-        <button className="btn btn-primary"
+        <button className="btn btn-primary""
           style={{
             background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
             border: 'none',
@@ -159,52 +159,52 @@ export default function MaintenancePage() {
       </div>
 
       {/* Filters */}
-      <div className="card mb-6">
-        <div className="grid grid-cols-4 gap-4">
-          <div className="form-group">
-            <label className="form-label">Search</label>
+      <div className="card mb-6"">
+        <div className="grid grid-cols-4 gap-4"">
+          <div className="form-group"">
+            <label className="form-label"">Search</label>
             <input
-              type="text"
-              placeholder="Search by vehicle, description, or technician..."
-              className="form-input"
+              type="text""
+              placeholder="Search by vehicle, description, or technician...""
+              className="form-input""
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           
-          <div className="form-group">
-            <label className="form-label">Status Filter</label>
+          <div className="form-group"">
+            <label className="form-label"">Status Filter</label>
             <select 
-              className="form-input"
+              className="form-input""
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="overdue">Overdue</option>
+              <option value="all"">All Status</option>
+              <option value="pending"">Pending</option>
+              <option value="in_progress"">In Progress</option>
+              <option value="completed"">Completed</option>
+              <option value="overdue"">Overdue</option>
             </select>
           </div>
           
-          <div className="form-group">
-            <label className="form-label">Type Filter</label>
+          <div className="form-group"">
+            <label className="form-label"">Type Filter</label>
             <select 
-              className="form-input"
+              className="form-input""
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
             >
-              <option value="all">All Types</option>
-              <option value="scheduled">Scheduled</option>
-              <option value="emergency">Emergency</option>
-              <option value="inspection">Inspection</option>
-              <option value="repair">Repair</option>
+              <option value="all"">All Types</option>
+              <option value="scheduled"">Scheduled</option>
+              <option value="emergency"">Emergency</option>
+              <option value="inspection"">Inspection</option>
+              <option value="repair"">Repair</option>
             </select>
           </div>
           
-          <div className="form-group">
-            <label className="form-label">Quick Actions</label>
-            <button className="btn btn-secondary" style={{ width: '100%', background: 'linear-gradient(135deg, #06b6d4, #0891b2)', border: 'none', color: 'white' }}>
+          <div className="form-group"">
+            <label className="form-label"">Quick Actions</label>
+            <button className="btn btn-secondary"" style={{ width: '100%', background: 'linear-gradient(135deg, #06b6d4, #0891b2)', border: 'none', color: 'white' }}>
               Maintenance Report
             </button>
           </div>
@@ -212,48 +212,48 @@ export default function MaintenancePage() {
       </div>
 
       {/* Maintenance Stats */}
-      <div className="grid grid-cols-4 gap-6 mb-6">
-        <div className="metric-card">
-          <div className="metric-value">{maintenanceRecords.length}</div>
-          <div className="metric-label">Total Records</div>
+      <div className="grid grid-cols-4 gap-6 mb-6"">
+        <div className="metric-card"">
+          <div className="metric-value"">{maintenanceRecords.length}</div>
+          <div className="metric-label"">Total Records</div>
         </div>
-        <div className="metric-card">
-          <div className="metric-value">{maintenanceRecords.filter(r => r.status === 'pending').length}</div>
-          <div className="metric-label">Pending</div>
+        <div className="metric-card"">
+          <div className="metric-value"">{maintenanceRecords.filter(r => r.status === 'pending').length}</div>
+          <div className="metric-label"">Pending</div>
         </div>
-        <div className="metric-card">
-          <div className="metric-value">{maintenanceRecords.filter(r => r.status === 'overdue').length}</div>
-          <div className="metric-label">Overdue</div>
+        <div className="metric-card"">
+          <div className="metric-value"">{maintenanceRecords.filter(r => r.status === 'overdue').length}</div>
+          <div className="metric-label"">Overdue</div>
         </div>
-        <div className="metric-card">
-          <div className="metric-value">${totalCost.toLocaleString()}</div>
-          <div className="metric-label">Total Costs</div>
+        <div className="metric-card"">
+          <div className="metric-value"">${totalCost.toLocaleString()}</div>
+          <div className="metric-label"">Total Costs</div>
         </div>
       </div>
 
       {/* Maintenance Overview */}
-      <div className="grid grid-cols-2 gap-6 mb-6">
-        <div className="card">
-          <h3 className="mb-4" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+      <div className="grid grid-cols-2 gap-6 mb-6"">
+        <div className="card"">
+          <h3 className="mb-4"" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
             Upcoming Maintenance
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-3"">
             {maintenanceRecords
               .filter(record => record.status === 'pending' || record.status === 'overdue')
               .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
               .slice(0, 4)
               .map((record) => (
-                <div key={record.id} className="flex items-center justify-between p-3 bg-gray-50" style={{ borderRadius: '6px' }}>
-                  <div className="flex items-center gap-3">
+                <div key={record.id} className="flex items-center justify-between p-3 bg-gray-50"" style={{ borderRadius: '6px' }}>
+                  <div className="flex items-center gap-3"">
                     <div style={{ fontSize: '1.5rem' }}>{getTypeIcon(record.type)}</div>
                     <div>
                       <div style={{ fontWeight: '600' }}>{record.vehicleName}</div>
-                      <div className="text-gray-600" style={{ fontSize: '0.875rem' }}>
+                      <div className="text-gray-600"" style={{ fontSize: '0.875rem' }}>
                         {record.description}
                       </div>
                     </div>
                   </div>
-                  <div className="text-center">
+                  <div className="text-center"">
                     <div 
                       style={{ 
                         color: record.status === 'overdue' ? '#ef4444' : '#6b7280',
@@ -264,7 +264,7 @@ export default function MaintenancePage() {
                       {record.scheduledDate}
                     </div>
                     <div 
-                      className="status"
+                      className="status""
                       style={{ 
                         backgroundColor: record.status === 'overdue' ? '#fef2f2' : '#fef3c7',
                         color: record.status === 'overdue' ? '#dc2626' : '#d97706',
@@ -279,43 +279,43 @@ export default function MaintenancePage() {
           </div>
         </div>
 
-        <div className="card">
-          <h3 className="mb-4" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+        <div className="card"">
+          <h3 className="mb-4"" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
             Maintenance Statistics
           </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Average Cost per Service</span>
-              <span className="text-gray-900" style={{ fontWeight: '600' }}>
+          <div className="space-y-4"">
+            <div className="flex justify-between items-center"">
+              <span className="text-gray-600"">Average Cost per Service</span>
+              <span className="text-gray-900"" style={{ fontWeight: '600' }}>
                 ${avgCost.toFixed(0)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">On-Time Completion</span>
-              <span className="text-gray-900" style={{ fontWeight: '600' }}>87%</span>
+            <div className="flex justify-between items-center"">
+              <span className="text-gray-600"">On-Time Completion</span>
+              <span className="text-gray-900"" style={{ fontWeight: '600' }}>87%</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Emergency Repairs</span>
-              <span className="text-gray-900" style={{ fontWeight: '600' }}>
+            <div className="flex justify-between items-center"">
+              <span className="text-gray-600"">Emergency Repairs</span>
+              <span className="text-gray-900"" style={{ fontWeight: '600' }}>
                 {maintenanceRecords.filter(r => r.type === 'emergency').length}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Monthly Maintenance Budget</span>
-              <span className="text-gray-900" style={{ fontWeight: '600' }}>$12,500</span>
+            <div className="flex justify-between items-center"">
+              <span className="text-gray-600"">Monthly Maintenance Budget</span>
+              <span className="text-gray-900"" style={{ fontWeight: '600' }}>$12,500</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Maintenance Table */}
-      <div className="card">
-        <h3 className="mb-4" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
+      <div className="card"">
+        <h3 className="mb-4"" style={{ fontSize: '1.25rem', fontWeight: '600' }}>
           Maintenance Records ({filteredRecords.length} records)
         </h3>
         
         <div style={{ overflowX: 'auto' }}>
-          <table className="table">
+          <table className="table"">
             <thead>
               <tr>
                 <th>Vehicle</th>
@@ -336,13 +336,13 @@ export default function MaintenancePage() {
                   <td>
                     <div>
                       <div style={{ fontWeight: '600' }}>{record.vehicleName}</div>
-                      <div className="text-gray-600" style={{ fontSize: '0.875rem' }}>
+                      <div className="text-gray-600"" style={{ fontSize: '0.875rem' }}>
                         {record.mileage.toLocaleString()} km
                       </div>
                     </div>
                   </td>
                   <td>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2"">
                       <span>{getTypeIcon(record.type)}</span>
                       <span style={{ textTransform: 'capitalize' }}>{record.type}</span>
                     </div>
@@ -361,7 +361,7 @@ export default function MaintenancePage() {
                     <div>
                       <div>{record.scheduledDate}</div>
                       {record.completedDate && (
-                        <div className="text-gray-600" style={{ fontSize: '0.875rem' }}>
+                        <div className="text-gray-600"" style={{ fontSize: '0.875rem' }}>
                           Completed: {record.completedDate}
                         </div>
                       )}
@@ -373,14 +373,14 @@ export default function MaintenancePage() {
                     <div>
                       <div style={{ fontSize: '0.875rem' }}>Est: {record.estimatedDuration}</div>
                       {record.actualDuration && (
-                        <div className="text-gray-600" style={{ fontSize: '0.875rem' }}>
+                        <div className="text-gray-600"" style={{ fontSize: '0.875rem' }}>
                           Act: {record.actualDuration}
                         </div>
                       )}
                     </div>
                   </td>
                   <td>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2"">
                       <div 
                         style={{ 
                           width: '8px', 
@@ -393,11 +393,11 @@ export default function MaintenancePage() {
                     </div>
                   </td>
                   <td>
-                    <div className="flex gap-2">
-                      <button className="btn btn-secondary" style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem', background: 'linear-gradient(135deg, #06b6d4, #0891b2)', border: 'none', color: 'white' }}>
+                    <div className="flex gap-2"">
+                      <button className="btn btn-secondary"" style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem', background: 'linear-gradient(135deg, #06b6d4, #0891b2)', border: 'none', color: 'white' }}>
                         View
                       </button>
-                      <button className="btn btn-secondary" style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem', background: 'linear-gradient(135deg, #06b6d4, #0891b2)', border: 'none', color: 'white' }}>
+                      <button className="btn btn-secondary"" style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem', background: 'linear-gradient(135deg, #06b6d4, #0891b2)', border: 'none', color: 'white' }}>
                         Edit
                       </button>
                     </div>
@@ -410,15 +410,15 @@ export default function MaintenancePage() {
       </div>
 
       {/* Maintenance Notes Section */}
-      <div className="card">
-        <div className="card-header">
+      <div className="card"">
+        <div className="card-header"">
           <h3>Maintenance Notes & Documentation</h3>
         </div>
-        <div className="card-content">
+        <div className="card-content"">
           <StickyNote 
-            section="maintenance" 
-            entityId="maintenance-general" 
-            entityName="Maintenance Operations"
+            section=""maintenance"" 
+            entityId=""maintenance-general"" 
+            entityName=""Maintenance Operations""
           />
         </div>
       </div>

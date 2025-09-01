@@ -277,7 +277,7 @@ async function handleNetworkInsights() {
 // ========================================
 
 async function handleTruckingPlanetDemo() {
-  console.log('🌐 Running TruckingPlanet Network demo...');
+  console.info('🌐 Running TruckingPlanet Network demo...');
 
   // Demo shipper search
   const demoShippers = await truckingPlanetService.searchShippers({

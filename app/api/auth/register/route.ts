@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
     await createInitialSubscription(newUser.id, validatedData.selectedPlan);
 
     // Log successful registration
-    console.log('✅ New user registered:', {
+    console.info('✅ New user registered:', {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
@@ -189,8 +189,8 @@ async function sendVerificationEmail(
   userId: string
 ): Promise<void> {
   // In production, integrate with email service like SendGrid, Mailgun, or Resend
-  console.log('📧 Verification email sent to:', email);
-  console.log(
+  console.info('📧 Verification email sent to:', email);
+  console.info(
     '🔗 Verification link: /api/auth/verify-email?token=' +
       generateVerificationToken(userId)
   );
@@ -209,7 +209,7 @@ async function createInitialSubscription(
   userId: string,
   planId: string
 ): Promise<void> {
-  console.log('💼 Creating trial subscription:', {
+  console.info('💼 Creating trial subscription:', {
     userId,
     planId,
     trialDays: 14,

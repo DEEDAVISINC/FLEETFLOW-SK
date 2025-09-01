@@ -58,11 +58,32 @@ export default function UserSubscriptionManager({
         (m) => m.id.startsWith('phone-')
       );
 
-      // Get recommendations
+      // Get recommendations including driver free tier
       const tierOptions =
         SubscriptionManagementService.getSubscriptionTiers().filter(
           (t) => t.targetRole !== 'hybrid'
         );
+
+      // Add driver free tier if not already present
+      const hasDriverFreeTier = tierOptions.some((t) => t.id === 'driver_free');
+      if (!hasDriverFreeTier) {
+        tierOptions.unshift({
+          id: 'driver_free',
+          name: 'Driver/Carrier - FREE',
+          description: 'Free access to Driver OTR Flow and Dispatch Connection',
+          price: 0,
+          targetRole: 'driver',
+          popular: false,
+          features: [
+            'driver_otr_flow',
+            'dispatch_connection',
+            'basic_notifications',
+          ],
+          phoneMinutes: 0,
+          smsMessages: 0,
+          maxUsers: 1,
+        });
+      }
 
       setSubscriptionData({
         subscription,
@@ -94,7 +115,7 @@ export default function UserSubscriptionManager({
   const handleAddPhoneAddon = async (addonId: string) => {
     try {
       // In production, this would integrate with billing
-      console.log(`Adding phone addon: ${addonId}`);
+      console.info(`Adding phone addon: ${addonId}`);
       alert('✅ Phone system add-on activated!');
       loadSubscriptionData();
     } catch (error) {
@@ -277,11 +298,14 @@ export default function UserSubscriptionManager({
                     marginBottom: '8px',
                   }}
                 >
-                  $
-                  {SubscriptionManagementService.getSubscriptionTier(
-                    subscriptionData.subscription.subscriptionTierId
-                  )?.price || 0}
-                  /month
+                  {(() => {
+                    const tier =
+                      SubscriptionManagementService.getSubscriptionTier(
+                        subscriptionData.subscription.subscriptionTierId
+                      );
+                    const price = tier?.price || 0;
+                    return price === 0 ? 'FREE' : `$${price}/month`;
+                  })()}
                 </div>
               </div>
             ) : (
@@ -1028,20 +1052,22 @@ export default function UserSubscriptionManager({
                   style={{
                     fontSize: '24px',
                     fontWeight: 'bold',
-                    color: '#60a5fa',
+                    color: tier.price === 0 ? '#34d399' : '#60a5fa',
                     marginBottom: '8px',
                   }}
                 >
-                  ${tier.price}
-                  <span
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: '400',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    /month
-                  </span>
+                  {tier.price === 0 ? 'FREE' : `$${tier.price}`}
+                  {tier.price > 0 && (
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '400',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      /month
+                    </span>
+                  )}
                 </div>
                 <p
                   style={{

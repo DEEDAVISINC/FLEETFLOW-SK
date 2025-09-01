@@ -131,7 +131,7 @@ export class EDIService {
         endpoint: 'https://demo-api.fleetflow.com/edi',
         isActive: true,
         supportedTransactions: ['214', '204', '997'],
-        testMode: true
+        testMode: true,
       },
       {
         id: 'demo-broker-1',
@@ -141,11 +141,11 @@ export class EDIService {
         endpoint: 'https://demo-api.fleetflow.com/edi',
         isActive: true,
         supportedTransactions: ['214', '210', '820', '997'],
-        testMode: true
-      }
+        testMode: true,
+      },
     ];
 
-    demoPartners.forEach(partner => {
+    demoPartners.forEach((partner) => {
       this.tradingPartners.set(partner.id, partner);
     });
   }
@@ -153,7 +153,10 @@ export class EDIService {
   /**
    * Generate EDI 214 - Shipment Status Message
    */
-  async generateEDI214(data: EDI214Data, tradingPartnerId: string): Promise<EDIMessage> {
+  async generateEDI214(
+    data: EDI214Data,
+    tradingPartnerId: string
+  ): Promise<EDIMessage> {
     const partner = this.tradingPartners.get(tradingPartnerId);
     if (!partner) {
       throw new Error(`Trading partner ${tradingPartnerId} not found`);
@@ -169,7 +172,7 @@ export class EDIService {
       timestamp: new Date(),
       data,
       status: 'pending',
-      retryCount: 0
+      retryCount: 0,
     };
 
     // Generate EDI 214 format
@@ -183,7 +186,10 @@ export class EDIService {
   /**
    * Generate EDI 204 - Load Tender Response
    */
-  async generateEDI204(data: EDI204Data, tradingPartnerId: string): Promise<EDIMessage> {
+  async generateEDI204(
+    data: EDI204Data,
+    tradingPartnerId: string
+  ): Promise<EDIMessage> {
     const partner = this.tradingPartners.get(tradingPartnerId);
     if (!partner) {
       throw new Error(`Trading partner ${tradingPartnerId} not found`);
@@ -199,7 +205,7 @@ export class EDIService {
       timestamp: new Date(),
       data,
       status: 'pending',
-      retryCount: 0
+      retryCount: 0,
     };
 
     const ediContent = this.formatEDI204(ediMessage);
@@ -212,7 +218,10 @@ export class EDIService {
   /**
    * Generate EDI 210 - Invoice
    */
-  async generateEDI210(data: EDI210Data, tradingPartnerId: string): Promise<EDIMessage> {
+  async generateEDI210(
+    data: EDI210Data,
+    tradingPartnerId: string
+  ): Promise<EDIMessage> {
     const partner = this.tradingPartners.get(tradingPartnerId);
     if (!partner) {
       throw new Error(`Trading partner ${tradingPartnerId} not found`);
@@ -228,7 +237,7 @@ export class EDIService {
       timestamp: new Date(),
       data,
       status: 'pending',
-      retryCount: 0
+      retryCount: 0,
     };
 
     const ediContent = this.formatEDI210(ediMessage);
@@ -241,7 +250,11 @@ export class EDIService {
   /**
    * Generate EDI 997 - Functional Acknowledgment
    */
-  async generateEDI997(originalMessage: EDIMessage, status: 'accepted' | 'rejected', errorDetails?: string): Promise<EDIMessage> {
+  async generateEDI997(
+    originalMessage: EDIMessage,
+    status: 'accepted' | 'rejected',
+    errorDetails?: string
+  ): Promise<EDIMessage> {
     const controlNumber = this.generateControlNumber();
     const ediMessage: EDIMessage = {
       id: randomUUID(),
@@ -253,10 +266,10 @@ export class EDIService {
       data: {
         originalControlNumber: originalMessage.controlNumber,
         status,
-        errorDetails
+        errorDetails,
       },
       status: 'pending',
-      retryCount: 0
+      retryCount: 0,
     };
 
     const ediContent = this.formatEDI997(ediMessage);
@@ -283,9 +296,14 @@ export class EDIService {
     try {
       // In test mode, simulate successful transmission
       if (partner.testMode) {
-        console.log(`📡 [EDI TEST MODE] Sending ${message.transactionSet} to ${partner.name}`);
-        console.log(`📄 EDI Content Preview:`, message.rawEDI?.substring(0, 200) + '...');
-        
+        console.info(
+          `📡 [EDI TEST MODE] Sending ${message.transactionSet} to ${partner.name}`
+        );
+        console.info(
+          `📄 EDI Content Preview:`,
+          message.rawEDI?.substring(0, 200) + '...'
+        );
+
         message.status = 'sent';
         return true;
       }
@@ -293,7 +311,7 @@ export class EDIService {
       // Production EDI transmission logic would go here
       // This would include AS2, SFTP, HTTP POST, or VAN communication
       const result = await this.transmitEDI(message, partner);
-      
+
       if (result) {
         message.status = 'sent';
         return true;
@@ -304,7 +322,8 @@ export class EDIService {
       }
     } catch (error) {
       message.status = 'error';
-      message.errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      message.errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       message.retryCount++;
       return false;
     }
@@ -316,8 +335,8 @@ export class EDIService {
   async parseIncomingEDI(ediData: string): Promise<EDIMessage> {
     // Basic EDI parsing logic
     const lines = ediData.split('\n');
-    const isaSegment = lines.find(line => line.startsWith('ISA'));
-    
+    const isaSegment = lines.find((line) => line.startsWith('ISA'));
+
     if (!isaSegment) {
       throw new Error('Invalid EDI format: Missing ISA segment');
     }
@@ -326,9 +345,15 @@ export class EDIService {
     const isaFields = isaSegment.split('*');
     const senderId = isaFields[6]?.trim();
     const receiverId = isaFields[8]?.trim();
-    
-    const gsSegment = lines.find(line => line.startsWith('GS'));
-    const transactionSet = gsSegment?.split('*')[1] as '214' | '204' | '210' | '997' | '990' | '820';
+
+    const gsSegment = lines.find((line) => line.startsWith('GS'));
+    const transactionSet = gsSegment?.split('*')[1] as
+      | '214'
+      | '204'
+      | '210'
+      | '997'
+      | '990'
+      | '820';
 
     const message: EDIMessage = {
       id: randomUUID(),
@@ -340,7 +365,7 @@ export class EDIService {
       data: this.parseEDIContent(ediData, transactionSet),
       status: 'pending',
       retryCount: 0,
-      rawEDI: ediData
+      rawEDI: ediData,
     };
 
     return message;
@@ -371,20 +396,26 @@ export class EDIService {
    * Get all pending EDI messages
    */
   getPendingMessages(): EDIMessage[] {
-    return Array.from(this.pendingMessages.values())
-      .filter(msg => msg.status === 'pending' || msg.status === 'retry');
+    return Array.from(this.pendingMessages.values()).filter(
+      (msg) => msg.status === 'pending' || msg.status === 'retry'
+    );
   }
 
   // Private helper methods
 
   private generateControlNumber(): string {
-    return Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
+    return Math.floor(Math.random() * 1000000000)
+      .toString()
+      .padStart(9, '0');
   }
 
   private formatEDI214(message: EDIMessage): string {
     const data = message.data as EDI214Data;
-    const timestamp = new Date().toISOString().replace(/[-:]/g, '').substring(0, 14);
-    
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .substring(0, 14);
+
     return `ISA*00*          *00*          *ZZ*FLEETFLOW     *ZZ*${message.receiverId.padEnd(15)}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*U*00401*${message.controlNumber}*0*T*>~
 GS*QM*FLEETFLOW*${message.receiverId}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*${message.controlNumber}*X*004010~
 ST*214*${message.controlNumber}~
@@ -399,8 +430,11 @@ IEA*1*${message.controlNumber}~`;
 
   private formatEDI204(message: EDIMessage): string {
     const data = message.data as EDI204Data;
-    const timestamp = new Date().toISOString().replace(/[-:]/g, '').substring(0, 14);
-    
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .substring(0, 14);
+
     return `ISA*00*          *00*          *ZZ*FLEETFLOW     *ZZ*${message.receiverId.padEnd(15)}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*U*00401*${message.controlNumber}*0*T*>~
 GS*SM*FLEETFLOW*${message.receiverId}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*${message.controlNumber}*X*004010~
 ST*204*${message.controlNumber}~
@@ -417,8 +451,11 @@ IEA*1*${message.controlNumber}~`;
 
   private formatEDI210(message: EDIMessage): string {
     const data = message.data as EDI210Data;
-    const timestamp = new Date().toISOString().replace(/[-:]/g, '').substring(0, 14);
-    
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .substring(0, 14);
+
     return `ISA*00*          *00*          *ZZ*FLEETFLOW     *ZZ*${message.receiverId.padEnd(15)}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*U*00401*${message.controlNumber}*0*T*>~
 GS*FR*FLEETFLOW*${message.receiverId}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*${message.controlNumber}*X*004010~
 ST*210*${message.controlNumber}~
@@ -436,8 +473,11 @@ IEA*1*${message.controlNumber}~`;
 
   private formatEDI997(message: EDIMessage): string {
     const data = message.data;
-    const timestamp = new Date().toISOString().replace(/[-:]/g, '').substring(0, 14);
-    
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .substring(0, 14);
+
     return `ISA*00*          *00*          *ZZ*FLEETFLOW     *ZZ*${message.receiverId.padEnd(15)}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*U*00401*${message.controlNumber}*0*T*>~
 GS*FA*FLEETFLOW*${message.receiverId}*${timestamp.substring(2, 8)}*${timestamp.substring(8, 12)}*${message.controlNumber}*X*004010~
 ST*997*${message.controlNumber}~
@@ -453,7 +493,7 @@ IEA*1*${message.controlNumber}~`;
     const segments = ediData.split('~');
     const data: any = {};
 
-    segments.forEach(segment => {
+    segments.forEach((segment) => {
       const fields = segment.split('*');
       const segmentType = fields[0];
 
@@ -469,7 +509,7 @@ IEA*1*${message.controlNumber}~`;
           data.location = {
             city: fields[1],
             state: fields[2],
-            zipCode: fields[3]
+            zipCode: fields[3],
           };
           break;
       }
@@ -478,13 +518,18 @@ IEA*1*${message.controlNumber}~`;
     return data;
   }
 
-  private async transmitEDI(message: EDIMessage, partner: TradingPartner): Promise<boolean> {
+  private async transmitEDI(
+    message: EDIMessage,
+    partner: TradingPartner
+  ): Promise<boolean> {
     // Production EDI transmission logic
     // This would implement AS2, SFTP, HTTP POST, or VAN communication
     // For now, return true to simulate successful transmission
-    
-    console.log(`📡 Transmitting EDI ${message.transactionSet} to ${partner.name} via ${partner.communicationMethod}`);
-    
+
+    console.info(
+      `📡 Transmitting EDI ${message.transactionSet} to ${partner.name} via ${partner.communicationMethod}`
+    );
+
     switch (partner.communicationMethod) {
       case 'HTTP':
         return await this.transmitViaHTTP(message, partner);
@@ -495,11 +540,16 @@ IEA*1*${message.controlNumber}~`;
       case 'VAN':
         return await this.transmitViaVAN(message, partner);
       default:
-        throw new Error(`Unsupported communication method: ${partner.communicationMethod}`);
+        throw new Error(
+          `Unsupported communication method: ${partner.communicationMethod}`
+        );
     }
   }
 
-  private async transmitViaHTTP(message: EDIMessage, partner: TradingPartner): Promise<boolean> {
+  private async transmitViaHTTP(
+    message: EDIMessage,
+    partner: TradingPartner
+  ): Promise<boolean> {
     // HTTP POST transmission
     try {
       const response = await fetch(partner.endpoint, {
@@ -507,11 +557,11 @@ IEA*1*${message.controlNumber}~`;
         headers: {
           'Content-Type': 'application/edi-x12',
           'X-EDI-Transaction-Set': message.transactionSet,
-          'X-EDI-Control-Number': message.controlNumber
+          'X-EDI-Control-Number': message.controlNumber,
         },
-        body: message.rawEDI
+        body: message.rawEDI,
       });
-      
+
       return response.ok;
     } catch (error) {
       console.error('HTTP transmission failed:', error);
@@ -519,21 +569,30 @@ IEA*1*${message.controlNumber}~`;
     }
   }
 
-  private async transmitViaAS2(message: EDIMessage, partner: TradingPartner): Promise<boolean> {
+  private async transmitViaAS2(
+    message: EDIMessage,
+    partner: TradingPartner
+  ): Promise<boolean> {
     // AS2 transmission (would require AS2 library implementation)
-    console.log('AS2 transmission not yet implemented');
+    console.info('AS2 transmission not yet implemented');
     return true; // Simulate success for now
   }
 
-  private async transmitViaSFTP(message: EDIMessage, partner: TradingPartner): Promise<boolean> {
+  private async transmitViaSFTP(
+    message: EDIMessage,
+    partner: TradingPartner
+  ): Promise<boolean> {
     // SFTP transmission (would require SFTP library implementation)
-    console.log('SFTP transmission not yet implemented');
+    console.info('SFTP transmission not yet implemented');
     return true; // Simulate success for now
   }
 
-  private async transmitViaVAN(message: EDIMessage, partner: TradingPartner): Promise<boolean> {
+  private async transmitViaVAN(
+    message: EDIMessage,
+    partner: TradingPartner
+  ): Promise<boolean> {
     // VAN transmission (would require VAN provider API implementation)
-    console.log('VAN transmission not yet implemented');
+    console.info('VAN transmission not yet implemented');
     return true; // Simulate success for now
   }
 }

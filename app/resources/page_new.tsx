@@ -156,7 +156,7 @@ export default function ResourcesPage() {
     }}>
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+        <Link href="/"" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
@@ -350,7 +350,7 @@ export default function ResourcesPage() {
                         </span>
                       ))}
                     </div>
-                    <a href={hotel.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={hotel.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#60a5fa',
                       textDecoration: 'none',
                       fontSize: '14px',
@@ -446,7 +446,7 @@ export default function ResourcesPage() {
                     }}>
                       {stop.description}
                     </p>
-                    <a href={stop.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={stop.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#60a5fa',
                       textDecoration: 'none',
                       fontSize: '14px',
@@ -542,7 +542,7 @@ export default function ResourcesPage() {
                     }}>
                       {service.description}
                     </p>
-                    <a href={service.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={service.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#60a5fa',
                       textDecoration: 'none',
                       fontSize: '14px',
@@ -642,7 +642,7 @@ export default function ResourcesPage() {
                     }}>
                       {tool.description}
                     </p>
-                    <a href={tool.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={tool.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#60a5fa',
                       textDecoration: 'none',
                       fontSize: '14px',
@@ -687,7 +687,7 @@ export default function ResourcesPage() {
                   </p>
                 </div>
                 <div style={{ marginLeft: '24px' }}>
-                  <Link href="/dispatch" style={{ textDecoration: 'none' }}>
+                  <Link href="/dispatch"" style={{ textDecoration: 'none' }}>
                     <button style={{
                       background: 'white',
                       color: '#10b981',
@@ -788,7 +788,7 @@ export default function ResourcesPage() {
                     }}>
                       {platform.description}
                     </p>
-                    <a href={platform.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={platform.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#60a5fa',
                       textDecoration: 'none',
                       fontSize: '14px',
@@ -932,7 +932,7 @@ export default function ResourcesPage() {
                     }}>
                       {service.description}
                     </p>
-                    <a href={service.website} target="_blank" rel="noopener noreferrer" style={{
+                    <a href={service.website} target=""_blank"" rel=""noopener noreferrer"" style={{
                       color: '#60a5fa',
                       textDecoration: 'none',
                       fontSize: '14px',

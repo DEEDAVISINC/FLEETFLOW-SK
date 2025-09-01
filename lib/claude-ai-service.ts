@@ -365,13 +365,13 @@ export class ElevenLabsVoiceService {
 
   constructor() {
     this.apiKey = process.env.ELEVENLABS_API_KEY;
-    console.log(
+    console.info(
       `🎙️ ElevenLabs API Key Status: ${this.apiKey ? 'CONFIGURED ✅' : 'MISSING ❌'}`
     );
     if (this.apiKey) {
-      console.log(`🎙️ ElevenLabs API Key: ${this.apiKey.substring(0, 8)}...`);
+      console.info(`🎙️ ElevenLabs API Key: ${this.apiKey.substring(0, 8)}...`);
     } else {
-      console.log(
+      console.info(
         '🎙️ ElevenLabs running in demo mode - using browser TTS with voice selection'
       );
     }
@@ -391,7 +391,7 @@ export class ElevenLabsVoiceService {
   }> {
     // For demo purposes, use browser TTS with enhanced settings if no API key
     if (!this.apiKey) {
-      console.log(
+      console.info(
         '🎙️ ElevenLabs API key not configured - using enhanced browser TTS demo mode'
       );
       return {
@@ -412,7 +412,7 @@ export class ElevenLabsVoiceService {
       'american-male-confident': 'ZQe5CZNOzWyzPSCn5a3c', // Marcus
     };
 
-    console.log(
+    console.info(
       `🎙️ Voice selection: ${voiceId} -> ${voiceMap[voiceId] || voiceId}`
     );
 

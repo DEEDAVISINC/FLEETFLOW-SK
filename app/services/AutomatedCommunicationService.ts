@@ -754,7 +754,7 @@ ${JSON.stringify(trigger.context, null, 2)}
     delayMinutes: number
   ): Promise<void> {
     // Schedule follow-up check
-    console.log(
+    console.info(
       `📅 Scheduling follow-up monitoring for ${trigger.loadId} in ${delayMinutes} minutes`
     );
   }
@@ -764,7 +764,7 @@ ${JSON.stringify(trigger.context, null, 2)}
     rule: CommunicationRule
   ): Promise<boolean> {
     // Implement automated voice call logic
-    console.log(`📞 Making automated call for ${trigger.loadId}`);
+    console.info(`📞 Making automated call for ${trigger.loadId}`);
     return true;
   }
 
@@ -773,7 +773,7 @@ ${JSON.stringify(trigger.context, null, 2)}
     rule: CommunicationRule
   ): Promise<boolean> {
     // Implement automated email logic
-    console.log(`📧 Sending automated email for ${trigger.loadId}`);
+    console.info(`📧 Sending automated email for ${trigger.loadId}`);
     return true;
   }
 
@@ -783,7 +783,7 @@ ${JSON.stringify(trigger.context, null, 2)}
     escalation: any
   ): Promise<void> {
     // Send immediate notification to assigned agent
-    console.log(
+    console.info(
       `🚨 Notifying ${agent.firstName} ${agent.lastName} of escalation for ${trigger.loadId}`
     );
   }
@@ -793,7 +793,7 @@ ${JSON.stringify(trigger.context, null, 2)}
     escalation: any
   ): Promise<any> {
     // Emergency protocol when no agents available
-    console.log(
+    console.info(
       `🚨 EMERGENCY PROTOCOL: No agents available for ${trigger.loadId}`
     );
     return {

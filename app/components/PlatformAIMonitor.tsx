@@ -230,7 +230,7 @@ export function PlatformAIMonitor() {
             <button
               className='rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700'
               onClick={() => {
-                console.log('🔧 Platform AI configuration requested');
+                console.info('🔧 Platform AI configuration requested');
                 alert('Platform AI configuration panel would open here');
               }}
             >
@@ -247,7 +247,7 @@ export function PlatformAIMonitor() {
             <button
               className='rounded bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700'
               onClick={async () => {
-                console.log('🧪 Testing Platform AI...');
+                console.info('🧪 Testing Platform AI...');
                 const { testPlatformAI } = await import('../config/ai-config');
                 const result = await testPlatformAI();
                 alert(

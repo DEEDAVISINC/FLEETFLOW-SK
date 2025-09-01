@@ -14,7 +14,11 @@ interface OfflineData {
 
 interface PendingAction {
   id: string;
-  type: 'complete_step' | 'send_message' | 'upload_document' | 'update_location';
+  type:
+    | 'complete_step'
+    | 'send_message'
+    | 'upload_document'
+    | 'update_location';
   data: any;
   timestamp: string;
   retryCount: number;
@@ -29,7 +33,7 @@ class OfflineModeServiceClass {
     // Check browser environment
     if (typeof window !== 'undefined') {
       this.isOnline = navigator.onLine;
-      
+
       // Listen for online/offline events
       window.addEventListener('online', () => {
         this.isOnline = true;
@@ -63,14 +67,17 @@ class OfflineModeServiceClass {
         eldData: null,
         lastSync: new Date().toISOString(),
         pendingUploads: [],
-        pendingActions: []
+        pendingActions: [],
       };
 
       this.offlineData[driverId] = offlineData;
-      
+
       // Store in localStorage
-      localStorage.setItem(`${this.storagePrefix}${driverId}`, JSON.stringify(offlineData));
-      
+      localStorage.setItem(
+        `${this.storagePrefix}${driverId}`,
+        JSON.stringify(offlineData)
+      );
+
       return true;
     } catch (error) {
       console.error('Error enabling offline mode:', error);
@@ -78,7 +85,11 @@ class OfflineModeServiceClass {
     }
   }
 
-  async cacheData(driverId: string, dataType: string, data: any): Promise<boolean> {
+  async cacheData(
+    driverId: string,
+    dataType: string,
+    data: any
+  ): Promise<boolean> {
     try {
       if (typeof window === 'undefined') {
         return false;
@@ -124,8 +135,11 @@ class OfflineModeServiceClass {
       }
 
       // Update localStorage
-      localStorage.setItem(`${this.storagePrefix}${driverId}`, JSON.stringify(offlineData));
-      
+      localStorage.setItem(
+        `${this.storagePrefix}${driverId}`,
+        JSON.stringify(offlineData)
+      );
+
       return true;
     } catch (error) {
       console.error('Error caching data:', error);
@@ -171,7 +185,10 @@ class OfflineModeServiceClass {
     }
   }
 
-  async addPendingAction(driverId: string, action: Omit<PendingAction, 'id' | 'timestamp' | 'retryCount'>): Promise<boolean> {
+  async addPendingAction(
+    driverId: string,
+    action: Omit<PendingAction, 'id' | 'timestamp' | 'retryCount'>
+  ): Promise<boolean> {
     try {
       if (typeof window === 'undefined') {
         return false;
@@ -187,14 +204,17 @@ class OfflineModeServiceClass {
         ...action,
         id: `action-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        retryCount: 0
+        retryCount: 0,
       };
 
       offlineData.pendingActions.push(pendingAction);
-      
+
       // Update localStorage
-      localStorage.setItem(`${this.storagePrefix}${driverId}`, JSON.stringify(offlineData));
-      
+      localStorage.setItem(
+        `${this.storagePrefix}${driverId}`,
+        JSON.stringify(offlineData)
+      );
+
       return true;
     } catch (error) {
       console.error('Error adding pending action:', error);
@@ -225,7 +245,10 @@ class OfflineModeServiceClass {
     }
   }
 
-  async removePendingAction(driverId: string, actionId: string): Promise<boolean> {
+  async removePendingAction(
+    driverId: string,
+    actionId: string
+  ): Promise<boolean> {
     try {
       if (typeof window === 'undefined') {
         return false;
@@ -236,16 +259,21 @@ class OfflineModeServiceClass {
         return false;
       }
 
-      const index = offlineData.pendingActions.findIndex(action => action.id === actionId);
+      const index = offlineData.pendingActions.findIndex(
+        (action) => action.id === actionId
+      );
       if (index === -1) {
         return false;
       }
 
       offlineData.pendingActions.splice(index, 1);
-      
+
       // Update localStorage
-      localStorage.setItem(`${this.storagePrefix}${driverId}`, JSON.stringify(offlineData));
-      
+      localStorage.setItem(
+        `${this.storagePrefix}${driverId}`,
+        JSON.stringify(offlineData)
+      );
+
       return true;
     } catch (error) {
       console.error('Error removing pending action:', error);
@@ -278,14 +306,20 @@ class OfflineModeServiceClass {
               }
             }
           } catch (error) {
-            console.error(`Error processing pending action ${action.id}:`, error);
+            console.error(
+              `Error processing pending action ${action.id}:`,
+              error
+            );
             action.retryCount++;
           }
         }
 
         // Update last sync time
         offlineData.lastSync = new Date().toISOString();
-        localStorage.setItem(`${this.storagePrefix}${driverId}`, JSON.stringify(offlineData));
+        localStorage.setItem(
+          `${this.storagePrefix}${driverId}`,
+          JSON.stringify(offlineData)
+        );
       }
 
       return true;
@@ -295,30 +329,33 @@ class OfflineModeServiceClass {
     }
   }
 
-  private async processPendingAction(driverId: string, action: PendingAction): Promise<boolean> {
+  private async processPendingAction(
+    driverId: string,
+    action: PendingAction
+  ): Promise<boolean> {
     try {
       // In a real implementation, this would call the actual service methods
       switch (action.type) {
         case 'complete_step':
-          console.log(`Syncing step completion for ${driverId}:`, action.data);
+          console.info(`Syncing step completion for ${driverId}:`, action.data);
           // Would call DriverWorkflowService.completeStep()
           return true;
-        
+
         case 'send_message':
-          console.log(`Syncing message for ${driverId}:`, action.data);
+          console.info(`Syncing message for ${driverId}:`, action.data);
           // Would call CommunicationService.sendMessage()
           return true;
-        
+
         case 'upload_document':
-          console.log(`Syncing document upload for ${driverId}:`, action.data);
+          console.info(`Syncing document upload for ${driverId}:`, action.data);
           // Would call DocumentManagementService.uploadDocument()
           return true;
-        
+
         case 'update_location':
-          console.log(`Syncing location update for ${driverId}:`, action.data);
+          console.info(`Syncing location update for ${driverId}:`, action.data);
           // Would call GPSTrackingService.updateLocation()
           return true;
-        
+
         default:
           console.warn(`Unknown action type: ${action.type}`);
           return false;
@@ -329,7 +366,9 @@ class OfflineModeServiceClass {
     }
   }
 
-  async getStorageUsage(driverId: string): Promise<{ size: number; items: number }> {
+  async getStorageUsage(
+    driverId: string
+  ): Promise<{ size: number; items: number }> {
     try {
       if (typeof window === 'undefined') {
         return { size: 0, items: 0 };
@@ -341,7 +380,7 @@ class OfflineModeServiceClass {
       }
 
       const offlineData = JSON.parse(stored);
-      const totalItems = 
+      const totalItems =
         (offlineData.workflowSteps?.length || 0) +
         (offlineData.messages?.length || 0) +
         (offlineData.notifications?.length || 0) +
@@ -350,7 +389,7 @@ class OfflineModeServiceClass {
 
       return {
         size: stored.length,
-        items: totalItems
+        items: totalItems,
       };
     } catch (error) {
       console.error('Error getting storage usage:', error);
@@ -366,10 +405,10 @@ class OfflineModeServiceClass {
 
       // Remove from memory
       delete this.offlineData[driverId];
-      
+
       // Remove from localStorage
       localStorage.removeItem(`${this.storagePrefix}${driverId}`);
-      
+
       return true;
     } catch (error) {
       console.error('Error clearing offline data:', error);
@@ -377,7 +416,9 @@ class OfflineModeServiceClass {
     }
   }
 
-  async exportOfflineData(driverId: string): Promise<{ success: boolean; data?: any }> {
+  async exportOfflineData(
+    driverId: string
+  ): Promise<{ success: boolean; data?: any }> {
     try {
       if (typeof window === 'undefined') {
         return { success: false };
@@ -389,14 +430,14 @@ class OfflineModeServiceClass {
       }
 
       const offlineData = JSON.parse(stored);
-      
+
       return {
         success: true,
         data: {
           exportedAt: new Date().toISOString(),
           driverId,
-          offlineData
-        }
+          offlineData,
+        },
       };
     } catch (error) {
       console.error('Error exporting offline data:', error);
@@ -417,8 +458,11 @@ class OfflineModeServiceClass {
 
       // Store in memory and localStorage
       this.offlineData[driverId] = data.offlineData;
-      localStorage.setItem(`${this.storagePrefix}${driverId}`, JSON.stringify(data.offlineData));
-      
+      localStorage.setItem(
+        `${this.storagePrefix}${driverId}`,
+        JSON.stringify(data.offlineData)
+      );
+
       return true;
     } catch (error) {
       console.error('Error importing offline data:', error);
@@ -446,4 +490,4 @@ class OfflineModeServiceClass {
   }
 }
 
-export const OfflineModeService = new OfflineModeServiceClass(); 
+export const OfflineModeService = new OfflineModeServiceClass();

@@ -320,7 +320,7 @@ export class AuditTrailService {
     // 3. Alert on high-risk activities
     // 4. Store in secure database
 
-    console.log(
+    console.info(
       `[AUDIT] ${auditEntry.agentName} - ${auditEntry.actionType}: ${auditEntry.description}`
     );
 

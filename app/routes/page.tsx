@@ -71,7 +71,7 @@ export default function RoutesPage() {
   };
 
   const handleShareComplete = (shareData: any) => {
-    console.log('Route shared:', shareData);
+    console.info('Route shared:', shareData);
     // Here you would typically send the sharing data to your backend
     // For now, we'll just show a success message
     alert(
@@ -153,7 +153,7 @@ export default function RoutesPage() {
   const handleViewOptimizedRoute = (quote: UniversalQuote) => {
     setSelectedQuoteForRouting(quote);
     // Could open a detailed route view modal here
-    console.log('Viewing optimized route for:', quote.quoteNumber);
+    console.info('Viewing optimized route for:', quote.quoteNumber);
   };
 
   const refreshSavedQuotes = () => {

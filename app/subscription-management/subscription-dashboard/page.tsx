@@ -122,7 +122,7 @@ export default function SubscriptionDashboard() {
   useEffect(() => {
     // Ensure a user is logged in for demo purposes
     if (!loggedInUser) {
-      console.log('🔐 Auto-logging in demo user for subscription dashboard');
+      console.info('🔐 Auto-logging in demo user for subscription dashboard');
       userDataService.loginUser('FM-MGR-20230115-1'); // Frank Miller - Manager
     }
 

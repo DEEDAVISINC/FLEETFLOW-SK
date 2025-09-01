@@ -762,7 +762,7 @@ export class VendorManagementService {
   public async syncWithBillingSystem(): Promise<void> {
     // This would integrate with BillingAutomationService
     // to pull real vendor spend data, payment history, etc.
-    console.log('🔄 Syncing vendor data with billing system...');
+    console.info('🔄 Syncing vendor data with billing system...');
 
     for (const vendor of this.vendors.values()) {
       // Simulate billing sync
@@ -775,7 +775,7 @@ export class VendorManagementService {
       }
     }
 
-    console.log('✅ Billing sync completed');
+    console.info('✅ Billing sync completed');
   }
 
   // Document integration

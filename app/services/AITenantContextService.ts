@@ -107,7 +107,7 @@ export class AITenantContextService {
    */
   setTenantContext(sessionId: string, tenantId: string): void {
     this.activeTenantSessions.set(sessionId, tenantId);
-    console.log(
+    console.info(
       `🏢 Set AI tenant context: ${tenantId} for session: ${sessionId}`
     );
   }
@@ -463,7 +463,7 @@ REQUEST: ${request.operation}
    */
   registerTenant(tenantConfig: TenantSpecificAIConfig): void {
     this.tenantConfigs.set(tenantConfig.tenantId, tenantConfig);
-    console.log(
+    console.info(
       `✅ Registered AI context for tenant: ${tenantConfig.organizationName} (${tenantConfig.tenantId})`
     );
   }
@@ -478,7 +478,7 @@ REQUEST: ${request.operation}
     const existing = this.tenantConfigs.get(tenantId);
     if (existing) {
       this.tenantConfigs.set(tenantId, { ...existing, ...updates });
-      console.log(`🔄 Updated AI config for tenant: ${tenantId}`);
+      console.info(`🔄 Updated AI config for tenant: ${tenantId}`);
     }
   }
 

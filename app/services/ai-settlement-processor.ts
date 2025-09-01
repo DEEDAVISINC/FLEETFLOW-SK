@@ -257,7 +257,7 @@ export class AISettlementProcessor {
     invoiceData: UnstructuredInvoiceData
   ): Promise<ExtractedInvoiceData | null> {
     try {
-      console.log(
+      console.info(
         `🔍 Processing unstructured invoice ${invoiceData.id} from ${invoiceData.source}`
       );
 
@@ -301,7 +301,7 @@ export class AISettlementProcessor {
       invoiceData.extractedData = extractedData;
       invoiceData.processedAt = new Date();
 
-      console.log(
+      console.info(
         `✅ Invoice processed with ${invoiceData.confidence}% confidence`
       );
       return extractedData;
@@ -325,7 +325,7 @@ export class AISettlementProcessor {
     // - Azure Computer Vision
     // - Tesseract.js for client-side processing
 
-    console.log(`📷 Performing OCR on ${invoiceData.originalFormat} document`);
+    console.info(`📷 Performing OCR on ${invoiceData.originalFormat} document`);
 
     if (invoiceData.originalFormat === 'pdf') {
       // PDF text extraction
@@ -352,7 +352,7 @@ export class AISettlementProcessor {
     invoiceData: UnstructuredInvoiceData
   ): Promise<ExtractedInvoiceData | null> {
     try {
-      console.log(`🤖 AI extracting structured data from invoice text`);
+      console.info(`🤖 AI extracting structured data from invoice text`);
 
       // Use AI/ML models to extract structured data
       // In production, this would use:
@@ -471,7 +471,7 @@ export class AISettlementProcessor {
     const discrepancies: SettlementDiscrepancy[] = [];
 
     try {
-      console.log(
+      console.info(
         `🕵️ Detecting discrepancies for invoice ${extractedData.invoiceNumber}`
       );
 
@@ -547,7 +547,7 @@ export class AISettlementProcessor {
         this.discrepancies.set(discrepancy.id, discrepancy);
       });
 
-      console.log(
+      console.info(
         `🎯 Found ${discrepancies.length} discrepancies for invoice ${extractedData.invoiceNumber}`
       );
       return discrepancies;
@@ -642,7 +642,7 @@ export class AISettlementProcessor {
       return;
     }
 
-    console.log(
+    console.info(
       `🔧 Attempting automated resolution for discrepancy ${discrepancy.id}`
     );
 
@@ -659,7 +659,7 @@ export class AISettlementProcessor {
           discrepancy.resolutionMethod = 'auto';
           discrepancy.notes = `Automated resolution via rule: ${rule.name}`;
 
-          console.log(
+          console.info(
             `✅ Discrepancy ${discrepancy.id} resolved automatically`
           );
           return;
@@ -680,7 +680,7 @@ export class AISettlementProcessor {
     discrepancies: SettlementDiscrepancy[]
   ): Promise<PaymentProcessingResult> {
     try {
-      console.log(
+      console.info(
         `💳 Processing payment for invoice ${extractedData.invoiceNumber}`
       );
 
@@ -755,7 +755,7 @@ export class AISettlementProcessor {
       // Send notifications
       await this.sendPaymentNotifications(paymentResult, extractedData);
 
-      console.log(
+      console.info(
         `✅ Payment processed: ${paymentResult.status} - $${paymentResult.amount}`
       );
       return paymentResult;
@@ -785,7 +785,7 @@ export class AISettlementProcessor {
     amount: number
   ): Promise<PaymentProcessingResult> {
     // Integrate with ACH payment processor (e.g., Stripe, Plaid, bank APIs)
-    console.log(
+    console.info(
       `🏦 Processing ACH payment of $${amount} to ${extractedData.carrier.name}`
     );
 
@@ -810,7 +810,7 @@ export class AISettlementProcessor {
     extractedData: ExtractedInvoiceData,
     amount: number
   ): Promise<PaymentProcessingResult> {
-    console.log(
+    console.info(
       `🔄 Processing wire payment of $${amount} to ${extractedData.carrier.name}`
     );
 
@@ -834,7 +834,7 @@ export class AISettlementProcessor {
     extractedData: ExtractedInvoiceData,
     amount: number
   ): Promise<PaymentProcessingResult> {
-    console.log(
+    console.info(
       `📝 Processing check payment of $${amount} to ${extractedData.carrier.name}`
     );
 
@@ -861,7 +861,7 @@ export class AISettlementProcessor {
   async generateSettlementAnalytics(
     period: number = 30
   ): Promise<SettlementAnalytics> {
-    console.log(`📊 Generating settlement analytics for last ${period} days`);
+    console.info(`📊 Generating settlement analytics for last ${period} days`);
 
     const startDate = new Date(Date.now() - period * 24 * 60 * 60 * 1000);
     const invoices = this.getInvoicesInPeriod(startDate);

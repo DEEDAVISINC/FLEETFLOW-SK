@@ -11,13 +11,13 @@ export class AIDispatcherWorkflowOrchestrator {
    * Complete AI → Onboarding → Assignment → Contract workflow
    */
   async executeCompleteWorkflow(): Promise<void> {
-    console.log('🔄 Starting AI Dispatcher Assignment Workflow...');
+    console.info('🔄 Starting AI Dispatcher Assignment Workflow...');
 
     try {
       // Step 1: Process AI-generated carrier leads and start onboarding
       await aiCarrierOnboardingTrigger.processAILeadsAndStartOnboarding();
 
-      console.log('✅ AI Dispatcher Workflow completed successfully');
+      console.info('✅ AI Dispatcher Workflow completed successfully');
     } catch (error) {
       console.error('❌ AI Dispatcher Workflow failed:', error);
     }
@@ -89,15 +89,15 @@ export class AIDispatcherWorkflowOrchestrator {
    * Demo method to showcase the complete workflow
    */
   async runCompleteDemo(): Promise<void> {
-    console.log('🎬 Starting AI Dispatcher Workflow Demo...');
+    console.info('🎬 Starting AI Dispatcher Workflow Demo...');
 
     try {
       // 1. Trigger AI lead generation and onboarding
-      console.log('🤖 Step 1: AI processing leads...');
+      console.info('🤖 Step 1: AI processing leads...');
       await this.executeCompleteWorkflow();
 
       // 2. Simulate management assignment (in real system, management would do this via UI)
-      console.log('👨‍💼 Step 2: Simulating management assignment...');
+      console.info('👨‍💼 Step 2: Simulating management assignment...');
       const assignmentId = await this.handleDispatcherAssignment(
         'AI-CARRIER-DEMO-001',
         'Demo Trucking LLC',
@@ -109,14 +109,14 @@ export class AIDispatcherWorkflowOrchestrator {
       );
 
       // 3. Simulate dispatcher acceptance
-      console.log('✅ Step 3: Simulating dispatcher acceptance...');
+      console.info('✅ Step 3: Simulating dispatcher acceptance...');
       await this.handleDispatcherAcceptance(assignmentId);
 
       // 4. Show final status
       const status = await this.getWorkflowStatus();
-      console.log('📊 Workflow Status:', status);
+      console.info('📊 Workflow Status:', status);
 
-      console.log(
+      console.info(
         '🎉 Complete AI Dispatcher Workflow Demo finished successfully!'
       );
     } catch (error) {

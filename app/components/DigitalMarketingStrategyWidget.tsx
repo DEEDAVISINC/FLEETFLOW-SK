@@ -929,7 +929,7 @@ const DigitalMarketingStrategyWidget = () => {
                         flex: 1,
                       }}
                     >
-                      "{metric.keyword}"
+                      ""{metric.keyword}""
                     </h4>
                     <div
                       style={{

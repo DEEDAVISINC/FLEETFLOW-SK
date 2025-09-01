@@ -271,7 +271,7 @@ async function handleConnectProvider(request: NextRequest) {
   const tenantId = getTenantId(request);
   const connectionData = await request.json();
 
-  console.log('🔗 Connecting ELD provider for tenant:', tenantId);
+  console.info('🔗 Connecting ELD provider for tenant:', tenantId);
 
   if (!connectionData.providerId || !connectionData.credentials) {
     return NextResponse.json(
@@ -305,7 +305,7 @@ async function handleConnectProvider(request: NextRequest) {
       isActive: true,
     });
 
-    console.log('✅ ELD provider connected:', connection.id);
+    console.info('✅ ELD provider connected:', connection.id);
 
     return NextResponse.json({
       success: true,
@@ -334,7 +334,7 @@ async function handleSyncData(request: NextRequest) {
   const { providerId, driverId, vehicleId, startDate, endDate, dataType } =
     await request.json();
 
-  console.log('🔄 Syncing ELD data:', { tenantId, providerId, dataType });
+  console.info('🔄 Syncing ELD data:', { tenantId, providerId, dataType });
 
   if (!providerId) {
     return NextResponse.json(
@@ -365,7 +365,7 @@ async function handleSyncData(request: NextRequest) {
       );
     }
 
-    console.log('✅ ELD data sync completed:', syncResult);
+    console.info('✅ ELD data sync completed:', syncResult);
 
     return NextResponse.json({
       success: syncResult.success,
@@ -403,7 +403,7 @@ async function handleWebhook(request: NextRequest) {
   try {
     const webhookData = await request.json();
 
-    console.log('📡 Processing ELD webhook:', { providerId });
+    console.info('📡 Processing ELD webhook:', { providerId });
 
     const result = await eldDataImportService.processWebhookData(
       providerId,
@@ -458,7 +458,7 @@ async function handleGetProviders() {
 
 async function handleGetConnections(request: NextRequest, tenantId: string) {
   try {
-    console.log('🔗 Getting ELD connections for tenant:', tenantId);
+    console.info('🔗 Getting ELD connections for tenant:', tenantId);
 
     const connections = await mockDb.getProviderConnectionsByTenant(tenantId);
 
@@ -500,7 +500,7 @@ async function handleGetHOSData(request: NextRequest, tenantId: string) {
   }
 
   try {
-    console.log('📋 Getting HOS data:', {
+    console.info('📋 Getting HOS data:', {
       tenantId,
       driverId,
       startDate,
@@ -573,7 +573,7 @@ async function handleGetViolations(request: NextRequest, tenantId: string) {
   const resolved = searchParams.get('resolved');
 
   try {
-    console.log('🚨 Getting HOS violations for tenant:', tenantId);
+    console.info('🚨 Getting HOS violations for tenant:', tenantId);
 
     const violations = await mockDb.getViolationsByTenant(
       tenantId,
@@ -627,7 +627,7 @@ async function handleGetDiagnostics(request: NextRequest, tenantId: string) {
   }
 
   try {
-    console.log('🔧 Getting vehicle diagnostics:', { tenantId, vehicleId });
+    console.info('🔧 Getting vehicle diagnostics:', { tenantId, vehicleId });
 
     const diagnostics = await mockDb.getDiagnosticsByVehicle(
       tenantId,

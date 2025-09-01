@@ -438,7 +438,7 @@ export class StripeService {
           await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
           break;
         default:
-          console.log(`Unhandled event type: ${event.type}`);
+          console.info(`Unhandled event type: ${event.type}`);
       }
     } catch (error) {
       console.error('Error handling webhook event:', error);
@@ -449,7 +449,7 @@ export class StripeService {
   private async handleSubscriptionCreated(
     subscription: Stripe.Subscription
   ): Promise<void> {
-    console.log('Subscription created:', subscription.id);
+    console.info('Subscription created:', subscription.id);
     // TODO: Update user's plan in database
     // TODO: Send welcome email
     // TODO: Enable features based on plan
@@ -458,7 +458,7 @@ export class StripeService {
   private async handleSubscriptionUpdated(
     subscription: Stripe.Subscription
   ): Promise<void> {
-    console.log('Subscription updated:', subscription.id);
+    console.info('Subscription updated:', subscription.id);
     // TODO: Update user's plan in database
     // TODO: Handle plan upgrades/downgrades
     // TODO: Adjust feature access
@@ -467,21 +467,21 @@ export class StripeService {
   private async handleSubscriptionDeleted(
     subscription: Stripe.Subscription
   ): Promise<void> {
-    console.log('Subscription deleted:', subscription.id);
+    console.info('Subscription deleted:', subscription.id);
     // TODO: Disable user's paid features
     // TODO: Send cancellation confirmation
     // TODO: Archive user data
   }
 
   private async handlePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
-    console.log('Payment succeeded:', invoice.id);
+    console.info('Payment succeeded:', invoice.id);
     // TODO: Send payment confirmation
     // TODO: Extend service period
     // TODO: Clear any overdue notices
   }
 
   private async handlePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
-    console.log('Payment failed:', invoice.id);
+    console.info('Payment failed:', invoice.id);
     // TODO: Send payment failure notification
     // TODO: Implement dunning management
     // TODO: Potentially suspend services

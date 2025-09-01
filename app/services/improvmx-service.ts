@@ -94,7 +94,7 @@ export class ImprovMXService {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(
+        console.info(
           `✅ Created email alias: ${alias}@${this.domain} → ${forward}`
         );
         return {
@@ -138,7 +138,7 @@ export class ImprovMXService {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(`✅ Updated email alias ID ${aliasId} → ${forward}`);
+        console.info(`✅ Updated email alias ID ${aliasId} → ${forward}`);
         return {
           success: true,
           data: data.alias,
@@ -172,7 +172,7 @@ export class ImprovMXService {
       );
 
       if (response.ok) {
-        console.log(`✅ Deleted email alias ID ${aliasId}`);
+        console.info(`✅ Deleted email alias ID ${aliasId}`);
         return { success: true };
       } else {
         const errorData = await response.json().catch(() => ({}));
@@ -278,7 +278,7 @@ export class ImprovMXService {
       const result = await this.createAlias(alias, email);
       if (result.success && result.data) {
         results.push(result.data);
-        console.log(
+        console.info(
           `✅ Created departmental alias: ${alias}@fleetflowapp.com → ${email}`
         );
       } else {
@@ -306,7 +306,7 @@ export class ImprovMXService {
   // Development mode fallback
   private logDevMode(action: string, details: any) {
     if (!this.apiKey) {
-      console.log(`📧 ImprovMX (Dev Mode) - ${action}:`, details);
+      console.info(`📧 ImprovMX (Dev Mode) - ${action}:`, details);
     }
   }
 }

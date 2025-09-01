@@ -125,7 +125,7 @@ export default function SubscriptionAgreementSignup({
       );
 
       setAgreedTo((prev) => new Set([...prev, agreementId]));
-      console.log(`✅ Agreement consent recorded: ${agreementId}`);
+      console.info(`✅ Agreement consent recorded: ${agreementId}`);
     } catch (error) {
       console.error('Error recording consent:', error);
       setError(`Failed to record agreement consent: ${error}`);
@@ -228,7 +228,7 @@ export default function SubscriptionAgreementSignup({
         accountType: 'checking',
       });
 
-      console.log('✅ Payment method added successfully');
+      console.info('✅ Payment method added successfully');
     } catch (error) {
       console.error('Error adding payment method:', error);
       setError(`Failed to add payment method: ${error}`);
@@ -257,7 +257,7 @@ export default function SubscriptionAgreementSignup({
       );
 
       setCurrentStep('confirmation');
-      console.log('✅ Subscription created successfully:', billing.id);
+      console.info('✅ Subscription created successfully:', billing.id);
 
       setTimeout(() => {
         onComplete?.(billing.id);
@@ -494,7 +494,7 @@ export default function SubscriptionAgreementSignup({
                         marginTop: '4px',
                       }}
                     >
-                      Please sign above and click "I Agree" below.
+                      Please sign above and click ""I Agree"" below.
                     </p>
                   </div>
                 )}
@@ -1114,18 +1114,3 @@ export default function SubscriptionAgreementSignup({
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

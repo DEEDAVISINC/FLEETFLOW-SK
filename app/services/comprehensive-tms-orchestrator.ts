@@ -134,7 +134,7 @@ export class ComprehensiveTMSOrchestrator {
     this.aiService = new FleetFlowAI();
     this.routeOptimizer = new RouteOptimizationService();
 
-    console.log('🚀 Comprehensive TMS Orchestrator initialized');
+    console.info('🚀 Comprehensive TMS Orchestrator initialized');
   }
 
   // ========================================
@@ -150,7 +150,7 @@ export class ComprehensiveTMSOrchestrator {
     settlementPreferences?: any;
   }): Promise<ComprehensiveTMSWorkflow> {
     const workflowId = `CTMS-${Date.now()}`;
-    console.log(`🎯 Starting comprehensive TMS workflow: ${workflowId}`);
+    console.info(`🎯 Starting comprehensive TMS workflow: ${workflowId}`);
 
     // Initialize workflow
     const workflow: ComprehensiveTMSWorkflow = {
@@ -264,7 +264,7 @@ export class ComprehensiveTMSOrchestrator {
       workflow.completedAt = new Date();
       await this.updateWorkflow(workflow);
 
-      console.log(`✅ Comprehensive workflow completed: ${workflowId}`);
+      console.info(`✅ Comprehensive workflow completed: ${workflowId}`);
       return workflow;
     } catch (error) {
       console.error(`❌ Workflow failed: ${workflowId}`, error);
@@ -283,7 +283,7 @@ export class ComprehensiveTMSOrchestrator {
     preferences: any,
     workflow: ComprehensiveTMSWorkflow
   ): Promise<MultimodalQuote> {
-    console.log('🤖 AI selecting optimal transport mode...');
+    console.info('🤖 AI selecting optimal transport mode...');
 
     // Enhanced AI selection considering existing FleetFlow capabilities
     const scoredQuotes = await Promise.all(
@@ -302,7 +302,7 @@ export class ComprehensiveTMSOrchestrator {
 
     // Log the decision reasoning
     const selectedQuote = scoredQuotes[0].quote;
-    console.log(
+    console.info(
       `🎯 Selected mode: ${selectedQuote.mode.mode} (${selectedQuote.carrier}) - Score: ${scoredQuotes[0].score}`
     );
 
@@ -489,7 +489,7 @@ export class ComprehensiveTMSOrchestrator {
 
     if (!workflow.createdShipment) return appointments;
 
-    console.log('📅 Scheduling intelligent dock appointments...');
+    console.info('📅 Scheduling intelligent dock appointments...');
 
     for (const segment of workflow.createdShipment.segments) {
       // Schedule pickup appointment
@@ -553,7 +553,7 @@ export class ComprehensiveTMSOrchestrator {
       }
     }
 
-    console.log(`📅 Scheduled ${appointments.length} appointments`);
+    console.info(`📅 Scheduled ${appointments.length} appointments`);
     return appointments;
   }
 
@@ -565,7 +565,7 @@ export class ComprehensiveTMSOrchestrator {
     workflow: ComprehensiveTMSWorkflow,
     invoiceData: any
   ): Promise<void> {
-    console.log(
+    console.info(
       `💳 Processing comprehensive settlement for workflow ${workflow.id}`
     );
 
@@ -617,7 +617,7 @@ export class ComprehensiveTMSOrchestrator {
 
         await this.updateWorkflow(workflow);
 
-        console.log(
+        console.info(
           `✅ Settlement processed successfully for workflow ${workflow.id}`
         );
       }
@@ -658,7 +658,7 @@ export class ComprehensiveTMSOrchestrator {
   async optimizeComprehensiveWorkflow(
     workflow: ComprehensiveTMSWorkflow
   ): Promise<ComprehensiveOptimization> {
-    console.log(`🔧 Optimizing comprehensive workflow ${workflow.id}`);
+    console.info(`🔧 Optimizing comprehensive workflow ${workflow.id}`);
 
     const recommendations =
       await this.generateComprehensiveRecommendations(workflow);
@@ -692,7 +692,9 @@ export class ComprehensiveTMSOrchestrator {
   // ========================================
 
   async generateComprehensiveAnalytics(period: number = 30): Promise<any> {
-    console.log(`📊 Generating comprehensive TMS analytics for ${period} days`);
+    console.info(
+      `📊 Generating comprehensive TMS analytics for ${period} days`
+    );
 
     const workflows = this.getWorkflowsInPeriod(period);
 
@@ -792,7 +794,7 @@ export class ComprehensiveTMSOrchestrator {
     this.activeWorkflows.set(workflow.id, workflow);
 
     // In production, this would persist to database
-    console.log(
+    console.info(
       `📝 Workflow ${workflow.id} updated - Status: ${workflow.status}`
     );
   }
@@ -977,4 +979,3 @@ export class ComprehensiveTMSOrchestrator {
     return 95.0; // Placeholder
   }
 }
-

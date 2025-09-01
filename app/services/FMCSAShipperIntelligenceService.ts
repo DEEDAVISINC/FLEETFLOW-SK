@@ -54,7 +54,7 @@ export class FMCSAShipperIntelligenceService {
 
   constructor() {
     this.carrierService = new EnhancedCarrierService();
-    console.log('🧠 FMCSA Shipper Intelligence Service initialized');
+    console.info('🧠 FMCSA Shipper Intelligence Service initialized');
   }
 
   /**
@@ -66,7 +66,7 @@ export class FMCSAShipperIntelligenceService {
     equipmentType?: string;
     maxResults?: number;
   }): Promise<ShipperIntelligence[]> {
-    console.log('🔍 Starting FMCSA shipper intelligence discovery...');
+    console.info('🔍 Starting FMCSA shipper intelligence discovery...');
 
     try {
       // Step 1: Get relevant carriers from FMCSA database
@@ -90,7 +90,7 @@ export class FMCSAShipperIntelligenceService {
       // Step 3: AI scoring and ranking
       const rankedShippers = await this.rankShipperProspects(Array.from(shipperIntelligence.values()));
       
-      console.log(`✅ Discovered ${rankedShippers.length} potential shippers`);
+      console.info(`✅ Discovered ${rankedShippers.length} potential shippers`);
       return rankedShippers.slice(0, searchCriteria.maxResults || 50);
 
     } catch (error) {
@@ -103,7 +103,7 @@ export class FMCSAShipperIntelligenceService {
    * Analyze specific carrier to identify their likely customers/shippers
    */
   private async analyzeCarrierForShippers(carrier: any): Promise<ShipperIntelligence[]> {
-    console.log(`🔍 Analyzing carrier ${carrier.carrierName} for shipper patterns...`);
+    console.info(`🔍 Analyzing carrier ${carrier.carrierName} for shipper patterns...`);
 
     try {
       // Use AI to analyze carrier data and infer shipper relationships
@@ -132,7 +132,7 @@ export class FMCSAShipperIntelligenceService {
    * AI-powered prospect scoring and ranking
    */
   private async rankShipperProspects(shippers: ShipperIntelligence[]): Promise<ShipperIntelligence[]> {
-    console.log('🧠 AI ranking shipper prospects...');
+    console.info('🧠 AI ranking shipper prospects...');
 
     try {
       const scoredShippers = await Promise.all(
@@ -180,7 +180,7 @@ export class FMCSAShipperIntelligenceService {
       averageProspectScore: number;
     };
   }> {
-    console.log('📊 Exporting shipper intelligence to lead generation...');
+    console.info('📊 Exporting shipper intelligence to lead generation...');
 
     const csvHeaders = [
       'Company Name',

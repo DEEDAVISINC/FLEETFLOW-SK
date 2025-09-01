@@ -639,7 +639,7 @@ export default function DEPOINTEDashboard() {
   const handleHealthcareBatchDeploy = (
     healthcareTasksData: HealthcareTask[]
   ) => {
-    console.log('🚀 HEALTHCARE BATCH DEPLOYMENT:', healthcareTasksData);
+    console.info('🚀 HEALTHCARE BATCH DEPLOYMENT:', healthcareTasksData);
 
     // Update healthcare tasks state
     setHealthcareTasks(healthcareTasksData);
@@ -730,14 +730,14 @@ export default function DEPOINTEDashboard() {
     setIsHealthcareTaskOpen(false);
 
     // Show success notification
-    console.log(
+    console.info(
       '✅ Healthcare tasks deployed successfully to DEPOINTE AI team!'
     );
   };
 
   // Handle shipper batch deployment
   const handleShipperBatchDeploy = (shipperTasksData: ShipperTask[]) => {
-    console.log('🚀 SHIPPER EXPANSION DEPLOYMENT:', shipperTasksData);
+    console.info('🚀 SHIPPER EXPANSION DEPLOYMENT:', shipperTasksData);
 
     // Update shipper tasks state
     setShipperTasks(shipperTasksData);
@@ -830,7 +830,7 @@ export default function DEPOINTEDashboard() {
     setIsShipperTaskOpen(false);
 
     // Show success notification
-    console.log(
+    console.info(
       '✅ Shipper expansion tasks deployed successfully to DEPOINTE AI team!'
     );
   };
@@ -839,7 +839,7 @@ export default function DEPOINTEDashboard() {
   const handleDesperateProspectsBatchDeploy = (
     desperateProspectsTasksData: DesperateProspectsTask[]
   ) => {
-    console.log(
+    console.info(
       '🚨 DESPERATE PROSPECTS DEPLOYMENT:',
       desperateProspectsTasksData
     );
@@ -938,7 +938,7 @@ export default function DEPOINTEDashboard() {
     setIsDesperateProspectsTaskOpen(false);
 
     // Show success notification
-    console.log(
+    console.info(
       '🚨 Desperate prospects crisis response deployed successfully to DEPOINTE AI team!'
     );
   };
@@ -1128,7 +1128,7 @@ export default function DEPOINTEDashboard() {
         paddingTop: '90px',
         color: 'white',
         fontFamily:
-          'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segue UI", Roboto, sans-serif',
+          'Inter, system-ui, -apple-system, BlinkMacSystemFont, ""Segue UI"", Roboto, sans-serif',
       }}
     >
       {/* Header */}

@@ -499,7 +499,7 @@ export default function AutomationDemoPage() {
                         // Load status change (automatic)
                       </div>
                       <div>
-                        updateLoad('FL-001', {"{ status: 'In Transit' }"})
+                        updateLoad('FL-001', {{ status: 'In Transit' }})
                       </div>
                     </div>
                     <div style={{ marginBottom: '12px' }}>

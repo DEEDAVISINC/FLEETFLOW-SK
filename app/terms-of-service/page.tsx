@@ -83,9 +83,10 @@ export default function TermsOfServicePage() {
               1. Acceptance of Terms
             </h2>
             <p style={{ marginBottom: '15px' }}>
-              By accessing or using FleetFlow™ ("Service"), you agree to be
-              bound by these Terms of Service ("Terms"). If you disagree with
-              any part of these terms, then you may not access the Service.
+              By accessing or using FleetFlow™ (""Service""), you agree
+              to be bound by these Terms of Service (""Terms""). If you
+              disagree with any part of these terms, then you may not access the
+              Service.
             </p>
             <p style={{ marginBottom: '15px' }}>
               These Terms apply to all visitors, users, and others who access or

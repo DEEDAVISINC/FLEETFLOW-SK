@@ -204,7 +204,7 @@ export default function PhoneSystemWidget({
 
     // Clear current note
     setCurrentNote('');
-    console.log(`📝 Note added to call ${activeCallId}: ${currentNote}`);
+    console.info(`📝 Note added to call ${activeCallId}: ${currentNote}`);
   };
 
   // Quick note templates

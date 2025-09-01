@@ -293,7 +293,7 @@ export default function AgentPortal() {
   };
 
   const calculateWarehousing = () => {
-    console.log('🔄 Calculating Warehousing Quote...');
+    console.info('🔄 Calculating Warehousing Quote...');
     const palletCount = parseInt(warehousingData.palletCount) || 0;
     const duration = parseInt(warehousingData.duration) || 1;
     const squareFootage = parseInt(warehousingData.squareFootage) || 0;
@@ -330,7 +330,7 @@ export default function AgentPortal() {
   };
 
   const calculateMultiService = () => {
-    console.log('🔄 Calculating Multi-Service Quote...');
+    console.info('🔄 Calculating Multi-Service Quote...');
 
     if (multiServiceData.services.length === 0) {
       alert('Please select at least one service');
@@ -2134,7 +2134,7 @@ export default function AgentPortal() {
                   </div>
                   <button
                     onClick={() => {
-                      console.log('Spot rate optimization requested');
+                      console.info('Spot rate optimization requested');
                     }}
                     style={{
                       background: 'linear-gradient(135deg, #10b981, #059669)',

@@ -274,7 +274,10 @@ export async function setTenantConfig(
 ): Promise<boolean> {
   // In production, this would update the tenant_integrations table
   try {
-    console.log(`Setting ${configType} config for tenant ${tenantId}:`, config);
+    console.info(
+      `Setting ${configType} config for tenant ${tenantId}:`,
+      config
+    );
 
     // Validate user has permission to modify tenant config
     if (!hasPermission(`${configType}.admin`)) {
@@ -413,7 +416,7 @@ export function switchTenant(newTenantId: string): boolean {
   }
 }
 
-export default {
+const tenantUtils = {
   getTenantId,
   getCurrentUserTenant,
   getTenantInfo,
@@ -428,40 +431,4 @@ export default {
   switchTenant,
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default tenantUtils;

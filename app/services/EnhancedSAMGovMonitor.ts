@@ -207,7 +207,7 @@ export class EnhancedSAMGovMonitor {
         
         if (attempt < maxRetries) {
           const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000); // Exponential backoff, max 10s
-          console.log(`⚠️ SAM.gov API attempt ${attempt} failed, retrying in ${delay}ms...`);
+          console.info(`⚠️ SAM.gov API attempt ${attempt} failed, retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -310,7 +310,7 @@ export class EnhancedSAMGovMonitor {
     
     const timeSinceLastFailure = Date.now() - this.circuitBreaker.lastFailureTime;
     if (timeSinceLastFailure > this.circuitBreaker.resetTimeoutMs) {
-      console.log('🔄 Circuit breaker reset timeout reached, attempting to close...');
+      console.info('🔄 Circuit breaker reset timeout reached, attempting to close...');
       return false;
     }
     
@@ -329,7 +329,7 @@ export class EnhancedSAMGovMonitor {
 
   private resetCircuitBreaker(): void {
     if (this.circuitBreaker.consecutiveFailures > 0) {
-      console.log('✅ SAM.gov API circuit breaker reset - service healthy');
+      console.info('✅ SAM.gov API circuit breaker reset - service healthy');
     }
     this.circuitBreaker.consecutiveFailures = 0;
     this.circuitBreaker.isOpen = false;

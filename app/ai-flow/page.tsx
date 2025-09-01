@@ -331,7 +331,7 @@ export default function AIFlowPage() {
               notification.type === 'workflow_update'
             ) {
               // Update AI Flow metrics based on notifications
-              console.log(
+              console.info(
                 '🔔 AI Flow notification received:',
                 notification.title
               );

@@ -94,7 +94,7 @@ export class TaxBanditsService {
    */
   async fileForm2290(formData: Form2290Data): Promise<Form2290Response> {
     try {
-      console.log('📋 Filing Form 2290 via TaxBandits...', {
+      console.info('📋 Filing Form 2290 via TaxBandits...', {
         businessName: formData.businessInfo.businessName,
         vehicleCount: formData.vehicles.length,
         filingType: formData.filingType,
@@ -130,7 +130,7 @@ export class TaxBanditsService {
 
       const result = await response.json();
 
-      console.log('✅ Form 2290 filed successfully:', {
+      console.info('✅ Form 2290 filed successfully:', {
         submissionId: result.SubmissionId,
         status: result.Status,
         totalTax: result.TotalTaxDue,
@@ -150,7 +150,7 @@ export class TaxBanditsService {
    */
   async getFilingStatus(submissionId: string): Promise<FilingStatus> {
     try {
-      console.log('🔍 Checking Form 2290 status:', submissionId);
+      console.info('🔍 Checking Form 2290 status:', submissionId);
 
       if (!this.apiKey || !this.userToken) {
         return this.getMockStatusResponse(submissionId);
@@ -355,7 +355,7 @@ export class TaxBanditsService {
     const { totalTax } = this.calculateHVUT(formData.vehicles);
     const submissionId = `MOCK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-    console.log('🧪 Using mock TaxBandits response (no API key configured)');
+    console.info('🧪 Using mock TaxBandits response (no API key configured)');
 
     return {
       submissionId,
@@ -371,7 +371,7 @@ export class TaxBanditsService {
    * Generate mock status response for testing
    */
   private getMockStatusResponse(submissionId: string): FilingStatus {
-    console.log('🧪 Using mock status response (no API key configured)');
+    console.info('🧪 Using mock status response (no API key configured)');
 
     // Simulate different statuses based on submission ID
     const statuses = ['processing', 'accepted', 'rejected'];
@@ -413,4 +413,3 @@ export class TaxBanditsService {
 }
 
 export const taxBanditsService = new TaxBanditsService();
-

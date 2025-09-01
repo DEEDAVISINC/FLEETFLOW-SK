@@ -46,7 +46,7 @@ export class WebSocketNotificationService {
 
   private constructor() {
     this.initializeConnection();
-    console.log('🔗 WebSocketNotificationService initialized');
+    console.info('🔗 WebSocketNotificationService initialized');
   }
 
   public static getInstance(): WebSocketNotificationService {
@@ -64,7 +64,7 @@ export class WebSocketNotificationService {
       const wsUrl = this.getWebSocketUrl();
       this.connectionStatus.websocketUrl = wsUrl;
 
-      console.log(`🔌 Attempting WebSocket connection to: ${wsUrl}`);
+      console.info(`🔌 Attempting WebSocket connection to: ${wsUrl}`);
 
       this.websocket = new WebSocket(wsUrl);
       this.setupEventListeners();
@@ -101,7 +101,7 @@ export class WebSocketNotificationService {
     if (!this.websocket) return;
 
     this.websocket.onopen = (event) => {
-      console.log('✅ WebSocket connected');
+      console.info('✅ WebSocket connected');
 
       this.connectionStatus.connected = true;
       this.connectionStatus.connectionAttempts = 0;
@@ -136,7 +136,7 @@ export class WebSocketNotificationService {
     };
 
     this.websocket.onclose = (event) => {
-      console.log('🔌 WebSocket disconnected:', event.code, event.reason);
+      console.info('🔌 WebSocket disconnected:', event.code, event.reason);
 
       this.connectionStatus.connected = false;
       this.stopHeartbeat();
@@ -168,7 +168,7 @@ export class WebSocketNotificationService {
 
   // 📥 HANDLE INCOMING MESSAGES
   private handleIncomingMessage(message: WebSocketMessage): void {
-    console.log('📨 WebSocket message received:', message.type);
+    console.info('📨 WebSocket message received:', message.type);
 
     switch (message.type) {
       case 'notification':
@@ -201,7 +201,7 @@ export class WebSocketNotificationService {
         break;
 
       default:
-        console.log('📋 Unknown message type:', message.type, message);
+        console.info('📋 Unknown message type:', message.type, message);
         this.notifyHandlers('unknown_message', message);
     }
   }
@@ -217,7 +217,7 @@ export class WebSocketNotificationService {
 
     try {
       this.websocket.send(JSON.stringify(message));
-      console.log('📤 WebSocket message sent:', message.type);
+      console.info('📤 WebSocket message sent:', message.type);
       return true;
     } catch (error) {
       console.error('❌ Failed to send WebSocket message:', error);
@@ -314,12 +314,12 @@ export class WebSocketNotificationService {
       30000 // Max 30 second delay
     );
 
-    console.log(
+    console.info(
       `🔄 Scheduling reconnect attempt ${this.connectionStatus.connectionAttempts} in ${delay}ms`
     );
 
     this.reconnectTimeout = setTimeout(() => {
-      console.log(
+      console.info(
         `🔄 Reconnect attempt ${this.connectionStatus.connectionAttempts}`
       );
 
@@ -336,7 +336,7 @@ export class WebSocketNotificationService {
 
   // 🔗 MANUAL RECONNECT
   public reconnect(): void {
-    console.log('🔄 Manual reconnect requested');
+    console.info('🔄 Manual reconnect requested');
 
     // Clear any pending reconnect
     if (this.reconnectTimeout) {
@@ -411,7 +411,7 @@ export class WebSocketNotificationService {
 
   // 🔌 DISCONNECT
   public disconnect(): void {
-    console.log('🔌 Disconnecting WebSocket');
+    console.info('🔌 Disconnecting WebSocket');
 
     // Clear timers
     this.stopHeartbeat();
@@ -433,7 +433,7 @@ export class WebSocketNotificationService {
 
   // 🗑️ CLEANUP
   public destroy(): void {
-    console.log('🗑️ Destroying WebSocketNotificationService');
+    console.info('🗑️ Destroying WebSocketNotificationService');
 
     this.disconnect();
     this.messageHandlers.clear();

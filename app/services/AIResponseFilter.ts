@@ -776,7 +776,7 @@ export class AIResponseFilter {
    */
   addCustomPattern(pattern: SensitivePattern): void {
     this.sensitivePatterns.push(pattern);
-    console.log(`Added custom sensitive pattern: ${pattern.name}`);
+    console.info(`Added custom sensitive pattern: ${pattern.name}`);
   }
 
   testResponse(

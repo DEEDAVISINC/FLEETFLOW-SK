@@ -39,7 +39,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const digits = formData.get('Digits') as string;
   const callSid = formData.get('CallSid') as string;
 
-  console.log(
+  console.info(
     `📞 Call input received - CallSid: ${callSid}, Digits: ${digits}`
   );
 

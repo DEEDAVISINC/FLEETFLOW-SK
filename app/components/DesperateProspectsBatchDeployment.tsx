@@ -327,7 +327,7 @@ export default function DesperateProspectsBatchDeployment({
       }
     );
 
-    console.log('🚨 DESPERATE PROSPECTS DEPLOYMENT:', deployTasks);
+    console.info('🚨 DESPERATE PROSPECTS DEPLOYMENT:', deployTasks);
     onBatchDeploy(deployTasks);
   };
 

@@ -75,7 +75,7 @@ export class DriverLoadBoardAccessService {
       this.credentials.set(credentialId, credentials);
 
       // Log the sharing event
-      console.log(
+      console.info(
         `Driver ${data.driverId} shared ${data.loadBoard} access with dispatcher ${data.dispatcherId}`
       );
 
@@ -137,7 +137,7 @@ export class DriverLoadBoardAccessService {
     credentials.isActive = false;
     this.credentials.set(credentialId, credentials);
 
-    console.log(
+    console.info(
       `Load board access revoked for credential ${credentialId} by ${requestedBy}`
     );
     return true;
@@ -361,7 +361,7 @@ export class DriverLoadBoardAccessService {
       ],
     });
 
-    console.log(
+    console.info(
       'Comprehensive load board access data initialized with 7+ platforms'
     );
   }

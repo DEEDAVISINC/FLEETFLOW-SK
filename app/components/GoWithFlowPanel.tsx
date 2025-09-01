@@ -100,12 +100,12 @@ export default function GoWithFlowPanel({
   }, [automationService]);
 
   const handleInstantMatch = async (loadId: string) => {
-    console.log('🚀 Triggering instant match for', loadId);
+    console.info('🚀 Triggering instant match for', loadId);
     await automationService.simulateInstantMatch(loadId, nearbyDrivers);
   };
 
   const handleAutoMatch = async () => {
-    console.log('🤖 Triggering auto-match system');
+    console.info('🤖 Triggering auto-match system');
     await automationService.simulateAutoMatch();
   };
 

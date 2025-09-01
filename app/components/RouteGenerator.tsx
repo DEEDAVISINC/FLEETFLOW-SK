@@ -970,7 +970,7 @@ const RouteGenerator: React.FC<RouteBuilderProps> = ({
             </div>
           ) : (
             <div className='flex h-96 items-center justify-center rounded border bg-white p-4 text-gray-500'>
-              Click "Preview" or "Generate Route" to see the document
+              Click ""Preview"" or ""Generate Route"" to see the document
             </div>
           )}
         </div>

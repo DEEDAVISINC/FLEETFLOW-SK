@@ -5,7 +5,7 @@ import { platformAIManager } from '../services/PlatformAIManager';
 
 // Platform-wide AI settings
 export const initializeFleetFlowAI = () => {
-  console.log('🚀 Initializing FleetFlow Platform AI...');
+  console.info('🚀 Initializing FleetFlow Platform AI...');
 
   // Enable all AI improvements platform-wide
   platformAIManager.updateConfig({
@@ -18,7 +18,7 @@ export const initializeFleetFlowAI = () => {
   });
 
   // Register all existing AI services for monitoring and management
-  console.log('📝 Registering AI services with Platform AI Manager...');
+  console.info('📝 Registering AI services with Platform AI Manager...');
 
   const aiServices = [
     'FleetFlowAI', // Core AI service (already integrated)
@@ -45,12 +45,12 @@ export const initializeFleetFlowAI = () => {
     platformAIManager.registerService(serviceName, serviceName);
   });
 
-  console.log('✅ FleetFlow Platform AI initialized with all enhancements');
-  console.log(`📊 Monitoring ${aiServices.length} AI services`);
-  console.log('💰 Cost optimization: Active (71% reduction expected)');
-  console.log('🎯 Quality supervision: Active (auto-correction enabled)');
-  console.log('😊 Human-like responses: Active (natural conversations)');
-  console.log('🧠 Continuous learning: Active (improving from successes)');
+  console.info('✅ FleetFlow Platform AI initialized with all enhancements');
+  console.info(`📊 Monitoring ${aiServices.length} AI services`);
+  console.info('💰 Cost optimization: Active (71% reduction expected)');
+  console.info('🎯 Quality supervision: Active (auto-correction enabled)');
+  console.info('😊 Human-like responses: Active (natural conversations)');
+  console.info('🧠 Continuous learning: Active (improving from successes)');
 };
 
 // Get current Platform AI status
@@ -93,13 +93,13 @@ export const configurePlatformAI = (options: {
   costOptimization?: boolean;
   debugMode?: boolean;
 }) => {
-  console.log('⚙️ Updating Platform AI configuration:', options);
+  console.info('⚙️ Updating Platform AI configuration:', options);
   platformAIManager.updateConfig(options);
 };
 
 // Emergency disable all AI enhancements (fallback to original behavior)
 export const disablePlatformAI = () => {
-  console.log('🚨 Emergency: Disabling all Platform AI enhancements');
+  console.info('🚨 Emergency: Disabling all Platform AI enhancements');
   platformAIManager.updateConfig({
     enableHumanizedResponses: false,
     enableSmartNegotiation: false,
@@ -108,12 +108,12 @@ export const disablePlatformAI = () => {
     enableCostOptimization: false,
     debugMode: true,
   });
-  console.log('⚠️ Platform AI disabled - using original AI behavior');
+  console.info('⚠️ Platform AI disabled - using original AI behavior');
 };
 
 // Test Platform AI functionality
 export const testPlatformAI = async () => {
-  console.log('🧪 Testing Platform AI functionality...');
+  console.info('🧪 Testing Platform AI functionality...');
 
   try {
     // Test a simple AI task
@@ -129,12 +129,12 @@ export const testPlatformAI = async () => {
       }
     );
 
-    console.log('✅ Platform AI test successful:');
-    console.log(`   Quality: ${testResult.quality}`);
-    console.log(`   Cost: $${testResult.cost}`);
-    console.log(`   Human-like: ${testResult.humanLike}`);
-    console.log(`   Escalated: ${testResult.escalated}`);
-    console.log(`   Confidence: ${testResult.confidence}%`);
+    console.info('✅ Platform AI test successful:');
+    console.info(`   Quality: ${testResult.quality}`);
+    console.info(`   Cost: $${testResult.cost}`);
+    console.info(`   Human-like: ${testResult.humanLike}`);
+    console.info(`   Escalated: ${testResult.escalated}`);
+    console.info(`   Confidence: ${testResult.confidence}%`);
 
     return {
       success: true,

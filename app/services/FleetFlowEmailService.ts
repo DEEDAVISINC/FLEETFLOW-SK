@@ -32,7 +32,7 @@ export class FleetFlowEmailService {
   async setupAllDepartmentEmails(
     defaultForwardEmail: string = 'ddavis@fleetflowapp.com'
   ): Promise<EmailSetupResult> {
-    console.log('🚀 Setting up FleetFlow departmental email system...');
+    console.info('🚀 Setting up FleetFlow departmental email system...');
 
     // Validate configuration first
     const validation = validateEmailConfiguration();
@@ -50,8 +50,8 @@ export class FleetFlowEmailService {
     // Generate email mapping
     const mapping = generateDepartmentEmailMapping(defaultForwardEmail);
 
-    console.log(`📧 Generated ${Object.keys(mapping).length} email aliases`);
-    console.log('📋 Department mapping:', mapping);
+    console.info(`📧 Generated ${Object.keys(mapping).length} email aliases`);
+    console.info('📋 Department mapping:', mapping);
 
     // Setup aliases through ImprovMX
     const result = await improvmxService.setupDepartmentalAliases(mapping);
@@ -68,7 +68,7 @@ export class FleetFlowEmailService {
     };
 
     if (result.success) {
-      console.log(
+      console.info(
         `✅ Successfully created ${setupResult.aliasesCreated} departmental email aliases`
       );
     } else {

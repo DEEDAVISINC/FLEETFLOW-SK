@@ -114,7 +114,7 @@ export class FreeSWITCHCallCenter {
       
       await new Promise((resolve, reject) => {
         this.connection!.on('esl::connect', () => {
-          console.log('Connected to FreeSWITCH');
+          console.info('Connected to FreeSWITCH');
           this.isConnected = true;
           resolve(true);
         });
@@ -484,7 +484,7 @@ export class LeadGenerationStrategy {
   }
 
   async implementGovernmentContractStrategy(): Promise<void> {
-    console.log('🏛️ Implementing Government Contract Lead Generation Strategy');
+    console.info('🏛️ Implementing Government Contract Lead Generation Strategy');
     
     // Monitor SAM.gov opportunities
     const govLeads = await this.monitorSAMgovOpportunities();
@@ -505,7 +505,7 @@ export class LeadGenerationStrategy {
   }
 
   async implementMarketplaceStrategy(): Promise<void> {
-    console.log('🚛 Implementing Freight Marketplace Lead Generation Strategy');
+    console.info('🚛 Implementing Freight Marketplace Lead Generation Strategy');
     
     // Monitor freight boards and load matching
     const marketplaceLeads = await this.monitorFreightMarketplace();
@@ -525,7 +525,7 @@ export class LeadGenerationStrategy {
   }
 
   async implementRFxIntelligenceStrategy(): Promise<void> {
-    console.log('📊 Implementing RFx Intelligence Lead Generation Strategy');
+    console.info('📊 Implementing RFx Intelligence Lead Generation Strategy');
     
     // Monitor RFx responses and competitive intelligence
     const rfxLeads = await this.monitorRFxResponses();

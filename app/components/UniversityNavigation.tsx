@@ -104,7 +104,7 @@ export const UniversityNavigation: React.FC<UniversityNavigationProps> = ({
             📚 Need training on the Carrier Onboard Workflow?
           </div>
           <Link
-            href="/university/carrier-onboard-workflow"
+            href="/university/carrier-onboard-workflow""
             style={{
               background: 'linear-gradient(135deg, #10b981, #059669)',
               color: 'white',

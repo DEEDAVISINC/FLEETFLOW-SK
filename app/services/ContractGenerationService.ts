@@ -164,7 +164,7 @@ export class ContractGenerationService {
     data: LeadContractData
   ): Promise<GeneratedContract> {
     try {
-      console.log(`📄 Generating broker contract for lead: ${data.leadId}`);
+      console.info(`📄 Generating broker contract for lead: ${data.leadId}`);
 
       // Generate professional contract identifier using EP format
       const idData: ContractIdentificationData = {
@@ -249,7 +249,7 @@ export class ContractGenerationService {
       // Send contract for signature
       await this.sendForSignature(contract, contractDocument);
 
-      console.log(`✅ Broker contract generated successfully: ${contractId}`);
+      console.info(`✅ Broker contract generated successfully: ${contractId}`);
       return contract;
     } catch (error: any) {
       console.error('❌ Broker contract generation failed:', error);
@@ -265,7 +265,7 @@ export class ContractGenerationService {
     data: DispatcherLeadContractData
   ): Promise<GeneratedContract> {
     try {
-      console.log(`📄 Generating dispatcher contract for lead: ${data.leadId}`);
+      console.info(`📄 Generating dispatcher contract for lead: ${data.leadId}`);
 
       // Generate professional contract identifier using DP format (Dispatcher Partnership)
       const idData: ContractIdentificationData = {
@@ -347,7 +347,7 @@ export class ContractGenerationService {
       // Send contract for signature
       await this.sendForSignature(contract, contractDocument);
 
-      console.log(
+      console.info(
         `✅ Dispatcher contract generated successfully: ${contractId}`
       );
       return contract;
@@ -1039,7 +1039,7 @@ Date: _______________________________
       });
 
       if (error) throw error;
-      console.log(`✅ Contract saved to database: ${contract.contractId}`);
+      console.info(`✅ Contract saved to database: ${contract.contractId}`);
     } catch (error: any) {
       console.error('Failed to save contract:', error);
       throw error;
@@ -1055,10 +1055,10 @@ Date: _______________________________
   ): Promise<void> {
     try {
       // In a real implementation, this would integrate with DocuSign, HelloSign, or similar
-      console.log(
+      console.info(
         `📧 Sending contract ${contract.contractNumber} for signature`
       );
-      console.log(
+      console.info(
         `📄 Contract document generated for ${contract.parties.broker?.company || contract.parties.dispatcher?.company || 'Unknown'}`
       );
 
@@ -1086,7 +1086,7 @@ Date: _______________________________
         .eq('contract_id', contractId);
 
       if (error) throw error;
-      console.log(`✅ Contract status updated: ${contractId} -> ${status}`);
+      console.info(`✅ Contract status updated: ${contractId} -> ${status}`);
     } catch (error: any) {
       console.error('Failed to update contract status:', error);
       throw error;
@@ -1142,7 +1142,7 @@ Date: _______________________________
 
       if (updateError) throw updateError;
 
-      console.log(
+      console.info(
         `✅ Revenue tracked: $${revenue} -> Commission: $${commission}`
       );
     } catch (error: any) {
@@ -1284,13 +1284,13 @@ Date: _______________________________
 
       if (updateError) throw updateError;
 
-      console.log(
+      console.info(
         `✅ Recurring revenue tracked: Customer ${customerName} - $${revenue} -> 50% Commission: $${commission} (Recurring: ${isRecurringPayment})`
       );
 
       // Log recurring revenue alert for high-value customers
       if (revenue > 10000) {
-        console.log(
+        console.info(
           `🚨 HIGH-VALUE RECURRING CUSTOMER: ${customerName} - $${revenue} revenue = $${commission} commission`
         );
       }

@@ -256,7 +256,7 @@ export class AIAgentOrchestrator {
     );
 
     if (tenantAgents.length === 0) {
-      console.log(`No active AI agents found for tenant ${tenantId}`);
+      console.info(`No active AI agents found for tenant ${tenantId}`);
       return;
     }
 
@@ -890,7 +890,7 @@ export class AIAgentOrchestrator {
     emailData: any
   ): Promise<any> {
     // Implementation would use SendGrid, AWS SES, or similar
-    console.log(`Sending email for agent ${agent.agentId}:`, emailData);
+    console.info(`Sending email for agent ${agent.agentId}:`, emailData);
     return { success: true, emailId: 'email-123' };
   }
 
@@ -899,13 +899,13 @@ export class AIAgentOrchestrator {
     callData: any
   ): Promise<any> {
     // Implementation would use Twilio or FreeSWITCH
-    console.log(`Making AI call for agent ${agent.agentId}:`, callData);
+    console.info(`Making AI call for agent ${agent.agentId}:`, callData);
     return { success: true, callId: 'call-123', duration: 120 };
   }
 
   private static async updateCRM(tenantId: string, crmData: any): Promise<any> {
     // Implementation would update FleetFlow CRM
-    console.log(`Updating CRM for tenant ${tenantId}:`, crmData);
+    console.info(`Updating CRM for tenant ${tenantId}:`, crmData);
     return { recordId: 'crm-record-123' };
   }
 
@@ -952,7 +952,7 @@ export class AIAgentOrchestrator {
   private static async saveAgentToDatabase(
     agent: AIAgentConfig
   ): Promise<void> {
-    console.log(`Saving agent ${agent.agentId} to database`);
+    console.info(`Saving agent ${agent.agentId} to database`);
   }
 }
 

@@ -72,7 +72,7 @@ export class EmailWarmupService {
       this.loadDefaultFriendlyAccounts();
     }
 
-    console.log('📧 Email Warm-up Service initialized');
+    console.info('📧 Email Warm-up Service initialized');
   }
 
   /**
@@ -80,11 +80,11 @@ export class EmailWarmupService {
    */
   async startWarmup(): Promise<boolean> {
     if (this.isActive) {
-      console.log('⚠️ Warm-up already in progress');
+      console.info('⚠️ Warm-up already in progress');
       return false;
     }
 
-    console.log('🚀 Starting email warm-up process');
+    console.info('🚀 Starting email warm-up process');
     this.isActive = true;
     this.currentDay = 0;
 
@@ -102,11 +102,11 @@ export class EmailWarmupService {
    */
   stopWarmup(): boolean {
     if (!this.isActive) {
-      console.log('⚠️ No warm-up currently active');
+      console.info('⚠️ No warm-up currently active');
       return false;
     }
 
-    console.log('🛑 Stopping email warm-up process');
+    console.info('🛑 Stopping email warm-up process');
     this.isActive = false;
     return true;
   }
@@ -165,18 +165,18 @@ export class EmailWarmupService {
    */
   async executeWarmupDay(): Promise<WarmupMetrics> {
     if (!this.isActive) {
-      console.log('⚠️ Warm-up is not active');
+      console.info('⚠️ Warm-up is not active');
       throw new Error('Warm-up process is not active');
     }
 
     const schedule = this.schedule[this.currentDay];
     if (!schedule) {
-      console.log('✅ Warm-up process complete!');
+      console.info('✅ Warm-up process complete!');
       this.isActive = false;
       return this.metrics[this.currentDay] || this.createEmptyMetrics();
     }
 
-    console.log(
+    console.info(
       `📧 Executing warm-up day ${this.currentDay + 1}: ${schedule.dailyVolume} emails`
     );
 
@@ -215,7 +215,7 @@ export class EmailWarmupService {
     if (this.currentDay < this.schedule.length) {
       this.scheduleNextWarmupDay();
     } else {
-      console.log('🎉 Email warm-up process complete!');
+      console.info('🎉 Email warm-up process complete!');
       this.isActive = false;
     }
 
@@ -304,7 +304,7 @@ export class EmailWarmupService {
     ];
 
     // In a real implementation, these would come from a database
-    console.log(
+    console.info(
       `Loaded ${this.friendlyAccounts.length} friendly accounts for warm-up`
     );
   }
@@ -448,7 +448,7 @@ export class EmailWarmupService {
   private scheduleNextWarmupDay(): void {
     // In a production environment, you would use a proper scheduler
     // For this implementation, we'll just log that it should be scheduled
-    console.log(
+    console.info(
       `📅 Scheduled next warm-up day ${this.currentDay + 1} for tomorrow`
     );
 

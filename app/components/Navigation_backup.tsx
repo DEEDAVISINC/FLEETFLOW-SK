@@ -11,17 +11,17 @@ export default function ProfessionalNavigation() {
   const navRef = useRef<HTMLDivElement>(null);
 
   const handleDropdownToggle = (dropdownName: string) => {
-    console.log('Navigation render - activeDropdown:', activeDropdown);
-    console.log('Dropdown toggle clicked:', dropdownName);
+    console.info('Navigation render - activeDropdown:', activeDropdown);
+    console.info('Dropdown toggle clicked:', dropdownName);
     setActiveDropdown((prev) => {
       const newValue = prev === dropdownName ? null : dropdownName;
-      console.log('Setting activeDropdown from', prev, 'to', newValue);
+      console.info('Setting activeDropdown from', prev, 'to', newValue);
       return newValue;
     });
   };
 
   const handleDropdownClose = () => {
-    console.log('Closing dropdown');
+    console.info('Closing dropdown');
     setActiveDropdown(null);
   };
 
@@ -95,8 +95,8 @@ export default function ProfessionalNavigation() {
             >
               <button
                 onClick={() => handleDropdownToggle('operations')}
-                onMouseDown={() => console.log('Operations button mousedown')}
-                onMouseUp={() => console.log('Operations button mouseup')}
+                onMouseDown={() => console.info('Operations button mousedown')}
+                onMouseUp={() => console.info('Operations button mouseup')}
                 style={{
                   background:
                     activeDropdown === 'operations'

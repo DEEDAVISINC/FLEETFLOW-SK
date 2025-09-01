@@ -1,6 +1,6 @@
 /**
  * Production-Ready Logging System for FleetFlow
- * Replaces console.log statements with proper logging infrastructure
+ * Replaces console.info statements with proper logging infrastructure
  */
 
 export enum LogLevel {
@@ -88,7 +88,7 @@ class Logger {
         console.info(message, entry.data);
         break;
       case LogLevel.DEBUG:
-        console.log(message, entry.data);
+        console.info(message, entry.data);
         break;
     }
   }

@@ -384,7 +384,7 @@ const sendInvitationEmail = (
   shipper: ShipperInfo,
   invitation: ShipperInvitation
 ) => {
-  console.log(`📧 Invitation Email Sent to ${shipper.email}:
+  console.info(`📧 Invitation Email Sent to ${shipper.email}:
 
   🚚 FleetFlow Vendor Portal - Account Setup Invitation
 
@@ -419,7 +419,7 @@ const sendAdminNotification = (
   invitation: ShipperInvitation
 ) => {
   // In production, this would integrate with the notification system
-  console.log(`🔔 Admin Notification to ${adminId}:
+  console.info(`🔔 Admin Notification to ${adminId}:
 
   📧 Vendor Portal Invitation Sent
 
@@ -500,7 +500,7 @@ const sendSetupCompletionNotifications = (
   invitation: ShipperInvitation
 ) => {
   // Email to shipper
-  console.log(`📧 Setup Confirmation Email to ${shipper.email}:
+  console.info(`📧 Setup Confirmation Email to ${shipper.email}:
 
   🎉 FleetFlow Vendor Portal - Account Activated!
 
@@ -524,7 +524,7 @@ const sendSetupCompletionNotifications = (
   `);
 
   // Notification to admin who sent invitation
-  console.log(`🔔 Admin Notification to ${invitation.invitedBy}:
+  console.info(`🔔 Admin Notification to ${invitation.invitedBy}:
 
   ✅ Vendor Portal Setup Completed
 
@@ -687,7 +687,7 @@ export const extendedShipperService = {
     credentials.password = newTempPassword;
 
     // Send reset email
-    console.log(`📧 Password Reset Email Sent to ${email}:
+    console.info(`📧 Password Reset Email Sent to ${email}:
 
     Your FleetFlow Shipper Portal password has been reset.
     New temporary password: ${newTempPassword}

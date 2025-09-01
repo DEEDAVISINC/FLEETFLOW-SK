@@ -53,7 +53,7 @@ export const FlowterSmartNavigation: React.FC<FlowterSmartNavigationProps> = ({
   // ============================================================================
 
   const handleNavigationAction = async (action: FlowterAction) => {
-    console.log(`🚀 Flowter executing action:`, action);
+    console.info(`🚀 Flowter executing action:`, action);
 
     try {
       switch (action.type) {
@@ -84,7 +84,7 @@ export const FlowterSmartNavigation: React.FC<FlowterSmartNavigationProps> = ({
   };
 
   const handleSelectionOption = async (option: SelectionOption) => {
-    console.log(`🎯 Flowter executing selection:`, option);
+    console.info(`🎯 Flowter executing selection:`, option);
 
     try {
       if (option.action.startsWith('navigate:')) {
@@ -103,7 +103,7 @@ export const FlowterSmartNavigation: React.FC<FlowterSmartNavigationProps> = ({
   // ============================================================================
 
   const navigateToPage = async (url: string) => {
-    console.log(`🔗 Navigating to: ${url}`);
+    console.info(`🔗 Navigating to: ${url}`);
 
     // Add small delay for UX
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -123,7 +123,7 @@ export const FlowterSmartNavigation: React.FC<FlowterSmartNavigationProps> = ({
   };
 
   const executeCustomAction = async (actionString: string) => {
-    console.log(`⚙️ Executing custom action: ${actionString}`);
+    console.info(`⚙️ Executing custom action: ${actionString}`);
 
     const [actionType, actionValue] = actionString.split(':');
 
@@ -151,7 +151,7 @@ export const FlowterSmartNavigation: React.FC<FlowterSmartNavigationProps> = ({
 
       case 'modal':
         // Open a specific modal (future enhancement)
-        console.log(`📋 Opening modal: ${actionValue}`);
+        console.info(`📋 Opening modal: ${actionValue}`);
         break;
 
       case 'help':
@@ -252,8 +252,8 @@ export const FlowterSmartNavigation: React.FC<FlowterSmartNavigationProps> = ({
       {/* Keyboard Shortcuts Hint */}
       {(actions.length > 0 || options.length > 0) && (
         <div className='mt-4 rounded-lg bg-gray-50 p-2 text-xs text-gray-500'>
-          💡 <strong>Tip:</strong> You can also type commands like "go to
-          dispatch" or "find routing" to navigate quickly.
+          💡 <strong>Tip:</strong> You can also type commands like ""go to
+          dispatch"" or ""find routing"" to navigate quickly.
         </div>
       )}
     </div>

@@ -163,7 +163,7 @@ export class AIFreightNegotiatorService {
   private marketIntelligence = new Map<string, any>();
 
   constructor() {
-    console.log(
+    console.info(
       '🤝 AI Freight Negotiator Service initialized with advanced psychological capabilities'
     );
     this.initializePersonalityProfiles();
@@ -178,7 +178,7 @@ export class AIFreightNegotiatorService {
     context: NegotiationContext,
     counterpartyProfile?: PersonalityProfile
   ): Promise<NegotiationResult> {
-    console.log(
+    console.info(
       `🎯 Starting AI negotiation for ${context.negotiationType} with ${context.customerType}`
     );
 
@@ -242,7 +242,7 @@ export class AIFreightNegotiatorService {
     // Store for continuous learning
     this.storeNegotiationResult(context, result);
 
-    console.log(
+    console.info(
       `✅ Negotiation completed: ${result.success ? 'SUCCESS' : 'PARTIAL'} - Final rate: $${result.finalRate}`
     );
     return result;
@@ -438,7 +438,7 @@ export class AIFreightNegotiatorService {
     script: NegotiationScript,
     personality: PersonalityProfile
   ): Promise<any> {
-    console.log(
+    console.info(
       '🎭 Executing advanced negotiation with psychological tactics...'
     );
 

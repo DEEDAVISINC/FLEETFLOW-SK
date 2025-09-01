@@ -1083,7 +1083,7 @@ export default function BusinessIntelligencePage() {
     ]);
 
     const csvContent = [headers, ...csvData]
-      .map((row) => row.map((field) => `"${field}"`).join(','))
+      .map((row) => row.map((field) => `""${field}""`).join(','))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1170,12 +1170,12 @@ export default function BusinessIntelligencePage() {
           </style>
         </head>
         <body>
-          <div class="header">
+          <div class=""header"">
             <h1>FleetFlow™ Business Intelligence Report</h1>
             <p>Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
           </div>
 
-          <div class="filters">
+          <div class=""filters"">
             <h3>Search Criteria</h3>
             <p><strong>Search Query:</strong> ${searchQuery || 'All loads'}</p>
             <p><strong>Search Type:</strong> ${searchType === 'all' ? 'All Fields' : searchType}</p>
@@ -1183,7 +1183,7 @@ export default function BusinessIntelligencePage() {
             <p><strong>Revenue Range:</strong> ${minRevenue ? `$${minRevenue}` : 'No min'} - ${maxRevenue ? `$${maxRevenue}` : 'No max'}</p>
           </div>
 
-          <div class="summary">
+          <div class=""summary"">
             <h3>Summary</h3>
             <p><strong>Total Records Found:</strong> ${filteredLoads.length} loads</p>
             <p><strong>Total Revenue:</strong> $${filteredLoads.reduce((sum, load) => sum + load.rate, 0).toLocaleString()}</p>
@@ -1231,9 +1231,49 @@ export default function BusinessIntelligencePage() {
     }, 250);
   };
 
+  const loadCompletedLoadsData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      // Option 1: Use API for large datasets (recommended for production)
+      // const response = await fetch(`/api/admin/business-intelligence?type=overview&dateRange=${dateRange}`);
+      // if (response.ok) {
+      //   const result = await response.json();
+      //   if (result.success) {
+      //     setCompletedLoads(result.data.recentCompletedLoads);
+      //     setAnalytics({
+      //       totalCompleted: result.data.overview.totalCompleted,
+      //       totalRevenue: result.data.overview.totalRevenue,
+      //       avgDeliveryTime: result.data.overview.avgDeliveryTime,
+      //       onTimeDeliveryRate: result.data.overview.onTimeDeliveryRate,
+      //       avgRatePerMile: result.data.overview.avgRatePerMile,
+      //       topPerformingDrivers: result.data.topPerformingDrivers,
+      //       completionTrends: result.data.revenueTrends,
+      //       customerAnalytics: result.data.customerAnalytics,
+      //       workflowCompliance: result.data.workflowCompliance
+      //     });
+      //     return;
+      //   }
+      // }
+
+      // Option 2: Direct service calls (current implementation)
+      // Get all loads and filter completed ones
+      const allLoads = getLoadsForUser();
+      const completed = allLoads.filter((load) => load.status === 'Delivered');
+      setCompletedLoads(completed);
+
+      // Calculate analytics
+      const analyticsData = calculateAnalytics(completed);
+      setAnalytics(analyticsData);
+    } catch (error) {
+      console.error('Error loading completed loads data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [dateRange, calculateAnalytics]);
+
   useEffect(() => {
     loadCompletedLoadsData();
-  }, [dateRange]);
+  }, [dateRange, loadCompletedLoadsData]);
 
   // Filter loads based on search criteria
   useEffect(() => {
@@ -1331,57 +1371,17 @@ export default function BusinessIntelligencePage() {
 
   // Handle widget management
   const handleWidgetMove = (widgetId: string) => {
-    console.log('Moving widget:', widgetId);
+    console.info('Moving widget:', widgetId);
   };
 
   const handleWidgetResize = (widgetId: string) => {
-    console.log('Resizing widget:', widgetId);
+    console.info('Resizing widget:', widgetId);
   };
 
   const handleWidgetRemove = (widgetId: string) => {
     setCustomWidgets((widgets: any[]) =>
       widgets.filter((w: any) => w.id !== widgetId)
     );
-  };
-
-  const loadCompletedLoadsData = async () => {
-    setIsLoading(true);
-    try {
-      // Option 1: Use API for large datasets (recommended for production)
-      // const response = await fetch(`/api/admin/business-intelligence?type=overview&dateRange=${dateRange}`);
-      // if (response.ok) {
-      //   const result = await response.json();
-      //   if (result.success) {
-      //     setCompletedLoads(result.data.recentCompletedLoads);
-      //     setAnalytics({
-      //       totalCompleted: result.data.overview.totalCompleted,
-      //       totalRevenue: result.data.overview.totalRevenue,
-      //       avgDeliveryTime: result.data.overview.avgDeliveryTime,
-      //       onTimeDeliveryRate: result.data.overview.onTimeDeliveryRate,
-      //       avgRatePerMile: result.data.overview.avgRatePerMile,
-      //       topPerformingDrivers: result.data.topPerformingDrivers,
-      //       completionTrends: result.data.revenueTrends,
-      //       customerAnalytics: result.data.customerAnalytics,
-      //       workflowCompliance: result.data.workflowCompliance
-      //     });
-      //     return;
-      //   }
-      // }
-
-      // Option 2: Direct service calls (current implementation)
-      // Get all loads and filter completed ones
-      const allLoads = getLoadsForUser();
-      const completed = allLoads.filter((load) => load.status === 'Delivered');
-      setCompletedLoads(completed);
-
-      // Calculate analytics
-      const analyticsData = calculateAnalytics(completed);
-      setAnalytics(analyticsData);
-    } catch (error) {
-      console.error('Error loading completed loads data:', error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const calculateAnalytics = (loads: Load[]): CompletedLoadAnalytics => {
@@ -1555,7 +1555,7 @@ export default function BusinessIntelligencePage() {
         color: '#ffffff',
         position: 'relative',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Professional Header */}
@@ -2302,7 +2302,7 @@ export default function BusinessIntelligencePage() {
                 background: '#10b981',
                 borderRadius: '2px',
               }}
-             />
+            />
           </div>
         </div>
 
@@ -2371,7 +2371,7 @@ export default function BusinessIntelligencePage() {
                         background: item.color,
                         borderRadius: '3px',
                       }}
-                     />
+                    />
                   </div>
                 </div>
                 <div
@@ -2604,7 +2604,7 @@ export default function BusinessIntelligencePage() {
                   background: idx === 6 ? '#10b981' : 'rgba(59, 130, 246, 0.6)',
                   borderRadius: '2px',
                 }}
-               />
+              />
             ))}
           </div>
           <div
@@ -2852,7 +2852,7 @@ export default function BusinessIntelligencePage() {
                     borderRadius: '50%',
                     background: '#10b981',
                   }}
-                 />
+                />
                 <span
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
@@ -2872,7 +2872,7 @@ export default function BusinessIntelligencePage() {
                     borderRadius: '50%',
                     background: '#f59e0b',
                   }}
-                 />
+                />
                 <span
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
@@ -2892,7 +2892,7 @@ export default function BusinessIntelligencePage() {
                     borderRadius: '50%',
                     background: '#ef4444',
                   }}
-                 />
+                />
                 <span
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',

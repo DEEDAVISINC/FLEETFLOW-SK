@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     // Add to vendors array
     vendors.push(newVendor);
 
-    console.log('✅ New vendor created:', newVendor);
+    console.info('✅ New vendor created:', newVendor);
 
     return NextResponse.json(
       {

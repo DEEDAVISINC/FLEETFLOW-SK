@@ -123,7 +123,7 @@ export default function HomePage() {
           marginBottom: '32px',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
         }}>
-          <Link href="/ai" style={{ textDecoration: 'none' }}>
+          <Link href="/ai"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #7c3aed, #5b21b6)',
               borderRadius: '8px',

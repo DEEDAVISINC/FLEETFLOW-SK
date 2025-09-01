@@ -824,7 +824,7 @@ const BrokerOperationsPage: React.FC = () => {
             <BrokerQuoteInterface
               user={user}
               onQuoteGenerated={(quote) => {
-                console.log('📧 Quote generated and sent:', quote);
+                console.info('📧 Quote generated and sent:', quote);
                 // Future: Add to broker dashboard metrics
                 // Future: Trigger email notification
                 // Future: Update broker performance stats

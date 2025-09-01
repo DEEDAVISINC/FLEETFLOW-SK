@@ -12,7 +12,7 @@ export default function DriverManagement() {
   useEffect(() => {
     try {
       // Test if basic mounting works
-      console.log('DriverManagement component mounted');
+      console.info('DriverManagement component mounted');
       setLoading(false);
     } catch (err) {
       console.error('Error in DriverManagement:', err);
@@ -1053,7 +1053,7 @@ export default function DriverManagement() {
                                   driverStatus={driver.status}
                                   onScheduleCreate={() => {
                                     // Optionally refresh driver data or show notification
-                                    console.log(
+                                    console.info(
                                       `Schedule created for ${driver.name}`
                                     );
                                   }}

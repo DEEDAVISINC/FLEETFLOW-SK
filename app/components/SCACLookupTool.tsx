@@ -125,8 +125,8 @@ const SCACLookupTool: React.FC = () => {
         
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <input
-            type="text"
-            placeholder="Enter SCAC code (e.g., FLTF)"
+            type="text""
+            placeholder="Enter SCAC code (e.g., FLTF)""
             value={scacCode}
             onChange={(e) => setSCACCode(e.target.value.toUpperCase())}
             style={{
@@ -206,8 +206,8 @@ const SCACLookupTool: React.FC = () => {
         
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <input
-            type="text"
-            placeholder="Enter company name"
+            type="text""
+            placeholder="Enter company name""
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             style={{
@@ -322,8 +322,8 @@ const SCACLookupTool: React.FC = () => {
         
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <input
-            type="text"
-            placeholder="Enter NMFC item number (e.g., 100920)"
+            type="text""
+            placeholder="Enter NMFC item number (e.g., 100920)""
             value={nmfcItemNumber}
             onChange={(e) => setNMFCItemNumber(e.target.value)}
             style={{
@@ -376,8 +376,8 @@ const SCACLookupTool: React.FC = () => {
         
         <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
           <input
-            type="text"
-            placeholder="Enter commodity description"
+            type="text""
+            placeholder="Enter commodity description""
             value={nmfcDescription}
             onChange={(e) => setNMFCDescription(e.target.value)}
             style={{

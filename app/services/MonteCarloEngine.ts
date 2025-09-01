@@ -79,7 +79,7 @@ export class MonteCarloEngine {
   async simulateLoadScenarios(
     inputs: LoadScenarioInputs
   ): Promise<MonteCarloResult> {
-    console.log(
+    console.info(
       `🎲 Starting Monte Carlo simulation with ${this.iterations} iterations...`
     );
 
@@ -92,7 +92,7 @@ export class MonteCarloEngine {
 
     const result = this.analyzeResults(scenarios, inputs);
 
-    console.log(
+    console.info(
       `✅ Monte Carlo simulation complete. Confidence: ${result.recommendations.confidence}%`
     );
     return result;

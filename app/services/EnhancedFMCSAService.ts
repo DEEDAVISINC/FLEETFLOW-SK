@@ -135,7 +135,7 @@ export class EnhancedFMCSAService {
       this.isConfigured = false;
     } else {
       this.isConfigured = true;
-      console.log('✅ FMCSA service initialized with production API key');
+      console.info('✅ FMCSA service initialized with production API key');
     }
 
     this.resetRateLimitsIfNeeded();
@@ -223,7 +223,7 @@ export class EnhancedFMCSAService {
           if (attempt < maxRetries) {
             // Exponential backoff
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-            console.log(
+            console.info(
               `⚠️ FMCSA DOT search attempt ${attempt} failed, retrying in ${delay}ms...`
             );
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -328,7 +328,7 @@ export class EnhancedFMCSAService {
 
           if (attempt < maxRetries) {
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-            console.log(
+            console.info(
               `⚠️ FMCSA MC search attempt ${attempt} failed, retrying in ${delay}ms...`
             );
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -912,7 +912,7 @@ export class EnhancedFMCSAService {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('✅ FMCSA cache cleared');
+    console.info('✅ FMCSA cache cleared');
   }
 
   /**

@@ -189,7 +189,7 @@ export class LeadConversionNotificationService {
       }
     }
 
-    console.log(`✅ Lead conversion processed: ${conversion.id}`);
+    console.info(`✅ Lead conversion processed: ${conversion.id}`);
     return {
       success: true,
       notificationId: notificationResult.notificationId,
@@ -415,7 +415,7 @@ export class LeadConversionNotificationService {
       };
 
       // In a real implementation, this would save to database
-      console.log('📨 Sending to notification hub:', hubNotification);
+      console.info('📨 Sending to notification hub:', hubNotification);
 
       return {
         success: true,
@@ -447,7 +447,7 @@ export class LeadConversionNotificationService {
         await this.sendSMSNotification(notification);
       }
 
-      console.log(
+      console.info(
         `✅ Management team notified for conversion: ${notification.conversion.id}`
       );
     } catch (error: any) {
@@ -463,7 +463,7 @@ export class LeadConversionNotificationService {
     notification: ManagementNotificationPayload
   ): Promise<void> {
     // This would integrate with your existing notification system
-    console.log('📱 In-app notification sent:', notification.title);
+    console.info('📱 In-app notification sent:', notification.title);
   }
 
   /**
@@ -473,7 +473,7 @@ export class LeadConversionNotificationService {
     notification: ManagementNotificationPayload
   ): Promise<void> {
     // This would integrate with your email service
-    console.log('📧 Email notification sent:', notification.title);
+    console.info('📧 Email notification sent:', notification.title);
   }
 
   /**
@@ -483,7 +483,7 @@ export class LeadConversionNotificationService {
     notification: ManagementNotificationPayload
   ): Promise<void> {
     // This would integrate with your SMS service
-    console.log('📱 SMS notification sent:', notification.title);
+    console.info('📱 SMS notification sent:', notification.title);
   }
 
   /**
@@ -492,7 +492,7 @@ export class LeadConversionNotificationService {
   private async logConversion(conversion: LeadConversion): Promise<void> {
     try {
       // In a real implementation, this would save to analytics database
-      console.log('📊 Conversion logged for analytics:', {
+      console.info('📊 Conversion logged for analytics:', {
         conversionId: conversion.id,
         source: conversion.source.source,
         value: conversion.potentialValue,
@@ -510,7 +510,7 @@ export class LeadConversionNotificationService {
    */
   private async generateContractForLead(conversion: LeadConversion): Promise<void> {
     try {
-      console.log(`📄 Generating contract for lead conversion: ${conversion.id}`);
+      console.info(`📄 Generating contract for lead conversion: ${conversion.id}`);
 
       // Prepare contract data
       const contractData: LeadContractData = {
@@ -537,7 +537,7 @@ export class LeadConversionNotificationService {
       // Generate contract
       const contract = await contractGenerationService.generateLeadContract(contractData);
 
-      console.log(`✅ Contract generated for lead: ${contract.contractId}`);
+      console.info(`✅ Contract generated for lead: ${contract.contractId}`);
 
       // Update conversion record with contract ID
       await this.updateConversionWithContract(conversion.id, contract.contractId);
@@ -554,7 +554,7 @@ export class LeadConversionNotificationService {
   private async updateConversionWithContract(conversionId: string, contractId: string): Promise<void> {
     try {
       // In a real implementation, this would update the conversion record in the database
-      console.log(`📝 Updated conversion ${conversionId} with contract ${contractId}`);
+      console.info(`📝 Updated conversion ${conversionId} with contract ${contractId}`);
     } catch (error: any) {
       console.error('Failed to update conversion with contract ID:', error);
     }

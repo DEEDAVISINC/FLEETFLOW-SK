@@ -297,7 +297,7 @@ class BrokerAgentIntegrationService {
       };
 
       // Store quote in system (in production, save to database)
-      console.log('💰 Agent Quote Submitted:', quote);
+      console.info('💰 Agent Quote Submitted:', quote);
 
       // Integrate with brokerage analytics
       await this.updateBrokerageMetrics('quote_submitted', quote);
@@ -382,8 +382,8 @@ class BrokerAgentIntegrationService {
           : undefined,
       };
 
-      console.log('🚛 Agent Load Created:', agentLoad);
-      console.log('🔄 Workflow Initiated:', workflow);
+      console.info('🚛 Agent Load Created:', agentLoad);
+      console.info('🔄 Workflow Initiated:', workflow);
 
       // Update brokerage metrics
       await this.updateBrokerageMetrics('load_created', agentLoad);
@@ -498,7 +498,7 @@ class BrokerAgentIntegrationService {
   ): Promise<void> {
     try {
       // In production, this would update database records
-      console.log(`📊 Brokerage Metrics Updated - Action: ${action}`, data);
+      console.info(`📊 Brokerage Metrics Updated - Action: ${action}`, data);
 
       // Trigger real-time updates to brokerage dashboard
       // This could use WebSocket or other real-time communication
@@ -628,7 +628,7 @@ class BrokerAgentIntegrationService {
   updateLoadTransportMode(loadId: string, newMode: string, newRate: number): boolean {
     // In production, this would update the database
     // For now, this is a mock implementation
-    console.log(`Updated load ${loadId} to ${newMode} mode with rate $${newRate}`);
+    console.info(`Updated load ${loadId} to ${newMode} mode with rate $${newRate}`);
     return true;
   }
 

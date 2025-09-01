@@ -193,7 +193,7 @@ export default function AIFlowPlatform() {
         name: 'Driver Welcome Call',
         type: 'Voice',
         content:
-          "Welcome to FleetFlow! We're excited to have you on our team...",
+          ""Welcome to FleetFlow! We're excited to have you on our team..."",
         usage: 156,
         effectiveness: 94,
       },
@@ -300,7 +300,7 @@ export default function AIFlowPlatform() {
 
   // AI Action Handler for Automation Services
   const handleAIAction = async (action: string) => {
-    console.log(`🤖 Executing AI action: ${action}`);
+    console.info(`🤖 Executing AI action: ${action}`);
 
     switch (action) {
       case 'test-negotiator':
@@ -313,7 +313,7 @@ export default function AIFlowPlatform() {
           });
           const result = await response.json();
           setNegotiationResult(result);
-          console.log('🎯 Negotiation demo completed:', result);
+          console.info('🎯 Negotiation demo completed:', result);
         } catch (error) {
           console.error('❌ Negotiation test failed:', error);
         } finally {
@@ -484,7 +484,7 @@ export default function AIFlowPlatform() {
         break;
 
       default:
-        alert(`Action "${action}" not yet implemented`);
+        alert(`Action ""${action}"" not yet implemented`);
     }
   };
 
@@ -659,7 +659,7 @@ export default function AIFlowPlatform() {
       return {
         id: Date.now().toString(),
         type: 'assistant',
-        content: `🎯 **Lead Generation Hub Guide:**\n\n**Current Performance:**\n• Active Leads: ${currentLeads.length}\n• Conversion Rate: ${conversionRate}%\n\n**How to Use:**\n1. **Navigate to Lead Generation Hub** - Click the "Lead Generation Hub" tab\n2. **Use AI-Powered Discovery** - The system automatically finds potential customers\n3. **Review Lead Scores** - Focus on leads with scores above 70\n4. **Convert Leads** - Use the conversion buttons to move leads through your pipeline\n5. **Track Performance** - Monitor conversion rates in the analytics dashboard\n\n💡 **Pro Tip:** Set up automated follow-up sequences for high-scoring leads!`,
+        content: `🎯 **Lead Generation Hub Guide:**\n\n**Current Performance:**\n• Active Leads: ${currentLeads.length}\n• Conversion Rate: ${conversionRate}%\n\n**How to Use:**\n1. **Navigate to Lead Generation Hub** - Click the ""Lead Generation Hub"" tab\n2. **Use AI-Powered Discovery** - The system automatically finds potential customers\n3. **Review Lead Scores** - Focus on leads with scores above 70\n4. **Convert Leads** - Use the conversion buttons to move leads through your pipeline\n5. **Track Performance** - Monitor conversion rates in the analytics dashboard\n\n💡 **Pro Tip:** Set up automated follow-up sequences for high-scoring leads!`,
         timestamp: new Date().toISOString(),
         suggestions: [
           'How do I set up automated follow-ups?',
@@ -803,7 +803,7 @@ export default function AIFlowPlatform() {
     return {
       id: Date.now().toString(),
       type: 'assistant',
-      content: `🤖 **Flowter AI Response:**\n\nI understand you're asking about "${message}". Let me help you with that!\n\nI can assist with:\n• **Navigation** - Finding the right tools and features\n• **Optimization** - Improving your workflows and processes\n• **Troubleshooting** - Solving technical issues\n• **Training** - Learning new capabilities\n• **Analytics** - Understanding your performance\n\n💡 **Pro Tip:** Try asking me about specific features like "Lead Generation", "Dispatch", or "Route Optimization" for detailed guidance!`,
+      content: `🤖 **Flowter AI Response:**\n\nI understand you're asking about ""${message}"". Let me help you with that!\n\nI can assist with:\n• **Navigation** - Finding the right tools and features\n• **Optimization** - Improving your workflows and processes\n• **Troubleshooting** - Solving technical issues\n• **Training** - Learning new capabilities\n• **Analytics** - Understanding your performance\n\n💡 **Pro Tip:** Try asking me about specific features like ""Lead Generation"", ""Dispatch"", or ""Route Optimization"" for detailed guidance!`,
       timestamp: new Date().toISOString(),
       suggestions: [
         'How do I use the Lead Generation Hub?',
@@ -815,7 +815,7 @@ export default function AIFlowPlatform() {
 
   // Handle Flowter actions
   const handleFlowterAction = async (action: string, data: any) => {
-    console.log('Flowter action:', action, data);
+    console.info('Flowter action:', action, data);
 
     // Execute actions based on type
     switch (action) {
@@ -874,7 +874,7 @@ export default function AIFlowPlatform() {
         });
         break;
       default:
-        console.log('Unknown action:', action);
+        console.info('Unknown action:', action);
     }
   };
 

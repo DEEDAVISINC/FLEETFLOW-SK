@@ -616,7 +616,7 @@ export class DataGovernanceService {
   public runDailyCleanupJob(): void {
     ServiceErrorHandler.handleOperation(
       () => {
-        console.log('🧹 Running daily data cleanup job...');
+        console.info('🧹 Running daily data cleanup job...');
 
         const now = new Date();
         const expiredData: DataDeletionRequest[] = [];
@@ -653,7 +653,7 @@ export class DataGovernanceService {
           }
         });
 
-        console.log(
+        console.info(
           `📊 Daily cleanup job completed. ${expiredData.length} deletion requests created.`
         );
       },
@@ -665,7 +665,7 @@ export class DataGovernanceService {
   public runWeeklyComplianceReview(): void {
     ServiceErrorHandler.handleOperation(
       () => {
-        console.log('📋 Running weekly compliance review...');
+        console.info('📋 Running weekly compliance review...');
 
         const report = this.generateComplianceReport('retention_compliance');
         this.complianceReports.set(report.id, report);
@@ -678,7 +678,7 @@ export class DataGovernanceService {
           }
         });
 
-        console.log(
+        console.info(
           `📈 Weekly compliance review completed. Compliance score: ${report.metrics.complianceScore}%`
         );
       },

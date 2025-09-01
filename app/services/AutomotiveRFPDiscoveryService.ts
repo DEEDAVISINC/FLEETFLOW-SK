@@ -151,7 +151,7 @@ export class AutomotiveRFPDiscoveryService {
     notificationsSent: number;
     sourcesScanned: number;
   }> {
-    console.log('🚛 Starting comprehensive automotive RFP discovery...');
+    console.info('🚛 Starting comprehensive automotive RFP discovery...');
 
     const discoveryPromises = [
       this.scanOEMPortals(),
@@ -168,7 +168,7 @@ export class AutomotiveRFPDiscoveryService {
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         allOpportunities.push(...result.value);
-        console.log(
+        console.info(
           `✅ Source ${index + 1} discovered ${result.value.length} opportunities`
         );
       } else {
@@ -200,7 +200,7 @@ export class AutomotiveRFPDiscoveryService {
       notificationsSent = qualifiedOpportunities.length;
     }
 
-    console.log(
+    console.info(
       `🎯 Automotive RFP Discovery Complete: ${qualifiedOpportunities.length} qualified opportunities`
     );
 
@@ -219,7 +219,7 @@ export class AutomotiveRFPDiscoveryService {
 
     for (const portal of this.oemPortals) {
       try {
-        console.log(`🔍 Scanning ${portal.name}...`);
+        console.info(`🔍 Scanning ${portal.name}...`);
 
         // Check if scan is needed based on update frequency
         const lastScan = this.lastScanTime.get(portal.name);
@@ -444,7 +444,7 @@ export class AutomotiveRFPDiscoveryService {
    * Monitor Tier 1 supplier networks
    */
   private async monitorSupplierNetworks(): Promise<AutomotiveRFP[]> {
-    console.log('🔧 Monitoring Tier 1 supplier networks...');
+    console.info('🔧 Monitoring Tier 1 supplier networks...');
 
     const tier1Suppliers = [
       'Bosch',
@@ -523,7 +523,7 @@ export class AutomotiveRFPDiscoveryService {
    * Search procurement platforms (Ariba, Jaggaer, etc.)
    */
   private async searchProcurementPlatforms(): Promise<AutomotiveRFP[]> {
-    console.log('🌐 Searching procurement platforms...');
+    console.info('🌐 Searching procurement platforms...');
 
     // Mock procurement platform opportunities
     return [
@@ -591,7 +591,7 @@ export class AutomotiveRFPDiscoveryService {
    * Track automotive industry publications and announcements
    */
   private async trackIndustryPublications(): Promise<AutomotiveRFP[]> {
-    console.log('📰 Tracking industry publications...');
+    console.info('📰 Tracking industry publications...');
 
     // This would monitor RSS feeds, newsletters, trade publications
     // For now, return mock opportunities from industry announcements
@@ -602,7 +602,7 @@ export class AutomotiveRFPDiscoveryService {
    * Check government automotive contracts (USPS, GSA, Military)
    */
   private async checkGovernmentAutomotiveContracts(): Promise<AutomotiveRFP[]> {
-    console.log('🏛️ Checking government automotive contracts...');
+    console.info('🏛️ Checking government automotive contracts...');
 
     // Mock government automotive opportunity
     return [
@@ -672,7 +672,7 @@ export class AutomotiveRFPDiscoveryService {
   private async analyzeOpportunities(
     opportunities: AutomotiveRFP[]
   ): Promise<AutomotiveRFP[]> {
-    console.log('🤖 Analyzing opportunities with AI...');
+    console.info('🤖 Analyzing opportunities with AI...');
 
     return opportunities.map((opp) => {
       // Calculate win probability based on various factors

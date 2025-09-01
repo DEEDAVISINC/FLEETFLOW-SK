@@ -347,7 +347,7 @@ export default function SimplePhoneDialer() {
       style={{
         color: '#ffffff',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Header with CRM Integration Status */}

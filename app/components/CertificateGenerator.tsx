@@ -91,7 +91,7 @@ export class CertificateGenerator {
     const colors = getModuleColorScheme(moduleId);
 
     return `
-      <div style="
+      <div style=""
         width: 100%;
         height: 100%;
         background: ${colors.gradient};
@@ -100,9 +100,9 @@ export class CertificateGenerator {
         justify-content: center;
         position: relative;
         overflow: hidden;
-      ">
+      "">
         <!-- Background Pattern -->
-        <div style="
+        <div style=""
           position: absolute;
           top: 0;
           left: 0;
@@ -112,10 +112,10 @@ export class CertificateGenerator {
             radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
             radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
           background-size: 50px 50px;
-        "></div>
+        ""></div>
 
         <!-- Certificate Content -->
-        <div style="
+        <div style=""
           background: rgba(255, 255, 255, 0.98);
           border: 8px solid rgba(255, 255, 255, 0.9);
           border-radius: 20px;
@@ -125,19 +125,19 @@ export class CertificateGenerator {
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
           position: relative;
           z-index: 2;
-        ">
+        "">
           <!-- Header -->
-          <div style="margin-bottom: 40px;">
+          <div style=""margin-bottom: 40px;"">
             <!-- Logo Placeholder - Replace with actual FleetFlow logo -->
-            <div style="
+            <div style=""
               margin-bottom: 20px;
               display: flex;
               align-items: center;
               justify-content: center;
               gap: 20px;
-            ">
+            "">
               <!-- Logo Image Placeholder -->
-              <div style="
+              <div style=""
                 width: 80px;
                 height: 80px;
                 background: linear-gradient(135deg, ${colors.primary}, ${colors.secondary});
@@ -149,51 +149,51 @@ export class CertificateGenerator {
                 color: white;
                 font-weight: bold;
                 border: 3px solid ${colors.border};
-              ">🚛</div>
+              "">🚛</div>
               <!-- Company Name -->
               <div>
-                <div style="
+                <div style=""
                   font-size: 48px;
                   font-weight: bold;
                   color: #1f2937;
                   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-                ">FleetFlow University℠</div>
-                <div style="
+                "">FleetFlow University℠</div>
+                <div style=""
                   font-size: 16px;
                   color: #6b7280;
                   font-weight: 500;
                   text-align: center;
                   margin-top: 5px;
-                ">Transportation Excellence Institute</div>
+                "">Transportation Excellence Institute</div>
               </div>
             </div>
-            <div style="
+            <div style=""
               font-size: 32px;
               color: #6b7280;
               font-weight: 600;
               letter-spacing: 3px;
-            ">CERTIFICATE OF COMPLETION</div>
+            "">CERTIFICATE OF COMPLETION</div>
           </div>
 
           <!-- Decorative Line -->
-          <div style="
+          <div style=""
             height: 4px;
             background: linear-gradient(90deg, ${colors.primary}, ${colors.secondary}, ${colors.primary});
             margin: 30px auto;
             width: 300px;
             border-radius: 2px;
-          "></div>
+          ""></div>
 
           <!-- Main Content -->
-          <div style="margin: 40px 0;">
-            <div style="
+          <div style=""margin: 40px 0;"">
+            <div style=""
               font-size: 24px;
               color: #374151;
               margin-bottom: 20px;
               font-style: italic;
-            ">This is to certify that</div>
+            "">This is to certify that</div>
 
-            <div style="
+            <div style=""
               font-size: 40px;
               font-weight: bold;
               color: #1f2937;
@@ -201,15 +201,15 @@ export class CertificateGenerator {
               padding: 15px 30px;
               border-bottom: 3px solid ${colors.primary};
               display: inline-block;
-            ">${data.recipientName}</div>
+            "">${data.recipientName}</div>
 
-            <div style="
+            <div style=""
               font-size: 20px;
               color: #374151;
               margin: 20px 0;
-            ">has successfully completed the training program</div>
+            "">has successfully completed the training program</div>
 
-            <div style="
+            <div style=""
               font-size: 28px;
               font-weight: bold;
               color: ${colors.secondary};
@@ -218,140 +218,140 @@ export class CertificateGenerator {
               background: ${colors.light};
               border-radius: 10px;
               border: 2px solid ${colors.border};
-            ">${data.moduleTitle}</div>
+            "">${data.moduleTitle}</div>
 
-            <div style="
+            <div style=""
               font-size: 18px;
               color: #374151;
               margin-top: 20px;
-            ">with a score of <strong style="color: ${colors.primary}; font-size: 22px;">${data.score}%</strong></div>
+            "">with a score of <strong style=""color: ${colors.primary}; font-size: 22px;"">${data.score}%</strong></div>
           </div>
 
           <!-- Footer Info -->
-          <div style="
+          <div style=""
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 50px;
             padding-top: 30px;
             border-top: 2px solid #e5e7eb;
-          ">
-            <div style="text-align: left;">
-              <div style="
+          "">
+            <div style=""text-align: left;"">
+              <div style=""
                 font-size: 16px;
                 color: #6b7280;
                 margin-bottom: 5px;
-              ">Date Issued:</div>
-              <div style="
+              "">Date Issued:</div>
+              <div style=""
                 font-size: 18px;
                 font-weight: bold;
                 color: #1f2937;
-              ">${data.dateEarned}</div>
+              "">${data.dateEarned}</div>
             </div>
 
-            <div style="text-align: center;">
-              <div style="
+            <div style=""text-align: center;"">
+              <div style=""
                 font-size: 16px;
                 color: #6b7280;
                 margin-bottom: 5px;
-              ">Certificate ID:</div>
-              <div style="
+              "">Certificate ID:</div>
+              <div style=""
                 font-size: 14px;
                 font-weight: bold;
                 color: #1f2937;
                 font-family: monospace;
-              ">${data.certificateId ? formatCertificateSerial(data.certificateId) : data.id}</div>
+              "">${data.certificateId ? formatCertificateSerial(data.certificateId) : data.id}</div>
             </div>
 
-            <div style="text-align: center;">
-              <div style="
+            <div style=""text-align: center;"">
+              <div style=""
                 font-size: 14px;
                 color: #6b7280;
                 margin-bottom: 5px;
-              ">Score Achieved:</div>
-              <div style="
+              "">Score Achieved:</div>
+              <div style=""
                 font-size: 16px;
                 font-weight: bold;
                 color: ${data.score >= 80 ? colors.primary : '#ef4444'};
-              ">${data.score}%</div>
+              "">${data.score}%</div>
             </div>
 
-            <div style="text-align: right;">
-              <div style="
+            <div style=""text-align: right;"">
+              <div style=""
                 font-size: 16px;
                 color: #6b7280;
                 margin-bottom: 5px;
-              ">Valid Until:</div>
-              <div style="
+              "">Valid Until:</div>
+              <div style=""
                 font-size: 18px;
                 font-weight: bold;
                 color: #1f2937;
-              ">${data.validUntil}</div>
+              "">${data.validUntil}</div>
             </div>
           </div>
 
           <!-- Signature Section -->
-          <div style="
+          <div style=""
             margin-top: 40px;
             display: flex;
             justify-content: ${data.instructor ? 'space-between' : 'center'};
             align-items: center;
             padding: 0 40px;
-          ">
+          "">
             ${
               data.instructor
                 ? `
             <!-- Instructor Signature -->
-            <div style="text-align: center;">
-              <div style="
+            <div style=""text-align: center;"">
+              <div style=""
                 height: 2px;
                 background: #374151;
                 width: 200px;
                 margin-bottom: 10px;
-              "></div>
-              <div style="
+              ""></div>
+              <div style=""
                 font-size: 16px;
                 color: #374151;
                 font-weight: 600;
-              ">${data.instructor.name}</div>
-              <div style="
+              "">${data.instructor.name}</div>
+              <div style=""
                 font-size: 14px;
                 color: #6b7280;
                 margin-top: 2px;
-              ">${data.instructor.title}</div>
-              <div style="
+              "">${data.instructor.title}</div>
+              <div style=""
                 font-size: 12px;
                 color: #6b7280;
                 margin-top: 2px;
-              ">${data.instructor.credentials}</div>
+              "">${data.instructor.credentials}</div>
             </div>
             `
                 : ''
             }
 
             <!-- Director Signature -->
-            <div style="text-align: center;">
-              <div style="
+            <div style=""text-align: center;"">
+              <div style=""
                 height: 2px;
                 background: #374151;
                 width: 200px;
                 margin-bottom: 10px;
-              "></div>
-              <div style="
+              ""></div>
+              <div style=""
                 font-size: 16px;
                 color: #374151;
                 font-weight: 600;
-              ">FleetFlow University℠ Director</div>
-              <div style="
+              "">FleetFlow University℠ Director</div>
+              <div style=""
                 font-size: 14px;
                 color: #6b7280;
                 margin-top: 5px;
-              ">Transportation Excellence Institute</div>
+              "">Transportation Excellence Institute</div>
             </div>
           </div>
 
           <!-- Security Features -->
-          <div style="
+          <div style=""
             position: absolute;
             top: 20px;
             right: 20px;
@@ -363,16 +363,16 @@ export class CertificateGenerator {
             align-items: center;
             justify-content: center;
             background: ${colors.light};
-          ">
-            <div style="
+          "">
+            <div style=""
               font-size: 24px;
               color: ${colors.secondary};
               font-weight: bold;
-            ">✓</div>
+            "">✓</div>
           </div>
 
           <!-- Security Watermark -->
-          <div style="
+          <div style=""
             position: absolute;
             bottom: 20px;
             left: 20px;
@@ -380,7 +380,7 @@ export class CertificateGenerator {
             color: #9ca3af;
             transform: rotate(-45deg);
             opacity: 0.7;
-          ">AUTHENTICATED CERTIFICATE</div>
+          "">AUTHENTICATED CERTIFICATE</div>
         </div>
       </div>
     `;

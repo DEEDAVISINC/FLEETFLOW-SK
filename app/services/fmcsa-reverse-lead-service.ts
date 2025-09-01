@@ -94,11 +94,11 @@ export class FMCSAReverseLeadService {
   async generateShipperLeads(
     filters: FMCSAReverseFilters = {}
   ): Promise<FMCSAReverseResults> {
-    console.log('🔍 Starting FMCSA reverse shipper lead generation:', filters);
+    console.info('🔍 Starting FMCSA reverse shipper lead generation:', filters);
 
     const startTime = Date.now();
     const leads: FMCSAShipperLead[] = [];
-    let stats = {
+    const stats = {
       totalScanned: 0,
       qualifiedLeads: 0,
       averageScore: 0,
@@ -153,7 +153,7 @@ export class FMCSAReverseLeadService {
 
     // If no real leads found, generate demo desperate leads for demonstration
     if (leads.length === 0 && filters.desperateOnly) {
-      console.log(
+      console.info(
         '📋 Generating demo desperate shipper leads for demonstration...'
       );
 
@@ -257,7 +257,7 @@ export class FMCSAReverseLeadService {
     };
 
     const duration = Date.now() - startTime;
-    console.log(
+    console.info(
       `🎉 FMCSA reverse lead generation completed in ${duration}ms:`,
       stats
     );

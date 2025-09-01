@@ -238,9 +238,9 @@ export default function GoWithFlowDemo() {
                   margin: 0,
                 }}
               >
-                Click "⚡ Instant Match" on any urgent load. Watch the real-time
-                activity feed show: AI matching → Driver acceptance → BOL
-                workflow auto-start → Driver portal update
+                Click ""⚡ Instant Match"" on any urgent load. Watch the
+                real-time activity feed show: AI matching → Driver acceptance →
+                BOL workflow auto-start → Driver portal update
               </p>
             </div>
 
@@ -255,7 +255,7 @@ export default function GoWithFlowDemo() {
                   margin: 0,
                 }}
               >
-                Click "🚛 Trigger Auto-Match Demo" to see the system
+                Click ""🚛 Trigger Auto-Match Demo"" to see the system
                 automatically find and assign multiple urgent loads to drivers
                 with full workflow automation.
               </p>
@@ -272,9 +272,9 @@ export default function GoWithFlowDemo() {
                   margin: 0,
                 }}
               >
-                Click "🚛 Driver OTR Flow Portal" to see where drivers would
-                accept loads from their loadboard, triggering the same automated
-                BOL workflow.
+                Click ""🚛 Driver OTR Flow Portal"" to see where drivers
+                would accept loads from their loadboard, triggering the same
+                automated BOL workflow.
               </p>
             </div>
           </div>
@@ -310,4 +310,3 @@ export default function GoWithFlowDemo() {
     </div>
   );
 }
-

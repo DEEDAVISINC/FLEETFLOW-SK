@@ -28,10 +28,10 @@ interface PricingTier {
   ctaColor: string;
 }
 
-const ENTERPRISE_PLANS: PricingTier[] = [
+const INDIVIDUAL_PLANS: PricingTier[] = [
   {
-    id: 'university',
-    name: 'FleetFlow University℠',
+    id: 'training',
+    name: 'Training Only',
     price: 49,
     period: '/month',
     description: 'Professional transportation training and certification',
@@ -53,8 +53,8 @@ const ENTERPRISE_PLANS: PricingTier[] = [
     ctaColor: '#f59e0b',
   },
   {
-    id: 'dispatcher',
-    name: 'Professional Dispatcher',
+    id: 'solo_dispatcher',
+    name: 'Solo Dispatcher',
     price: 79,
     period: '/month',
     description:
@@ -79,40 +79,66 @@ const ENTERPRISE_PLANS: PricingTier[] = [
     ctaColor: '#3b82f6',
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise Professional',
-    price: 2698,
+    id: 'solo_dispatcher_premium',
+    name: 'Solo Dispatcher Premium',
+    price: 199,
     period: '/month',
     description:
-      'Complete platform access + unlimited phone system + AI Flow Professional included',
+      'Advanced dispatch operations with premium features and unlimited communications',
+    icon: Crown,
+    features: [
+      'Advanced dispatch management',
+      'Multi-fleet coordination',
+      'Advanced route optimization',
+      'Performance analytics & reporting',
+      'API access & webhooks',
+      'Priority support',
+      'Custom integrations',
+      'Advanced driver management',
+      'Real-time fleet monitoring',
+      '📞 Unlimited phone minutes',
+      '📱 Unlimited SMS messages',
+      '📊 Advanced call monitoring',
+      '🤖 AI automation tools',
+    ],
+    cta: 'Go Premium Dispatch',
+    gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+    borderColor: '#6366f1',
+    ctaColor: '#6366f1',
+  },
+  {
+    id: 'solo_broker_premium',
+    name: 'Solo Broker Premium',
+    price: 599,
+    period: '/month',
+    description:
+      'Complete brokerage platform with all premium features and enterprise capabilities',
     icon: Crown,
     features: [
       'Complete platform access',
       'FreightFlow RFx platform',
-      'All premium features',
-      '🤖 AI Flow Professional included (unlimited usage)',
-      '🤖 Unlimited AI workflows & operations',
-      '🤖 AI Review System with validations',
-      '🤖 Advanced analytics & reporting',
-      '🤖 Machine learning insights',
-      '🤖 API access & webhooks',
-      'Priority support & training',
+      'Advanced brokerage operations',
+      'Load board management premium',
+      'Enhanced carrier relationships',
+      'Revenue analytics dashboard',
+      'Advanced analytics & reporting',
+      'API access & webhooks',
+      'Priority support',
       'Custom integrations',
-      'Dedicated account manager',
-      'White-label options',
+      'Multi-customer management',
       '📞 Unlimited phone minutes',
       '📱 Unlimited SMS messages',
-      '📊 Enterprise call center features',
-      '🏢 Multi-tenant phone management',
+      '📊 Advanced call monitoring',
+      '🤖 AI automation tools',
     ],
-    cta: 'Go Enterprise',
+    cta: 'Go Premium Broker',
     gradient: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
     borderColor: '#9333ea',
     ctaColor: '#9333ea',
   },
   {
-    id: 'brokerage',
-    name: 'Professional Brokerage',
+    id: 'solo_broker',
+    name: 'Solo Broker',
     price: 289,
     period: '/month',
     description:
@@ -140,10 +166,152 @@ const ENTERPRISE_PLANS: PricingTier[] = [
   },
 ];
 
+// Team Organization Plans
+const TEAM_PLANS: PricingTier[] = [
+  {
+    id: 'team_brokerage_starter',
+    name: 'Team Brokerage Starter',
+    price: 199,
+    period: '/month (up to 2 people)',
+    description:
+      'Perfect for small brokerage operations with up to 2 team members',
+    icon: Building,
+    popular: false,
+    features: [
+      'Core brokerage tools',
+      'Load management & posting',
+      'Basic carrier database',
+      'Standard reporting & analytics',
+      'Up to 2 team members included',
+      'Additional seats: $49/month each',
+      '📞 Phone add-on available',
+    ],
+    cta: 'Start Organization',
+    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    borderColor: '#10b981',
+    ctaColor: '#10b981',
+  },
+  {
+    id: 'team_brokerage_pro',
+    name: 'Team Brokerage Pro',
+    price: 499,
+    period: '/month (up to 5 people)',
+    description:
+      'Advanced brokerage platform for growing operations with up to 5 team members',
+    icon: Building,
+    popular: true,
+    features: [
+      'Advanced brokerage operations',
+      'Unlimited load management',
+      'Enhanced carrier relationships',
+      'Advanced analytics & reporting',
+      'Performance tracking',
+      'API access & integrations',
+      'Up to 5 team members included',
+      'Additional seats: $39/month each',
+      '📞 500 phone minutes included',
+      '📱 200 SMS messages included',
+    ],
+    cta: 'Start Pro',
+    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    borderColor: '#10b981',
+    ctaColor: '#10b981',
+  },
+  {
+    id: 'team_dispatch_starter',
+    name: 'Team Dispatch Starter',
+    price: 149,
+    period: '/month (up to 2 people)',
+    description:
+      'Essential dispatch tools for small operations with up to 2 team members',
+    icon: TrendingUp,
+    popular: false,
+    features: [
+      'Core dispatch management',
+      'Driver assignment & tracking',
+      'Route optimization basics',
+      'Basic reporting',
+      'CRM integration',
+      'Up to 2 team members included',
+      'Additional seats: $39/month each',
+      '📞 Phone add-on available',
+    ],
+    cta: 'Start Dispatch',
+    gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    borderColor: '#3b82f6',
+    ctaColor: '#3b82f6',
+  },
+  {
+    id: 'team_dispatch_pro',
+    name: 'Team Dispatch Pro',
+    price: 349,
+    period: '/month (up to 5 people)',
+    description:
+      'Complete dispatch platform for professional operations with up to 5 team members',
+    icon: TrendingUp,
+    popular: false,
+    features: [
+      'Advanced dispatch management',
+      'Real-time driver tracking',
+      'Advanced route optimization',
+      'Performance analytics',
+      'Mobile app access',
+      'API integrations',
+      'Up to 5 team members included',
+      'Additional seats: $29/month each',
+      '📞 500 phone minutes included',
+      '📱 200 SMS messages included',
+    ],
+    cta: 'Start Professional',
+    gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    borderColor: '#3b82f6',
+    ctaColor: '#3b82f6',
+  },
+  {
+    id: 'team_enterprise',
+    name: 'Team Enterprise',
+    price: 2698,
+    period: '/month + seats',
+    description:
+      'Complete enterprise platform for large organizations (excludes DEPOINTE AI)',
+    icon: Crown,
+    popular: false,
+    features: [
+      'Complete platform access',
+      'FreightFlow RFx platform',
+      'All premium features',
+      '🤖 AI Flow Professional included (unlimited usage)',
+      '🤖 Unlimited AI workflows & operations',
+      '🤖 AI Review System with validations',
+      '🤖 Advanced analytics & reporting',
+      '🤖 Machine learning insights',
+      '🤖 API access & webhooks',
+      'Priority support & training',
+      'Custom integrations',
+      'Dedicated account manager',
+      'White-label options',
+      '10 included seats',
+      'Additional seats: $199/month each',
+      '📞 Unlimited phone minutes',
+      '📱 Unlimited SMS messages',
+      '📊 Enterprise call center features',
+      '🏢 Multi-tenant phone management',
+      '⚠️ DEPOINTE AI sold separately',
+    ],
+    cta: 'Go Enterprise',
+    gradient: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
+    borderColor: '#9333ea',
+    ctaColor: '#9333ea',
+  },
+];
+
 export default function FleetFlowPlansPage() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>(
     'monthly'
   );
+  const [pricingModel, setPricingModel] = useState<
+    'individual' | 'organization'
+  >('individual');
 
   return (
     <div
@@ -193,7 +361,16 @@ export default function FleetFlowPlansPage() {
           with AI-powered automation and enterprise-grade tools.
           <br />
           <span style={{ color: '#3b82f6', fontWeight: '600' }}>
-            Start your 14-day free trial - no credit card required.
+            Choose between individual plans or organization subscriptions with
+            seat-based pricing for brokerages and dispatch companies.
+            <br />
+            <span style={{ fontSize: '0.9rem', fontWeight: '500' }}>
+              Use the toggle below to switch between pricing models
+            </span>
+          </span>
+          <br />
+          <span style={{ color: '#10b981', fontWeight: '600' }}>
+            Organization plans save up to 76% for multi-user teams!
           </span>
         </p>
 
@@ -278,6 +455,88 @@ export default function FleetFlowPlansPage() {
             </span>
           )}
         </div>
+
+        {/* Pricing Model Toggle */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '16px',
+            marginBottom: '20px',
+          }}
+        >
+          <span
+            style={{
+              color:
+                pricingModel === 'individual'
+                  ? '#3b82f6'
+                  : 'rgba(255,255,255,0.6)',
+              fontWeight: '600',
+            }}
+          >
+            👤 Solo Plans
+          </span>
+          <button
+            onClick={() =>
+              setPricingModel(
+                pricingModel === 'individual' ? 'organization' : 'individual'
+              )
+            }
+            style={{
+              width: '56px',
+              height: '28px',
+              borderRadius: '14px',
+              border: 'none',
+              background:
+                pricingModel === 'organization'
+                  ? '#10b981'
+                  : 'rgba(255,255,255,0.2)',
+              position: 'relative',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                borderRadius: '12px',
+                background: 'white',
+                position: 'absolute',
+                top: '2px',
+                left: pricingModel === 'organization' ? '30px' : '2px',
+                transition: 'all 0.3s ease',
+              }}
+            />
+          </button>
+          <span
+            style={{
+              color:
+                pricingModel === 'organization'
+                  ? '#10b981'
+                  : 'rgba(255,255,255,0.6)',
+              fontWeight: '600',
+            }}
+          >
+            👥 Team Plans
+          </span>
+          {pricingModel === 'organization' && (
+            <span
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                padding: '6px 16px',
+                borderRadius: '12px',
+                fontSize: '0.9rem',
+                fontWeight: '700',
+                marginLeft: '8px',
+                boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              💰 Up to 76% Savings for Brokerages!
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Pricing Cards */}
@@ -287,180 +546,131 @@ export default function FleetFlowPlansPage() {
           margin: '0 auto',
           padding: '60px 20px',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns:
+            pricingModel === 'organization'
+              ? 'repeat(auto-fit, minmax(300px, 1fr))'
+              : 'repeat(auto-fit, minmax(320px, 1fr))',
           gap: '32px',
         }}
       >
-        {ENTERPRISE_PLANS.map((plan) => (
+        {/* Cost Savings Comparison Banner for Team Plans */}
+        {pricingModel === 'organization' && (
           <div
-            key={plan.id}
             style={{
-              background: 'rgba(255,255,255,0.03)',
-              backdropFilter: 'blur(20px)',
-              borderRadius: '20px',
-              border: `2px solid ${plan.popular ? plan.borderColor : 'rgba(255,255,255,0.1)'}`,
-              padding: '40px',
-              position: 'relative',
-              transition: 'all 0.4s ease',
-              boxShadow: plan.popular
-                ? `0 20px 60px rgba(249, 115, 34, 0.2)`
-                : '0 10px 40px rgba(0,0,0,0.2)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.border = `2px solid ${plan.borderColor}`;
-              e.currentTarget.style.boxShadow = `0 25px 80px rgba(${
-                plan.id === 'dispatcher'
-                  ? '59, 130, 246'
-                  : plan.id === 'brokerage'
-                    ? '16, 185, 129'
-                    : plan.id === 'enterprise'
-                      ? '147, 51, 234'
-                      : '245, 158, 11'
-              }, 0.3)`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0px)';
-              e.currentTarget.style.border = `2px solid ${plan.popular ? plan.borderColor : 'rgba(255,255,255,0.1)'}`;
-              e.currentTarget.style.boxShadow = plan.popular
-                ? `0 20px 60px rgba(16, 185, 129, 0.2)`
-                : '0 10px 40px rgba(0,0,0,0.2)';
+              gridColumn: '1 / -1',
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              borderRadius: '16px',
+              padding: '24px',
+              marginBottom: '20px',
+              textAlign: 'center',
+              color: 'white',
+              boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
             }}
           >
-            {/* Popular Badge */}
-            {plan.popular && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '-12px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: plan.gradient,
-                  color: 'white',
-                  padding: '8px 24px',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  fontWeight: '700',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4)',
-                }}
-              >
-                <Star size={16} fill='currentColor' />
-                Most Popular
+            <h3
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                marginBottom: '12px',
+              }}
+            >
+              💰 Team Plans Save Big!
+            </h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '16px',
+                marginTop: '16px',
+              }}
+            >
+              <div>
+                <strong style={{ fontSize: '1.2rem' }}>Brokerage:</strong>
+                <br />5 users: $346 vs $1,445 (76% savings)
               </div>
-            )}
-
-            {/* Plan Header */}
-            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-              <div
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '20px',
-                  background: plan.gradient,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 20px',
-                  boxShadow: `0 10px 30px rgba(${
-                    plan.id === 'dispatcher'
-                      ? '59, 130, 246'
-                      : plan.id === 'brokerage'
-                        ? '16, 185, 129'
-                        : plan.id === 'enterprise'
-                          ? '147, 51, 234'
-                          : '245, 158, 11'
-                  }, 0.3)`,
-                }}
-              >
-                <plan.icon size={36} color='white' />
+              <div>
+                <strong style={{ fontSize: '1.2rem' }}>Dispatch:</strong>
+                <br />5 users: $266 vs $395 (33% savings)
               </div>
+            </div>
+          </div>
+        )}
 
-              <h3
-                style={{
-                  fontSize: '1.5rem',
-                  fontWeight: '700',
-                  color: 'white',
-                  marginBottom: '8px',
-                }}
-              >
-                {plan.name}
-              </h3>
-
-              <p
-                style={{
-                  color: 'rgba(255,255,255,0.7)',
-                  fontSize: '0.95rem',
-                  lineHeight: '1.5',
-                  marginBottom: '24px',
-                }}
-              >
-                {plan.description}
-              </p>
-
-              {/* Pricing */}
-              <div style={{ marginBottom: '24px' }}>
+        {(pricingModel === 'individual' ? INDIVIDUAL_PLANS : TEAM_PLANS).map(
+          (plan) => (
+            <div
+              key={plan.id}
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                border: `2px solid ${plan.popular ? plan.borderColor : 'rgba(255,255,255,0.1)'}`,
+                padding: '40px',
+                position: 'relative',
+                transition: 'all 0.4s ease',
+                boxShadow: plan.popular
+                  ? `0 20px 60px rgba(249, 115, 34, 0.2)`
+                  : '0 10px 40px rgba(0,0,0,0.2)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.border = `2px solid ${plan.borderColor}`;
+                e.currentTarget.style.boxShadow = `0 25px 80px rgba(${
+                  plan.id === 'dispatcher'
+                    ? '59, 130, 246'
+                    : plan.id === 'brokerage'
+                      ? '16, 185, 129'
+                      : plan.id === 'enterprise'
+                        ? '147, 51, 234'
+                        : '245, 158, 11'
+                }, 0.3)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0px)';
+                e.currentTarget.style.border = `2px solid ${plan.popular ? plan.borderColor : 'rgba(255,255,255,0.1)'}`;
+                e.currentTarget.style.boxShadow = plan.popular
+                  ? `0 20px 60px rgba(16, 185, 129, 0.2)`
+                  : '0 10px 40px rgba(0,0,0,0.2)';
+              }}
+            >
+              {/* Popular Badge */}
+              {plan.popular && (
                 <div
                   style={{
-                    fontSize: '2.6rem',
-                    fontWeight: '900',
-                    color: 'white',
-                    lineHeight: '1',
-                    marginBottom: '4px',
-                  }}
-                >
-                  {billingPeriod === 'annual'
-                    ? `$${Math.round(plan.price * 10).toLocaleString()}` // 10 months pricing (2 months free)
-                    : `Starting at $${plan.price}`}
-                  <span
-                    style={{
-                      fontSize: '1.2rem',
-                      fontWeight: '500',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    {billingPeriod === 'annual' ? '/year' : '/month'}
-                  </span>
-                </div>
-                {billingPeriod === 'annual' && (
-                  <div
-                    style={{
-                      fontSize: '0.9rem',
-                      color: 'rgba(255,255,255,0.6)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    ${plan.price}/month billed annually
-                    <br />
-                    <span style={{ color: '#10b981', fontWeight: '600' }}>
-                      💰 Save ${plan.price * 2}/year (2 months free!)
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* CTA Button */}
-              <Link href='/auth/signup'>
-                <button
-                  style={{
-                    width: '100%',
-                    padding: '16px 24px',
-                    borderRadius: '12px',
-                    border: 'none',
+                    position: 'absolute',
+                    top: '-12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
                     background: plan.gradient,
                     color: 'white',
-                    fontSize: '1.1rem',
+                    padding: '8px 24px',
+                    borderRadius: '20px',
+                    fontSize: '0.85rem',
                     fontWeight: '700',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 8px 25px rgba(16, 185, 129, 0.4)',
+                  }}
+                >
+                  <Star size={16} fill='currentColor' />
+                  Most Popular
+                </div>
+              )}
+
+              {/* Plan Header */}
+              <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                <div
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    borderRadius: '20px',
+                    background: plan.gradient,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '8px',
-                    marginBottom: '32px',
-                    boxShadow: `0 8px 25px rgba(${
+                    margin: '0 auto 20px',
+                    boxShadow: `0 10px 30px rgba(${
                       plan.id === 'dispatcher'
                         ? '59, 130, 246'
                         : plan.id === 'brokerage'
@@ -470,105 +680,238 @@ export default function FleetFlowPlansPage() {
                             : '245, 158, 11'
                     }, 0.3)`,
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = `0 12px 35px rgba(${
-                      plan.id === 'dispatcher'
-                        ? '59, 130, 246'
-                        : plan.id === 'brokerage'
-                          ? '16, 185, 129'
-                          : plan.id === 'enterprise'
-                            ? '147, 51, 234'
-                            : '245, 158, 11'
-                    }, 0.4)`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0px)';
-                    e.currentTarget.style.boxShadow = `0 8px 25px rgba(${
-                      plan.id === 'dispatcher'
-                        ? '59, 130, 246'
-                        : plan.id === 'brokerage'
-                          ? '16, 185, 129'
-                          : plan.id === 'enterprise'
-                            ? '147, 51, 234'
-                            : '245, 158, 11'
-                    }, 0.3)`;
+                >
+                  <plan.icon size={36} color='white' />
+                </div>
+
+                <h3
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                    color: 'white',
+                    marginBottom: '8px',
                   }}
                 >
-                  {plan.cta}
-                  <ArrowRight size={20} />
-                </button>
-              </Link>
-            </div>
+                  {plan.name}
+                </h3>
 
-            {/* Features List */}
-            <div>
-              <h4
-                style={{
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  color: 'rgba(255,255,255,0.9)',
-                  marginBottom: '16px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Everything Included:
-              </h4>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                {plan.features.map((feature, index) => {
-                  const isPhoneFeature =
-                    feature.includes('📞') ||
-                    feature.includes('📱') ||
-                    feature.includes('📊') ||
-                    feature.includes('🏢');
-                  return (
-                    <li
-                      key={index}
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: '0.95rem',
+                    lineHeight: '1.5',
+                    marginBottom: '24px',
+                  }}
+                >
+                  {plan.description}
+                </p>
+
+                {/* Pricing */}
+                <div style={{ marginBottom: '24px' }}>
+                  {pricingModel === 'organization' ? (
+                    // Team subscription pricing with annual discount
+                    <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        marginBottom: '12px',
-                        color: isPhoneFeature
-                          ? '#34d399'
-                          : 'rgba(255,255,255,0.8)',
-                        fontSize: '0.95rem',
-                        fontWeight: isPhoneFeature ? '600' : '400',
-                        background: isPhoneFeature
-                          ? 'rgba(52, 211, 153, 0.1)'
-                          : 'transparent',
-                        padding: isPhoneFeature ? '8px 12px' : '0',
-                        borderRadius: isPhoneFeature ? '8px' : '0',
-                        border: isPhoneFeature
-                          ? '1px solid rgba(52, 211, 153, 0.2)'
-                          : 'none',
+                        fontSize: '2.6rem',
+                        fontWeight: '900',
+                        color: 'white',
+                        lineHeight: '1',
+                        marginBottom: '4px',
                       }}
                     >
-                      <div
+                      {plan.price === 0
+                        ? 'FREE'
+                        : billingPeriod === 'annual'
+                          ? `$${Math.round(plan.price * 10).toLocaleString()}` // 10 months pricing (2 months free)
+                          : `$${plan.price}`}
+                      <span
                         style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '10px',
-                          background: isPhoneFeature
-                            ? 'linear-gradient(135deg, #34d399 0%, #10b981 100%)'
-                            : plan.gradient,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
+                          fontSize: '1.2rem',
+                          fontWeight: '500',
+                          color: 'rgba(255,255,255,0.7)',
                         }}
                       >
-                        <Check size={12} color='white' />
+                        {billingPeriod === 'annual' ? '/year' : plan.period}
+                      </span>
+                    </div>
+                  ) : (
+                    // Individual pricing with annual discount
+                    <div
+                      style={{
+                        fontSize: '2.6rem',
+                        fontWeight: '900',
+                        color: 'white',
+                        lineHeight: '1',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {billingPeriod === 'annual'
+                        ? `$${Math.round(plan.price * 10).toLocaleString()}` // 10 months pricing (2 months free)
+                        : `$${plan.price}`}
+                      <span
+                        style={{
+                          fontSize: '1.2rem',
+                          fontWeight: '500',
+                          color: 'rgba(255,255,255,0.7)',
+                        }}
+                      >
+                        {billingPeriod === 'annual' ? '/year' : '/month'}
+                      </span>
+                    </div>
+                  )}
+                  {billingPeriod === 'annual' &&
+                    pricingModel === 'individual' && (
+                      <div
+                        style={{
+                          fontSize: '0.9rem',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        ${plan.price}/month billed annually
+                        <br />
+                        <span style={{ color: '#10b981', fontWeight: '600' }}>
+                          💰 Save ${plan.price * 2}/year (2 months free!)
+                        </span>
                       </div>
-                      {feature}
-                    </li>
-                  );
-                })}
-              </ul>
+                    )}
+                </div>
+
+                {/* CTA Button */}
+                <Link
+                  href={
+                    pricingModel === 'organization'
+                      ? '/organizations/create'
+                      : '/auth/signup'
+                  }
+                >
+                  <button
+                    style={{
+                      width: '100%',
+                      padding: '16px 24px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: plan.gradient,
+                      color: 'white',
+                      fontSize: '1.1rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      marginBottom: '32px',
+                      boxShadow: `0 8px 25px rgba(${
+                        plan.id === 'dispatcher'
+                          ? '59, 130, 246'
+                          : plan.id === 'brokerage'
+                            ? '16, 185, 129'
+                            : plan.id === 'enterprise'
+                              ? '147, 51, 234'
+                              : '245, 158, 11'
+                      }, 0.3)`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = `0 12px 35px rgba(${
+                        plan.id === 'dispatcher'
+                          ? '59, 130, 246'
+                          : plan.id === 'brokerage'
+                            ? '16, 185, 129'
+                            : plan.id === 'enterprise'
+                              ? '147, 51, 234'
+                              : '245, 158, 11'
+                      }, 0.4)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0px)';
+                      e.currentTarget.style.boxShadow = `0 8px 25px rgba(${
+                        plan.id === 'dispatcher'
+                          ? '59, 130, 246'
+                          : plan.id === 'brokerage'
+                            ? '16, 185, 129'
+                            : plan.id === 'enterprise'
+                              ? '147, 51, 234'
+                              : '245, 158, 11'
+                      }, 0.3)`;
+                    }}
+                  >
+                    {plan.cta}
+                    <ArrowRight size={20} />
+                  </button>
+                </Link>
+              </div>
+
+              {/* Features List */}
+              <div>
+                <h4
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    color: 'rgba(255,255,255,0.9)',
+                    marginBottom: '16px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Everything Included:
+                </h4>
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {plan.features.map((feature, index) => {
+                    const isPhoneFeature =
+                      feature.includes('📞') ||
+                      feature.includes('📱') ||
+                      feature.includes('📊') ||
+                      feature.includes('🏢');
+                    return (
+                      <li
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          marginBottom: '12px',
+                          color: isPhoneFeature
+                            ? '#34d399'
+                            : 'rgba(255,255,255,0.8)',
+                          fontSize: '0.95rem',
+                          fontWeight: isPhoneFeature ? '600' : '400',
+                          background: isPhoneFeature
+                            ? 'rgba(52, 211, 153, 0.1)'
+                            : 'transparent',
+                          padding: isPhoneFeature ? '8px 12px' : '0',
+                          borderRadius: isPhoneFeature ? '8px' : '0',
+                          border: isPhoneFeature
+                            ? '1px solid rgba(52, 211, 153, 0.2)'
+                            : 'none',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '20px',
+                            height: '20px',
+                            borderRadius: '10px',
+                            background: isPhoneFeature
+                              ? 'linear-gradient(135deg, #34d399 0%, #10b981 100%)'
+                              : plan.gradient,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <Check size={12} color='white' />
+                        </div>
+                        {feature}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
 
       {/* Phone System Add-Ons Section */}
@@ -1515,7 +1858,7 @@ export default function FleetFlowPlansPage() {
               marginBottom: '40px',
             }}
           >
-            Join Waitlist - Coming Q2 2024
+            Join Waitlist - Coming Q2 2026
           </button>
         </div>
       </div>
@@ -1629,7 +1972,9 @@ export default function FleetFlowPlansPage() {
             marginBottom: '16px',
           }}
         >
-          Ready to Transform Your Transportation Business?
+          {pricingModel === 'organization'
+            ? 'Ready to Start Your Brokerage or Dispatch Organization?'
+            : 'Ready to Transform Your Transportation Business?'}
         </h3>
         <p
           style={{
@@ -1638,13 +1983,23 @@ export default function FleetFlowPlansPage() {
             marginBottom: '32px',
           }}
         >
-          Join thousands of professionals who trust FleetFlow for their
-          transportation needs.
+          {pricingModel === 'organization'
+            ? 'Create your brokerage or dispatch organization and invite your team. Save up to 76% compared to individual plans!'
+            : 'Join thousands of professionals who trust FleetFlow for their transportation needs.'}
         </p>
-        <Link href='/user-profile'>
+        <Link
+          href={
+            pricingModel === 'organization'
+              ? '/organizations/create'
+              : '/user-profile'
+          }
+        >
           <button
             style={{
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              background:
+                pricingModel === 'organization'
+                  ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                  : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
               color: 'white',
               border: 'none',
               padding: '20px 40px',
@@ -1659,7 +2014,9 @@ export default function FleetFlowPlansPage() {
               gap: '12px',
             }}
           >
-            🚀 Start 14-Day Free Trial
+            {pricingModel === 'organization'
+              ? '🚀 Create Brokerage/Dispatch'
+              : '🚀 Start 14-Day Free Trial'}
             <ArrowRight size={24} />
           </button>
         </Link>

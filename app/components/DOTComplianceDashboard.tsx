@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 import FleetFlowFooter from './FleetFlowFooter';
 
@@ -123,13 +124,12 @@ export default function DOTComplianceDashboard() {
         {/* Header */}
         <div className='mb-8'>
           <div className='mb-4 flex items-center gap-4'>
-            <img
+            <Image
               src='/images/fleetflow logo tms.jpg'
               alt='FleetFlow Logo'
+              width={32}
+              height={32}
               className='h-8 w-8 object-contain'
-              onError={(e) => {
-                e.currentTarget.src = '/images/fleetflow logo tms.jpg';
-              }}
             />
             <div>
               <h1 className='mb-2 text-3xl font-bold text-gray-900'>
@@ -402,7 +402,7 @@ export default function DOTComplianceDashboard() {
                       </label>
                       <textarea
                         className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
-                        placeholder='{"drivers": 30, "vehicles": 25, "operationType": "interstate"}'
+                        placeholder='{""drivers"": 30, ""vehicles"": 25, ""operationType"": ""interstate""}'
                         value={documentParameters}
                         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                           setDocumentParameters(e.target.value)

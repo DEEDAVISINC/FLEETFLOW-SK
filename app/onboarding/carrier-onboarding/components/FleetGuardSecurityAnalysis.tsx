@@ -59,7 +59,7 @@ export const FleetGuardSecurityAnalysis: React.FC<
     setError('');
 
     try {
-      console.log(
+      console.info(
         '🛡️ FleetGuard AI: Starting comprehensive security analysis...'
       );
 
@@ -79,7 +79,7 @@ export const FleetGuardSecurityAnalysis: React.FC<
           }
         }
       } catch (error) {
-        console.log(
+        console.info(
           '⚠️ Enhanced data unavailable, using FMCSA data for analysis'
         );
       }
@@ -150,7 +150,7 @@ export const FleetGuardSecurityAnalysis: React.FC<
         carrierApproved: result.riskLevel !== 'high',
       });
 
-      console.log('✅ FleetGuard AI: Security analysis complete', result);
+      console.info('✅ FleetGuard AI: Security analysis complete', result);
     } catch (error) {
       console.error('❌ FleetGuard AI analysis failed:', error);
       setError(

@@ -51,10 +51,10 @@ export const EnhancedFlowterModal: React.FC<EnhancedFlowterModalProps> = ({
         role: 'assistant',
         content: `👋 Hi ${user.name}! I'm Flowter AI, your FleetFlow assistant. I can help you with:
 
-🔍 **Smart Navigation**: "Find routing" or "Take me to dispatch"
-📚 **Feature Help**: "How do I create loads?" or "Help with invoicing"
-🚀 **Quick Actions**: "Create new invoice" or "Optimize routes"
-📊 **Insights**: "Show me reports" or "Track shipments"
+🔍 **Smart Navigation**: ""Find routing"" or ""Take me to dispatch""
+📚 **Feature Help**: ""How do I create loads?"" or ""Help with invoicing""
+🚀 **Quick Actions**: ""Create new invoice"" or ""Optimize routes""
+📊 **Insights**: ""Show me reports"" or ""Track shipments""
 
 What would you like to do today?`,
         timestamp: new Date().toLocaleTimeString(),
@@ -145,7 +145,7 @@ What would you like to do today?`,
   };
 
   const handleNavigation = (url: string) => {
-    console.log(`🔗 Navigating to: ${url}`);
+    console.info(`🔗 Navigating to: ${url}`);
     onClose(); // Close modal after navigation
   };
 

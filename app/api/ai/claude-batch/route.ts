@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     const today = new Date().toDateString();
     if (dailyUsage.date !== today) {
       dailyUsage = { calls: 0, tokens: 0, cost: 0, date: today };
-      console.log('🔄 Daily usage reset for:', today);
+      console.info('🔄 Daily usage reset for:', today);
     }
 
     // Check daily limits
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     const startTime = Date.now();
 
-    console.log(`🚀 Processing batch: ${taskCount} ${type} tasks`);
+    console.info(`🚀 Processing batch: ${taskCount} ${type} tasks`);
 
     // Check if we have Claude API key
     if (!process.env.ANTHROPIC_API_KEY) {
@@ -176,7 +176,7 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    console.log(
+    console.info(
       `✅ Batch completed: ${taskCount} tasks, ${tokensUsed} tokens, $${batchCost.toFixed(2)} (saved $${savedAmount.toFixed(2)}, ${savedPercentage}%)`
     );
 

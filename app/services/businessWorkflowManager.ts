@@ -344,48 +344,48 @@ class BusinessWorkflowManager {
   ) {
     const notifications = {
       quote_generated: async () => {
-        console.log(`📋 Quote generated: ${workflowId}`);
+        console.info(`📋 Quote generated: ${workflowId}`);
       },
       quote_sent_to_shipper: async () => {
-        console.log(`📧 Quote sent to shipper: ${workflowId}`);
+        console.info(`📧 Quote sent to shipper: ${workflowId}`);
       },
       quote_reviewed_by_shipper: async () => {
-        console.log(`👀 Quote reviewed by shipper: ${workflowId}`);
+        console.info(`👀 Quote reviewed by shipper: ${workflowId}`);
       },
       quote_accepted_by_shipper: async () => {
-        console.log(`📧 Quote accepted by shipper: ${workflowId}`);
+        console.info(`📧 Quote accepted by shipper: ${workflowId}`);
         // Trigger contract generation
         await this.triggerContractGeneration(workflow);
       },
       shipper_information_collected: async () => {
-        console.log(`📝 Shipper information collected: ${workflowId}`);
+        console.info(`📝 Shipper information collected: ${workflowId}`);
       },
       shipper_verified: async () => {
-        console.log(`✅ Shipper information verified: ${workflowId}`);
+        console.info(`✅ Shipper information verified: ${workflowId}`);
       },
       contract_generation_triggered: async () => {
-        console.log(`📋 Contract generation triggered: ${workflowId}`);
+        console.info(`📋 Contract generation triggered: ${workflowId}`);
         // Navigate to contract system
         this.navigateToContractSystem(workflow);
       },
       contract_sent_to_shipper: async () => {
-        console.log(`📧 Contract sent to shipper: ${workflowId}`);
+        console.info(`📧 Contract sent to shipper: ${workflowId}`);
       },
       contract_signed_by_shipper: async () => {
-        console.log(`✍️ Contract signed by shipper: ${workflowId}`);
+        console.info(`✍️ Contract signed by shipper: ${workflowId}`);
         // Notify broker to sign
         this.notifyBrokerToSign(workflow);
       },
       contract_signed_by_broker: async () => {
-        console.log(`✍️ Contract signed by broker: ${workflowId}`);
+        console.info(`✍️ Contract signed by broker: ${workflowId}`);
         // Establish relationship
         await this.establishBusinessRelationship(workflow);
       },
       shipper_created: async () => {
-        console.log(`🏢 Shipper created in system: ${workflowId}`);
+        console.info(`🏢 Shipper created in system: ${workflowId}`);
       },
       relationship_established: async () => {
-        console.log(`🤝 Business relationship established: ${workflowId}`);
+        console.info(`🤝 Business relationship established: ${workflowId}`);
         // Complete onboarding
         this.completeOnboarding(workflow);
       },
@@ -424,28 +424,28 @@ class BusinessWorkflowManager {
    */
   private navigateToContractSystem(workflow: BusinessWorkflow) {
     // This would integrate with the existing contract system
-    console.log('Navigating to contract system');
+    console.info('Navigating to contract system');
   }
 
   /**
    * Notify broker to sign contract
    */
   private notifyBrokerToSign(workflow: BusinessWorkflow) {
-    console.log('Notifying broker to sign contract');
+    console.info('Notifying broker to sign contract');
   }
 
   /**
    * Establish business relationship
    */
   private async establishBusinessRelationship(workflow: BusinessWorkflow) {
-    console.log('Establishing business relationship');
+    console.info('Establishing business relationship');
   }
 
   /**
    * Complete onboarding
    */
   private completeOnboarding(workflow: BusinessWorkflow) {
-    console.log('Completing onboarding process');
+    console.info('Completing onboarding process');
   }
 
   /**
@@ -494,7 +494,7 @@ class BusinessWorkflowManager {
         'system'
       );
 
-      console.log(`✅ New shipper created: ${newShipper.id}`);
+      console.info(`✅ New shipper created: ${newShipper.id}`);
       return { success: true, shipperId: newShipper.id };
     } catch (error) {
       console.error('Error creating shipper:', error);

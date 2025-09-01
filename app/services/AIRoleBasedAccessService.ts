@@ -995,7 +995,7 @@ export class AIRoleBasedAccessService {
 
     this.accessAuditLog.get(request.userId)!.push(logEntry);
 
-    console.log(
+    console.info(
       `[AI Access Control] ${granted ? 'GRANTED' : 'DENIED'}: ${auditId}`,
       {
         user: request.userId,
@@ -1013,7 +1013,7 @@ export class AIRoleBasedAccessService {
     if (!currentRoles.includes(roleId)) {
       currentRoles.push(roleId);
       this.userRoleMappings.set(userId, currentRoles);
-      console.log(`✅ Assigned user ${userId} to role ${roleId}`);
+      console.info(`✅ Assigned user ${userId} to role ${roleId}`);
     }
   }
 
@@ -1021,12 +1021,12 @@ export class AIRoleBasedAccessService {
     const currentRoles = this.userRoleMappings.get(userId) || [];
     const updatedRoles = currentRoles.filter((r) => r !== roleId);
     this.userRoleMappings.set(userId, updatedRoles);
-    console.log(`🚫 Removed user ${userId} from role ${roleId}`);
+    console.info(`🚫 Removed user ${userId} from role ${roleId}`);
   }
 
   createCustomRole(role: AIRole): void {
     this.roles.set(role.id, role);
-    console.log(`➕ Created custom AI role: ${role.name}`);
+    console.info(`➕ Created custom AI role: ${role.name}`);
   }
 
   getUserAccessSummary(userId: string): {

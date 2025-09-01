@@ -323,7 +323,7 @@ export default function UserProfile() {
     // Load appropriate onboarding based on user type
     if (currentUser.departmentCode === 'DM') {
       // DM users get driver onboarding workflow - handled by OnboardingIntegrationService
-      console.log(
+      console.info(
         '🚛 DM User: Driver onboarding will be loaded from carrier system'
       );
       // Driver onboarding is managed separately - we'll show it in the UI below
@@ -349,7 +349,7 @@ export default function UserProfile() {
       setWorkflowData(userWorkflow);
     } else {
       // If no workflow exists, create one (simulates user creation from user-management)
-      console.log('🔄 Initializing user workflow for:', currentUser.name);
+      console.info('🔄 Initializing user workflow for:', currentUser.name);
 
       // For DM users, add mock carrier onboarding status
       if (currentUser.departmentCode === 'DM') {
@@ -1696,7 +1696,8 @@ export default function UserProfile() {
                       marginBottom: '4px',
                     }}
                   >
-                    {workflowData?.trainingProgress && workflowData.trainingProgress.length > 0
+                    {workflowData?.trainingProgress &&
+                    workflowData.trainingProgress.length > 0
                       ? Math.round(
                           workflowData.trainingProgress.reduce(
                             (sum, p) => sum + p.progress,
@@ -1734,7 +1735,8 @@ export default function UserProfile() {
                     background: 'linear-gradient(90deg, #10b981, #059669)',
                     height: '100%',
                     width: `${
-                      workflowData?.trainingProgress && workflowData.trainingProgress.length > 0
+                      workflowData?.trainingProgress &&
+                      workflowData.trainingProgress.length > 0
                         ? Math.round(
                             workflowData.trainingProgress.reduce(
                               (sum, p) => sum + p.progress,
@@ -2287,7 +2289,9 @@ export default function UserProfile() {
           )}
 
           {/* Executive Compliance Center - Only for executive users */}
-          {['Admin', 'Manager', 'Owner', 'President'].includes(currentUser.role) && (
+          {['Admin', 'Manager', 'Owner', 'President'].includes(
+            currentUser.role
+          ) && (
             <div
               style={{
                 padding: '32px',
@@ -2307,9 +2311,9 @@ export default function UserProfile() {
               >
                 ⚖️ Executive Regulatory Compliance Center
               </h4>
-              <ExecutiveComplianceCenter 
-                userId={currentUser.id} 
-                userRole={currentUser.role} 
+              <ExecutiveComplianceCenter
+                userId={currentUser.id}
+                userRole={currentUser.role}
               />
             </div>
           )}

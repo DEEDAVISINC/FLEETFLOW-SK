@@ -1197,7 +1197,7 @@ export async function POST(request: NextRequest) {
       shipperLeads = shipperLeads.slice(0, 200);
     }
 
-    console.log(
+    console.info(
       `✅ New shipper discovery lead created: ${newLead.companyName} - ${newLead.industry} (Score: ${newLead.leadScore}, Priority: ${newLead.priority})`
     );
 
@@ -1259,7 +1259,7 @@ export async function PUT(request: NextRequest) {
 
     shipperLeads[leadIndex] = updatedLead;
 
-    console.log(
+    console.info(
       `✅ Shipper discovery lead updated: ${updatedLead.companyName} - ${activityType || 'General Update'}`
     );
 
@@ -1303,7 +1303,7 @@ export async function DELETE(request: NextRequest) {
 
     const deletedLead = shipperLeads.splice(leadIndex, 1)[0];
 
-    console.log(
+    console.info(
       `✅ Shipper discovery lead deleted: ${deletedLead.companyName}`
     );
 

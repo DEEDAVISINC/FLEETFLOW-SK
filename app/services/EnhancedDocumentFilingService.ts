@@ -333,12 +333,12 @@ export class EnhancedDocumentFilingService {
     // Update Driver OTR Flow
     await this.updateDriverOTRFlowWithExternalDoc(metadata);
 
-    console.log(`Enhanced document stored with cross-references:`);
-    console.log(`FleetFlow ID: ${metadata.documentId}`);
-    console.log(
+    console.info(`Enhanced document stored with cross-references:`);
+    console.info(`FleetFlow ID: ${metadata.documentId}`);
+    console.info(
       `External Broker ID: ${metadata.externalBrokerIds?.brokerDocumentId}`
     );
-    console.log(
+    console.info(
       `Cross-Reference Created: ${metadata.crossReference?.crossReferenceVerified}`
     );
   }
@@ -377,7 +377,7 @@ export class EnhancedDocumentFilingService {
     };
 
     // Store cross-reference index (implementation depends on database)
-    console.log('Cross-reference index created:', crossRefIndex);
+    console.info('Cross-reference index created:', crossRefIndex);
   }
 
   /**
@@ -421,7 +421,7 @@ export class EnhancedDocumentFilingService {
       portalURL: metadata.externalBrokerIds?.brokerPortalURL,
     };
 
-    console.log('External broker index created:', brokerIndex);
+    console.info('External broker index created:', brokerIndex);
   }
 
   /**
@@ -432,9 +432,9 @@ export class EnhancedDocumentFilingService {
     brokerMC?: string
   ): Promise<EnhancedDocumentMetadata[]> {
     // Implementation would search the cross-reference index
-    console.log(`Searching for external document ID: ${externalDocumentId}`);
+    console.info(`Searching for external document ID: ${externalDocumentId}`);
     if (brokerMC) {
-      console.log(`Filtering by broker MC: ${brokerMC}`);
+      console.info(`Filtering by broker MC: ${brokerMC}`);
     }
 
     // Return mock results for now
@@ -448,7 +448,7 @@ export class EnhancedDocumentFilingService {
     fleetflowDocumentId: string
   ): Promise<ExternalBrokerDocumentIds[]> {
     // Implementation would search the cross-reference index
-    console.log(
+    console.info(
       `Finding external references for FleetFlow doc: ${fleetflowDocumentId}`
     );
 
@@ -468,8 +468,8 @@ export class EnhancedDocumentFilingService {
     verificationReport: any;
   }> {
     // Implementation would verify that external broker IDs match our records
-    console.log(`Verifying cross-references for document: ${documentId}`);
-    console.log(`Verified by user: ${verifiedByUserId}`);
+    console.info(`Verifying cross-references for document: ${documentId}`);
+    console.info(`Verified by user: ${verifiedByUserId}`);
 
     return {
       verified: true,
@@ -638,14 +638,14 @@ export class EnhancedDocumentFilingService {
     path: string,
     metadata: EnhancedDocumentMetadata
   ): Promise<void> {
-    console.log(`Storing file at: ${path}`);
-    console.log('Metadata:', metadata);
+    console.info(`Storing file at: ${path}`);
+    console.info('Metadata:', metadata);
   }
 
   private static async createCrossReferenceAuditRecord(
     metadata: EnhancedDocumentMetadata
   ): Promise<void> {
-    console.log(
+    console.info(
       'Creating cross-reference audit record for:',
       metadata.documentId
     );
@@ -654,7 +654,7 @@ export class EnhancedDocumentFilingService {
   private static async updateDriverOTRFlowWithExternalDoc(
     metadata: EnhancedDocumentMetadata
   ): Promise<void> {
-    console.log(
+    console.info(
       'Updating Driver OTR Flow with external document:',
       metadata.documentId
     );

@@ -1,0 +1,620 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { CheckCircle, AlertTriangle, Calendar, Shield, User, RefreshCw, ExternalLink } from 'lucide-react';
+
+interface ClearinghouseRecord {
+  recordId: string;
+  type: 'violation' | 'return_to_duty' | 'follow_up' | 'negative_return';
+  substanceType: string;
+  testType: string;
+  date: string;
+  employer: string;
+  status: 'pending' | 'resolved' | 'active';
+  details: string;
+}
+
+interface DriverClearinghouseData {
+  driverId: string;
+  licenseNumber: string;
+  firstName: string;
+  lastName: string;
+  clearinghouseStatus: 'clear' | 'prohibited' | 'pending_info' | 'not_enrolled';
+  enrollmentDate: string | null;
+  lastQueryDate: string;
+  prohibitionsActive: number;
+  violationsResolved: number;
+  records: ClearinghouseRecord[];
+  consentStatus: 'active' | 'expired' | 'revoked' | 'pending';
+  consentExpiryDate: string | null;
+}
+
+interface ClearinghouseStatusProps {
+  driverId?: string;
+  licenseNumber?: string;
+  onRefresh?: () => void;
+}
+
+export default function ClearinghouseStatus({ 
+  driverId, 
+  licenseNumber, 
+  onRefresh 
+}: ClearinghouseStatusProps) {
+  const [data, setData] = useState<DriverClearinghouseData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Mock data for demonstration
+  const mockData: DriverClearinghouseData = {
+    driverId: driverId || ""DRV-001"",
+    licenseNumber: licenseNumber || ""WA123456789"",
+    firstName: ""John"",
+    lastName: ""Driver"",
+    clearinghouseStatus: ""clear"",
+    enrollmentDate: ""2023-01-15"",
+    lastQueryDate: ""2024-07-08"",
+    prohibitionsActive: 0,
+    violationsResolved: 1,
+    records: [
+      {
+        recordId: ""CH-2023-001"",
+        type: ""return_to_duty"",
+        substanceType: ""Alcohol"",
+        testType: ""Random"",
+        date: ""2023-06-15"",
+        employer: ""Previous Carrier Inc"",
+        status: ""resolved"",
+        details: ""Successfully completed SAP program and return-to-duty process""
+      }
+    ],
+    consentStatus: ""active"",
+    consentExpiryDate: ""2025-01-15""
+  };
+
+  const fetchClearinghouseData = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // TODO: Replace with actual DOT Clearinghouse API call
+      // const response = await fetch(`/api/compliance/clearinghouse?driverId=${driverId}`);
+      // const result = await response.json();
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setData(mockData);
+    } catch (err) {
+      setError('Failed to fetch Clearinghouse data');
+      console.error('Clearinghouse API error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (driverId || licenseNumber) {
+      fetchClearinghouseData();
+    }
+  }, [driverId, licenseNumber]);
+
+
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'clear': return <CheckCircle className="w-4 h-4 text-green-600"" />;
+      case 'prohibited': return <AlertTriangle className="w-4 h-4 text-red-600"" />;
+      case 'pending_info': return <Calendar className="w-4 h-4 text-yellow-600"" />;
+      default: return <Shield className="w-4 h-4 text-gray-600"" />;
+    }
+  };
+
+
+
+  const getRecordTypeIcon = (type: string) => {
+    switch (type) {
+      case 'violation': return '⚠️';
+      case 'return_to_duty': return '✅';
+      case 'follow_up': return '🔄';
+      case 'negative_return': return '❌';
+      default: return '📋';
+    }
+  };
+
+  const isConsentExpiringSoon = (expiryDate: string | null) => {
+    if (!expiryDate) return false;
+    const expDate = new Date(expiryDate);
+    const today = new Date();
+    const daysUntilExpiration = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
+    return daysUntilExpiration <= 30;
+  };
+
+  const handleRefresh = () => {
+    fetchClearinghouseData();
+    onRefresh?.();
+  };
+
+  if (loading) {
+    return (
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.2)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <h3 style={{ 
+          color: 'white', 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          margin: '0 0 16px 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <User className="w-5 h-5"" />
+          DOT Clearinghouse Status
+        </h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '75%' }} />
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '50%' }} />
+          <div style={{ height: '16px', background: 'rgba(255, 255, 255, 0.15)', borderRadius: '4px', width: '65%' }} />
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{
+        background: 'rgba(239, 68, 68, 0.1)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(239, 68, 68, 0.3)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          marginBottom: '16px'
+        }}>
+          <h3 style={{ 
+            color: 'white', 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            margin: '0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <AlertTriangle className="w-5 h-5"" style={{ color: '#ef4444' }} />
+            DOT Clearinghouse Status
+          </h3>
+          <button
+            onClick={handleRefresh}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            <RefreshCw className="w-4 h-4"" />
+          </button>
+        </div>
+        <div style={{ color: '#fee2e2', fontSize: '14px', marginBottom: '12px' }}>
+          {error}
+        </div>
+        <button
+          onClick={handleRefresh}
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '8px',
+            padding: '8px 16px',
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.2)',
+        borderRadius: '12px',
+        padding: '24px',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <h3 style={{ 
+          color: 'white', 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          margin: '0 0 16px 0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <User className="w-5 h-5"" />
+          DOT Clearinghouse Status
+        </h3>
+        <div style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '14px' }}>
+          Select a driver to view Clearinghouse status
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      background: 'rgba(0, 0, 0, 0.2)',
+      borderRadius: '12px',
+      padding: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.15)',
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+      backdropFilter: 'blur(10px)'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        marginBottom: '20px'
+      }}>
+        <h3 style={{ 
+          color: 'white', 
+          fontSize: '18px', 
+          fontWeight: '600', 
+          margin: '0',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <User className="w-5 h-5"" />
+          DOT Clearinghouse Status
+        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={handleRefresh}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            <RefreshCw className="w-4 h-4"" />
+          </button>
+          <button
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            <a 
+              href="https://clearinghouse.fmcsa.dot.gov/"" 
+              target=""_blank"" 
+              rel=""noopener noreferrer""
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '4px',
+                color: 'white',
+                textDecoration: 'none'
+              }}
+            >
+              <ExternalLink className="w-3 h-3"" />
+              Portal
+            </a>
+          </button>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Driver Info */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', color: 'white' }}>
+              {data.firstName} {data.lastName}
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {getStatusIcon(data.clearinghouseStatus)}
+              <span style={{
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '500',
+                background: data.clearinghouseStatus === 'clear' ? 'rgba(34, 197, 94, 0.2)' : 
+                          data.clearinghouseStatus === 'prohibited' ? 'rgba(239, 68, 68, 0.2)' : 
+                          data.clearinghouseStatus === 'pending_info' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                color: data.clearinghouseStatus === 'clear' ? '#22c55e' : 
+                      data.clearinghouseStatus === 'prohibited' ? '#ef4444' : 
+                      data.clearinghouseStatus === 'pending_info' ? '#f59e0b' : '#9ca3af',
+                border: `1px solid ${data.clearinghouseStatus === 'clear' ? '#22c55e40' : 
+                        data.clearinghouseStatus === 'prohibited' ? '#ef444440' : 
+                        data.clearinghouseStatus === 'pending_info' ? '#f59e0b40' : '#9ca3af40'}`
+              }}>
+                {data.clearinghouseStatus.replace('_', ' ').toUpperCase()}
+              </span>
+            </div>
+          </div>
+          <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.85)' }}>
+            CDL: {data.licenseNumber} | ID: {data.driverId}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.2)',
+            border: '1px solid rgba(239, 68, 68, 0.4)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              color: '#ef4444', 
+              fontSize: '24px', 
+              fontWeight: 'bold',
+              marginBottom: '4px'
+            }}>
+              {data.prohibitionsActive}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '12px'
+            }}>
+              Active Prohibitions
+            </div>
+          </div>
+          <div style={{
+            background: 'rgba(34, 197, 94, 0.2)',
+            border: '1px solid rgba(34, 197, 94, 0.4)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              color: '#22c55e', 
+              fontSize: '24px', 
+              fontWeight: 'bold',
+              marginBottom: '4px'
+            }}>
+              {data.violationsResolved}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '12px'
+            }}>
+              Resolved Cases
+            </div>
+          </div>
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.2)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center'
+          }}>
+            <div style={{ 
+              color: '#3b82f6', 
+              fontSize: '24px', 
+              fontWeight: 'bold',
+              marginBottom: '4px'
+            }}>
+              {data.records.length}
+            </div>
+            <div style={{ 
+              color: 'rgba(255, 255, 255, 0.9)', 
+              fontSize: '12px'
+            }}>
+              Total Records
+            </div>
+          </div>
+        </div>
+
+        {/* Consent Status */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ fontWeight: '500', color: 'white', fontSize: '14px' }}>Consent Status</div>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between', 
+            padding: '12px', 
+            background: 'rgba(0, 0, 0, 0.1)', 
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                padding: '4px 8px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '500',
+                background: data.consentStatus === 'active' ? 'rgba(34, 197, 94, 0.2)' : 
+                          data.consentStatus === 'expired' ? 'rgba(239, 68, 68, 0.2)' : 
+                          data.consentStatus === 'revoked' ? 'rgba(239, 68, 68, 0.2)' : 
+                          data.consentStatus === 'pending' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                color: data.consentStatus === 'active' ? '#22c55e' : 
+                      data.consentStatus === 'expired' ? '#ef4444' : 
+                      data.consentStatus === 'revoked' ? '#ef4444' : 
+                      data.consentStatus === 'pending' ? '#f59e0b' : '#9ca3af',
+                border: `1px solid ${data.consentStatus === 'active' ? '#22c55e40' : 
+                        data.consentStatus === 'expired' ? '#ef444440' : 
+                        data.consentStatus === 'revoked' ? '#ef444440' : 
+                        data.consentStatus === 'pending' ? '#f59e0b40' : '#9ca3af40'}`
+              }}>
+                {data.consentStatus.toUpperCase()}
+              </span>
+              {data.consentExpiryDate && (
+                <span style={{
+                  fontSize: '12px',
+                  color: isConsentExpiringSoon(data.consentExpiryDate) ? '#ef4444' : 'rgba(255, 255, 255, 0.85)',
+                  fontWeight: isConsentExpiringSoon(data.consentExpiryDate) ? '500' : '400'
+                }}>
+                  Expires: {new Date(data.consentExpiryDate).toLocaleDateString()}
+                  {isConsentExpiringSoon(data.consentExpiryDate) && ' ⚠️'}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Enrollment Info */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '14px' }}>
+          <div>
+            <div style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Enrollment Date</div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+              {data.enrollmentDate 
+                ? new Date(data.enrollmentDate).toLocaleDateString()
+                : 'Not enrolled'
+              }
+            </div>
+          </div>
+          <div>
+            <div style={{ fontWeight: '500', color: 'white', marginBottom: '4px' }}>Last Query</div>
+            <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>{new Date(data.lastQueryDate).toLocaleDateString()}</div>
+          </div>
+        </div>
+
+        {/* Records */}
+        {data.records.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ fontWeight: '500', color: 'white', fontSize: '14px' }}>Recent Records</div>
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '8px', 
+              maxHeight: '240px', 
+              overflowY: 'auto'
+            }}>
+              {data.records.map((record) => (
+                <div key={record.recordId} style={{ 
+                  padding: '12px', 
+                  border: '1px solid rgba(255, 255, 255, 0.2)', 
+                  borderRadius: '8px', 
+                  fontSize: '12px',
+                  background: 'rgba(0, 0, 0, 0.1)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '16px' }}>{getRecordTypeIcon(record.type)}</span>
+                      <span style={{ fontWeight: '500', color: 'white', textTransform: 'capitalize' }}>
+                        {record.type.replace('_', ' ')}
+                      </span>
+                    </div>
+                    <span style={{
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      background: record.status === 'resolved' ? 'rgba(34, 197, 94, 0.2)' : 
+                                record.status === 'active' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                      color: record.status === 'resolved' ? '#22c55e' : 
+                            record.status === 'active' ? '#ef4444' : '#f59e0b',
+                      border: `1px solid ${record.status === 'resolved' ? '#22c55e40' : 
+                              record.status === 'active' ? '#ef444440' : '#f59e0b40'}`
+                    }}>
+                      {record.status}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                    <div><strong>Test:</strong> {record.testType} - {record.substanceType}</div>
+                    <div><strong>Date:</strong> {new Date(record.date).toLocaleDateString()}</div>
+                    <div><strong>Employer:</strong> {record.employer}</div>
+                    {record.details && (
+                      <div><strong>Details:</strong> {record.details}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Compliance Actions */}
+        {data.clearinghouseStatus === 'prohibited' && (
+          <div style={{ 
+            padding: '12px', 
+            background: 'rgba(239, 68, 68, 0.1)', 
+            border: '1px solid rgba(239, 68, 68, 0.3)', 
+            borderRadius: '8px'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              color: '#fee2e2', 
+              fontWeight: '500', 
+              fontSize: '14px', 
+              marginBottom: '4px'
+            }}>
+              <AlertTriangle className="w-4 h-4"" />
+              Action Required
+            </div>
+            <div style={{ color: '#fecaca', fontSize: '12px' }}>
+              Driver is currently prohibited from operating CMVs. Complete SAP program and return-to-duty process required.
+            </div>
+          </div>
+        )}
+
+        {isConsentExpiringSoon(data.consentExpiryDate) && (
+          <div style={{ 
+            padding: '12px', 
+            background: 'rgba(245, 158, 11, 0.1)', 
+            border: '1px solid rgba(245, 158, 11, 0.3)', 
+            borderRadius: '8px'
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              color: '#fef3c7', 
+              fontWeight: '500', 
+              fontSize: '14px', 
+              marginBottom: '4px'
+            }}>
+              <Calendar className="w-4 h-4"" />
+              Consent Expiring Soon
+            </div>
+            <div style={{ color: '#fde68a', fontSize: '12px' }}>
+              Driver consent expires in less than 30 days. Renewal required to continue queries.
+            </div>
+          </div>
+        )}
+
+        {/* Last Updated */}
+        <div style={{ 
+          fontSize: '12px', 
+          color: 'rgba(255, 255, 255, 0.75)', 
+          paddingTop: '12px', 
+          borderTop: '1px solid rgba(255, 255, 255, 0.2)'
+        }}>
+          Last queried: {new Date(data.lastQueryDate).toLocaleString()}
+        </div>
+      </div>
+    </div>
+  );
+}

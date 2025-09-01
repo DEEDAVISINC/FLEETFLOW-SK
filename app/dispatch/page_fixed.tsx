@@ -338,7 +338,7 @@ export default function DispatchCentral() {
             });
 
           if (integrationResult.success) {
-            console.log(
+            console.info(
               '✅ Load assignment integrated with schedule management'
             );
 

@@ -390,7 +390,7 @@ export default function GlobalNotificationBell({
         await audioRef.current.play();
       }
     } catch (error) {
-      console.log('Could not play notification sound:', error);
+      console.info('Could not play notification sound:', error);
     }
   };
 

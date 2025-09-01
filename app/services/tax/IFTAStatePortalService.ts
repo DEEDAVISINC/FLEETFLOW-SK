@@ -78,7 +78,7 @@ export class IFTAStatePortalService {
       process.env.IFTA_FILING_DEADLINE_BUFFER_DAYS || '7'
     );
 
-    console.log('🗺️ IFTA State Portal Service initialized:', {
+    console.info('🗺️ IFTA State Portal Service initialized:', {
       baseFleetMPG: this.baseFleetMPG,
       defaultFuelType: this.defaultFuelType,
       filingBufferDays: this.filingBufferDays,
@@ -547,7 +547,7 @@ export class IFTAStatePortalService {
     fuelPurchases: FuelPurchase[],
     mileageRecords: MileageRecord[]
   ): Promise<IFTAQuarterlyReturn> {
-    console.log('📊 Calculating IFTA quarterly return:', {
+    console.info('📊 Calculating IFTA quarterly return:', {
       tenantId,
       year,
       quarter,
@@ -829,4 +829,3 @@ export class IFTAStatePortalService {
 }
 
 export const iftaStatePortalService = new IFTAStatePortalService();
-

@@ -54,7 +54,7 @@ export class LoadScheduleIntegrationService {
     warnings?: string[];
   }> {
     try {
-      console.log('🔄 Integrating load assignment with schedule management:', {
+      console.info('🔄 Integrating load assignment with schedule management:', {
         loadId: loadData.loadId,
         driverId: loadData.driverId,
         route: `${loadData.origin} → ${loadData.destination}`,
@@ -68,7 +68,7 @@ export class LoadScheduleIntegrationService {
       if (loadData.cargoWeight && loadData.cargoWeight > 0) {
         const routeStates = loadData.routeStates || ['FEDERAL'];
 
-        console.log(
+        console.info(
           `⚖️ Evaluating weight compliance for ${loadData.cargoWeight} lbs cargo`
         );
 
@@ -86,11 +86,11 @@ export class LoadScheduleIntegrationService {
             );
 
           if (criticalViolations.length > 0) {
-            console.log(
+            console.info(
               '🚫 CRITICAL WEIGHT VIOLATIONS DETECTED - Load assignment blocked'
             );
             criticalViolations.forEach((violation) => {
-              console.log(
+              console.info(
                 `   • ${violation.type}: ${violation.description} (${violation.excessWeight} lbs over)`
               );
             });
@@ -142,7 +142,7 @@ export class LoadScheduleIntegrationService {
           warnings.push(...validationResult.warnings);
         }
 
-        console.log(
+        console.info(
           `✅ Weight compliance check passed: ${weightCompliance.weightCompliance.safetyRating}`
         );
       }
@@ -161,7 +161,7 @@ export class LoadScheduleIntegrationService {
             weightCompliance
           );
 
-          console.log(
+          console.info(
             `📋 OpenELD weight compliance log created for driver ${loadData.driverName}`
           );
         } catch (error) {
@@ -277,7 +277,7 @@ export class LoadScheduleIntegrationService {
           await this.schedulingService.createSchedule(transitSchedule);
       }
 
-      console.log(
+      console.info(
         '✅ Load assignment integrated with schedule management successfully'
       );
 
@@ -368,7 +368,7 @@ export class LoadScheduleIntegrationService {
         await this.schedulingService.deleteSchedule(schedule.id);
       }
 
-      console.log(
+      console.info(
         `✅ Removed ${schedules.length} schedule entries for cancelled load ${loadId}`
       );
       return true;

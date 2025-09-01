@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { vendorDocumentService } from '../services/vendorDocumentService';
 
@@ -552,12 +552,12 @@ export default function VendorPortalPage() {
 
   // Debug: Log activeTab changes
   useEffect(() => {
-    console.log('Active tab changed to:', activeTab);
+    console.info('Active tab changed to:', activeTab);
   }, [activeTab]);
 
   // Force CSS reset for scrolling on component mount
   useEffect(() => {
-    console.log('🎯 INITIALIZING SCROLL CSS RESET');
+    console.info('🎯 INITIALIZING SCROLL CSS RESET');
 
     // Reset any CSS that might prevent scrolling
     document.documentElement.style.overflow = 'auto';
@@ -583,14 +583,14 @@ export default function VendorPortalPage() {
     `;
     document.head.appendChild(style);
 
-    console.log('🎯 CSS RESET COMPLETE');
+    console.info('🎯 CSS RESET COMPLETE');
   }, []);
 
   const router = useRouter();
 
   // SIMPLE PAGE REFRESH: Most reliable way to get to top
   const scrollToTop = () => {
-    console.log('🔄 FORCING PAGE REFRESH - Direct approach');
+    console.info('🔄 FORCING PAGE REFRESH - Direct approach');
     window.location.reload();
   };
 
@@ -652,141 +652,125 @@ export default function VendorPortalPage() {
     }
   }, [activeTab, loads]);
 
-  useEffect(() => {
-    // Check if user is logged in
-    const sessionData = localStorage.getItem('vendorSession');
-    if (!sessionData) {
-      // Set demo session for vendor portal access
-      const demoSession = {
-        shipperId: 'demo-vendor',
-        companyName: 'Demo Vendor Company',
-        loginTime: new Date().toISOString(),
-      };
-      setSession(demoSession);
-      // Load data with demo session
-      loadDashboardData(demoSession.shipperId);
-      loadPhase1Data(demoSession.shipperId);
-      loadPhase2Data(demoSession.shipperId);
-      return;
-    }
-
-    const parsedSession = JSON.parse(sessionData);
-    setSession(parsedSession);
-    loadDashboardData(parsedSession.shipperId);
-    loadPhase1Data(parsedSession.shipperId);
-    loadPhase2Data(parsedSession.shipperId);
-  }, [router]);
+  // Session initialization will be moved after function definitions
 
   // Removed useEffect for tab changes - now handled directly in onClick
 
   // No need for floating scroll button since we use page refresh
 
-  const loadDashboardData = async (shipperId: string) => {
-    try {
-      setIsLoading(true);
+  const loadDashboardData = useCallback(
+    async (shipperId: string) => {
+      try {
+        setIsLoading(true);
 
-      // Clear all dashboard data - no loads, no summary
-      const emptyDashboardSummary = {
-        totalLoads: 0,
-        dispatched: 0,
-        pickupComplete: 0,
-        inTransit: 0,
-        delivered: 0,
-        recentActivity: [],
-        deliveryPerformance: {
-          onTimeRate: 0,
-          avgTransitTime: '0 days',
-          totalRevenue: 0,
-        },
-      };
+        // Clear all dashboard data - no loads, no summary
+        const emptyDashboardSummary = {
+          totalLoads: 0,
+          dispatched: 0,
+          pickupComplete: 0,
+          inTransit: 0,
+          delivered: 0,
+          recentActivity: [],
+          deliveryPerformance: {
+            onTimeRate: 0,
+            avgTransitTime: '0 days',
+            totalRevenue: 0,
+          },
+        };
 
-      setLoads([]);
-      setDashboardSummary(emptyDashboardSummary);
-    } catch (error) {
-      console.error('Error loading dashboard data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setLoads([]);
+        setDashboardSummary(emptyDashboardSummary);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [setIsLoading, setLoads, setDashboardSummary]
+  );
 
   // Phase 1 - Load enhanced data
-  const loadPhase1Data = async (shipperId: string) => {
-    try {
-      // Empty data structures for Phase 1 features
-      const emptyLoadRequests: LoadRequest[] = [];
+  const loadPhase1Data = useCallback(
+    async (shipperId: string) => {
+      try {
+        // Empty data structures for Phase 1 features
+        const emptyLoadRequests: LoadRequest[] = [];
 
-      const emptyFinancialData: FinancialData = {
-        outstandingInvoices: [],
-        paymentHistory: [],
-        creditLimit: 0,
-        availableCredit: 0,
-        paymentTerms: 'Net 30',
-        totalSpent: 0,
-        averageRate: 0,
-        onTimePaymentRate: 0,
-      };
-
-      const emptyUserAccess: UserAccess[] = [];
-
-      const emptyAnalyticsData: AnalyticsData = {
-        loadMetrics: {
-          totalLoads: 0,
-          completedLoads: 0,
-          onTimeDelivery: 0,
-          averageTransitTime: 0,
-          totalRevenue: 0,
+        const emptyFinancialData: FinancialData = {
+          outstandingInvoices: [],
+          paymentHistory: [],
+          creditLimit: 0,
+          availableCredit: 0,
+          paymentTerms: 'Net 30',
+          totalSpent: 0,
           averageRate: 0,
-        },
-        performanceTrends: {
-          monthlyLoads: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          monthlyRevenue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          onTimeRate: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        topLanes: [],
-      };
+          onTimePaymentRate: 0,
+        };
 
-      setLoadRequests(emptyLoadRequests);
-      setFinancialData(emptyFinancialData);
-      setUserAccess(emptyUserAccess);
-      setAnalyticsData(emptyAnalyticsData);
-    } catch (error) {
-      console.error('Error loading Phase 1 data:', error);
-    }
-  };
+        const emptyUserAccess: UserAccess[] = [];
+
+        const emptyAnalyticsData: AnalyticsData = {
+          loadMetrics: {
+            totalLoads: 0,
+            completedLoads: 0,
+            onTimeDelivery: 0,
+            averageTransitTime: 0,
+            totalRevenue: 0,
+            averageRate: 0,
+          },
+          performanceTrends: {
+            monthlyLoads: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            monthlyRevenue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            onTimeRate: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          },
+          topLanes: [],
+        };
+
+        setLoadRequests(emptyLoadRequests);
+        setFinancialData(emptyFinancialData);
+        setUserAccess(emptyUserAccess);
+        setAnalyticsData(emptyAnalyticsData);
+      } catch (error) {
+        console.error('Error loading Phase 1 data:', error);
+      }
+    },
+    [setLoadRequests, setFinancialData, setUserAccess, setAnalyticsData]
+  );
 
   // Phase 2 - Load enhanced data
-  const loadPhase2Data = async (shipperId: string) => {
-    try {
-      // Empty data structures for Phase 2 features
-      const emptyErpIntegration: ERPIntegration = {
-        sap: {
-          connected: false,
-          lastSync: '',
-          syncStatus: 'disconnected',
-          modules: [],
-        },
-        oracle: {
-          connected: false,
-          lastSync: '',
-          syncStatus: 'disconnected',
-          modules: [],
-        },
-        netsuite: {
-          connected: false,
-          lastSync: '',
-          syncStatus: 'disconnected',
-          modules: [],
-        },
-        quickbooks: {
-          connected: false,
-          lastSync: '',
-          syncStatus: 'disconnected',
-          modules: [],
-        },
-      };
+  const loadPhase2Data = useCallback(
+    async (shipperId: string) => {
+      try {
+        // Empty data structures for Phase 2 features
+        const emptyErpIntegration: ERPIntegration = {
+          sap: {
+            connected: false,
+            lastSync: '',
+            syncStatus: 'disconnected',
+            modules: [],
+          },
+          oracle: {
+            connected: false,
+            lastSync: '',
+            syncStatus: 'disconnected',
+            modules: [],
+          },
+          netsuite: {
+            connected: false,
+            lastSync: '',
+            syncStatus: 'disconnected',
+            modules: [],
+          },
+          quickbooks: {
+            connected: false,
+            lastSync: '',
+            syncStatus: 'disconnected',
+            modules: [],
+          },
+        };
 
-      // Mock data structures removed - setting empty data instead
-      /*const mockWmsIntegration: WMSIntegration = {
+        // Mock data structures removed - setting empty data instead
+        /*const mockWmsIntegration: WMSIntegration = {
         warehouseManagement: {
           connected: true,
           warehouses: [
@@ -1199,16 +1183,51 @@ export default function VendorPortalPage() {
         },
       };*/
 
-      setErpIntegration(emptyErpIntegration);
-      setWmsIntegration(null);
-      setContractManagement(null);
-      setAdvancedTracking(null);
-      setCustomBranding(null);
-      setWorkflowCustomization(null);
-    } catch (error) {
-      console.error('Error loading Phase 2 data:', error);
+        setErpIntegration(emptyErpIntegration);
+        setWmsIntegration(null);
+        setContractManagement(null);
+        setAdvancedTracking(null);
+        setCustomBranding(null);
+        setWorkflowCustomization(null);
+      } catch (error) {
+        console.error('Error loading Phase 2 data:', error);
+      }
+    },
+    [
+      setErpIntegration,
+      setWmsIntegration,
+      setContractManagement,
+      setAdvancedTracking,
+      setCustomBranding,
+      setWorkflowCustomization,
+    ]
+  );
+
+  // Initialize session and load data
+  useEffect(() => {
+    // Check if user is logged in
+    const sessionData = localStorage.getItem('vendorSession');
+    if (!sessionData) {
+      // Set demo session for vendor portal access
+      const demoSession = {
+        shipperId: 'demo-vendor',
+        companyName: 'Demo Vendor Company',
+        loginTime: new Date().toISOString(),
+      };
+      setSession(demoSession);
+      // Load data with demo session
+      loadDashboardData(demoSession.shipperId);
+      loadPhase1Data(demoSession.shipperId);
+      loadPhase2Data(demoSession.shipperId);
+      return;
     }
-  };
+
+    const parsedSession = JSON.parse(sessionData);
+    setSession(parsedSession);
+    loadDashboardData(parsedSession.shipperId);
+    loadPhase1Data(parsedSession.shipperId);
+    loadPhase2Data(parsedSession.shipperId);
+  }, [router, loadDashboardData, loadPhase1Data, loadPhase2Data]);
 
   const handleLogout = () => {
     localStorage.removeItem('vendorSession');

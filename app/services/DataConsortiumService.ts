@@ -96,7 +96,7 @@ export class DataConsortiumService {
       this.dataPoints.push(...anonymizedData);
       
       // In real implementation, this would send to consortium database
-      console.log('Data contributed to consortium:', anonymizedData.length, 'points');
+      console.info('Data contributed to consortium:', anonymizedData.length, 'points');
       
       // Generate updated benchmarks
       await this.updateBenchmarks();

@@ -96,7 +96,7 @@ class PaymentCollectionService {
   private initializeServices() {
     try {
       this.squareService = new MultiTenantSquareService();
-      console.log('✅ Square service initialized');
+      console.info('✅ Square service initialized');
     } catch (error) {
       console.warn(
         '⚠️ Square service not available in development mode',
@@ -107,7 +107,7 @@ class PaymentCollectionService {
 
     try {
       this.billComService = new BillComService();
-      console.log('✅ Bill.com service initialized');
+      console.info('✅ Bill.com service initialized');
     } catch (error) {
       console.warn('⚠️ Bill.com service not available in development mode');
       this.billComService = null;
@@ -223,11 +223,11 @@ class PaymentCollectionService {
           // Note: Square payment methods are typically created on the frontend
           // This is a placeholder for the backend integration
           squarePaymentMethodId = `sq_pm_${userId}_${Date.now()}`;
-          console.log('✅ Square payment method created');
+          console.info('✅ Square payment method created');
         } else {
           // Mock Square payment method ID for development
           squarePaymentMethodId = `sq_pm_mock_${userId}_${Date.now()}`;
-          console.log('🔧 Using mock Square payment method ID');
+          console.info('🔧 Using mock Square payment method ID');
         }
       } else if (paymentMethodData.type === 'bank_account') {
         // Create ACH payment method in Bill.com (if available)
@@ -241,7 +241,7 @@ class PaymentCollectionService {
         } else {
           // Mock Bill.com vendor ID for development
           billComVendorId = `vendor_mock_${userId}_${Date.now()}`;
-          console.log('🔧 Using mock Bill.com vendor ID');
+          console.info('🔧 Using mock Bill.com vendor ID');
         }
       }
 
@@ -273,7 +273,7 @@ class PaymentCollectionService {
 
       this.paymentMethods.get(userId)!.push(paymentMethod);
 
-      console.log(
+      console.info(
         `✅ Payment method added for user ${userId}: ${paymentMethod.type} ending in ${paymentMethod.last4}`
       );
 
@@ -299,7 +299,7 @@ class PaymentCollectionService {
     );
     if (targetMethod) {
       targetMethod.isDefault = true;
-      console.log(
+      console.info(
         `✅ Default payment method updated for user ${userId}: ${paymentMethodId}`
       );
     }
@@ -325,9 +325,9 @@ class PaymentCollectionService {
       if (method.squarePaymentMethodId && this.squareService) {
         // Square payment methods would be handled on the frontend
         // This is a placeholder for any backend cleanup needed
-        console.log('✅ Square payment method removed');
+        console.info('✅ Square payment method removed');
       } else if (method.squarePaymentMethodId) {
-        console.log(
+        console.info(
           '🔧 Skipping Square payment method removal in development mode'
         );
       }
@@ -335,7 +335,7 @@ class PaymentCollectionService {
       // Mark as inactive rather than deleting for audit purposes
       method.isActive = false;
 
-      console.log(
+      console.info(
         `✅ Payment method removed for user ${userId}: ${paymentMethodId}`
       );
     }
@@ -402,7 +402,7 @@ class PaymentCollectionService {
       'Initial subscription payment'
     );
 
-    console.log(
+    console.info(
       `✅ Subscription billing created for user ${userId}: ${subscriptionTierId} - $${amount}/${billingCycle}`
     );
 
@@ -459,7 +459,7 @@ class PaymentCollectionService {
           // Mock successful payment in development mode
           attempt.squarePaymentId = `sq_pay_mock_${Date.now()}`;
           success = true;
-          console.log('🔧 Mock Square payment processed successfully');
+          console.info('🔧 Mock Square payment processed successfully');
         }
       } else if (
         paymentMethod.type === 'ach' &&
@@ -479,7 +479,7 @@ class PaymentCollectionService {
           // Mock successful payment in development mode
           attempt.billComTransactionId = `tx_mock_${Date.now()}`;
           success = true;
-          console.log('🔧 Mock Bill.com payment processed successfully');
+          console.info('🔧 Mock Bill.com payment processed successfully');
         }
       }
 
@@ -494,11 +494,11 @@ class PaymentCollectionService {
           billing.dunningStatus = 'none';
         }
 
-        console.log(`✅ Payment successful: User ${userId}, Amount $${amount}`);
+        console.info(`✅ Payment successful: User ${userId}, Amount $${amount}`);
       } else {
         attempt.failureReason = 'Payment processing failed';
         await this.handleFailedPayment(userId, attempt);
-        console.log(`❌ Payment failed: User ${userId}, Amount $${amount}`);
+        console.info(`❌ Payment failed: User ${userId}, Amount $${amount}`);
       }
     } catch (error) {
       attempt.status = 'failed';
@@ -547,7 +547,7 @@ class PaymentCollectionService {
       attempt.nextRetryDate = new Date(
         Date.now() + settings.retryInterval * 24 * 60 * 60 * 1000
       );
-      console.log(
+      console.info(
         `🔄 Payment retry scheduled for ${attempt.nextRetryDate} (attempt ${attempt.retryCount + 1})`
       );
     }
@@ -579,7 +579,7 @@ class PaymentCollectionService {
       },
     };
 
-    console.log(`📧 Payment failure notification sent to user ${userId}`);
+    console.info(`📧 Payment failure notification sent to user ${userId}`);
     // In production, integrate with EmailService/NotificationService
   }
 
@@ -633,7 +633,7 @@ class PaymentCollectionService {
       }
     }
 
-    console.log(
+    console.info(
       `💰 Recurring billing complete: ${processed} processed, ${failed} failed, $${totalRevenue} revenue`
     );
 
@@ -681,7 +681,7 @@ class PaymentCollectionService {
       } as PaymentSettings);
     }
 
-    console.log(`✅ Payment settings updated for user ${userId}`);
+    console.info(`✅ Payment settings updated for user ${userId}`);
   }
 
   // Get billing summary for dashboard

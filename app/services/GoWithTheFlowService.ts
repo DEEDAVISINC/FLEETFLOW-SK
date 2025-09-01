@@ -451,7 +451,7 @@ class GoWithTheFlowService extends EventEmitter {
       (load) => load.status === 'pending'
     );
 
-    console.log(
+    console.info(
       `🤖 Marketplace Integration: Evaluating ${activeExternalLoads.length} external load opportunities...`
     );
 
@@ -600,7 +600,7 @@ class GoWithTheFlowService extends EventEmitter {
   // MARKETPLACE: Submit External Bid
   private async submitExternalBid(evaluation: any): Promise<boolean> {
     try {
-      console.log(
+      console.info(
         `📤 Marketplace Integration: Auto-submitting bid for ${evaluation.loadId} at $${evaluation.recommendedBid}`
       );
 
@@ -656,7 +656,7 @@ class GoWithTheFlowService extends EventEmitter {
   // MARKETPLACE: Scrape New External Loads (simulates web scraping)
   private async scrapeExternalLoads() {
     try {
-      console.log(
+      console.info(
         '🕷️ Marketplace Integration: Scraping new external load opportunities...'
       );
 
@@ -726,7 +726,7 @@ class GoWithTheFlowService extends EventEmitter {
       driver.status = 'online';
       this.activityFeed.push(`${driver.name} went online.`);
       this.emit('driverStatusChange', driver);
-      console.log(`${driver.name} is now online.`);
+      console.info(`${driver.name} is now online.`);
       return true;
     }
     return false;
@@ -738,7 +738,7 @@ class GoWithTheFlowService extends EventEmitter {
       driver.status = 'offline';
       this.activityFeed.push(`${driver.name} went offline.`);
       this.emit('driverStatusChange', driver);
-      console.log(`${driver.name} is now offline.`);
+      console.info(`${driver.name} is now offline.`);
       return true;
     }
     return false;
@@ -760,7 +760,7 @@ class GoWithTheFlowService extends EventEmitter {
       driver.currentLoadId = loadId;
       this.activityFeed.push(`${driver.name} accepted load ${load.id}.`);
       this.emit('loadAccepted', { driver, load });
-      console.log(`${driver.name} accepted load ${load.id}`);
+      console.info(`${driver.name} accepted load ${load.id}`);
 
       // 🗓️ SCHEDULE INTEGRATION: Create schedule entry for accepted load
       try {
@@ -787,7 +787,7 @@ class GoWithTheFlowService extends EventEmitter {
         });
 
         if (scheduleResult.success) {
-          console.log(
+          console.info(
             `✅ Load ${load.id} added to driver ${driver.name}'s schedule`
           );
           this.activityFeed.push(
@@ -838,7 +838,7 @@ class GoWithTheFlowService extends EventEmitter {
       load.offerExpiresAt = undefined;
       this.activityFeed.push(`${driver.name} declined load ${load.id}.`);
       this.emit('loadDeclined', { driver, load });
-      console.log(`${driver.name} declined load ${load.id}`);
+      console.info(`${driver.name} declined load ${load.id}`);
 
       // Re-queue the load for matching
       this.queueLoadForMatching(load);
@@ -977,7 +977,7 @@ class GoWithTheFlowService extends EventEmitter {
       `New load request received: ${newLoad.id} from ${loadRequest.shipperId}.`
     );
     this.emit('newLoadRequest', newLoad);
-    console.log(`New load request: ${newLoad.id}`);
+    console.info(`New load request: ${newLoad.id}`);
 
     this.queueLoadForMatching(newLoad);
     return newLoad;
@@ -999,14 +999,14 @@ class GoWithTheFlowService extends EventEmitter {
     if (!loadToMatch) return;
 
     const { load } = loadToMatch;
-    console.log(`Attempting to match load: ${load.id}`);
+    console.info(`Attempting to match load: ${load.id}`);
 
     const availableDrivers = this.drivers.filter(
       (d) => d.status === 'online' && d.equipmentType === load.equipmentType
     );
 
     if (availableDrivers.length === 0) {
-      console.log(`No available drivers for load ${load.id}. Re-queueing.`);
+      console.info(`No available drivers for load ${load.id}. Re-queueing.`);
       this.queueLoadForMatching(load); // Re-queue if no drivers
       return;
     }
@@ -1053,7 +1053,9 @@ class GoWithTheFlowService extends EventEmitter {
         `New load offer: ${load.origin.address} to ${load.destination.address} for $${load.rate}!`,
         load.id
       );
-      console.log(`Load ${load.id} offered to ${driver.name}. Expires in 30s.`);
+      console.info(
+        `Load ${load.id} offered to ${driver.name}. Expires in 30s.`
+      );
 
       // Set a timeout for offer expiration
       setTimeout(
@@ -1062,7 +1064,7 @@ class GoWithTheFlowService extends EventEmitter {
             load.status === 'offered' &&
             load.assignedDriverId === driver.id
           ) {
-            console.log(`Load ${load.id} offer to ${driver.name} expired.`);
+            console.info(`Load ${load.id} offer to ${driver.name} expired.`);
             load.status = 'pending';
             load.assignedDriverId = undefined;
             load.offerExpiresAt = undefined;
@@ -1078,7 +1080,9 @@ class GoWithTheFlowService extends EventEmitter {
         5 * 60 * 1000
       ); // 5 minutes
     } else {
-      console.log(`No suitable driver found for load ${load.id}. Re-queueing.`);
+      console.info(
+        `No suitable driver found for load ${load.id}. Re-queueing.`
+      );
       this.queueLoadForMatching(load); // Re-queue if no suitable drivers
     }
   }
@@ -1121,7 +1125,7 @@ class GoWithTheFlowService extends EventEmitter {
 
   // --- Notifications ---
   sendPushNotification(driverId: string, message: string, loadId?: string) {
-    console.log(`PUSH NOTIFICATION to ${driverId}: ${message}`);
+    console.info(`PUSH NOTIFICATION to ${driverId}: ${message}`);
     // In a real app, this would integrate with a push notification service (e.g., Firebase Cloud Messaging)
   }
 
@@ -1182,7 +1186,7 @@ class GoWithTheFlowService extends EventEmitter {
     rating: number,
     comment: string
   ): boolean {
-    console.log(
+    console.info(
       `Rating from ${raterId} to ${ratedId}: ${rating} stars - "${comment}"`
     );
     this.activityFeed.push(`${raterId} rated ${ratedId} ${rating} stars.`);
@@ -1281,7 +1285,7 @@ class GoWithTheFlowService extends EventEmitter {
 
   // Force evaluation of all external loads (for testing/demo)
   async forceExternalLoadEvaluation(): Promise<void> {
-    console.log('🔄 Force evaluating all marketplace external loads...');
+    console.info('🔄 Force evaluating all marketplace external loads...');
     await this.processExternalLoadOpportunities();
   }
 

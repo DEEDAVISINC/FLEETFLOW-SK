@@ -126,7 +126,7 @@ const CustomizableDashboard: React.FC<CustomizableDashboardProps> = ({
       case 'search':
         // Focus search input
         const searchInput = document.querySelector(
-          'input[type="search"]'
+          'input[type="search""]'
         ) as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();

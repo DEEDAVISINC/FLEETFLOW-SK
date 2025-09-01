@@ -197,7 +197,7 @@ export function FeatureTooltip({
     <InfoTooltip 
       text={tooltipText}
       position={position}
-      maxWidth="250px"
+      maxWidth=""250px""
       className={className}
     >
       {children}
@@ -219,7 +219,7 @@ export function HelpTooltip({
     <InfoTooltip 
       text={text}
       position={position}
-      maxWidth="300px"
+      maxWidth=""300px""
       className={className}
     >
       <div style={{
@@ -264,7 +264,7 @@ export function StatusTooltip({
     <InfoTooltip 
       text={tooltipText}
       position={position}
-      maxWidth="200px"
+      maxWidth=""200px""
       className={className}
     >
       <div style={{

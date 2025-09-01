@@ -16,7 +16,7 @@ import { businessEventGenerator } from './BusinessEventGenerator';
 
 export class TestNotificationGenerator {
   constructor() {
-    console.log('🧪 TestNotificationGenerator initialized');
+    console.info('🧪 TestNotificationGenerator initialized');
   }
 
   /**
@@ -48,7 +48,7 @@ export class TestNotificationGenerator {
     };
 
     await notificationService.sendNotification(testNotification);
-    console.log('✅ Test notification sent');
+    console.info('✅ Test notification sent');
   }
 
   /**
@@ -166,13 +166,13 @@ export class TestNotificationGenerator {
     for (let i = 0; i < testNotifications.length; i++) {
       setTimeout(async () => {
         await notificationService.sendNotification(testNotifications[i]);
-        console.log(
+        console.info(
           `✅ Test notification ${i + 1} sent: ${testNotifications[i].title}`
         );
       }, i * 1000); // 1 second delay between each
     }
 
-    console.log(
+    console.info(
       `📢 Generating ${testNotifications.length} variety test notifications...`
     );
   }
@@ -181,11 +181,11 @@ export class TestNotificationGenerator {
    * Generate business event test notifications
    */
   async generateBusinessEventTestNotifications(): Promise<void> {
-    console.log('🎯 Generating business event test notifications...');
+    console.info('🎯 Generating business event test notifications...');
 
     try {
       await businessEventGenerator.generateTestNotifications('default');
-      console.log('✅ Business event test notifications generated');
+      console.info('✅ Business event test notifications generated');
     } catch (error) {
       console.error(
         '❌ Failed to generate business event notifications:',
@@ -223,11 +223,11 @@ export class TestNotificationGenerator {
 
       if (testNotificationIds.length > 0) {
         await notificationService.archiveNotifications(testNotificationIds);
-        console.log(
+        console.info(
           `🗑️ Cleared ${testNotificationIds.length} test notifications`
         );
       } else {
-        console.log('ℹ️ No test notifications to clear');
+        console.info('ℹ️ No test notifications to clear');
       }
     } catch (error) {
       console.error('❌ Failed to clear test notifications:', error);
@@ -271,7 +271,7 @@ export class TestNotificationGenerator {
     };
 
     await notificationService.sendNotification(criticalNotification);
-    console.log('🚨 Critical test notification sent');
+    console.info('🚨 Critical test notification sent');
   }
 }
 
@@ -294,7 +294,7 @@ if (typeof window !== 'undefined') {
 
     // Helper function to show all available test commands
     help: () => {
-      console.log(`
+      console.info(`
 🧪 FleetFlow Notification Test Commands:
 
 testNotifications.simple()    - Generate a simple test notification
@@ -310,7 +310,7 @@ testNotifications.clear()     // Clears all test notifications
     },
   };
 
-  console.log(
+  console.info(
     '🧪 Test notification commands loaded! Type testNotifications.help() for usage.'
   );
 }

@@ -34,7 +34,7 @@ class DOTComplianceMonitor {
     dotNumber: string,
     documents: Document[]
   ): Promise<void> {
-    console.log(`🔍 Checking document expirations for carrier ${carrierId}`);
+    console.info(`🔍 Checking document expirations for carrier ${carrierId}`);
 
     const today = new Date();
 
@@ -92,7 +92,7 @@ class DOTComplianceMonitor {
     details: string,
     severity: 'critical' | 'major' | 'minor' = 'major'
   ): Promise<void> {
-    console.log(
+    console.info(
       `🚨 Reporting ${severity} violation for carrier ${carrierId}: ${violationType}`
     );
 
@@ -107,7 +107,7 @@ class DOTComplianceMonitor {
     }
 
     // Log the violation (in a real system, this would go to a database)
-    console.log({
+    console.info({
       carrierId,
       dotNumber,
       violationType,
@@ -128,7 +128,7 @@ class DOTComplianceMonitor {
   ): Promise<void> {
     if (oldRating === newRating) return;
 
-    console.log(
+    console.info(
       `🔄 Safety rating changed for carrier ${carrierId}: ${oldRating} -> ${newRating}`
     );
 
@@ -168,7 +168,7 @@ class DOTComplianceMonitor {
   ): Promise<void> {
     if (oldLevel === newLevel) return;
 
-    console.log(
+    console.info(
       `🔄 Risk level changed for carrier ${carrierId}: ${oldLevel} -> ${newLevel}`
     );
 

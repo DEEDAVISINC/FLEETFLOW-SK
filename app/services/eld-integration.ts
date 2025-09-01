@@ -51,10 +51,10 @@ class ELDIntegrationServiceClass {
           endTime: '2024-12-23T07:00:00Z',
           duration: 7,
           location: 'Dallas, TX',
-          automatic: true
-        }
+          automatic: true,
+        },
       ],
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     },
     'DRV-002': {
       driverId: 'DRV-002',
@@ -70,8 +70,8 @@ class ELDIntegrationServiceClass {
           description: '30-minute break required after 8 hours of driving',
           severity: 'warning',
           timestamp: '2024-12-23T14:30:00Z',
-          resolved: false
-        }
+          resolved: false,
+        },
       ],
       logs: [
         {
@@ -81,14 +81,16 @@ class ELDIntegrationServiceClass {
           startTime: '2024-12-23T12:00:00Z',
           duration: 2.5,
           location: 'Phoenix, AZ',
-          automatic: true
-        }
+          automatic: true,
+        },
       ],
-      lastUpdate: new Date().toISOString()
-    }
+      lastUpdate: new Date().toISOString(),
+    },
   };
 
-  async getHoursOfService(driverId: string): Promise<HoursOfServiceData | null> {
+  async getHoursOfService(
+    driverId: string
+  ): Promise<HoursOfServiceData | null> {
     try {
       const data = this.hoursOfService[driverId];
       if (!data) {
@@ -97,12 +99,13 @@ class ELDIntegrationServiceClass {
 
       // Update data with current time calculations
       const now = new Date();
-      const currentLog = data.logs.find(log => !log.endTime);
-      
+      const currentLog = data.logs.find((log) => !log.endTime);
+
       if (currentLog) {
         const startTime = new Date(currentLog.startTime);
-        const elapsedHours = (now.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-        
+        const elapsedHours =
+          (now.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+
         data.totalHours = Math.round(elapsedHours * 100) / 100;
         data.remainingHours = Math.max(0, 11 - data.totalHours);
         data.lastUpdate = now.toISOString();
@@ -115,7 +118,12 @@ class ELDIntegrationServiceClass {
     }
   }
 
-  async updateDutyStatus(driverId: string, status: HoursOfServiceData['currentStatus'], location: string, notes?: string): Promise<boolean> {
+  async updateDutyStatus(
+    driverId: string,
+    status: HoursOfServiceData['currentStatus'],
+    location: string,
+    notes?: string
+  ): Promise<boolean> {
     try {
       const data = this.hoursOfService[driverId];
       if (!data) {
@@ -123,12 +131,14 @@ class ELDIntegrationServiceClass {
       }
 
       const now = new Date();
-      
+
       // End current log if exists
-      const currentLog = data.logs.find(log => !log.endTime);
+      const currentLog = data.logs.find((log) => !log.endTime);
       if (currentLog) {
         currentLog.endTime = now.toISOString();
-        const duration = (now.getTime() - new Date(currentLog.startTime).getTime()) / (1000 * 60 * 60);
+        const duration =
+          (now.getTime() - new Date(currentLog.startTime).getTime()) /
+          (1000 * 60 * 60);
         currentLog.duration = Math.round(duration * 100) / 100;
       }
 
@@ -141,7 +151,7 @@ class ELDIntegrationServiceClass {
         duration: 0,
         location,
         notes,
-        automatic: false
+        automatic: false,
       };
 
       data.logs.push(newLog);
@@ -166,7 +176,7 @@ class ELDIntegrationServiceClass {
       }
 
       const cutoffTime = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-      return data.logs.filter(log => new Date(log.startTime) >= cutoffTime);
+      return data.logs.filter((log) => new Date(log.startTime) >= cutoffTime);
     } catch (error) {
       console.error('Error getting duty logs:', error);
       return [];
@@ -180,21 +190,24 @@ class ELDIntegrationServiceClass {
         return [];
       }
 
-      return data.violations.filter(v => !v.resolved);
+      return data.violations.filter((v) => !v.resolved);
     } catch (error) {
       console.error('Error getting violations:', error);
       return [];
     }
   }
 
-  async resolveViolation(driverId: string, violationId: string): Promise<boolean> {
+  async resolveViolation(
+    driverId: string,
+    violationId: string
+  ): Promise<boolean> {
     try {
       const data = this.hoursOfService[driverId];
       if (!data) {
         return false;
       }
 
-      const violation = data.violations.find(v => v.id === violationId);
+      const violation = data.violations.find((v) => v.id === violationId);
       if (!violation) {
         return false;
       }
@@ -207,14 +220,20 @@ class ELDIntegrationServiceClass {
     }
   }
 
-  async generateDVIR(driverId: string, vehicleId: string, inspection: any): Promise<{ success: boolean; dvirId?: string }> {
+  async generateDVIR(
+    driverId: string,
+    vehicleId: string,
+    inspection: any
+  ): Promise<{ success: boolean; dvirId?: string }> {
     try {
       // Driver Vehicle Inspection Report
       const dvirId = `DVIR-${Date.now()}`;
-      
+
       // In a real implementation, this would save to database
-      console.log(`Generated DVIR ${dvirId} for driver ${driverId}, vehicle ${vehicleId}`);
-      
+      console.info(
+        `Generated DVIR ${dvirId} for driver ${driverId}, vehicle ${vehicleId}`
+      );
+
       return { success: true, dvirId };
     } catch (error) {
       console.error('Error generating DVIR:', error);
@@ -222,10 +241,14 @@ class ELDIntegrationServiceClass {
     }
   }
 
-  async exportLogs(driverId: string, startDate: string, endDate: string): Promise<{ success: boolean; data?: any }> {
+  async exportLogs(
+    driverId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<{ success: boolean; data?: any }> {
     try {
       const logs = await this.getDutyLogs(driverId, 30);
-      const filteredLogs = logs.filter(log => {
+      const filteredLogs = logs.filter((log) => {
         const logDate = new Date(log.startTime);
         return logDate >= new Date(startDate) && logDate <= new Date(endDate);
       });
@@ -237,10 +260,16 @@ class ELDIntegrationServiceClass {
         dateRange: { startDate, endDate },
         logs: filteredLogs,
         summary: {
-          totalDrivingHours: filteredLogs.filter(l => l.status === 'driving').reduce((sum, l) => sum + l.duration, 0),
-          totalOnDutyHours: filteredLogs.filter(l => l.status === 'on_duty').reduce((sum, l) => sum + l.duration, 0),
-          totalOffDutyHours: filteredLogs.filter(l => l.status === 'off_duty').reduce((sum, l) => sum + l.duration, 0)
-        }
+          totalDrivingHours: filteredLogs
+            .filter((l) => l.status === 'driving')
+            .reduce((sum, l) => sum + l.duration, 0),
+          totalOnDutyHours: filteredLogs
+            .filter((l) => l.status === 'on_duty')
+            .reduce((sum, l) => sum + l.duration, 0),
+          totalOffDutyHours: filteredLogs
+            .filter((l) => l.status === 'off_duty')
+            .reduce((sum, l) => sum + l.duration, 0),
+        },
       };
 
       return { success: true, data: exportData };
@@ -250,7 +279,9 @@ class ELDIntegrationServiceClass {
     }
   }
 
-  async checkCompliance(driverId: string): Promise<{ compliant: boolean; issues: string[] }> {
+  async checkCompliance(
+    driverId: string
+  ): Promise<{ compliant: boolean; issues: string[] }> {
     try {
       const data = this.hoursOfService[driverId];
       if (!data) {
@@ -258,7 +289,7 @@ class ELDIntegrationServiceClass {
       }
 
       const issues: string[] = [];
-      
+
       // Check 11-hour driving limit
       if (data.remainingHours <= 0) {
         issues.push('11-hour driving limit reached');
@@ -270,14 +301,14 @@ class ELDIntegrationServiceClass {
       }
 
       // Check for unresolved violations
-      const unresolved = data.violations.filter(v => !v.resolved);
+      const unresolved = data.violations.filter((v) => !v.resolved);
       if (unresolved.length > 0) {
         issues.push(`${unresolved.length} unresolved violation(s)`);
       }
 
       return {
         compliant: issues.length === 0,
-        issues
+        issues,
       };
     } catch (error) {
       console.error('Error checking compliance:', error);
@@ -300,15 +331,18 @@ class ELDIntegrationServiceClass {
           description: '11-hour driving limit exceeded',
           severity: 'violation',
           timestamp: new Date().toISOString(),
-          resolved: false
+          resolved: false,
         };
         data.violations.push(violation);
       }
 
       // Check for 30-minute break requirement
-      const drivingLogs = data.logs.filter(log => log.status === 'driving');
-      const continuousDriving = drivingLogs.reduce((sum, log) => sum + log.duration, 0);
-      
+      const drivingLogs = data.logs.filter((log) => log.status === 'driving');
+      const continuousDriving = drivingLogs.reduce(
+        (sum, log) => sum + log.duration,
+        0
+      );
+
       if (continuousDriving >= 8) {
         const violation: Violation = {
           id: `viol-${Date.now()}`,
@@ -316,7 +350,7 @@ class ELDIntegrationServiceClass {
           description: '30-minute break required after 8 hours of driving',
           severity: 'warning',
           timestamp: new Date().toISOString(),
-          resolved: false
+          resolved: false,
         };
         data.violations.push(violation);
       }
@@ -326,4 +360,4 @@ class ELDIntegrationServiceClass {
   }
 }
 
-export const ELDIntegrationService = new ELDIntegrationServiceClass(); 
+export const ELDIntegrationService = new ELDIntegrationServiceClass();

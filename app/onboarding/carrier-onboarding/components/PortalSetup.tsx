@@ -369,14 +369,46 @@ export const PortalSetup: React.FC<PortalSetupProps> = ({
       // Simulate account creation
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      const updatedUsers = users.map((user) => ({
-        ...user,
-        accountCreated: true,
-        initialPasswordSent: true,
-        status: 'active' as const,
-      }));
+      const updatedUsers = users.map((user) => {
+        // Create free driver subscription for drivers
+        const subscriptionTier =
+          user.role === 'company_driver' || user.role === 'owner_operator'
+            ? 'driver_free'
+            : 'university'; // Default for other roles
+
+        return {
+          ...user,
+          accountCreated: true,
+          initialPasswordSent: true,
+          status: 'active' as const,
+          subscriptionTier,
+          subscriptionStatus: 'active',
+          subscriptionExpiresAt: new Date(
+            Date.now() + 365 * 24 * 60 * 60 * 1000
+          ), // 1 year
+          permissions: [
+            ...user.permissions,
+            ...(subscriptionTier === 'driver_free'
+              ? [
+                  'driver_otr_flow',
+                  'dispatch_connection',
+                  'basic_notifications',
+                ]
+              : []),
+          ],
+        };
+      });
 
       setUsers(updatedUsers);
+
+      // Log subscription creation for drivers
+      updatedUsers.forEach((user) => {
+        if (user.subscriptionTier === 'driver_free') {
+          console.info(
+            `✅ Created FREE Driver subscription for ${user.firstName} ${user.lastName} (${user.email})`
+          );
+        }
+      });
     } catch (error) {
       console.error('Account creation failed:', error);
     } finally {

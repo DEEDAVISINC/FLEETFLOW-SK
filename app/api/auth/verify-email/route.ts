@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     user.status = 'active';
 
     // Log successful verification
-    console.log('✅ Email verified successfully:', {
+    console.info('✅ Email verified successfully:', {
       userId: user.id,
       email: user.email,
       name: user.name,
@@ -135,7 +135,7 @@ async function activateTrialSubscription(
   userId: string,
   planId: string
 ): Promise<void> {
-  console.log('🚀 Activating trial subscription:', {
+  console.info('🚀 Activating trial subscription:', {
     userId,
     planId,
     trialDays: 14,

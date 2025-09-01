@@ -74,14 +74,14 @@ class ThomasNetIntegrationService {
 
   async initialize(): Promise<void> {
     await this.thomasNetService.initialize();
-    console.log('ThomasNet Integration Service initialized');
+    console.info('ThomasNet Integration Service initialized');
   }
 
   async discoverHighValueManufacturers(
     location?: string
   ): Promise<EnhancedLeadInfo[]> {
     try {
-      console.log('Starting high-value manufacturer discovery...');
+      console.info('Starting high-value manufacturer discovery...');
 
       // Search for high freight volume industries
       const highValueIndustries = [
@@ -100,7 +100,9 @@ class ThomasNetIntegrationService {
         location
       );
 
-      console.log(`Found ${manufacturers.length} manufacturers from ThomasNet`);
+      console.info(
+        `Found ${manufacturers.length} manufacturers from ThomasNet`
+      );
 
       // Enhance each lead with FMCSA data and advanced scoring
       const enhancedLeads: EnhancedLeadInfo[] = [];
@@ -127,7 +129,7 @@ class ThomasNetIntegrationService {
         (a, b) => (b.enhancedLeadScore || 0) - (a.enhancedLeadScore || 0)
       );
 
-      console.log(`Enhanced ${enhancedLeads.length} high-quality leads`);
+      console.info(`Enhanced ${enhancedLeads.length} high-quality leads`);
       return enhancedLeads;
     } catch (error) {
       console.error('Failed to discover manufacturers:', error);
@@ -162,7 +164,7 @@ class ThomasNetIntegrationService {
       // Step 4: Contact Enhancement
       enhanced.contactEnrichment = this.enhanceContactInfo(enhanced);
 
-      console.log(
+      console.info(
         `Enhanced lead: ${enhanced.companyName} (Score: ${enhanced.enhancedLeadScore})`
       );
     } catch (error) {
@@ -472,7 +474,7 @@ class ThomasNetIntegrationService {
   async integratWithAIFlow(leads: EnhancedLeadInfo[]): Promise<void> {
     try {
       // Send leads to AI Flow system for further processing
-      console.log(
+      console.info(
         `Integrating ${leads.length} ThomasNet leads with AI Flow system`
       );
 
@@ -482,7 +484,7 @@ class ThomasNetIntegrationService {
         // This would call your existing AI Flow lead ingestion API
         // await this.submitToAIFlow(aiFlowLead);
 
-        console.log(
+        console.info(
           `Submitted ${lead.companyName} to AI Flow (Score: ${lead.enhancedLeadScore})`
         );
       }
@@ -515,7 +517,7 @@ class ThomasNetIntegrationService {
 
   async close(): Promise<void> {
     await this.thomasNetService.close();
-    console.log('ThomasNet Integration Service closed');
+    console.info('ThomasNet Integration Service closed');
   }
 }
 

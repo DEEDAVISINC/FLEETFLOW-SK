@@ -95,7 +95,7 @@ export default function EmergencyPage() {
           'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         padding: '0',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Executive Header */}

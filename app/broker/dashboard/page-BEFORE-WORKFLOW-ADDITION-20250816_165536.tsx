@@ -201,7 +201,7 @@ export default function BrokerDashboard() {
 
   // Calculation Functions
   const calculateLTL = () => {
-    console.log('🔄 Calculating LTL Quote...');
+    console.info('🔄 Calculating LTL Quote...');
     const weight = parseFloat(ltlData.weight) || 0;
     const pallets = parseInt(ltlData.pallets) || 1;
     const freightClass = parseInt(ltlData.freightClass) || 50;
@@ -238,13 +238,13 @@ export default function BrokerDashboard() {
       },
     };
 
-    console.log('✅ LTL Quote calculated:', quote);
+    console.info('✅ LTL Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
 
   const calculateFTL = () => {
-    console.log('🔄 Calculating FTL Quote...');
+    console.info('🔄 Calculating FTL Quote...');
     const miles = parseFloat(ftlData.miles) || 0;
     const weight = parseFloat(ftlData.weight) || 0;
 
@@ -279,13 +279,13 @@ export default function BrokerDashboard() {
       },
     };
 
-    console.log('✅ FTL Quote calculated:', quote);
+    console.info('✅ FTL Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
 
   const calculateSpecialized = () => {
-    console.log('🔄 Calculating Specialized Quote...');
+    console.info('🔄 Calculating Specialized Quote...');
     const weight = parseFloat(specializedData.weight) || 0;
     const value = parseFloat(specializedData.value) || 0;
 
@@ -317,13 +317,13 @@ export default function BrokerDashboard() {
       },
     };
 
-    console.log('✅ Specialized Quote calculated:', quote);
+    console.info('✅ Specialized Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
 
   const calculateWarehousing = () => {
-    console.log('🔄 Calculating Warehousing Quote...');
+    console.info('🔄 Calculating Warehousing Quote...');
     const palletCount = parseInt(warehousingData.palletCount) || 0;
     const duration = parseInt(warehousingData.duration) || 1;
 
@@ -356,13 +356,13 @@ export default function BrokerDashboard() {
       },
     };
 
-    console.log('✅ Warehousing Quote calculated:', quote);
+    console.info('✅ Warehousing Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
 
   const calculateMultiService = () => {
-    console.log('🔄 Calculating Multi-Service Quote...');
+    console.info('🔄 Calculating Multi-Service Quote...');
 
     if (multiServiceData.selectedServices.length === 0) {
       alert('Please select at least one service');
@@ -432,7 +432,7 @@ export default function BrokerDashboard() {
       },
     };
 
-    console.log('✅ Multi-Service Quote calculated:', quote);
+    console.info('✅ Multi-Service Quote calculated:', quote);
     setPendingQuote(quote);
     setShowConfirmation(true);
   };
@@ -530,7 +530,7 @@ export default function BrokerDashboard() {
   const confirmQuote = () => {
     if (pendingQuote) {
       setQuotes((prev) => [pendingQuote, ...prev]);
-      console.log('✅ Quote confirmed and saved!');
+      console.info('✅ Quote confirmed and saved!');
       setShowConfirmation(false);
       setPendingQuote(null);
     }
@@ -567,7 +567,7 @@ export default function BrokerDashboard() {
             );
             return [...newQuotes, ...prevQuotes];
           });
-          console.log('🎯 Loaded unified quotes for broker:', {
+          console.info('🎯 Loaded unified quotes for broker:', {
             broker: brokerSession.brokerName,
             count: parsedQuotes.length,
           });
@@ -584,7 +584,7 @@ export default function BrokerDashboard() {
   };
 
   const handleLoadCreated = (load: Load) => {
-    console.log('New load created:', load);
+    console.info('New load created:', load);
     setShowCreateForm(false);
     // Refresh the load board by switching tabs and back
     setSelectedTab('bids');
@@ -615,7 +615,7 @@ export default function BrokerDashboard() {
           alignItems: 'center',
           justifyContent: 'center',
           fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         }}
       >
         <div
@@ -715,7 +715,7 @@ export default function BrokerDashboard() {
           backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
           backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
           fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         }}
       >
         {/* Back Button */}
@@ -1624,7 +1624,7 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🎯 LTL Calculate Button Clicked!');
+                        console.info('🎯 LTL Calculate Button Clicked!');
                         calculateLTL();
                       }}
                       style={{
@@ -1920,7 +1920,7 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🎯 FTL Calculate Button Clicked!');
+                        console.info('🎯 FTL Calculate Button Clicked!');
                         calculateFTL();
                       }}
                       style={{
@@ -2173,7 +2173,7 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🎯 Specialized Calculate Button Clicked!');
+                        console.info('🎯 Specialized Calculate Button Clicked!');
                         calculateSpecialized();
                       }}
                       style={{
@@ -2395,7 +2395,7 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🎯 Warehousing Calculate Button Clicked!');
+                        console.info('🎯 Warehousing Calculate Button Clicked!');
                         calculateWarehousing();
                       }}
                       style={{
@@ -2682,7 +2682,7 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log(
+                        console.info(
                           '🎯 Multi-Service Calculate Button Clicked!'
                         );
                         calculateMultiService();
@@ -7114,7 +7114,7 @@ export default function BrokerDashboard() {
                 </button>
                 <button
                   onClick={() => {
-                    console.log('❌ Quote cancelled');
+                    console.info('❌ Quote cancelled');
                     setShowConfirmation(false);
                     setPendingQuote(null);
                   }}

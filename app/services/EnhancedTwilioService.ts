@@ -135,7 +135,7 @@ export class EnhancedTwilioService {
       this.client = twilio(accountSid, authToken);
       this.isConfigured = true;
       
-      console.log('✅ Twilio SMS service initialized successfully');
+      console.info('✅ Twilio SMS service initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize Twilio:', error);
       this.isConfigured = false;
@@ -203,7 +203,7 @@ export class EnhancedTwilioService {
           if (attempt < maxRetries) {
             // Exponential backoff
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-            console.log(`⚠️ Twilio SMS attempt ${attempt} failed, retrying in ${delay}ms...`);
+            console.info(`⚠️ Twilio SMS attempt ${attempt} failed, retrying in ${delay}ms...`);
             await new Promise(resolve => setTimeout(resolve, delay));
             
             this.metrics.retriedMessages++;

@@ -155,7 +155,7 @@ export async function PUT(request: NextRequest) {
       envelope: formData.get('envelope'),
     };
 
-    console.log('📧 Received inbound email webhook:', {
+    console.info('📧 Received inbound email webhook:', {
       from: webhookData.from,
       to: webhookData.to,
       subject: webhookData.subject,

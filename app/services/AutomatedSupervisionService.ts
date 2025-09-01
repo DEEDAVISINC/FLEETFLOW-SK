@@ -91,10 +91,10 @@ export class AutomatedSupervisionService {
           check
         );
         corrections.push(`Auto-fixed: ${check.checkType}`);
-        console.log(`✅ Auto-corrected: ${check.checkType}`);
+        console.info(`✅ Auto-corrected: ${check.checkType}`);
       } else if (check.status === 'fail') {
         humanNeeded = true;
-        console.log(`⚠️ Requires human intervention: ${check.checkType}`);
+        console.info(`⚠️ Requires human intervention: ${check.checkType}`);
       }
     }
 
@@ -642,7 +642,7 @@ AI Performance Summary:
       grade: this.calculateOverallGrade(metrics),
     };
 
-    console.log(
+    console.info(
       `📊 Performance logged: Grade ${logEntry.grade}, Accuracy ${metrics.accuracy.toFixed(1)}%`
     );
   }

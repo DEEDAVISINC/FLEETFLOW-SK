@@ -103,7 +103,7 @@ export class ELDDataImportService {
       process.env.ELD_DATA_RETENTION_DAYS || '1095'
     ); // 3 years
 
-    console.log('📱 ELD Data Import Service initialized:', {
+    console.info('📱 ELD Data Import Service initialized:', {
       syncIntervalMinutes: this.syncIntervalMinutes,
       webhookSecret: this.webhookSecret ? 'CONFIGURED' : 'NOT CONFIGURED',
       dataRetentionDays: this.dataRetentionDays,
@@ -210,7 +210,7 @@ export class ELDDataImportService {
     startDate?: string,
     endDate?: string
   ): Promise<ELDSyncResult> {
-    console.log('🔄 Syncing HOS data:', {
+    console.info('🔄 Syncing HOS data:', {
       tenantId,
       providerId,
       driverId,
@@ -234,7 +234,7 @@ export class ELDDataImportService {
       );
       const violations = this.detectHOSViolations(mockHOSRecords);
 
-      console.log('✅ HOS data sync completed:', {
+      console.info('✅ HOS data sync completed:', {
         recordsProcessed: mockHOSRecords.length,
         violationsDetected: violations.length,
       });
@@ -268,7 +268,7 @@ export class ELDDataImportService {
     startTime?: string,
     endTime?: string
   ): Promise<ELDSyncResult> {
-    console.log('🚗 Syncing vehicle diagnostics:', {
+    console.info('🚗 Syncing vehicle diagnostics:', {
       tenantId,
       providerId,
       vehicleId,
@@ -291,7 +291,7 @@ export class ELDDataImportService {
         vehicleId
       );
 
-      console.log('✅ Vehicle diagnostics sync completed:', {
+      console.info('✅ Vehicle diagnostics sync completed:', {
         recordsProcessed: mockDiagnostics.length,
       });
 
@@ -508,7 +508,7 @@ export class ELDDataImportService {
     webhookData: any,
     signature?: string
   ): Promise<{ success: boolean; message: string }> {
-    console.log('📡 Processing ELD webhook data:', {
+    console.info('📡 Processing ELD webhook data:', {
       providerId,
       dataType: typeof webhookData,
     });
@@ -560,18 +560,18 @@ export class ELDDataImportService {
   private async processOpenELDWebhook(
     data: any
   ): Promise<{ success: boolean; message: string }> {
-    console.log('🔓 Processing Open ELD webhook data');
+    console.info('🔓 Processing Open ELD webhook data');
 
     // Process Open ELD standard format
     if (data.eventType === 'hos_update') {
       // Handle HOS record update
-      console.log('📋 HOS update received:', data.hosRecord);
+      console.info('📋 HOS update received:', data.hosRecord);
     } else if (data.eventType === 'violation_detected') {
       // Handle violation alert
-      console.log('🚨 Violation detected:', data.violation);
+      console.info('🚨 Violation detected:', data.violation);
     } else if (data.eventType === 'diagnostic_update') {
       // Handle vehicle diagnostic update
-      console.log('🔧 Diagnostic update received:', data.diagnostic);
+      console.info('🔧 Diagnostic update received:', data.diagnostic);
     }
 
     return {
@@ -586,7 +586,7 @@ export class ELDDataImportService {
   private async processSamsaraWebhook(
     data: any
   ): Promise<{ success: boolean; message: string }> {
-    console.log('📊 Processing Samsara webhook data');
+    console.info('📊 Processing Samsara webhook data');
     return { success: true, message: 'Samsara webhook processed successfully' };
   }
 
@@ -596,7 +596,7 @@ export class ELDDataImportService {
   private async processMotiveWebhook(
     data: any
   ): Promise<{ success: boolean; message: string }> {
-    console.log('🚛 Processing Motive webhook data');
+    console.info('🚛 Processing Motive webhook data');
     return { success: true, message: 'Motive webhook processed successfully' };
   }
 
@@ -606,7 +606,7 @@ export class ELDDataImportService {
   private async processGenericWebhook(
     data: any
   ): Promise<{ success: boolean; message: string }> {
-    console.log('📡 Processing generic ELD webhook data');
+    console.info('📡 Processing generic ELD webhook data');
     return { success: true, message: 'Generic webhook processed successfully' };
   }
 
@@ -772,4 +772,3 @@ export class ELDDataImportService {
 }
 
 export const eldDataImportService = new ELDDataImportService();
-

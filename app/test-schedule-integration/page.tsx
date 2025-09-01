@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { SchedulingService } from '../scheduling/service';
 import LoadScheduleIntegrationService from '../services/LoadScheduleIntegrationService';
@@ -22,17 +22,17 @@ export default function TestScheduleIntegration() {
   useEffect(() => {
     checkIntegrationStatus();
     loadSchedules();
-  }, []);
+  }, [loadSchedules]);
 
   const checkIntegrationStatus = async () => {
     const status = await LoadScheduleIntegrationService.getIntegrationStatus();
     setIntegrationStatus(status);
   };
 
-  const loadSchedules = async () => {
+  const loadSchedules = useCallback(async () => {
     const allSchedules = await schedulingService.getSchedules({});
     setSchedules(allSchedules.schedules || []);
-  };
+  }, [schedulingService]);
 
   const runIntegrationTest = async () => {
     setIsRunning(true);
@@ -40,7 +40,7 @@ export default function TestScheduleIntegration() {
 
     try {
       // Test 1: Basic Integration Test
-      console.log('🧪 Running Test 1: Basic Integration Test');
+      console.info('🧪 Running Test 1: Basic Integration Test');
       const testLoad1 = {
         loadId: `TEST-LOAD-${Date.now()}`,
         loadBoardNumber: `TB${Date.now().toString().slice(-6)}`,
@@ -72,7 +72,7 @@ export default function TestScheduleIntegration() {
       });
 
       // Test 2: Conflict Detection Test
-      console.log('🧪 Running Test 2: Conflict Detection Test');
+      console.info('🧪 Running Test 2: Conflict Detection Test');
       const testLoad2 = {
         ...testLoad1,
         loadId: `TEST-CONFLICT-${Date.now()}`,
@@ -93,7 +93,7 @@ export default function TestScheduleIntegration() {
       });
 
       // Test 3: Driver Availability Check
-      console.log('🧪 Running Test 3: Driver Availability Check');
+      console.info('🧪 Running Test 3: Driver Availability Check');
       const availabilityCheck =
         await LoadScheduleIntegrationService.checkDriverAvailability(
           'DRV-001',
@@ -108,7 +108,7 @@ export default function TestScheduleIntegration() {
       });
 
       // Test 4: Multi-day Load Test
-      console.log('🧪 Running Test 4: Multi-day Load Test');
+      console.info('🧪 Running Test 4: Multi-day Load Test');
       const testLoad3 = {
         ...testLoad1,
         loadId: `TEST-MULTIDAY-${Date.now()}`,
@@ -132,7 +132,7 @@ export default function TestScheduleIntegration() {
       });
 
       // Test 5: Status Update Test
-      console.log('🧪 Running Test 5: Status Update Test');
+      console.info('🧪 Running Test 5: Status Update Test');
       if (result1.success && result1.scheduleId) {
         const statusUpdateResult =
           await LoadScheduleIntegrationService.updateScheduleFromLoadStatus(
@@ -149,7 +149,7 @@ export default function TestScheduleIntegration() {
       }
 
       // Test 6: Load Cancellation Test
-      console.log('🧪 Running Test 6: Load Cancellation Test');
+      console.info('🧪 Running Test 6: Load Cancellation Test');
       if (result2.success) {
         const cancellationResult =
           await LoadScheduleIntegrationService.removeScheduleFromLoadCancellation(
@@ -191,7 +191,7 @@ export default function TestScheduleIntegration() {
 
       await loadSchedules();
       setTestResults([]);
-      console.log(`✅ Cleared ${testSchedules.length} test schedules`);
+      console.info(`✅ Cleared ${testSchedules.length} test schedules`);
     } catch (error) {
       console.error('❌ Error clearing test data:', error);
     }
@@ -435,5 +435,3 @@ export default function TestScheduleIntegration() {
     </div>
   );
 }
-
-

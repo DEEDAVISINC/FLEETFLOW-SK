@@ -65,7 +65,7 @@ export class AITrainingService {
       await this.updateLearningPatterns(trainingExample);
     }
 
-    console.log(
+    console.info(
       `📚 Captured training example: ${trainingExample.id} (${interaction.outcome})`
     );
   }
@@ -490,7 +490,7 @@ Respond in a natural, human-like way that follows the successful patterns:
       await this.updateLearningPatterns(example);
     }
 
-    console.log(
+    console.info(
       `📚 Loaded ${preTrainedExamples.length} pre-trained successful examples`
     );
   }
@@ -514,7 +514,7 @@ Respond in a natural, human-like way that follows the successful patterns:
       });
     } else if (outcome === 'failure') {
       // AI failed - flag this for human review and training
-      console.log(
+      console.info(
         `❌ AI failure logged for training improvement: ${originalScenario}`
       );
     }

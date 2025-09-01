@@ -43,11 +43,11 @@ export class AILeadGenerationTrainer {
     this.initializeTrainingPatterns();
 
     if (this.isEnabled) {
-      console.log(
+      console.info(
         '🎓 AI Lead Generation Trainer initialized - Ready to teach AI'
       );
     } else {
-      console.log(
+      console.info(
         '🎓 AI Trainer running in demo mode - set ANTHROPIC_API_KEY for full AI training'
       );
     }
@@ -204,11 +204,11 @@ export class AILeadGenerationTrainer {
    */
   async trainAIOnLeadGeneration(): Promise<void> {
     if (!this.isEnabled) {
-      console.log('🎓 Running AI training simulation...');
+      console.info('🎓 Running AI training simulation...');
       return;
     }
 
-    console.log('🎓 Starting comprehensive AI lead generation training...');
+    console.info('🎓 Starting comprehensive AI lead generation training...');
 
     try {
       const trainingPrompt = this.buildTrainingPrompt();
@@ -218,8 +218,8 @@ export class AILeadGenerationTrainer {
         'ai_training'
       );
 
-      console.log('✅ AI training session completed');
-      console.log('🧠 AI has learned lead generation patterns and strategies');
+      console.info('✅ AI training session completed');
+      console.info('🧠 AI has learned lead generation patterns and strategies');
     } catch (error) {
       console.error('AI training error:', error);
     }
@@ -310,11 +310,11 @@ Remember: Always provide specific, actionable recommendations with high confiden
    */
   async analyzeLeadsWithAI(leads: LeadProspect[]): Promise<LeadProspect[]> {
     if (!this.isEnabled) {
-      console.log('🤖 Using simulated AI analysis...');
+      console.info('🤖 Using simulated AI analysis...');
       return this.simulateAIAnalysis(leads);
     }
 
-    console.log('🤖 AI analyzing leads with trained patterns...');
+    console.info('🤖 AI analyzing leads with trained patterns...');
 
     try {
       const analysisPrompt = `
@@ -340,7 +340,7 @@ Return analysis as JSON array with enhanced lead data.
       );
       const enhancedLeads = JSON.parse(aiAnalysis);
 
-      console.log('✅ AI analysis completed with enhanced recommendations');
+      console.info('✅ AI analysis completed with enhanced recommendations');
       return enhancedLeads;
     } catch (error) {
       console.error('AI lead analysis error:', error);
@@ -382,7 +382,7 @@ Return analysis as JSON array with enhanced lead data.
 
     this.learningSessions.push(session);
 
-    console.log(`🎓 Learning session ${sessionId} started`);
+    console.info(`🎓 Learning session ${sessionId} started`);
     return sessionId;
   }
 
@@ -414,11 +414,11 @@ Return analysis as JSON array with enhanced lead data.
       session.learningOutcomes = learningOutcomes.outcomes;
       session.improvementSuggestions = learningOutcomes.improvements;
 
-      console.log(`🎓 Learning session ${sessionId} completed`);
-      console.log(
+      console.info(`🎓 Learning session ${sessionId} completed`);
+      console.info(
         `📊 Success Rate: ${((results.successfulLeads / results.leadsGenerated) * 100).toFixed(1)}%`
       );
-      console.log(`🧠 Key Learnings: ${learningOutcomes.outcomes.join(', ')}`);
+      console.info(`🧠 Key Learnings: ${learningOutcomes.outcomes.join(', ')}`);
     }
   }
 
@@ -485,7 +485,7 @@ Return as JSON with 'outcomes' and 'improvements' arrays.
    * Update AI patterns based on successful outcomes
    */
   async updateAIPatterns(successfulLeads: LeadProspect[]): Promise<void> {
-    console.log('🧠 Updating AI patterns based on successful leads...');
+    console.info('🧠 Updating AI patterns based on successful leads...');
 
     // Analyze successful leads for pattern improvements
     const patternUpdates = await this.analyzeSuccessfulLeads(successfulLeads);
@@ -504,7 +504,7 @@ Return as JSON with 'outcomes' and 'improvements' arrays.
         pattern.usageCount += 1;
         pattern.lastUsed = new Date();
 
-        console.log(
+        console.info(
           `📈 Pattern '${pattern.name}' improved by ${relevantUpdate.improvement}%`
         );
       }
@@ -597,7 +597,7 @@ Return as JSON with 'outcomes' and 'improvements' arrays.
    * Run a complete AI training demonstration
    */
   async runTrainingDemo(): Promise<void> {
-    console.log('🎓 Starting AI Lead Generation Training Demo...');
+    console.info('🎓 Starting AI Lead Generation Training Demo...');
 
     // Start learning session
     const sessionId = await this.startLearningSession();
@@ -607,11 +607,11 @@ Return as JSON with 'outcomes' and 'improvements' arrays.
 
     // Generate sample leads
     const leads = await leadGenerationService.generateAILeads();
-    console.log(`📋 Generated ${leads.length} sample leads`);
+    console.info(`📋 Generated ${leads.length} sample leads`);
 
     // Analyze leads with AI
     const analyzedLeads = await this.analyzeLeadsWithAI(leads);
-    console.log(`🤖 AI analyzed and enhanced ${analyzedLeads.length} leads`);
+    console.info(`🤖 AI analyzed and enhanced ${analyzedLeads.length} leads`);
 
     // Simulate successful outcomes
     const successfulLeads = analyzedLeads.filter((lead) => lead.leadScore > 85);
@@ -631,9 +631,9 @@ Return as JSON with 'outcomes' and 'improvements' arrays.
 
     // Show insights
     const insights = await this.getAIInsights();
-    console.log('🧠 AI Training Demo Results:', insights);
+    console.info('🧠 AI Training Demo Results:', insights);
 
-    console.log('✅ AI Training Demo completed successfully!');
+    console.info('✅ AI Training Demo completed successfully!');
   }
 }
 

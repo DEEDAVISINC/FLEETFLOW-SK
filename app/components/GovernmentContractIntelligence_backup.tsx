@@ -163,37 +163,37 @@ export default function GovernmentContractIntelligence() {
       {/* Navigation Tabs */}
       <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' }}>
         <TabButton
-          id="overview"
-          label="Market Overview"
-          icon="📊"
+          id="overview""
+          label=""Market Overview""
+          icon=""📊""
           active={activeTab === 'overview'}
           onClick={() => setActiveTab('overview')}
         />
         <TabButton
-          id="contracts"
-          label="Active Contracts"
-          icon="📋"
+          id="contracts""
+          label=""Active Contracts""
+          icon=""📋""
           active={activeTab === 'contracts'}
           onClick={() => setActiveTab('contracts')}
         />
         <TabButton
-          id="competitors"
-          label="Competitor Analysis"
-          icon="🎯"
+          id="competitors""
+          label=""Competitor Analysis""
+          icon=""🎯""
           active={activeTab === 'competitors'}
           onClick={() => setActiveTab('competitors')}
         />
         <TabButton
-          id="agencies"
-          label="Agency Spending"
-          icon="🏢"
+          id="agencies""
+          label=""Agency Spending""
+          icon=""🏢""
           active={activeTab === 'agencies'}
           onClick={() => setActiveTab('agencies')}
         />
         <TabButton
-          id="geography"
-          label="Geographic Analysis"
-          icon="🗺️"
+          id="geography""
+          label=""Geographic Analysis""
+          icon=""🗺️""
           active={activeTab === 'geography'}
           onClick={() => setActiveTab('geography')}
         />

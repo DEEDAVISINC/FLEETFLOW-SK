@@ -1089,7 +1089,7 @@ export async function POST(request: NextRequest) {
       serviceLeads = serviceLeads.slice(0, 500);
     }
 
-    console.log(
+    console.info(
       `✅ New service lead created: ${newLead.companyName} - ${newLead.serviceCategory} (Score: ${newLead.leadScore})`
     );
 
@@ -1158,7 +1158,7 @@ export async function PUT(request: NextRequest) {
 
     serviceLeads[leadIndex] = updatedLead;
 
-    console.log(
+    console.info(
       `✅ Service lead updated: ${updatedLead.companyName} - ${activityType || 'General Update'}`
     );
 
@@ -1202,7 +1202,7 @@ export async function DELETE(request: NextRequest) {
 
     const deletedLead = serviceLeads.splice(leadIndex, 1)[0];
 
-    console.log(`✅ Service lead deleted: ${deletedLead.companyName}`);
+    console.info(`✅ Service lead deleted: ${deletedLead.companyName}`);
 
     return NextResponse.json({
       success: true,

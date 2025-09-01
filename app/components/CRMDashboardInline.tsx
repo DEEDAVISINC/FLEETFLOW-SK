@@ -13,7 +13,7 @@ interface Lead {
 }
 
 export default function CRMDashboardInline() {
-  console.log('🔥 CRMDashboardInline LOADED - INLINE STYLES!');
+  console.info('🔥 CRMDashboardInline LOADED - INLINE STYLES!');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,34 +68,34 @@ export default function CRMDashboardInline() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('🔄 CRMDashboardInline: Starting data fetch...');
+        console.info('🔄 CRMDashboardInline: Starting data fetch...');
         const response = await fetch(
           '/api/ai-flow/services-sales?tenantId=tenant-demo-123'
         );
-        console.log('📡 CRMDashboardInline: Response status:', response.status);
+        console.info('📡 CRMDashboardInline: Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('📊 CRMDashboardInline: Data received:', data);
+        console.info('📊 CRMDashboardInline: Data received:', data);
 
         if (data.success && data.data?.serviceLeads) {
-          console.log(
+          console.info(
             '✅ CRMDashboardInline: Setting API leads:',
             data.data.serviceLeads.length
           );
           setLeads(data.data.serviceLeads);
         } else {
-          console.log(
+          console.info(
             '🔄 CRMDashboardInline: Using mock data due to invalid API structure'
           );
           setLeads(mockLeads);
         }
       } catch (error) {
         console.error('❌ CRMDashboardInline: Fetch error:', error);
-        console.log('🔄 CRMDashboardInline: Using fallback mock data');
+        console.info('🔄 CRMDashboardInline: Using fallback mock data');
         setLeads(mockLeads);
       } finally {
         setLoading(false);

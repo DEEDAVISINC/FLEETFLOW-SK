@@ -541,7 +541,7 @@ export default function SignUpPage() {
                 color: '#1f2937',
               }}
             >
-              Let's get to know you
+              Let&apos;s get to know you
             </h2>
             <div style={{ display: 'grid', gap: '20px' }}>
               <div
@@ -1109,7 +1109,7 @@ export default function SignUpPage() {
                     color: 'rgba(255, 255, 255, 0.8)',
                   }}
                 >
-                  I'd like to receive updates about FleetFlow features and
+                  I&apos;d like to receive updates about FleetFlow features and
                   transportation industry news
                 </span>
               </label>
@@ -1141,8 +1141,8 @@ export default function SignUpPage() {
               }}
             >
               <p style={{ fontSize: '14px', color: '#60a5fa', margin: 0 }}>
-                🔒 We'll securely verify your card details. You won't be charged
-                until your 14-day free trial ends.
+                🔒 We&apos;ll securely verify your card details. You won&apos;t
+                be charged until your 14-day free trial ends.
               </p>
             </div>
 

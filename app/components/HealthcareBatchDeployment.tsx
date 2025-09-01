@@ -228,7 +228,7 @@ export default function HealthcareBatchDeployment({
       })
     );
 
-    console.log('🚀 DEPLOYING ALL HEALTHCARE TASKS:', tasksToDeploy);
+    console.info('🚀 DEPLOYING ALL HEALTHCARE TASKS:', tasksToDeploy);
     onBatchDeploy(tasksToDeploy);
     onClose();
   };

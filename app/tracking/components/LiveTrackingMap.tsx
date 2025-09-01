@@ -1,75 +1,75 @@
-'use client'
+'use client';
 
-import React, { useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 // Add debounce utility function
 const useDebounce = (value: any, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = React.useState(value)
+  const [debouncedValue, setDebouncedValue] = React.useState(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+      setDebouncedValue(value);
+    }, delay);
 
     return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
 
-  return debouncedValue
-}
+  return debouncedValue;
+};
 
 interface Shipment {
-  id: string
-  status: 'in-transit' | 'delivered' | 'delayed' | 'loading' | 'unloading'
-  origin: string
-  destination: string
-  carrier: string
-  progress: number
-  currentLocation: [number, number]
-  originCoords: [number, number]
-  destCoords: [number, number]
-  speed: number
-  eta: string
-  driverName?: string
-  driverPhone?: string
-  vehicleInfo?: string
-  temperature?: number
-  humidity?: number
-  fuelLevel?: number
-  lastUpdate?: string
-  alerts?: string[]
-  priority: 'high' | 'medium' | 'low'
-  value: number
-  weight: number
-  commodity: string
+  id: string;
+  status: 'in-transit' | 'delivered' | 'delayed' | 'loading' | 'unloading';
+  origin: string;
+  destination: string;
+  carrier: string;
+  progress: number;
+  currentLocation: [number, number];
+  originCoords: [number, number];
+  destCoords: [number, number];
+  speed: number;
+  eta: string;
+  driverName?: string;
+  driverPhone?: string;
+  vehicleInfo?: string;
+  temperature?: number;
+  humidity?: number;
+  fuelLevel?: number;
+  lastUpdate?: string;
+  alerts?: string[];
+  priority: 'high' | 'medium' | 'low';
+  value: number;
+  weight: number;
+  commodity: string;
   // Enhanced fields
-  createdDate?: string
-  pickupDate?: string
-  deliveryDate?: string
-  customerName?: string
-  miles?: number
+  createdDate?: string;
+  pickupDate?: string;
+  deliveryDate?: string;
+  customerName?: string;
+  miles?: number;
   // Clustering support
-  isCluster?: boolean
-  shipments?: Shipment[]
-  position?: [number, number]
+  isCluster?: boolean;
+  shipments?: Shipment[];
+  position?: [number, number];
 }
 
 interface MapFeatures {
-  showTraffic: boolean
-  showWeather: boolean
-  showSatellite: boolean
-  showClustering: boolean
-  mapType: 'roadmap' | 'satellite' | 'hybrid' | 'terrain'
+  showTraffic: boolean;
+  showWeather: boolean;
+  showSatellite: boolean;
+  showClustering: boolean;
+  mapType: 'roadmap' | 'satellite' | 'hybrid' | 'terrain';
 }
 
 interface LiveTrackingMapProps {
-  shipments: Shipment[]
-  selectedShipment: string | null
-  onSelectShipment: (shipmentId: string | null) => void
-  autoTracking: boolean
-  showRoutes: boolean
-  mapFeatures: MapFeatures
+  shipments: Shipment[];
+  selectedShipment: string | null;
+  onSelectShipment: (shipmentId: string | null) => void;
+  autoTracking: boolean;
+  showRoutes: boolean;
+  mapFeatures: MapFeatures;
 }
 
 export default React.memo(function LiveTrackingMap({
@@ -78,29 +78,30 @@ export default React.memo(function LiveTrackingMap({
   onSelectShipment,
   autoTracking,
   showRoutes,
-  mapFeatures
+  mapFeatures,
 }: LiveTrackingMapProps) {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const debouncedShipments = useDebounce(shipments, 300)
+  const mapRef = useRef<HTMLDivElement>(null);
+  const debouncedShipments = useDebounce(shipments, 300);
 
   // Create a simple interactive map visualization
   const mapHTML = useMemo(() => {
-    const mapCenter = selectedShipment && shipments.find(s => s.id === selectedShipment)
-      ? shipments.find(s => s.id === selectedShipment)!.currentLocation
-      : [39.8283, -98.5795] // Center of US
+    const mapCenter =
+      selectedShipment && shipments.find((s) => s.id === selectedShipment)
+        ? shipments.find((s) => s.id === selectedShipment)!.currentLocation
+        : [39.8283, -98.5795]; // Center of US
 
-    const clusteredShipments = shipments.filter(s => !s.isCluster)
-    const clusterMarkers = shipments.filter(s => s.isCluster)
+    const clusteredShipments = shipments.filter((s) => !s.isCluster);
+    const clusterMarkers = shipments.filter((s) => s.isCluster);
 
     return `
       <!DOCTYPE html>
       <html>
         <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <meta charset=""utf-8"">
+          <meta name="viewport"" content=""width=device-width, initial-scale=1"">
           <title>FleetFlow Live Tracking Map</title>
-          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+          <link rel=""stylesheet"" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"" />
+          <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js""></script>
           <style>
             body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
             #map { height: 100vh; width: 100vw; }
@@ -158,7 +159,7 @@ export default React.memo(function LiveTrackingMap({
           </style>
         </head>
         <body>
-          <div id="map"></div>
+          <div id="map""></div>
           <script>
             let map;
             let markers = [];
@@ -210,14 +211,22 @@ export default React.memo(function LiveTrackingMap({
               tileLayer.addTo(map);
 
               // Add shipment markers
-              ${clusteredShipments.map(shipment => `
+              ${clusteredShipments
+                .map(
+                  (shipment) => `
                 addShipmentMarker(${JSON.stringify(shipment)});
-              `).join('')}
+              `
+                )
+                .join('')}
 
               // Add cluster markers
-              ${clusterMarkers.map(cluster => `
+              ${clusterMarkers
+                .map(
+                  (cluster) => `
                 addClusterMarker(${JSON.stringify(cluster)});
-              `).join('')}
+              `
+                )
+                .join('')}
 
               // Auto-tracking simulation
               if (${autoTracking}) {
@@ -249,7 +258,7 @@ export default React.memo(function LiveTrackingMap({
 
     // Create custom icon
               const iconHtml = \`
-      <div style="
+      <div style=""
                   background: \${color};
         color: white;
         border-radius: 50%;
@@ -262,7 +271,7 @@ export default React.memo(function LiveTrackingMap({
         box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         border: 2px solid white;
         position: relative;
-                " class="\${shipment.status === 'in-transit' ? 'pulse-marker' : ''}">
+                "" class=""\${shipment.status === 'in-transit' ? 'pulse-marker' : ''}"">
                   \${emoji}
       </div>
               \`;
@@ -282,20 +291,20 @@ export default React.memo(function LiveTrackingMap({
 
     // Create popup content
               const popupContent = \`
-                <div class="shipment-popup">
-                  <div class="popup-header" style="color: \${color};">
+                <div class=""shipment-popup"">
+                  <div class=""popup-header"" style=""color: \${color};"">
                     \${shipment.id}
         </div>
-                  <div class="popup-row"><strong>Status:</strong> \${shipment.status.replace('-', ' ').replace(/\\b\\w/g, l => l.toUpperCase())}</div>
-                  <div class="popup-row"><strong>Driver:</strong> \${shipment.driverName || 'N/A'}</div>
-                  <div class="popup-row"><strong>Phone:</strong> \${shipment.driverPhone || 'N/A'}</div>
-                  <div class="popup-row"><strong>Carrier:</strong> \${shipment.carrier}</div>
-                  <div class="popup-row"><strong>Route:</strong> \${shipment.origin} → \${shipment.destination}</div>
-                  <div class="popup-row"><strong>Progress:</strong> \${shipment.progress}%</div>
-                  <div class="popup-row"><strong>Speed:</strong> \${shipment.speed} mph</div>
-                  <div class="popup-row"><strong>ETA:</strong> \${shipment.eta}</div>
-                  \${shipment.temperature ? '<div class="popup-row"><strong>Temperature:</strong> ' + shipment.temperature + '°F</div>' : ''}
-                  <button class="popup-button" onclick="selectShipment('\${shipment.id}')">
+                  <div class=""popup-row""><strong>Status:</strong> \${shipment.status.replace('-', ' ').replace(/\\b\\w/g, l => l.toUpperCase())}</div>
+                  <div class=""popup-row""><strong>Driver:</strong> \${shipment.driverName || 'N/A'}</div>
+                  <div class=""popup-row""><strong>Phone:</strong> \${shipment.driverPhone || 'N/A'}</div>
+                  <div class=""popup-row""><strong>Carrier:</strong> \${shipment.carrier}</div>
+                  <div class=""popup-row""><strong>Route:</strong> \${shipment.origin} → \${shipment.destination}</div>
+                  <div class=""popup-row""><strong>Progress:</strong> \${shipment.progress}%</div>
+                  <div class=""popup-row""><strong>Speed:</strong> \${shipment.speed} mph</div>
+                  <div class=""popup-row""><strong>ETA:</strong> \${shipment.eta}</div>
+                  \${shipment.temperature ? '<div class=""popup-row""><strong>Temperature:</strong> ' + shipment.temperature + '°F</div>' : ''}
+                  <button class=""popup-button"" onclick=""selectShipment('\${shipment.id}')"">
             Track This Load
           </button>
         </div>
@@ -339,7 +348,7 @@ export default React.memo(function LiveTrackingMap({
 
             function addClusterMarker(cluster) {
               const iconHtml = \`
-                <div class="cluster-marker">
+                <div class=""cluster-marker"">
                   \${cluster.shipments.length}
                 </div>
               \`;
@@ -354,12 +363,12 @@ export default React.memo(function LiveTrackingMap({
                 .addTo(map);
 
               const popupContent = \`
-                <div class="shipment-popup">
-                  <div class="popup-header">Shipment Cluster</div>
-                  <div class="popup-row"><strong>Shipments:</strong> \${cluster.shipments.length}</div>
-                  <div style="max-height: 200px; overflow-y: auto; margin-top: 8px;">
+                <div class=""shipment-popup"">
+                  <div class=""popup-header"">Shipment Cluster</div>
+                  <div class=""popup-row""><strong>Shipments:</strong> \${cluster.shipments.length}</div>
+                  <div style=""max-height: 200px; overflow-y: auto; margin-top: 8px;"">
                     \${cluster.shipments.map(s => \`
-                      <div style="border-bottom: 1px solid #eee; padding: 4px 0;">
+                      <div style=""border-bottom: 1px solid #eee; padding: 4px 0;"">
                         <strong>\${s.id}</strong> - \${s.status}<br>
                         <small>\${s.origin} → \${s.destination}</small>
                       </div>
@@ -390,91 +399,42 @@ export default React.memo(function LiveTrackingMap({
   // Center map function
   const centerMap = useCallback(() => {
     if (mapRef.current && selectedShipment) {
-      const shipment = debouncedShipments.find((s: Shipment) => s.id === selectedShipment)
+      const shipment = debouncedShipments.find(
+        (s: Shipment) => s.id === selectedShipment
+      );
       if (shipment) {
         // Send message to iframe to center map
-        const iframe = mapRef.current.querySelector('iframe') as HTMLIFrameElement
+        const iframe = mapRef.current.querySelector(
+          'iframe'
+        ) as HTMLIFrameElement;
         if (iframe?.contentWindow) {
-          iframe.contentWindow.postMessage({
-            type: 'centerMap',
-            location: shipment.currentLocation
-          }, '*')
+          iframe.contentWindow.postMessage(
+            {
+              type: 'centerMap',
+              location: shipment.currentLocation,
+            },
+            '*'
+          );
         }
       }
     }
-  }, [debouncedShipments, selectedShipment])
+  }, [debouncedShipments, selectedShipment]);
 
   // Handle messages from iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'shipmentSelected') {
-        onSelectShipment(event.data.shipmentId)
+        onSelectShipment(event.data.shipmentId);
       }
-    }
+    };
 
-    window.addEventListener('message', handleMessage)
-    return () => window.removeEventListener('message', handleMessage)
-  }, [onSelectShipment])
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [onSelectShipment]);
 
   return (
-    <>
-      <div 
-        ref={mapRef} 
-        style={{ 
-          width: '100%', 
-          height: '100%',
-          position: 'relative'
-        }} 
-      >
-        <iframe
-          style={{ 
-            width: '100%', 
-            height: '100%',
-            border: 'none'
-          }}
-          srcDoc={mapHTML}
-          title="Live Tracking Map"
-        />
-      </div>
-      
-      {/* Center Map Button */}
-      <button
-        onClick={centerMap}
-        style={{
-          position: 'absolute',
-          bottom: '1rem',
-          right: '1rem',
-          zIndex: 500,
-          background: 'white',
-          border: '1px solid #e5e7eb',
-          borderRadius: '8px',
-          padding: '0.75rem',
-          cursor: 'pointer',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          fontSize: '1rem'
-        }}
-        title="Center Map"
-      >
-        🎯
-      </button>
-
-      {/* Add animation styles */}
-      <style jsx>{`
-        @keyframes pulse {
-          0% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.2);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
-    </>
-  )
-})
+    <div>
+      <h1>Live Tracking Map</h1>
+    </div>
+  );
+});

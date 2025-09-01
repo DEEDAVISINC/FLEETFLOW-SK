@@ -79,18 +79,18 @@ export default function AdvancedWeatherIntegration() {
   // Simplified data loading - load immediately when mounted and enabled
   useEffect(() => {
     if (mounted && forceEnabled) {
-      console.log('Weather component mounted and enabled - loading data...');
+      console.info('Weather component mounted and enabled - loading data...');
       loadWeatherData();
     }
   }, [mounted, forceEnabled]);
 
   const loadWeatherData = async () => {
-    console.log('🌤️ loadWeatherData called');
+    console.info('🌤️ loadWeatherData called');
     setLoading(true);
     try {
-      console.log('🌤️ Fetching weather data from /api/weather/current-alerts');
+      console.info('🌤️ Fetching weather data from /api/weather/current-alerts');
       const response = await fetch('/api/weather/current-alerts');
-      console.log('🌤️ Response status:', response.status);
+      console.info('🌤️ Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
 

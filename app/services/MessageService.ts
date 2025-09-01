@@ -140,11 +140,11 @@ export class MessageService {
 
     if (supabaseUrl && supabaseKey) {
       this.supabase = createClient(supabaseUrl, supabaseKey);
-      console.log(
+      console.info(
         '📬 MessageService initialized for intraoffice communications'
       );
     } else {
-      console.log(
+      console.info(
         '📬 MessageService initialized in development mode (Supabase credentials not configured)'
       );
       // Create a mock supabase client for development
@@ -167,14 +167,14 @@ export class MessageService {
   ): Promise<string | null> {
     // Return early if Supabase is not configured
     if (!this.supabase) {
-      console.log(
+      console.info(
         '📬 MessageService: Supabase not configured, skipping message send'
       );
       return null;
     }
 
     try {
-      console.log(`📤 Sending ${message.messageType}: ${message.subject}`);
+      console.info(`📤 Sending ${message.messageType}: ${message.subject}`);
 
       // Generate unique ID
       const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -228,7 +228,7 @@ export class MessageService {
         .single();
 
       if (error) {
-        console.log(
+        console.info(
           '📭 MessageService: Database not configured, message not stored'
         );
         return null;
@@ -237,7 +237,7 @@ export class MessageService {
       // Send notifications to recipients
       await this.createMessageNotifications(fullMessage);
 
-      console.log(`✅ Message sent: ${messageId}`);
+      console.info(`✅ Message sent: ${messageId}`);
       return messageId;
     } catch (error) {
       console.error('❌ MessageService.sendMessage error:', error);
@@ -299,7 +299,7 @@ export class MessageService {
       const { data, error, count } = await query;
 
       if (error) {
-        console.log(
+        console.info(
           '📭 MessageService: Database not configured, returning empty messages'
         );
         return { messages: [], total: 0 };
@@ -312,7 +312,7 @@ export class MessageService {
         total: count || 0,
       };
     } catch (error) {
-      console.log(
+      console.info(
         '📭 MessageService: Connection not available, returning empty messages'
       );
       return { messages: [], total: 0 };
@@ -338,7 +338,7 @@ export class MessageService {
         .order('created_at', { ascending: true });
 
       if (error || !data || data.length === 0) {
-        console.log(
+        console.info(
           '📭 MessageService: Database not configured, returning empty thread'
         );
         return null;
@@ -469,13 +469,13 @@ export class MessageService {
         .contains('to_user_ids', [userId]);
 
       if (error) {
-        console.log(
+        console.info(
           '📭 MessageService: Database not configured, cannot mark as read'
         );
         return false;
       }
 
-      console.log(`✅ Message marked as read: ${messageId}`);
+      console.info(`✅ Message marked as read: ${messageId}`);
       return true;
     } catch (error) {
       console.error('❌ MessageService.markMessageAsRead error:', error);
@@ -541,7 +541,7 @@ export class MessageService {
         return false;
       }
 
-      console.log(`✅ Message acknowledged: ${messageId} by ${userName}`);
+      console.info(`✅ Message acknowledged: ${messageId} by ${userName}`);
       return true;
     } catch (error) {
       console.error('❌ MessageService.acknowledgeMessage error:', error);
@@ -593,7 +593,7 @@ export class MessageService {
         return null;
       }
 
-      console.log(`💾 Draft saved: ${draftId}`);
+      console.info(`💾 Draft saved: ${draftId}`);
       return draftId;
     } catch (error) {
       console.error('❌ MessageService.saveDraft error:', error);
@@ -792,7 +792,7 @@ export class MessageService {
     userRole: string,
     tenantId: string = 'default'
   ): Promise<void> {
-    console.log(
+    console.info(
       `📬 Generating sample intraoffice messages for user: ${userId}`
     );
 
@@ -848,7 +848,7 @@ export class MessageService {
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
 
-    console.log(
+    console.info(
       `✅ Generated ${sampleMessages.length} sample intraoffice messages`
     );
   }

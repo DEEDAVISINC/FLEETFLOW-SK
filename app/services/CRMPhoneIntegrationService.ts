@@ -94,7 +94,7 @@ export class CRMPhoneIntegrationService {
    * Handle call started event
    */
   private async handleCallStarted(callRecord: CallRecord): Promise<void> {
-    console.log(`🔗 CRM Integration: Call started - ${callRecord.callId}`);
+    console.info(`🔗 CRM Integration: Call started - ${callRecord.callId}`);
 
     // Try to match phone number with existing CRM contacts
     const contact = await this.findContactByPhone(callRecord.customerPhone);
@@ -109,12 +109,12 @@ export class CRMPhoneIntegrationService {
           contact.personalInfo?.lastName,
       });
 
-      console.log(
+      console.info(
         `✅ Call matched to CRM contact: ${contact.personalInfo?.firstName} ${contact.personalInfo?.lastName}`
       );
     } else {
       // Create opportunity to add new contact
-      console.log(`💡 New contact opportunity: ${callRecord.customerPhone}`);
+      console.info(`💡 New contact opportunity: ${callRecord.customerPhone}`);
 
       if (callRecord.callDirection === 'inbound') {
         // For inbound calls, suggest creating a new contact
@@ -127,7 +127,7 @@ export class CRMPhoneIntegrationService {
    * Handle call ended event
    */
   private async handleCallEnded(callRecord: CallRecord): Promise<void> {
-    console.log(`🔗 CRM Integration: Call ended - ${callRecord.callId}`);
+    console.info(`🔗 CRM Integration: Call ended - ${callRecord.callId}`);
 
     // Create CRM call activity
     await this.createCRMCallActivity(callRecord);
@@ -148,7 +148,7 @@ export class CRMPhoneIntegrationService {
     callId: string,
     note: CallNote
   ): Promise<void> {
-    console.log(`🔗 CRM Integration: Note added to call ${callId}`);
+    console.info(`🔗 CRM Integration: Note added to call ${callId}`);
 
     const callRecords = phoneMonitoringService.getCallRecords({ limit: 100 });
     const callRecord = callRecords.find((c) => c.callId === callId);
@@ -219,7 +219,7 @@ export class CRMPhoneIntegrationService {
     };
 
     // TODO: Save to CRM system
-    console.log(`💾 CRM Call Activity Created:`, activity);
+    console.info(`💾 CRM Call Activity Created:`, activity);
   }
 
   /**
@@ -247,7 +247,7 @@ export class CRMPhoneIntegrationService {
     };
 
     // TODO: Update CRM contact
-    console.log(`🔄 Contact Relationship Updated:`, relationshipUpdate);
+    console.info(`🔄 Contact Relationship Updated:`, relationshipUpdate);
   }
 
   /**
@@ -265,7 +265,7 @@ export class CRMPhoneIntegrationService {
     };
 
     // TODO: Present suggestion to user or auto-create
-    console.log(`💡 New Contact Suggestion:`, suggestion);
+    console.info(`💡 New Contact Suggestion:`, suggestion);
   }
 
   /**
@@ -285,7 +285,7 @@ export class CRMPhoneIntegrationService {
     };
 
     // TODO: Add to CRM system
-    console.log(`📝 Note Added to CRM Contact ${contactId}:`, crmNote);
+    console.info(`📝 Note Added to CRM Contact ${contactId}:`, crmNote);
   }
 
   /**
@@ -296,7 +296,7 @@ export class CRMPhoneIntegrationService {
     details: string
   ): Promise<void> {
     // TODO: Update contact status in CRM
-    console.log(`🎯 Contact ${contactId} marked as opportunity: ${details}`);
+    console.info(`🎯 Contact ${contactId} marked as opportunity: ${details}`);
   }
 
   /**
@@ -307,7 +307,7 @@ export class CRMPhoneIntegrationService {
     details: string
   ): Promise<void> {
     // TODO: Create support ticket or flag contact
-    console.log(`🚨 Issue flagged for contact ${contactId}: ${details}`);
+    console.info(`🚨 Issue flagged for contact ${contactId}: ${details}`);
   }
 
   /**
@@ -337,7 +337,7 @@ export class CRMPhoneIntegrationService {
 
     // TODO: Execute workflows
     if (workflows.length > 0) {
-      console.log(
+      console.info(
         `⚡ Triggered workflows for call ${callRecord.callId}:`,
         workflows
       );

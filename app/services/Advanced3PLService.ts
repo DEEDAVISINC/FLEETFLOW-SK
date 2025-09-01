@@ -488,7 +488,7 @@ class Advanced3PLService extends EventEmitter {
       },
     ];
 
-    console.log(
+    console.info(
       '🏭 Advanced 3PL Service initialized with enterprise capabilities'
     );
   }
@@ -549,7 +549,7 @@ class Advanced3PLService extends EventEmitter {
     this.vendorConsolidationPlans.set(consolidationPlan.id, consolidationPlan);
     this.emit('consolidationPlanCreated', consolidationPlan);
 
-    console.log(
+    console.info(
       `📦 Vendor consolidation plan created: ${consolidationPlan.id} - $${costAnalysis.savingsAmount} savings`
     );
     return consolidationPlan;
@@ -662,7 +662,7 @@ class Advanced3PLService extends EventEmitter {
     this.bigBulkyOrders.set(delivery.id, delivery);
     this.emit('bigBulkyScheduled', delivery);
 
-    console.log(
+    console.info(
       `🚚 Big & Bulky delivery scheduled: ${delivery.id} - ${delivery.equipmentRequirement.vehicleType}`
     );
     return delivery;
@@ -729,7 +729,7 @@ class Advanced3PLService extends EventEmitter {
     );
 
     if (shipment.weight > availableCapacity) {
-      console.log(`❌ Insufficient pool capacity for shipment ${shipment.id}`);
+      console.info(`❌ Insufficient pool capacity for shipment ${shipment.id}`);
       return false;
     }
 
@@ -744,7 +744,7 @@ class Advanced3PLService extends EventEmitter {
     }
 
     this.emit('shipmentAddedToPool', { hubId, shipment });
-    console.log(`📦 Shipment ${shipment.id} added to pool ${hubId}`);
+    console.info(`📦 Shipment ${shipment.id} added to pool ${hubId}`);
     return true;
   }
 
@@ -768,7 +768,7 @@ class Advanced3PLService extends EventEmitter {
     );
 
     if (availableVehicles.length === 0) {
-      console.log(`⚠️ No available vehicles for pool dispatch at ${hub.name}`);
+      console.info(`⚠️ No available vehicles for pool dispatch at ${hub.name}`);
       return;
     }
 
@@ -783,7 +783,7 @@ class Advanced3PLService extends EventEmitter {
       shipmentCount: hub.currentPool.shipmentCount,
     });
 
-    console.log(
+    console.info(
       `🚚 Pool dispatched from ${hub.name} - ${hub.currentPool.shipmentCount} shipments`
     );
 
@@ -910,7 +910,7 @@ class Advanced3PLService extends EventEmitter {
     };
 
     this.emit('notificationSent', notification);
-    console.log(`📧 Automated notification sent: ${rule.name}`);
+    console.info(`📧 Automated notification sent: ${rule.name}`);
   }
 
   // ========================================
@@ -975,11 +975,11 @@ class Advanced3PLService extends EventEmitter {
     const gwfMetrics = goWithTheFlowService.getSystemMetrics();
     const equipmentBreakdown = goWithTheFlowService.getEquipmentBreakdown();
 
-    console.log('🔗 Integrating Advanced 3PL with Go With The Flow network');
-    console.log(
+    console.info('🔗 Integrating Advanced 3PL with Go With The Flow network');
+    console.info(
       `Available drivers: ${gwfMetrics.onlineDrivers}/${gwfMetrics.totalDrivers}`
     );
-    console.log(`Equipment capacity:`, equipmentBreakdown.availableCapacity);
+    console.info(`Equipment capacity:`, equipmentBreakdown.availableCapacity);
 
     // Use Go With The Flow network for final mile deliveries
     this.bigBulkyOrders.forEach((order) => {
@@ -991,7 +991,7 @@ class Advanced3PLService extends EventEmitter {
         );
 
       if (availableDrivers.length > 0) {
-        console.log(
+        console.info(
           `✅ Matched driver ${availableDrivers[0].name} for big & bulky order ${order.id}`
         );
       }

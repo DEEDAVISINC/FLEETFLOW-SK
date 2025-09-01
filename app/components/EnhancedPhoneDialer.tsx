@@ -212,13 +212,13 @@ export default function EnhancedPhoneDialer() {
         const platform =
           selectedPlatform === 'auto' ? preferredPlatform : selectedPlatform;
 
-        console.log(
+        console.info(
           `📞 Making call using ${platform} for ${tenantPhoneConfig.tenantName}`
         );
-        console.log(
+        console.info(
           `From: ${tenantPhoneConfig.primaryPhone} (${tenantPhoneConfig.callerIdName})`
         );
-        console.log(`To: ${phoneNumber}`);
+        console.info(`To: ${phoneNumber}`);
 
         if (platform === 'freeswitch') {
         try {
@@ -251,7 +251,7 @@ export default function EnhancedPhoneDialer() {
               determinePurposeFromContact(selectedContact) || 'dispatch',
           });
 
-          console.log(
+          console.info(
             `📊 FreeSWITCH call monitoring started: ${monitoringCallId}`
           );
         } catch (freeswitchError) {
@@ -306,10 +306,10 @@ export default function EnhancedPhoneDialer() {
           sentiment: 'neutral',
         });
 
-        console.log(`✅ Call initiated successfully:`);
-        console.log(`Call SID: ${result.callSid}`);
-        console.log(`From: ${result.callerNumber} (${result.tenantName})`);
-        console.log(`To: ${phoneNumber}`);
+        console.info(`✅ Call initiated successfully:`);
+        console.info(`Call SID: ${result.callSid}`);
+        console.info(`From: ${result.callerNumber} (${result.tenantName})`);
+        console.info(`To: ${phoneNumber}`);
 
         // Start call monitoring
         const { user } = getCurrentUser();
@@ -329,7 +329,7 @@ export default function EnhancedPhoneDialer() {
           callPurpose: determinePurposeFromContact(selectedContact) || 'sales',
         });
 
-        console.log(`📊 Call monitoring started: ${monitoringCallId}`);
+        console.info(`📊 Call monitoring started: ${monitoringCallId}`);
       } else {
         throw new Error(result.error || 'Twilio call failed');
       }
@@ -349,7 +349,7 @@ export default function EnhancedPhoneDialer() {
         await freeSWITCHService.hangupCall(activeCall.id);
       } else {
         // Twilio hangup logic
-        console.log('Hanging up Twilio call:', activeCall.id);
+        console.info('Hanging up Twilio call:', activeCall.id);
       }
 
       // Track phone usage after call ends
@@ -361,7 +361,7 @@ export default function EnhancedPhoneDialer() {
       );
 
       if (usageResult.success && usageResult.cost && usageResult.cost > 0) {
-        console.log(`💰 Call completed. Overage charges: $${usageResult.cost.toFixed(2)}`);
+        console.info(`💰 Call completed. Overage charges: $${usageResult.cost.toFixed(2)}`);
       }
 
     } catch (error) {
@@ -473,7 +473,7 @@ export default function EnhancedPhoneDialer() {
       style={{
         color: '#ffffff',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Header */}

@@ -129,8 +129,8 @@ export default function DriversPortalPage() {
                     Driver ID / Email
                   </label>
                   <input
-                    type="text"
-                    placeholder="Enter your driver ID or email"
+                    type="text""
+                    placeholder="Enter your driver ID or email""
                     style={{
                       width: '100%',
                       padding: '14px 16px',
@@ -155,8 +155,8 @@ export default function DriversPortalPage() {
                     Password
                   </label>
                   <input
-                    type="password"
-                    placeholder="Enter your password"
+                    type="password""
+                    placeholder="Enter your password""
                     style={{
                       width: '100%',
                       padding: '14px 16px',
@@ -194,7 +194,7 @@ export default function DriversPortalPage() {
                 </button>
                 
                 <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                  <a href="#" style={{ color: '#2d3748', fontSize: '14px', textDecoration: 'none' }}>
+                  <a href="#"" style={{ color: '#2d3748', fontSize: '14px', textDecoration: 'none' }}>
                     Forgot your password?
                   </a>
                 </div>

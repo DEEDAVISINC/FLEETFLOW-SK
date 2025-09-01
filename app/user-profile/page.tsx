@@ -304,7 +304,7 @@ export default function UserProfile() {
     // Load appropriate onboarding based on user type
     if (currentUser.departmentCode === 'DM') {
       // DM users get driver onboarding workflow - handled by OnboardingIntegrationService
-      console.log(
+      console.info(
         '🚛 DM User: Driver onboarding will be loaded from carrier system'
       );
       // Driver onboarding is managed separately - we'll show it in the UI below
@@ -330,7 +330,7 @@ export default function UserProfile() {
       setWorkflowData(userWorkflow);
     } else {
       // If no workflow exists, create one (simulates user creation from user-management)
-      console.log('🔄 Initializing user workflow for:', currentUser.name);
+      console.info('🔄 Initializing user workflow for:', currentUser.name);
 
       // Initialize empty workflow data - no mock data
       if (currentUser.departmentCode === 'DM') {
@@ -2578,7 +2578,7 @@ export default function UserProfile() {
                         <PhoneConnectionSetup
                           user={currentUser}
                           onSetupComplete={(setupData) => {
-                            console.log(
+                            console.info(
                               'Phone setup completed for user:',
                               setupData
                             );

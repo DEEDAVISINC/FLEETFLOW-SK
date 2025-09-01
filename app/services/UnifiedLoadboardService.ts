@@ -262,7 +262,7 @@ export class UnifiedLoadboardService {
       // Update last update timestamp
       this.lastUpdate = Date.now();
 
-      console.log(
+      console.info(
         `🚛 Load ${loadId} status updated to ${newStatus} - All loadboards synchronized`
       );
     }
@@ -272,14 +272,14 @@ export class UnifiedLoadboardService {
   public addNewLoad(load: Load): void {
     this.currentLoads.push(load);
     this.notifyAllSubscribers();
-    console.log(`🚛 New load ${load.id} added - All loadboards synchronized`);
+    console.info(`🚛 New load ${load.id} added - All loadboards synchronized`);
   }
 
   // Remove load from all loadboards
   public removeLoad(loadId: string): void {
     this.currentLoads = this.currentLoads.filter((load) => load.id !== loadId);
     this.notifyAllSubscribers();
-    console.log(`🚛 Load ${loadId} removed - All loadboards synchronized`);
+    console.info(`🚛 Load ${loadId} removed - All loadboards synchronized`);
   }
 
   // Synchronize all loadboards with latest data
@@ -298,7 +298,7 @@ export class UnifiedLoadboardService {
     if (JSON.stringify(this.currentLoads) !== JSON.stringify(uniqueLoads)) {
       this.currentLoads = uniqueLoads;
       this.notifyAllSubscribers();
-      console.log(
+      console.info(
         `🔄 Loadboards synchronized - ${this.currentLoads.length} loads updated`
       );
     }
@@ -485,7 +485,7 @@ export class UnifiedLoadboardService {
   public forceSynchronization(): void {
     this.synchronizeAllLoadboards();
     this.notifyAllSubscribers();
-    console.log('🔄 Force synchronization completed across all loadboards');
+    console.info('🔄 Force synchronization completed across all loadboards');
   }
 }
 

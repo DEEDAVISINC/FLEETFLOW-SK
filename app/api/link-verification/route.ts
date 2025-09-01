@@ -3,7 +3,7 @@ import { resourceLinkVerifier } from '../../services/ResourceLinkVerifier';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('🔍 Starting comprehensive link verification...');
+    console.info('🔍 Starting comprehensive link verification...');
 
     // Get link statistics
     const stats = resourceLinkVerifier.getLinkStatistics();
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     if (isBrowser) {
       // In browser environment, use mock data for external links
-      console.log(
+      console.info(
         '🌐 Browser environment detected - using mock external link data'
       );
       externalResults = resourceLinkVerifier.getMockVerificationResults();
@@ -75,13 +75,13 @@ export async function GET(request: NextRequest) {
       };
     } else {
       // Server-side environment - run actual verification
-      console.log('🔗 Verifying external links...');
+      console.info('🔗 Verifying external links...');
       externalResults = await resourceLinkVerifier.verifyExternalLinks();
 
-      console.log('🏠 Verifying internal links...');
+      console.info('🏠 Verifying internal links...');
       internalResults = await resourceLinkVerifier.verifyInternalLinks();
 
-      console.log('📊 Generating verification report...');
+      console.info('📊 Generating verification report...');
       report = await resourceLinkVerifier.generateVerificationReport();
     }
 
@@ -102,8 +102,8 @@ export async function GET(request: NextRequest) {
         : 'Full verification completed',
     };
 
-    console.log('✅ Link verification completed successfully');
-    console.log(
+    console.info('✅ Link verification completed successfully');
+    console.info(
       `📈 Results: ${report.validExternalLinks}/${report.totalExternalLinks} external links valid, ${report.validInternalLinks}/${report.totalInternalLinks} internal links valid`
     );
 

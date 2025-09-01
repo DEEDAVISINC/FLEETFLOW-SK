@@ -289,7 +289,7 @@ export class FleetFlowSystemOrchestrator {
    * Uses AI to detect pickup location type and generate appropriate document
    */
   private async generateRouteDocument(loadData: any): Promise<any> {
-    console.log(
+    console.info(
       '📋 Generating route document with smart template selection...'
     );
 
@@ -411,7 +411,7 @@ export class FleetFlowSystemOrchestrator {
         });
     }
 
-    console.log(`✅ Route document generated using ${locationType} template`);
+    console.info(`✅ Route document generated using ${locationType} template`);
     return {
       document: routeDocument,
       locationType,
@@ -424,7 +424,7 @@ export class FleetFlowSystemOrchestrator {
    * Integrates with route optimization service for efficient routing
    */
   private async optimizeRoute(loadData: any, routeDocument: any): Promise<any> {
-    console.log('🗺️ Optimizing route with AI...');
+    console.info('🗺️ Optimizing route with AI...');
 
     const optimizationRequest = {
       vehicles: [
@@ -475,7 +475,7 @@ export class FleetFlowSystemOrchestrator {
     const optimizedRoutes =
       await this.routeOptimizer.optimizeRoutes(optimizationRequest);
 
-    console.log('✅ Route optimization completed');
+    console.info('✅ Route optimization completed');
     return {
       optimizedRoute: optimizedRoutes[0],
       optimizationScore: optimizedRoutes[0]?.efficiency || 85,
@@ -492,7 +492,7 @@ export class FleetFlowSystemOrchestrator {
     loadData: any,
     optimizedRoute: any
   ): Promise<any> {
-    console.log('📅 Creating optimal schedule...');
+    console.info('📅 Creating optimal schedule...');
 
     const scheduleData = {
       title: `Load ${loadData.id} - ${loadData.origin} → ${loadData.destination}`,
@@ -515,7 +515,7 @@ export class FleetFlowSystemOrchestrator {
 
     const scheduleResult = await this.scheduling.createSchedule(scheduleData);
 
-    console.log('✅ Schedule created with conflict detection');
+    console.info('✅ Schedule created with conflict detection');
     return {
       schedule: scheduleResult.schedule,
       conflicts: scheduleResult.conflicts || [],
@@ -531,7 +531,7 @@ export class FleetFlowSystemOrchestrator {
     loadData: any,
     workflow: IntegratedWorkflow
   ): Promise<any> {
-    console.log('🤖 Executing AI dispatch...');
+    console.info('🤖 Executing AI dispatch...');
 
     // Mock carrier data for dispatch matching
     const availableCarriers = [
@@ -575,7 +575,7 @@ export class FleetFlowSystemOrchestrator {
       specialInstructions: loadData.specialInstructions,
     });
 
-    console.log('✅ AI dispatch completed');
+    console.info('✅ AI dispatch completed');
     return {
       recommendation: dispatchRecommendation,
       distribution: distributionResult,
@@ -591,7 +591,7 @@ export class FleetFlowSystemOrchestrator {
     loadData: any,
     workflow: IntegratedWorkflow
   ): Promise<any> {
-    console.log('🛰️ Initializing live tracking...');
+    console.info('🛰️ Initializing live tracking...');
 
     const trackingData = {
       loadId: loadData.id,
@@ -621,7 +621,7 @@ export class FleetFlowSystemOrchestrator {
     };
 
     // In production, this would connect to actual GPS/ELD systems
-    console.log('✅ Live tracking initialized');
+    console.info('✅ Live tracking initialized');
     return {
       tracking: trackingData,
       trackingUrl: `https://track.fleetflow.com/load/${loadData.id}`,
@@ -636,7 +636,7 @@ export class FleetFlowSystemOrchestrator {
   private async sendIntegratedNotifications(
     workflow: IntegratedWorkflow
   ): Promise<void> {
-    console.log('📧 Sending integrated notifications...');
+    console.info('📧 Sending integrated notifications...');
 
     const loadId = workflow.loadId;
     const routeDoc =
@@ -681,11 +681,11 @@ export class FleetFlowSystemOrchestrator {
     // Send notifications
     try {
       // Mock notification sending (in production, these would use actual SMS/email services)
-      console.log('📱 Driver SMS:', driverNotification.sms);
-      console.log('📧 Driver Email:', driverNotification.email.subject);
-      console.log('📱 Carrier SMS:', carrierNotification.sms);
-      console.log('📧 Customer Email:', customerNotification.email.subject);
-      console.log('📧 Dispatch Email:', dispatchNotification.email.subject);
+      console.info('📱 Driver SMS:', driverNotification.sms);
+      console.info('📧 Driver Email:', driverNotification.email.subject);
+      console.info('📱 Carrier SMS:', carrierNotification.sms);
+      console.info('📧 Customer Email:', customerNotification.email.subject);
+      console.info('📧 Dispatch Email:', dispatchNotification.email.subject);
 
       workflow.notifications.push(
         { type: 'driver_sms', sent: new Date(), status: 'delivered' },
@@ -695,7 +695,7 @@ export class FleetFlowSystemOrchestrator {
         { type: 'dispatch_email', sent: new Date(), status: 'delivered' }
       );
 
-      console.log('✅ All notifications sent successfully');
+      console.info('✅ All notifications sent successfully');
     } catch (error) {
       console.error('❌ Notification sending failed:', error);
     }
@@ -754,7 +754,7 @@ export class FleetFlowSystemOrchestrator {
     this.workflows.set(workflow.id, workflow);
 
     // In production, this would trigger WebSocket updates to the UI
-    console.log(
+    console.info(
       `🔄 Workflow ${workflow.id} updated - Status: ${workflow.status}`
     );
   }
@@ -777,18 +777,18 @@ export class FleetFlowSystemOrchestrator {
    * Start the system orchestrator (activates all automation)
    */
   public start(): void {
-    console.log('🚀 Starting FleetFlow System Orchestrator...');
+    console.info('🚀 Starting FleetFlow System Orchestrator...');
     this.automation.start();
-    console.log('✅ System orchestrator active - All integrations online');
+    console.info('✅ System orchestrator active - All integrations online');
   }
 
   /**
    * Stop the system orchestrator
    */
   public stop(): void {
-    console.log('🛑 Stopping FleetFlow System Orchestrator...');
+    console.info('🛑 Stopping FleetFlow System Orchestrator...');
     this.automation.stop();
-    console.log('⏹️ System orchestrator stopped');
+    console.info('⏹️ System orchestrator stopped');
   }
 
   /**
@@ -837,7 +837,7 @@ export class FleetFlowSystemOrchestrator {
     mcNumber: string,
     carrierData?: any
   ): Promise<CarrierValidationResult> {
-    console.log(`🛡️ Validating new carrier: ${mcNumber}`);
+    console.info(`🛡️ Validating new carrier: ${mcNumber}`);
 
     const validationResult: CarrierValidationResult = {
       mcNumber,
@@ -865,7 +865,7 @@ export class FleetFlowSystemOrchestrator {
     try {
       // STEP 1: FMCSA Validation (Primary validation when carrier is uploaded)
       if (this.config.enableCarrierValidation) {
-        console.log('📋 Running FMCSA validation...');
+        console.info('📋 Running FMCSA validation...');
 
         const fmcsaData =
           await this.carrierService.verifyCarrierFMCSA(mcNumber);
@@ -874,7 +874,7 @@ export class FleetFlowSystemOrchestrator {
           validationResult.validationErrors.push(
             'FMCSA validation failed - carrier not found'
           );
-          console.log('❌ FMCSA validation failed');
+          console.info('❌ FMCSA validation failed');
           return validationResult;
         }
 
@@ -914,22 +914,22 @@ export class FleetFlowSystemOrchestrator {
 
         if (validationResult.validationErrors.length === 0) {
           validationResult.isValid = true;
-          console.log('✅ FMCSA validation passed');
+          console.info('✅ FMCSA validation passed');
         }
       }
 
       // STEP 2: Enable BrokerSnapshot Monitoring (For ongoing monitoring)
       if (this.config.enableCarrierMonitoring && validationResult.isValid) {
-        console.log('📊 Enabling BrokerSnapshot monitoring...');
+        console.info('📊 Enabling BrokerSnapshot monitoring...');
 
         const monitoringResult =
           await this.carrierService.enableCarrierTracking(mcNumber);
 
         if (monitoringResult.success) {
           validationResult.monitoringEnabled = true;
-          console.log('✅ BrokerSnapshot monitoring enabled');
+          console.info('✅ BrokerSnapshot monitoring enabled');
         } else {
-          console.log(
+          console.info(
             '⚠️ BrokerSnapshot monitoring setup failed:',
             monitoringResult.message
           );
@@ -942,7 +942,7 @@ export class FleetFlowSystemOrchestrator {
       // Send validation notification
       await this.sendCarrierValidationNotification(validationResult);
 
-      console.log(
+      console.info(
         `✅ Carrier validation completed for ${mcNumber}: ${validationResult.isValid ? 'VALID' : 'INVALID'}`
       );
       return validationResult;
@@ -960,7 +960,7 @@ export class FleetFlowSystemOrchestrator {
    * Called periodically for ongoing carrier monitoring
    */
   async monitorCarriers(): Promise<void> {
-    console.log('📊 Running carrier monitoring checks...');
+    console.info('📊 Running carrier monitoring checks...');
 
     const validatedCarriers = Array.from(
       this.validatedCarriers.values()
@@ -987,7 +987,7 @@ export class FleetFlowSystemOrchestrator {
           carrier.mcNumber
         );
         if (locationData.success) {
-          console.log(`📍 Carrier ${carrier.mcNumber} location updated`);
+          console.info(`📍 Carrier ${carrier.mcNumber} location updated`);
         }
       } catch (error) {
         console.error(
@@ -997,7 +997,7 @@ export class FleetFlowSystemOrchestrator {
       }
     }
 
-    console.log(
+    console.info(
       `✅ Carrier monitoring completed for ${validatedCarriers.length} carriers`
     );
   }
@@ -1049,7 +1049,7 @@ export class FleetFlowSystemOrchestrator {
     mcNumber: string,
     dotNumber?: string
   ): Promise<CarrierValidationResult> {
-    console.log(`🔍 Starting FMCSA carrier validation for MC-${mcNumber}...`);
+    console.info(`🔍 Starting FMCSA carrier validation for MC-${mcNumber}...`);
 
     try {
       const validationResult: CarrierValidationResult = {
@@ -1142,7 +1142,7 @@ export class FleetFlowSystemOrchestrator {
       // Send validation notification
       await this.sendCarrierValidationNotification(validationResult);
 
-      console.log(
+      console.info(
         `✅ Carrier validation completed for ${mcNumber}: ${validationResult.isValid ? 'VALID' : 'INVALID'}`
       );
 
@@ -1179,7 +1179,7 @@ export class FleetFlowSystemOrchestrator {
   async startCarrierMonitoring(): Promise<void> {
     if (!this.config.enableCarrierMonitoring) return;
 
-    console.log('🔄 Starting carrier monitoring service...');
+    console.info('🔄 Starting carrier monitoring service...');
 
     const monitorCarriers = async () => {
       const carriersToMonitor = Array.from(
@@ -1212,7 +1212,7 @@ export class FleetFlowSystemOrchestrator {
     const carrier = this.carrierValidationCache.get(mcNumber);
     if (!carrier || !carrier.monitoringEnabled) return;
 
-    console.log(`🔍 Monitoring carrier MC-${mcNumber}...`);
+    console.info(`🔍 Monitoring carrier MC-${mcNumber}...`);
 
     try {
       // Check for FMCSA status changes
@@ -1281,12 +1281,12 @@ export class FleetFlowSystemOrchestrator {
         `This carrier cannot be assigned loads until validation issues are resolved.`;
 
     // Send email notification
-    console.log(`📧 Sending carrier validation notification: ${subject}`);
+    console.info(`📧 Sending carrier validation notification: ${subject}`);
 
     // Send SMS alert for failed validations
     if (!validation.isValid) {
       const smsMessage = `CARRIER ALERT: MC-${validation.mcNumber} validation failed. Check dispatch system for details.`;
-      console.log(`📱 SMS Alert: ${smsMessage}`);
+      console.info(`📱 SMS Alert: ${smsMessage}`);
     }
   }
 
@@ -1301,8 +1301,8 @@ export class FleetFlowSystemOrchestrator {
       '\n\n' +
       'Please review carrier status and take appropriate action.';
 
-    console.log(`📧 Sending carrier alert: ${subject}`);
-    console.log(
+    console.info(`📧 Sending carrier alert: ${subject}`);
+    console.info(
       `📱 SMS Alert: Carrier MC-${carrier.mcNumber} status changed. Check alerts.`
     );
   }
@@ -1312,7 +1312,7 @@ export class FleetFlowSystemOrchestrator {
     dotNumber?: string
   ): Promise<any> {
     // Simulated FMCSA API call - replace with actual FMCSA API integration
-    console.log(`🔍 Fetching FMCSA data for MC-${mcNumber}...`);
+    console.info(`🔍 Fetching FMCSA data for MC-${mcNumber}...`);
 
     // Demo data for different scenarios
     const demoData: Record<string, any> = {
@@ -1350,7 +1350,7 @@ export class FleetFlowSystemOrchestrator {
 
   private async fetchBrokerSnapshotData(mcNumber: string): Promise<any> {
     // Simulated BrokerSnapshot API call
-    console.log(`🔍 Fetching BrokerSnapshot data for MC-${mcNumber}...`);
+    console.info(`🔍 Fetching BrokerSnapshot data for MC-${mcNumber}...`);
 
     const demoData: Record<string, any> = {
       '123456': {
@@ -1401,7 +1401,7 @@ export class FleetFlowSystemOrchestrator {
     timeline: string;
     applications?: HeavyHaulPermitApp[];
   }> {
-    console.log(
+    console.info(
       `🚛 Analyzing heavy haul requirements for load ${loadData.id}...`
     );
 
@@ -1449,7 +1449,7 @@ export class FleetFlowSystemOrchestrator {
     let applications: HeavyHaulPermitApp[] = [];
 
     if (analysis.requiresPermits) {
-      console.log(
+      console.info(
         `📋 Permits required: ${analysis.permitType} for states: ${analysis.affectedStates.join(', ')}`
       );
 
@@ -1466,9 +1466,9 @@ export class FleetFlowSystemOrchestrator {
           requirements
         );
 
-      console.log(`✅ Created ${applications.length} permit applications`);
+      console.info(`✅ Created ${applications.length} permit applications`);
     } else {
-      console.log(`✅ No permits required for load ${loadData.id}`);
+      console.info(`✅ No permits required for load ${loadData.id}`);
     }
 
     return {
@@ -1487,7 +1487,7 @@ export class FleetFlowSystemOrchestrator {
     totalCost: number;
     readyToTravel: boolean;
   }> {
-    console.log(
+    console.info(
       `🚀 Processing ${applications.length} heavy haul permits for load ${loadId}...`
     );
 
@@ -1506,11 +1506,11 @@ export class FleetFlowSystemOrchestrator {
 
         if (result.success) {
           submitted++;
-          console.log(
+          console.info(
             `✅ Submitted permit for ${application.state}: ${result.confirmationNumber}`
           );
         } else {
-          console.log(
+          console.info(
             `❌ Failed to submit permit for ${application.state}: ${result.message}`
           );
         }
@@ -1545,12 +1545,12 @@ export class FleetFlowSystemOrchestrator {
 
     const readyToTravel = approved === applications.length;
 
-    console.log(`📊 Permit Status Summary:`);
-    console.log(`   Submitted: ${submitted}/${applications.length}`);
-    console.log(`   Pending: ${pending}`);
-    console.log(`   Approved: ${approved}`);
-    console.log(`   Total Cost: $${totalCost}`);
-    console.log(`   Ready to Travel: ${readyToTravel ? 'YES' : 'NO'}`);
+    console.info(`📊 Permit Status Summary:`);
+    console.info(`   Submitted: ${submitted}/${applications.length}`);
+    console.info(`   Pending: ${pending}`);
+    console.info(`   Approved: ${approved}`);
+    console.info(`   Total Cost: $${totalCost}`);
+    console.info(`   Ready to Travel: ${readyToTravel ? 'YES' : 'NO'}`);
 
     return {
       submitted,
@@ -1628,7 +1628,7 @@ export class FleetFlowSystemOrchestrator {
     }
 
     try {
-      console.log(
+      console.info(
         `🔗 Integrating heavy haul permits with workflow ${workflowId}...`
       );
 
@@ -1668,7 +1668,7 @@ export class FleetFlowSystemOrchestrator {
           },
         });
 
-        console.log(
+        console.info(
           `✅ Heavy haul permits integrated with workflow ${workflowId}`
         );
 
@@ -1793,7 +1793,9 @@ export class HeavyHaulPermitService {
     confirmationNumber?: string;
   }> {
     // Mock submission logic
-    console.log(`📄 Submitting permit application for ${application.state}...`);
+    console.info(
+      `📄 Submitting permit application for ${application.state}...`
+    );
 
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -1814,7 +1816,7 @@ export class HeavyHaulPermitService {
     estimatedApproval?: string;
   }> {
     // Mock tracking logic
-    console.log(`📦 Tracking permit application ${application.id}...`);
+    console.info(`📦 Tracking permit application ${application.id}...`);
 
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -1919,7 +1921,7 @@ export class IntegrationHelpers {
     status: string,
     location?: any
   ): Promise<void> {
-    console.log(`📍 Load ${loadId} status update: ${status}`, location);
+    console.info(`📍 Load ${loadId} status update: ${status}`, location);
     // In production, this would update the tracking system and notify stakeholders
   }
 
@@ -1930,7 +1932,7 @@ export class IntegrationHelpers {
     loadId: string,
     message: string
   ): Promise<void> {
-    console.log(`🚨 EMERGENCY ALERT for Load ${loadId}: ${message}`);
+    console.info(`🚨 EMERGENCY ALERT for Load ${loadId}: ${message}`);
     // In production, this would send urgent notifications to all stakeholders
   }
 
@@ -1999,7 +2001,7 @@ export class IntegrationHelpers {
     recommendations: string[];
   }> {
     if (!this.config.enableTaskPrioritization) {
-      console.log(
+      console.info(
         '⚠️ Task prioritization is disabled - returning workflows in original order'
       );
       return {
@@ -2018,7 +2020,7 @@ export class IntegrationHelpers {
     }
 
     try {
-      console.log(
+      console.info(
         `🎯 Prioritizing ${workflows.length} system workflows using AI...`
       );
 
@@ -2085,10 +2087,10 @@ export class IntegrationHelpers {
         );
         prioritizedWorkflows.push(...remainingWorkflows);
 
-        console.log(
+        console.info(
           `✅ Successfully prioritized ${prioritizedWorkflows.length} workflows`
         );
-        console.log(
+        console.info(
           `🎯 Top priority: ${prioritizedWorkflows[0]?.loadId} (${this.getWorkflowDescription(prioritizedWorkflows[0])})`
         );
 
@@ -2389,7 +2391,7 @@ export class IntegrationHelpers {
     prioritizationResults: any;
     processingOrder: string[];
   }> {
-    console.log(
+    console.info(
       `🚀 Processing ${loadDataArray.length} loads with intelligent prioritization...`
     );
 
@@ -2416,10 +2418,10 @@ export class IntegrationHelpers {
       (w) => w.loadId
     );
 
-    console.log(
+    console.info(
       `✅ Processed ${workflows.length} loads with AI prioritization`
     );
-    console.log(
+    console.info(
       `🎯 Processing order optimized for ${prioritizationResults.prioritizationMetrics.systemEfficiencyGain}% efficiency gain`
     );
 
@@ -2431,4 +2433,4 @@ export class IntegrationHelpers {
   }
 }
 
-console.log('🔗 FleetFlow System Integration loaded successfully');
+console.info('🔗 FleetFlow System Integration loaded successfully');

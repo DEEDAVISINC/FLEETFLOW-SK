@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 export default function SimpleCRMDashboard() {
-  console.log('🚀 SimpleCRMDashboard LOADED - BASIC HTML/CSS APPROACH');
+  console.info('🚀 SimpleCRMDashboard LOADED - BASIC HTML/CSS APPROACH');
   const [leads, setLeads] = useState([
     {
       id: 'SL-001',
@@ -55,7 +55,7 @@ export default function SimpleCRMDashboard() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(
+    console.info(
       '✅ SimpleCRMDashboard: Component mounted with',
       leads.length,
       'leads'

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CarrierInvitationService from '../services/CarrierInvitationService';
@@ -41,7 +42,7 @@ export default function CarrierLandingPage() {
       if (ref) {
         const invitationService = CarrierInvitationService.getInstance();
         invitationService.updateInvitationStatus(ref, 'opened');
-        console.log(`Invitation ${ref} marked as opened`);
+        console.info(`Invitation ${ref} marked as opened`);
       }
     }
   }, [searchParams]);
@@ -51,7 +52,7 @@ export default function CarrierLandingPage() {
     if (invitationData.ref) {
       const invitationService = CarrierInvitationService.getInstance();
       invitationService.updateInvitationStatus(invitationData.ref, 'started');
-      console.log(`Invitation ${invitationData.ref} marked as started`);
+      console.info(`Invitation ${invitationData.ref} marked as started`);
     }
 
     // Build the onboarding URL with pre-filled data
@@ -84,7 +85,7 @@ export default function CarrierLandingPage() {
           radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)
         `,
         minHeight: '100vh',
-        fontFamily: '"Inter", system-ui, -apple-system, "Segoe UI", sans-serif',
+        fontFamily: '""Inter"", system-ui, -apple-system, ""Segoe UI"", sans-serif',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -273,20 +274,16 @@ export default function CarrierLandingPage() {
                   justifyContent: 'center',
                 }}
               >
-                <img
-                  src="/images/fleetflow logo tms.jpg"
-                  alt="FleetFlow Logo"
+                <Image
+                  src='/images/fleetflow logo tms.jpg'
+                  alt='FleetFlow Logo'
+                  width={300}
+                  height={50}
                   style={{
                     height: '50px',
                     width: 'auto',
                     maxWidth: '300px',
                     objectFit: 'contain',
-                  }}
-                  onError={(e) => {
-                    // Fallback to text logo if image fails
-                    e.currentTarget.style.display = 'none';
-                    const fallback = e.currentTarget.nextElementSibling;
-                    if (fallback) fallback.style.display = 'block';
                   }}
                 />
                 {/* Fallback text logo */}

@@ -38,7 +38,7 @@ export default function ContractDemoPage() {
       setError(null);
       setResult(null);
 
-      console.log('Generating contract with data:', demoContractData);
+      console.info('Generating contract with data:', demoContractData);
 
       const contract =
         await contractGenerationService.generateLeadContract(demoContractData);
@@ -49,7 +49,7 @@ export default function ContractDemoPage() {
         message: 'Contract generated successfully!',
       });
 
-      console.log('Contract generated:', contract);
+      console.info('Contract generated:', contract);
     } catch (error: any) {
       console.error('Contract generation failed:', error);
       setError(error.message || 'Failed to generate contract');

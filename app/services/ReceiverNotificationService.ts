@@ -44,10 +44,10 @@ export class ReceiverNotificationService {
 
       // In production, this would use the actual Twilio API
       // For now, we'll simulate the notification
-      console.log(`📱 SMS Notification Sent:`);
-      console.log(`To: ${request.receiverPhone}`);
-      console.log(`From: ${this.TWILIO_PHONE}`);
-      console.log(`Message: ${message}`);
+      console.info(`📱 SMS Notification Sent:`);
+      console.info(`To: ${request.receiverPhone}`);
+      console.info(`From: ${this.TWILIO_PHONE}`);
+      console.info(`Message: ${message}`);
 
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -77,10 +77,10 @@ export class ReceiverNotificationService {
       const { subject, body } = this.generateEmailContent(request);
 
       // In production, this would use an email service (SendGrid, AWS SES, etc.)
-      console.log(`📧 Email Notification Sent:`);
-      console.log(`To: ${request.receiverEmail}`);
-      console.log(`Subject: ${subject}`);
-      console.log(`Body: ${body}`);
+      console.info(`📧 Email Notification Sent:`);
+      console.info(`To: ${request.receiverEmail}`);
+      console.info(`Subject: ${subject}`);
+      console.info(`Body: ${body}`);
 
       // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 300));

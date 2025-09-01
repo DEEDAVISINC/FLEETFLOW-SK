@@ -21,7 +21,7 @@ export default function AcquisitionAnalysisPage() {
           'linear-gradient(135deg, #1a0f2e 0%, #2d1b4e 50%, #4c1d95 100%)',
         padding: '0',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Executive Header */}

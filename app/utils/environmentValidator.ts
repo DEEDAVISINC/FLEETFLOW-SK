@@ -10,7 +10,7 @@ interface EnvironmentConfig {
     secretKey?: string;
     webhookSecret?: string;
   };
-  
+
   // Bill.com Configuration
   billcom: {
     apiKey?: string;
@@ -19,7 +19,7 @@ interface EnvironmentConfig {
     environment?: 'sandbox' | 'production';
     orgId?: string;
   };
-  
+
   // Application Configuration
   app: {
     nodeEnv?: string;
@@ -41,7 +41,9 @@ class EnvironmentValidator {
   private loadConfig(): EnvironmentConfig {
     return {
       stripe: {
-        publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || process.env.STRIPE_PUBLISHABLE_KEY,
+        publishableKey:
+          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
+          process.env.STRIPE_PUBLISHABLE_KEY,
         secretKey: process.env.STRIPE_SECRET_KEY,
         webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
       },
@@ -49,13 +51,17 @@ class EnvironmentValidator {
         apiKey: process.env.BILLCOM_API_KEY,
         username: process.env.BILLCOM_USERNAME,
         password: process.env.BILLCOM_PASSWORD,
-        environment: (process.env.BILLCOM_ENVIRONMENT as 'sandbox' | 'production') || 'sandbox',
+        environment:
+          (process.env.BILLCOM_ENVIRONMENT as 'sandbox' | 'production') ||
+          'sandbox',
         orgId: process.env.BILLCOM_ORG_ID,
       },
       app: {
         nodeEnv: process.env.NODE_ENV,
-        frontendUrl: process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.FRONTEND_URL,
-        backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL,
+        frontendUrl:
+          process.env.NEXT_PUBLIC_FRONTEND_URL || process.env.FRONTEND_URL,
+        backendUrl:
+          process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL,
       },
     };
   }
@@ -70,29 +76,41 @@ class EnvironmentValidator {
     const { stripe } = this.config;
 
     if (!stripe.publishableKey) {
-      this.errors.push('Missing STRIPE_PUBLISHABLE_KEY or NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY');
+      this.errors.push(
+        'Missing STRIPE_PUBLISHABLE_KEY or NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'
+      );
     } else if (!stripe.publishableKey.startsWith('pk_')) {
-      this.errors.push('Invalid Stripe publishable key format (must start with pk_)');
+      this.errors.push(
+        'Invalid Stripe publishable key format (must start with pk_)'
+      );
     }
 
     if (!stripe.secretKey) {
       this.errors.push('Missing STRIPE_SECRET_KEY');
     } else if (!stripe.secretKey.startsWith('sk_')) {
-      this.errors.push('Invalid Stripe secret key format (must start with sk_)');
+      this.errors.push(
+        'Invalid Stripe secret key format (must start with sk_)'
+      );
     }
 
     if (!stripe.webhookSecret) {
-      this.warnings.push('Missing STRIPE_WEBHOOK_SECRET - webhooks will not work');
+      this.warnings.push(
+        'Missing STRIPE_WEBHOOK_SECRET - webhooks will not work'
+      );
     } else if (!stripe.webhookSecret.startsWith('whsec_')) {
-      this.errors.push('Invalid Stripe webhook secret format (must start with whsec_)');
+      this.errors.push(
+        'Invalid Stripe webhook secret format (must start with whsec_)'
+      );
     }
 
     // Check for test vs production key consistency
     const isPublishableTest = stripe.publishableKey?.includes('test');
     const isSecretTest = stripe.secretKey?.includes('test');
-    
+
     if (isPublishableTest !== isSecretTest) {
-      this.errors.push('Stripe key mismatch: publishable and secret keys must both be test or both be live');
+      this.errors.push(
+        'Stripe key mismatch: publishable and secret keys must both be test or both be live'
+      );
     }
 
     if (this.config.app.nodeEnv === 'production' && isSecretTest) {
@@ -104,7 +122,9 @@ class EnvironmentValidator {
     const { billcom } = this.config;
 
     if (!billcom.apiKey) {
-      this.warnings.push('Missing BILLCOM_API_KEY - Bill.com features will be disabled');
+      this.warnings.push(
+        'Missing BILLCOM_API_KEY - Bill.com features will be disabled'
+      );
       return;
     }
 
@@ -117,14 +137,21 @@ class EnvironmentValidator {
     }
 
     if (!billcom.orgId) {
-      this.warnings.push('Missing BILLCOM_ORG_ID - some features may not work correctly');
+      this.warnings.push(
+        'Missing BILLCOM_ORG_ID - some features may not work correctly'
+      );
     }
 
     if (!['sandbox', 'production'].includes(billcom.environment || '')) {
-      this.errors.push('Invalid BILLCOM_ENVIRONMENT - must be "sandbox" or "production"');
+      this.errors.push(
+        'Invalid BILLCOM_ENVIRONMENT - must be "sandbox" or "production"'
+      );
     }
 
-    if (this.config.app.nodeEnv === 'production' && billcom.environment === 'sandbox') {
+    if (
+      this.config.app.nodeEnv === 'production' &&
+      billcom.environment === 'sandbox'
+    ) {
       this.warnings.push('Using Bill.com sandbox environment in production');
     }
   }
@@ -163,40 +190,46 @@ class EnvironmentValidator {
   public logResults(): void {
     const results = this.getValidationResults();
 
-    console.log('🔧 FleetFlow Environment Validation');
-    console.log('=====================================');
+    console.info('🔧 FleetFlow Environment Validation');
+    console.info('=====================================');
 
     if (results.isValid) {
-      console.log('✅ Environment configuration is valid');
+      console.info('✅ Environment configuration is valid');
     } else {
-      console.log('❌ Environment configuration has errors');
+      console.info('❌ Environment configuration has errors');
     }
 
     if (results.errors.length > 0) {
-      console.log('\n🚨 Errors:');
-      results.errors.forEach(error => console.log(`  • ${error}`));
+      console.info('\n🚨 Errors:');
+      results.errors.forEach((error) => console.info(`  • ${error}`));
     }
 
     if (results.warnings.length > 0) {
-      console.log('\n⚠️  Warnings:');
-      results.warnings.forEach(warning => console.log(`  • ${warning}`));
+      console.info('\n⚠️  Warnings:');
+      results.warnings.forEach((warning) => console.info(`  • ${warning}`));
     }
 
-    console.log('\n📊 Configuration Summary:');
-    console.log(`  • Stripe: ${results.config.stripe.secretKey ? '✅ Configured' : '❌ Missing'}`);
-    console.log(`  • Bill.com: ${results.config.billcom.apiKey ? '✅ Configured' : '⚠️  Optional'}`);
-    console.log(`  • Environment: ${results.config.app.nodeEnv || 'development'}`);
-    
+    console.info('\n📊 Configuration Summary:');
+    console.info(
+      `  • Stripe: ${results.config.stripe.secretKey ? '✅ Configured' : '❌ Missing'}`
+    );
+    console.info(
+      `  • Bill.com: ${results.config.billcom.apiKey ? '✅ Configured' : '⚠️  Optional'}`
+    );
+    console.info(
+      `  • Environment: ${results.config.app.nodeEnv || 'development'}`
+    );
+
     if (results.config.stripe.secretKey) {
       const isTest = results.config.stripe.secretKey.includes('test');
-      console.log(`  • Stripe Mode: ${isTest ? 'Test' : 'Live'}`);
-    }
-    
-    if (results.config.billcom.environment) {
-      console.log(`  • Bill.com Mode: ${results.config.billcom.environment}`);
+      console.info(`  • Stripe Mode: ${isTest ? 'Test' : 'Live'}`);
     }
 
-    console.log('\n');
+    if (results.config.billcom.environment) {
+      console.info(`  • Bill.com Mode: ${results.config.billcom.environment}`);
+    }
+
+    console.info('\n');
   }
 
   /**
@@ -204,16 +237,16 @@ class EnvironmentValidator {
    */
   public validateOrThrow(): void {
     const results = this.getValidationResults();
-    
+
     if (!results.isValid) {
       const errorMessage = [
         'FleetFlow environment validation failed:',
-        ...results.errors.map(e => `  • ${e}`),
+        ...results.errors.map((e) => `  • ${e}`),
         '',
         'Please check your environment variables and try again.',
-        'See BILLING_ENVIRONMENT_SETUP.md for detailed setup instructions.'
+        'See BILLING_ENVIRONMENT_SETUP.md for detailed setup instructions.',
       ].join('\n');
-      
+
       throw new Error(errorMessage);
     }
   }
@@ -222,14 +255,20 @@ class EnvironmentValidator {
    * Check if billing features are available
    */
   public isBillingEnabled(): boolean {
-    return !!(this.config.stripe.secretKey && this.config.stripe.publishableKey);
+    return !!(
+      this.config.stripe.secretKey && this.config.stripe.publishableKey
+    );
   }
 
   /**
    * Check if Bill.com features are available
    */
   public isBillcomEnabled(): boolean {
-    return !!(this.config.billcom.apiKey && this.config.billcom.username && this.config.billcom.password);
+    return !!(
+      this.config.billcom.apiKey &&
+      this.config.billcom.username &&
+      this.config.billcom.password
+    );
   }
 }
 
@@ -237,9 +276,11 @@ class EnvironmentValidator {
 export const environmentValidator = new EnvironmentValidator();
 
 // Convenience exports
-export const validateEnvironment = () => environmentValidator.getValidationResults();
+export const validateEnvironment = () =>
+  environmentValidator.getValidationResults();
 export const logEnvironmentStatus = () => environmentValidator.logResults();
-export const requireValidEnvironment = () => environmentValidator.validateOrThrow();
+export const requireValidEnvironment = () =>
+  environmentValidator.validateOrThrow();
 export const isBillingEnabled = () => environmentValidator.isBillingEnabled();
 export const isBillcomEnabled = () => environmentValidator.isBillcomEnabled();
 

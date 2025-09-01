@@ -255,7 +255,7 @@ To integrate dialer access into app/settings/page.tsx:
 3. Update the sample users with SAMPLE_USERS_WITH_DIALER from this file
 
 4. Add the DialerAccessManagement component in the user details section,
-   after the compliance section and before the "Grant Access" button:
+   after the compliance section and before the ""Grant Access"" button:
 
    <DialerAccessManagement
      user={selectedUser}

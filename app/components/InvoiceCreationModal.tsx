@@ -20,12 +20,12 @@ interface InvoiceCreationModalProps {
 interface InvoiceData {
   id: string;
   loadId: string;
-  loadBoardNumber?: string; // Phone reference - the 6-digit number customers call about (e.g., "100001")
-  bolNumber?: string; // BOL number for document tracking (e.g., "BOL-MJ25015-001")
+  loadBoardNumber?: string; // Phone reference - the 6-digit number customers call about (e.g., ""100001"")
+  bolNumber?: string; // BOL number for document tracking (e.g., ""BOL-MJ25015-001"")
   departmentCode?: string; // Department code: DC (dispatcher), BB (broker)
-  userInitials?: string; // User initials for accountability (e.g., "SJ")
+  userInitials?: string; // User initials for accountability (e.g., ""SJ"")
   dispatcherName?: string; // Name of the dispatcher handling the load
-  dispatcherUserIdentifier?: string; // Dispatcher user identifier (e.g., "SJ-DC-2024014")
+  dispatcherUserIdentifier?: string; // Dispatcher user identifier (e.g., ""SJ-DC-2024014"")
   dispatcherCompanyInfo?: {
     name: string;
     address: string;
@@ -198,7 +198,7 @@ export default function InvoiceCreationModal({
         // Simulate submission delay
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        console.log('Dispatcher fee submitted to management:', invoiceData);
+        console.info('Dispatcher fee submitted to management:', invoiceData);
       } else {
         // Auto-approval workflow
         invoiceData.status = 'auto_approved';
@@ -212,7 +212,7 @@ export default function InvoiceCreationModal({
         // Simulate processing delay
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        console.log('Dispatcher fee auto-approved:', invoiceData);
+        console.info('Dispatcher fee auto-approved:', invoiceData);
       }
 
       // Save to localStorage (simulate database)
@@ -228,7 +228,7 @@ export default function InvoiceCreationModal({
       if (!isDuplicate) {
         existingInvoices.push(invoiceData);
         localStorage.setItem('invoices', JSON.stringify(existingInvoices));
-        console.log('Invoice saved successfully:', invoiceData.id);
+        console.info('Invoice saved successfully:', invoiceData.id);
       } else {
         console.warn('Duplicate invoice prevented:', invoiceData.id);
         // Generate a new unique ID if duplicate detected
@@ -240,7 +240,7 @@ export default function InvoiceCreationModal({
         );
         existingInvoices.push(invoiceData);
         localStorage.setItem('invoices', JSON.stringify(existingInvoices));
-        console.log('Invoice saved with new ID:', invoiceData.id);
+        console.info('Invoice saved with new ID:', invoiceData.id);
       }
 
       // Update the onInvoiceCreated callback if provided
@@ -256,7 +256,7 @@ export default function InvoiceCreationModal({
 
   const previewInvoiceData = generateInvoiceData();
 
-  console.log(
+  console.info(
     'InvoiceCreationModal render - showPreview:',
     showPreview,
     'load:',

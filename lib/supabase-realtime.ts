@@ -68,13 +68,13 @@ class RealtimeSubscriptionManager {
 
   private setupConnectionHandlers() {
     this.client.realtime.onOpen(() => {
-      console.log('🔗 FleetFlow realtime connected');
+      console.info('🔗 FleetFlow realtime connected');
       this.reconnectAttempts = 0;
       this.options.onConnect?.();
     });
 
     this.client.realtime.onClose(() => {
-      console.log('🔌 FleetFlow realtime disconnected');
+      console.info('🔌 FleetFlow realtime disconnected');
       this.options.onDisconnect?.();
       this.handleReconnect();
     });
@@ -90,7 +90,7 @@ class RealtimeSubscriptionManager {
       this.reconnectAttempts++;
       const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 10000);
 
-      console.log(
+      console.info(
         `🔄 Attempting reconnect ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay}ms`
       );
 
@@ -127,13 +127,13 @@ class RealtimeSubscriptionManager {
         },
         (payload) => {
           if (this.options.enableLogs) {
-            console.log('📦 Load update:', payload);
+            console.info('📦 Load update:', payload);
           }
           callback(payload as RealtimePostgresChangesPayload<LoadUpdate>);
         }
       )
       .subscribe((status) => {
-        console.log(`🔔 Load subscription status: ${status}`);
+        console.info(`🔔 Load subscription status: ${status}`);
       });
 
     this.subscriptions.set(channelId, channel);
@@ -158,7 +158,7 @@ class RealtimeSubscriptionManager {
         },
         (payload) => {
           if (this.options.enableLogs) {
-            console.log('📦 Specific load update:', payload);
+            console.info('📦 Specific load update:', payload);
           }
           callback(payload as RealtimePostgresChangesPayload<LoadUpdate>);
         }
@@ -193,7 +193,7 @@ class RealtimeSubscriptionManager {
         },
         (payload) => {
           if (this.options.enableLogs) {
-            console.log('🔔 New notification:', payload);
+            console.info('🔔 New notification:', payload);
           }
           callback(
             payload as RealtimePostgresChangesPayload<NotificationUpdate>
@@ -235,7 +235,7 @@ class RealtimeSubscriptionManager {
 
           if (oldRecord.current_location !== newRecord.current_location) {
             if (this.options.enableLogs) {
-              console.log('📍 Driver location update:', payload);
+              console.info('📍 Driver location update:', payload);
             }
             callback(
               payload as RealtimePostgresChangesPayload<DriverLocationUpdate>
@@ -269,7 +269,7 @@ class RealtimeSubscriptionManager {
         },
         (payload) => {
           if (this.options.enableLogs) {
-            console.log('📍 Specific driver update:', payload);
+            console.info('📍 Specific driver update:', payload);
           }
           callback(
             payload as RealtimePostgresChangesPayload<DriverLocationUpdate>
@@ -304,7 +304,7 @@ class RealtimeSubscriptionManager {
         },
         (payload) => {
           if (this.options.enableLogs) {
-            console.log('📄 Document update:', payload);
+            console.info('📄 Document update:', payload);
           }
           callback(payload);
         }
@@ -324,12 +324,12 @@ class RealtimeSubscriptionManager {
     if (channel) {
       channel.unsubscribe();
       this.subscriptions.delete(channelId);
-      console.log(`🔕 Unsubscribed from ${channelId}`);
+      console.info(`🔕 Unsubscribed from ${channelId}`);
     }
   }
 
   unsubscribeAll(): void {
-    console.log('🔕 Unsubscribing from all channels...');
+    console.info('🔕 Unsubscribing from all channels...');
     this.subscriptions.forEach((channel, channelId) => {
       channel.unsubscribe();
     });
@@ -353,7 +353,7 @@ class RealtimeSubscriptionManager {
   destroy(): void {
     this.unsubscribeAll();
     this.client.realtime.disconnect();
-    console.log('🔌 Realtime manager destroyed');
+    console.info('🔌 Realtime manager destroyed');
   }
 }
 

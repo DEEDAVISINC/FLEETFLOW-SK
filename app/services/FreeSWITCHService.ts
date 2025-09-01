@@ -157,7 +157,7 @@ class FreeSWITCHService {
       // In a real implementation, this would connect to FreeSWITCH ESL
       // For demo purposes, we'll simulate the connection
 
-      console.log(
+      console.info(
         `Connecting to FreeSWITCH at ${this.config.host}:${this.config.port}`
       );
 
@@ -170,7 +170,7 @@ class FreeSWITCHService {
       // Start heartbeat
       this.startHeartbeat();
 
-      console.log('FreeSWITCH connected successfully');
+      console.info('FreeSWITCH connected successfully');
       return true;
     } catch (error) {
       console.error('Failed to connect to FreeSWITCH:', error);
@@ -247,7 +247,7 @@ class FreeSWITCHService {
 
     try {
       // Simulate FreeSWITCH originate command
-      console.log(`Originating call from ${from} to ${to}`);
+      console.info(`Originating call from ${from} to ${to}`);
 
       // Simulate call progression
       setTimeout(() => this.simulateCallProgress(callUuid), 2000);
@@ -274,7 +274,7 @@ class FreeSWITCHService {
       call.answerTime = new Date().toISOString();
 
       this.emit('callAnswered', call);
-      console.log(`Call ${callUuid} answered`);
+      console.info(`Call ${callUuid} answered`);
       return true;
     } catch (error) {
       console.error('Failed to answer call:', error);
@@ -317,7 +317,7 @@ class FreeSWITCHService {
       this.activeCalls.delete(callUuid);
       this.emit('callEnded', call);
 
-      console.log(
+      console.info(
         `Call ${callUuid} ended - Duration: ${duration}s, Cost: $${call.cost.total.toFixed(4)}`
       );
       return true;
@@ -339,7 +339,7 @@ class FreeSWITCHService {
     }
 
     try {
-      console.log(
+      console.info(
         `Transferring call ${callUuid} to ${destination} (${type} transfer)`
       );
 
@@ -364,7 +364,7 @@ class FreeSWITCHService {
     }
 
     try {
-      console.log(`${hold ? 'Holding' : 'Unholding'} call ${callUuid}`);
+      console.info(`${hold ? 'Holding' : 'Unholding'} call ${callUuid}`);
 
       this.emit('callHold', {
         ...call,
@@ -480,7 +480,7 @@ class FreeSWITCHService {
     }
 
     try {
-      console.log(`Playing audio file ${filePath} to call ${callUuid}`);
+      console.info(`Playing audio file ${filePath} to call ${callUuid}`);
 
       this.emit('audioPlaying', {
         callUuid,
@@ -515,7 +515,7 @@ class FreeSWITCHService {
         };
       }
 
-      console.log(`Started recording call ${callUuid} to ${recordingPath}`);
+      console.info(`Started recording call ${callUuid} to ${recordingPath}`);
 
       this.emit('recordingStarted', {
         callUuid,
@@ -544,7 +544,7 @@ class FreeSWITCHService {
       call.recording.duration = duration;
       call.recording.size = duration * 8000; // Approximate
 
-      console.log(`Stopped recording call ${callUuid}`);
+      console.info(`Stopped recording call ${callUuid}`);
 
       this.emit('recordingStopped', {
         callUuid,

@@ -56,7 +56,7 @@ export class WorkflowIntegrationService {
     if (!this.billingService) {
       try {
         this.billingService = new BillingAutomationService();
-        console.log('✅ BillingAutomationService initialized successfully');
+        console.info('✅ BillingAutomationService initialized successfully');
       } catch (error) {
         console.warn(
           '⚠️ BillingAutomationService initialization failed:',
@@ -84,7 +84,7 @@ export class WorkflowIntegrationService {
     cascadeData: WorkflowCascadeData,
     bolData: BOLSigningData
   ): Promise<CascadeResult> {
-    console.log(
+    console.info(
       '🔄 Starting BOL completion cascade for load:',
       cascadeData.loadId
     );
@@ -100,7 +100,7 @@ export class WorkflowIntegrationService {
 
     try {
       // 1. GENERATE SIGNED BOL DOCUMENT
-      console.log('📄 Step 1: Generating signed BOL document...');
+      console.info('📄 Step 1: Generating signed BOL document...');
       const signedBOLResult = await this.generateSignedBOLDocument(
         cascadeData,
         bolData
@@ -114,7 +114,7 @@ export class WorkflowIntegrationService {
       }
 
       // 2. STORE IN DRIVER DOCUMENTS
-      console.log('💾 Step 2: Adding to driver document collection...');
+      console.info('💾 Step 2: Adding to driver document collection...');
       await this.addToDriverDocuments(
         cascadeData.driverId,
         signedBOLResult.documentUrl!
@@ -122,7 +122,7 @@ export class WorkflowIntegrationService {
       result.statusUpdates.push('Added to driver documents');
 
       // 3. SUBMIT TO BROKER FOR REVIEW
-      console.log('👔 Step 3: Submitting to broker for review...');
+      console.info('👔 Step 3: Submitting to broker for review...');
       const brokerSubmissionResult = await this.submitToBrokerReview(
         cascadeData,
         bolData
@@ -136,7 +136,7 @@ export class WorkflowIntegrationService {
       }
 
       // 4. UPDATE DISPATCHER DASHBOARD
-      console.log('🎯 Step 4: Updating dispatcher dashboard...');
+      console.info('🎯 Step 4: Updating dispatcher dashboard...');
       await this.updateDispatcherLoadStatus(
         cascadeData.loadId,
         cascadeData.dispatcherId,
@@ -145,7 +145,7 @@ export class WorkflowIntegrationService {
       result.statusUpdates.push('Dispatcher dashboard updated: DELIVERED');
 
       // 5. ENABLE DISPATCH FEE INVOICE CREATION
-      console.log('💰 Step 5: Enabling dispatch fee invoice creation...');
+      console.info('💰 Step 5: Enabling dispatch fee invoice creation...');
       await this.enableDispatchInvoicing(
         cascadeData.loadId,
         cascadeData.dispatcherId
@@ -153,15 +153,15 @@ export class WorkflowIntegrationService {
       result.statusUpdates.push('Dispatch fee invoice creation enabled');
 
       // 6. SEND STAKEHOLDER NOTIFICATIONS
-      console.log('🔔 Step 6: Sending stakeholder notifications...');
+      console.info('🔔 Step 6: Sending stakeholder notifications...');
       const notificationResults = await this.sendStakeholderNotifications(
         cascadeData,
         bolData
       );
       result.notificationsSent.push(...notificationResults);
 
-      console.log('✅ BOL completion cascade completed successfully!');
-      console.log(
+      console.info('✅ BOL completion cascade completed successfully!');
+      console.info(
         `📊 Summary: ${result.documentsGenerated.length} docs, ${result.notificationsSent.length} notifications, ${result.statusUpdates.length} updates`
       );
     } catch (error) {
@@ -215,7 +215,7 @@ export class WorkflowIntegrationService {
 
       const documentUrl = `/api/documents/${documentId}/signed-bol.pdf`;
 
-      console.log(`📋 Signed BOL generated: ${documentId}`);
+      console.info(`📋 Signed BOL generated: ${documentId}`);
       return { success: true, documentId, documentUrl };
     } catch (error) {
       console.error('Error generating signed BOL:', error);
@@ -274,7 +274,7 @@ This document serves as proof of delivery and acceptance of goods.
     const documentId = `DOC-BOL-${loadId}-${Date.now()}`;
 
     // TODO: Implement actual database storage
-    console.log(`💾 Storing signed BOL document: ${documentId}`);
+    console.info(`💾 Storing signed BOL document: ${documentId}`);
 
     return documentId;
   }
@@ -287,7 +287,7 @@ This document serves as proof of delivery and acceptance of goods.
     documentUrl: string
   ): Promise<void> {
     // TODO: Implement driver document storage
-    console.log(
+    console.info(
       `📚 Adding BOL to driver ${driverId} documents: ${documentUrl}`
     );
   }
@@ -349,7 +349,7 @@ This document serves as proof of delivery and acceptance of goods.
       const result = await BOLWorkflowService.submitBOL(submissionData);
 
       if (result.success) {
-        console.log(
+        console.info(
           `✅ BOL submitted to broker successfully: ${result.submissionId}`
         );
         return { success: true, submissionId: result.submissionId };
@@ -381,7 +381,7 @@ This document serves as proof of delivery and acceptance of goods.
 
       // Send real-time update to dispatcher dashboard
       // TODO: Implement WebSocket/SSE notification to dispatcher dashboard
-      console.log(
+      console.info(
         `🎯 Load ${loadId} status updated to ${status} for dispatcher ${dispatcherId}`
       );
     } catch (error) {
@@ -400,7 +400,7 @@ This document serves as proof of delivery and acceptance of goods.
     try {
       // Mark load as ready for dispatch fee invoicing
       // TODO: Implement dispatch fee invoice flag in database
-      console.log(
+      console.info(
         `💰 Dispatch fee invoice creation enabled for load ${loadId}`
       );
 
@@ -409,7 +409,7 @@ This document serves as proof of delivery and acceptance of goods.
       if (billingService) {
         try {
           // const invoice = await billingService.generateDispatchFeeInvoice(loadId, dispatcherId);
-          console.log('📊 Billing service available for invoice generation');
+          console.info('📊 Billing service available for invoice generation');
         } catch (billingError) {
           console.warn(
             '⚠️ Invoice generation failed:',
@@ -419,7 +419,7 @@ This document serves as proof of delivery and acceptance of goods.
           );
         }
       } else {
-        console.log(
+        console.info(
           'ℹ️ Billing service not available - invoice creation will be manual'
         );
       }
@@ -465,7 +465,7 @@ This document serves as proof of delivery and acceptance of goods.
     stepData: any,
     completedBy: string
   ): Promise<void> {
-    console.log(
+    console.info(
       `🔗 Handling workflow step completion: ${stepId} for load ${loadId}`
     );
 
@@ -475,7 +475,7 @@ This document serves as proof of delivery and acceptance of goods.
       stepData.receiverSignature &&
       stepData.bolSigned
     ) {
-      console.log('📋 BOL signing detected - triggering cascade...');
+      console.info('📋 BOL signing detected - triggering cascade...');
 
       // Extract necessary data for cascade
       const cascadeData: WorkflowCascadeData = {
@@ -505,7 +505,7 @@ This document serves as proof of delivery and acceptance of goods.
       if (!result.success) {
         console.error('❌ BOL completion cascade had errors:', result.errors);
       } else {
-        console.log('✅ BOL completion cascade completed successfully!');
+        console.info('✅ BOL completion cascade completed successfully!');
       }
     }
   }

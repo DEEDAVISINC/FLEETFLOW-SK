@@ -166,7 +166,7 @@ export class SAMGovOpportunityMonitor {
     notificationsSent: number;
   }> {
     if (!this.config.enabled) {
-      console.log('⏸️ SAM.gov monitoring is disabled');
+      console.info('⏸️ SAM.gov monitoring is disabled');
       return {
         newOpportunities: [],
         totalOpportunities: 0,
@@ -174,7 +174,7 @@ export class SAMGovOpportunityMonitor {
       };
     }
 
-    console.log('🔍 Checking SAM.gov for new opportunities...');
+    console.info('🔍 Checking SAM.gov for new opportunities...');
 
     try {
       // Fetch current opportunities from SAM.gov
@@ -193,7 +193,7 @@ export class SAMGovOpportunityMonitor {
           await this.sendOpportunityNotifications(newOpportunities);
       }
 
-      console.log(
+      console.info(
         `✅ SAM.gov check complete: ${newOpportunities.length} new opportunities found`
       );
 
@@ -414,7 +414,7 @@ export class SAMGovOpportunityMonitor {
         totalNotificationsSent++;
       }
 
-      console.log(
+      console.info(
         `📨 Universal notifications sent for ${opportunities.length} opportunities to ${this.config.recipients.length} recipients`
       );
       return totalNotificationsSent;
@@ -630,7 +630,7 @@ export class SAMGovOpportunityMonitor {
         throw new Error(`SMS API error: ${response.status}`);
       }
 
-      console.log(`📱 SMS sent to ${name} (${phone})`);
+      console.info(`📱 SMS sent to ${name} (${phone})`);
     } catch (error) {
       console.error(`Failed to send SMS to ${name}:`, error);
     }
@@ -646,9 +646,9 @@ export class SAMGovOpportunityMonitor {
   ): Promise<void> {
     try {
       // In production, integrate with your email service
-      console.log(`📧 Email sent to ${name} (${email})`);
-      console.log(`Subject: ${content.subject}`);
-      console.log(`HTML Content: ${content.html.substring(0, 200)}...`);
+      console.info(`📧 Email sent to ${name} (${email})`);
+      console.info(`Subject: ${content.subject}`);
+      console.info(`HTML Content: ${content.html.substring(0, 200)}...`);
     } catch (error) {
       console.error(`Failed to send email to ${name}:`, error);
     }
@@ -688,7 +688,7 @@ export class SAMGovOpportunityMonitor {
         this.cache = JSON.parse(cached);
       }
     } catch (error) {
-      console.log('No cache found, starting fresh');
+      console.info('No cache found, starting fresh');
     }
   }
 
@@ -848,7 +848,7 @@ export class SAMGovOpportunityMonitor {
    */
   updateConfig(newConfig: Partial<MonitoringConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('🔧 SAM.gov monitoring configuration updated');
+    console.info('🔧 SAM.gov monitoring configuration updated');
   }
 
   /**

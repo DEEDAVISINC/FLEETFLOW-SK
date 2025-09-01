@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log the contact submission for now (in production, you'd save to database or send email)
-    console.log('📧 Go with the Flow Contact Form Submission:', {
+    console.info('📧 Go with the Flow Contact Form Submission:', {
       timestamp: new Date().toISOString(),
       name,
       email,

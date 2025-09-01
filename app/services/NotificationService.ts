@@ -149,7 +149,7 @@ export class NotificationService {
   constructor() {
     this.initializeTemplates();
     this.setupEventListeners();
-    console.log('🔔 NotificationService initialized');
+    console.info('🔔 NotificationService initialized');
   }
 
   // ============================================================================
@@ -163,7 +163,7 @@ export class NotificationService {
     notification: NotificationData
   ): Promise<string | null> {
     try {
-      console.log(`🚀 Sending notification: ${notification.title}`);
+      console.info(`🚀 Sending notification: ${notification.title}`);
 
       // Generate unique ID if not provided
       if (!notification.id) {
@@ -176,7 +176,7 @@ export class NotificationService {
 
       // Store in database if Supabase is configured
       if (!this.supabase) {
-        console.log(
+        console.info(
           '📭 NotificationService: Supabase not configured, notification not stored'
         );
         return notification;
@@ -212,7 +212,7 @@ export class NotificationService {
         .single();
 
       if (error) {
-        console.log(
+        console.info(
           '📭 NotificationService: Database not configured, notification not stored'
         );
         return null;
@@ -229,7 +229,7 @@ export class NotificationService {
         await this.setupEscalation(notification);
       }
 
-      console.log(`✅ Notification sent successfully: ${notification.id}`);
+      console.info(`✅ Notification sent successfully: ${notification.id}`);
       return notification.id;
     } catch (error) {
       console.error('❌ NotificationService.sendNotification error:', error);
@@ -243,7 +243,7 @@ export class NotificationService {
   async sendBulkNotifications(
     notifications: NotificationData[]
   ): Promise<(string | null)[]> {
-    console.log(
+    console.info(
       `📢 Sending bulk notifications: ${notifications.length} notifications`
     );
 
@@ -252,7 +252,7 @@ export class NotificationService {
     );
 
     const successful = results.filter((id) => id !== null).length;
-    console.log(
+    console.info(
       `✅ Bulk send complete: ${successful}/${notifications.length} successful`
     );
 
@@ -263,7 +263,7 @@ export class NotificationService {
    * Create notification from business event
    */
   async handleBusinessEvent(event: BusinessEvent): Promise<void> {
-    console.log(`🎯 Handling business event: ${event.type}`);
+    console.info(`🎯 Handling business event: ${event.type}`);
 
     try {
       // Find applicable templates
@@ -272,7 +272,7 @@ export class NotificationService {
       );
 
       if (applicableTemplates.length === 0) {
-        console.log(`⚠️ No templates found for event: ${event.type}`);
+        console.info(`⚠️ No templates found for event: ${event.type}`);
         return;
       }
 
@@ -317,7 +317,7 @@ export class NotificationService {
     try {
       // Return empty array if Supabase is not configured
       if (!this.supabase) {
-        console.log(
+        console.info(
           '📭 NotificationService: Supabase not configured, returning empty notifications'
         );
         return [];
@@ -359,7 +359,7 @@ export class NotificationService {
       const { data, error } = await query;
 
       if (error) {
-        console.log(
+        console.info(
           '📭 NotificationService: Database not configured, returning empty notifications'
         );
         return [];
@@ -367,7 +367,7 @@ export class NotificationService {
 
       return data?.map(this.mapDatabaseNotification) || [];
     } catch (error) {
-      console.log(
+      console.info(
         '📭 NotificationService: Connection not available, returning empty notifications'
       );
       return [];
@@ -380,7 +380,7 @@ export class NotificationService {
   async markAsRead(notificationIds: string[]): Promise<boolean> {
     try {
       if (!this.supabase) {
-        console.log(
+        console.info(
           '📭 NotificationService: Supabase not configured, cannot mark as read'
         );
         return false;
@@ -395,13 +395,13 @@ export class NotificationService {
         .in('id', notificationIds);
 
       if (error) {
-        console.log(
+        console.info(
           '📭 NotificationService: Database not configured, cannot mark as read'
         );
         return false;
       }
 
-      console.log(`✅ Marked ${notificationIds.length} notifications as read`);
+      console.info(`✅ Marked ${notificationIds.length} notifications as read`);
       return true;
     } catch (error) {
       console.error('❌ markAsRead error:', error);
@@ -415,7 +415,7 @@ export class NotificationService {
   async archiveNotifications(notificationIds: string[]): Promise<boolean> {
     try {
       if (!this.supabase) {
-        console.log(
+        console.info(
           '📭 NotificationService: Supabase not configured, cannot archive'
         );
         return false;
@@ -434,7 +434,7 @@ export class NotificationService {
         return false;
       }
 
-      console.log(`✅ Archived ${notificationIds.length} notifications`);
+      console.info(`✅ Archived ${notificationIds.length} notifications`);
       return true;
     } catch (error) {
       console.error('❌ archiveNotifications error:', error);
@@ -456,7 +456,7 @@ export class NotificationService {
   }> {
     try {
       if (!this.supabase) {
-        console.log(
+        console.info(
           '📭 NotificationService: Supabase not configured, returning empty stats'
         );
         return {
@@ -482,7 +482,7 @@ export class NotificationService {
       const { data, error } = await query;
 
       if (error) {
-        console.log(
+        console.info(
           '📭 NotificationService: Database not configured, returning empty stats'
         );
         return {
@@ -521,7 +521,7 @@ export class NotificationService {
   // ============================================================================
 
   private initializeTemplates(): void {
-    console.log('📝 Initializing notification templates...');
+    console.info('📝 Initializing notification templates...');
 
     // System notifications
     this.templates.set('system_maintenance', {
@@ -634,11 +634,13 @@ export class NotificationService {
       ],
     });
 
-    console.log(`✅ Initialized ${this.templates.size} notification templates`);
+    console.info(
+      `✅ Initialized ${this.templates.size} notification templates`
+    );
   }
 
   private setupEventListeners(): void {
-    console.log('👂 Setting up business event listeners...');
+    console.info('👂 Setting up business event listeners...');
 
     // Load delivery events
     this.addEventListener('load_delivered', async (event) => {
@@ -677,7 +679,7 @@ export class NotificationService {
       await this.sendNotification(confirmation);
     });
 
-    console.log(`✅ Event listeners setup complete`);
+    console.info(`✅ Event listeners setup complete`);
   }
 
   private addEventListener(
@@ -726,13 +728,13 @@ export class NotificationService {
 
   private async sendEmail(notification: NotificationData): Promise<void> {
     // Integration with SendGrid or similar service
-    console.log(`📧 Email notification sent: ${notification.title}`);
+    console.info(`📧 Email notification sent: ${notification.title}`);
     // Implementation would go here
   }
 
   private async sendSMS(notification: NotificationData): Promise<void> {
     // Integration with Twilio or similar service
-    console.log(`📱 SMS notification sent: ${notification.title}`);
+    console.info(`📱 SMS notification sent: ${notification.title}`);
     // Implementation would go here
   }
 
@@ -740,19 +742,19 @@ export class NotificationService {
     notification: NotificationData
   ): Promise<void> {
     // Integration with FCM or similar service
-    console.log(`🔔 Push notification sent: ${notification.title}`);
+    console.info(`🔔 Push notification sent: ${notification.title}`);
     // Implementation would go here
   }
 
   private async sendWebhook(notification: NotificationData): Promise<void> {
     // Send to external webhook endpoints
-    console.log(`🌐 Webhook notification sent: ${notification.title}`);
+    console.info(`🌐 Webhook notification sent: ${notification.title}`);
     // Implementation would go here
   }
 
   private async setupEscalation(notification: NotificationData): Promise<void> {
     // Setup escalation logic for critical notifications
-    console.log(`⏰ Escalation setup for: ${notification.id}`);
+    console.info(`⏰ Escalation setup for: ${notification.id}`);
     // Implementation would go here
   }
 
@@ -900,7 +902,7 @@ export class NotificationService {
     userId: string,
     tenantId: string = 'default'
   ): Promise<void> {
-    console.log(`🎯 Generating sample notifications for user: ${userId}`);
+    console.info(`🎯 Generating sample notifications for user: ${userId}`);
 
     const sampleNotifications: NotificationData[] = [
       {
@@ -1034,7 +1036,7 @@ export class NotificationService {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    console.log(
+    console.info(
       `✅ Generated ${sampleNotifications.length} sample notifications`
     );
   }

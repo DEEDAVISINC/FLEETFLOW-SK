@@ -7,6 +7,10 @@ import {
   RouteDocumentData,
   professionalRouteDocumentService,
 } from '../services/ProfessionalRouteDocumentService';
+import {
+  ShipperQuestionnaireData,
+  ShipperQuestionnaireService,
+} from '../services/ShipperQuestionnaireService';
 import { subscriptionAgreementService } from '../services/SubscriptionAgreementService';
 import {
   BrandingTheme,
@@ -224,6 +228,35 @@ export default function ProfessionalTemplateManager({
           downloadUrl: `data:text/html;charset=utf-8,${encodeURIComponent(agreement.html)}`,
         });
       }
+
+      // Shipper Questionnaire Preview
+      const questionnaireData: ShipperQuestionnaireData = {
+        ...ShipperQuestionnaireService.getDefaultQuestionnaireData(),
+        companyName: 'Cupertino Electric',
+        contactName: 'John Smith',
+        contactEmail: 'john@cupertinoelectric.com',
+        contactPhone: '(555) 123-4567',
+        projectDetails: 'multi-location requirements',
+        locations: {
+          states: ['California', 'Texas', 'Florida'],
+          countries: ['Canada', 'Mexico'],
+          territories: ['Puerto Rico'],
+          specificCities: ['Los Angeles', 'Houston', 'Miami'],
+        },
+        transportationHubs: ['Los Angeles Port', 'Houston Ship Channel'],
+      };
+
+      const questionnaireEmail =
+        ShipperQuestionnaireService.generateQuestionnaireEmail(
+          questionnaireData
+        );
+
+      previews.push({
+        type: 'questionnaire',
+        name: 'Shipper/Vendor Questionnaire',
+        preview: questionnaireEmail.substring(0, 500) + '...',
+        downloadUrl: `data:text/plain;charset=utf-8,${encodeURIComponent(questionnaireEmail)}`,
+      });
 
       setTemplatePreviews(previews);
     } catch (error) {
@@ -497,6 +530,7 @@ export default function ProfessionalTemplateManager({
                       {preview.type === 'agreement' && '📋'}
                       {preview.type === 'email' && '📧'}
                       {preview.type === 'pdf' && '📄'}
+                      {preview.type === 'questionnaire' && '📝'}
                       {preview.name}
                     </h4>
 
@@ -524,8 +558,9 @@ export default function ProfessionalTemplateManager({
                       marginBottom: '16px',
                     }}
                   >
-                    Professional {preview.type} template with modern styling and
-                    company branding integration.
+                    {preview.type === 'questionnaire'
+                      ? 'Professional questionnaire template for gathering logistics requirements from potential shippers and vendors.'
+                      : `Professional ${preview.type} template with modern styling and company branding integration.`}
                   </p>
 
                   <div

@@ -78,7 +78,7 @@ export default function FleetFlowPricingDashboard() {
         color: '#ffffff',
         position: 'relative',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Professional Header - EXACT FleetFlow Style */}

@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { createLoad, Load, generateLoadId, ShipperInfo } from '../services/loadService';
-import { getCurrentUser, getAvailableDispatchers } from '../config/access';
+import React, { useEffect, useState } from 'react';
+import { getAvailableDispatchers, getCurrentUser } from '../config/access';
+import { Load, ShipperInfo, createLoad, generateLoadId } from '../services/loadService';
 import { shipperService } from '../services/shipperService';
 
 interface LoadFormData {
@@ -106,7 +106,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
       });
 
       setPreviewLoad(newLoad);
-      
+
       // If tracking is enabled, show tracking setup
       if (trackingEnabled) {
         setShowTrackingSetup(true);
@@ -143,8 +143,8 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
   };
 
   if (showTrackingSetup && previewLoad) {
-    return <RealTimeTrackingSetup 
-      load={previewLoad} 
+    return <RealTimeTrackingSetup
+      load={previewLoad}
       onComplete={completeLoadCreation}
       onBack={() => setShowTrackingSetup(false)}
     />;
@@ -164,8 +164,18 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
               onClick={onClose}
               className="text-white hover:text-gray-200 transition-colors"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           )}
@@ -174,13 +184,13 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Route Information */}
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-gray-50 rounded-lg p-4">>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             📍 Route Information
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">>
                 Origin *
               </label>
               <input
@@ -193,7 +203,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">>
                 Destination *
               </label>
               <input
@@ -206,7 +216,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">>
                 Distance
               </label>
               <input
@@ -218,7 +228,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">>
                 Rate *
               </label>
               <input
@@ -234,13 +244,13 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
         </div>
 
         {/* Load Details */}
-        <div className="bg-gray-50 rounded-lg p-4">
+        <div className="bg-gray-50 rounded-lg p-4">>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             📦 Load Details
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">>
                 Weight
               </label>
               <input
@@ -271,7 +281,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
         {/* Schedule */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center"
             🗓️ Schedule
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -326,22 +336,22 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
         {/* Shipper Information */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center"
             🏢 Shipper Information
           </h3>
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4"
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Select Shipper *
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-2"
                 <select
                   required
                   value={formData.shipperId}
                   onChange={(e) => handleInputChange('shipperId', e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="">Select a shipper...</option>
+                  <option value=">Select a shipper...</option>
                   {shippers.map(shipper => (
                     <option key={shipper.id} value={shipper.id}>
                       {shipper.companyName} - {shipper.city}, {shipper.state}
@@ -360,35 +370,35 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
             {/* Selected Shipper Details */}
             {selectedShipper && (
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">Shipper Details</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div className="bg-white rounded-lg p-4 border border-gray-200"
+                <h4 className="font-semibold text-gray-900 mb-2"Shipper Details</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm"
                   <div>
-                    <span className="font-medium text-gray-600">Company:</span>
-                    <span className="ml-2 text-gray-900">{selectedShipper.companyName}</span>
+                    <span className="font-medium text-gray-600"Company:</span>
+                    <span className="ml-2 text-gray-900"{selectedShipper.companyName}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Contact:</span>
-                    <span className="ml-2 text-gray-900">{selectedShipper.contactName}</span>
+                    <span className="font-medium text-gray-600"Contact:</span>
+                    <span className="ml-2 text-gray-900"{selectedShipper.contactName}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Phone:</span>
-                    <span className="ml-2 text-gray-900">{selectedShipper.phone}</span>
+                    <span className="font-medium text-gray-600"Phone:</span>
+                    <span className="ml-2 text-gray-900"{selectedShipper.phone}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-600">Email:</span>
-                    <span className="ml-2 text-gray-900">{selectedShipper.email}</span>
+                    <span className="font-medium text-gray-600"Email:</span>
+                    <span className="ml-2 text-gray-900"{selectedShipper.email}</span>
                   </div>
-                  <div className="md:col-span-2">
-                    <span className="font-medium text-gray-600">Address:</span>
-                    <span className="ml-2 text-gray-900">
+                  <div className="md:col-span-2"
+                    <span className="font-medium text-gray-600"Address:</span>
+                    <span className="ml-2 text-gray-900"
                       {selectedShipper.address}, {selectedShipper.city}, {selectedShipper.state} {selectedShipper.zipCode}
                     </span>
                   </div>
                   {selectedShipper.specialInstructions && (
-                    <div className="md:col-span-2">
-                      <span className="font-medium text-gray-600">Special Instructions:</span>
-                      <span className="ml-2 text-gray-900">{selectedShipper.specialInstructions}</span>
+                    <div className="md:col-span-2"
+                      <span className="font-medium text-gray-600"Special Instructions:</span>
+                      <span className="ml-2 text-gray-900"{selectedShipper.specialInstructions}</span>
                     </div>
                   )}
                 </div>
@@ -397,9 +407,9 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
             {/* New Shipper Form */}
             {showNewShipperForm && (
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-3">Add New Shipper</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-white rounded-lg p-4 border border-gray-200"
+                <h4 className="font-semibold text-gray-900 mb-3"Add New Shipper</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3"
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
                     <input
@@ -481,7 +491,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 mt-3"
                   <button
                     type="button"
                     onClick={handleAddNewShipper}
@@ -504,7 +514,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
         {/* Assignment & Tracking */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center"
             👥 Assignment & Tracking
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -517,7 +527,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
                 onChange={(e) => handleInputChange('dispatcherId', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="">Select Dispatcher</option>
+                <option value=">Select Dispatcher</option>
                 {dispatchers.map(dispatcher => (
                   <option key={dispatcher.id} value={dispatcher.id}>
                     {dispatcher.name}
@@ -525,15 +535,15 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
                 ))}
               </select>
             </div>
-            <div className="flex items-center">
-              <label className="flex items-center space-x-2 cursor-pointer">
+            <div className="flex items-center"
+              <label className="flex items-center space-x-2 cursor-pointer"
                 <input
                   type="checkbox"
                   checked={trackingEnabled}
                   onChange={(e) => setTrackingEnabled(e.target.checked)}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-gray-700"
                   📍 Enable Real-time Tracking
                 </span>
               </label>
@@ -543,7 +553,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
 
         {/* Special Instructions */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center"
             📝 Special Instructions
           </h3>
           <textarea
@@ -556,7 +566,7 @@ export default function AddShipment({ onLoadCreated, onClose }: AddShipmentProps
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 pt-6 border-t border-gray-200">
+        <div className="flex gap-4 pt-6 border-t border-gray-200"
           {onClose && (
             <button
               type="button"
@@ -611,8 +621,8 @@ function RealTimeTrackingSetup({ load, onComplete, onBack }: RealTimeTrackingSet
   const handleSetupComplete = () => {
     setIsSetupComplete(true);
     // In production, this would configure the actual tracking system
-    console.log('🚛 Real-time tracking configured for load:', load.id, trackingData);
-    
+    console.info('🚛 Real-time tracking configured for load:', load.id, trackingData);
+
     setTimeout(() => {
       onComplete();
     }, 2000);
@@ -620,23 +630,23 @@ function RealTimeTrackingSetup({ load, onComplete, onBack }: RealTimeTrackingSet
 
   if (isSetupComplete) {
     return (
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
-        <div className="mb-6">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 text-center"
+        <div className="mb-6"
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            <svg className="w-8 h-8 text-green-600"" fill=""none"" stroke=""currentColor"" viewBox=""0 0 24 24"
+              <path strokeLinecap=""round"" strokeLinejoin=""round"" strokeWidth={2} d=""M5 13l4 4L19 7"" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">🎉 Tracking Setup Complete!</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2"🎉 Tracking Setup Complete!</h2>
+          <p className="text-gray-600"
             Real-time tracking has been enabled for load <strong>{load.id}</strong>
           </p>
         </div>
-        
-        <div className="bg-blue-50 rounded-lg p-4 mb-6">
-          <div className="text-sm text-blue-800">
-            <div className="font-medium mb-2">✅ Tracking Features Enabled:</div>
-            <ul className="space-y-1 text-left">
+
+        <div className="bg-blue-50 rounded-lg p-4 mb-6"
+          <div className="text-sm text-blue-800"
+            <div className="font-medium mb-2"✅ Tracking Features Enabled:</div>
+            <ul className="space-y-1 text-left"
               <li>• GPS location updates every {trackingData.updateInterval} minutes</li>
               <li>• Automated milestone notifications</li>
               <li>• Real-time status updates</li>
@@ -645,7 +655,7 @@ function RealTimeTrackingSetup({ load, onComplete, onBack }: RealTimeTrackingSet
           </div>
         </div>
 
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-500"
           Redirecting to Dispatch Central...
         </div>
       </div>
@@ -653,20 +663,20 @@ function RealTimeTrackingSetup({ load, onComplete, onBack }: RealTimeTrackingSet
   }
 
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden"
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
+      <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6"
+        <h2 className="text-2xl font-bold flex items-center gap-2"
           📍 Real-time Tracking Setup
         </h2>
-        <p className="text-green-100 mt-1">Configure tracking for load {load.id}</p>
+        <p className="text-green-100 mt-1"Configure tracking for load {load.id}</p>
       </div>
 
-      <div className="p-6">
+      <div className="p-6"
         {/* Load Summary */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <h3 className="font-semibold text-gray-900 mb-2">Load Summary</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="bg-gray-50 rounded-lg p-4 mb-6"
+          <h3 className="font-semibold text-gray-900 mb-2"Load Summary</h3>
+          <div className="grid grid-cols-2 gap-4 text-sm"
             <div><strong>Route:</strong> {load.origin} → {load.destination}</div>
             <div><strong>Equipment:</strong> {load.equipment}</div>
             <div><strong>Rate:</strong> ${load.rate.toLocaleString()}</div>
@@ -675,7 +685,7 @@ function RealTimeTrackingSetup({ load, onComplete, onBack }: RealTimeTrackingSet
         </div>
 
         {/* Tracking Configuration */}
-        <div className="space-y-6">
+        <div className="space-y-6"
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Vehicle ID
@@ -718,41 +728,41 @@ function RealTimeTrackingSetup({ load, onComplete, onBack }: RealTimeTrackingSet
             </select>
           </div>
 
-          <div className="space-y-3">
-            <label className="flex items-center space-x-2">
+          <div className="space-y-3"
+            <label className="flex items-center space-x-2"
               <input
                 type="checkbox"
                 checked={trackingData.gpsEnabled}
                 onChange={(e) => setTrackingData(prev => ({ ...prev, gpsEnabled: e.target.checked }))}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
               />
-              <span className="text-sm font-medium text-gray-700">Enable GPS Tracking</span>
+              <span className="text-sm font-medium text-gray-700"Enable GPS Tracking</span>
             </label>
 
-            <label className="flex items-center space-x-2">
+            <label className="flex items-center space-x-2"
               <input
                 type="checkbox"
                 checked={trackingData.notificationsEnabled}
                 onChange={(e) => setTrackingData(prev => ({ ...prev, notificationsEnabled: e.target.checked }))}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
               />
-              <span className="text-sm font-medium text-gray-700">Enable Push Notifications</span>
+              <span className="text-sm font-medium text-gray-700"Enable Push Notifications</span>
             </label>
 
-            <label className="flex items-center space-x-2">
+            <label className="flex items-center space-x-2"
               <input
                 type="checkbox"
                 checked={trackingData.milestoneAlerts}
                 onChange={(e) => setTrackingData(prev => ({ ...prev, milestoneAlerts: e.target.checked }))}
                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded"
               />
-              <span className="text-sm font-medium text-gray-700">Milestone Alerts</span>
+              <span className="text-sm font-medium text-gray-700"Milestone Alerts</span>
             </label>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 pt-6 border-t border-gray-200 mt-6">
+        <div className="flex gap-4 pt-6 border-t border-gray-200 mt-6"
           <button
             onClick={onBack}
             className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

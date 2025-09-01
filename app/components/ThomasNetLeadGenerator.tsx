@@ -90,7 +90,7 @@ export default function ThomasNetLeadGenerator() {
     setSearchStats(null);
 
     try {
-      console.log('Starting ThomasNet search with params:', searchParams);
+      console.info('Starting ThomasNet search with params:', searchParams);
 
       const requestBody: any = { ...searchParams };
 
@@ -135,7 +135,7 @@ export default function ThomasNetLeadGenerator() {
           withFMCSA: withFMCSA.length,
         });
 
-        console.log(
+        console.info(
           `ThomasNet search completed: ${data.data.length} leads found`
         );
       } else {
@@ -488,8 +488,8 @@ export default function ThomasNetLeadGenerator() {
               Ready to Discover Leads
             </h3>
             <p className='mb-4 text-gray-600'>
-              Configure your search parameters above and click "Start Lead
-              Discovery" to find high-value manufacturing and wholesale
+              Configure your search parameters above and click ""Start Lead
+              Discovery"" to find high-value manufacturing and wholesale
               prospects.
             </p>
             <div className='text-sm text-gray-500'>

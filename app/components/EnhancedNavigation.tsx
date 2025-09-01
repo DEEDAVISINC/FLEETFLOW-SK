@@ -182,7 +182,7 @@ export default function EnhancedNavigation() {
     setShowProfileDropdown(false);
   };
 
-  console.log(
+  console.info(
     'Navigation render - activeDropdown:',
     activeDropdown,
     'activeSubDropdown:',
@@ -798,7 +798,7 @@ export default function EnhancedNavigation() {
                       onClick={() => {
                         setShowProfileDropdown(false);
                         // Add logout logic here
-                        console.log('Logout clicked');
+                        console.info('Logout clicked');
                         alert('Logout functionality would be implemented here');
                       }}
                       style={{

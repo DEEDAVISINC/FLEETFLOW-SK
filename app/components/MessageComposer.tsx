@@ -198,7 +198,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
       const messageId = await messageService.sendMessage(messageData);
 
       if (messageId) {
-        console.log('✅ Message sent successfully:', messageId);
+        console.info('✅ Message sent successfully:', messageId);
         handleClose();
       } else {
         console.error('❌ Failed to send message');
@@ -247,7 +247,7 @@ export const MessageComposer: React.FC<MessageComposerProps> = ({
       const draftId = await messageService.saveDraft(draft);
 
       if (draftId) {
-        console.log('💾 Draft saved successfully:', draftId);
+        console.info('💾 Draft saved successfully:', draftId);
       }
     } catch (error) {
       console.error('❌ Error saving draft:', error);

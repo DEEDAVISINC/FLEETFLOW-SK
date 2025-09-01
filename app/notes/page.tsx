@@ -191,8 +191,10 @@ export default function NotesAndCommunicationsHub() {
     'notifications' | 'notes' | 'communications'
   >('notifications');
   const [notes, setNotes] = useState<any[]>(sampleNotes);
-  const [notifications, setNotifications] = useState<any[]>(sampleNotifications);
-  const [communications, setCommunications] = useState<any[]>(sampleCommunications);
+  const [notifications, setNotifications] =
+    useState<any[]>(sampleNotifications);
+  const [communications, setCommunications] =
+    useState<any[]>(sampleCommunications);
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<
     'all' | 'critical' | 'high' | 'normal' | 'low'

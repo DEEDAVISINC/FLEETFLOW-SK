@@ -219,7 +219,7 @@ export default function HomePage() {
             background: 'rgba(255, 255, 255, 0.05)',
             borderRadius: '8px'
           }}>
-            <Link href="/loads" style={{ textDecoration: 'none' }}>
+            <Link href="/loads"" style={{ textDecoration: 'none' }}>
               <button style={{
                 padding: '12px 24px',
                 background: 'linear-gradient(135deg, #10b981, #059669)',

@@ -1,0 +1,563 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { centralCRMService, UserIdentifier, TransferRequest, CentralInteraction } from '../services/CentralCRMService';
+
+interface CRMTransferCenterProps {
+  currentUser?: UserIdentifier;
+  onTransferComplete?: (transferId: string) => void;
+}
+
+export default function CRMTransferCenter({ currentUser, onTransferComplete }: CRMTransferCenterProps) {
+  const [users, setUsers] = useState<UserIdentifier[]>([]);
+  const [selectedUser, setSelectedUser] = useState<UserIdentifier | null>(null);
+  const [transferData, setTransferData] = useState({
+    contactId: '',
+    contactName: '',
+    contactCompany: '',
+    reason: '',
+    notes: '',
+    urgency: 'normal' as 'normal' | 'urgent' | 'immediate',
+    currentCall: false,
+    loadId: '',
+    specialInstructions: ''
+  });
+  const [isTransferring, setIsTransferring] = useState(false);
+  const [recentInteractions, setRecentInteractions] = useState<CentralInteraction[]>([]);
+  const [showTransferForm, setShowTransferForm] = useState(false);
+
+  useEffect(() => {
+    loadUsers();
+    loadRecentInteractions();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      const allUsers = await centralCRMService.getAllUsers();
+      setUsers(allUsers);
+    } catch (error) {
+      console.error('Failed to load users:', error);
+    }
+  };
+
+  const loadRecentInteractions = async () => {
+    try {
+      const interactions = await centralCRMService.getActivityFeed();
+      setRecentInteractions(interactions.slice(0, 5));
+    } catch (error) {
+      console.error('Failed to load interactions:', error);
+    }
+  };
+
+  const handleTransfer = async () => {
+    if (!selectedUser || !currentUser) return;
+
+    setIsTransferring(true);
+    try {
+      const transferRequest: TransferRequest = {
+        fromUser: currentUser,
+        toUser: selectedUser,
+        contactId: transferData.contactId || 'CONTACT_TEMP',
+        contactName: transferData.contactName,
+        contactCompany: transferData.contactCompany,
+        reason: transferData.reason,
+        notes: transferData.notes,
+        urgency: transferData.urgency,
+        context: {
+          currentCall: transferData.currentCall,
+          loadDetails: transferData.loadId ? {
+            loadId: transferData.loadId,
+            status: 'pending_dispatch'
+          } : undefined,
+          specialInstructions: transferData.specialInstructions
+        }
+      };
+
+      const result = await centralCRMService.initiateTransfer(transferRequest);
+      
+      if (result.success) {
+        // Reset form
+        setTransferData({
+          contactId: '',
+          contactName: '',
+          contactCompany: '',
+          reason: '',
+          notes: '',
+          urgency: 'normal',
+          currentCall: false,
+          loadId: '',
+          specialInstructions: ''
+        });
+        setSelectedUser(null);
+        setShowTransferForm(false);
+        
+        // Reload interactions
+        loadRecentInteractions();
+        
+        if (onTransferComplete) {
+          onTransferComplete(result.transferId);
+        }
+
+        alert(`✅ Transfer successful! ${selectedUser.firstName} has been notified.`);
+      }
+    } catch (error) {
+      console.error('Transfer failed:', error);
+      alert('❌ Transfer failed. Please try again.');
+    } finally {
+      setIsTransferring(false);
+    }
+  };
+
+  const getDepartmentColor = (department: string) => {
+    switch (department) {
+      case 'DC': return '#3b82f6'; // Blue - Dispatcher
+      case 'BB': return '#f97316'; // Orange - Broker  
+      case 'DM': return '#eab308'; // Yellow - Driver
+      case 'MGR': return '#8b5cf6'; // Purple - Manager
+      case 'CS': return '#22c55e'; // Green - Customer Service
+      case 'SALES': return '#ef4444'; // Red - Sales
+      default: return '#6b7280';
+    }
+  };
+
+  const getInteractionIcon = (type: string) => {
+    switch (type) {
+      case 'call': return '📞';
+      case 'email': return '📧';
+      case 'sms': return '💬';
+      case 'transfer': return '🔄';
+      case 'note': return '📝';
+      case 'task': return '✅';
+      case 'meeting': return '🤝';
+      default: return '📋';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'urgent': return '#ef4444';
+      case 'high': return '#f97316';
+      case 'medium': return '#eab308';
+      case 'low': return '#22c55e';
+      default: return '#6b7280';
+    }
+  };
+
+  return (
+    <div style={{ padding: '0' }}>
+      {/* Transfer Center Header */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '24px',
+          marginBottom: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h2
+            style={{
+              color: 'white',
+              margin: 0,
+              fontSize: '20px',
+              fontWeight: '600',
+            }}
+          >
+            🔄 Transfer & Communication Center
+          </h2>
+          
+          <button
+            onClick={() => setShowTransferForm(!showTransferForm)}
+            style={{
+              background: showTransferForm ? 'rgba(239, 68, 68, 0.2)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
+              color: showTransferForm ? '#ef4444' : 'white',
+              border: showTransferForm ? '1px solid rgba(239, 68, 68, 0.3)' : 'none',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            {showTransferForm ? '❌ Cancel' : '🔄 New Transfer'}
+          </button>
+        </div>
+
+        {/* Online Users Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+          {users.filter(user => user.isOnline).map((user) => (
+            <div
+              key={user.userId}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px',
+                padding: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <div
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#22c55e',
+                  boxShadow: '0 0 0 2px rgba(34, 197, 94, 0.3)',
+                }}
+              />
+              <div style={{ flex: 1 }}>
+                <div style={{ color: 'white', fontSize: '13px', fontWeight: '500' }}>
+                  {user.firstName} {user.lastName}
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '11px' }}>
+                  {user.role} • {user.userCode}
+                </div>
+              </div>
+              <div
+                style={{
+                  background: getDepartmentColor(user.department),
+                  color: 'white',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  fontSize: '10px',
+                  fontWeight: '600',
+                }}
+              >
+                {user.department}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Transfer Form */}
+      {showTransferForm && (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          <h3 style={{ color: 'white', fontSize: '18px', marginBottom: '20px' }}>
+            �� Initiate Transfer
+          </h3>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            {/* Contact Information */}
+            <div>
+              <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                Contact Name
+              </label>
+              <input
+                type="text""
+                value={transferData.contactName}
+                onChange={(e) => setTransferData({ ...transferData, contactName: e.target.value })}
+                placeholder="Customer/Contact Name""
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                Company
+              </label>
+              <input
+                type="text""
+                value={transferData.contactCompany}
+                onChange={(e) => setTransferData({ ...transferData, contactCompany: e.target.value })}
+                placeholder="Company Name""
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            {/* Transfer To */}
+            <div>
+              <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                Transfer To
+              </label>
+              <select
+                value={selectedUser?.userId || ''}
+                onChange={(e) => {
+                  const user = users.find(u => u.userId === e.target.value);
+                  setSelectedUser(user || null);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              >
+                <option value=">Select User...</option>
+                {users.filter(u => u.userId !== currentUser?.userId).map((user) => (
+                  <option key={user.userId} value={user.userId} style={{ background: '#1e293b', color: 'white' }}>
+                    {user.firstName} {user.lastName} ({user.department}) {user.isOnline ? '🟢' : '🔴'}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Urgency */}
+            <div>
+              <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+                Urgency Level
+              </label>
+              <select
+                value={transferData.urgency}
+                onChange={(e) => setTransferData({ ...transferData, urgency: e.target.value as any })}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              >
+                <option value="normal"" style={{ background: '#1e293b', color: 'white' }}>🟢 Normal</option>
+                <option value="urgent"" style={{ background: '#1e293b', color: 'white' }}>🟡 Urgent</option>
+                <option value="immediate"" style={{ background: '#1e293b', color: 'white' }}>🔴 Immediate</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Reason */}
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+              Transfer Reason
+            </label>
+            <input
+              type="text""
+              value={transferData.reason}
+              onChange={(e) => setTransferData({ ...transferData, reason: e.target.value })}
+              placeholder="Why are you transferring this call/task?""
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px',
+              }}
+            />
+          </div>
+
+          {/* Notes */}
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+              Transfer Notes
+            </label>
+            <textarea
+              value={transferData.notes}
+              onChange={(e) => setTransferData({ ...transferData, notes: e.target.value })}
+              placeholder="Provide context, customer history, special instructions...""
+              rows={3}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px',
+                resize: 'vertical',
+              }}
+            />
+          </div>
+
+          {/* Context Options */}
+          <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px' }}>
+              <input
+                type="checkbox""
+                checked={transferData.currentCall}
+                onChange={(e) => setTransferData({ ...transferData, currentCall: e.target.checked })}
+                style={{ width: '16px', height: '16px' }}
+              />
+              📞 Customer is currently on hold
+            </label>
+          </div>
+
+          {/* Load ID (optional) */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
+              Related Load ID (Optional)
+            </label>
+            <input
+              type="text""
+              value={transferData.loadId}
+              onChange={(e) => setTransferData({ ...transferData, loadId: e.target.value })}
+              placeholder="FL-25001-ATLMIA-ABC-DVFL-001""
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px',
+              }}
+            />
+          </div>
+
+          {/* Transfer Button */}
+          <button
+            onClick={handleTransfer}
+            disabled={!selectedUser || !transferData.reason || isTransferring}
+            style={{
+              background: (!selectedUser || !transferData.reason) 
+                ? 'rgba(107, 114, 128, 0.5)' 
+                : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: (!selectedUser || !transferData.reason) ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              opacity: isTransferring ? 0.7 : 1,
+            }}
+          >
+            {isTransferring ? '⏳ Transferring...' : '🔄 Initiate Transfer'}
+          </button>
+        </div>
+      )}
+
+      {/* Recent Activity Feed */}
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: '16px',
+          padding: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+        }}
+      >
+        <h3 style={{ color: 'white', fontSize: '18px', marginBottom: '20px' }}>
+          📊 Recent Activity Feed
+        </h3>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {recentInteractions.map((interaction) => (
+            <div
+              key={interaction.id}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px',
+                padding: '16px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  background: `linear-gradient(135deg, ${getDepartmentColor(interaction.initiatedBy.department)}, ${getDepartmentColor(interaction.initiatedBy.department)}99)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px',
+                }}
+              >
+                {getInteractionIcon(interaction.interactionType)}
+              </div>
+              
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <span style={{ color: 'white', fontSize: '14px', fontWeight: '500' }}>
+                    {interaction.initiatedBy.firstName} {interaction.initiatedBy.lastName}
+                  </span>
+                  <span
+                    style={{
+                      background: getDepartmentColor(interaction.initiatedBy.department),
+                      color: 'white',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {interaction.initiatedBy.department}
+                  </span>
+                  {interaction.transferredTo && (
+                    <>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px' }}>→</span>
+                      <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px' }}>
+                        {interaction.transferredTo.firstName} {interaction.transferredTo.lastName}
+                      </span>
+                    </>
+                  )}
+                </div>
+                
+                <div style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px', marginBottom: '4px' }}>
+                  {interaction.subject}
+                </div>
+                
+                <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '12px' }}>
+                  {interaction.contactName} • {interaction.contactCompany}
+                </div>
+              </div>
+              
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    background: `rgba(${getPriorityColor(interaction.priority)}, 0.2)`,
+                    color: getPriorityColor(interaction.priority),
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {interaction.priority.toUpperCase()}
+                </div>
+                <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '11px' }}>
+                  {new Date(interaction.createdAt).toLocaleTimeString()}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

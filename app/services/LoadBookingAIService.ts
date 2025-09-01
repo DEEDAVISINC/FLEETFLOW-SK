@@ -440,7 +440,7 @@ FleetFlow Operations`,
       .replace('{PICKUP_DATE}', new Date(load.pickupDate).toLocaleDateString());
 
     // Simulate email sending
-    console.log(`📧 Sending ${type} email for load ${load.id}:`, emailContent);
+    console.info(`📧 Sending ${type} email for load ${load.id}:`, emailContent);
 
     // In production, integrate with actual email service
     return true;
@@ -451,12 +451,12 @@ FleetFlow Operations`,
    */
   private async sendTelegramNotification(message: string): Promise<boolean> {
     if (!this.settings.telegramChatId) {
-      console.log(`📱 Telegram notification: ${message}`);
+      console.info(`📱 Telegram notification: ${message}`);
       return true;
     }
 
     // In production, integrate with Telegram Bot API
-    console.log(`📱 Telegram to ${this.settings.telegramChatId}: ${message}`);
+    console.info(`📱 Telegram to ${this.settings.telegramChatId}: ${message}`);
     return true;
   }
 

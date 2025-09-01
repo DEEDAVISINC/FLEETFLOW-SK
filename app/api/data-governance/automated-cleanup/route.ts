@@ -126,7 +126,7 @@ async function runDailyCleanupJob(
   dataGovernanceService: DataGovernanceService,
   tenant_id?: string | null
 ): Promise<any> {
-  console.log(
+  console.info(
     `🧹 Starting daily cleanup job${tenant_id ? ` for tenant ${tenant_id}` : ''}`
   );
 
@@ -192,7 +192,7 @@ async function runDailyCleanupJob(
 
     results.execution_duration = Date.now() - startTime.getTime();
 
-    console.log(
+    console.info(
       `✅ Daily cleanup job completed in ${results.execution_duration}ms`
     );
     return results;
@@ -208,7 +208,7 @@ async function runWeeklyComplianceJob(
   privacyService: PrivacyComplianceService,
   tenant_id?: string | null
 ): Promise<any> {
-  console.log(
+  console.info(
     `📋 Starting weekly compliance job${tenant_id ? ` for tenant ${tenant_id}` : ''}`
   );
 
@@ -267,7 +267,7 @@ async function runWeeklyComplianceJob(
 
     results.execution_duration = Date.now() - startTime.getTime();
 
-    console.log(
+    console.info(
       `✅ Weekly compliance job completed in ${results.execution_duration}ms`
     );
     return results;
@@ -283,7 +283,7 @@ async function runMonthlyAuditJob(
   privacyService: PrivacyComplianceService,
   tenant_id?: string | null
 ): Promise<any> {
-  console.log(
+  console.info(
     `📊 Starting monthly audit job${tenant_id ? ` for tenant ${tenant_id}` : ''}`
   );
 
@@ -336,7 +336,7 @@ async function runMonthlyAuditJob(
 
     results.execution_duration = Date.now() - startTime.getTime();
 
-    console.log(
+    console.info(
       `✅ Monthly audit job completed in ${results.execution_duration}ms`
     );
     return results;
@@ -351,7 +351,7 @@ async function runRetentionEnforcementJob(
   dataGovernanceService: DataGovernanceService,
   tenant_id?: string | null
 ): Promise<any> {
-  console.log(
+  console.info(
     `⚖️ Starting retention enforcement job${tenant_id ? ` for tenant ${tenant_id}` : ''}`
   );
 
@@ -396,7 +396,7 @@ async function runRetentionEnforcementJob(
 
     results.execution_duration = Date.now() - startTime.getTime();
 
-    console.log(
+    console.info(
       `✅ Retention enforcement job completed in ${results.execution_duration}ms`
     );
     return results;
@@ -527,7 +527,7 @@ async function getCleanupMetrics(
 async function cleanupSystemLogs(): Promise<void> {
   // Clean up application logs older than 90 days
   const cutoffDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-  console.log(
+  console.info(
     `🗂️ Cleaning up system logs older than ${cutoffDate.toISOString()}`
   );
 
@@ -540,7 +540,7 @@ async function cleanupSystemLogs(): Promise<void> {
 
 async function cleanupTemporaryFiles(): Promise<void> {
   // Clean up temporary files and cache
-  console.log('🗑️ Cleaning up temporary files and cache');
+  console.info('🗑️ Cleaning up temporary files and cache');
 
   // In real implementation, this would:
   // 1. Clean /tmp directories

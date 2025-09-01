@@ -97,7 +97,7 @@ export class MarketRateService {
   };
 
   constructor() {
-    console.log('📊 MarketRateService initialized');
+    console.info('📊 MarketRateService initialized');
   }
 
   /**
@@ -116,7 +116,7 @@ export class MarketRateService {
     }
 
     try {
-      console.log(`📈 Fetching market rates for ${origin} → ${destination}`);
+      console.info(`📈 Fetching market rates for ${origin} → ${destination}`);
       
       // In production, this would call external market data APIs
       const marketData = await this.fetchMarketData(origin, destination, equipmentType, timeframe);
@@ -145,7 +145,7 @@ export class MarketRateService {
     }
 
     try {
-      console.log(`🎯 Analyzing competitors for ${origin} → ${destination}`);
+      console.info(`🎯 Analyzing competitors for ${origin} → ${destination}`);
       
       const competitors = await this.fetchCompetitorData(origin, destination, equipmentType);
       
@@ -174,7 +174,7 @@ export class MarketRateService {
     }
 
     try {
-      console.log(`📊 Analyzing market trends for ${origin} → ${destination}`);
+      console.info(`📊 Analyzing market trends for ${origin} → ${destination}`);
       
       const trends = await this.fetchTrendsData(origin, destination, equipmentType, timeframe);
       
@@ -201,7 +201,7 @@ export class MarketRateService {
     }
 
     try {
-      console.log(`🚛 Analyzing capacity for ${equipmentType} in ${region}`);
+      console.info(`🚛 Analyzing capacity for ${equipmentType} in ${region}`);
       
       const capacity = await this.fetchCapacityData(region, equipmentType);
       
@@ -228,7 +228,7 @@ export class MarketRateService {
     }
 
     try {
-      console.log(`📦 Analyzing demand for ${commodityType} in ${region}`);
+      console.info(`📦 Analyzing demand for ${commodityType} in ${region}`);
       
       const demand = await this.fetchDemandData(region, commodityType);
       
@@ -249,7 +249,7 @@ export class MarketRateService {
     destination: string,
     equipmentType: string = 'Dry Van'
   ) {
-    console.log(`📋 Generating market intelligence report for ${origin} → ${destination}`);
+    console.info(`📋 Generating market intelligence report for ${origin} → ${destination}`);
     
     const [rates, competitors, trends, capacity, demand] = await Promise.all([
       this.getMarketRates(origin, destination, equipmentType),
@@ -287,7 +287,7 @@ export class MarketRateService {
     lanes: Array<{ origin: string; destination: string; equipmentType: string }>,
     thresholds: { minRate: number; maxRate: number; volatilityThreshold: number }
   ) {
-    console.log(`🔔 Monitoring ${lanes.length} lanes for rate changes`);
+    console.info(`🔔 Monitoring ${lanes.length} lanes for rate changes`);
     
     const alerts = [];
     

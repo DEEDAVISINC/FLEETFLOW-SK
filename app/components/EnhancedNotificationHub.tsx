@@ -248,7 +248,7 @@ export const EnhancedNotificationHub: React.FC<NotificationHubProps> = ({
     const action = notification.actions?.find((a) => a.id === actionId);
     if (!action) return;
 
-    console.log(`🎯 Executing notification action: ${actionId}`, action);
+    console.info(`🎯 Executing notification action: ${actionId}`, action);
 
     try {
       switch (action.type) {
@@ -261,12 +261,12 @@ export const EnhancedNotificationHub: React.FC<NotificationHubProps> = ({
 
         case 'modal':
           // Handle modal opening
-          console.log('Opening modal:', action.payload);
+          console.info('Opening modal:', action.payload);
           break;
 
         case 'api':
           // Handle API call
-          console.log('Making API call:', action.payload);
+          console.info('Making API call:', action.payload);
           break;
 
         case 'external':

@@ -356,7 +356,7 @@ export class BillComIntegrationService {
     data?: any
   ): Promise<any> {
     // Mock implementation for now - replace with actual Bill.com API calls
-    console.log(`Bill.com API Call: ${method} ${endpoint}`, data);
+    console.info(`Bill.com API Call: ${method} ${endpoint}`, data);
 
     // Simulate API response
     return {

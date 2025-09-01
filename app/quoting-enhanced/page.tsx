@@ -166,7 +166,7 @@ export default function EnhancedQuotingPage() {
           <TabsContent value='quoting'>
             <FreightQuotingDashboard
               onQuoteGenerated={(quote) => {
-                console.log('AI-Enhanced Quote Generated:', quote);
+                console.info('AI-Enhanced Quote Generated:', quote);
                 // Enhanced quote handling with comprehensive features:
                 // - Market intelligence integration
                 // - Competitive positioning analysis

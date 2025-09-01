@@ -361,7 +361,7 @@ class LatePaymentComplaintService {
             // Update in the map
             this.complaints.set(complaint.id, updatedComplaint);
 
-            console.log(
+            console.info(
               `[BROKERSNAPSHOT] Review posted for ${updatedComplaint.entityType} ${updatedComplaint.entityName} (MC: ${updatedComplaint.mcNumber}) due to ${updatedComplaint.daysOverdue} days overdue payment.`
             );
           }
@@ -700,7 +700,7 @@ class LatePaymentComplaintService {
     try {
       // Check if there's already a review for this complaint
       if (complaint.reviewPostedToBrokerSnapshot) {
-        console.log(
+        console.info(
           `[BROKERSNAPSHOT] Review already posted for complaint ${complaintId}`
         );
         return false;
@@ -730,7 +730,7 @@ class LatePaymentComplaintService {
       // Update in the map
       this.complaints.set(complaintId, updatedComplaint);
 
-      console.log(
+      console.info(
         `[BROKERSNAPSHOT] Review manually posted for ${complaint.entityType} ${complaint.entityName} (MC: ${mcNumber})`
       );
       return true;
@@ -773,7 +773,7 @@ class LatePaymentComplaintService {
         // Update in the map
         this.complaints.set(complaintId, updatedComplaint);
 
-        console.log(
+        console.info(
           `[BROKERSNAPSHOT] Review removed for ${complaint.entityType} ${complaint.entityName} (MC: ${complaint.mcNumber})`
         );
       }

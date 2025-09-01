@@ -301,7 +301,7 @@ export class PortAuthoritySystemsService {
   ]);
 
   constructor() {
-    console.log(
+    console.info(
       '🏗️ Port Authority Systems Service initialized - Direct port operations data ready'
     );
   }
@@ -806,7 +806,7 @@ export class PortAuthoritySystemsService {
       // For now, simulate the booking process
       const appointmentId = `APT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      console.log(`Booking appointment at ${authority.name}:`, appointmentData);
+      console.info(`Booking appointment at ${authority.name}:`, appointmentData);
 
       return {
         success: true,
@@ -848,7 +848,7 @@ export class PortAuthoritySystemsService {
 
     try {
       // In production, this would make real API calls to cancel
-      console.log(
+      console.info(
         `Cancelling appointment ${appointmentId} at ${authority.name}`
       );
 

@@ -276,7 +276,7 @@ class UserProfileWorkflowService {
     // DM (Driver/Carrier) users should complete driver onboarding workflow
     // instead of FleetFlow University training
     if (user.departmentCode === 'DM') {
-      console.log(
+      console.info(
         `🚛 DM User ${user.name}: Driver onboarding workflow will be handled by carrier onboarding system`
       );
       // Driver onboarding will be managed by OnboardingIntegrationService
@@ -550,7 +550,7 @@ class UserProfileWorkflowService {
       // Update workflow status based on onboarding progress
       if (overallProgress === 100) {
         workflowData.workflowStatus = 'active'; // Driver gets Driver OTR Flow access
-        console.log(
+        console.info(
           `🚛 Driver ${workflowData.user.name} completed onboarding - Driver OTR Flow access granted`
         );
       } else if (overallProgress > 0) {
@@ -632,7 +632,7 @@ class UserProfileWorkflowService {
         overallProgress
       );
 
-      console.log(
+      console.info(
         `🔄 Synced driver onboarding progress for ${workflowData.user.name}: ${overallProgress}% complete`
       );
     } catch (error) {
@@ -655,7 +655,7 @@ class UserProfileWorkflowService {
       workflowData.workflowStatus = 'active';
       this.storeUserWorkflowData(userId, workflowData);
 
-      console.log(
+      console.info(
         `🚛 Driver OTR Flow access granted to ${workflowData.user.name}`
       );
       return true;
@@ -690,7 +690,7 @@ class UserProfileWorkflowService {
 
   private notifyInstructorsOfNewStudent(user: UserProfile): void {
     // In real app, this would send notifications to instructors
-    console.log(`🎓 New student enrolled: ${user.name} (${user.department})`);
+    console.info(`🎓 New student enrolled: ${user.name} (${user.department})`);
   }
 
   private notifyInstructorsOfAssignment(
@@ -699,7 +699,7 @@ class UserProfileWorkflowService {
   ): void {
     // In real app, this would send notifications to assigned instructors
     assignments.forEach((assignment) => {
-      console.log(
+      console.info(
         `📚 New training assigned: ${assignment.moduleName} to ${user.name} (Instructor: ${assignment.instructor})`
       );
     });
@@ -710,7 +710,7 @@ class UserProfileWorkflowService {
     progress: TrainingProgress
   ): void {
     // In real app, this would send progress notifications to instructors
-    console.log(
+    console.info(
       `📈 Progress update: ${user.name} - ${progress.moduleName}: ${progress.progress}% (Instructor: ${progress.instructor})`
     );
   }

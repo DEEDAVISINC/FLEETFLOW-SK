@@ -14,7 +14,7 @@ interface Lead {
 }
 
 export default function WorkingCRMDashboard() {
-  console.log('🚀 WorkingCRMDashboard LOADED - AI HUB DARK THEME');
+  console.info('🚀 WorkingCRMDashboard LOADED - AI HUB DARK THEME');
 
   const [leads, setLeads] = useState<Lead[]>([
     {
@@ -68,7 +68,7 @@ export default function WorkingCRMDashboard() {
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    console.log(
+    console.info(
       '✅ WorkingCRMDashboard: Component mounted with',
       leads.length,
       'leads'
@@ -83,23 +83,23 @@ export default function WorkingCRMDashboard() {
   const avgDealSize = leads.length > 0 ? totalPipeline / leads.length : 0;
 
   const handleLeadClick = (lead: Lead) => {
-    console.log('🔍 Lead clicked:', lead.companyName);
+    console.info('🔍 Lead clicked:', lead.companyName);
     setSelectedLead(lead);
     setShowDetails(true);
   };
 
   const handleContactLead = (lead: Lead) => {
-    console.log('📞 Contacting lead:', lead.companyName);
+    console.info('📞 Contacting lead:', lead.companyName);
     alert(`Contacting ${lead.companyName} - ${lead.serviceCategory}`);
   };
 
   const handleScheduleDemo = (lead: Lead) => {
-    console.log('📅 Scheduling demo for:', lead.companyName);
+    console.info('📅 Scheduling demo for:', lead.companyName);
     alert(`Demo scheduled for ${lead.companyName}`);
   };
 
   const handleSendProposal = (lead: Lead) => {
-    console.log('📄 Sending proposal to:', lead.companyName);
+    console.info('📄 Sending proposal to:', lead.companyName);
     alert(`Proposal sent to ${lead.companyName}`);
   };
 
@@ -305,7 +305,7 @@ export default function WorkingCRMDashboard() {
           <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
             <button
               onClick={() => {
-                console.log('🔍 Analyzing all leads...');
+                console.info('🔍 Analyzing all leads...');
                 alert('AI Analysis started for all leads');
               }}
               className='rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white shadow-md transition-all hover:from-blue-600 hover:to-blue-700'
@@ -321,7 +321,7 @@ export default function WorkingCRMDashboard() {
 
             <button
               onClick={() => {
-                console.log('📊 Generating report...');
+                console.info('📊 Generating report...');
                 alert('Pipeline report generated');
               }}
               className='rounded-lg bg-gradient-to-r from-green-500 to-green-600 p-4 text-white shadow-md transition-all hover:from-green-600 hover:to-green-700'
@@ -335,7 +335,7 @@ export default function WorkingCRMDashboard() {
 
             <button
               onClick={() => {
-                console.log('📧 Sending bulk emails...');
+                console.info('📧 Sending bulk emails...');
                 alert('Bulk email campaign started');
               }}
               className='rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 p-4 text-white shadow-md transition-all hover:from-purple-600 hover:to-purple-700'

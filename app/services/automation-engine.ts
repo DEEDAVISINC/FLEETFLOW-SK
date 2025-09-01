@@ -7,18 +7,18 @@ export class AIAutomationEngine {
   private isRunning: boolean = false;
 
   constructor() {
-    console.log('🤖 AI Automation Engine initialized');
+    console.info('🤖 AI Automation Engine initialized');
   }
 
   // Start all automation tasks
   start() {
     if (this.isRunning) {
-      console.log('⚠️ Automation engine already running');
+      console.info('⚠️ Automation engine already running');
       return;
     }
 
     this.isRunning = true;
-    console.log('🚀 Starting AI Automation Engine...');
+    console.info('🚀 Starting AI Automation Engine...');
 
     // Schedule predictive maintenance checks (daily at 6 AM)
     this.scheduleTask('predictive-maintenance', '0 6 * * *', () => {
@@ -45,24 +45,24 @@ export class AIAutomationEngine {
       this.runSmartMonitoring();
     });
 
-    console.log('✅ All AI automation tasks scheduled');
+    console.info('✅ All AI automation tasks scheduled');
   }
 
   // Stop all automation tasks
   stop() {
     if (!this.isRunning) {
-      console.log('⚠️ Automation engine not running');
+      console.info('⚠️ Automation engine not running');
       return;
     }
 
     this.tasks.forEach((task, name) => {
       task.stop();
-      console.log(`🛑 Stopped task: ${name}`);
+      console.info(`🛑 Stopped task: ${name}`);
     });
 
     this.tasks.clear();
     this.isRunning = false;
-    console.log('⏹️ AI Automation Engine stopped');
+    console.info('⏹️ AI Automation Engine stopped');
   }
 
   // Schedule a new automation task
@@ -73,7 +73,7 @@ export class AIAutomationEngine {
       });
 
       this.tasks.set(name, task);
-      console.log(`📅 Scheduled task: ${name} (${schedule})`);
+      console.info(`📅 Scheduled task: ${name} (${schedule})`);
     } catch (error) {
       console.error(`❌ Failed to schedule task ${name}:`, error);
     }
@@ -129,7 +129,7 @@ export class AIAutomationEngine {
 
   // Run predictive maintenance analysis
   private async runPredictiveMaintenance() {
-    console.log('🔧 Running AI Predictive Maintenance Analysis...');
+    console.info('🔧 Running AI Predictive Maintenance Analysis...');
 
     try {
       // Get vehicle data (in real app, this would come from database)
@@ -144,7 +144,7 @@ export class AIAutomationEngine {
         }
       }
 
-      console.log('✅ Predictive maintenance analysis completed');
+      console.info('✅ Predictive maintenance analysis completed');
     } catch (error) {
       console.error('❌ Predictive maintenance analysis failed:', error);
     }
@@ -152,7 +152,7 @@ export class AIAutomationEngine {
 
   // Run route optimization
   private async runRouteOptimization() {
-    console.log('🗺️ Running AI Route Optimization...');
+    console.info('🗺️ Running AI Route Optimization...');
 
     try {
       const vehicles = await this.getActiveVehicles();
@@ -168,7 +168,7 @@ export class AIAutomationEngine {
         await this.sendRouteOptimizationAlert(optimization);
       }
 
-      console.log('✅ Route optimization completed');
+      console.info('✅ Route optimization completed');
     } catch (error) {
       console.error('❌ Route optimization failed:', error);
     }
@@ -176,7 +176,7 @@ export class AIAutomationEngine {
 
   // Run driver performance analysis
   private async runDriverAnalysis() {
-    console.log('👨‍💼 Running AI Driver Performance Analysis...');
+    console.info('👨‍💼 Running AI Driver Performance Analysis...');
 
     try {
       const drivers = await this.getDriverData();
@@ -190,7 +190,7 @@ export class AIAutomationEngine {
         }
       }
 
-      console.log('✅ Driver performance analysis completed');
+      console.info('✅ Driver performance analysis completed');
     } catch (error) {
       console.error('❌ Driver performance analysis failed:', error);
     }
@@ -198,7 +198,7 @@ export class AIAutomationEngine {
 
   // Run cost optimization analysis
   private async runCostOptimization() {
-    console.log('💰 Running AI Cost Optimization Analysis...');
+    console.info('💰 Running AI Cost Optimization Analysis...');
 
     try {
       const fleetData = await this.getFleetData();
@@ -207,7 +207,7 @@ export class AIAutomationEngine {
       // Send cost optimization recommendations to management
       await this.sendCostOptimizationReport(optimization);
 
-      console.log('✅ Cost optimization analysis completed');
+      console.info('✅ Cost optimization analysis completed');
     } catch (error) {
       console.error('❌ Cost optimization analysis failed:', error);
     }
@@ -215,7 +215,7 @@ export class AIAutomationEngine {
 
   // Run smart monitoring
   private async runSmartMonitoring() {
-    console.log('🧠 Running Smart Monitoring...');
+    console.info('🧠 Running Smart Monitoring...');
 
     try {
       // Monitor various fleet metrics
@@ -227,7 +227,7 @@ export class AIAutomationEngine {
         await this.sendSmartAlert(smartNotification);
       }
 
-      console.log('✅ Smart monitoring completed');
+      console.info('✅ Smart monitoring completed');
     } catch (error) {
       console.error('❌ Smart monitoring failed:', error);
     }

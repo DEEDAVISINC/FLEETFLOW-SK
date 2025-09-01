@@ -86,7 +86,7 @@ export class AccountingEmailService {
   // Core email sending method
   private async sendEmail(recipient: EmailRecipient, template: EmailTemplate) {
     try {
-      console.log(`📧 Sending ${template.type} email to ${recipient.email}`);
+      console.info(`📧 Sending ${template.type} email to ${recipient.email}`);
 
       const emailData = {
         personalizations: [
@@ -458,7 +458,7 @@ FleetFlow Factoring Services
   private async sendViaSendGrid(emailData: any) {
     if (!this.apiKey || this.apiKey === 'demo-key') {
       // Fallback to console logging for development
-      console.log('📧 Email (Dev Mode):', {
+      console.info('📧 Email (Dev Mode):', {
         to: emailData.personalizations[0].to[0].email,
         subject: emailData.personalizations[0].subject,
         type: emailData.personalizations[0].custom_args?.email_type,
@@ -485,7 +485,7 @@ FleetFlow Factoring Services
       const messageId =
         response.headers.get('X-Message-Id') || `sg-${Date.now()}`;
 
-      console.log('✅ Accounting email sent via SendGrid:', {
+      console.info('✅ Accounting email sent via SendGrid:', {
         to: emailData.personalizations[0].to[0].email,
         messageId,
         type: emailData.personalizations[0].custom_args?.email_type,

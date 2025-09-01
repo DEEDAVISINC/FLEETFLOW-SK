@@ -109,7 +109,7 @@ export default function DialerDemoPage() {
 
   const handleUserUpdate = (updatedUser: any) => {
     // In a real app, this would update the user in your backend
-    console.log('User updated:', updatedUser);
+    console.info('User updated:', updatedUser);
   };
 
   return (

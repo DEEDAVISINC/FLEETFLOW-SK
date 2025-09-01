@@ -24,7 +24,7 @@ export default function ProfessionalNavigation() {
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
-        <Link href="/" style={{
+        <Link href="/"" style={{
           fontSize: '1.8rem',
           fontWeight: 'bold',
           background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
@@ -42,7 +42,7 @@ export default function ProfessionalNavigation() {
           alignItems: 'center'
         }}>
           {/* Operations Dropdown - Blue */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
+          <div className="dropdown"" style={{ position: 'relative', display: 'inline-block' }}>
             <button style={{
               background: 'linear-gradient(145deg, #2196F3, #1976D2)',
               color: 'white',
@@ -82,28 +82,28 @@ export default function ProfessionalNavigation() {
             onMouseEnter={(e) => {
               e.currentTarget.style.display = 'block';
             }}>
-              <Link href="/dispatch/login" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/dispatch/login"" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 🚛 Dispatch Central
               </Link>
-              <Link href="/drivers" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/drivers"" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 👤 Driver Management
               </Link>
               <div style={{ borderLeft: '3px solid #2196F3', paddingLeft: '17px', margin: '5px 0' }}>
-                <Link href="/tracking" style={{ display: 'block', padding: '8px 20px', color: '#1565C0', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
+                <Link href="/tracking"" style={{ display: 'block', padding: '8px 20px', color: '#1565C0', textDecoration: 'none', fontSize: '0.85rem', fontWeight: '500', fontStyle: 'italic' }}>
                   🗺️ Live Load Tracking
                 </Link>
               </div>
-              <Link href="/vehicles" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/vehicles"" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 🚛 Vehicle Fleet
               </Link>
-              <Link href="/maintenance" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/maintenance"" style={{ display: 'block', padding: '10px 20px', color: '#2196F3', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 🔧 Maintenance
               </Link>
             </div>
           </div>
 
           {/* Customers Dropdown - Green */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
+          <div className="dropdown"" style={{ position: 'relative', display: 'inline-block' }}>
             <button style={{
               background: 'linear-gradient(145deg, #10B981, #059669)',
               color: 'white',
@@ -143,23 +143,23 @@ export default function ProfessionalNavigation() {
             onMouseEnter={(e) => {
               e.currentTarget.style.display = 'block';
             }}>
-              <Link href="/customers" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/customers"" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 📋 Customer List
               </Link>
-              <Link href="/quotes" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/quotes"" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 💰 Quotes
               </Link>
-              <Link href="/contracts" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/contracts"" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 📑 Contracts
               </Link>
-              <Link href="/invoices" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/invoices"" style={{ display: 'block', padding: '10px 20px', color: '#10B981', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 💵 Invoices
               </Link>
             </div>
           </div>
 
           {/* Admin Dropdown - Purple */}
-          <div className="dropdown" style={{ position: 'relative', display: 'inline-block' }}>
+          <div className="dropdown"" style={{ position: 'relative', display: 'inline-block' }}>
             <button style={{
               background: 'linear-gradient(145deg, #8B5CF6, #7C3AED)',
               color: 'white',
@@ -199,23 +199,23 @@ export default function ProfessionalNavigation() {
             onMouseEnter={(e) => {
               e.currentTarget.style.display = 'block';
             }}>
-              <Link href="/user-management" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/user-management"" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 👥 User Management
               </Link>
-              <Link href="/settings" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/settings"" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 ⚙️ System Settings
               </Link>
-              <Link href="/admin/logs" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/admin/logs"" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 📊 System Logs
               </Link>
-              <Link href="/admin/backups" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
+              <Link href="/admin/backups"" style={{ display: 'block', padding: '10px 20px', color: '#8B5CF6', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '500' }}>
                 💾 Backups
               </Link>
             </div>
           </div>
 
           {/* Help Button - Orange */}
-          <Link href="/help" style={{ textDecoration: 'none' }}>
+          <Link href="/help"" style={{ textDecoration: 'none' }}>
             <button style={{
               background: 'linear-gradient(145deg, #F97316, #EA580C)',
               color: 'white',

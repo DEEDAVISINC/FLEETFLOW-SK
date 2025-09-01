@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 export default function TabCompatibleCRMDashboard() {
-  console.log('🚀 TabCompatibleCRMDashboard LOADED - TAB SYSTEM COMPATIBLE');
+  console.info('🚀 TabCompatibleCRMDashboard LOADED - TAB SYSTEM COMPATIBLE');
 
   const [leads, setLeads] = useState([
     {
@@ -54,7 +54,7 @@ export default function TabCompatibleCRMDashboard() {
   ]);
 
   useEffect(() => {
-    console.log(
+    console.info(
       '✅ TabCompatibleCRMDashboard: Component mounted with',
       leads.length,
       'leads'

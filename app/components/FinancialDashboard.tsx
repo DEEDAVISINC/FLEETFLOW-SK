@@ -110,7 +110,7 @@ const FinancialDashboard: React.FC = () => {
 
   return (
     <div 
-      id="financial-markets"
+      id="financial-markets""
       style={{
         background: 'rgba(255, 255, 255, 0.15)',
         backdropFilter: 'blur(10px)',

@@ -75,7 +75,7 @@ export default function DriverDashboardPage() {
         type === 'emergency' ? 'urgent' : 'normal'
       );
 
-      console.log('SMS notification sent successfully');
+      console.info('SMS notification sent successfully');
     } catch (error) {
       console.error('Failed to send SMS notification:', error);
     } finally {
@@ -158,7 +158,7 @@ export default function DriverDashboardPage() {
           opacity: 0.1,
           zIndex: 1,
         }}
-       />
+      />
       <div
         style={{
           position: 'absolute',
@@ -171,7 +171,7 @@ export default function DriverDashboardPage() {
           opacity: 0.1,
           zIndex: 1,
         }}
-       />
+      />
 
       <main
         style={{

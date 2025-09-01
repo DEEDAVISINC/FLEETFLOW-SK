@@ -57,7 +57,7 @@ const MarketingPage = () => {
           'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%)',
         padding: '0',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Marketing Header */}

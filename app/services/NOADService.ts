@@ -154,7 +154,7 @@ export class NOADService {
   private readonly NVMC_TRACKER_URL = 'https://developer.nvmc.uscg.gov/tracker';
 
   constructor() {
-    console.log('🚢 NOAD Service initialized - Maritime Intelligence Ready');
+    console.info('🚢 NOAD Service initialized - Maritime Intelligence Ready');
   }
 
   private isCacheValid(cacheKey: string): boolean {
@@ -282,7 +282,7 @@ export class NOADService {
   parseNOADXML(xmlData: string): NOADVesselData[] {
     // This would parse actual NOAD XML using the schema
     // For now, return mock data structure
-    console.log('Parsing NOAD XML data...');
+    console.info('Parsing NOAD XML data...');
     return [];
   }
 
@@ -293,7 +293,7 @@ export class NOADService {
     try {
       // In production, this would submit to NVMC API
       const noticeId = `NOAD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      console.log('NOAD Notice submitted:', noticeId);
+      console.info('NOAD Notice submitted:', noticeId);
       return noticeId;
     } catch (error) {
       console.error('Error submitting NOAD notice:', error);

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   return (
     ServiceErrorHandler.handleAsyncOperation(
       async () => {
-        console.log('📊 Checking Plaid compliance status...');
+        console.info('📊 Checking Plaid compliance status...');
 
         const plaidService = PlaidService.getInstance();
         const complianceStatus = plaidService.getComplianceStatus();
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
 
         const statusCode = complianceStatus.overall_compliant ? 200 : 202;
 
-        console.log(
+        console.info(
           `✅ Plaid compliance check completed. Status: ${complianceStatus.overall_compliant ? 'COMPLIANT' : 'PENDING'}`
         );
 
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     ServiceErrorHandler.handleAsyncOperation(
       async () => {
         const body = await request.json();
-        console.log('🔧 Running Plaid compliance validation...', body);
+        console.info('🔧 Running Plaid compliance validation...', body);
 
         const plaidService = PlaidService.getInstance();
 

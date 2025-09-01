@@ -75,7 +75,7 @@ export abstract class BaseService {
 
     switch (level) {
       case 'info':
-        console.log(`[${this.serviceName}] ${message}`, data || '');
+        console.info(`[${this.serviceName}] ${message}`, data || '');
         break;
       case 'warn':
         console.warn(`[${this.serviceName}] ${message}`, data || '');

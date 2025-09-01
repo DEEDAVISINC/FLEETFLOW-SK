@@ -377,7 +377,7 @@ export default function SettingsWithPaymentIntegration() {
                 <div>
                   <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Name</label>
                   <input
-                    type="text"
+                    type="text""
                     value={currentUser.name}
                     readOnly
                     style={{
@@ -392,7 +392,7 @@ export default function SettingsWithPaymentIntegration() {
                 <div>
                   <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Email</label>
                   <input
-                    type="email"
+                    type="email""
                     value={currentUser.email}
                     readOnly
                     style={{
@@ -407,7 +407,7 @@ export default function SettingsWithPaymentIntegration() {
                 <div>
                   <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>Role</label>
                   <input
-                    type="text"
+                    type="text""
                     value={currentUser.role}
                     readOnly
                     style={{

@@ -57,7 +57,7 @@ export class PlatformAIManager {
     }
   ) {
     this.config = config;
-    console.log(
+    console.info(
       '🚀 Platform AI Manager initialized with enhanced capabilities'
     );
   }
@@ -77,7 +77,7 @@ export class PlatformAIManager {
     priority: 'high' | 'medium' | 'low' = 'medium'
   ): Promise<PlatformAIResponse> {
     const startTime = Date.now();
-    console.log(`🤖 Processing ${taskType} with Platform AI Manager`);
+    console.info(`🤖 Processing ${taskType} with Platform AI Manager`);
 
     try {
       let response = '';
@@ -149,12 +149,12 @@ export class PlatformAIManager {
         if (correctionResult.corrections.length > 0) {
           corrections = correctionResult.corrections;
           response = correctionResult.correctedResponse.content;
-          console.log('🔧 Applied auto-corrections:', corrections);
+          console.info('🔧 Applied auto-corrections:', corrections);
         }
 
         if (correctionResult.stillNeedsHuman && !escalated) {
           escalated = true;
-          console.log('⚠️ Quality check flagged for human review');
+          console.info('⚠️ Quality check flagged for human review');
         }
       }
 
@@ -202,7 +202,7 @@ export class PlatformAIManager {
     content: string,
     context: AIServiceContext
   ): Promise<PlatformAIResponse> {
-    console.log(
+    console.info(
       `🔄 Intercepting ${serviceName}.${originalFunction} - routing to Platform AI`
     );
 
@@ -273,7 +273,7 @@ export class PlatformAIManager {
   // SOLUTION 5: Register existing AI services for management
   registerService(serviceName: string, serviceInstance: any): void {
     this.activeServices.set(serviceName, serviceInstance);
-    console.log(`📝 Registered ${serviceName} with Platform AI Manager`);
+    console.info(`📝 Registered ${serviceName} with Platform AI Manager`);
   }
 
   // Helper methods
@@ -340,7 +340,7 @@ export class PlatformAIManager {
       {
         get: (target, property) => {
           return async (...args: any[]) => {
-            console.log(
+            console.info(
               `🔄 Migrating ${serviceName}.${String(property)} to Platform AI`
             );
 
@@ -382,7 +382,7 @@ export class PlatformAIManager {
   // SOLUTION 7: Enable/disable features platform-wide
   updateConfig(newConfig: Partial<PlatformAIConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Platform AI config updated:', newConfig);
+    console.info('⚙️ Platform AI config updated:', newConfig);
   }
 
   // SOLUTION 8: Performance analytics

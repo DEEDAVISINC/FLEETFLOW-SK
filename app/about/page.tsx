@@ -26,7 +26,7 @@ export default function AboutUsPage() {
         background:
           'linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%)',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Hero Header */}
@@ -225,7 +225,7 @@ export default function AboutUsPage() {
                     🚀 Revolutionizing Global Logistics Intelligence
                   </h3>
                   <p style={{ marginBottom: '24px', fontSize: '18px' }}>
-                    <strong>FLEETFLOW TMS LLC</strong> is the world's most
+                    <strong>FLEETFLOW TMS LLC</strong> is the world&apos;s most
                     advanced logistics intelligence agency, providing
                     comprehensive end-to-end solutions that transform how
                     Fortune 500 companies, logistics providers, and supply chain
@@ -504,12 +504,12 @@ export default function AboutUsPage() {
                     🎯 The Complete Logistics Intelligence Ecosystem
                   </h3>
                   <p style={{ marginBottom: '20px', fontSize: '18px' }}>
-                    <strong>FLEETFLOW TMS LLC</strong> operates as the world's
-                    most comprehensive one-stop logistics intelligence agency,
-                    providing Fortune 500 enterprises and global supply chain
-                    networks with complete end-to-end intelligence solutions
-                    across every aspect of logistics operations, optimization,
-                    and strategic planning.
+                    <strong>FLEETFLOW TMS LLC</strong> operates as the
+                    world&apos;s most comprehensive one-stop logistics
+                    intelligence agency, providing Fortune 500 enterprises and
+                    global supply chain networks with complete end-to-end
+                    intelligence solutions across every aspect of logistics
+                    operations, optimization, and strategic planning.
                   </p>
                   <p style={{ margin: 0, fontSize: '16px', opacity: 0.9 }}>
                     From freight brokerage and carrier management to predictive
@@ -1053,12 +1053,12 @@ export default function AboutUsPage() {
                     🎯 Comprehensive Logistics Intelligence Services
                   </h3>
                   <p style={{ marginBottom: '20px', fontSize: '18px' }}>
-                    <strong>FLEETFLOW TMS LLC</strong> delivers the industry's
-                    most comprehensive full-service portfolio of logistics
-                    intelligence solutions, combining traditional logistics
-                    services with cutting-edge AI-powered analytics, predictive
-                    modeling, and strategic optimization across every aspect of
-                    supply chain operations.
+                    <strong>FLEETFLOW TMS LLC</strong> delivers the
+                    industry&apos;s most comprehensive full-service portfolio of
+                    logistics intelligence solutions, combining traditional
+                    logistics services with cutting-edge AI-powered analytics,
+                    predictive modeling, and strategic optimization across every
+                    aspect of supply chain operations.
                   </p>
                   <p style={{ margin: 0, fontSize: '16px', opacity: 0.9 }}>
                     From freight brokerage and carrier management to advanced
@@ -2608,10 +2608,10 @@ export default function AboutUsPage() {
                       <strong>DEE DAVIS</strong> is the visionary founder of
                       <strong>FLEETFLOW TMS LLC</strong> and the creator of
                       <strong>DEPOINTE AI</strong>, the revolutionary artificial
-                      intelligence system that powers FLEETFLOW's logistics
+                      intelligence system that powers FLEETFLOW&apos;s logistics
                       intelligence platform. As both the company founder and
-                      architect of the world's most advanced transportation AI,
-                      she has transformed the logistics industry through
+                      architect of the world&apos;s most advanced transportation
+                      AI, she has transformed the logistics industry through
                       breakthrough innovations in predictive analytics,
                       autonomous decision-making, and intelligent automation.
                     </p>
@@ -4297,10 +4297,10 @@ export default function AboutUsPage() {
                           lineHeight: '1.6',
                         }}
                       >
-                        "FLEETFLOW transformed our global supply chain from a
+                        ""FLEETFLOW transformed our global supply chain from a
                         cost center to a competitive advantage. Their AI-powered
                         intelligence platform saved us $34M in the first year
-                        alone."
+                        alone.""
                       </p>
                       <div
                         style={{
@@ -4346,9 +4346,9 @@ export default function AboutUsPage() {
                           lineHeight: '1.6',
                         }}
                       >
-                        "The predictive analytics and DEPOINTE AI have
+                        ""The predictive analytics and DEPOINTE AI have
                         revolutionized our demand planning. We've achieved 99.7%
-                        forecast accuracy and eliminated stockouts entirely."
+                        forecast accuracy and eliminated stockouts entirely.""
                       </p>
                       <div
                         style={{
@@ -4394,9 +4394,9 @@ export default function AboutUsPage() {
                           lineHeight: '1.6',
                         }}
                       >
-                        "FLEETFLOW's enterprise-grade security and compliance
+                        ""FLEETFLOW's enterprise-grade security and compliance
                         framework gave us confidence to modernize our entire
-                        logistics infrastructure. Best decision we've made."
+                        logistics infrastructure. Best decision we've made.""
                       </p>
                       <div
                         style={{

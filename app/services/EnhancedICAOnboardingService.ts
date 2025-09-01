@@ -345,7 +345,7 @@ export class EnhancedICAOnboardingService {
       this.updateSummary(record);
 
       // Log audit trail
-      console.log(
+      console.info(
         `✅ Platform Services Agreement signed by user ${userId} for tenant ${record.tenantId}`,
         {
           agreementId,

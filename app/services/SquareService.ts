@@ -326,6 +326,164 @@ class SquareService {
   }
 
   /**
+   * Create a customer in Square
+   */
+  async createCustomer(customerData: {
+    givenName: string;
+    familyName: string;
+    companyName: string;
+    emailAddress: string;
+    phoneNumber?: string;
+    address?: {
+      addressLine1: string;
+      locality: string;
+      administrativeDistrictLevel1: string;
+      postalCode: string;
+      country: string;
+    };
+    referenceId?: string;
+  }): Promise<{ success: boolean; customerId?: string; error?: string }> {
+    try {
+      const endpoint = '/v2/customers';
+      const data = {
+        given_name: customerData.givenName,
+        family_name: customerData.familyName,
+        company_name: customerData.companyName,
+        email_address: customerData.emailAddress,
+        phone_number: customerData.phoneNumber,
+        address: customerData.address
+          ? {
+              address_line_1: customerData.address.addressLine1,
+              locality: customerData.address.locality,
+              administrative_district_level_1:
+                customerData.address.administrativeDistrictLevel1,
+              postal_code: customerData.address.postalCode,
+              country: customerData.address.country,
+            }
+          : undefined,
+        reference_id: customerData.referenceId,
+      };
+
+      const response = await this.makeRequest(endpoint, 'POST', data);
+
+      if (response.customer) {
+        return {
+          success: true,
+          customerId: response.customer.id,
+        };
+      } else {
+        return {
+          success: false,
+          error: response.errors?.[0]?.detail || 'Failed to create customer',
+        };
+      }
+    } catch (error) {
+      console.error('Error creating Square customer:', error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
+   * Create a FleetFlow-specific invoice
+   */
+  async createFleetFlowInvoice(invoiceData: {
+    customerId: string;
+    invoiceTitle: string;
+    description: string;
+    lineItems: Array<{
+      name: string;
+      quantity: number;
+      rate: number;
+      amount: number;
+    }>;
+    dueDate: string;
+    customFields?: Array<{
+      label: string;
+      value: string;
+    }>;
+  }): Promise<{ success: boolean; invoiceId?: string; error?: string }> {
+    try {
+      const endpoint = '/v2/invoices';
+
+      // Calculate total amount
+      const totalAmount = invoiceData.lineItems.reduce(
+        (sum, item) => sum + item.amount,
+        0
+      );
+
+      const data = {
+        invoice: {
+          location_id: this.locationId,
+          primary_recipient: {
+            customer_id: invoiceData.customerId,
+          },
+          title: invoiceData.invoiceTitle,
+          description: invoiceData.description,
+          scheduled_at: new Date().toISOString(),
+          payment_requests: [
+            {
+              request_type: 'BALANCE',
+              due_date: invoiceData.dueDate,
+              automatic_payment_source: 'NONE',
+              reminders: [
+                {
+                  relative_scheduled_days: -7,
+                  message: 'Your invoice is due in 7 days.',
+                },
+                {
+                  relative_scheduled_days: 0,
+                  message: 'Your invoice is due today.',
+                },
+              ],
+            },
+          ],
+          accepted_payment_methods: {
+            card: true,
+            square_gift_card: false,
+            bank_account: true,
+            buy_now_pay_later: false,
+            cash_app_pay: true,
+          },
+          delivery_method: 'EMAIL',
+          invoice_number: `FF-${Date.now()}`, // FleetFlow invoice number
+          custom_fields:
+            invoiceData.customFields?.map((field) => ({
+              label: field.label,
+              value: field.value,
+              placement: 'ABOVE_LINE_ITEMS',
+            })) || [],
+        },
+        idempotency_key: `ff-invoice-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      };
+
+      const response = await this.makeRequest(endpoint, 'POST', data);
+
+      if (response.invoice) {
+        return {
+          success: true,
+          invoiceId: response.invoice.id,
+        };
+      } else {
+        return {
+          success: false,
+          error: response.errors?.[0]?.detail || 'Failed to create invoice',
+        };
+      }
+    } catch (error) {
+      console.error('Error creating FleetFlow invoice:', error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'Unknown error occurred',
+      };
+    }
+  }
+
+  /**
    * Check if Square is properly configured
    */
   isConfigured(): boolean {

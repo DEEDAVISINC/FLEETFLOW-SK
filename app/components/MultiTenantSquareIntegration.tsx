@@ -265,10 +265,10 @@ export default function MultiTenantSquareIntegration({
                     Application ID
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={credentials.applicationId}
                     onChange={(e) => setCredentials({ ...credentials, applicationId: e.target.value })}
-                    placeholder="sandbox-sq0idb-..."
+                    placeholder="sandbox-sq0idb-...""
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -282,10 +282,10 @@ export default function MultiTenantSquareIntegration({
                     Access Token
                   </label>
                   <input
-                    type="password"
+                    type="password""
                     value={credentials.accessToken}
                     onChange={(e) => setCredentials({ ...credentials, accessToken: e.target.value })}
-                    placeholder="EAAAl..."
+                    placeholder="EAAAl...""
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -299,10 +299,10 @@ export default function MultiTenantSquareIntegration({
                     Location ID
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={credentials.locationId}
                     onChange={(e) => setCredentials({ ...credentials, locationId: e.target.value })}
-                    placeholder="Location ID"
+                    placeholder="Location ID""
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -325,8 +325,8 @@ export default function MultiTenantSquareIntegration({
                       borderRadius: '4px',
                     }}
                   >
-                    <option value="sandbox">Sandbox</option>
-                    <option value="production">Production</option>
+                    <option value="sandbox"">Sandbox</option>
+                    <option value="production"">Production</option>
                   </select>
                 </div>
                 <button
@@ -368,10 +368,10 @@ export default function MultiTenantSquareIntegration({
                     Customer Name
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={invoiceForm.customerName}
                     onChange={(e) => setInvoiceForm({ ...invoiceForm, customerName: e.target.value })}
-                    placeholder="John Doe"
+                    placeholder="John Doe""
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -385,10 +385,10 @@ export default function MultiTenantSquareIntegration({
                     Company Name
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={invoiceForm.companyName}
                     onChange={(e) => setInvoiceForm({ ...invoiceForm, companyName: e.target.value })}
-                    placeholder="ABC Logistics"
+                    placeholder="ABC Logistics""
                     style={{
                       width: '100%',
                       padding: '8px',
@@ -403,10 +403,10 @@ export default function MultiTenantSquareIntegration({
                   Email Address
                 </label>
                 <input
-                  type="email"
+                  type="email""
                   value={invoiceForm.email}
                   onChange={(e) => setInvoiceForm({ ...invoiceForm, email: e.target.value })}
-                  placeholder="customer@example.com"
+                  placeholder="customer@example.com""
                   style={{
                     width: '100%',
                     padding: '8px',
@@ -421,7 +421,7 @@ export default function MultiTenantSquareIntegration({
                     Invoice Title
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={invoiceForm.title}
                     onChange={(e) => setInvoiceForm({ ...invoiceForm, title: e.target.value })}
                     style={{
@@ -437,11 +437,11 @@ export default function MultiTenantSquareIntegration({
                     Amount ($)
                   </label>
                   <input
-                    type="number"
+                    type="number""
                     value={invoiceForm.amount}
                     onChange={(e) => setInvoiceForm({ ...invoiceForm, amount: parseFloat(e.target.value) || 0 })}
-                    min="0"
-                    step="0.01"
+                    min=""0""
+                    step=""0.01""
                     style={{
                       width: '100%',
                       padding: '8px',

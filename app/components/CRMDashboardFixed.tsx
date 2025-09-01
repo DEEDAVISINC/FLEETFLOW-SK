@@ -13,7 +13,7 @@ interface Lead {
 }
 
 export default function CRMDashboardFixed() {
-  console.log('🔥 CRMDashboardFixed LOADED - NEW COMPONENT!');
+  console.info('🔥 CRMDashboardFixed LOADED - NEW COMPONENT!');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -68,34 +68,34 @@ export default function CRMDashboardFixed() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('🔄 CRMDashboardFixed: Starting data fetch...');
+        console.info('🔄 CRMDashboardFixed: Starting data fetch...');
         const response = await fetch(
           '/api/ai-flow/services-sales?tenantId=tenant-demo-123'
         );
-        console.log('📡 CRMDashboardFixed: Response status:', response.status);
+        console.info('📡 CRMDashboardFixed: Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('📊 CRMDashboardFixed: Data received:', data);
+        console.info('📊 CRMDashboardFixed: Data received:', data);
 
         if (data.success && data.data?.serviceLeads) {
-          console.log(
+          console.info(
             '✅ CRMDashboardFixed: Setting API leads:',
             data.data.serviceLeads.length
           );
           setLeads(data.data.serviceLeads);
         } else {
-          console.log(
+          console.info(
             '🔄 CRMDashboardFixed: Using mock data due to invalid API structure'
           );
           setLeads(mockLeads);
         }
       } catch (error) {
         console.error('❌ CRMDashboardFixed: Fetch error:', error);
-        console.log('🔄 CRMDashboardFixed: Using fallback mock data');
+        console.info('🔄 CRMDashboardFixed: Using fallback mock data');
         setLeads(mockLeads);
       } finally {
         setLoading(false);

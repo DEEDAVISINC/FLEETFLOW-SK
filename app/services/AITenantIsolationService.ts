@@ -679,7 +679,7 @@ export class AITenantIsolationService {
       tenantContext.tenantId,
       new Set([tenantContext.tenantId, 'public_data'])
     );
-    console.log(
+    console.info(
       `✅ Registered tenant: ${tenantContext.tenantId} (${tenantContext.tier} tier)`
     );
   }
@@ -689,7 +689,7 @@ export class AITenantIsolationService {
       tenantId,
       new Set([tenantId, ...allowedReferences])
     );
-    console.log(`🔒 Updated boundaries for tenant: ${tenantId}`);
+    console.info(`🔒 Updated boundaries for tenant: ${tenantId}`);
   }
 
   getTenantSecurityStats(tenantId: string): {

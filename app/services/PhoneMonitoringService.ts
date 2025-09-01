@@ -371,7 +371,7 @@ export class PhoneMonitoringService {
     });
 
     // TODO: Integrate with CRM system
-    console.log(`📝 CRM Note Added to Call ${callId}:`, callNote);
+    console.info(`📝 CRM Note Added to Call ${callId}:`, callNote);
   }
 
   /**
@@ -417,7 +417,7 @@ export class PhoneMonitoringService {
       data: handoff,
     });
 
-    console.log(`🔄 Call Handoff Initiated:`, handoff);
+    console.info(`🔄 Call Handoff Initiated:`, handoff);
   }
 
   /**
@@ -600,18 +600,3 @@ export class PhoneMonitoringService {
 
 // Export singleton instance
 export const phoneMonitoringService = PhoneMonitoringService.getInstance();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

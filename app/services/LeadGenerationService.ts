@@ -71,7 +71,7 @@ export class LeadGenerationService {
   constructor() {
     this.financialService = new FinancialMarketsService();
     this.initializeAIPatterns();
-    console.log('🎯 Lead Generation Service initialized with AI learning');
+    console.info('🎯 Lead Generation Service initialized with AI learning');
   }
 
   // ========================================
@@ -131,47 +131,54 @@ export class LeadGenerationService {
   // ========================================
 
   /**
-   * AI-Enhanced Lead Generation using learned patterns
+   * AI-Enhanced Lead Generation with cost optimization
    */
   async generateAILeads(
     filters: LeadGenerationFilters = {}
   ): Promise<LeadProspect[]> {
-    console.log('🤖 Starting AI-powered lead generation...');
+    console.info('🤖 Starting cost-optimized AI-powered lead generation...');
 
     const leads: LeadProspect[] = [];
 
     try {
-      // 1. FMCSA AI Analysis
+      // 1. FMCSA AI Analysis (cost-optimized)
       const fmcsaLeads = await this.getAIFMCSALeads(filters);
       leads.push(...fmcsaLeads);
 
-      // 2. Weather Intelligence
+      // 2. Weather Intelligence (cost-optimized)
       const weatherLeads = await this.getAIWeatherLeads(filters);
       leads.push(...weatherLeads);
 
-      // 3. Economic Intelligence
+      // 3. Economic Intelligence (cost-optimized)
       const economicLeads = await this.getAIEconomicLeads(filters);
       leads.push(...economicLeads);
 
-      // 4. Trade Intelligence
+      // 4. Trade Intelligence (cost-optimized)
       const tradeLeads = await this.getAITradeLeads(filters);
       leads.push(...tradeLeads);
 
-      // 5. TruckingPlanet Network Intelligence
-      const truckingPlanetLeads = await this.getAITruckingPlanetLeads(filters);
+      // 5. TruckingPlanet Network Intelligence (cost-optimized)
+      const truckingPlanetLeads =
+        await this.getOptimizedTruckingPlanetLeads(filters);
       leads.push(...truckingPlanetLeads);
 
-      // 6. ThomasNet Manufacturer Intelligence - NEW REFERRAL SOURCE
-      const thomasNetLeads = await this.getAIThomasNetLeads(filters);
+      // 6. ThomasNet Manufacturer Intelligence (cost-optimized)
+      const thomasNetLeads = await this.getOptimizedThomasNetLeads(filters);
       leads.push(...thomasNetLeads);
 
-      // 7. Apply AI scoring and patterns
-      const aiScoredLeads = await this.applyAIScoring(leads);
+      // 7. FMCSA Carrier Intelligence (cost-optimized)
+      const fmcsaLeads = await this.getOptimizedFMCSALeads(filters);
+      leads.push(...fmcsaLeads);
 
-      // 6. Learn from results
+      // 8. Apply cost-optimized AI scoring and patterns
+      const aiScoredLeads = await this.applyCostOptimizedAIScoring(leads);
+
+      // 9. Learn from results
       this.updateAIPatterns(aiScoredLeads);
 
-      console.log(`✅ AI generated ${aiScoredLeads.length} qualified leads`);
+      console.info(
+        `✅ Cost-optimized AI generated ${aiScoredLeads.length} qualified leads`
+      );
       return aiScoredLeads;
     } catch (error) {
       console.error('AI lead generation error:', error);
@@ -186,7 +193,7 @@ export class LeadGenerationService {
   async getAIFMCSALeads(
     filters: LeadGenerationFilters
   ): Promise<LeadProspect[]> {
-    console.log('🚛 AI analyzing FMCSA patterns...');
+    console.info('🚛 AI analyzing FMCSA patterns...');
 
     const leads: LeadProspect[] = [];
 
@@ -306,7 +313,7 @@ export class LeadGenerationService {
   async getAIWeatherLeads(
     filters: LeadGenerationFilters
   ): Promise<LeadProspect[]> {
-    console.log(
+    console.info(
       '🌤️ AI analyzing weather patterns for freight opportunities...'
     );
 
@@ -387,7 +394,7 @@ export class LeadGenerationService {
   async getAIEconomicLeads(
     filters: LeadGenerationFilters
   ): Promise<LeadProspect[]> {
-    console.log('📈 AI analyzing economic growth patterns...');
+    console.info('📈 AI analyzing economic growth patterns...');
 
     const leads: LeadProspect[] = [];
 
@@ -464,7 +471,7 @@ export class LeadGenerationService {
   async getAITradeLeads(
     filters: LeadGenerationFilters
   ): Promise<LeadProspect[]> {
-    console.log('🌍 AI analyzing international trade patterns...');
+    console.info('🌍 AI analyzing international trade patterns...');
 
     const leads: LeadProspect[] = [];
 
@@ -544,7 +551,7 @@ export class LeadGenerationService {
   async getAITruckingPlanetLeads(
     filters: LeadGenerationFilters
   ): Promise<LeadProspect[]> {
-    console.log('🌐 AI analyzing TruckingPlanet Network...');
+    console.info('🌐 AI analyzing TruckingPlanet Network...');
 
     const leads: LeadProspect[] = [];
 
@@ -565,7 +572,7 @@ export class LeadGenerationService {
         leads.push(aiEnhancedLead);
       }
 
-      console.log(`✅ AI generated ${leads.length} TruckingPlanet leads`);
+      console.info(`✅ AI generated ${leads.length} TruckingPlanet leads`);
       return leads;
     } catch (error) {
       console.error('AI TruckingPlanet analysis error:', error);
@@ -640,7 +647,7 @@ export class LeadGenerationService {
   async getAIThomasNetLeads(
     filters: LeadGenerationFilters
   ): Promise<LeadProspect[]> {
-    console.log('🏭 AI analyzing ThomasNet Manufacturer Directory...');
+    console.info('🏭 AI analyzing ThomasNet Manufacturer Directory...');
 
     const leads: LeadProspect[] = [];
 
@@ -661,7 +668,7 @@ export class LeadGenerationService {
         }
       }
 
-      console.log(
+      console.info(
         `✅ AI generated ${leads.length} ThomasNet manufacturer leads`
       );
       return leads;
@@ -887,6 +894,328 @@ export class LeadGenerationService {
       .sort((a, b) => b.leadScore - a.leadScore);
   }
 
+  // ========================================
+  // COST-OPTIMIZED AI SCORING
+  // ========================================
+
+  private async applyCostOptimizedAIScoring(
+    leads: LeadProspect[]
+  ): Promise<LeadProspect[]> {
+    const { aiBatchService } = await import('./AIBatchService');
+    const { platformOptimizationService } = await import(
+      './PlatformOptimizationService'
+    );
+
+    // Separate leads by value tier for cost optimization
+    const highValueLeads = leads.filter(
+      (lead) => lead.leadScore >= 80 || lead.aiConfidence >= 85
+    );
+    const mediumValueLeads = leads.filter(
+      (lead) => lead.leadScore >= 60 && lead.leadScore < 80
+    );
+    const lowValueLeads = leads.filter((lead) => lead.leadScore < 60);
+
+    console.info(
+      `💰 Cost optimization: ${highValueLeads.length} high-value, ${mediumValueLeads.length} medium-value, ${lowValueLeads.length} low-value leads`
+    );
+
+    const scoredLeads: LeadProspect[] = [];
+
+    // Process high-value leads with full AI analysis
+    if (highValueLeads.length > 0) {
+      const highValueTasks = highValueLeads.map((lead) => ({
+        type: 'lead_scoring' as const,
+        content: `Score this lead: ${lead.companyName}, ${lead.businessIntel.industryCode}, ${lead.businessIntel.employeeCount} employees, ${lead.businessIntel.annualRevenue} revenue, ${lead.businessIntel.freightNeed} freight needs`,
+        priority: 'high' as const,
+        leadValue: 'high' as const,
+        userId: 'lead_generation_system',
+      }));
+
+      const highValueResults = await Promise.all(
+        highValueTasks.map(async (task) => {
+          const taskId = await aiBatchService.queueTask(task);
+          return await aiBatchService.getTaskResult(taskId);
+        })
+      );
+
+      highValueLeads.forEach((lead, index) => {
+        const aiResult = highValueResults[index]?.result;
+        if (aiResult) {
+          scoredLeads.push({
+            ...lead,
+            leadScore: Math.min(100, lead.leadScore + (aiResult.score || 0)),
+            notes: [
+              ...(lead.notes || []),
+              `AI Cost-Optimized: High-value scoring applied (+${aiResult.score || 0})`,
+            ],
+          });
+        } else {
+          scoredLeads.push(lead);
+        }
+      });
+    }
+
+    // Process medium-value leads with batch AI analysis
+    if (mediumValueLeads.length > 0) {
+      const mediumValueTasks = mediumValueLeads.map((lead) => ({
+        type: 'lead_qualification' as const,
+        content: `Qualify this lead: ${lead.companyName}, ${lead.businessIntel.industryCode}, ${lead.businessIntel.employeeCount} employees, ${lead.businessIntel.freightNeed} freight needs`,
+        priority: 'medium' as const,
+        leadValue: 'medium' as const,
+        userId: 'lead_generation_system',
+      }));
+
+      const mediumValueResults = await Promise.all(
+        mediumValueTasks.map(async (task) => {
+          const taskId = await aiBatchService.queueTask(task);
+          return await aiBatchService.getTaskResult(taskId);
+        })
+      );
+
+      mediumValueLeads.forEach((lead, index) => {
+        const aiResult = mediumValueResults[index]?.result;
+        if (aiResult) {
+          scoredLeads.push({
+            ...lead,
+            leadScore: Math.min(100, lead.leadScore + (aiResult.score || 0)),
+            notes: [
+              ...(lead.notes || []),
+              `AI Cost-Optimized: Medium-value qualification applied (+${aiResult.score || 0})`,
+            ],
+          });
+        } else {
+          scoredLeads.push(lead);
+        }
+      });
+    }
+
+    // Process low-value leads with rule-based scoring (no AI cost)
+    if (lowValueLeads.length > 0) {
+      lowValueLeads.forEach((lead) => {
+        // Apply basic rule-based scoring
+        let ruleScore = 0;
+
+        // Industry scoring
+        if (
+          lead.businessIntel.industryCode
+            .toLowerCase()
+            .includes('manufacturing')
+        ) {
+          ruleScore += 5;
+        }
+        if (
+          lead.businessIntel.industryCode.toLowerCase().includes('wholesale')
+        ) {
+          ruleScore += 3;
+        }
+
+        // Size scoring
+        if (lead.businessIntel.employeeCount) {
+          const employeeCount = parseInt(
+            lead.businessIntel.employeeCount.replace(/[^\d]/g, '')
+          );
+          if (employeeCount > 500) ruleScore += 10;
+          else if (employeeCount > 100) ruleScore += 5;
+          else if (employeeCount > 25) ruleScore += 2;
+        }
+
+        // Freight need scoring
+        if (lead.businessIntel.freightNeed === 'high') ruleScore += 8;
+        else if (lead.businessIntel.freightNeed === 'medium') ruleScore += 4;
+
+        scoredLeads.push({
+          ...lead,
+          leadScore: Math.min(100, lead.leadScore + ruleScore),
+          notes: [
+            ...(lead.notes || []),
+            `AI Cost-Optimized: Rule-based scoring applied (+${ruleScore}) - No AI cost`,
+          ],
+        });
+      });
+
+      console.info(
+        `⚡ Processed ${lowValueLeads.length} low-value leads with rule-based scoring (0 AI cost)`
+      );
+    }
+
+    // Sort by lead score and apply final AI pattern boosts
+    return scoredLeads
+      .map((lead) => {
+        let finalScore = lead.leadScore;
+
+        // AI pattern matching boosts (no additional cost)
+        const matchingPattern = this.aiPatterns.find((pattern) =>
+          pattern.industryFocus.some((industry) =>
+            lead.businessIntel.industryCode.toLowerCase().includes(industry)
+          )
+        );
+
+        if (matchingPattern && matchingPattern.successRate > 85) {
+          finalScore = Math.min(100, finalScore + 5);
+        }
+
+        return {
+          ...lead,
+          leadScore: finalScore,
+        };
+      })
+      .sort((a, b) => b.leadScore - a.leadScore);
+  }
+
+  // ========================================
+  // PLATFORM OPTIMIZATION INTEGRATION
+  // ========================================
+
+  private async getOptimizedThomasNetLeads(
+    filters: LeadGenerationFilters
+  ): Promise<LeadProspect[]> {
+    const { platformOptimizationService } = await import(
+      './PlatformOptimizationService'
+    );
+
+    const searchCriteria = {
+      industry: filters.industry || ['manufacturing'],
+      companySize: 'LARGE', // Focus on large companies for cost optimization
+      location: filters.location || 'NATIONWIDE',
+      freightVolume: 'HIGH',
+      employeeCount: '500+', // Enterprise focus
+    };
+
+    try {
+      const { results, optimization } =
+        await platformOptimizationService.optimizeThomasNetSearch(
+          searchCriteria
+        );
+
+      console.info(
+        `💰 Thomas.net optimization: Saved $${optimization.costSavings} (${optimization.performanceImprovement}ms faster)`
+      );
+
+      return results.map((result) => ({
+        id: `thomasnet_${result.id}`,
+        companyName: `Optimized Manufacturer ${result.id}`,
+        type: 'manufacturer',
+        contactInfo: {
+          address: 'Optimized Location',
+        },
+        businessIntel: {
+          industryCode: 'MANUFACTURING',
+          estimatedRevenue: '$50M+',
+          employeeCount: '500+',
+          freightNeed: 'high',
+        },
+        leadScore: result.score,
+        source: 'Thomas.net (Cost Optimized)',
+        lastUpdated: new Date(),
+        notes: [`Platform optimized - saved $${optimization.costSavings}`],
+        aiConfidence: result.score,
+        aiRecommendations: ['Cost-optimized lead from Thomas.net'],
+      }));
+    } catch (error) {
+      console.error('Thomas.net optimization error:', error);
+      return [];
+    }
+  }
+
+  private async getOptimizedTruckingPlanetLeads(
+    filters: LeadGenerationFilters
+  ): Promise<LeadProspect[]> {
+    const { platformOptimizationService } = await import(
+      './PlatformOptimizationService'
+    );
+
+    const searchCriteria = {
+      urgencyLevel: 'CRITICAL', // Focus on urgent needs for cost optimization
+      shippingVolume: '50+',
+      capacityIssue: true,
+      contractExpiring: true,
+      location: 'NATIONWIDE',
+    };
+
+    try {
+      const { results, optimization } =
+        await platformOptimizationService.optimizeTruckingPlanetSearch(
+          searchCriteria
+        );
+
+      console.info(
+        `💰 TruckingPlanet optimization: Saved $${optimization.costSavings} (${optimization.performanceImprovement}ms faster)`
+      );
+
+      return results.map((result) => ({
+        id: `truckingplanet_${result.id}`,
+        companyName: `Desperate Shipper ${result.id}`,
+        type: 'shipper',
+        contactInfo: {
+          address: 'Urgent Location',
+        },
+        businessIntel: {
+          industryCode: 'LOGISTICS',
+          estimatedRevenue: '$10M-50M',
+          employeeCount: '50-200',
+          freightNeed: 'critical',
+        },
+        leadScore: result.score,
+        source: 'TruckingPlanet (Cost Optimized)',
+        lastUpdated: new Date(),
+        notes: [`Platform optimized - saved $${optimization.costSavings}`],
+        aiConfidence: result.score,
+        aiRecommendations: ['Cost-optimized urgent lead from TruckingPlanet'],
+      }));
+    } catch (error) {
+      console.error('TruckingPlanet optimization error:', error);
+      return [];
+    }
+  }
+
+  private async getOptimizedFMCSALeads(
+    filters: LeadGenerationFilters
+  ): Promise<LeadProspect[]> {
+    const { platformOptimizationService } = await import(
+      './PlatformOptimizationService'
+    );
+
+    const searchCriteria = {
+      safetyRating: 'Conditional', // Focus on critical violations
+      violationType: 'safety_critical',
+      violationAge: 12, // Last 12 months
+      operatingStatus: 'active',
+    };
+
+    try {
+      const { results, optimization } =
+        await platformOptimizationService.optimizeFMCSASearch(searchCriteria);
+
+      console.info(
+        `💰 FMCSA optimization: Saved $${optimization.costSavings} (${optimization.performanceImprovement}ms faster)`
+      );
+
+      return results.map((result) => ({
+        id: `fmcsa_${result.id}`,
+        companyName: `Carrier with Compliance Issues ${result.id}`,
+        type: 'carrier',
+        contactInfo: {
+          address: 'Compliance Location',
+        },
+        businessIntel: {
+          industryCode: 'TRANSPORTATION',
+          estimatedRevenue: '$5M-25M',
+          employeeCount: '25-100',
+          freightNeed: 'medium',
+        },
+        leadScore: result.score,
+        source: 'FMCSA (Cost Optimized)',
+        lastUpdated: new Date(),
+        notes: [`Platform optimized - saved $${optimization.costSavings}`],
+        aiConfidence: result.score,
+        aiRecommendations: ['Cost-optimized carrier lead from FMCSA'],
+      }));
+    } catch (error) {
+      console.error('FMCSA optimization error:', error);
+      return [];
+    }
+  }
+
   private calculateAIConfidence(patternName: string): number {
     const pattern = this.aiPatterns.find((p) => p.pattern === patternName);
     return pattern ? pattern.successRate : 70;
@@ -897,7 +1226,7 @@ export class LeadGenerationService {
     const highConfidenceLeads = leads.filter((lead) => lead.aiConfidence > 85);
 
     if (highConfidenceLeads.length > 0) {
-      console.log(
+      console.info(
         `🧠 AI learning from ${highConfidenceLeads.length} high-confidence leads`
       );
 
@@ -996,7 +1325,7 @@ export class LeadGenerationService {
   }
 
   async integrateWithFreightFlowRFx(leads: LeadProspect[]): Promise<void> {
-    console.log(
+    console.info(
       `🔗 AI integrating ${leads.length} leads with FreightFlow RFx...`
     );
 
@@ -1004,13 +1333,13 @@ export class LeadGenerationService {
       (lead) => lead.leadScore >= 85 && lead.aiConfidence >= 80
     );
 
-    console.log(
+    console.info(
       `🤖 AI identified ${aiHighValueLeads.length} premium leads for RFx integration`
     );
 
     // AI creates targeted RFx opportunities based on lead intelligence
     for (const lead of aiHighValueLeads) {
-      console.log(`Creating AI-optimized RFx for: ${lead.companyName}`);
+      console.info(`Creating AI-optimized RFx for: ${lead.companyName}`);
       // Integration with RFxResponseService would happen here
     }
   }

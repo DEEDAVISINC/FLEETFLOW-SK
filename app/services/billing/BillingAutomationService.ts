@@ -312,7 +312,7 @@ export class BillingAutomationService {
     failed: number;
     totalRevenue: number;
   }> {
-    console.log('🔄 Starting monthly billing process...');
+    console.info('🔄 Starting monthly billing process...');
 
     let processed = 0;
     let failed = 0;
@@ -333,7 +333,7 @@ export class BillingAutomationService {
           // Reset usage tracking for new period
           await this.resetUsageTracking(customer.id);
 
-          console.log(`✅ Processed billing for ${customer.companyName}`);
+          console.info(`✅ Processed billing for ${customer.companyName}`);
         } catch (error) {
           console.error(
             `❌ Failed to process billing for ${customer.companyName}:`,
@@ -348,7 +348,7 @@ export class BillingAutomationService {
         await this.billComService.processRecurringBilling();
       processed += recurringProcessed;
 
-      console.log(
+      console.info(
         `🎉 Monthly billing complete: ${processed} processed, ${failed} failed, $${totalRevenue.toFixed(2)} revenue`
       );
 
@@ -398,7 +398,7 @@ export class BillingAutomationService {
     retried: number;
     suspended: number;
   }> {
-    console.log('🔄 Processing failed payments...');
+    console.info('🔄 Processing failed payments...');
 
     let retried = 0;
     let suspended = 0;
@@ -443,7 +443,7 @@ export class BillingAutomationService {
         }
       }
 
-      console.log(
+      console.info(
         `💳 Failed payments processed: ${retried} retried, ${suspended} suspended`
       );
       return { retried, suspended };
@@ -599,7 +599,7 @@ export class BillingAutomationService {
 
   private async storeBillingCustomer(customer: BillingCustomer): Promise<void> {
     // TODO: Implement database storage
-    console.log('Storing billing customer:', customer.id);
+    console.info('Storing billing customer:', customer.id);
   }
 
   private async getBillingCustomer(
@@ -613,7 +613,7 @@ export class BillingAutomationService {
     customer: BillingCustomer
   ): Promise<void> {
     // TODO: Implement database update
-    console.log('Updating billing customer:', customer.id);
+    console.info('Updating billing customer:', customer.id);
   }
 
   private async getAllBillingCustomers(): Promise<BillingCustomer[]> {
@@ -626,12 +626,12 @@ export class BillingAutomationService {
     planId: string
   ): Promise<void> {
     // TODO: Update usage limits based on plan
-    console.log('Updating usage limits for:', customerId, planId);
+    console.info('Updating usage limits for:', customerId, planId);
   }
 
   private async resetUsageTracking(customerId: string): Promise<void> {
     // TODO: Reset usage tracking for new billing period
-    console.log('Resetting usage tracking for:', customerId);
+    console.info('Resetting usage tracking for:', customerId);
   }
 
   private async scheduleOverageCharges(
@@ -639,7 +639,7 @@ export class BillingAutomationService {
     charges: InvoiceLineItem[]
   ): Promise<void> {
     // TODO: Schedule overage charges for next invoice
-    console.log('Scheduling overage charges for:', customerId);
+    console.info('Scheduling overage charges for:', customerId);
   }
 
   private async sendOverageNotification(
@@ -647,7 +647,7 @@ export class BillingAutomationService {
     overages: any[]
   ): Promise<void> {
     // TODO: Send overage notification email
-    console.log('Sending overage notification to:', customerId);
+    console.info('Sending overage notification to:', customerId);
   }
 
   private async getOverdueInvoices(): Promise<Invoice[]> {
@@ -672,7 +672,7 @@ export class BillingAutomationService {
 
   private async markInvoiceAsPaid(invoiceId: string): Promise<void> {
     // TODO: Mark invoice as paid
-    console.log('Marking invoice as paid:', invoiceId);
+    console.info('Marking invoice as paid:', invoiceId);
   }
 
   private async getPaymentFailureCount(invoiceId: string): Promise<number> {
@@ -682,21 +682,21 @@ export class BillingAutomationService {
 
   private async suspendCustomerServices(customerId: string): Promise<void> {
     // TODO: Suspend customer services
-    console.log('Suspending services for:', customerId);
+    console.info('Suspending services for:', customerId);
   }
 
   private async sendPaymentSuccessNotification(
     customerId: string
   ): Promise<void> {
     // TODO: Send payment success notification
-    console.log('Sending payment success notification to:', customerId);
+    console.info('Sending payment success notification to:', customerId);
   }
 
   private async sendServiceSuspensionNotification(
     customerId: string
   ): Promise<void> {
     // TODO: Send service suspension notification
-    console.log('Sending service suspension notification to:', customerId);
+    console.info('Sending service suspension notification to:', customerId);
   }
 
   private async sendDunningNotification(
@@ -704,7 +704,7 @@ export class BillingAutomationService {
     attemptNumber: number
   ): Promise<void> {
     // TODO: Send dunning notification
-    console.log(
+    console.info(
       'Sending dunning notification to:',
       customerId,
       'attempt:',

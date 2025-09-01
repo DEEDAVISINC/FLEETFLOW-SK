@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action') || 'comprehensive';
     const tenantId = getTenantId(request);
 
-    console.log(`📊 AI Dashboard API: ${action} for tenant ${tenantId}`);
+    console.info(`📊 AI Dashboard API: ${action} for tenant ${tenantId}`);
 
     switch (action) {
       case 'comprehensive':
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     const action = searchParams.get('action') || 'refresh';
     const tenantId = getTenantId(request);
 
-    console.log(`🔄 AI Dashboard API: ${action} for tenant ${tenantId}`);
+    console.info(`🔄 AI Dashboard API: ${action} for tenant ${tenantId}`);
 
     switch (action) {
       case 'refresh':
@@ -83,13 +83,13 @@ export async function POST(request: NextRequest) {
 
 async function handleGetComprehensiveData() {
   try {
-    console.log('📊 Fetching comprehensive dashboard data...');
+    console.info('📊 Fetching comprehensive dashboard data...');
 
     const startTime = Date.now();
     const data = await aiDashboardIntegration.getComprehensiveDashboardData();
     const fetchTime = Date.now() - startTime;
 
-    console.log(`✅ Comprehensive data fetched in ${fetchTime}ms`);
+    console.info(`✅ Comprehensive data fetched in ${fetchTime}ms`);
 
     return NextResponse.json({
       success: true,
@@ -114,7 +114,7 @@ async function handleGetComprehensiveData() {
 
 async function handleGetRealTimeMetrics() {
   try {
-    console.log('📈 Fetching real-time metrics...');
+    console.info('📈 Fetching real-time metrics...');
 
     const metrics = await aiDashboardIntegration.getRealTimeMetrics();
 
@@ -137,7 +137,7 @@ async function handleGetRealTimeMetrics() {
 
 async function handleGetFinancialData() {
   try {
-    console.log('💰 Fetching financial data...');
+    console.info('💰 Fetching financial data...');
 
     const financial = await aiDashboardIntegration.getFinancialData();
 
@@ -160,7 +160,7 @@ async function handleGetFinancialData() {
 
 async function handleGetOperationalData() {
   try {
-    console.log('🚛 Fetching operational data...');
+    console.info('🚛 Fetching operational data...');
 
     const operational = await aiDashboardIntegration.getOperationalData();
 
@@ -183,7 +183,7 @@ async function handleGetOperationalData() {
 
 async function handleGetAIPerformanceData() {
   try {
-    console.log('🤖 Fetching AI performance data...');
+    console.info('🤖 Fetching AI performance data...');
 
     const performance = await aiDashboardIntegration.getAIPerformanceData();
 
@@ -206,7 +206,7 @@ async function handleGetAIPerformanceData() {
 
 async function handleGetSystemHealthData() {
   try {
-    console.log('🏥 Fetching system health data...');
+    console.info('🏥 Fetching system health data...');
 
     const health = await aiDashboardIntegration.getSystemHealthData();
 
@@ -229,7 +229,7 @@ async function handleGetSystemHealthData() {
 
 async function handleGetStaffProductivity() {
   try {
-    console.log('👥 Fetching staff productivity data...');
+    console.info('👥 Fetching staff productivity data...');
 
     const productivity = await aiDashboardIntegration.getStaffProductivity();
 
@@ -252,7 +252,7 @@ async function handleGetStaffProductivity() {
 
 async function handleGetCacheStatus() {
   try {
-    console.log('🗂️ Getting cache status...');
+    console.info('🗂️ Getting cache status...');
 
     const cacheStatus = aiDashboardIntegration.getCacheStatus();
 
@@ -275,7 +275,7 @@ async function handleGetCacheStatus() {
 
 async function handleServiceHealthCheck() {
   try {
-    console.log('🏥 Performing service health check...');
+    console.info('🏥 Performing service health check...');
 
     const healthCheck = await aiDashboardIntegration.healthCheck();
 
@@ -298,7 +298,7 @@ async function handleServiceHealthCheck() {
 
 async function handleRefreshData() {
   try {
-    console.log('🔄 Refreshing dashboard data...');
+    console.info('🔄 Refreshing dashboard data...');
 
     // Clear cache to force fresh data
     aiDashboardIntegration.clearCache();
@@ -326,7 +326,7 @@ async function handleRefreshData() {
 
 async function handleClearCache() {
   try {
-    console.log('🗑️ Clearing dashboard cache...');
+    console.info('🗑️ Clearing dashboard cache...');
 
     aiDashboardIntegration.clearCache();
 

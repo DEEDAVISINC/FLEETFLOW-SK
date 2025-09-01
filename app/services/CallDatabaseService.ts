@@ -6,7 +6,7 @@ export class CallDatabaseService {
     callSid: string,
     status: string
   ): Promise<boolean> {
-    console.log(`Saving call status: ${callSid} - ${status}`);
+    console.info(`Saving call status: ${callSid} - ${status}`);
     // In a real implementation, this would save to a database
     return true;
   }
@@ -15,7 +15,7 @@ export class CallDatabaseService {
     callSid: string,
     transcription: string
   ): Promise<boolean> {
-    console.log(`Saving transcription for call: ${callSid}`);
+    console.info(`Saving transcription for call: ${callSid}`);
     // In a real implementation, this would save to a database
     return true;
   }

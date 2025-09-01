@@ -374,7 +374,7 @@ export class InsurancePartnershipService {
     try {
       // Simulate API call to Covered Embedded Insurance
       // In production, this would use their white-label API with SOC 2 certification
-      console.log('Submitting referral to Covered Embedded Insurance:', {
+      console.info('Submitting referral to Covered Embedded Insurance:', {
         mcNumber: request.companyInfo.mcNumber,
         businessType: request.companyInfo.businessType,
         referralSource: 'FleetFlow',
@@ -393,7 +393,7 @@ export class InsurancePartnershipService {
   ): Promise<boolean> {
     try {
       // Simulate API call to Coverdash (single-line NPM integration)
-      console.log('Submitting referral to Coverdash:', {
+      console.info('Submitting referral to Coverdash:', {
         businessName: request.companyInfo.businessName,
         insuranceTypes: request.insuranceTypes,
         referralSource: 'FleetFlow',
@@ -411,7 +411,7 @@ export class InsurancePartnershipService {
   ): Promise<boolean> {
     try {
       // Simulate API call to Tivly Affiliate Program
-      console.log('Submitting referral to Tivly:', {
+      console.info('Submitting referral to Tivly:', {
         companyInfo: request.companyInfo,
         fleetSize: request.fleetInfo?.vehicleCount,
         referralSource: 'FleetFlow',
@@ -429,7 +429,7 @@ export class InsurancePartnershipService {
   ): Promise<boolean> {
     try {
       // Simulate API call to Insurify Partnership (120+ carriers)
-      console.log('Submitting referral to Insurify:', {
+      console.info('Submitting referral to Insurify:', {
         businessDetails: request.companyInfo,
         coverageNeeds: request.requestedCoverage,
         referralSource: 'FleetFlow',

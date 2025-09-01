@@ -109,7 +109,7 @@ class ThomasNetService {
           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
       });
 
-      console.log('ThomasNet service initialized');
+      console.info('ThomasNet service initialized');
     } catch (error) {
       console.error('Failed to initialize ThomasNet service:', error);
       throw error;
@@ -122,13 +122,13 @@ class ThomasNetService {
     }
 
     try {
-      console.log(
+      console.info(
         '🔐 Attempting ThomasNet login for:',
         this.credentials.username
       );
 
       // Step 1: Navigate to homepage first (more reliable)
-      console.log('📍 Navigating to ThomasNet homepage...');
+      console.info('📍 Navigating to ThomasNet homepage...');
       await this.page.goto('https://www.thomasnet.com', {
         waitUntil: 'domcontentloaded',
         timeout: 45000,
@@ -138,7 +138,7 @@ class ThomasNetService {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Step 2: Look for login link and click it
-      console.log('🔍 Looking for login link...');
+      console.info('🔍 Looking for login link...');
       try {
         await this.page.waitForSelector('a[href*="login"], .login, .sign-in', {
           timeout: 10000,
@@ -147,7 +147,7 @@ class ThomasNetService {
           'a[href*="login"], .login, .sign-in'
         );
         if (loginLink) {
-          console.log('🖱️ Clicking login link...');
+          console.info('🖱️ Clicking login link...');
           await loginLink.click();
           await this.page.waitForNavigation({
             waitUntil: 'domcontentloaded',
@@ -155,7 +155,7 @@ class ThomasNetService {
           });
         }
       } catch (linkError) {
-        console.log('⚠️ Login link not found, trying direct navigation...');
+        console.info('⚠️ Login link not found, trying direct navigation...');
         await this.page.goto('https://www.thomasnet.com/account/login', {
           waitUntil: 'domcontentloaded',
           timeout: 45000,
@@ -163,7 +163,7 @@ class ThomasNetService {
       }
 
       // Step 3: Wait for and identify login form elements
-      console.log('📝 Looking for login form...');
+      console.info('📝 Looking for login form...');
 
       // Try multiple common selectors
       const possibleUserSelectors = [
@@ -191,7 +191,7 @@ class ThomasNetService {
         try {
           await this.page.waitForSelector(selector, { timeout: 3000 });
           usernameField = selector;
-          console.log('✅ Found username field:', selector);
+          console.info('✅ Found username field:', selector);
           break;
         } catch {} // Continue to next selector
       }
@@ -200,7 +200,7 @@ class ThomasNetService {
         try {
           await this.page.waitForSelector(selector, { timeout: 3000 });
           passwordField = selector;
-          console.log('✅ Found password field:', selector);
+          console.info('✅ Found password field:', selector);
           break;
         } catch {} // Continue to next selector
       }
@@ -216,7 +216,7 @@ class ThomasNetService {
       }
 
       // Step 4: Clear fields and enter credentials
-      console.log('⌨️ Entering credentials...');
+      console.info('⌨️ Entering credentials...');
       await this.page.click(usernameField, { clickCount: 3 }); // Select all
       await this.page.type(usernameField, this.credentials.username, {
         delay: 100,
@@ -228,7 +228,7 @@ class ThomasNetService {
       });
 
       // Step 5: Submit form
-      console.log('🚀 Submitting login form...');
+      console.info('🚀 Submitting login form...');
 
       // Try different submit methods
       const submitSelectors = [
@@ -248,19 +248,19 @@ class ThomasNetService {
           if (button) {
             await button.click();
             submitted = true;
-            console.log('✅ Clicked submit button:', selector);
+            console.info('✅ Clicked submit button:', selector);
             break;
           }
         } catch {} // Continue to next selector
       }
 
       if (!submitted) {
-        console.log('⌨️ No submit button found, trying Enter key...');
+        console.info('⌨️ No submit button found, trying Enter key...');
         await this.page.keyboard.press('Enter');
       }
 
       // Step 6: Wait for login to complete (with multiple fallbacks)
-      console.log('⏳ Waiting for login to complete...');
+      console.info('⏳ Waiting for login to complete...');
 
       try {
         // Wait for either navigation OR success indicators
@@ -281,12 +281,12 @@ class ThomasNetService {
           ),
         ]);
       } catch (waitError) {
-        console.log('⚠️ Navigation timeout, checking current state...');
+        console.info('⚠️ Navigation timeout, checking current state...');
       }
 
       // Step 7: Verify login success
       const currentUrl = this.page.url();
-      console.log('🌐 Current URL after login attempt:', currentUrl);
+      console.info('🌐 Current URL after login attempt:', currentUrl);
 
       // Check for success indicators
       const successIndicators = [
@@ -304,7 +304,7 @@ class ThomasNetService {
       // Check if we're no longer on login page
       if (!currentUrl.includes('/login')) {
         loginSuccess = true;
-        console.log('✅ Login successful - redirected from login page');
+        console.info('✅ Login successful - redirected from login page');
       }
 
       // Check for user elements
@@ -313,7 +313,10 @@ class ThomasNetService {
           const element = await this.page.$(indicator);
           if (element) {
             loginSuccess = true;
-            console.log('✅ Login successful - found user element:', indicator);
+            console.info(
+              '✅ Login successful - found user element:',
+              indicator
+            );
             break;
           }
         } catch {}
@@ -341,7 +344,7 @@ class ThomasNetService {
 
       if (loginSuccess) {
         this.isLoggedIn = true;
-        console.log('🎉 ThomasNet login successful!');
+        console.info('🎉 ThomasNet login successful!');
         return true;
       } else {
         console.error('❌ Login failed - no success indicators found');
@@ -380,7 +383,7 @@ class ThomasNetService {
     }
 
     try {
-      console.log('Searching for manufacturers with filters:', filters);
+      console.info('Searching for manufacturers with filters:', filters);
 
       // Navigate to supplier search page
       await this.page.goto('https://www.thomasnet.com/suppliers', {
@@ -525,7 +528,7 @@ class ThomasNetService {
         return results;
       });
 
-      console.log(`Found ${manufacturers.length} manufacturers`);
+      console.info(`Found ${manufacturers.length} manufacturers`);
       return manufacturers;
     } catch (error) {
       console.error('Failed to search manufacturers:', error);
@@ -548,7 +551,7 @@ class ThomasNetService {
     }
 
     try {
-      console.log(
+      console.info(
         'Searching for wholesalers/distributors with filters:',
         filters
       );
@@ -681,7 +684,7 @@ class ThomasNetService {
         return results;
       });
 
-      console.log(`Found ${wholesalers.length} wholesalers/distributors`);
+      console.info(`Found ${wholesalers.length} wholesalers/distributors`);
       return wholesalers;
     } catch (error) {
       console.error('Failed to search wholesalers:', error);
@@ -697,7 +700,7 @@ class ThomasNetService {
     }
 
     try {
-      console.log(`Getting detailed company information from: ${companyUrl}`);
+      console.info(`Getting detailed company information from: ${companyUrl}`);
 
       await this.page.goto(companyUrl, { waitUntil: 'networkidle2' });
 
@@ -786,7 +789,7 @@ class ThomasNetService {
       this.browser = null;
       this.page = null;
       this.isLoggedIn = false;
-      console.log('ThomasNet service closed');
+      console.info('ThomasNet service closed');
     }
   }
 }

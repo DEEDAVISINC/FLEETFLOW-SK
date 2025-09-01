@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import InvitationQuickManager from '../components/InvitationQuickManager';
-// ✅ ADD: Platform AI monitoring dashboard
+import OrganizationDashboard from '../components/OrganizationDashboard';
 import { PlatformAIMonitor } from '../components/PlatformAIMonitor';
+import { useOrganization } from '../contexts/OrganizationContext';
 
 export default function DashboardPage() {
+  const { currentOrganization } = useOrganization();
   const quickLinks = [
     {
       href: '/dispatch',
@@ -86,12 +88,32 @@ export default function DashboardPage() {
     },
   ];
 
-  const stats = [
-    { label: 'Active Loads', value: '24', color: '#3b82f6', emoji: '📦' },
-    { label: 'Available Drivers', value: '8', color: '#10b981', emoji: '👨‍💼' },
-    { label: 'Fleet Vehicles', value: '32', color: '#8b5cf6', emoji: '🚛' },
-    { label: 'Revenue (MTD)', value: '$145K', color: '#22c55e', emoji: '💵' },
-  ];
+  // Dynamic stats based on organization data
+  const getOrganizationStats = () => {
+    if (!currentOrganization) {
+      return [
+        { label: 'Active Loads', value: '0', color: '#3b82f6', emoji: '📦' },
+        {
+          label: 'Available Drivers',
+          value: '0',
+          color: '#10b981',
+          emoji: '👨‍💼',
+        },
+        { label: 'Fleet Vehicles', value: '0', color: '#8b5cf6', emoji: '🚛' },
+        { label: 'Revenue (MTD)', value: '$0', color: '#22c55e', emoji: '💵' },
+      ];
+    }
+
+    // Placeholder stats - would be replaced with real data from OrganizationDataService
+    return [
+      { label: 'Active Loads', value: '24', color: '#3b82f6', emoji: '📦' },
+      { label: 'Available Drivers', value: '8', color: '#10b981', emoji: '👨‍💼' },
+      { label: 'Fleet Vehicles', value: '32', color: '#8b5cf6', emoji: '🚛' },
+      { label: 'Revenue (MTD)', value: '$145K', color: '#22c55e', emoji: '💵' },
+    ];
+  };
+
+  const stats = getOrganizationStats();
 
   return (
     <div
@@ -130,7 +152,10 @@ export default function DashboardPage() {
               textShadow: '0 4px 8px rgba(0,0,0,0.3)',
             }}
           >
-            🚛 FleetFlow Dashboard
+            🚛{' '}
+            {currentOrganization
+              ? `${currentOrganization.name} Dashboard`
+              : 'FleetFlow Dashboard'}
           </h1>
           <p
             style={{
@@ -140,7 +165,9 @@ export default function DashboardPage() {
               fontWeight: '500',
             }}
           >
-            Comprehensive Transportation Management System
+            {currentOrganization
+              ? `${currentOrganization.type.charAt(0).toUpperCase() + currentOrganization.type.slice(1)} Organization Management`
+              : 'Comprehensive Transportation Management System'}
           </p>
         </div>
 
@@ -192,16 +219,93 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Carrier Invitation Management */}
-        <InvitationQuickManager
-          compact={true}
-          style={{ marginBottom: '24px' }}
-        />
+        {/* Conditional Content Based on Organization Selection */}
+        {currentOrganization ? (
+          <>
+            {/* Organization Dashboard */}
+            <div style={{ marginBottom: '24px' }}>
+              <OrganizationDashboard />
+            </div>
 
-        {/* ✅ Platform AI Monitoring */}
-        <div style={{ marginBottom: '24px' }}>
-          <PlatformAIMonitor />
-        </div>
+            {/* Carrier Invitation Management */}
+            <InvitationQuickManager
+              compact={true}
+              style={{ marginBottom: '24px' }}
+            />
+
+            {/* ✅ Platform AI Monitoring */}
+            <div style={{ marginBottom: '24px' }}>
+              <PlatformAIMonitor />
+            </div>
+          </>
+        ) : (
+          <>
+            {/* No Organization Selected - Show Organization Selection Prompt */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.15)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '32px',
+                marginBottom: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '64px', marginBottom: '16px' }}>🏢</div>
+              <h2
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: '0 0 12px 0',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                }}
+              >
+                Select Your Organization
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0 0 24px 0',
+                }}
+              >
+                Choose an organization to view your personalized dashboard with
+                organization-specific data and metrics.
+              </p>
+              <Link
+                href='/organizations'
+                style={{
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  fontSize: '16px',
+                  display: 'inline-block',
+                  boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                Select Organization
+              </Link>
+            </div>
+
+            {/* Carrier Invitation Management */}
+            <InvitationQuickManager
+              compact={true}
+              style={{ marginBottom: '24px' }}
+            />
+
+            {/* ✅ Platform AI Monitoring */}
+            <div style={{ marginBottom: '24px' }}>
+              <PlatformAIMonitor />
+            </div>
+          </>
+        )}
 
         {/* Quick Links */}
         <div

@@ -59,7 +59,7 @@ export class SendingIPManager {
     // Initialize with empty pools
     this.initializeDefaultPools();
 
-    console.log(
+    console.info(
       `🌐 Sending IP Manager initialized (IP Pools: ${this.useIPPools ? 'Enabled' : 'Disabled'})`
     );
   }
@@ -69,12 +69,12 @@ export class SendingIPManager {
    */
   async initialize(): Promise<boolean> {
     if (!this.useIPPools) {
-      console.log('⚠️ IP Pools are disabled. Using default SendGrid IP.');
+      console.info('⚠️ IP Pools are disabled. Using default SendGrid IP.');
       return false;
     }
 
     if (!this.apiKey) {
-      console.log('⚠️ No API key provided for IP Pool management.');
+      console.info('⚠️ No API key provided for IP Pool management.');
       return false;
     }
 
@@ -82,7 +82,7 @@ export class SendingIPManager {
       // In a real implementation, this would fetch IP pools from SendGrid
       // For now, we'll use mock data
       await this.fetchIPPoolsFromSendGrid();
-      console.log(
+      console.info(
         `✅ Initialized ${this.ipPools.length} IP pools with ${this.getTotalIPs()} IPs`
       );
       return true;
@@ -105,7 +105,7 @@ export class SendingIPManager {
     // Find the appropriate pool for this email type
     const pool = this.findPoolForEmailType(emailType);
     if (!pool || pool.ips.length === 0) {
-      console.log(`⚠️ No IPs available for ${emailType} emails`);
+      console.info(`⚠️ No IPs available for ${emailType} emails`);
       return null;
     }
 
@@ -115,7 +115,7 @@ export class SendingIPManager {
     );
 
     if (availableIPs.length === 0) {
-      console.log(`⚠️ No available IPs in the ${pool.name} pool`);
+      console.info(`⚠️ No available IPs in the ${pool.name} pool`);
       return null;
     }
 
@@ -158,7 +158,7 @@ export class SendingIPManager {
   async checkAllIPReputations(): Promise<void> {
     if (!this.useIPPools || !this.monitorReputation) return;
 
-    console.log('🔍 Checking reputation for all IPs');
+    console.info('🔍 Checking reputation for all IPs');
 
     for (const pool of this.ipPools) {
       for (const ip of pool.ips) {
@@ -180,7 +180,7 @@ export class SendingIPManager {
             this.autoQuarantine
           ) {
             await this.quarantineIP(ip);
-            console.log(
+            console.info(
               `⚠️ IP ${ip.ip} quarantined due to poor reputation (${reputation})`
             );
           }
@@ -198,7 +198,7 @@ export class SendingIPManager {
     if (!this.useIPPools) return false;
 
     // In a real implementation, this would update the IP pool in SendGrid
-    console.log(`🔒 Quarantining IP ${ip.ip} due to delivery issues`);
+    console.info(`🔒 Quarantining IP ${ip.ip} due to delivery issues`);
     ip.warmupStatus = 'quarantined';
 
     // Check if we need to activate a replacement IP
@@ -215,7 +215,7 @@ export class SendingIPManager {
         )[0];
 
         oldestWarmingIP.warmupStatus = 'active';
-        console.log(
+        console.info(
           `✅ Activated IP ${oldestWarmingIP.ip} to replace quarantined IP`
         );
       }

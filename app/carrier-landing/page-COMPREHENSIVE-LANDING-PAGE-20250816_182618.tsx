@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import CarrierInvitationService from '../services/CarrierInvitationService';
 
 export default function CarrierLandingPage() {
@@ -41,7 +41,7 @@ export default function CarrierLandingPage() {
       if (ref) {
         const invitationService = CarrierInvitationService.getInstance();
         invitationService.updateInvitationStatus(ref, 'opened');
-        console.log(`Invitation ${ref} marked as opened`);
+        console.info(`Invitation ${ref} marked as opened`);
       }
     }
   }, [searchParams]);
@@ -51,7 +51,7 @@ export default function CarrierLandingPage() {
     if (invitationData.ref) {
       const invitationService = CarrierInvitationService.getInstance();
       invitationService.updateInvitationStatus(invitationData.ref, 'started');
-      console.log(`Invitation ${invitationData.ref} marked as started`);
+      console.info(`Invitation ${invitationData.ref} marked as started`);
     }
 
     // Build the onboarding URL with pre-filled data
@@ -77,9 +77,10 @@ export default function CarrierLandingPage() {
   return (
     <div
       style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%)',
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%)',
         minHeight: '100vh',
-        fontFamily: 'system-ui, -apple-system, "Segoe UI", sans-serif',
+        fontFamily: 'system-ui, -apple-system, ""Segoe UI"", sans-serif',
       }}
     >
       {/* Hero Section */}
@@ -107,8 +108,15 @@ export default function CarrierLandingPage() {
             zIndex: 1,
           }}
         />
-        
-        <div style={{ position: 'relative', zIndex: 2, maxWidth: '1200px', margin: '0 auto' }}>
+
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            maxWidth: '1200px',
+            margin: '0 auto',
+          }}
+        >
           {/* FleetFlow Logo/Brand */}
           <div style={{ marginBottom: '40px' }}>
             <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🚛</div>
@@ -119,7 +127,8 @@ export default function CarrierLandingPage() {
                 color: 'white',
                 marginBottom: '16px',
                 textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-                background: 'linear-gradient(135deg, #14b8a6, #3b82f6, #8b5cf6)',
+                background:
+                  'linear-gradient(135deg, #14b8a6, #3b82f6, #8b5cf6)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -161,7 +170,8 @@ export default function CarrierLandingPage() {
                     marginBottom: '12px',
                   }}
                 >
-                  🎉 You're Personally Invited by {decodeURIComponent(invitationData.inviter)}!
+                  🎉 You're Personally Invited by{' '}
+                  {decodeURIComponent(invitationData.inviter)}!
                 </p>
               )}
               {invitationData.carrier && (
@@ -172,17 +182,29 @@ export default function CarrierLandingPage() {
                     marginBottom: '12px',
                   }}
                 >
-                  Welcome {decodeURIComponent(invitationData.carrier)} to the FleetFlow Network
+                  Welcome {decodeURIComponent(invitationData.carrier)} to the
+                  FleetFlow Network
                 </p>
               )}
-              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
                 {invitationData.mc && (
-                  <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem' }}>
+                  <span
+                    style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem' }}
+                  >
                     <strong>MC:</strong> {invitationData.mc}
                   </span>
                 )}
                 {invitationData.dot && (
-                  <span style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem' }}>
+                  <span
+                    style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem' }}
+                  >
                     <strong>DOT:</strong> {invitationData.dot}
                   </span>
                 )}
@@ -212,12 +234,21 @@ export default function CarrierLandingPage() {
               margin: '0 auto 40px',
             }}
           >
-            Join thousands of carriers using FleetFlow's Driver OTR Flow Portal - the complete mobile-first platform 
-            for managing your transportation business operations, load assignments, and driver workflows.
+            Join thousands of carriers using FleetFlow's Driver OTR Flow Portal
+            - the complete mobile-first platform for managing your
+            transportation business operations, load assignments, and driver
+            workflows.
           </p>
 
           {/* CTA Buttons */}
-          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '20px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <button
               onClick={handleStartOnboarding}
               style={{
@@ -235,16 +266,18 @@ export default function CarrierLandingPage() {
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.transform = 'translateY(-3px)';
-                e.currentTarget.style.boxShadow = '0 12px 35px rgba(20, 184, 166, 0.4)';
+                e.currentTarget.style.boxShadow =
+                  '0 12px 35px rgba(20, 184, 166, 0.4)';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 25px rgba(20, 184, 166, 0.3)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(20, 184, 166, 0.3)';
               }}
             >
               🚀 Join FleetFlow Now
             </button>
-            
+
             <button
               onClick={handleContactUs}
               style={{
@@ -305,7 +338,8 @@ export default function CarrierLandingPage() {
               margin: '0 auto 60px',
             }}
           >
-            Your complete mobile operations hub - manage loads, documents, communications, and business operations all in one place.
+            Your complete mobile operations hub - manage loads, documents,
+            communications, and business operations all in one place.
           </p>
 
           <div
@@ -319,38 +353,74 @@ export default function CarrierLandingPage() {
               {
                 icon: '📱',
                 title: 'Mobile Driver Workflow',
-                description: 'Complete mobile-first experience for drivers with real-time load updates, GPS tracking, and instant communication.',
-                benefits: ['Real-time load assignments', 'GPS route optimization', 'Instant broker communication', 'Mobile document capture']
+                description:
+                  'Complete mobile-first experience for drivers with real-time load updates, GPS tracking, and instant communication.',
+                benefits: [
+                  'Real-time load assignments',
+                  'GPS route optimization',
+                  'Instant broker communication',
+                  'Mobile document capture',
+                ],
               },
               {
                 icon: '📄',
                 title: 'Digital Document Management',
-                description: 'Paperless BOL processing, digital signatures, and automated document workflows for maximum efficiency.',
-                benefits: ['Electronic BOL processing', 'Digital signatures', 'Automated compliance docs', 'Cloud document storage']
+                description:
+                  'Paperless BOL processing, digital signatures, and automated document workflows for maximum efficiency.',
+                benefits: [
+                  'Electronic BOL processing',
+                  'Digital signatures',
+                  'Automated compliance docs',
+                  'Cloud document storage',
+                ],
               },
               {
                 icon: '🤝',
                 title: 'Professional Broker Network',
-                description: 'Connect with vetted brokers, access premium loads, and build long-term profitable relationships.',
-                benefits: ['Vetted broker partnerships', 'Premium load access', 'Guaranteed payment terms', 'Performance-based rates']
+                description:
+                  'Connect with vetted brokers, access premium loads, and build long-term profitable relationships.',
+                benefits: [
+                  'Vetted broker partnerships',
+                  'Premium load access',
+                  'Guaranteed payment terms',
+                  'Performance-based rates',
+                ],
               },
               {
                 icon: '💰',
                 title: 'Automated Settlement',
-                description: 'Fast payment processing, factoring integration, and transparent rate calculations with instant settlements.',
-                benefits: ['Quick pay options', 'Factoring integration', 'Transparent billing', 'Performance bonuses']
+                description:
+                  'Fast payment processing, factoring integration, and transparent rate calculations with instant settlements.',
+                benefits: [
+                  'Quick pay options',
+                  'Factoring integration',
+                  'Transparent billing',
+                  'Performance bonuses',
+                ],
               },
               {
                 icon: '📊',
                 title: 'Performance Analytics',
-                description: 'Comprehensive dashboard with performance metrics, route optimization, and business intelligence.',
-                benefits: ['Performance dashboards', 'Route optimization', 'Fuel efficiency tracking', 'Revenue analytics']
+                description:
+                  'Comprehensive dashboard with performance metrics, route optimization, and business intelligence.',
+                benefits: [
+                  'Performance dashboards',
+                  'Route optimization',
+                  'Fuel efficiency tracking',
+                  'Revenue analytics',
+                ],
               },
               {
                 icon: '🛡️',
                 title: 'Compliance Management',
-                description: 'Automated DOT compliance, FMCSA integration, and regulatory monitoring to keep you compliant.',
-                benefits: ['DOT compliance tracking', 'FMCSA integration', 'Automated alerts', 'Inspection management']
+                description:
+                  'Automated DOT compliance, FMCSA integration, and regulatory monitoring to keep you compliant.',
+                benefits: [
+                  'DOT compliance tracking',
+                  'FMCSA integration',
+                  'Automated alerts',
+                  'Inspection management',
+                ],
               },
             ].map((feature, index) => (
               <div
@@ -365,14 +435,17 @@ export default function CarrierLandingPage() {
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.15)';
                 }}
                 onMouseOut={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
                 }}
               >
-                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>{feature.icon}</div>
+                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>
+                  {feature.icon}
+                </div>
                 <h3
                   style={{
                     fontSize: '1.5rem',
@@ -393,9 +466,23 @@ export default function CarrierLandingPage() {
                 >
                   {feature.description}
                 </p>
-                <ul style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.9rem', lineHeight: '1.8' }}>
+                <ul
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.8',
+                  }}
+                >
                   {feature.benefits.map((benefit, idx) => (
-                    <li key={idx} style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <li
+                      key={idx}
+                      style={{
+                        marginBottom: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
                       <span style={{ color: '#14b8a6' }}>✓</span>
                       {benefit}
                     </li>
@@ -409,7 +496,9 @@ export default function CarrierLandingPage() {
 
       {/* Go With The Flow Section */}
       <section style={{ padding: '80px 20px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+        <div
+          style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}
+        >
           <h2
             style={{
               fontSize: '3rem',
@@ -461,8 +550,9 @@ export default function CarrierLandingPage() {
                 marginBottom: '40px',
               }}
             >
-              Go With The Flow represents our premium carrier partnership program. Access exclusive loads, 
-              priority dispatch, enhanced rates, and VIP support. We're looking for professional carriers 
+              Go With The Flow represents our premium carrier partnership
+              program. Access exclusive loads, priority dispatch, enhanced
+              rates, and VIP support. We're looking for professional carriers
               who share our commitment to excellence and reliability.
             </p>
 
@@ -475,13 +565,31 @@ export default function CarrierLandingPage() {
               }}
             >
               {[
-                { icon: '🏆', title: 'Premium Rates', desc: 'Access to highest-paying loads' },
-                { icon: '⚡', title: 'Priority Dispatch', desc: 'First access to premium opportunities' },
-                { icon: '🤝', title: 'Dedicated Support', desc: '24/7 VIP carrier support team' },
-                { icon: '💎', title: 'Exclusive Access', desc: 'Special contracts and partnerships' },
+                {
+                  icon: '🏆',
+                  title: 'Premium Rates',
+                  desc: 'Access to highest-paying loads',
+                },
+                {
+                  icon: '⚡',
+                  title: 'Priority Dispatch',
+                  desc: 'First access to premium opportunities',
+                },
+                {
+                  icon: '🤝',
+                  title: 'Dedicated Support',
+                  desc: '24/7 VIP carrier support team',
+                },
+                {
+                  icon: '💎',
+                  title: 'Exclusive Access',
+                  desc: 'Special contracts and partnerships',
+                },
               ].map((benefit, index) => (
                 <div key={index} style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>{benefit.icon}</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>
+                    {benefit.icon}
+                  </div>
                   <h4
                     style={{
                       color: '#14b8a6',
@@ -492,7 +600,12 @@ export default function CarrierLandingPage() {
                   >
                     {benefit.title}
                   </h4>
-                  <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.95rem' }}>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.95rem',
+                    }}
+                  >
                     {benefit.desc}
                   </p>
                 </div>
@@ -533,7 +646,13 @@ export default function CarrierLandingPage() {
                   '✓ Professional equipment',
                   '✓ Excellent track record',
                 ].map((requirement, idx) => (
-                  <div key={idx} style={{ color: 'rgba(255, 255, 255, 0.9)', fontSize: '1rem' }}>
+                  <div
+                    key={idx}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      fontSize: '1rem',
+                    }}
+                  >
                     {requirement}
                   </div>
                 ))}
@@ -556,11 +675,13 @@ export default function CarrierLandingPage() {
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.transform = 'translateY(-3px)';
-                e.currentTarget.style.boxShadow = '0 12px 35px rgba(20, 184, 166, 0.4)';
+                e.currentTarget.style.boxShadow =
+                  '0 12px 35px rgba(20, 184, 166, 0.4)';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 25px rgba(20, 184, 166, 0.3)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(20, 184, 166, 0.3)';
               }}
             >
               🌊 Apply for Go With The Flow
@@ -577,7 +698,9 @@ export default function CarrierLandingPage() {
           backdropFilter: 'blur(10px)',
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+        <div
+          style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}
+        >
           <h2
             style={{
               fontSize: '3rem',
@@ -600,26 +723,33 @@ export default function CarrierLandingPage() {
               {
                 icon: '🚀',
                 title: 'Advanced Technology',
-                description: 'Cutting-edge platform with AI-powered route optimization, predictive maintenance, and smart load matching.',
-                stats: '99.9% Uptime • Real-time Updates • Mobile-first Design'
+                description:
+                  'Cutting-edge platform with AI-powered route optimization, predictive maintenance, and smart load matching.',
+                stats: '99.9% Uptime • Real-time Updates • Mobile-first Design',
               },
               {
                 icon: '💼',
                 title: 'Proven Results',
-                description: 'Join thousands of successful carriers who have increased their revenue and operational efficiency with FleetFlow.',
-                stats: '25% Average Revenue Increase • 40% Faster Settlements • 95% Satisfaction Rate'
+                description:
+                  'Join thousands of successful carriers who have increased their revenue and operational efficiency with FleetFlow.',
+                stats:
+                  '25% Average Revenue Increase • 40% Faster Settlements • 95% Satisfaction Rate',
               },
               {
                 icon: '🛡️',
                 title: 'Trusted Platform',
-                description: 'Bank-level security, FMCSA compliance, and comprehensive insurance coverage to protect your business.',
-                stats: 'SOC 2 Certified • FMCSA Integrated • $5M+ Protected Annually'
+                description:
+                  'Bank-level security, FMCSA compliance, and comprehensive insurance coverage to protect your business.',
+                stats:
+                  'SOC 2 Certified • FMCSA Integrated • $5M+ Protected Annually',
               },
               {
                 icon: '📈',
                 title: 'Growth Opportunities',
-                description: 'Scale your business with access to premium loads, factoring services, and business development resources.',
-                stats: '500+ Active Brokers • $2B+ Annual Volume • National Coverage'
+                description:
+                  'Scale your business with access to premium loads, factoring services, and business development resources.',
+                stats:
+                  '500+ Active Brokers • $2B+ Annual Volume • National Coverage',
               },
             ].map((benefit, index) => (
               <div
@@ -635,14 +765,17 @@ export default function CarrierLandingPage() {
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.15)';
                 }}
                 onMouseOut={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
                 }}
               >
-                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>{benefit.icon}</div>
+                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>
+                  {benefit.icon}
+                </div>
                 <h3
                   style={{
                     fontSize: '1.5rem',
@@ -682,8 +815,10 @@ export default function CarrierLandingPage() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact-section" style={{ padding: '80px 20px' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+      <section id='contact-section' style={{ padding: '80px 20px' }}>
+        <div
+          style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}
+        >
           <h2
             style={{
               fontSize: '3rem',
@@ -702,8 +837,9 @@ export default function CarrierLandingPage() {
               lineHeight: '1.6',
             }}
           >
-            Join the FleetFlow network today and start experiencing the future of transportation operations. 
-            Our team is ready to help you get onboarded and maximize your success.
+            Join the FleetFlow network today and start experiencing the future
+            of transportation operations. Our team is ready to help you get
+            onboarded and maximize your success.
           </p>
 
           <div
@@ -726,31 +862,77 @@ export default function CarrierLandingPage() {
             >
               <div>
                 <div style={{ fontSize: '2rem', marginBottom: '12px' }}>📞</div>
-                <h4 style={{ color: '#14b8a6', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '8px' }}>
+                <h4
+                  style={{
+                    color: '#14b8a6',
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                  }}
+                >
                   Phone Support
                 </h4>
-                <p style={{ color: 'white', fontSize: '1rem' }}>1-800-FLEET-FLOW</p>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Available 24/7</p>
+                <p style={{ color: 'white', fontSize: '1rem' }}>
+                  1-800-FLEET-FLOW
+                </p>
+                <p
+                  style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}
+                >
+                  Available 24/7
+                </p>
               </div>
               <div>
                 <div style={{ fontSize: '2rem', marginBottom: '12px' }}>✉️</div>
-                <h4 style={{ color: '#14b8a6', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '8px' }}>
+                <h4
+                  style={{
+                    color: '#14b8a6',
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                  }}
+                >
                   Email Support
                 </h4>
-                <p style={{ color: 'white', fontSize: '1rem' }}>carriers@fleetflow.com</p>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Response within 2 hours</p>
+                <p style={{ color: 'white', fontSize: '1rem' }}>
+                  carriers@fleetflow.com
+                </p>
+                <p
+                  style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}
+                >
+                  Response within 2 hours
+                </p>
               </div>
               <div>
                 <div style={{ fontSize: '2rem', marginBottom: '12px' }}>💬</div>
-                <h4 style={{ color: '#14b8a6', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '8px' }}>
+                <h4
+                  style={{
+                    color: '#14b8a6',
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold',
+                    marginBottom: '8px',
+                  }}
+                >
                   Live Chat
                 </h4>
-                <p style={{ color: 'white', fontSize: '1rem' }}>Available on portal</p>
-                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Instant responses</p>
+                <p style={{ color: 'white', fontSize: '1rem' }}>
+                  Available on portal
+                </p>
+                <p
+                  style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}
+                >
+                  Instant responses
+                </p>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '20px',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
               <button
                 onClick={handleStartOnboarding}
                 style={{
@@ -768,16 +950,18 @@ export default function CarrierLandingPage() {
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.boxShadow = '0 12px 35px rgba(20, 184, 166, 0.4)';
+                  e.currentTarget.style.boxShadow =
+                    '0 12px 35px rgba(20, 184, 166, 0.4)';
                 }}
                 onMouseOut={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(20, 184, 166, 0.3)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 25px rgba(20, 184, 166, 0.3)';
                 }}
               >
                 🚀 Start Onboarding
               </button>
-              
+
               <button
                 onClick={() => window.open('tel:1-800-353-3835', '_self')}
                 style={{
@@ -831,11 +1015,20 @@ export default function CarrierLandingPage() {
           >
             FleetFlow
           </h3>
-          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1rem', marginBottom: '20px' }}>
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              fontSize: '1rem',
+              marginBottom: '20px',
+            }}
+          >
             The Future of Transportation Operations
           </p>
-          <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem' }}>
-            © 2024 FleetFlow. All rights reserved. | Privacy Policy | Terms of Service
+          <div
+            style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem' }}
+          >
+            © 2024 FleetFlow. All rights reserved. | Privacy Policy | Terms of
+            Service
           </div>
         </div>
       </footer>

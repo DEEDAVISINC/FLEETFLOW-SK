@@ -119,7 +119,7 @@ class BrokerSnapshotService {
       );
     }
 
-    console.log(
+    console.info(
       `[BROKERSNAPSHOT] Review posted for carrier ${reviewData.carrierName} (MC: ${reviewData.mcNumber})`
     );
     return updatedReview;
@@ -330,7 +330,7 @@ class BrokerSnapshotService {
       'policy_brokersnapshot_default'
     );
 
-    console.log(
+    console.info(
       `[BROKERSNAPSHOT] Review removed for carrier ${review.carrierName} (MC: ${review.mcNumber})`
     );
     return true;

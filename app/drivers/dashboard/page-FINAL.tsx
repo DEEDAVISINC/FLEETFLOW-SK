@@ -83,7 +83,7 @@ export default function DriverDashboardPage() {
         type === 'emergency' ? 'urgent' : 'normal'
       );
 
-      console.log('SMS notification sent successfully');
+      console.info('SMS notification sent successfully');
     } catch (error) {
       console.error('Failed to send SMS notification:', error);
     } finally {
@@ -110,7 +110,7 @@ export default function DriverDashboardPage() {
         },
       });
 
-      console.log('Photo uploaded successfully:', result);
+      console.info('Photo uploaded successfully:', result);
       return result;
     } catch (error) {
       console.error('Failed to upload photo:', error);
@@ -193,7 +193,7 @@ export default function DriverDashboardPage() {
           opacity: 0.1,
           zIndex: 1,
         }}
-       />
+      />
       <div
         style={{
           position: 'absolute',
@@ -206,7 +206,7 @@ export default function DriverDashboardPage() {
           opacity: 0.1,
           zIndex: 1,
         }}
-       />
+      />
 
       <main
         style={{
@@ -851,7 +851,7 @@ export default function DriverDashboardPage() {
                     title='Upload Pickup Photos'
                     description='Take photos during pickup'
                     onUploadComplete={(urls) => {
-                      console.log('Pickup photos uploaded:', urls);
+                      console.info('Pickup photos uploaded:', urls);
                       // You can update load data here
                     }}
                   />
@@ -894,7 +894,7 @@ export default function DriverDashboardPage() {
                     title='Upload Delivery Photos'
                     description='Take photos during delivery'
                     onUploadComplete={(urls) => {
-                      console.log('Delivery photos uploaded:', urls);
+                      console.info('Delivery photos uploaded:', urls);
                       // You can update load data here
                     }}
                   />
@@ -936,7 +936,7 @@ export default function DriverDashboardPage() {
                     title='Upload Inspection Photos'
                     description='Document vehicle and cargo inspection'
                     onUploadComplete={(urls) => {
-                      console.log('Inspection photos uploaded:', urls);
+                      console.info('Inspection photos uploaded:', urls);
                       // You can update load data here
                     }}
                   />
@@ -972,7 +972,7 @@ export default function DriverDashboardPage() {
                   </p>
                   <SignaturePad
                     onSignatureChange={(signature) => {
-                      console.log('Signature captured:', signature);
+                      console.info('Signature captured:', signature);
                       // You can save signature here
                     }}
                     placeholder='Receiver signature'

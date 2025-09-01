@@ -38,7 +38,7 @@ try {
 
     if (!error) {
       supabaseAvailable = true;
-      console.log('✅ Supabase connection successful');
+      console.info('✅ Supabase connection successful');
     } else {
       console.warn('⚠️ Supabase connection failed, using mock data');
       supabaseAvailable = false;

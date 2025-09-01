@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
           'smart-monitoring'
         ];
         
-        console.log('🚀 AI Automation Engine started (mock mode)');
+        console.info('🚀 AI Automation Engine started (mock mode)');
         break;
         
       case 'stop':
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         automationStatus.lastUpdate = new Date().toISOString();
         automationStatus.tasksRunning = [];
         
-        console.log('⏹️ AI Automation Engine stopped');
+        console.info('⏹️ AI Automation Engine stopped');
         break;
         
       default:

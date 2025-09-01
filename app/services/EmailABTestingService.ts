@@ -65,7 +65,7 @@ export class EmailABTestingService {
   private audienceSegments: EmailAudienceSegment[] = [];
 
   constructor() {
-    console.log('🧪 Email A/B Testing Service initialized');
+    console.info('🧪 Email A/B Testing Service initialized');
   }
 
   /**
@@ -129,7 +129,7 @@ export class EmailABTestingService {
     };
 
     this.testGroups.push(testGroup);
-    console.log(
+    console.info(
       `📊 Created A/B test group "${name}" with ${variants.length} variants`
     );
 
@@ -143,18 +143,18 @@ export class EmailABTestingService {
     const test = this.getTestGroup(testId);
 
     if (!test) {
-      console.log(`⚠️ Test group ${testId} not found`);
+      console.info(`⚠️ Test group ${testId} not found`);
       return false;
     }
 
     if (test.status === 'running') {
-      console.log(`⚠️ Test group "${test.name}" is already running`);
+      console.info(`⚠️ Test group "${test.name}" is already running`);
       return false;
     }
 
     test.status = 'running';
     test.updatedAt = new Date();
-    console.log(`🚀 Started A/B test "${test.name}"`);
+    console.info(`🚀 Started A/B test "${test.name}"`);
 
     return true;
   }
@@ -166,18 +166,18 @@ export class EmailABTestingService {
     const test = this.getTestGroup(testId);
 
     if (!test) {
-      console.log(`⚠️ Test group ${testId} not found`);
+      console.info(`⚠️ Test group ${testId} not found`);
       return false;
     }
 
     if (test.status !== 'running') {
-      console.log(`⚠️ Test group "${test.name}" is not running`);
+      console.info(`⚠️ Test group "${test.name}" is not running`);
       return false;
     }
 
     test.status = 'paused';
     test.updatedAt = new Date();
-    console.log(`⏸️ Paused A/B test "${test.name}"`);
+    console.info(`⏸️ Paused A/B test "${test.name}"`);
 
     return true;
   }
@@ -189,12 +189,12 @@ export class EmailABTestingService {
     const test = this.getTestGroup(testId);
 
     if (!test) {
-      console.log(`⚠️ Test group ${testId} not found`);
+      console.info(`⚠️ Test group ${testId} not found`);
       return null;
     }
 
     if (test.status === 'completed') {
-      console.log(`⚠️ Test group "${test.name}" is already completed`);
+      console.info(`⚠️ Test group "${test.name}" is already completed`);
       return null;
     }
 
@@ -209,13 +209,13 @@ export class EmailABTestingService {
       test.winningReason = this.getWinningReason(test, result.winner);
     }
 
-    console.log(`✅ Completed A/B test "${test.name}"`);
+    console.info(`✅ Completed A/B test "${test.name}"`);
     if (result.winner) {
-      console.log(
+      console.info(
         `🏆 Winner: "${result.winner.name}" (${result.significanceLevel * 100}% confidence)`
       );
     } else {
-      console.log(
+      console.info(
         `🤔 No clear winner determined (${result.significanceLevel * 100}% confidence)`
       );
     }
@@ -304,14 +304,14 @@ export class EmailABTestingService {
     const test = this.getTestGroup(testId);
 
     if (!test) {
-      console.log(`⚠️ Test group ${testId} not found`);
+      console.info(`⚠️ Test group ${testId} not found`);
       return;
     }
 
     const variant = test.variants.find((v) => v.id === variantId);
 
     if (!variant) {
-      console.log(`⚠️ Variant ${variantId} not found in test "${test.name}"`);
+      console.info(`⚠️ Variant ${variantId} not found in test "${test.name}"`);
       return;
     }
 
@@ -371,7 +371,7 @@ export class EmailABTestingService {
     };
 
     this.audienceSegments.push(segment);
-    console.log(
+    console.info(
       `👥 Created audience segment "${name}" with estimated size of ${size}`
     );
 

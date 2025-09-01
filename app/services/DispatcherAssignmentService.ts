@@ -49,7 +49,7 @@ export class DispatcherAssignmentService {
   ): Promise<void> {
     await ServiceErrorHandler.handleAsyncOperation(
       async () => {
-        // console.log(`📢 Sending management notification: DISPATCHER NEEDED for ${notification.carrierName}`);
+        // console.info(`📢 Sending management notification: DISPATCHER NEEDED for ${notification.carrierName}`);
 
         try {
           // Create management notification
@@ -90,7 +90,7 @@ export class DispatcherAssignmentService {
           // Send to management notification hub
           await this.safelyNotifyManagement(managementNotification);
 
-          // console.log(`✅ Management notification sent for ${notification.carrierName}`);
+          // console.info(`✅ Management notification sent for ${notification.carrierName}`);
         } catch (error) {
           console.error('❌ Failed to send management notification:', error);
           // Don't throw here - we don't want to break the entire workflow for a notification failure
@@ -139,7 +139,7 @@ export class DispatcherAssignmentService {
           // Notify dispatcher of assignment (safely)
           await this.safelyNotifyDispatcher(assignment);
 
-          // console.log(`✅ Carrier ${carrierName} assigned to dispatcher ${dispatcherName}`);
+          // console.info(`✅ Carrier ${carrierName} assigned to dispatcher ${dispatcherName}`);
           return assignmentId;
         } catch (error) {
           console.error('❌ Failed to assign carrier to dispatcher:', error);
@@ -208,7 +208,7 @@ export class DispatcherAssignmentService {
               contract.contractNumber
             );
 
-            // console.log(`✅ Dispatcher accepted assignment and contract generated: ${contract.contractNumber}`);
+            // console.info(`✅ Dispatcher accepted assignment and contract generated: ${contract.contractNumber}`);
           } else {
             console.error('❌ Failed to generate contract for assignment');
             assignment.status = 'pending'; // Revert status
@@ -243,7 +243,7 @@ export class DispatcherAssignmentService {
     } catch (error) {
       console.error('Failed to send to management hub:', error);
       // For now, log to console as fallback
-      console.log('🚨 MANAGEMENT NOTIFICATION:', notification);
+      console.info('🚨 MANAGEMENT NOTIFICATION:', notification);
     }
   }
 
@@ -360,7 +360,7 @@ export class DispatcherAssignmentService {
     } catch (error) {
       console.error('Failed to send dispatcher notification:', error);
       // For now, log to console as fallback
-      console.log('📤 DISPATCHER NOTIFICATION:', notification);
+      console.info('📤 DISPATCHER NOTIFICATION:', notification);
     }
   }
 }

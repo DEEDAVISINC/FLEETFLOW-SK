@@ -403,7 +403,7 @@ class FleetFlowSmartLoadNetwork extends EventEmitter {
       },
     });
 
-    console.log(
+    console.info(
       '🚛 FleetFlow Smart Load Network initialized - Advanced load matching ready!'
     );
     this.updateNetworkMetrics();
@@ -451,7 +451,7 @@ class FleetFlowSmartLoadNetwork extends EventEmitter {
     // Immediately match with available drivers
     this.matchLoadWithDrivers(smartLoad);
 
-    console.log(
+    console.info(
       `📦 Smart Load created: ${loadId} - ${smartLoad.customer.name} - $${smartLoad.rate.totalRate}`
     );
     return smartLoad;
@@ -499,7 +499,7 @@ class FleetFlowSmartLoadNetwork extends EventEmitter {
       .filter((driver) => driver.equipmentType === load.equipment.type);
 
     if (availableDrivers.length === 0) {
-      console.log(
+      console.info(
         `❌ No available drivers for ${load.equipment.type} - Load ${load.id}`
       );
       return;
@@ -523,7 +523,7 @@ class FleetFlowSmartLoadNetwork extends EventEmitter {
     this.loadMatches.set(load.id, matches);
     this.emit('loadMatched', { load, matches: matches.slice(0, 3) }); // Top 3 matches
 
-    console.log(
+    console.info(
       `🎯 Load ${load.id} matched with ${matches.length} drivers - Best match: ${matches[0]?.matchScore}%`
     );
   }
@@ -840,7 +840,7 @@ class FleetFlowSmartLoadNetwork extends EventEmitter {
     load.status = 'awarded';
     this.emit('loadAwarded', { loadId, driverId, load });
 
-    console.log(
+    console.info(
       `✅ Load ${loadId} awarded to driver ${driverId} - $${load.rate.totalRate}`
     );
     return true;

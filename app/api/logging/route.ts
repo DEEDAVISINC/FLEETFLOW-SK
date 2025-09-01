@@ -163,7 +163,7 @@ async function storeLogEntry(
 
   // For now, we'll use console output in development
   if (process.env.NODE_ENV === 'development') {
-    console.log('LOG STORED:', logMessage);
+    console.info('LOG STORED:', logMessage);
     return;
   }
 

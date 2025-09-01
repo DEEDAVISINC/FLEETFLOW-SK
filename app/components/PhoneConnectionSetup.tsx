@@ -158,12 +158,12 @@ export default function PhoneConnectionSetup({
           title: '📱 Mobile Phone Setup (Softphone App)',
           steps: [
             'Download a SIP client app (recommended: Zoiper, Linphone, or 3CX)',
-            'Open the app and select "Add SIP Account"',
+            'Open the app and select Add SIP Account',
             `Enter Username: ${setupData.sipCredentials?.username || 'ff[extension]'}`,
             `Enter Password: ${setupData.sipCredentials?.password || '[generated_password]'}`,
             `Enter Server: ${setupData.sipCredentials?.server || 'sip.fleetflowapp.com'}`,
             `Set Port: ${setupData.sipCredentials?.port || '5060'}`,
-            'Enable "Register" and save settings',
+            'Enable Register and save settings',
             'Your phone should now be connected to FleetFlow system',
           ],
         };
@@ -171,15 +171,15 @@ export default function PhoneConnectionSetup({
         return {
           title: '☎️ Desk Phone Setup (IP Phone)',
           steps: [
-            "Access your IP phone's web interface (usually by typing its IP address in browser)",
-            'Navigate to "Accounts" or "SIP Settings"',
+            'Access your IP phone web interface',
+            'Navigate to Accounts or SIP Settings',
             `Set Account Name: FleetFlow Extension ${setupData.extension}`,
             `Enter SIP Server: ${setupData.sipCredentials?.server || 'sip.fleetflowapp.com'}`,
             `Enter Username: ${setupData.sipCredentials?.username || 'ff[extension]'}`,
             `Enter Password: ${setupData.sipCredentials?.password || '[generated_password]'}`,
-            'Set Registration to "Enabled"',
+            'Set Registration to Enabled',
             'Save and restart your phone',
-            'Phone should display "Registered" status',
+            'Phone should display Registered status',
           ],
         };
       case 'softphone':
@@ -207,7 +207,7 @@ export default function PhoneConnectionSetup({
             'You can still use FleetFlow dialer to make outbound calls',
             'Incoming calls to your extension will ring your personal phone',
             'Call history and recordings will still be tracked in FleetFlow',
-            "Perfect for mobile users who don't want softphone apps",
+            'Perfect for mobile users who do not want softphone apps',
           ],
         };
       default:

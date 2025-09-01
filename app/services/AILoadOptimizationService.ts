@@ -93,7 +93,7 @@ export class AILoadOptimizationService {
 
   constructor() {
     this.ai = new FleetFlowAI();
-    console.log('🤖 AI Load Optimization Service initialized');
+    console.info('🤖 AI Load Optimization Service initialized');
   }
 
   /**
@@ -106,7 +106,7 @@ export class AILoadOptimizationService {
     this.optimizationInProgress = true;
 
     try {
-      console.log(
+      console.info(
         `🚀 Starting comprehensive load optimization for ${request.loads.length} loads and ${request.drivers.length} drivers...`
       );
 
@@ -114,14 +114,14 @@ export class AILoadOptimizationService {
       const constraints = this.configureConstraints(request);
 
       // Step 2: Run Linear Programming optimization for initial assignments
-      console.log('📐 Running Linear Programming optimization...');
+      console.info('📐 Running Linear Programming optimization...');
       const lpResult = await linearProgrammingSolver.optimizeAssignments(
         request.loads,
         request.drivers
       );
 
       // Step 3: Enhanced each assignment with Monte Carlo risk analysis
-      console.log('🎲 Running Monte Carlo risk analysis...');
+      console.info('🎲 Running Monte Carlo risk analysis...');
       const enhancedAssignments = await this.enhanceAssignmentsWithRiskAnalysis(
         lpResult.assignments,
         request.loads,
@@ -129,7 +129,7 @@ export class AILoadOptimizationService {
       );
 
       // Step 4: Get AI insights for each assignment
-      console.log('🧠 Generating AI insights...');
+      console.info('🧠 Generating AI insights...');
       const aiEnhancedAssignments = await this.addAIInsights(
         enhancedAssignments,
         request.loads,
@@ -153,7 +153,7 @@ export class AILoadOptimizationService {
 
       this.lastOptimizationResult = result;
 
-      console.log(
+      console.info(
         `✅ Comprehensive optimization complete. Quality: ${result.solutionQuality}, Expected Profit: $${result.totalExpectedProfit.toLocaleString()}`
       );
 

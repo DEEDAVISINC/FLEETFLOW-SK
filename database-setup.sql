@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS loads (
     broker_id VARCHAR(50) NOT NULL REFERENCES brokers(id),
     dispatcher_id VARCHAR(50) REFERENCES dispatchers(id),
     assigned_driver_id VARCHAR(50) REFERENCES drivers(id),
-    
+
     -- Load Details
     origin VARCHAR(255) NOT NULL,
     destination VARCHAR(255) NOT NULL,
@@ -81,23 +81,23 @@ CREATE TABLE IF NOT EXISTS loads (
     weight VARCHAR(50),
     equipment VARCHAR(100) NOT NULL,
     commodity VARCHAR(255),
-    
+
     -- Dates and Times
     pickup_date TIMESTAMP NOT NULL,
     delivery_date TIMESTAMP NOT NULL,
     pickup_time VARCHAR(20),
     delivery_time VARCHAR(20),
-    
+
     -- Status and Tracking
     status VARCHAR(20) DEFAULT 'Draft', -- Draft, Available, Assigned, In Transit, Delivered, Cancelled
     tracking_enabled BOOLEAN DEFAULT FALSE,
     current_location JSONB, -- {lat, lng, timestamp, address}
-    
+
     -- Additional Information
     special_instructions TEXT,
     reference_number VARCHAR(100),
     po_number VARCHAR(100),
-    
+
     -- Timestamps
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -127,23 +127,23 @@ CREATE TABLE IF NOT EXISTS deliveries (
     id VARCHAR(50) PRIMARY KEY DEFAULT 'DEL-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('delivery_seq')::text, 3, '0'),
     load_id VARCHAR(50) NOT NULL REFERENCES loads(id),
     driver_id VARCHAR(50) NOT NULL REFERENCES drivers(id),
-    
+
     -- Receiver Information
     receiver_name VARCHAR(255),
     receiver_signature TEXT, -- Base64 encoded signature
     receiver_title VARCHAR(100),
     receiver_company VARCHAR(255),
-    
+
     -- Delivery Details
     delivery_time TIMESTAMP,
     delivery_location JSONB, -- {lat, lng, address}
     delivery_condition VARCHAR(50), -- Good, Damaged, Partial, etc.
     notes TEXT,
-    
+
     -- Status
     status VARCHAR(20) DEFAULT 'pending', -- pending, completed, issue
     confirmation_number VARCHAR(50),
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -156,18 +156,18 @@ CREATE TABLE IF NOT EXISTS files (
     driver_id VARCHAR(50) REFERENCES drivers(id),
     delivery_id VARCHAR(50) REFERENCES deliveries(id),
     confirmation_id VARCHAR(50) REFERENCES load_confirmations(id),
-    
+
     -- File Details
     file_type VARCHAR(50) NOT NULL, -- confirmation_photo, pickup_photo, delivery_photo, driver_signature, receiver_signature, document
     file_name VARCHAR(255),
     file_url VARCHAR(500) NOT NULL,
     file_size INTEGER,
     mime_type VARCHAR(100),
-    
+
     -- Metadata
     metadata JSONB, -- Additional file information
     description TEXT,
-    
+
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -179,19 +179,19 @@ CREATE TABLE IF NOT EXISTS notifications (
     driver_id VARCHAR(50) REFERENCES drivers(id),
     dispatcher_id VARCHAR(50) REFERENCES dispatchers(id),
     load_id VARCHAR(50) REFERENCES loads(id),
-    
+
     -- Message Details
     message TEXT NOT NULL,
     type VARCHAR(50) NOT NULL, -- load_assignment, dispatch_update, system_alert, delivery_reminder
     priority VARCHAR(20) DEFAULT 'normal', -- low, normal, high, urgent
-    
+
     -- Status
     read_at TIMESTAMP,
     delivered_at TIMESTAMP,
-    
+
     -- Metadata
     metadata JSONB,
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -204,17 +204,17 @@ CREATE TABLE IF NOT EXISTS sms_messages (
     from_phone VARCHAR(20),
     message TEXT NOT NULL,
     type VARCHAR(50),
-    
+
     -- Status
     status VARCHAR(20) DEFAULT 'pending', -- pending, sent, delivered, failed
     external_message_id VARCHAR(100), -- Twilio SID, etc.
     error_message TEXT,
-    
+
     -- Related Records
     driver_id VARCHAR(50) REFERENCES drivers(id),
     load_id VARCHAR(50) REFERENCES loads(id),
     notification_id VARCHAR(50) REFERENCES notifications(id),
-    
+
     sent_at TIMESTAMP,
     delivered_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -227,18 +227,18 @@ CREATE TABLE IF NOT EXISTS documents (
     id VARCHAR(50) PRIMARY KEY DEFAULT 'DOC-' || EXTRACT(YEAR FROM NOW()) || '-' || LPAD(nextval('document_seq')::text, 6, '0'),
     load_id VARCHAR(50) REFERENCES loads(id),
     driver_id VARCHAR(50) REFERENCES drivers(id),
-    
+
     -- Document Details
     type VARCHAR(50) NOT NULL, -- rate_confirmation, bill_of_lading, load_confirmation, invoice
     title VARCHAR(255),
     file_url VARCHAR(500),
     file_size INTEGER,
-    
+
     -- Status
     status VARCHAR(20) DEFAULT 'draft', -- draft, generated, sent, signed
     generated_at TIMESTAMP,
     sent_at TIMESTAMP,
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -258,6 +258,84 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     user_agent TEXT
 );
 
+-- ========================================
+-- ORGANIZATION MANAGEMENT TABLES
+-- ========================================
+
+-- Organizations table
+CREATE TABLE IF NOT EXISTS organizations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255) NOT NULL,
+  type ENUM('brokerage', 'dispatch_agency', 'carrier', 'shipper') NOT NULL,
+  subscription_plan VARCHAR(50) NOT NULL,
+  subscription_seats_total INT NOT NULL DEFAULT 1,
+  subscription_seats_used INT NOT NULL DEFAULT 1,
+  subscription_billing_cycle ENUM('monthly', 'annual') NOT NULL DEFAULT 'monthly',
+  subscription_price DECIMAL(10, 2) NOT NULL,
+  subscription_next_billing_date DATE NOT NULL,
+  billing_contact_name VARCHAR(255) NOT NULL,
+  billing_contact_email VARCHAR(255) NOT NULL,
+  square_customer_id VARCHAR(255),
+  mc_number VARCHAR(50),
+  dispatch_fee_percentage DECIMAL(5, 2),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Organization users table
+CREATE TABLE IF NOT EXISTS organization_users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL,
+  organization_id UUID NOT NULL,
+  role ENUM('owner', 'admin', 'agent', 'dispatcher', 'staff') NOT NULL,
+  permissions JSONB DEFAULT '[]'::jsonb,
+  active BOOLEAN DEFAULT TRUE,
+  invited_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  joined_at TIMESTAMP NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Organization invitations table
+CREATE TABLE IF NOT EXISTS organization_invitations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  organization_id UUID NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  role ENUM('owner', 'admin', 'agent', 'dispatcher', 'staff') NOT NULL,
+  permissions JSONB DEFAULT '[]'::jsonb,
+  token VARCHAR(255) NOT NULL UNIQUE,
+  expires_at TIMESTAMP NOT NULL,
+  status ENUM('pending', 'accepted', 'declined', 'expired') DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE
+);
+
+-- Users table (for NextAuth compatibility)
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name VARCHAR(255),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  email_verified TIMESTAMP NULL,
+  image TEXT,
+  current_organization_id UUID,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (current_organization_id) REFERENCES organizations(id)
+);
+
+-- Update existing tables to support organizations
+ALTER TABLE loads ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE drivers ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE dispatchers ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE brokers ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE files ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+ALTER TABLE sms_messages ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
+
 -- Indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_loads_status ON loads(status);
 CREATE INDEX IF NOT EXISTS idx_loads_driver ON loads(assigned_driver_id);
@@ -269,21 +347,31 @@ CREATE INDEX IF NOT EXISTS idx_files_type ON files(file_type);
 CREATE INDEX IF NOT EXISTS idx_sms_status ON sms_messages(status);
 CREATE INDEX IF NOT EXISTS idx_audit_table_record ON audit_logs(table_name, record_id);
 
+-- Organization-related indexes
+CREATE INDEX IF NOT EXISTS idx_org_users_user_id ON organization_users(user_id);
+CREATE INDEX IF NOT EXISTS idx_org_users_org_id ON organization_users(organization_id);
+CREATE INDEX IF NOT EXISTS idx_org_invitations_email ON organization_invitations(email);
+CREATE INDEX IF NOT EXISTS idx_org_invitations_token ON organization_invitations(token);
+CREATE INDEX IF NOT EXISTS idx_loads_organization ON loads(organization_id);
+CREATE INDEX IF NOT EXISTS idx_drivers_organization ON drivers(organization_id);
+CREATE INDEX IF NOT EXISTS idx_dispatchers_organization ON dispatchers(organization_id);
+CREATE INDEX IF NOT EXISTS idx_brokers_organization ON brokers(organization_id);
+
 -- Sample Data Inserts
-INSERT INTO dispatchers (id, name, email, phone) VALUES 
+INSERT INTO dispatchers (id, name, email, phone) VALUES
 ('DSP-001', 'Sarah Johnson', 'sarah.johnson@fleetflow.com', '+1-555-987-6543')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO drivers (id, name, email, phone, license_number, dispatcher_id, current_location, eld_status, hours_remaining) VALUES 
+INSERT INTO drivers (id, name, email, phone, license_number, dispatcher_id, current_location, eld_status, hours_remaining) VALUES
 ('DRV-001', 'John Smith', 'john.smith@fleetflow.com', '+1-555-123-4567', 'CDL-TX-123456', 'DSP-001', 'Dallas, TX', 'Connected', 8.5)
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO brokers (id, company_name, contact_name, email, phone, city, state) VALUES 
+INSERT INTO brokers (id, company_name, contact_name, email, phone, city, state) VALUES
 ('BRK-001', 'ABC Logistics', 'Mike Wilson', 'mike@abclogistics.com', '+1-555-111-2222', 'Atlanta', 'GA'),
 ('BRK-002', 'XYZ Freight', 'Lisa Davis', 'lisa@xyzfreight.com', '+1-555-333-4444', 'Miami', 'FL')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO loads (id, broker_id, dispatcher_id, origin, destination, rate, distance, weight, equipment, status, pickup_date, delivery_date) VALUES 
+INSERT INTO loads (id, broker_id, dispatcher_id, origin, destination, rate, distance, weight, equipment, status, pickup_date, delivery_date) VALUES
 ('LD-2025-001', 'BRK-001', 'DSP-001', 'Dallas, TX', 'Atlanta, GA', 2500.00, '925 miles', '45,000 lbs', 'Dry Van', 'Assigned', '2025-07-03 08:00:00', '2025-07-05 17:00:00'),
 ('LD-2025-002', 'BRK-002', NULL, 'Houston, TX', 'Miami, FL', 3200.00, '1200 miles', '40,000 lbs', 'Refrigerated', 'Available', '2025-07-04 06:00:00', '2025-07-06 18:00:00')
 ON CONFLICT (id) DO NOTHING;

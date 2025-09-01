@@ -3,7 +3,7 @@ import BOLWorkflowService from '../../../services/bol-workflow/BOLWorkflowServic
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('🧪 Testing BOL Workflow System...');
+    console.info('🧪 Testing BOL Workflow System...');
 
     // Test BOL submission
     const testSubmission = {
@@ -35,17 +35,17 @@ export async function POST(request: NextRequest) {
     };
 
     // Step 1: Submit BOL
-    console.log('📋 Step 1: Submitting BOL...');
+    console.info('📋 Step 1: Submitting BOL...');
     const submissionResult = await BOLWorkflowService.submitBOL(testSubmission);
     
     if (!submissionResult.success) {
       throw new Error(`BOL submission failed: ${submissionResult.error}`);
     }
 
-    console.log(`✅ BOL submitted: ${submissionResult.submissionId}`);
+    console.info(`✅ BOL submitted: ${submissionResult.submissionId}`);
 
     // Step 2: Approve BOL (simulate broker approval)
-    console.log('👔 Step 2: Broker approving BOL...');
+    console.info('👔 Step 2: Broker approving BOL...');
     const approvalResult = await BOLWorkflowService.approveBOL(
       submissionResult.submissionId!,
       'broker-js001',
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       throw new Error(`BOL approval failed: ${approvalResult.error}`);
     }
 
-    console.log(`✅ BOL approved and invoice generated: ${approvalResult.invoiceId}`);
+    console.info(`✅ BOL approved and invoice generated: ${approvalResult.invoiceId}`);
 
     // Get workflow status
     const submission = BOLWorkflowService.getSubmission(submissionResult.submissionId!);

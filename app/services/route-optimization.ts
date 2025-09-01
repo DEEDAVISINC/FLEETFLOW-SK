@@ -91,7 +91,7 @@ export class RouteOptimizationService {
     request: RouteOptimizationRequest
   ): Promise<OptimizedRoute[]> {
     try {
-      console.log('🚛 Starting route optimization...');
+      console.info('🚛 Starting route optimization...');
 
       if (!this.isRealApiKey()) {
         return this.mockOptimization(request);
@@ -113,7 +113,7 @@ export class RouteOptimizationService {
       const routesWithDirections =
         await this.addDetailedDirections(optimizedRoutes);
 
-      console.log('✅ Route optimization completed');
+      console.info('✅ Route optimization completed');
       return routesWithDirections;
     } catch (error) {
       console.error('❌ Route optimization failed:', error);

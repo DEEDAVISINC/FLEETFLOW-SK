@@ -107,7 +107,7 @@ export class PlaidService {
 
           const response = await this.plaidClient.linkTokenCreate(request);
 
-          console.log(
+          console.info(
             `🔗 Created Plaid Link token for user ${userId}${tenantId ? ` (tenant: ${tenantId})` : ''}`
           );
           return response.data.link_token;
@@ -156,7 +156,7 @@ export class PlaidService {
 
           this.connectedUsers.set(userId, plaidUser);
 
-          console.log(
+          console.info(
             `✅ Successfully connected Plaid for user ${userId} with ${accounts.length} accounts`
           );
           return plaidUser;
@@ -290,7 +290,7 @@ export class PlaidService {
         async () => {
           const user = this.connectedUsers.get(userId);
           if (!user) {
-            console.log(`No Plaid data found for user ${userId}`);
+            console.info(`No Plaid data found for user ${userId}`);
             return true;
           }
 
@@ -303,7 +303,7 @@ export class PlaidService {
             // Remove from local storage
             this.connectedUsers.delete(userId);
 
-            console.log(
+            console.info(
               `🗑️ Successfully deleted all Plaid data for user ${userId}`
             );
             return true;
@@ -430,7 +430,7 @@ export class PlaidService {
       case 'production':
         return PlaidEnvironments.production;
       default:
-        console.log('⚠️ PLAID_ENVIRONMENT not set, defaulting to sandbox');
+        console.info('⚠️ PLAID_ENVIRONMENT not set, defaulting to sandbox');
         return PlaidEnvironments.sandbox;
     }
   }

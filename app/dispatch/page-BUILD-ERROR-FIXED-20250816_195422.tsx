@@ -1966,11 +1966,11 @@ export default function DispatchCentral() {
             <div style={{ marginTop: '25px' }}>
               <AILoadOptimizationPanel
                 onOptimizationComplete={(result) => {
-                  console.log('Optimization completed:', result);
+                  console.info('Optimization completed:', result);
                   // Could integrate with other dispatch systems here
                 }}
                 onAssignmentSelected={(assignment) => {
-                  console.log('Assignment selected:', assignment);
+                  console.info('Assignment selected:', assignment);
                   // Could auto-fill load assignment forms here
                 }}
               />
@@ -4209,7 +4209,7 @@ export default function DispatchCentral() {
                     fontWeight: '500',
                   }}
                 >
-                  Click "Open Full Tracking Dashboard" to access the interactive
+                  Click ""Open Full Tracking Dashboard"" to access the interactive
                   map with live driver locations, detailed route information,
                   and real-time shipment monitoring for all your loads.
                 </p>

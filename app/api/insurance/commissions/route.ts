@@ -220,7 +220,7 @@ export async function POST(request: NextRequest) {
     }
 
     // In production, this would save to database
-    console.log('New commission recorded:', commissionData);
+    console.info('New commission recorded:', commissionData);
 
     // Generate commission ID
     const commissionId = `COMM-${Date.now()}`;

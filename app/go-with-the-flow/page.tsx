@@ -90,7 +90,7 @@ export default function GoWithTheFlow() {
 
       // Step 1: Get comprehensive carrier data (FMCSA + BrokerSnapshot)
       try {
-        console.log(
+        console.info(
           `🔍 FleetGuard AI: Analyzing carrier ${carrierName} (${mcNumber})...`
         );
 
@@ -104,12 +104,12 @@ export default function GoWithTheFlow() {
             await carrierService.getCarrierBrokerSnapshot(mcNumber);
         }
 
-        console.log(
+        console.info(
           `📊 BrokerSnapshot data retrieved for ${carrierName}:`,
           brokerSnapshotData || comprehensiveCarrierData
         );
       } catch (error) {
-        console.log(
+        console.info(
           `⚠️ Real data unavailable for ${carrierName}, using enhanced mock data`
         );
       }
@@ -392,7 +392,7 @@ export default function GoWithTheFlow() {
         fraudAnalysis: carrierAnalyses[index],
       }));
 
-      console.log(
+      console.info(
         '🛡️ FleetGuard AI Analysis Complete for Go with the Flow:',
         carrierAnalyses
       );

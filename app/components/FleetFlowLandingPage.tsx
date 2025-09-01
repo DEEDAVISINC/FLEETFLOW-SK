@@ -58,7 +58,7 @@ export default function FleetFlowLandingPage() {
 
   const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Demo booking submitted:', demoForm);
+    console.info('Demo booking submitted:', demoForm);
     alert(
       'Thank you! We will contact you within 24 hours to schedule your enterprise demo.'
     );
@@ -572,7 +572,7 @@ export default function FleetFlowLandingPage() {
                   marginBottom: '20px',
                 }}
               >
-                FleetFlow Business Intelligence
+                FleetFlow Solo Plans
               </h2>
               <p
                 style={{
@@ -582,7 +582,7 @@ export default function FleetFlowLandingPage() {
                   marginBottom: '30px',
                 }}
               >
-                Individual subscriptions for transportation professionals.
+                Individual plans for solo transportation professionals.
                 <br />
                 <strong style={{ color: '#fbbf24' }}>
                   Start your 14-day free trial
@@ -620,7 +620,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  FleetFlow University℠
+                  Training Only
                 </h3>
                 <div
                   style={{
@@ -673,7 +673,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  Professional Dispatcher
+                  Solo Dispatcher
                 </h3>
                 <div
                   style={{
@@ -759,7 +759,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  Professional Brokerage
+                  Solo Broker
                 </h3>
                 <div
                   style={{
@@ -809,7 +809,7 @@ export default function FleetFlowLandingPage() {
                 </ul>
               </div>
 
-              {/* Enterprise Professional */}
+              {/* Solo Dispatcher Premium */}
               <div
                 style={{
                   background: 'rgba(99, 102, 241, 0.1)',
@@ -820,7 +820,7 @@ export default function FleetFlowLandingPage() {
                 }}
               >
                 <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
-                  🌟
+                  👑
                 </div>
                 <h3
                   style={{
@@ -830,7 +830,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  Enterprise Professional
+                  Solo Dispatcher Premium
                 </h3>
                 <div
                   style={{
@@ -840,16 +840,72 @@ export default function FleetFlowLandingPage() {
                     marginBottom: '15px',
                   }}
                 >
-                  <span
-                    style={{
-                      fontSize: '1.2rem',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Starting at
+                  $199
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
                   </span>
-                  <br />
-                  $2,698
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Advanced dispatch management</li>
+                  <li>✓ Multi-fleet coordination</li>
+                  <li>✓ Advanced route optimization</li>
+                  <li>✓ Performance analytics & reporting</li>
+                  <li>✓ API access & webhooks</li>
+                  <li>✓ Priority support</li>
+                  <li>✓ Advanced driver management</li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Unlimited phone minutes
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Unlimited SMS messages
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Advanced call monitoring
+                  </li>
+                  <li>✓ 🤖 AI automation tools</li>
+                </ul>
+              </div>
+
+              {/* Solo Broker Premium */}
+              <div
+                style={{
+                  background: 'rgba(147, 51, 234, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(147, 51, 234, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🌟
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#9333ea',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Solo Broker Premium
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.6rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $599
                   <span style={{ fontSize: '1rem', fontWeight: '500' }}>
                     /month
                   </span>
@@ -864,10 +920,13 @@ export default function FleetFlowLandingPage() {
                   }}
                 >
                   <li>✓ Complete platform access</li>
-                  <li>✓ All premium features</li>
-                  <li>✓ Advanced AI automation</li>
-                  <li>✓ Priority support & training</li>
-                  <li>✓ Custom integrations</li>
+                  <li>✓ FreightFlow RFx platform</li>
+                  <li>✓ Advanced brokerage operations</li>
+                  <li>✓ Enhanced carrier relationships</li>
+                  <li>✓ Revenue analytics dashboard</li>
+                  <li>✓ Advanced analytics & reporting</li>
+                  <li>✓ API access & webhooks</li>
+                  <li>✓ Multi-customer management</li>
                   <li style={{ color: '#34d399', fontWeight: '600' }}>
                     ✓ Unlimited phone minutes
                   </li>
@@ -875,7 +934,339 @@ export default function FleetFlowLandingPage() {
                     ✓ Unlimited SMS messages
                   </li>
                   <li style={{ color: '#34d399', fontWeight: '600' }}>
-                    ✓ Enterprise call center features
+                    ✓ Advanced call monitoring
+                  </li>
+                  <li>✓ 🤖 AI automation tools</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Team Plans Section */}
+            <div
+              style={{
+                textAlign: 'center',
+                marginBottom: '40px',
+                marginTop: '60px',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: '800',
+                  background:
+                    'linear-gradient(135deg, #10b981 0%, #14b8a6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '20px',
+                }}
+              >
+                FleetFlow Team Plans
+              </h2>
+              <p
+                style={{
+                  fontSize: '1.2rem',
+                  color: 'rgba(255,255,255,0.8)',
+                  lineHeight: '1.6',
+                  marginBottom: '30px',
+                }}
+              >
+                Organization subscriptions for brokerage and dispatch teams.
+                <br />
+                <strong style={{ color: '#10b981' }}>
+                  Save up to 76% compared to individual plans!
+                </strong>
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '25px',
+                marginBottom: '40px',
+              }}
+            >
+              {/* Team Brokerage Starter */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(16, 185, 129, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🏢
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#10b981',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Team Brokerage Starter
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.8rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $199
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (up to 2 people)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Core brokerage tools</li>
+                  <li>✓ Load management & posting</li>
+                  <li>✓ Basic carrier database</li>
+                  <li>✓ Standard reporting & analytics</li>
+                  <li>✓ Up to 2 team members included</li>
+                  <li>✓ Additional seats: $49/month each</li>
+                  <li>✓ 📞 Phone add-on available</li>
+                </ul>
+              </div>
+
+              {/* Team Brokerage Pro */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid #10b981',
+                  textAlign: 'center',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background:
+                      'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: 'white',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  ⭐ Popular
+                </div>
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🚀
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#10b981',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Team Brokerage Pro
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.8rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $499
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (up to 5 people)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Advanced brokerage operations</li>
+                  <li>✓ Unlimited load management</li>
+                  <li>✓ Enhanced carrier relationships</li>
+                  <li>✓ Advanced analytics & reporting</li>
+                  <li>✓ API access & integrations</li>
+                  <li>✓ Up to 5 team members included</li>
+                  <li>✓ Additional seats: $39/month each</li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ 500 phone minutes included
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ 200 SMS messages included
+                  </li>
+                </ul>
+              </div>
+
+              {/* Team Dispatch Starter */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(59, 130, 246, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  📋
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#3b82f6',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Team Dispatch Starter
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.8rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $149
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (up to 2 people)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Core dispatch management</li>
+                  <li>✓ Driver assignment & tracking</li>
+                  <li>✓ Route optimization basics</li>
+                  <li>✓ Basic reporting</li>
+                  <li>✓ CRM integration</li>
+                  <li>✓ Up to 2 team members included</li>
+                  <li>✓ Additional seats: $39/month each</li>
+                  <li>✓ 📞 Phone add-on available</li>
+                </ul>
+              </div>
+
+              {/* Team Enterprise */}
+              <div
+                style={{
+                  background: 'rgba(147, 51, 234, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(147, 51, 234, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  👑
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#9333ea',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Team Enterprise
+                </h3>
+                <div
+                  style={{
+                    fontSize: '1.8rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $2,698
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (up to 10 people)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                  }}
+                >
+                  <li>✓ Complete platform access</li>
+                  <li>✓ All premium features</li>
+                  <li>✓ Dedicated account manager</li>
+                  <li>✓ White-label options</li>
+                  <li>✓ Up to 10 team members included</li>
+                  <li>✓ Additional seats: $199/month each</li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Unlimited phone minutes
+                  </li>
+                  <li style={{ color: '#34d399', fontWeight: '600' }}>
+                    ✓ Unlimited SMS messages
+                  </li>
+                  <li style={{ color: '#f59e0b', fontWeight: '600' }}>
+                    ⚠️ DEPOINTE AI sold separately
                   </li>
                 </ul>
               </div>
@@ -1151,7 +1542,7 @@ export default function FleetFlowLandingPage() {
                 }}
                 onClick={() => {
                   // Add click functionality if needed
-                  console.log(`Selected role: ${item.role}`);
+                  console.info(`Selected role: ${item.role}`);
                 }}
               >
                 {item.role}

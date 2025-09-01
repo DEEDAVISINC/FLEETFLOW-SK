@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import btsService, {
   PortPerformanceBenchmark,
   WaterborneCommerceData,
@@ -77,11 +77,7 @@ export default function MaritimeIntelligenceView({
     { code: 'USSEA', name: 'Seattle' },
   ];
 
-  useEffect(() => {
-    loadMaritimeData();
-  }, [selectedPort]);
-
-  const loadMaritimeData = async () => {
+  const loadMaritimeData = useCallback(async () => {
     setLoading(true);
     try {
       // Load summary data
@@ -138,7 +134,22 @@ export default function MaritimeIntelligenceView({
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    selectedPort,
+    portAuthorityService,
+    noaaPortsService,
+    portAuthoritySystemsService,
+    btsService,
+    setLoading,
+    setSummary,
+    setVesselData,
+    setPortData,
+    setScheduleData,
+    setNoaaConditions,
+    setPortOperations,
+    setCommerceData,
+    setPortBenchmarks,
+  ]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -158,6 +169,11 @@ export default function MaritimeIntelligenceView({
         return '#6b7280';
     }
   };
+
+  // Load data when component mounts or selectedPort changes
+  useEffect(() => {
+    loadMaritimeData();
+  }, [loadMaritimeData, selectedPort]);
 
   const getCongestionColor = (level: string) => {
     switch (level) {

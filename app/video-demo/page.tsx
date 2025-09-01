@@ -478,7 +478,7 @@ export default function VideoDemoPage() {
               >
                 <li>Upload video to Google Drive</li>
                 <li>Right-click → Get link</li>
-                <li>Set to "Anyone with link can view"</li>
+                <li>Set to ""Anyone with link can view""</li>
               </ul>
             </div>
             <div>

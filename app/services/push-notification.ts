@@ -2,7 +2,13 @@
 interface Notification {
   id: string;
   driverId: string;
-  type: 'load_assigned' | 'message' | 'alert' | 'reminder' | 'system' | 'emergency';
+  type:
+    | 'load_assigned'
+    | 'message'
+    | 'alert'
+    | 'reminder'
+    | 'system'
+    | 'emergency';
   title: string;
   message: string;
   priority: 'low' | 'normal' | 'high' | 'urgent';
@@ -20,15 +26,16 @@ class PushNotificationServiceClass {
         driverId: 'DRV-001',
         type: 'load_assigned',
         title: 'New Load Assigned',
-        message: 'Load LOAD-2024-001 has been assigned to you. Dallas, TX to Atlanta, GA.',
+        message:
+          'Load LOAD-2024-001 has been assigned to you. Dallas, TX to Atlanta, GA.',
         priority: 'high',
         read: false,
         timestamp: '2024-12-23T08:00:00Z',
         actionRequired: true,
         actions: [
           { label: 'Accept', action: 'accept_load' },
-          { label: 'Decline', action: 'decline_load' }
-        ]
+          { label: 'Decline', action: 'decline_load' },
+        ],
       },
       {
         id: 'notif-002',
@@ -39,8 +46,8 @@ class PushNotificationServiceClass {
         priority: 'high',
         read: true,
         timestamp: '2024-12-23T09:15:00Z',
-        actionRequired: false
-      }
+        actionRequired: false,
+      },
     ],
     'DRV-002': [
       {
@@ -48,13 +55,14 @@ class PushNotificationServiceClass {
         driverId: 'DRV-002',
         type: 'message',
         title: 'New Message from Dispatch',
-        message: 'Great job on the Phoenix delivery! Load LOAD-2024-003 is ready for pickup.',
+        message:
+          'Great job on the Phoenix delivery! Load LOAD-2024-003 is ready for pickup.',
         priority: 'normal',
         read: true,
         timestamp: '2024-12-23T10:30:00Z',
-        actionRequired: false
-      }
-    ]
+        actionRequired: false,
+      },
+    ],
   };
 
   async getNotifications(driverId: string): Promise<Notification[]> {
@@ -66,14 +74,17 @@ class PushNotificationServiceClass {
     }
   }
 
-  async sendNotification(driverId: string, notification: Omit<Notification, 'id' | 'driverId' | 'timestamp' | 'read'>): Promise<boolean> {
+  async sendNotification(
+    driverId: string,
+    notification: Omit<Notification, 'id' | 'driverId' | 'timestamp' | 'read'>
+  ): Promise<boolean> {
     try {
       const newNotification: Notification = {
         ...notification,
         id: `notif-${Date.now()}`,
         driverId,
         timestamp: new Date().toISOString(),
-        read: false
+        read: false,
       };
 
       if (!this.notifications[driverId]) {
@@ -81,10 +92,10 @@ class PushNotificationServiceClass {
       }
 
       this.notifications[driverId].unshift(newNotification);
-      
+
       // In a real implementation, this would send push notification to device
-      console.log(`Push notification sent to ${driverId}:`, newNotification);
-      
+      console.info(`Push notification sent to ${driverId}:`, newNotification);
+
       return true;
     } catch (error) {
       console.error('Error sending notification:', error);
@@ -99,7 +110,7 @@ class PushNotificationServiceClass {
         return false;
       }
 
-      const notification = notifications.find(n => n.id === notificationId);
+      const notification = notifications.find((n) => n.id === notificationId);
       if (!notification) {
         return false;
       }
@@ -115,21 +126,24 @@ class PushNotificationServiceClass {
   async getUnreadCount(driverId: string): Promise<number> {
     try {
       const notifications = this.notifications[driverId] || [];
-      return notifications.filter(n => !n.read).length;
+      return notifications.filter((n) => !n.read).length;
     } catch (error) {
       console.error('Error getting unread count:', error);
       return 0;
     }
   }
 
-  async deleteNotification(driverId: string, notificationId: string): Promise<boolean> {
+  async deleteNotification(
+    driverId: string,
+    notificationId: string
+  ): Promise<boolean> {
     try {
       const notifications = this.notifications[driverId];
       if (!notifications) {
         return false;
       }
 
-      const index = notifications.findIndex(n => n.id === notificationId);
+      const index = notifications.findIndex((n) => n.id === notificationId);
       if (index === -1) {
         return false;
       }
@@ -142,7 +156,11 @@ class PushNotificationServiceClass {
     }
   }
 
-  async sendLoadAssignedNotification(driverId: string, loadId: string, details: string): Promise<boolean> {
+  async sendLoadAssignedNotification(
+    driverId: string,
+    loadId: string,
+    details: string
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'load_assigned',
       title: 'New Load Assigned',
@@ -151,31 +169,35 @@ class PushNotificationServiceClass {
       actionRequired: true,
       actions: [
         { label: 'Accept', action: 'accept_load' },
-        { label: 'Decline', action: 'decline_load' }
-      ]
+        { label: 'Decline', action: 'decline_load' },
+      ],
     });
   }
 
-  async sendEmergencyAlert(driverId: string, message: string): Promise<boolean> {
+  async sendEmergencyAlert(
+    driverId: string,
+    message: string
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'emergency',
       title: '🚨 Emergency Alert',
       message: message,
       priority: 'urgent',
       actionRequired: true,
-      actions: [
-        { label: 'Acknowledge', action: 'acknowledge_emergency' }
-      ]
+      actions: [{ label: 'Acknowledge', action: 'acknowledge_emergency' }],
     });
   }
 
-  async sendHOSReminder(driverId: string, remainingHours: number): Promise<boolean> {
+  async sendHOSReminder(
+    driverId: string,
+    remainingHours: number
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'reminder',
       title: 'Hours of Service Reminder',
       message: `You have ${remainingHours} hours remaining in your driving window.`,
       priority: remainingHours < 2 ? 'high' : 'normal',
-      actionRequired: false
+      actionRequired: false,
     });
   }
 
@@ -186,52 +208,64 @@ class PushNotificationServiceClass {
       message: 'You need to take a 30-minute break after 8 hours of driving.',
       priority: 'high',
       actionRequired: true,
-      actions: [
-        { label: 'Take Break', action: 'take_break' }
-      ]
+      actions: [{ label: 'Take Break', action: 'take_break' }],
     });
   }
 
-  async sendWeatherAlert(driverId: string, weatherCondition: string, severity: 'low' | 'normal' | 'high'): Promise<boolean> {
+  async sendWeatherAlert(
+    driverId: string,
+    weatherCondition: string,
+    severity: 'low' | 'normal' | 'high'
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'alert',
       title: 'Weather Alert',
       message: `${weatherCondition} expected on your route. Drive safely.`,
       priority: severity,
-      actionRequired: false
+      actionRequired: false,
     });
   }
 
-  async sendMaintenanceReminder(driverId: string, vehicleId: string, maintenanceType: string): Promise<boolean> {
+  async sendMaintenanceReminder(
+    driverId: string,
+    vehicleId: string,
+    maintenanceType: string
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'reminder',
       title: 'Maintenance Reminder',
       message: `Vehicle ${vehicleId} is due for ${maintenanceType}.`,
       priority: 'normal',
       actionRequired: true,
-      actions: [
-        { label: 'Schedule', action: 'schedule_maintenance' }
-      ]
+      actions: [{ label: 'Schedule', action: 'schedule_maintenance' }],
     });
   }
 
-  async sendSystemUpdate(driverId: string, updateMessage: string): Promise<boolean> {
+  async sendSystemUpdate(
+    driverId: string,
+    updateMessage: string
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'system',
       title: 'System Update',
       message: updateMessage,
       priority: 'normal',
-      actionRequired: false
+      actionRequired: false,
     });
   }
 
-  async sendCustomNotification(driverId: string, title: string, message: string, priority: Notification['priority'] = 'normal'): Promise<boolean> {
+  async sendCustomNotification(
+    driverId: string,
+    title: string,
+    message: string,
+    priority: Notification['priority'] = 'normal'
+  ): Promise<boolean> {
     return this.sendNotification(driverId, {
       type: 'system',
       title,
       message,
       priority,
-      actionRequired: false
+      actionRequired: false,
     });
   }
 
@@ -245,20 +279,26 @@ class PushNotificationServiceClass {
     }
   }
 
-  async getNotificationsByType(driverId: string, type: Notification['type']): Promise<Notification[]> {
+  async getNotificationsByType(
+    driverId: string,
+    type: Notification['type']
+  ): Promise<Notification[]> {
     try {
       const notifications = this.notifications[driverId] || [];
-      return notifications.filter(n => n.type === type);
+      return notifications.filter((n) => n.type === type);
     } catch (error) {
       console.error('Error getting notifications by type:', error);
       return [];
     }
   }
 
-  async getNotificationsByPriority(driverId: string, priority: Notification['priority']): Promise<Notification[]> {
+  async getNotificationsByPriority(
+    driverId: string,
+    priority: Notification['priority']
+  ): Promise<Notification[]> {
     try {
       const notifications = this.notifications[driverId] || [];
-      return notifications.filter(n => n.priority === priority);
+      return notifications.filter((n) => n.priority === priority);
     } catch (error) {
       console.error('Error getting notifications by priority:', error);
       return [];
@@ -266,4 +306,4 @@ class PushNotificationServiceClass {
   }
 }
 
-export const PushNotificationService = new PushNotificationServiceClass(); 
+export const PushNotificationService = new PushNotificationServiceClass();

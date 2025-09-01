@@ -14,7 +14,7 @@ export default function SquarePaymentDemo() {
   const handlePaymentSuccess = (result: any) => {
     setPaymentResult(result);
     setShowPaymentForm(false);
-    console.log('Payment successful:', result);
+    console.info('Payment successful:', result);
   };
 
   const handlePaymentError = (error: string) => {

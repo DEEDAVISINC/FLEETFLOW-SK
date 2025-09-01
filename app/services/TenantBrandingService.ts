@@ -836,7 +836,7 @@ class TenantBrandingService {
 
     this.brandingProfiles.set(tenantId, updatedProfile);
 
-    console.log(
+    console.info(
       `✅ Branding profile ${existingProfile ? 'updated' : 'created'} for tenant: ${tenantId}`
     );
     return updatedProfile;
@@ -1142,18 +1142,3 @@ ${cssVars}
 }
 
 export const tenantBrandingService = new TenantBrandingService();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

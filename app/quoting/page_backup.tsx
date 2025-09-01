@@ -427,7 +427,7 @@ export default function FreightFlowQuotingEngine() {
         backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Back Button */}

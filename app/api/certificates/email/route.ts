@@ -105,11 +105,11 @@ export async function POST(request: NextRequest) {
     // Send email
     const info = await transporter.sendMail(mailOptions);
 
-    console.log('Certificate email sent:', info.messageId);
+    console.info('Certificate email sent:', info.messageId);
 
     // For Ethereal Email, provide preview URL
     if (process.env.NODE_ENV === 'development') {
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+      console.info('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     }
 
     return NextResponse.json({

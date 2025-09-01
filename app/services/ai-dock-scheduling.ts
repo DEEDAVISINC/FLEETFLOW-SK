@@ -309,7 +309,7 @@ export class AIDockSchedulingService {
     request: AppointmentRequest
   ): Promise<ScheduledAppointment | null> {
     try {
-      console.log(`🏭 AI Scheduling appointment for load ${request.loadId}`);
+      console.info(`🏭 AI Scheduling appointment for load ${request.loadId}`);
 
       // Get facility information
       const facility = this.facilities.get(request.facility);
@@ -323,7 +323,7 @@ export class AIDockSchedulingService {
         facility
       );
       if (optimalSlots.length === 0) {
-        console.log('❌ No available appointment slots found');
+        console.info('❌ No available appointment slots found');
         return null;
       }
 
@@ -350,7 +350,7 @@ export class AIDockSchedulingService {
       // Predict and prevent bottlenecks
       await this.predictAndMitigateBottlenecks(facility, appointment);
 
-      console.log(`✅ Appointment scheduled: ${appointment.confirmationCode}`);
+      console.info(`✅ Appointment scheduled: ${appointment.confirmationCode}`);
       return appointment;
     } catch (error) {
       console.error('Error scheduling appointment:', error);
@@ -738,7 +738,7 @@ export class AIDockSchedulingService {
     facility: DockFacility,
     forecastPeriod: number = 7 // days
   ): Promise<LaborOptimizationPlan> {
-    console.log(`📊 Optimizing labor planning for ${facility.name}`);
+    console.info(`📊 Optimizing labor planning for ${facility.name}`);
 
     // Get upcoming appointments
     const upcomingAppointments = this.getUpcomingAppointments(
@@ -860,7 +860,7 @@ export class AIDockSchedulingService {
   async optimizeYardManagement(
     facilityId: string
   ): Promise<YardOptimizationPlan> {
-    console.log(`🚛 Optimizing yard management for facility ${facilityId}`);
+    console.info(`🚛 Optimizing yard management for facility ${facilityId}`);
 
     const yardData = this.yardManagement.get(facilityId);
     if (!yardData) {
@@ -978,7 +978,7 @@ export class AIDockSchedulingService {
   // ========================================
 
   async optimizeRealTimeQueue(facilityId: string): Promise<QueueOptimization> {
-    console.log(`⏱️ Optimizing real-time queue for facility ${facilityId}`);
+    console.info(`⏱️ Optimizing real-time queue for facility ${facilityId}`);
 
     // Get current queue state
     const currentQueue = await this.getCurrentQueue(facilityId);

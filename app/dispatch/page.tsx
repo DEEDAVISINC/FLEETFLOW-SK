@@ -853,7 +853,7 @@ export default function DispatchCentral() {
     }
 
     // Assignment approved - proceed normally
-    console.log(
+    console.info(
       `✅ Assignment approved: Driver ${driverId} assigned to load ${loadId}`
     );
     return true;
@@ -983,7 +983,7 @@ export default function DispatchCentral() {
       const stats = getInvoiceStats();
       setInvoiceStats(stats);
 
-      console.log(
+      console.info(
         `🔄 Dispatch Central: Loaded ${tenantLoads.length} tenant loads + ${agentLoads.length} agent loads = ${allLoads.length} total loads`
       );
 
@@ -2167,11 +2167,11 @@ export default function DispatchCentral() {
             <div style={{ marginTop: '25px' }}>
               <AILoadOptimizationPanel
                 onOptimizationComplete={(result) => {
-                  console.log('Optimization completed:', result);
+                  console.info('Optimization completed:', result);
                   // Could integrate with other dispatch systems here
                 }}
                 onAssignmentSelected={(assignment) => {
-                  console.log('Assignment selected:', assignment);
+                  console.info('Assignment selected:', assignment);
                   // Could auto-fill load assignment forms here
                 }}
               />

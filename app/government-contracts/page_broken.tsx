@@ -255,7 +255,7 @@ export default function GovernmentContractsPage() {
         backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         minHeight: '100vh',
         color: 'white',
       }}
@@ -890,7 +890,7 @@ export default function GovernmentContractsPage() {
               </h3>
               <p style={{ margin: 0 }}>
                 {searchTerm
-                  ? `No contracts match "${searchTerm}"`
+                  ? `No contracts match ""${searchTerm}""`
                   : 'No contracts available'}
               </p>
             </div>

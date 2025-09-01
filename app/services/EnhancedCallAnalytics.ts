@@ -191,7 +191,7 @@ export class EnhancedCallAnalytics {
 
   private constructor() {
     this.initializeLearningData();
-    console.log('📊 Enhanced Call Analytics Service initialized');
+    console.info('📊 Enhanced Call Analytics Service initialized');
   }
 
   public static getInstance(): EnhancedCallAnalytics {
@@ -257,7 +257,7 @@ export class EnhancedCallAnalytics {
     callContext: LiveCallContext,
     outcome: string
   ): Promise<CallAnalyticsData> {
-    console.log(
+    console.info(
       `📊 Analyzing call ${callContext.callId} with outcome: ${outcome}`
     );
 
@@ -278,7 +278,7 @@ export class EnhancedCallAnalytics {
     await this.updateAgentMetrics(callContext.agentId, analyticsData);
     await this.learnFromCall(analyticsData);
 
-    console.log(`✅ Call analysis complete for ${callContext.callId}`);
+    console.info(`✅ Call analysis complete for ${callContext.callId}`);
     return analyticsData;
   }
 
@@ -608,7 +608,7 @@ export class EnhancedCallAnalytics {
       }
     });
 
-    console.log('🧠 AI learning updated with call data');
+    console.info('🧠 AI learning updated with call data');
   }
 
   /**

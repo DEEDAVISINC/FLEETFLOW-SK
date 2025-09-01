@@ -71,7 +71,7 @@ class GoWithFlowAutomationService {
     event: LoadAcceptanceEvent
   ): Promise<void> {
     try {
-      console.log('🤖 Go with Flow: Processing load acceptance', event);
+      console.info('🤖 Go with Flow: Processing load acceptance', event);
 
       // 1. AUTO-START BOL WORKFLOW (Critical automation)
       await this.autoStartBOLWorkflow(event);
@@ -120,7 +120,7 @@ class GoWithFlowAutomationService {
   private async autoStartBOLWorkflow(
     event: LoadAcceptanceEvent
   ): Promise<void> {
-    console.log('📋 Auto-starting BOL workflow for', event.loadId);
+    console.info('📋 Auto-starting BOL workflow for', event.loadId);
 
     // Simulate BOL workflow API call
     const bolWorkflowData = {
@@ -162,7 +162,7 @@ class GoWithFlowAutomationService {
    * AUTO-UPDATE DRIVER OTR FLOW PORTAL
    */
   private async updateDriverPortal(event: LoadAcceptanceEvent): Promise<void> {
-    console.log('🚛 Updating Driver OTR Flow for', event.driverId);
+    console.info('🚛 Updating Driver OTR Flow for', event.driverId);
 
     // Create workflow in Driver OTR Flow
     const driverWorkflow = {
@@ -263,7 +263,7 @@ class GoWithFlowAutomationService {
     }
 
     // In real implementation, broadcast via WebSocket
-    console.log('📡 Broadcasting activity:', activity);
+    console.info('📡 Broadcasting activity:', activity);
   }
 
   /**

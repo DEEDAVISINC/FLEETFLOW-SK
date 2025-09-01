@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { generateUniversalPickupDocument, safeGenerateRoute } from '../templates/route-generators.js';
+import React, { useEffect, useState } from 'react';
+import { safeGenerateRoute } from '../templates/route-generators.js';
 import { LOCATION_TYPES } from '../templates/template-constants.js';
 import { validateAddress } from '../templates/utils/maps-integration.js';
 
@@ -31,7 +31,7 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
     driverName: '',
     vehicleNumber: '',
     stops: [],
-    ...initialData
+    ...initialData,
   });
 
   const [currentStop, setCurrentStop] = useState({
@@ -40,7 +40,7 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
     deliveryTime: '',
     items: '',
     contact: '',
-    instructions: ''
+    instructions: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -51,13 +51,18 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
   useEffect(() => {
     const locationDefaults = LOCATION_TYPES[routeData.locationType];
     if (locationDefaults) {
-      setRouteData(prev => ({
+      setRouteData((prev) => ({
         ...prev,
-        safetyRequirements: prev.safetyRequirements || locationDefaults.defaultSafetyRequirements,
-        accessRequirements: prev.accessRequirements || locationDefaults.defaultAccessRequirements,
-        timingRestrictions: prev.timingRestrictions || locationDefaults.defaultTimingRestrictions,
-        documentationRequirements: prev.documentationRequirements || locationDefaults.defaultDocumentationRequirements,
-        loadingArea: prev.loadingArea || locationDefaults.defaultLoadingArea
+        safetyRequirements:
+          prev.safetyRequirements || locationDefaults.defaultSafetyRequirements,
+        accessRequirements:
+          prev.accessRequirements || locationDefaults.defaultAccessRequirements,
+        timingRestrictions:
+          prev.timingRestrictions || locationDefaults.defaultTimingRestrictions,
+        documentationRequirements:
+          prev.documentationRequirements ||
+          locationDefaults.defaultDocumentationRequirements,
+        loadingArea: prev.loadingArea || locationDefaults.defaultLoadingArea,
       }));
     }
   }, [routeData.locationType]);
@@ -65,38 +70,40 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
   // Auto-calculate rate per mile
   useEffect(() => {
     if (routeData.totalAmount && routeData.totalMiles) {
-      const ratePerMile = (parseFloat(routeData.totalAmount) / parseFloat(routeData.totalMiles)).toFixed(2);
-      setRouteData(prev => ({ ...prev, ratePerMile }));
+      const ratePerMile = (
+        parseFloat(routeData.totalAmount) / parseFloat(routeData.totalMiles)
+      ).toFixed(2);
+      setRouteData((prev) => ({ ...prev, ratePerMile }));
     }
   }, [routeData.totalAmount, routeData.totalMiles]);
 
   const handleInputChange = (field, value) => {
-    setRouteData(prev => ({
+    setRouteData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
 
     // Clear error for this field
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: null
+        [field]: null,
       }));
     }
   };
 
   const handleStopChange = (field, value) => {
-    setCurrentStop(prev => ({
+    setCurrentStop((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const addStop = () => {
     if (!currentStop.name || !currentStop.address) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        stopError: 'Stop name and address are required'
+        stopError: 'Stop name and address are required',
       }));
       return;
     }
@@ -104,16 +111,16 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
     // Validate address
     const addressValidation = validateAddress(currentStop.address);
     if (!addressValidation.isValid) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        stopError: addressValidation.suggestions.join(', ')
+        stopError: addressValidation.suggestions.join(', '),
       }));
       return;
     }
 
-    setRouteData(prev => ({
+    setRouteData((prev) => ({
       ...prev,
-      stops: [...prev.stops, { ...currentStop }]
+      stops: [...prev.stops, { ...currentStop }],
     }));
 
     setCurrentStop({
@@ -122,19 +129,19 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
       deliveryTime: '',
       items: '',
       contact: '',
-      instructions: ''
+      instructions: '',
     });
 
-    setErrors(prev => ({
+    setErrors((prev) => ({
       ...prev,
-      stopError: null
+      stopError: null,
     }));
   };
 
   const removeStop = (index) => {
-    setRouteData(prev => ({
+    setRouteData((prev) => ({
       ...prev,
-      stops: prev.stops.filter((_, i) => i !== index)
+      stops: prev.stops.filter((_, i) => i !== index),
     }));
   };
 
@@ -151,14 +158,14 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    
+
     try {
       const result = safeGenerateRoute(routeData);
-      
+
       if (result.success) {
         setPreviewDocument(result.document);
         setErrors({});
-        
+
         if (onRouteGenerated) {
           onRouteGenerated(result.document, routeData);
         }
@@ -173,121 +180,145 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
   };
 
   return (
-    <div className="route-builder max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div className='route-builder mx-auto max-w-6xl rounded-lg bg-white p-6 shadow-lg'>
+      <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
         {/* Form Section */}
-        <div className="space-y-6">
-          <div className="bg-blue-50 rounded-lg p-4">
-            <h2 className="text-2xl font-bold text-blue-900 mb-2">🚛 Route Builder</h2>
-            <p className="text-blue-700">Create professional route documents for any pickup location type</p>
+        <div className='space-y-6'>
+          <div className='rounded-lg bg-blue-50 p-4'>
+            <h2 className='mb-2 text-2xl font-bold text-blue-900'>
+              🚛 Route Builder
+            </h2>
+            <p className='text-blue-700'>
+              Create professional route documents for any pickup location type
+            </p>
           </div>
 
           {/* Company Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🏢 Company Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              🏢 Company Information
+            </h3>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Company Name *
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.companyName}
-                  onChange={(e) => handleInputChange('companyName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('companyName', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   MC Number *
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.mcNumber}
-                  onChange={(e) => handleInputChange('mcNumber', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('mcNumber', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Contact Phone *
                 </label>
                 <input
-                  type="tel"
+                  type='tel'
                   value={routeData.contactPhone}
-                  onChange={(e) => handleInputChange('contactPhone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('contactPhone', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
             </div>
           </div>
 
           {/* Route Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📍 Route Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              📍 Route Information
+            </h3>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Route Number *
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.routeNumber}
-                  onChange={(e) => handleInputChange('routeNumber', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('routeNumber', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Total Miles
                 </label>
                 <input
-                  type="number"
+                  type='number'
                   value={routeData.totalMiles}
-                  onChange={(e) => handleInputChange('totalMiles', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('totalMiles', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Total Rate ($)
                 </label>
                 <input
-                  type="number"
-                  step="0.01"
+                  type='number'
+                  step='0.01'
                   value={routeData.totalAmount}
-                  onChange={(e) => handleInputChange('totalAmount', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('totalAmount', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
             </div>
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className='mt-4'>
+              <label className='mb-1 block text-sm font-medium text-gray-700'>
                 Route Name
               </label>
               <input
-                type="text"
+                type='text'
                 value={routeData.routeName}
                 onChange={(e) => handleInputChange('routeName', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 placeholder="e.g., I-75 Deliveries, Sam's Club Route, Manufacturing Run"
               />
             </div>
           </div>
 
           {/* Pickup Location */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📦 Pickup Location</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              📦 Pickup Location
+            </h3>
+            <div className='space-y-4'>
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>
                     Location Type *
                   </label>
                   <select
                     value={routeData.locationType}
-                    onChange={(e) => handleInputChange('locationType', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleInputChange('locationType', e.target.value)
+                    }
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                   >
                     {Object.entries(LOCATION_TYPES).map(([type, config]) => (
                       <option key={type} value={type}>
@@ -297,66 +328,76 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>
                     Pickup Time
                   </label>
                   <input
-                    type="text"
+                    type='text'
                     value={routeData.pickupTime}
-                    onChange={(e) => handleInputChange('pickupTime', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                    placeholder="8:00 AM - 9:00 AM"
+                    onChange={(e) =>
+                      handleInputChange('pickupTime', e.target.value)
+                    }
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
+                    placeholder='8:00 AM - 9:00 AM'
                   />
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Location Name *
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.pickupLocationName}
-                  onChange={(e) => handleInputChange('pickupLocationName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('pickupLocationName', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                   placeholder="e.g., Sam's Club #1234, Detroit Manufacturing Plant"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Pickup Address *
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.pickupAddress}
-                  onChange={(e) => handleInputChange('pickupAddress', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                  placeholder="123 Main St, City, State 12345"
+                  onChange={(e) =>
+                    handleInputChange('pickupAddress', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
+                  placeholder='123 Main St, City, State 12345'
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>
                     Manager/Contact
                   </label>
                   <input
-                    type="text"
+                    type='text'
                     value={routeData.pickupManager}
-                    onChange={(e) => handleInputChange('pickupManager', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleInputChange('pickupManager', e.target.value)
+                    }
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className='mb-1 block text-sm font-medium text-gray-700'>
                     Contact Phone
                   </label>
                   <input
-                    type="tel"
+                    type='tel'
                     value={routeData.pickupPhone}
-                    onChange={(e) => handleInputChange('pickupPhone', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleInputChange('pickupPhone', e.target.value)
+                    }
+                    className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                   />
                 </div>
               </div>
@@ -364,102 +405,119 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
           </div>
 
           {/* Requirements (Auto-filled based on location type) */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">⚠️ Requirements</h3>
-            <div className="space-y-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              ⚠️ Requirements
+            </h3>
+            <div className='space-y-4'>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Safety Requirements
                 </label>
                 <textarea
                   value={routeData.safetyRequirements}
-                  onChange={(e) => handleInputChange('safetyRequirements', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('safetyRequirements', e.target.value)
+                  }
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Access Requirements
                 </label>
                 <textarea
                   value={routeData.accessRequirements}
-                  onChange={(e) => handleInputChange('accessRequirements', e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange('accessRequirements', e.target.value)
+                  }
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
             </div>
           </div>
 
           {/* Delivery Stops */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">🚚 Delivery Stops</h3>
-            
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              🚚 Delivery Stops
+            </h3>
+
             {/* Add Stop Form */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div>
                 <input
-                  type="text"
-                  placeholder="Stop name"
+                  type='text'
+                  placeholder='Stop name'
                   value={currentStop.name}
                   onChange={(e) => handleStopChange('name', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
                 <input
-                  type="text"
-                  placeholder="Address"
+                  type='text'
+                  placeholder='Address'
                   value={currentStop.address}
                   onChange={(e) => handleStopChange('address', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
                 <input
-                  type="text"
-                  placeholder="Delivery time"
+                  type='text'
+                  placeholder='Delivery time'
                   value={currentStop.deliveryTime}
-                  onChange={(e) => handleStopChange('deliveryTime', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleStopChange('deliveryTime', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
                 <input
-                  type="text"
-                  placeholder="Items/cargo"
+                  type='text'
+                  placeholder='Items/cargo'
                   value={currentStop.items}
                   onChange={(e) => handleStopChange('items', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
             </div>
-            
+
             <button
               onClick={addStop}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mb-4"
+              className='mb-4 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700'
             >
               ➕ Add Stop
             </button>
 
             {errors.stopError && (
-              <div className="text-red-600 text-sm mb-4">{errors.stopError}</div>
+              <div className='mb-4 text-sm text-red-600'>
+                {errors.stopError}
+              </div>
             )}
 
             {/* Existing Stops */}
             {routeData.stops.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="font-medium text-gray-900">Current Stops:</h4>
+              <div className='space-y-2'>
+                <h4 className='font-medium text-gray-900'>Current Stops:</h4>
                 {routeData.stops.map((stop, index) => (
-                  <div key={index} className="flex items-center justify-between bg-white p-3 rounded border">
+                  <div
+                    key={index}
+                    className='flex items-center justify-between rounded border bg-white p-3'
+                  >
                     <div>
-                      <div className="font-medium">{stop.name}</div>
-                      <div className="text-sm text-gray-600">{stop.address}</div>
+                      <div className='font-medium'>{stop.name}</div>
+                      <div className='text-sm text-gray-600'>
+                        {stop.address}
+                      </div>
                     </div>
                     <button
                       onClick={() => removeStop(index)}
-                      className="text-red-600 hover:text-red-800"
+                      className='text-red-600 hover:text-red-800'
                     >
                       ❌
                     </button>
@@ -470,68 +528,79 @@ const RouteBuilder = ({ onRouteGenerated, initialData = {} }) => {
           </div>
 
           {/* Driver Information */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">👤 Driver Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='rounded-lg bg-gray-50 p-4'>
+            <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              👤 Driver Information
+            </h3>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Driver Name
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.driverName}
-                  onChange={(e) => handleInputChange('driverName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('driverName', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   Vehicle Number
                 </label>
                 <input
-                  type="text"
+                  type='text'
                   value={routeData.vehicleNumber}
-                  onChange={(e) => handleInputChange('vehicleNumber', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) =>
+                    handleInputChange('vehicleNumber', e.target.value)
+                  }
+                  className='w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500'
                 />
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4">
+          <div className='flex gap-4'>
             <button
               onClick={generatePreview}
-              className="flex-1 px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className='flex-1 rounded-lg bg-gray-600 px-6 py-3 text-white transition-colors hover:bg-gray-700'
             >
               👁️ Preview
             </button>
             <button
               onClick={handleGenerate}
               disabled={isGenerating}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className='flex-1 rounded-lg bg-blue-600 px-6 py-3 text-white transition-colors hover:bg-blue-700 disabled:opacity-50'
             >
               {isGenerating ? '⏳ Generating...' : '🚛 Generate Route'}
             </button>
           </div>
 
           {errors.general && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="text-red-800">{errors.general}</div>
+            <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
+              <div className='text-red-800'>{errors.general}</div>
             </div>
           )}
         </div>
 
         {/* Preview Section */}
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">📄 Document Preview</h3>
+        <div className='rounded-lg bg-gray-50 p-4'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+            📄 Document Preview
+          </h3>
           {previewDocument ? (
-            <div className="bg-white rounded border p-4 h-96 overflow-y-auto">
-              <pre className="whitespace-pre-wrap text-sm">{previewDocument}</pre>
+            <div className='h-96 overflow-y-auto rounded border bg-white p-4'>
+              <pre className='text-sm whitespace-pre-wrap'>
+                {previewDocument}
+              </pre>
             </div>
           ) : (
-            <div className="bg-white rounded border p-4 h-96 flex items-center justify-center text-gray-500">
-              Click "Preview" or "Generate Route" to see the document
+            <div className='flex h-96 items-center justify-center rounded border bg-white p-4 text-gray-500'>
+              Click &quot;Preview&quot; or &quot;Generate Route&quot; to see the
+              document
             </div>
           )}
         </div>

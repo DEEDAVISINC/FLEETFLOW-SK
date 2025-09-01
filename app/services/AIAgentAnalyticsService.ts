@@ -715,7 +715,7 @@ export class AIAgentAnalyticsService {
     interaction: any
   ): Promise<void> {
     // Implementation would update metrics in database
-    console.log(`Updating metrics for agent ${agentId} in tenant ${tenantId}`);
+    console.info(`Updating metrics for agent ${agentId} in tenant ${tenantId}`);
   }
 
   private static calculateSentiment(
@@ -1180,14 +1180,14 @@ export class AIAgentAnalyticsService {
   private static async saveConversationToDatabase(
     conversation: ConversationLog
   ): Promise<void> {
-    console.log(`Saving conversation ${conversation.id} to database`);
+    console.info(`Saving conversation ${conversation.id} to database`);
   }
 
   private static async saveMessageToDatabase(
     conversationId: string,
     message: ConversationMessage
   ): Promise<void> {
-    console.log(
+    console.info(
       `Saving message ${message.id} to conversation ${conversationId}`
     );
   }

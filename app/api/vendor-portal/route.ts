@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action') || 'dashboard';
     const tenantId = getTenantId(request);
 
-    console.log(`🏢 Vendor Portal API: ${action} for tenant ${tenantId}`);
+    console.info(`🏢 Vendor Portal API: ${action} for tenant ${tenantId}`);
 
     switch (action) {
       case 'dashboard':
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     const action = searchParams.get('action') || 'update';
     const tenantId = getTenantId(request);
 
-    console.log(`🔄 Vendor Portal API: ${action} for tenant ${tenantId}`);
+    console.info(`🔄 Vendor Portal API: ${action} for tenant ${tenantId}`);
 
     switch (action) {
       case 'update-performance':
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
 
 async function handleGetDashboardData(request: NextRequest, tenantId: string) {
   try {
-    console.log('📊 Fetching vendor portal dashboard data...');
+    console.info('📊 Fetching vendor portal dashboard data...');
 
     // Get comprehensive data in parallel
     const [
@@ -166,7 +166,7 @@ async function handleGetDashboardData(request: NextRequest, tenantId: string) {
       dataSource: 'live',
     };
 
-    console.log('✅ Vendor portal dashboard data fetched successfully');
+    console.info('✅ Vendor portal dashboard data fetched successfully');
 
     return NextResponse.json({
       success: true,
@@ -191,7 +191,7 @@ async function handleGetVendors(request: NextRequest) {
     const category = searchParams.get('category');
     const limit = parseInt(searchParams.get('limit') || '50');
 
-    console.log('🏢 Getting vendor data...');
+    console.info('🏢 Getting vendor data...');
 
     let vendors;
     if (category) {
@@ -243,7 +243,7 @@ async function handleGetVendors(request: NextRequest) {
 
 async function handleGetAnalytics(request: NextRequest) {
   try {
-    console.log('📈 Getting vendor analytics...');
+    console.info('📈 Getting vendor analytics...');
 
     const [
       performanceAnalytics,
@@ -296,7 +296,7 @@ async function handleGetPerformanceData(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const vendorId = searchParams.get('vendorId');
 
-    console.log('📊 Getting performance data...');
+    console.info('📊 Getting performance data...');
 
     if (vendorId) {
       // Get specific vendor performance
@@ -358,7 +358,7 @@ async function handleGetContracts(request: NextRequest) {
     const status = searchParams.get('status');
     const expiring = searchParams.get('expiring') === 'true';
 
-    console.log('📋 Getting contract data...');
+    console.info('📋 Getting contract data...');
 
     let vendors = vendorManagementService.getAllVendors();
 
@@ -403,7 +403,7 @@ async function handleGetContracts(request: NextRequest) {
 
 async function handleGetIntegrations(request: NextRequest) {
   try {
-    console.log('🔗 Getting integration data...');
+    console.info('🔗 Getting integration data...');
 
     const integrationHealth = vendorManagementService.getIntegrationHealth();
     const vendors = vendorManagementService.getAllVendors();
@@ -446,7 +446,7 @@ async function handleGetIntegrations(request: NextRequest) {
 
 async function handleGetAlerts(request: NextRequest) {
   try {
-    console.log('🚨 Getting vendor alerts...');
+    console.info('🚨 Getting vendor alerts...');
 
     const alerts = vendorManagementService.getVendorAlerts();
 
@@ -486,7 +486,7 @@ async function handleUpdatePerformance(request: NextRequest) {
       );
     }
 
-    console.log(`🔄 Updating performance for vendor: ${vendorId}`);
+    console.info(`🔄 Updating performance for vendor: ${vendorId}`);
 
     const success =
       await vendorManagementService.updateVendorPerformance(vendorId);
@@ -514,7 +514,7 @@ async function handleUpdatePerformance(request: NextRequest) {
 
 async function handleSyncBilling(request: NextRequest) {
   try {
-    console.log('💰 Syncing vendor billing data...');
+    console.info('💰 Syncing vendor billing data...');
 
     await vendorManagementService.syncWithBillingSystem();
 

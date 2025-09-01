@@ -19,12 +19,12 @@ export default function VendorPortalTest() {
 
   // Debug: Log activeTab changes
   useEffect(() => {
-    console.log('Active tab changed to:', activeTab);
+    console.info('Active tab changed to:', activeTab);
   }, [activeTab]);
 
   // Force CSS reset for scrolling on component mount
   useEffect(() => {
-    console.log('🎯 INITIALIZING SCROLL CSS RESET');
+    console.info('🎯 INITIALIZING SCROLL CSS RESET');
 
     // Reset any CSS that might prevent scrolling
     document.documentElement.style.overflow = 'auto';
@@ -34,7 +34,7 @@ export default function VendorPortalTest() {
     document.body.style.height = 'auto';
     document.body.style.scrollBehavior = 'auto';
 
-    console.log('🎯 CSS RESET COMPLETE');
+    console.info('🎯 CSS RESET COMPLETE');
   }, []);
 
   // Check for session on mount
@@ -49,7 +49,7 @@ export default function VendorPortalTest() {
 
   // SIMPLE PAGE REFRESH: Most reliable way to get to top
   const scrollToTop = () => {
-    console.log('🔄 FORCING PAGE REFRESH - Direct approach');
+    console.info('🔄 FORCING PAGE REFRESH - Direct approach');
     window.location.reload();
   };
 
@@ -184,7 +184,7 @@ export default function VendorPortalTest() {
           <button
             key={tab.id}
             onClick={() => {
-              console.log('Tab clicked:', tab.id);
+              console.info('Tab clicked:', tab.id);
               setActiveTab(tab.id as any);
               scrollToTop();
             }}

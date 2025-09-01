@@ -53,11 +53,11 @@ export class AutomatedLoadOptimizationService {
    */
   startAutomaticOptimization(): void {
     if (!this.config.enabled) {
-      console.log('🚫 Automatic optimization is disabled');
+      console.info('🚫 Automatic optimization is disabled');
       return;
     }
 
-    console.log('🤖 Starting automatic load optimization...');
+    console.info('🤖 Starting automatic load optimization...');
 
     // Run optimization every 5 minutes
     this.optimizationInterval = setInterval(
@@ -78,7 +78,7 @@ export class AutomatedLoadOptimizationService {
     if (this.optimizationInterval) {
       clearInterval(this.optimizationInterval);
       this.optimizationInterval = null;
-      console.log('⏹️ Automatic optimization stopped');
+      console.info('⏹️ Automatic optimization stopped');
     }
   }
 
@@ -87,7 +87,7 @@ export class AutomatedLoadOptimizationService {
    */
   private async runOptimizationCycle(): Promise<void> {
     try {
-      console.log('🔄 Running optimization cycle...');
+      console.info('🔄 Running optimization cycle...');
 
       // 1. Get all active loads and available drivers
       const activeLoads = await this.getActiveLoads();
@@ -226,7 +226,7 @@ export class AutomatedLoadOptimizationService {
     route: TimeOptimizedRoute,
     driver: DriverAvailabilityWindow
   ): Promise<void> {
-    console.log(`🚀 Implementing optimization for ${driver.driverName}`);
+    console.info(`🚀 Implementing optimization for ${driver.driverName}`);
 
     // 1. Update driver schedule
     await this.updateDriverSchedule(driver.driverId, route);
@@ -252,7 +252,7 @@ export class AutomatedLoadOptimizationService {
     triggerId: string
   ): Promise<void> {
     // Store in review queue (would integrate with your review system)
-    console.log(`📋 Queued for review: ${triggerId}`);
+    console.info(`📋 Queued for review: ${triggerId}`);
 
     // In a real implementation, this would:
     // - Save to database review queue
@@ -270,17 +270,17 @@ export class AutomatedLoadOptimizationService {
     for (const message of messages) {
       if (this.config.notificationSettings.dashboardNotifications) {
         // Send dashboard notification
-        console.log(`📱 Dashboard: ${message}`);
+        console.info(`📱 Dashboard: ${message}`);
       }
 
       if (this.config.notificationSettings.emailAlerts) {
         // Send email notification
-        console.log(`📧 Email: ${message}`);
+        console.info(`📧 Email: ${message}`);
       }
 
       if (this.config.notificationSettings.smsAlerts) {
         // Send SMS notification
-        console.log(`📱 SMS: ${message}`);
+        console.info(`📱 SMS: ${message}`);
       }
     }
   }
@@ -291,7 +291,7 @@ export class AutomatedLoadOptimizationService {
   async onNewLoad(load: LTLLoad): Promise<void> {
     if (!this.config.enabled) return;
 
-    console.log(`🆕 New load added: ${load.id}, triggering optimization...`);
+    console.info(`🆕 New load added: ${load.id}, triggering optimization...`);
 
     // Find drivers who could handle this load
     const compatibleDrivers = await this.findCompatibleDrivers(load);
@@ -313,7 +313,7 @@ export class AutomatedLoadOptimizationService {
   async onDriverAvailable(driver: DriverAvailabilityWindow): Promise<void> {
     if (!this.config.enabled) return;
 
-    console.log(
+    console.info(
       `👤 Driver available: ${driver.driverName}, triggering optimization...`
     );
 
@@ -400,22 +400,3 @@ export class AutomatedLoadOptimizationService {
 }
 
 export default AutomatedLoadOptimizationService;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

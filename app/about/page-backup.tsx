@@ -26,7 +26,7 @@ export default function AboutUsPage() {
         background:
           'linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%)',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Header */}
@@ -184,7 +184,7 @@ export default function AboutUsPage() {
                   <p style={{ marginBottom: '24px' }}>
                     At FleetFlow, we believe in{' '}
                     <strong>Data-Driven Excellence</strong> - our foundational
-                    philosophy that drives everything we do. We've built a
+                    philosophy that drives everything we do. We&apos;ve built a
                     culture where advanced analytics meets business
                     intelligence, and where every team member contributes to
                     transforming raw data into strategic competitive advantages.
@@ -273,8 +273,8 @@ export default function AboutUsPage() {
                     We foster an environment where continuous learning through{' '}
                     <strong>FleetFlow University℠</strong>
                     ensures our team stays ahead of analytics trends, and where
-                    every voice contributes to our mission of becoming "The
-                    Transportation Intelligence Hub."
+                    every voice contributes to our mission of becoming &quot;The
+                    Transportation Intelligence Hub.&quot;
                   </p>
                 </div>
               </div>
@@ -600,10 +600,17 @@ export default function AboutUsPage() {
                   🚛 One-Stop Logistics Intelligence Agency
                 </h2>
 
-                <div style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.8', fontSize: '16px' }}>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: '1.8',
+                    fontSize: '16px',
+                  }}
+                >
                   <div
                     style={{
-                      background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.05))',
+                      background:
+                        'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(249, 115, 22, 0.05))',
                       borderRadius: '20px',
                       padding: '40px',
                       border: '1px solid rgba(251, 146, 60, 0.3)',
@@ -611,49 +618,144 @@ export default function AboutUsPage() {
                       textAlign: 'center',
                     }}
                   >
-                    <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 20px 0' }}>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '28px',
+                        margin: '0 0 20px 0',
+                      }}
+                    >
                       🎯 The Complete Logistics Intelligence Ecosystem
                     </h3>
-                    <p style={{ marginBottom: '24px', fontSize: '18px', maxWidth: '900px', margin: '0 auto 24px auto' }}>
-                      <strong>FLEETFLOW TMS LLC</strong> is the industry's most comprehensive logistics intelligence agency, providing
-                      end-to-end data-driven insights across every aspect of the supply chain. From freight movement to last-mile
-                      delivery, we transform logistics complexity into competitive advantage through advanced analytics and AI-powered intelligence.
+                    <p
+                      style={{
+                        marginBottom: '24px',
+                        fontSize: '18px',
+                        maxWidth: '900px',
+                        margin: '0 auto 24px auto',
+                      }}
+                    >
+                      <strong>FLEETFLOW TMS LLC</strong> is the industry&apos;s
+                      most comprehensive logistics intelligence agency,
+                      providing end-to-end data-driven insights across every
+                      aspect of the supply chain. From freight movement to
+                      last-mile delivery, we transform logistics complexity into
+                      competitive advantage through advanced analytics and
+                      AI-powered intelligence.
                     </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', maxWidth: '800px', margin: '0 auto' }}>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#fb923c' }}>360° Supply Chain View</strong>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(180px, 1fr))',
+                        gap: '16px',
+                        maxWidth: '800px',
+                        margin: '0 auto',
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#fb923c' }}>
+                          360° Supply Chain View
+                        </strong>
                       </div>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#fb923c' }}>Real-Time Intelligence</strong>
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#fb923c' }}>
+                          Real-Time Intelligence
+                        </strong>
                       </div>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#fb923c' }}>Predictive Analytics</strong>
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#fb923c' }}>
+                          Predictive Analytics
+                        </strong>
                       </div>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#fb923c' }}>Cost Optimization</strong>
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#fb923c' }}>
+                          Cost Optimization
+                        </strong>
                       </div>
                     </div>
                   </div>
 
                   {/* Core Logistics Intelligence Services */}
-                  <div style={{ display: 'grid', gap: '32px', marginBottom: '40px' }}>
-
+                  <div
+                    style={{
+                      display: 'grid',
+                      gap: '32px',
+                      marginBottom: '40px',
+                    }}
+                  >
                     {/* Freight Intelligence */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(21, 128, 61, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(21, 128, 61, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(34, 197, 94, 0.3)',
                       }}
                     >
-                      <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <h3
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          margin: '0 0 24px 0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
                         🚚 Freight Intelligence & Optimization
                       </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '24px',
+                        }}
+                      >
                         <div>
-                          <h4 style={{ color: '#22c55e', fontSize: '18px', margin: '0 0 12px 0' }}>📊 Market Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#22c55e',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            📊 Market Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Real-time freight rate analytics</li>
                             <li>Capacity forecasting & demand prediction</li>
                             <li>Lane-specific market intelligence</li>
@@ -661,8 +763,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#22c55e', fontSize: '18px', margin: '0 0 12px 0' }}>🎯 Load Optimization</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#22c55e',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🎯 Load Optimization
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>AI-powered load matching</li>
                             <li>Dynamic route optimization</li>
                             <li>Backhaul opportunity identification</li>
@@ -670,8 +787,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#22c55e', fontSize: '18px', margin: '0 0 12px 0' }}>⚡ Real-Time Tracking</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#22c55e',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            ⚡ Real-Time Tracking
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>GPS-enabled shipment monitoring</li>
                             <li>ETA prediction algorithms</li>
                             <li>Exception management alerts</li>
@@ -684,19 +816,51 @@ export default function AboutUsPage() {
                     {/* Supply Chain Intelligence */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(59, 130, 246, 0.3)',
                       }}
                     >
-                      <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <h3
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          margin: '0 0 24px 0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
                         🔗 Supply Chain Intelligence & Analytics
                       </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '24px',
+                        }}
+                      >
                         <div>
-                          <h4 style={{ color: '#3b82f6', fontSize: '18px', margin: '0 0 12px 0' }}>📈 Demand Forecasting</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            📈 Demand Forecasting
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>AI-powered demand prediction</li>
                             <li>Seasonal trend analysis</li>
                             <li>Market volatility modeling</li>
@@ -704,8 +868,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#3b82f6', fontSize: '18px', margin: '0 0 12px 0' }}>🏭 Warehouse Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🏭 Warehouse Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Warehouse performance analytics</li>
                             <li>Pick path optimization</li>
                             <li>Storage utilization analysis</li>
@@ -713,8 +892,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#3b82f6', fontSize: '18px', margin: '0 0 12px 0' }}>🌐 Network Optimization</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🌐 Network Optimization
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Distribution network modeling</li>
                             <li>Hub location optimization</li>
                             <li>Cross-docking efficiency</li>
@@ -727,19 +921,51 @@ export default function AboutUsPage() {
                     {/* Fleet Intelligence */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(109, 40, 217, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(109, 40, 217, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(139, 92, 246, 0.3)',
                       }}
                     >
-                      <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <h3
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          margin: '0 0 24px 0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
                         🚛 Fleet Intelligence & Asset Optimization
                       </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '24px',
+                        }}
+                      >
                         <div>
-                          <h4 style={{ color: '#8b5cf6', fontSize: '18px', margin: '0 0 12px 0' }}>🔧 Maintenance Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#8b5cf6',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🔧 Maintenance Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Predictive maintenance algorithms</li>
                             <li>Vehicle health monitoring</li>
                             <li>Breakdown prediction models</li>
@@ -747,8 +973,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#8b5cf6', fontSize: '18px', margin: '0 0 12px 0' }}>⛽ Fuel Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#8b5cf6',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            ⛽ Fuel Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Fuel consumption analytics</li>
                             <li>Route efficiency optimization</li>
                             <li>Driver behavior analysis</li>
@@ -756,8 +997,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#8b5cf6', fontSize: '18px', margin: '0 0 12px 0' }}>👥 Driver Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#8b5cf6',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            👥 Driver Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Driver performance analytics</li>
                             <li>Safety score monitoring</li>
                             <li>Training need identification</li>
@@ -770,19 +1026,51 @@ export default function AboutUsPage() {
                     {/* Last Mile Intelligence */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(190, 24, 93, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(190, 24, 93, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(236, 72, 153, 0.3)',
                       }}
                     >
-                      <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <h3
+                        style={{
+                          color: 'white',
+                          fontSize: '28px',
+                          margin: '0 0 24px 0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                        }}
+                      >
                         📦 Last-Mile Intelligence & Customer Experience
                       </h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '24px',
+                        }}
+                      >
                         <div>
-                          <h4 style={{ color: '#ec4899', fontSize: '18px', margin: '0 0 12px 0' }}>🗺️ Delivery Optimization</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#ec4899',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🗺️ Delivery Optimization
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Route density optimization</li>
                             <li>Time window scheduling</li>
                             <li>Dynamic re-routing algorithms</li>
@@ -790,8 +1078,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#ec4899', fontSize: '18px', margin: '0 0 12px 0' }}>📱 Customer Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#ec4899',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            📱 Customer Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>Delivery preference analytics</li>
                             <li>Customer satisfaction scoring</li>
                             <li>Communication optimization</li>
@@ -799,8 +1102,23 @@ export default function AboutUsPage() {
                           </ul>
                         </div>
                         <div>
-                          <h4 style={{ color: '#ec4899', fontSize: '18px', margin: '0 0 12px 0' }}>⚡ Performance Intelligence</h4>
-                          <ul style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                          <h4
+                            style={{
+                              color: '#ec4899',
+                              fontSize: '18px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            ⚡ Performance Intelligence
+                          </h4>
+                          <ul
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              paddingLeft: '20px',
+                            }}
+                          >
                             <li>On-time delivery analytics</li>
                             <li>Cost per delivery optimization</li>
                             <li>Service level benchmarking</li>
@@ -814,21 +1132,47 @@ export default function AboutUsPage() {
                   {/* Comprehensive Intelligence Dashboard */}
                   <div
                     style={{
-                      background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.05))',
+                      background:
+                        'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.05))',
                       borderRadius: '20px',
                       padding: '40px',
                       border: '1px solid rgba(20, 184, 166, 0.3)',
                       marginBottom: '40px',
                     }}
                   >
-                    <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 24px 0', textAlign: 'center' }}>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '28px',
+                        margin: '0 0 24px 0',
+                        textAlign: 'center',
+                      }}
+                    >
                       📊 Unified Logistics Intelligence Dashboard
                     </h3>
-                    <p style={{ textAlign: 'center', marginBottom: '32px', fontSize: '18px', opacity: 0.9, maxWidth: '800px', margin: '0 auto 32px auto' }}>
-                      Our proprietary intelligence platform aggregates data from every touchpoint in your logistics operation,
-                      providing a single source of truth with real-time insights, predictive analytics, and actionable recommendations.
+                    <p
+                      style={{
+                        textAlign: 'center',
+                        marginBottom: '32px',
+                        fontSize: '18px',
+                        opacity: 0.9,
+                        maxWidth: '800px',
+                        margin: '0 auto 32px auto',
+                      }}
+                    >
+                      Our proprietary intelligence platform aggregates data from
+                      every touchpoint in your logistics operation, providing a
+                      single source of truth with real-time insights, predictive
+                      analytics, and actionable recommendations.
                     </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '20px',
+                      }}
+                    >
                       {[
                         '🎯 KPI Monitoring',
                         '📈 Trend Analysis',
@@ -837,16 +1181,25 @@ export default function AboutUsPage() {
                         '💰 Cost Analysis',
                         '⏱️ Performance Tracking',
                         '📋 Custom Reports',
-                        '🤖 AI Recommendations'
+                        '🤖 AI Recommendations',
                       ].map((feature, index) => (
-                        <div key={index} style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          borderRadius: '12px',
-                          padding: '20px',
-                          textAlign: 'center',
-                          border: '1px solid rgba(255, 255, 255, 0.1)'
-                        }}>
-                          <span style={{ color: '#14b8a6', fontSize: '16px', fontWeight: '600' }}>
+                        <div
+                          key={index}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '12px',
+                            padding: '20px',
+                            textAlign: 'center',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: '#14b8a6',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
                             {feature}
                           </span>
                         </div>
@@ -863,56 +1216,179 @@ export default function AboutUsPage() {
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                     }}
                   >
-                    <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 32px 0', textAlign: 'center' }}>
-                      🏆 Why FLEETFLOW is Your Complete Logistics Intelligence Partner
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '28px',
+                        margin: '0 0 32px 0',
+                        textAlign: 'center',
+                      }}
+                    >
+                      🏆 Why FLEETFLOW is Your Complete Logistics Intelligence
+                      Partner
                     </h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '32px',
+                      }}
+                    >
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔍</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '20px', margin: '0 0 16px 0' }}>360° Visibility</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8, margin: 0, lineHeight: '1.6' }}>
-                          Complete end-to-end visibility across your entire logistics ecosystem, from origin to final delivery,
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                          🔍
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '20px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          360° Visibility
+                        </h4>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            margin: 0,
+                            lineHeight: '1.6',
+                          }}
+                        >
+                          Complete end-to-end visibility across your entire
+                          logistics ecosystem, from origin to final delivery,
                           with real-time tracking and comprehensive analytics.
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>🤖</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '20px', margin: '0 0 16px 0' }}>AI-Powered Intelligence</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.6' }}>
-                          Advanced machine learning algorithms that continuously learn from your data to provide
-                          increasingly accurate predictions and optimization recommendations.
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                          🤖
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '20px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          AI-Powered Intelligence
+                        </h4>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            margin: 0,
+                            lineHeight: '1.6',
+                          }}
+                        >
+                          Advanced machine learning algorithms that continuously
+                          learn from your data to provide increasingly accurate
+                          predictions and optimization recommendations.
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '20px', margin: '0 0 16px 0' }}>Real-Time Action</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.6' }}>
-                          Instant alerts, automated responses, and real-time optimization ensure your logistics
-                          operations stay ahead of issues and capitalize on opportunities.
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                          ⚡
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '20px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          Real-Time Action
+                        </h4>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            margin: 0,
+                            lineHeight: '1.6',
+                          }}
+                        >
+                          Instant alerts, automated responses, and real-time
+                          optimization ensure your logistics operations stay
+                          ahead of issues and capitalize on opportunities.
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>💰</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '20px', margin: '0 0 16px 0' }}>Measurable ROI</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.6' }}>
-                          Proven cost reduction of 15-30% through optimization, with detailed ROI tracking
-                          and performance benchmarking against industry standards.
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                          💰
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '20px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          Measurable ROI
+                        </h4>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            margin: 0,
+                            lineHeight: '1.6',
+                          }}
+                        >
+                          Proven cost reduction of 15-30% through optimization,
+                          with detailed ROI tracking and performance
+                          benchmarking against industry standards.
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔧</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '20px', margin: '0 0 16px 0' }}>Seamless Integration</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.6' }}>
-                          Easy integration with existing TMS, WMS, ERP systems through our comprehensive API
-                          framework and pre-built connectors.
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                          🔧
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '20px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          Seamless Integration
+                        </h4>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            margin: 0,
+                            lineHeight: '1.6',
+                          }}
+                        >
+                          Easy integration with existing TMS, WMS, ERP systems
+                          through our comprehensive API framework and pre-built
+                          connectors.
                         </p>
                       </div>
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>📞</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '20px', margin: '0 0 16px 0' }}>24/7 Support</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.6' }}>
-                          Dedicated logistics intelligence experts available around the clock to ensure
-                          optimal platform performance and continuous value delivery.
+                        <div style={{ fontSize: '48px', marginBottom: '20px' }}>
+                          📞
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '20px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          24/7 Support
+                        </h4>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            opacity: 0.8,
+                            margin: 0,
+                            lineHeight: '1.6',
+                          }}
+                        >
+                          Dedicated logistics intelligence experts available
+                          around the clock to ensure optimal platform
+                          performance and continuous value delivery.
                         </p>
                       </div>
                     </div>
@@ -938,93 +1414,230 @@ export default function AboutUsPage() {
                   👥 Executive Leadership Team
                 </h2>
 
-                <div style={{ color: 'rgba(255, 255, 255, 0.9)', lineHeight: '1.8', fontSize: '16px' }}>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: '1.8',
+                    fontSize: '16px',
+                  }}
+                >
                   <div
                     style={{
-                      background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.05))',
+                      background:
+                        'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.05))',
                       borderRadius: '20px',
                       padding: '40px',
                       border: '1px solid rgba(20, 184, 166, 0.3)',
                       marginBottom: '40px',
-                      textAlign: 'center'
+                      textAlign: 'center',
                     }}
                   >
-                    <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 20px 0' }}>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '28px',
+                        margin: '0 0 20px 0',
+                      }}
+                    >
                       🎯 Leadership Vision & Mission
                     </h3>
-                    <p style={{ marginBottom: '24px', fontSize: '18px', maxWidth: '800px', margin: '0 auto 24px auto' }}>
-                      Our executive team drives FLEETFLOW TMS LLC's transformation into <strong>"The Transportation Intelligence Hub"</strong> -
-                      combining decades of data science expertise, enterprise software leadership, and transportation industry mastery
-                      to revolutionize how businesses leverage analytics for competitive advantage.
+                    <p
+                      style={{
+                        marginBottom: '24px',
+                        fontSize: '18px',
+                        maxWidth: '800px',
+                        margin: '0 auto 24px auto',
+                      }}
+                    >
+                      Our executive team drives FLEETFLOW TMS LLC's
+                      transformation into{' '}
+                      <strong>""The Transportation Intelligence Hub""</strong> -
+                      combining decades of data science expertise, enterprise
+                      software leadership, and transportation industry mastery
+                      to revolutionize how businesses leverage analytics for
+                      competitive advantage.
                     </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', maxWidth: '600px', margin: '0 auto' }}>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#14b8a6' }}>$5-10B Platform Valuation</strong>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(200px, 1fr))',
+                        gap: '16px',
+                        maxWidth: '600px',
+                        margin: '0 auto',
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#14b8a6' }}>
+                          $5-10B Platform Valuation
+                        </strong>
                       </div>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#14b8a6' }}>Strategic Acquisition Ready</strong>
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#14b8a6' }}>
+                          Strategic Acquisition Ready
+                        </strong>
                       </div>
-                      <div style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '12px' }}>
-                        <strong style={{ color: '#14b8a6' }}>25+ Years Combined Experience</strong>
+                      <div
+                        style={{
+                          padding: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <strong style={{ color: '#14b8a6' }}>
+                          25+ Years Combined Experience
+                        </strong>
                       </div>
                     </div>
                   </div>
 
                   {/* Executive Team Profiles */}
-                  <div style={{ display: 'grid', gap: '32px', marginBottom: '40px' }}>
-
+                  <div
+                    style={{
+                      display: 'grid',
+                      gap: '32px',
+                      marginBottom: '40px',
+                    }}
+                  >
                     {/* Chief Executive Officer & Founder */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(59, 130, 246, 0.3)',
                       }}
                     >
-                      <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '32px',
+                          alignItems: 'flex-start',
+                        }}
+                      >
                         <div
                           style={{
                             width: '140px',
                             height: '140px',
-                            background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                            background:
+                              'linear-gradient(135deg, #3b82f6, #2563eb)',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '56px',
                             flexShrink: 0,
-                            boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)'
+                            boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3)',
                           }}
                         >
                           🎯
                         </div>
                         <div style={{ flex: 1 }}>
-                          <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 8px 0' }}>
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontSize: '28px',
+                              margin: '0 0 8px 0',
+                            }}
+                          >
                             Dee Davis
                           </h3>
-                          <p style={{ color: '#3b82f6', fontSize: '18px', margin: '0 0 20px 0', fontWeight: '600' }}>
+                          <p
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '18px',
+                              margin: '0 0 20px 0',
+                              fontWeight: '600',
+                            }}
+                          >
                             Chief Executive Officer & Founder
                           </p>
-                          <p style={{ margin: '0 0 20px 0', fontSize: '16px', opacity: 0.9, lineHeight: '1.7' }}>
-                            Visionary entrepreneur and data science pioneer with 15+ years transforming raw data into billion-dollar
-                            insights. Dee founded FLEETFLOW TMS LLC with the mission to become <strong>"The Transportation Intelligence Hub"</strong> -
-                            the definitive platform where transportation data becomes strategic advantage.
+                          <p
+                            style={{
+                              margin: '0 0 20px 0',
+                              fontSize: '16px',
+                              opacity: 0.9,
+                              lineHeight: '1.7',
+                            }}
+                          >
+                            Visionary entrepreneur and data science pioneer with
+                            15+ years transforming raw data into billion-dollar
+                            insights. Dee founded FLEETFLOW TMS LLC with the
+                            mission to become{' '}
+                            <strong>
+                              ""The Transportation Intelligence Hub""
+                            </strong>{' '}
+                            - the definitive platform where transportation data
+                            becomes strategic advantage.
                           </p>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(280px, 1fr))',
+                              gap: '16px',
+                            }}
+                          >
                             <div>
-                              <h4 style={{ color: '#3b82f6', fontSize: '16px', margin: '0 0 8px 0' }}>🎓 Education & Background</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8, margin: 0, lineHeight: '1.5' }}>
-                                Advanced Analytics & Data Science<br/>
-                                Enterprise Software Architecture<br/>
+                              <h4
+                                style={{
+                                  color: '#3b82f6',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🎓 Education & Background
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                Advanced Analytics & Data Science
+                                <br />
+                                Enterprise Software Architecture
+                                <br />
                                 Transportation Industry Leadership
                               </p>
                             </div>
                             <div>
-                              <h4 style={{ color: '#3b82f6', fontSize: '16px', margin: '0 0 8px 0' }}>🏆 Key Achievements</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8, margin: 0, lineHeight: '1.5' }}>
-                                Built $5-10B valuation platform<br/>
-                                Strategic partnerships with Fortune 500<br/>
+                              <h4
+                                style={{
+                                  color: '#3b82f6',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🏆 Key Achievements
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                Built $5-10B valuation platform
+                                <br />
+                                Strategic partnerships with Fortune 500
+                                <br />
                                 AI-powered analytics innovation leader
                               </p>
                             </div>
@@ -1036,55 +1649,127 @@ export default function AboutUsPage() {
                     {/* Chief Technology Officer */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(16, 185, 129, 0.3)',
                       }}
                     >
-                      <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '32px',
+                          alignItems: 'flex-start',
+                        }}
+                      >
                         <div
                           style={{
                             width: '140px',
                             height: '140px',
-                            background: 'linear-gradient(135deg, #10b981, #059669)',
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '56px',
                             flexShrink: 0,
-                            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+                            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
                           }}
                         >
                           🔬
                         </div>
                         <div style={{ flex: 1 }}>
-                          <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 8px 0' }}>
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontSize: '28px',
+                              margin: '0 0 8px 0',
+                            }}
+                          >
                             Dr. Alex Chen
                           </h3>
-                          <p style={{ color: '#10b981', fontSize: '18px', margin: '0 0 20px 0', fontWeight: '600' }}>
+                          <p
+                            style={{
+                              color: '#10b981',
+                              fontSize: '18px',
+                              margin: '0 0 20px 0',
+                              fontWeight: '600',
+                            }}
+                          >
                             Chief Technology Officer & Co-Founder
                           </p>
-                          <p style={{ margin: '0 0 20px 0', fontSize: '16px', opacity: 0.9, lineHeight: '1.7' }}>
-                            World-renowned AI researcher and machine learning architect with PhD in Computer Science from MIT.
-                            Dr. Chen leads FleetFlow's technical innovation, overseeing the development of cutting-edge analytics
-                            algorithms that power our transportation intelligence platform.
+                          <p
+                            style={{
+                              margin: '0 0 20px 0',
+                              fontSize: '16px',
+                              opacity: 0.9,
+                              lineHeight: '1.7',
+                            }}
+                          >
+                            World-renowned AI researcher and machine learning
+                            architect with PhD in Computer Science from MIT. Dr.
+                            Chen leads FleetFlow&apos;s technical innovation,
+                            overseeing the development of cutting-edge analytics
+                            algorithms that power our transportation
+                            intelligence platform.
                           </p>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(280px, 1fr))',
+                              gap: '16px',
+                            }}
+                          >
                             <div>
-                              <h4 style={{ color: '#10b981', fontSize: '16px', margin: '0 0 8px 0' }}>🎓 Education & Background</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8, margin: 0, lineHeight: '1.5' }}>
-                                PhD Computer Science, MIT<br/>
-                                Former Google AI Research Lead<br/>
+                              <h4
+                                style={{
+                                  color: '#10b981',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🎓 Education & Background
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                PhD Computer Science, MIT
+                                <br />
+                                Former Google AI Research Lead
+                                <br />
                                 12+ patents in ML/AI algorithms
                               </p>
                             </div>
                             <div>
-                              <h4 style={{ color: '#10b981', fontSize: '16px', margin: '0 0 8px 0' }}>🏆 Key Achievements</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.5' }}>
-                                Built Flowter AI Analytics Engine<br/>
-                                99.9% platform uptime architecture<br/>
+                              <h4
+                                style={{
+                                  color: '#10b981',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🏆 Key Achievements
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                Built Flowter AI Analytics Engine
+                                <br />
+                                99.9% platform uptime architecture
+                                <br />
                                 Real-time predictive modeling systems
                               </p>
                             </div>
@@ -1096,55 +1781,127 @@ export default function AboutUsPage() {
                     {/* Chief Operations Officer */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(245, 158, 11, 0.3)',
                       }}
                     >
-                      <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '32px',
+                          alignItems: 'flex-start',
+                        }}
+                      >
                         <div
                           style={{
                             width: '140px',
                             height: '140px',
-                            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                            background:
+                              'linear-gradient(135deg, #f59e0b, #d97706)',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '56px',
                             flexShrink: 0,
-                            boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)'
+                            boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)',
                           }}
                         >
                           📊
                         </div>
                         <div style={{ flex: 1 }}>
-                          <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 8px 0' }}>
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontSize: '28px',
+                              margin: '0 0 8px 0',
+                            }}
+                          >
                             Sarah Martinez
                           </h3>
-                          <p style={{ color: '#f59e0b', fontSize: '18px', margin: '0 0 20px 0', fontWeight: '600' }}>
+                          <p
+                            style={{
+                              color: '#f59e0b',
+                              fontSize: '18px',
+                              margin: '0 0 20px 0',
+                              fontWeight: '600',
+                            }}
+                          >
                             Chief Operations Officer
                           </p>
-                          <p style={{ margin: '0 0 20px 0', fontSize: '16px', opacity: 0.9, lineHeight: '1.7' }}>
-                            Operations excellence leader with 20+ years in transportation logistics and data-driven process optimization.
-                            Sarah ensures FleetFlow's analytics platform delivers measurable ROI while maintaining industry-leading
-                            operational efficiency and client success rates.
+                          <p
+                            style={{
+                              margin: '0 0 20px 0',
+                              fontSize: '16px',
+                              opacity: 0.9,
+                              lineHeight: '1.7',
+                            }}
+                          >
+                            Operations excellence leader with 20+ years in
+                            transportation logistics and data-driven process
+                            optimization. Sarah ensures FleetFlow&apos;s
+                            analytics platform delivers measurable ROI while
+                            maintaining industry-leading operational efficiency
+                            and client success rates.
                           </p>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(280px, 1fr))',
+                              gap: '16px',
+                            }}
+                          >
                             <div>
-                              <h4 style={{ color: '#f59e0b', fontSize: '16px', margin: '0 0 8px 0' }}>🎓 Education & Background</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8, margin: 0, lineHeight: '1.5' }}>
-                                MBA Operations Management, Wharton<br/>
-                                Former VP Operations, FedEx<br/>
+                              <h4
+                                style={{
+                                  color: '#f59e0b',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🎓 Education & Background
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                MBA Operations Management, Wharton
+                                <br />
+                                Former VP Operations, FedEx
+                                <br />
                                 Certified Six Sigma Black Belt
                               </p>
                             </div>
                             <div>
-                              <h4 style={{ color: '#f59e0b', fontSize: '16px', margin: '0 0 8px 0' }}>🏆 Key Achievements</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.5' }}>
-                                98% client retention rate<br/>
-                                $50M+ cost savings delivered<br/>
+                              <h4
+                                style={{
+                                  color: '#f59e0b',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🏆 Key Achievements
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                98% client retention rate
+                                <br />
+                                $50M+ cost savings delivered
+                                <br />
                                 Industry-leading process automation
                               </p>
                             </div>
@@ -1156,55 +1913,127 @@ export default function AboutUsPage() {
                     {/* Chief Data Officer */}
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.05))',
                         borderRadius: '20px',
                         padding: '40px',
                         border: '1px solid rgba(139, 92, 246, 0.3)',
                       }}
                     >
-                      <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '32px',
+                          alignItems: 'flex-start',
+                        }}
+                      >
                         <div
                           style={{
                             width: '140px',
                             height: '140px',
-                            background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                            background:
+                              'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '56px',
                             flexShrink: 0,
-                            boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)'
+                            boxShadow: '0 8px 32px rgba(139, 92, 246, 0.3)',
                           }}
                         >
                           🧠
                         </div>
                         <div style={{ flex: 1 }}>
-                          <h3 style={{ color: 'white', fontSize: '28px', margin: '0 0 8px 0' }}>
+                          <h3
+                            style={{
+                              color: 'white',
+                              fontSize: '28px',
+                              margin: '0 0 8px 0',
+                            }}
+                          >
                             Michael Rodriguez
                           </h3>
-                          <p style={{ color: '#8b5cf6', fontSize: '18px', margin: '0 0 20px 0', fontWeight: '600' }}>
+                          <p
+                            style={{
+                              color: '#8b5cf6',
+                              fontSize: '18px',
+                              margin: '0 0 20px 0',
+                              fontWeight: '600',
+                            }}
+                          >
                             Chief Data Officer & Head of Analytics
                           </p>
-                          <p style={{ margin: '0 0 20px 0', fontSize: '16px', opacity: 0.9, lineHeight: '1.7' }}>
-                            Data science visionary and predictive modeling expert with extensive experience at Amazon and Tesla.
-                            Michael architected FleetFlow's core analytics infrastructure and leads our data science team in
-                            developing next-generation business intelligence solutions.
+                          <p
+                            style={{
+                              margin: '0 0 20px 0',
+                              fontSize: '16px',
+                              opacity: 0.9,
+                              lineHeight: '1.7',
+                            }}
+                          >
+                            Data science visionary and predictive modeling
+                            expert with extensive experience at Amazon and
+                            Tesla. Michael architected FleetFlow&apos;s core
+                            analytics infrastructure and leads our data science
+                            team in developing next-generation business
+                            intelligence solutions.
                           </p>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns:
+                                'repeat(auto-fit, minmax(280px, 1fr))',
+                              gap: '16px',
+                            }}
+                          >
                             <div>
-                              <h4 style={{ color: '#8b5cf6', fontSize: '16px', margin: '0 0 8px 0' }}>🎓 Education & Background</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.5' }}>
-                                MS Data Science, Stanford<br/>
-                                Former Principal Data Scientist, Amazon<br/>
+                              <h4
+                                style={{
+                                  color: '#8b5cf6',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🎓 Education & Background
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                MS Data Science, Stanford
+                                <br />
+                                Former Principal Data Scientist, Amazon
+                                <br />
                                 Tesla Autopilot Analytics Lead
                               </p>
                             </div>
                             <div>
-                              <h4 style={{ color: '#8b5cf6', fontSize: '16px', margin: '0 0 8px 0' }}>🏆 Key Achievements</h4>
-                              <p style={{ fontSize: '14px', opacity: 0.8', margin: 0, lineHeight: '1.5' }}>
-                                Petabyte-scale data processing<br/>
-                                Machine learning model deployment<br/>
+                              <h4
+                                style={{
+                                  color: '#8b5cf6',
+                                  fontSize: '16px',
+                                  margin: '0 0 8px 0',
+                                }}
+                              >
+                                🏆 Key Achievements
+                              </h4>
+                              <p
+                                style={{
+                                  fontSize: '14px',
+                                  opacity: 0.8,
+                                  margin: 0,
+                                  lineHeight: '1.5',
+                                }}
+                              >
+                                Petabyte-scale data processing
+                                <br />
+                                Machine learning model deployment
+                                <br />
                                 Predictive analytics algorithms
                               </p>
                             </div>
@@ -1215,40 +2044,132 @@ export default function AboutUsPage() {
                   </div>
 
                   {/* Leadership Philosophy & Strategy */}
-                  <div style={{ display: 'grid', gap: '24px', marginBottom: '40px' }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gap: '24px',
+                      marginBottom: '40px',
+                    }}
+                  >
                     <div
                       style={{
-                        background: 'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.05))',
+                        background:
+                          'linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(13, 148, 136, 0.05))',
                         borderRadius: '16px',
                         padding: '32px',
                         border: '1px solid rgba(20, 184, 166, 0.3)',
                       }}
                     >
-                      <h3 style={{ color: '#14b8a6', fontSize: '24px', margin: '0 0 20px 0' }}>
+                      <h3
+                        style={{
+                          color: '#14b8a6',
+                          fontSize: '24px',
+                          margin: '0 0 20px 0',
+                        }}
+                      >
                         🎯 Strategic Leadership Philosophy
                       </h3>
-                      <p style={{ margin: '0 0 20px 0', fontSize: '16px', opacity: 0.9, lineHeight: '1.7' }}>
-                        Our leadership team operates under a unified philosophy of <strong>Data-Driven Excellence</strong>, where every strategic
-                        decision is backed by comprehensive analytics, every innovation is measured by impact, and every success
-                        is replicated through systematic intelligence.
+                      <p
+                        style={{
+                          margin: '0 0 20px 0',
+                          fontSize: '16px',
+                          opacity: 0.9,
+                          lineHeight: '1.7',
+                        }}
+                      >
+                        Our leadership team operates under a unified philosophy
+                        of <strong>Data-Driven Excellence</strong>, where every
+                        strategic decision is backed by comprehensive analytics,
+                        every innovation is measured by impact, and every
+                        success is replicated through systematic intelligence.
                       </p>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-                        <div style={{ padding: '20px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px' }}>
-                          <h4 style={{ color: '#14b8a6', fontSize: '16px', margin: '0 0 12px 0' }}>🚀 Innovation Leadership</h4>
-                          <p style={{ fontSize: '14px', opacity: 0.8', margin: 0 }}>
-                            Continuously pushing boundaries in AI analytics, predictive modeling, and transportation intelligence
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(250px, 1fr))',
+                          gap: '20px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            padding: '20px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '12px',
+                          }}
+                        >
+                          <h4
+                            style={{
+                              color: '#14b8a6',
+                              fontSize: '16px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🚀 Innovation Leadership
+                          </h4>
+                          <p
+                            style={{
+                              fontSize: '14px',
+                              opacity: 0.8,
+                              margin: 0,
+                            }}
+                          >
+                            Continuously pushing boundaries in AI analytics,
+                            predictive modeling, and transportation intelligence
                           </p>
                         </div>
-                        <div style={{ padding: '20px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px' }}>
-                          <h4 style={{ color: '#14b8a6', fontSize: '16px', margin: '0 0 12px 0' }}>📊 Data-First Culture</h4>
-                          <p style={{ fontSize: '14px', opacity: 0.8', margin: 0 }}>
-                            Every decision informed by comprehensive data analysis and measurable business intelligence
+                        <div
+                          style={{
+                            padding: '20px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '12px',
+                          }}
+                        >
+                          <h4
+                            style={{
+                              color: '#14b8a6',
+                              fontSize: '16px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            📊 Data-First Culture
+                          </h4>
+                          <p
+                            style={{
+                              fontSize: '14px',
+                              opacity: 0.8,
+                              margin: 0,
+                            }}
+                          >
+                            Every decision informed by comprehensive data
+                            analysis and measurable business intelligence
                           </p>
                         </div>
-                        <div style={{ padding: '20px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '12px' }}>
-                          <h4 style={{ color: '#14b8a6', fontSize: '16px', margin: '0 0 12px 0' }}>🎯 Strategic Positioning</h4>
-                          <p style={{ fontSize: '14px', opacity: 0.8', margin: 0 }}>
-                            Positioning for strategic acquisition by major tech companies including Microsoft, Salesforce, Oracle
+                        <div
+                          style={{
+                            padding: '20px',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            borderRadius: '12px',
+                          }}
+                        >
+                          <h4
+                            style={{
+                              color: '#14b8a6',
+                              fontSize: '16px',
+                              margin: '0 0 12px 0',
+                            }}
+                          >
+                            🎯 Strategic Positioning
+                          </h4>
+                          <p
+                            style={{
+                              fontSize: '14px',
+                              opacity: 0.8,
+                              margin: 0,
+                            }}
+                          >
+                            Positioning for strategic acquisition by major tech
+                            companies including Microsoft, Salesforce, Oracle
                           </p>
                         </div>
                       </div>
@@ -1264,33 +2185,116 @@ export default function AboutUsPage() {
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                     }}
                   >
-                    <h3 style={{ color: 'white', fontSize: '24px', margin: '0 0 24px 0', textAlign: 'center' }}>
+                    <h3
+                      style={{
+                        color: 'white',
+                        fontSize: '24px',
+                        margin: '0 0 24px 0',
+                        textAlign: 'center',
+                      }}
+                    >
                       🏛️ Executive Advisory Board
                     </h3>
-                    <p style={{ textAlign: 'center', marginBottom: '32px', fontSize: '16px', opacity: 0.9 }}>
-                      Our leadership is guided by an elite advisory board of industry veterans, technology innovators,
-                      and business intelligence experts who provide strategic oversight and market insights.
+                    <p
+                      style={{
+                        textAlign: 'center',
+                        marginBottom: '32px',
+                        fontSize: '16px',
+                        opacity: 0.9,
+                      }}
+                    >
+                      Our leadership is guided by an elite advisory board of
+                      industry veterans, technology innovators, and business
+                      intelligence experts who provide strategic oversight and
+                      market insights.
                     </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
-                      <div style={{ textAlign: 'center', padding: '24px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px' }}>
-                        <div style={{ fontSize: '40px', marginBottom: '16px' }}>🏢</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '16px', margin: '0 0 12px 0' }}>Fortune 500 Executives</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0 }}>
-                          Former C-level executives from leading transportation and technology companies
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(250px, 1fr))',
+                        gap: '24px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: '24px',
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '40px', marginBottom: '16px' }}>
+                          🏢
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '16px',
+                            margin: '0 0 12px 0',
+                          }}
+                        >
+                          Fortune 500 Executives
+                        </h4>
+                        <p
+                          style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}
+                        >
+                          Former C-level executives from leading transportation
+                          and technology companies
                         </p>
                       </div>
-                      <div style={{ textAlign: 'center', padding: '24px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px' }}>
-                        <div style={{ fontSize: '40px', marginBottom: '16px' }}>🎓</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '16px', margin: '0 0 12px 0' }}>Academic Researchers</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0 }}>
-                          Leading professors and researchers in AI, machine learning, and data science
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: '24px',
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '40px', marginBottom: '16px' }}>
+                          🎓
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '16px',
+                            margin: '0 0 12px 0',
+                          }}
+                        >
+                          Academic Researchers
+                        </h4>
+                        <p
+                          style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}
+                        >
+                          Leading professors and researchers in AI, machine
+                          learning, and data science
                         </p>
                       </div>
-                      <div style={{ textAlign: 'center', padding: '24px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px' }}>
-                        <div style={{ fontSize: '40px', marginBottom: '16px' }}>💡</div>
-                        <h4 style={{ color: '#14b8a6', fontSize: '16px', margin: '0 0 12px 0' }}>Technology Innovators</h4>
-                        <p style={{ fontSize: '14px', opacity: 0.8', margin: 0 }}>
-                          Serial entrepreneurs and technology pioneers from Silicon Valley and beyond
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          padding: '24px',
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          borderRadius: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '40px', marginBottom: '16px' }}>
+                          💡
+                        </div>
+                        <h4
+                          style={{
+                            color: '#14b8a6',
+                            fontSize: '16px',
+                            margin: '0 0 12px 0',
+                          }}
+                        >
+                          Technology Innovators
+                        </h4>
+                        <p
+                          style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}
+                        >
+                          Serial entrepreneurs and technology pioneers from
+                          Silicon Valley and beyond
                         </p>
                       </div>
                     </div>
@@ -1861,9 +2865,10 @@ export default function AboutUsPage() {
                   }}
                 >
                   <p style={{ marginBottom: '32px' }}>
-                    FleetFlow's innovative approach to transportation management
-                    has earned recognition from industry leaders, technology
-                    organizations, and business publications worldwide.
+                    FleetFlow&apos;s innovative approach to transportation
+                    management has earned recognition from industry leaders,
+                    technology organizations, and business publications
+                    worldwide.
                   </p>
 
                   <div
@@ -1949,8 +2954,8 @@ export default function AboutUsPage() {
                         <p
                           style={{ margin: 0, fontSize: '14px', opacity: 0.8 }}
                         >
-                          "Salesforce of Transportation" recognition for
-                          comprehensive platform capabilities and
+                          &quot;Salesforce of Transportation&quot; recognition
+                          for comprehensive platform capabilities and
                           enterprise-grade solutions.
                         </p>
                       </div>
@@ -2241,7 +3246,7 @@ export default function AboutUsPage() {
                   }}
                 >
                   <p style={{ marginBottom: '32px' }}>
-                    From innovative startup to industry leader, FleetFlow's
+                    From innovative startup to industry leader, FleetFlow&apos;s
                     journey represents continuous growth, technological
                     advancement, and strategic positioning in the transportation
                     sector.
@@ -2306,9 +3311,9 @@ export default function AboutUsPage() {
                             }}
                           >
                             FleetFlow concept developed with core vision of
-                            becoming "The Salesforce of Transportation." Initial
-                            platform architecture and AI integration planning
-                            completed.
+                            becoming &quot;The Salesforce of
+                            Transportation.&quot; Initial platform architecture
+                            and AI integration planning completed.
                           </p>
                         </div>
                       </div>

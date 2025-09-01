@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import Logo from './Logo';
+import OrganizationSwitcher from './OrganizationSwitcher';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
@@ -184,7 +185,7 @@ export default function ProfessionalNavigation() {
 
   // Prevent hydration mismatch by not rendering until hydrated
   if (!isHydrated) {
-    console.log('🚫 Navigation not hydrated yet, waiting...');
+    console.info('🚫 Navigation not hydrated yet, waiting...');
     return (
       <div
         style={{
@@ -200,7 +201,7 @@ export default function ProfessionalNavigation() {
     );
   }
 
-  console.log('✅ Navigation is hydrated and rendering...');
+  console.info('✅ Navigation is hydrated and rendering...');
 
   return (
     <nav
@@ -1201,6 +1202,13 @@ export default function ProfessionalNavigation() {
                   </Link>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Organization Switcher */}
+          {!isCarrierPlatform && (
+            <div style={{ marginLeft: '10px' }}>
+              <OrganizationSwitcher />
             </div>
           )}
 

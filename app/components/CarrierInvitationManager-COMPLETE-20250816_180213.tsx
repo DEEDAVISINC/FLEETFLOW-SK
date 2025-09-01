@@ -244,7 +244,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                     Carrier Name *
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={invitationForm.carrierName}
                     onChange={(e) => setInvitationForm({...invitationForm, carrierName: e.target.value})}
                     style={{
@@ -256,7 +256,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       color: 'white',
                       fontSize: '14px',
                     }}
-                    placeholder="Enter carrier company name"
+                    placeholder="Enter carrier company name""
                   />
                 </div>
 
@@ -265,7 +265,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                     Contact Name
                   </label>
                   <input
-                    type="text"
+                    type="text""
                     value={invitationForm.contactName}
                     onChange={(e) => setInvitationForm({...invitationForm, contactName: e.target.value})}
                     style={{
@@ -277,7 +277,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       color: 'white',
                       fontSize: '14px',
                     }}
-                    placeholder="Contact person name"
+                    placeholder="Contact person name""
                   />
                 </div>
 
@@ -287,7 +287,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       MC Number
                     </label>
                     <input
-                      type="text"
+                      type="text""
                       value={invitationForm.mcNumber}
                       onChange={(e) => setInvitationForm({...invitationForm, mcNumber: e.target.value})}
                       style={{
@@ -299,7 +299,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                         color: 'white',
                         fontSize: '14px',
                       }}
-                      placeholder="MC-123456"
+                      placeholder="MC-123456""
                     />
                   </div>
                   <div>
@@ -307,7 +307,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       DOT Number
                     </label>
                     <input
-                      type="text"
+                      type="text""
                       value={invitationForm.dotNumber}
                       onChange={(e) => setInvitationForm({...invitationForm, dotNumber: e.target.value})}
                       style={{
@@ -319,7 +319,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                         color: 'white',
                         fontSize: '14px',
                       }}
-                      placeholder="DOT-789012"
+                      placeholder="DOT-789012""
                     />
                   </div>
                 </div>
@@ -336,7 +336,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                     Email Address *
                   </label>
                   <input
-                    type="email"
+                    type="email""
                     value={invitationForm.email}
                     onChange={(e) => setInvitationForm({...invitationForm, email: e.target.value})}
                     style={{
@@ -348,7 +348,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       color: 'white',
                       fontSize: '14px',
                     }}
-                    placeholder="contact@carrier.com"
+                    placeholder="contact@carrier.com""
                   />
                 </div>
 
@@ -357,7 +357,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                     Phone Number
                   </label>
                   <input
-                    type="tel"
+                    type="tel""
                     value={invitationForm.phone}
                     onChange={(e) => setInvitationForm({...invitationForm, phone: e.target.value})}
                     style={{
@@ -369,7 +369,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       color: 'white',
                       fontSize: '14px',
                     }}
-                    placeholder="(555) 123-4567"
+                    placeholder="(555) 123-4567""
                   />
                 </div>
 
@@ -390,8 +390,8 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       fontSize: '14px',
                     }}
                   >
-                    <option value="email">📧 Email Invitation</option>
-                    <option value="sms">📱 SMS Invitation</option>
+                    <option value="email"">📧 Email Invitation</option>
+                    <option value="sms"">📱 SMS Invitation</option>
                   </select>
                 </div>
 
@@ -412,9 +412,9 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       fontSize: '14px',
                     }}
                   >
-                    <option value="standard">Standard Priority</option>
-                    <option value="high">High Priority</option>
-                    <option value="urgent">Urgent Priority</option>
+                    <option value="standard"">Standard Priority</option>
+                    <option value="high"">High Priority</option>
+                    <option value="urgent"">Urgent Priority</option>
                   </select>
                 </div>
               </div>
@@ -439,7 +439,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                   minHeight: '80px',
                   resize: 'vertical',
                 }}
-                placeholder="Add a personalized message to the invitation..."
+                placeholder="Add a personalized message to the invitation...""
               />
             </div>
 

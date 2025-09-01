@@ -1646,7 +1646,7 @@ const AISettlementTab = () => {
                   marginBottom: '10px',
                 }}
               >
-                📊 Today's Performance
+                📊 Today&apos;s Performance
               </h4>
               {[
                 {
@@ -2120,7 +2120,7 @@ export default function ModernAccountingPage() {
           const tierId =
             demoTierMap[currentUser.departmentCode] || 'dispatcher-pro';
 
-          console.log(
+          console.info(
             `🎯 Creating demo subscription ${tierId} for ${currentUser.name}`
           );
           await SubscriptionManagementService.createSubscription(
@@ -2148,7 +2148,7 @@ export default function ModernAccountingPage() {
 
     if (!currentUser) {
       // No auto-login - show empty state
-      console.log('🔐 No user logged in - showing empty state');
+      console.info('🔐 No user logged in - showing empty state');
     }
 
     checkAccess();

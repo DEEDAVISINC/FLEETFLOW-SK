@@ -348,7 +348,7 @@ export default function LiveTrackingPage() {
     ]);
 
     const csvContent = [csvHeaders, ...csvData]
-      .map((row) => row.map((cell) => `"${cell}"`).join(','))
+      .map((row) => row.map((cell) => `""${cell}""`).join(','))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -615,7 +615,7 @@ export default function LiveTrackingPage() {
           backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
           backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
           fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
         }}
       >
         {/* Back Button */}

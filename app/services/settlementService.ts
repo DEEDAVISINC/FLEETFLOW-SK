@@ -803,7 +803,7 @@ export const createAccessorialInvoice = async (
     });
 
     if (result.success && result.invoice) {
-      console.log(
+      console.info(
         `✅ Square accessorial invoice created: ${result.invoice.id} for Load ${loadId}`
       );
       return {
@@ -850,7 +850,7 @@ export const processAccessorialPayment = async (
     });
 
     if (result.success) {
-      console.log(
+      console.info(
         `✅ Accessorial payment processed: ${result.paymentId} for invoice ${invoiceId}`
       );
       return {
@@ -950,7 +950,7 @@ if (typeof window !== 'undefined') {
   loadFromStorage();
 }
 
-export default {
+const settlementService = {
   createSettlement,
   getSettlements,
   updateSettlementStatus,
@@ -963,3 +963,5 @@ export default {
   processAccessorialPayment,
   getAccessorialFeeStatus,
 };
+
+export default settlementService;

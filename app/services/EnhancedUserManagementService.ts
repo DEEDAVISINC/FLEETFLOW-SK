@@ -220,7 +220,7 @@ export class EnhancedUserManagementService {
       };
 
       // In production, this would save to database
-      console.log('Creating business entity:', businessUser);
+      console.info('Creating business entity:', businessUser);
 
       return {
         success: true,
@@ -309,7 +309,7 @@ export class EnhancedUserManagementService {
       };
 
       // In production, this would save to database and update parent company
-      console.log('Creating agent user:', agentUser);
+      console.info('Creating agent user:', agentUser);
 
       return {
         success: true,

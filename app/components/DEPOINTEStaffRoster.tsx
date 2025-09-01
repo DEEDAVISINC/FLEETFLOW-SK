@@ -143,7 +143,7 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
     internalRole: 'Sales Operations Specialist',
     customerFacingTitle: 'Sales Operations Manager',
     avatar: '💼',
-    hint: 'Will → "Will sell" anything',
+    hint: 'Will → ""Will sell"" anything',
     personality: 'Determined closer who will make it happen',
     specializations: [
       'Sales Strategy',

@@ -21,7 +21,7 @@ export class AutomotiveRFPWorkflow {
    */
   private initializeScheduledTasks(): void {
     if (this.isRunning) {
-      console.log('⚠️ Automotive RFP workflows already running');
+      console.info('⚠️ Automotive RFP workflows already running');
       return;
     }
 
@@ -57,10 +57,10 @@ export class AutomotiveRFPWorkflow {
     this.scheduledTasks = [dailyDiscovery, hourlyHighPriority, weeklyAnalysis];
     this.isRunning = true;
 
-    console.log('🚛 Automotive RFP automation workflows initialized');
-    console.log('📅 Daily Discovery: 6 AM EST');
-    console.log('⚡ Hourly High-Priority: Every hour');
-    console.log('📊 Weekly Analysis: Monday 8 AM EST');
+    console.info('🚛 Automotive RFP automation workflows initialized');
+    console.info('📅 Daily Discovery: 6 AM EST');
+    console.info('⚡ Hourly High-Priority: Every hour');
+    console.info('📊 Weekly Analysis: Monday 8 AM EST');
   }
 
   /**
@@ -70,7 +70,7 @@ export class AutomotiveRFPWorkflow {
     if (!this.isRunning) {
       this.initializeScheduledTasks();
     } else {
-      console.log('✅ Automotive RFP workflows already running');
+      console.info('✅ Automotive RFP workflows already running');
     }
   }
 
@@ -81,7 +81,7 @@ export class AutomotiveRFPWorkflow {
     this.scheduledTasks.forEach((task) => clearInterval(task));
     this.scheduledTasks = [];
     this.isRunning = false;
-    console.log('🛑 Automotive RFP workflows stopped');
+    console.info('🛑 Automotive RFP workflows stopped');
   }
 
   /**
@@ -93,14 +93,14 @@ export class AutomotiveRFPWorkflow {
     sourcesScanned: number;
     executionTime: number;
   }> {
-    console.log('🔥 Running immediate automotive RFP discovery...');
+    console.info('🔥 Running immediate automotive RFP discovery...');
 
     const startTime = Date.now();
     const result =
       await this.discoveryService.discoverAutomotiveOpportunities(userId);
     const executionTime = Date.now() - startTime;
 
-    console.log(`⚡ Immediate discovery complete in ${executionTime}ms`);
+    console.info(`⚡ Immediate discovery complete in ${executionTime}ms`);
 
     return {
       ...result,
@@ -113,7 +113,7 @@ export class AutomotiveRFPWorkflow {
    */
   async runDailyDiscovery(): Promise<void> {
     try {
-      console.log('🌅 Starting daily automotive RFP discovery...');
+      console.info('🌅 Starting daily automotive RFP discovery...');
 
       const startTime = Date.now();
 
@@ -143,7 +143,7 @@ export class AutomotiveRFPWorkflow {
           totalOpportunities += result.value.opportunities.length;
           totalNotifications += result.value.notificationsSent;
           successfulScans++;
-          console.log(
+          console.info(
             `✅ User ${discoveryUsers[index]}: ${result.value.opportunities.length} opportunities found`
           );
         } else {
@@ -158,15 +158,15 @@ export class AutomotiveRFPWorkflow {
       const duration = Date.now() - startTime;
 
       // Log comprehensive daily summary
-      console.log('📈 DAILY AUTOMOTIVE RFP DISCOVERY SUMMARY');
-      console.log(`🎯 Total Opportunities Found: ${totalOpportunities}`);
-      console.log(`📨 Notifications Sent: ${totalNotifications}`);
-      console.log(
+      console.info('📈 DAILY AUTOMOTIVE RFP DISCOVERY SUMMARY');
+      console.info(`🎯 Total Opportunities Found: ${totalOpportunities}`);
+      console.info(`📨 Notifications Sent: ${totalNotifications}`);
+      console.info(
         `✅ Successful Scans: ${successfulScans}/${discoveryUsers.length}`
       );
-      console.log(`❌ Failed Scans: ${failedScans}/${discoveryUsers.length}`);
-      console.log(`⏱️ Total Execution Time: ${duration}ms`);
-      console.log(`📅 Completed: ${new Date().toISOString()}`);
+      console.info(`❌ Failed Scans: ${failedScans}/${discoveryUsers.length}`);
+      console.info(`⏱️ Total Execution Time: ${duration}ms`);
+      console.info(`📅 Completed: ${new Date().toISOString()}`);
 
       // Store daily metrics for reporting
       await this.storeDailyMetrics({
@@ -191,7 +191,7 @@ export class AutomotiveRFPWorkflow {
    */
   async runHighPriorityMonitoring(): Promise<void> {
     try {
-      console.log('⚡ High-priority OEM monitoring...');
+      console.info('⚡ High-priority OEM monitoring...');
 
       const startTime = Date.now();
 
@@ -216,11 +216,11 @@ export class AutomotiveRFPWorkflow {
       const duration = Date.now() - startTime;
 
       if (urgentOpportunities.length > 0 || highValueOpportunities.length > 0) {
-        console.log('🚨 HIGH-PRIORITY AUTOMOTIVE OPPORTUNITIES DETECTED');
-        console.log(
+        console.info('🚨 HIGH-PRIORITY AUTOMOTIVE OPPORTUNITIES DETECTED');
+        console.info(
           `⏰ Urgent (< 48hrs): ${urgentOpportunities.length} opportunities`
         );
-        console.log(
+        console.info(
           `💰 High-Value (>$2M): ${highValueOpportunities.length} opportunities`
         );
 
@@ -231,7 +231,7 @@ export class AutomotiveRFPWorkflow {
         );
       }
 
-      console.log(`⚡ High-priority monitoring complete (${duration}ms)`);
+      console.info(`⚡ High-priority monitoring complete (${duration}ms)`);
     } catch (error) {
       console.error('❌ High-priority monitoring failed:', error);
     }
@@ -242,7 +242,7 @@ export class AutomotiveRFPWorkflow {
    */
   async runWeeklyAnalysis(): Promise<void> {
     try {
-      console.log('📊 Running weekly automotive RFP analysis...');
+      console.info('📊 Running weekly automotive RFP analysis...');
 
       const startTime = Date.now();
 
@@ -257,12 +257,12 @@ export class AutomotiveRFPWorkflow {
 
       const duration = Date.now() - startTime;
 
-      console.log('📈 WEEKLY AUTOMOTIVE RFP ANALYSIS COMPLETE');
-      console.log(`📊 Analysis Duration: ${duration}ms`);
-      console.log(
+      console.info('📈 WEEKLY AUTOMOTIVE RFP ANALYSIS COMPLETE');
+      console.info(`📊 Analysis Duration: ${duration}ms`);
+      console.info(
         `🎯 Opportunities Analyzed: ${analysisResult.opportunities.length}`
       );
-      console.log(`📅 Report Generated: ${new Date().toISOString()}`);
+      console.info(`📅 Report Generated: ${new Date().toISOString()}`);
 
       // Store weekly report
       await this.storeWeeklyReport(weeklyReport);
@@ -428,7 +428,7 @@ export class AutomotiveRFPWorkflow {
   private async storeDailyMetrics(metrics: any): Promise<void> {
     try {
       // In production, this would store to database
-      console.log(
+      console.info(
         '💾 Storing daily metrics:',
         JSON.stringify(metrics, null, 2)
       );
@@ -443,7 +443,7 @@ export class AutomotiveRFPWorkflow {
   private async storeWeeklyReport(report: any): Promise<void> {
     try {
       // In production, this would store to database and generate PDF
-      console.log('📊 Storing weekly report summary:', {
+      console.info('📊 Storing weekly report summary:', {
         totalOpportunities: report.summary.totalOpportunities,
         totalValue: report.summary.totalValue,
         topRecommendations: report.recommendations.slice(0, 3),
@@ -462,21 +462,21 @@ export class AutomotiveRFPWorkflow {
   ): Promise<void> {
     try {
       // This would integrate with notification systems (email, Slack, SMS)
-      console.log('🚨 HIGH-PRIORITY AUTOMOTIVE ALERTS SENT');
+      console.info('🚨 HIGH-PRIORITY AUTOMOTIVE ALERTS SENT');
 
       if (urgentOpps.length > 0) {
-        console.log('⏰ URGENT OPPORTUNITIES (Response Required < 48hrs):');
+        console.info('⏰ URGENT OPPORTUNITIES (Response Required < 48hrs):');
         urgentOpps.forEach((opp) => {
-          console.log(
+          console.info(
             `  • ${opp.title} - ${opp.company} - $${opp.estimatedValue.toLocaleString()}`
           );
         });
       }
 
       if (highValueOpps.length > 0) {
-        console.log('💰 HIGH-VALUE OPPORTUNITIES (>$2M):');
+        console.info('💰 HIGH-VALUE OPPORTUNITIES (>$2M):');
         highValueOpps.forEach((opp) => {
-          console.log(
+          console.info(
             `  • ${opp.title} - ${opp.company} - $${opp.estimatedValue.toLocaleString()}`
           );
         });
@@ -494,10 +494,10 @@ export class AutomotiveRFPWorkflow {
     error: any
   ): Promise<void> {
     try {
-      console.log(`🚨 AUTOMOTIVE RFP SYSTEM FAILURE ALERT`);
-      console.log(`Process: ${processName}`);
-      console.log(`Time: ${new Date().toISOString()}`);
-      console.log(`Error: ${error.message || error}`);
+      console.info(`🚨 AUTOMOTIVE RFP SYSTEM FAILURE ALERT`);
+      console.info(`Process: ${processName}`);
+      console.info(`Time: ${new Date().toISOString()}`);
+      console.info(`Error: ${error.message || error}`);
 
       // In production, this would send alerts to system administrators
     } catch (alertError) {

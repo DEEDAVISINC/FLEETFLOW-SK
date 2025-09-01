@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 interface FleetFlowFooterProps {
   variant?: 'dark' | 'light' | 'transparent';
   showLogo?: boolean;
@@ -27,16 +29,13 @@ export default function FleetFlowFooter({
         <div className='flex items-center justify-between'>
           {showLogo && (
             <div className='flex items-center gap-3'>
-              <img
+              <Image
                 src='/images/fleetflow logo tms.jpg'
                 alt='FleetFlow Logo'
+                width={28}
+                height={28}
                 style={{
-                  width: '28px',
-                  height: '28px',
                   objectFit: 'contain',
-                }}
-                onError={(e) => {
-                  e.currentTarget.src = '/images/fleetflow logo tms.jpg';
                 }}
               />
               <span

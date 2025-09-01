@@ -282,7 +282,7 @@ export default function AIReviewDashboard({
               ) : (
                 <div className='flex h-32 w-full items-center justify-center rounded-md border border-gray-300 bg-gray-50 px-3 py-2'>
                   <span className='text-gray-500'>
-                    Click "Show Form" to enter review data
+                    Click ""Show Form"" to enter review data
                   </span>
                 </div>
               )}

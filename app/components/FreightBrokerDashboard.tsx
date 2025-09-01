@@ -102,7 +102,7 @@ export default function FreightBrokerDashboard() {
         commodity: 'General Freight',
         pickup_date: new Date(),
       });
-      console.log('Quote generated:', quote);
+      console.info('Quote generated:', quote);
     } catch (error) {
       console.error('Error generating quote:', error);
     }
@@ -687,7 +687,7 @@ export default function FreightBrokerDashboard() {
               >
                 <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🔍</div>
                 <p>
-                  No prospects discovered yet. Click "Discover New Prospects" to
+                  No prospects discovered yet. Click ""Discover New Prospects"" to
                   start lead generation.
                 </p>
               </div>
@@ -928,7 +928,7 @@ export default function FreightBrokerDashboard() {
               >
                 <div style={{ fontSize: '3rem', marginBottom: '16px' }}>📦</div>
                 <p>
-                  No loads created yet. Click "Create Sample Load" to start load
+                  No loads created yet. Click ""Create Sample Load"" to start load
                   management.
                 </p>
               </div>

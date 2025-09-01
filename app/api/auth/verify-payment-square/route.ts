@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     // Card tokenization is sufficient for verification
     // The tokenization process validates the card details
-    console.log('Card successfully tokenized and verified:', {
+    console.info('Card successfully tokenized and verified:', {
       cardLast4: cardNumber.slice(-4),
       cardBrand: tokenResult.cardBrand || 'UNKNOWN',
     });

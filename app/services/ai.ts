@@ -16,9 +16,9 @@ export class FleetFlowAI {
     platformAIManager.registerService('FleetFlowAI', this);
 
     if (this.isEnabled) {
-      console.log('🚀 AI Service enhanced with Platform AI - All fixes active');
+      console.info('🚀 AI Service enhanced with Platform AI - All fixes active');
     } else {
-      console.log(
+      console.info(
         '🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production'
       );
     }
@@ -37,7 +37,7 @@ export class FleetFlowAI {
     try {
       // ✅ Use Platform AI for cost optimization, quality control, and human-like responses
       if (this.usePlatformAI) {
-        console.log(
+        console.info(
           '🎯 Route optimization using Platform AI (batched, supervised, human-like)'
         );
 
@@ -61,13 +61,13 @@ export class FleetFlowAI {
           }
         );
 
-        console.log(
+        console.info(
           `✅ Route optimized: Quality=${result.quality}, Cost=$${result.cost}, Escalated=${result.escalated}`
         );
 
         // ✅ If escalated, notify human dispatcher
         if (result.escalated) {
-          console.log(
+          console.info(
             '🔄 Complex route optimization escalated to human dispatcher'
           );
           // In real implementation: await notifyDispatcher(result);
@@ -124,7 +124,7 @@ export class FleetFlowAI {
 
     try {
       if (this.usePlatformAI) {
-        console.log('🔧 Maintenance prediction using Platform AI');
+        console.info('🔧 Maintenance prediction using Platform AI');
 
         const maintenanceContent = `
           Predictive maintenance analysis:
@@ -148,13 +148,13 @@ export class FleetFlowAI {
           }
         );
 
-        console.log(
+        console.info(
           `✅ Maintenance predicted: Quality=${result.quality}, Cost=$${result.cost}`
         );
 
         // ✅ If high-cost maintenance predicted, escalate to manager
         if (result.escalated || maintenanceContext.estimatedCost > 10000) {
-          console.log(
+          console.info(
             '🚨 High-cost maintenance prediction - escalating to fleet manager'
           );
           // In real implementation: await notifyFleetManager(result);
@@ -211,7 +211,7 @@ export class FleetFlowAI {
 
     try {
       if (this.usePlatformAI) {
-        console.log('🎯 Driver analysis using Platform AI');
+        console.info('🎯 Driver analysis using Platform AI');
 
         const analysisContent = `
           Driver performance analysis:
@@ -232,13 +232,13 @@ export class FleetFlowAI {
           }
         );
 
-        console.log(
+        console.info(
           `✅ Driver analyzed: Quality=${result.quality}, Human-like=${result.humanLike}`
         );
 
         // ✅ Learn from this analysis for future improvements
         if (managerContext.feedback && result.confidence > 80) {
-          console.log('📚 Learning from successful driver analysis');
+          console.info('📚 Learning from successful driver analysis');
           // Platform AI will automatically learn from this interaction
         }
 
@@ -845,12 +845,12 @@ export class FleetFlowAI {
   // ✅ NEW: Platform AI configuration methods
   enablePlatformAI(): void {
     this.usePlatformAI = true;
-    console.log('✅ Platform AI enabled - All enhancements active');
+    console.info('✅ Platform AI enabled - All enhancements active');
   }
 
   disablePlatformAI(): void {
     this.usePlatformAI = false;
-    console.log('⚠️ Platform AI disabled - Using original methods');
+    console.info('⚠️ Platform AI disabled - Using original methods');
   }
 
   // ✅ NEW: Get Platform AI metrics for this service

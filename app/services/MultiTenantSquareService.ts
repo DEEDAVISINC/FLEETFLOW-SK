@@ -501,7 +501,7 @@ export class MultiTenantSquareService {
     config: TenantSquareConfig
   ): Promise<void> {
     // Mock implementation - replace with actual database save
-    console.log(
+    console.info(
       `Saving Square config for tenant ${config.tenantId} to database`
     );
   }

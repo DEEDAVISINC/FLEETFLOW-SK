@@ -68,7 +68,7 @@ interface InvoiceData {
 
 export class BusinessEventGenerator {
   constructor() {
-    console.log('🎯 BusinessEventGenerator initialized');
+    console.info('🎯 BusinessEventGenerator initialized');
   }
 
   // ============================================================================
@@ -548,7 +548,7 @@ export class BusinessEventGenerator {
    * Bulk generate test notifications for development
    */
   async generateTestNotifications(tenantId: string): Promise<void> {
-    console.log('🧪 Generating test notifications...');
+    console.info('🧪 Generating test notifications...');
 
     // Test load events
     const testLoad: LoadData = {
@@ -606,7 +606,7 @@ export class BusinessEventGenerator {
       await this.generateInvoiceOverdueEvent(testInvoice, 5, tenantId);
     }, 3000);
 
-    console.log('✅ Test notifications generated');
+    console.info('✅ Test notifications generated');
   }
 }
 

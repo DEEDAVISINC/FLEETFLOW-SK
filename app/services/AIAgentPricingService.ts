@@ -1033,13 +1033,13 @@ export class AIAgentPricingService {
   private static async saveSubscriptionToDatabase(
     subscription: AIAgentSubscription
   ): Promise<void> {
-    console.log(`Saving subscription ${subscription.id} to database`);
+    console.info(`Saving subscription ${subscription.id} to database`);
   }
 
   private static async loadSubscriptionFromDatabase(
     tenantId: string
   ): Promise<AIAgentSubscription | null> {
-    console.log(`Loading subscription for tenant ${tenantId} from database`);
+    console.info(`Loading subscription for tenant ${tenantId} from database`);
     return null;
   }
 }

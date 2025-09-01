@@ -303,7 +303,7 @@ export default function ShipperBatchDeployment({
       };
     });
 
-    console.log('🚀 SHIPPER EXPANSION DEPLOYMENT:', deployTasks);
+    console.info('🚀 SHIPPER EXPANSION DEPLOYMENT:', deployTasks);
     onBatchDeploy(deployTasks);
   };
 

@@ -145,7 +145,7 @@ export default function CarrierVerificationPanel({
 
         setFraudAnalysis(analysis);
         setCarrier(carrierData); // Set carrier data for display
-        console.log('🛡️ FleetGuard AI Analysis Complete:', analysis);
+        console.info('🛡️ FleetGuard AI Analysis Complete:', analysis);
       } else {
         setError('Carrier not found - unable to run fraud analysis');
       }

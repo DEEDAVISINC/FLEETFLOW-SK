@@ -229,7 +229,7 @@ class CentralCRMService {
     } as CentralInteraction;
 
     // In production, save to database
-    console.log('📝 Creating central interaction:', newInteraction);
+    console.info('📝 Creating central interaction:', newInteraction);
 
     return newInteraction;
   }
@@ -311,11 +311,11 @@ class CentralCRMService {
       transferId
     );
 
-    console.log(
+    console.info(
       `🔄 Transfer initiated: ${transferRequest.fromUser.firstName} → ${transferRequest.toUser.firstName}`
     );
-    console.log(`📋 Context: ${transferRequest.reason}`);
-    console.log(`📝 Notes: ${transferRequest.notes}`);
+    console.info(`📋 Context: ${transferRequest.reason}`);
+    console.info(`📝 Notes: ${transferRequest.notes}`);
 
     return {
       success: true,
@@ -378,18 +378,18 @@ class CentralCRMService {
   // ============================================================================
 
   async sendNotification(payload: NotificationPayload): Promise<boolean> {
-    console.log('📢 Sending notification:', payload.title);
+    console.info('📢 Sending notification:', payload.title);
 
     // Dashboard notification (real-time)
     if (payload.channels.includes('dashboard')) {
-      console.log(
+      console.info(
         `📊 Dashboard notification sent to ${payload.recipientUserId}`
       );
     }
 
     // Push notification
     if (payload.channels.includes('push')) {
-      console.log(`📱 Push notification sent to ${payload.recipientUserId}`);
+      console.info(`📱 Push notification sent to ${payload.recipientUserId}`);
     }
 
     // SMS notification (integrate with existing Twilio)
@@ -410,7 +410,7 @@ class CentralCRMService {
           });
 
           if (response.ok) {
-            console.log(`📱 Transfer SMS sent to ${user.phone}`);
+            console.info(`📱 Transfer SMS sent to ${user.phone}`);
           }
         } catch (error) {
           console.error('Transfer SMS sending failed:', error);
@@ -422,7 +422,7 @@ class CentralCRMService {
     if (payload.channels.includes('email')) {
       const user = await this.getUserByCode(payload.recipientUserId);
       if (user?.email) {
-        console.log(`📧 Email notification queued for ${user.email}`);
+        console.info(`📧 Email notification queued for ${user.email}`);
       }
     }
 

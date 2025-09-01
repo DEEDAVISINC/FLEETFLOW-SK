@@ -55,14 +55,14 @@ export class ThomasNetAutomationService {
   private processedCache: Map<string, ManufacturerData> = new Map();
 
   constructor() {
-    console.log('🏭 ThomasNet Automation Service initialized');
+    console.info('🏭 ThomasNet Automation Service initialized');
   }
 
   /**
    * Process CSV file from ThomasNet with manufacturer data
    */
   async processThomasNetCSV(csvContent: string): Promise<ThomasNetProcessingResult> {
-    console.log('📄 Processing ThomasNet CSV data...');
+    console.info('📄 Processing ThomasNet CSV data...');
 
     try {
       const manufacturers = this.parseCSVContent(csvContent);
@@ -80,7 +80,7 @@ export class ThomasNetAutomationService {
       // Generate summary statistics
       const summary = this.generateProcessingSummary(processedManufacturers);
       
-      console.log(`✅ Processed ${processedManufacturers.length} manufacturers`);
+      console.info(`✅ Processed ${processedManufacturers.length} manufacturers`);
       return {
         totalProcessed: processedManufacturers.length,
         qualified: processedManufacturers.filter(m => m.freightScore >= 75).length,
@@ -138,7 +138,7 @@ export class ThomasNetAutomationService {
    * Automated research enhancement using web intelligence
    */
   async enhanceWithWebResearch(manufacturer: ManufacturerData): Promise<ManufacturerData> {
-    console.log(`🔍 Enhancing ${manufacturer.companyName} with web research...`);
+    console.info(`🔍 Enhancing ${manufacturer.companyName} with web research...`);
 
     try {
       // Simulate web research intelligence gathering
@@ -171,7 +171,7 @@ export class ThomasNetAutomationService {
       estimatedRevenue: string;
     };
   }> {
-    console.log('📊 Exporting qualified manufacturers to lead generation...');
+    console.info('📊 Exporting qualified manufacturers to lead generation...');
 
     const qualified = manufacturers.filter(m => m.freightScore >= minFreightScore);
 
@@ -241,7 +241,7 @@ export class ThomasNetAutomationService {
    * Automated prospect scoring and prioritization
    */
   async prioritizeProspects(manufacturers: ManufacturerData[]): Promise<ManufacturerData[]> {
-    console.log('🎯 AI prioritizing manufacturer prospects...');
+    console.info('🎯 AI prioritizing manufacturer prospects...');
 
     try {
       // Additional AI scoring for prioritization

@@ -340,7 +340,7 @@ Data Protection Officer: dpo@fleetflow.com
     this.userConsents.get(userId)?.push(consent);
 
     // Log for audit trail
-    console.log(
+    console.info(
       `✅ User consent recorded: ${userId} agreed to ${agreementId} via ${method}`
     );
 
@@ -401,7 +401,7 @@ Data Protection Officer: dpo@fleetflow.com
       consent.withdrawnDate = new Date();
       consent.withdrawnReason = reason;
 
-      console.log(
+      console.info(
         `🔄 Consent withdrawn: ${userId} withdrew ${consentId} - ${reason}`
       );
       return true;
@@ -546,7 +546,7 @@ Data Protection Officer: dpo@fleetflow.com
 
     this.agreements.set(newAgreement.id, newAgreement);
 
-    console.log(`📝 Agreement updated: ${agreementId} -> ${newAgreement.id}`);
+    console.info(`📝 Agreement updated: ${agreementId} -> ${newAgreement.id}`);
     return newAgreement;
   }
 

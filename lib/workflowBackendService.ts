@@ -2,7 +2,7 @@
 // Integrates the workflow management system with Supabase backend
 // Currently using mock implementation for development
 
-import { WorkflowStep, LoadWorkflow, WorkflowStepId } from './workflowManager';
+import { LoadWorkflow, WorkflowStep, WorkflowStepId } from './workflowManager';
 
 // Mock implementation for development
 // In production, replace with actual Supabase client
@@ -58,10 +58,14 @@ class WorkflowBackendService {
   /**
    * Create a new workflow in the database
    */
-  async createWorkflow(loadId: string, driverId: string, dispatcherId: string): Promise<string> {
+  async createWorkflow(
+    loadId: string,
+    driverId: string,
+    dispatcherId: string
+  ): Promise<string> {
     try {
       const workflowId = `WF-${Date.now()}`;
-      
+
       // Mock workflow record
       const workflow = {
         id: workflowId,
@@ -71,7 +75,7 @@ class WorkflowBackendService {
         current_step: 0,
         status: 'pending',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       this.workflows.set(loadId, workflow);
@@ -85,7 +89,7 @@ class WorkflowBackendService {
           step_order: 0,
           required: true,
           completed: false,
-          allow_override: false
+          allow_override: false,
         },
         {
           step_id: 'rate_confirmation_review',
@@ -94,7 +98,7 @@ class WorkflowBackendService {
           step_order: 1,
           required: true,
           completed: false,
-          allow_override: false
+          allow_override: false,
         },
         // ... other steps would be here
       ];
@@ -131,7 +135,7 @@ class WorkflowBackendService {
         data: step.step_data,
         allowOverride: step.allow_override,
         overrideReason: step.override_reason,
-        overrideBy: step.override_by
+        overrideBy: step.override_by,
       }));
 
       return {
@@ -142,7 +146,7 @@ class WorkflowBackendService {
         status: workflow.status as any,
         steps: workflowSteps,
         createdAt: workflow.created_at,
-        updatedAt: workflow.updated_at
+        updatedAt: workflow.updated_at,
       };
     } catch (error) {
       console.error('Error getting workflow:', error);
@@ -154,9 +158,9 @@ class WorkflowBackendService {
    * Complete a workflow step
    */
   async completeStep(
-    loadId: string, 
-    stepId: WorkflowStepId, 
-    completedBy: string, 
+    loadId: string,
+    stepId: WorkflowStepId,
+    completedBy: string,
     data?: any
   ): Promise<boolean> {
     try {
@@ -164,16 +168,16 @@ class WorkflowBackendService {
       if (!workflow) return false;
 
       const steps = this.workflowSteps.get(workflow.id) || [];
-      const stepIndex = steps.findIndex(step => step.step_id === stepId);
-      
+      const stepIndex = steps.findIndex((step) => step.step_id === stepId);
+
       if (stepIndex >= 0) {
         steps[stepIndex].completed = true;
         steps[stepIndex].completed_at = new Date().toISOString();
         steps[stepIndex].completed_by = completedBy;
         steps[stepIndex].step_data = data;
-        
+
         this.workflowSteps.set(workflow.id, steps);
-        
+
         // Update workflow current step
         workflow.current_step = stepIndex + 1;
         workflow.updated_at = new Date().toISOString();
@@ -191,9 +195,9 @@ class WorkflowBackendService {
    * Request override for a step
    */
   async requestOverride(
-    loadId: string, 
-    stepId: WorkflowStepId, 
-    reason: string, 
+    loadId: string,
+    stepId: WorkflowStepId,
+    reason: string,
     requestedBy: string
   ): Promise<boolean> {
     try {
@@ -223,7 +227,7 @@ class WorkflowBackendService {
   ): Promise<boolean> {
     try {
       // Mock implementation - in production this would save to database
-      console.log('Document uploaded:', { loadId, stepId, fileType, fileUrl });
+      console.info('Document uploaded:', { loadId, stepId, fileType, fileUrl });
       return true;
     } catch (error) {
       console.error('Error uploading step document:', error);
@@ -252,7 +256,7 @@ class WorkflowBackendService {
   async getDriverWorkflows(driverId: string): Promise<LoadWorkflow[]> {
     try {
       const workflows: LoadWorkflow[] = [];
-      
+
       // Use Array.from to convert Map keys to array for ES5 compatibility
       const loadIds = Array.from(this.workflows.keys());
       for (const loadId of loadIds) {
@@ -270,7 +274,7 @@ class WorkflowBackendService {
             data: step.step_data,
             allowOverride: step.allow_override,
             overrideReason: step.override_reason,
-            overrideBy: step.override_by
+            overrideBy: step.override_by,
           }));
 
           workflows.push({
@@ -281,7 +285,7 @@ class WorkflowBackendService {
             status: workflow.status,
             steps: workflowSteps,
             createdAt: workflow.created_at,
-            updatedAt: workflow.updated_at
+            updatedAt: workflow.updated_at,
           });
         }
       }

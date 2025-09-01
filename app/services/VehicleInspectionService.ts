@@ -403,7 +403,7 @@ export class VehicleInspectionService {
 
     this.inspections.set(inspectionId, inspection);
 
-    console.log(
+    console.info(
       `🔍 Created ${type} inspection ${inspectionId} for vehicle ${vehicleId}`
     );
     return inspection;
@@ -489,7 +489,7 @@ export class VehicleInspectionService {
 
     this.inspections.set(inspectionId, inspection);
 
-    console.log(
+    console.info(
       `✅ Completed inspection ${inspectionId} with status: ${inspection.overallStatus}`
     );
     return inspection;
@@ -723,6 +723,6 @@ export class VehicleInspectionService {
       }
     });
 
-    console.log('✅ Vehicle inspection demo data initialized');
+    console.info('✅ Vehicle inspection demo data initialized');
   }
 }

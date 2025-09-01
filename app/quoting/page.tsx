@@ -481,7 +481,7 @@ export default function FreightFlowQuotingEngine() {
       brokerQuotes.unshift(newQuote);
       localStorage.setItem(brokerQuotesKey, JSON.stringify(brokerQuotes));
 
-      console.log('🎯 Quote synced to broker dashboard:', {
+      console.info('🎯 Quote synced to broker dashboard:', {
         quote: newQuote.quoteNumber,
         broker: brokerInfo.brokerName,
         amount: `$${newQuote.total.toLocaleString()}`,
@@ -904,12 +904,12 @@ export default function FreightFlowQuotingEngine() {
     iframe.style.borderRadius = '8px';
 
     iframe.onload = () => {
-      console.log('Olimp iframe loaded successfully');
+      console.info('Olimp iframe loaded successfully');
       setOlimpConnectionStatus('connected');
     };
 
     iframe.onerror = () => {
-      console.log('Olimp iframe failed, trying popup');
+      console.info('Olimp iframe failed, trying popup');
       setOlimpConnectionStatus('error');
       // Fallback to popup
       window.open(
@@ -1005,7 +1005,7 @@ export default function FreightFlowQuotingEngine() {
         backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Back Button */}
@@ -2197,13 +2197,13 @@ export default function FreightFlowQuotingEngine() {
                 <MultiStateQuoteBuilder
                   onQuoteCreated={(quote) => {
                     setMultiStateQuotes((prev) => [...prev, quote]);
-                    console.log('New multi-state quote created:', quote);
+                    console.info('New multi-state quote created:', quote);
                   }}
                   onQuoteUpdated={(quote) => {
                     setMultiStateQuotes((prev) =>
                       prev.map((q) => (q.id === quote.id ? quote : q))
                     );
-                    console.log('Multi-state quote updated:', quote);
+                    console.info('Multi-state quote updated:', quote);
                   }}
                 />
               </div>
@@ -3846,7 +3846,7 @@ export default function FreightFlowQuotingEngine() {
                       fontSize: '14px',
                     }}
                   >
-                    Click "Connect to Olimp" to access real-time warehousing
+                    Click ""Connect to Olimp"" to access real-time warehousing
                     quotes and availability
                   </div>
                 )}

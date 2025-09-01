@@ -180,7 +180,7 @@ async function handleCreateInspection(data: any) {
       location
     );
 
-    console.log(`✅ Created inspection: ${inspection.id}`);
+    console.info(`✅ Created inspection: ${inspection.id}`);
 
     return NextResponse.json({
       success: true,
@@ -220,7 +220,7 @@ async function handleUpdateItem(data: any) {
       );
     }
 
-    console.log(`✅ Updated inspection item: ${itemId} in ${inspectionId}`);
+    console.info(`✅ Updated inspection item: ${itemId} in ${inspectionId}`);
 
     return NextResponse.json({
       success: true,
@@ -259,13 +259,13 @@ async function handleCompleteInspection(data: any) {
       );
     }
 
-    console.log(
+    console.info(
       `✅ Completed inspection: ${inspectionId} with status: ${inspection.overallStatus}`
     );
 
     // Send notifications based on inspection results
     if (inspection.overallStatus === 'fail' || !inspection.safeToOperate) {
-      console.log(
+      console.info(
         `🚨 CRITICAL: Vehicle ${inspection.vehicleId} failed inspection - OUT OF SERVICE`
       );
       // Here you would integrate with your notification system

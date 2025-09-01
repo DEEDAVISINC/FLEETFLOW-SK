@@ -149,21 +149,21 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black relative overflow-hidden"">
       {/* Dynamic Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black" />
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute inset-0"">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black"" />
+        <div className="absolute top-0 left-0 w-full h-full"">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"" />
+          <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse"" style={{ animationDelay: '2s' }} />
         </div>
         {/* Animated Moving Elements */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0"">
           {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-white/20 rounded-full animate-pulse"
+              className="absolute w-1 h-1 bg-white/20 rounded-full animate-pulse""
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
@@ -175,41 +175,41 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <main className="relative z-10 p-8 space-y-8">
+      <main className="relative z-10 p-8 space-y-8"">
         {/* Command Center Header */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 rounded-3xl blur-xl" />
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-8">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-2xl blur-lg opacity-75 animate-pulse" />
-                  <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 p-4 rounded-2xl">
-                    <FleetFlowLogo size="large" variant="light" />
+        <div className="relative"">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-cyan-600/20 rounded-3xl blur-xl"" />
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl"">
+            <div className="flex items-center justify-between"">
+              <div className="flex items-center space-x-8"">
+                <div className="relative"">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-2xl blur-lg opacity-75 animate-pulse"" />
+                  <div className="relative bg-gradient-to-r from-blue-500 to-cyan-500 p-4 rounded-2xl"">
+                    <FleetFlowLogo size=""large"" variant=""light"" />
                   </div>
                 </div>
-                <div className="text-white">
-                  <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-3">
+                <div className="text-white"">
+                  <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent mb-3"">
                     FleetFlow Command Center
                   </h1>
-                  <p className="text-xl text-gray-300">Real-time fleet operations dashboard</p>
-                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-400">
+                  <p className="text-xl text-gray-300"">Real-time fleet operations dashboard</p>
+                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-400"">
                     <span>🕒 {currentTime.toLocaleTimeString()}</span>
                     <span>📅 {currentTime.toLocaleDateString()}</span>
-                    <span className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <span className="flex items-center space-x-1"">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"" />
                       <span>System Operational</span>
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-6xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent mb-2">
+              <div className="text-right"">
+                <div className="text-6xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent mb-2"">
                   ${animatedMetrics.revenue.toLocaleString()}
                 </div>
-                <div className="text-lg text-gray-300">Today's Revenue</div>
-                <div className="text-sm text-green-400 mt-1 flex items-center justify-end">
-                  <span className="mr-1">↗</span> +12.5% from yesterday
+                <div className="text-lg text-gray-300"">Today's Revenue</div>
+                <div className="text-sm text-green-400 mt-1 flex items-center justify-end"">
+                  <span className="mr-1"">↗</span> +12.5% from yesterday
                 </div>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function Dashboard() {
         </div>
 
         {/* Real-time Metrics Dashboard */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6"">
           {[
             { 
               title: 'Active Loads', 
@@ -252,10 +252,10 @@ export default function Dashboard() {
               subtitle: 'capacity used'
             }
           ].map((metric, index) => (
-            <div key={index} className="relative group">
+            <div key={index} className="relative group"">
               <div className={`absolute inset-0 bg-gradient-to-r ${metric.gradient} rounded-2xl blur-lg opacity-25 group-hover:opacity-40 transition-opacity duration-300`} />
-              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
-                <div className="flex items-center justify-between mb-4">
+              <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:scale-105"">
+                <div className="flex items-center justify-between mb-4"">
                   <div className={`w-12 h-12 bg-gradient-to-r ${metric.gradient} rounded-xl flex items-center justify-center text-2xl shadow-lg`}>
                     {metric.icon}
                   </div>
@@ -263,9 +263,9 @@ export default function Dashboard() {
                     {metric.change}
                   </div>
                 </div>
-                <div className="text-3xl font-bold text-white mb-1">{metric.value}</div>
-                <div className="text-sm text-gray-400">{metric.title}</div>
-                <div className="text-xs text-gray-500 mt-1">{metric.subtitle}</div>
+                <div className="text-3xl font-bold text-white mb-1"">{metric.value}</div>
+                <div className="text-sm text-gray-400"">{metric.title}</div>
+                <div className="text-xs text-gray-500 mt-1"">{metric.subtitle}</div>
               </div>
             </div>
           ))}
@@ -273,42 +273,42 @@ export default function Dashboard() {
 
         {/* Critical Alerts Command Panel */}
         {activeAlerts.length > 0 && (
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-orange-600/20 to-yellow-600/20 rounded-3xl blur-xl" />
-            <div className="relative bg-white/5 backdrop-blur-xl border border-red-500/20 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-red-500 rounded-xl blur-lg opacity-50 animate-pulse" />
-                    <div className="relative w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center text-2xl">
+          <div className="relative"">
+            <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-orange-600/20 to-yellow-600/20 rounded-3xl blur-xl"" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-red-500/20 rounded-3xl p-6 shadow-2xl"">
+              <div className="flex items-center justify-between mb-6"">
+                <div className="flex items-center space-x-4"">
+                  <div className="relative"">
+                    <div className="absolute inset-0 bg-red-500 rounded-xl blur-lg opacity-50 animate-pulse"" />
+                    <div className="relative w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center text-2xl"">
                       🚨
                     </div>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Critical Alerts</h2>
-                    <p className="text-gray-300">Immediate attention required</p>
+                    <h2 className="text-2xl font-bold text-white"">Critical Alerts</h2>
+                    <p className="text-gray-300"">Immediate attention required</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="bg-red-500/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full border border-red-500/30">
+                <div className="flex items-center space-x-2"">
+                  <span className="bg-red-500/20 text-red-300 text-xs font-medium px-3 py-1 rounded-full border border-red-500/30"">
                     {activeAlerts.filter(a => a.priority === 'high').length} High Priority
                   </span>
-                  <span className="bg-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-500/30">
+                  <span className="bg-yellow-500/20 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-500/30"">
                     {activeAlerts.filter(a => a.priority === 'medium').length} Medium
                   </span>
                 </div>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-4"">
                 {activeAlerts.map((alert) => (
                   <div key={alert.id} className={`relative overflow-hidden bg-gradient-to-r ${getAlertGradient(alert.type)}/10 border border-white/10 rounded-2xl p-4 hover:bg-white/5 transition-all duration-300`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
+                    <div className="flex items-center justify-between"">
+                      <div className="flex items-center space-x-4"">
                         <div className={`w-10 h-10 bg-gradient-to-r ${getAlertGradient(alert.type)} rounded-xl flex items-center justify-center text-xl shadow-lg`}>
                           {getAlertIcon(alert.type, alert.category)}
                         </div>
                         <div>
-                          <p className="font-medium text-white">{alert.message}</p>
-                          <div className="flex items-center space-x-3 mt-1 text-sm text-gray-400">
+                          <p className="font-medium text-white"">{alert.message}</p>
+                          <div className="flex items-center space-x-3 mt-1 text-sm text-gray-400"">
                             <span>🕒 {new Date(alert.timestamp).toLocaleTimeString()}</span>
                             <span className={`px-2 py-1 rounded-full text-xs ${
                               alert.priority === 'high' ? 'bg-red-500/20 text-red-300' :
@@ -317,13 +317,13 @@ export default function Dashboard() {
                             }`}>
                               {alert.priority} priority
                             </span>
-                            <span className="text-gray-500">• {alert.category}</span>
+                            <span className="text-gray-500"">• {alert.category}</span>
                           </div>
                         </div>
                       </div>
                       <button
                         onClick={() => dismissAlert(alert.id)}
-                        className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg"
+                        className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg""
                       >
                         ✕
                       </button>
@@ -336,19 +336,19 @@ export default function Dashboard() {
         )}
 
         {/* Advanced Action Command Center */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 via-blue-600/20 to-purple-600/20 rounded-3xl blur-xl" />
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center text-2xl">
+        <div className="relative"">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 via-blue-600/20 to-purple-600/20 rounded-3xl blur-xl"" />
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"">
+            <div className="flex items-center space-x-4 mb-6"">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-xl flex items-center justify-center text-2xl"">
                 ⚡
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">Quick Actions</h2>
-                <p className="text-gray-300">Fleet command operations</p>
+                <h2 className="text-2xl font-bold text-white"">Quick Actions</h2>
+                <p className="text-gray-300"">Fleet command operations</p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"">
               {[
                 {
                   title: 'Dispatch Load',
@@ -382,15 +382,15 @@ export default function Dashboard() {
                 <button
                   key={index}
                   onClick={action.action}
-                  className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:scale-105"
+                  className="group relative overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 transform hover:scale-105""
                 >
                   <div className={`absolute inset-0 bg-gradient-to-r ${action.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300`} />
-                  <div className="relative">
+                  <div className="relative"">
                     <div className={`w-12 h-12 bg-gradient-to-r ${action.gradient} rounded-xl flex items-center justify-center text-2xl mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                       {action.icon}
                     </div>
-                    <div className="text-white font-semibold text-lg">{action.title}</div>
-                    <div className="text-gray-400 text-sm mt-1">{action.subtitle}</div>
+                    <div className="text-white font-semibold text-lg"">{action.title}</div>
+                    <div className="text-gray-400 text-sm mt-1"">{action.subtitle}</div>
                   </div>
                 </button>
               ))}
@@ -399,44 +399,44 @@ export default function Dashboard() {
         </div>
 
         {/* Fleet Overview Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8"">
           {/* Today's Metrics */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-3xl blur-xl" />
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-xl">
+          <div className="relative"">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-3xl blur-xl"" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"">
+              <div className="flex items-center space-x-3 mb-6"">
+                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-xl"">
                   📊
                 </div>
-                <h3 className="text-xl font-semibold text-white">Today's Performance</h3>
+                <h3 className="text-xl font-semibold text-white"">Today's Performance</h3>
               </div>
               <MetricsGrid metrics={fleetMetrics} />
             </div>
           </div>
 
           {/* Fleet Status */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-teal-600/20 rounded-3xl blur-xl" />
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center text-xl">
+          <div className="relative"">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-teal-600/20 rounded-3xl blur-xl"" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"">
+              <div className="flex items-center space-x-3 mb-6"">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center text-xl"">
                   🚛
                 </div>
-                <h3 className="text-xl font-semibold text-white">Fleet Status</h3>
+                <h3 className="text-xl font-semibold text-white"">Fleet Status</h3>
               </div>
               <VehicleStatusChart />
             </div>
           </div>
 
           {/* Recent Activity */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-3xl blur-xl" />
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-xl">
+          <div className="relative"">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-3xl blur-xl"" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"">
+              <div className="flex items-center space-x-3 mb-6"">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-xl"">
                   🕐
                 </div>
-                <h3 className="text-xl font-semibold text-white">Live Activity</h3>
+                <h3 className="text-xl font-semibold text-white"">Live Activity</h3>
               </div>
               <RecentActivity />
             </div>
@@ -444,19 +444,19 @@ export default function Dashboard() {
         </div>
 
         {/* Fleet Map and Notes */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8"">
           {/* Fleet Map */}
-          <div className="lg:col-span-2 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-green-600/20 rounded-3xl blur-xl" />
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center text-xl">
+          <div className="lg:col-span-2 relative"">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-green-600/20 rounded-3xl blur-xl"" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"">
+              <div className="flex items-center justify-between mb-6"">
+                <div className="flex items-center space-x-3"">
+                  <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl flex items-center justify-center text-xl"">
                     🗺️
                   </div>
-                  <h3 className="text-xl font-semibold text-white">Real-time Fleet Tracking</h3>
+                  <h3 className="text-xl font-semibold text-white"">Real-time Fleet Tracking</h3>
                 </div>
-                <span className="bg-green-500/20 text-green-300 text-sm font-medium px-3 py-1 rounded-full border border-green-500/30">
+                <span className="bg-green-500/20 text-green-300 text-sm font-medium px-3 py-1 rounded-full border border-green-500/30"">
                   {fleetMetrics.activeVehicles} Active Vehicles
                 </span>
               </div>
@@ -465,34 +465,34 @@ export default function Dashboard() {
           </div>
 
           {/* Sticky Notes */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-3xl blur-xl" />
-            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center text-xl">
+          <div className="relative"">
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-3xl blur-xl"" />
+            <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl"">
+              <div className="flex items-center space-x-3 mb-6"">
+                <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center text-xl"">
                   📝
                 </div>
-                <h3 className="text-xl font-semibold text-white">Command Notes</h3>
+                <h3 className="text-xl font-semibold text-white"">Command Notes</h3>
               </div>
-              <StickyNote section="dashboard" entityId="fleet-overview" entityName="Fleet Dashboard" />
+              <StickyNote section=""dashboard"" entityId=""fleet-overview"" entityName=""Fleet Dashboard"" />
             </div>
           </div>
         </div>
 
         {/* Performance Analytics */}
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-purple-600/20 rounded-3xl blur-xl" />
-          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
-            <div className="flex items-center space-x-3 mb-8">
-              <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-500 rounded-xl flex items-center justify-center text-2xl">
+        <div className="relative"">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-purple-600/20 rounded-3xl blur-xl"" />
+          <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl"">
+            <div className="flex items-center space-x-3 mb-8"">
+              <div className="w-12 h-12 bg-gradient-to-r from-violet-500 to-purple-500 rounded-xl flex items-center justify-center text-2xl"">
                 🏆
               </div>
               <div>
-                <h2 className="text-2xl font-semibold text-white">Performance Analytics</h2>
-                <p className="text-gray-300">Key operational metrics</p>
+                <h2 className="text-2xl font-semibold text-white"">Performance Analytics</h2>
+                <p className="text-gray-300"">Key operational metrics</p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8"">
               {[
                 {
                   title: 'On-Time Delivery',
@@ -516,15 +516,15 @@ export default function Dashboard() {
                   icon: '💰'
                 }
               ].map((metric, index) => (
-                <div key={index} className="text-center group">
+                <div key={index} className="text-center group"">
                   <div className={`bg-gradient-to-r ${metric.gradient} w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300`}>
-                    <div className="text-center">
-                      <div className="text-2xl mb-1">{metric.icon}</div>
-                      <div className="text-2xl font-bold text-white">{metric.value}</div>
+                    <div className="text-center"">
+                      <div className="text-2xl mb-1"">{metric.icon}</div>
+                      <div className="text-2xl font-bold text-white"">{metric.value}</div>
                     </div>
                   </div>
-                  <div className="font-semibold text-white text-lg">{metric.title}</div>
-                  <div className="text-sm text-green-400 mt-2 font-medium">{metric.change} from last week</div>
+                  <div className="font-semibold text-white text-lg"">{metric.title}</div>
+                  <div className="text-sm text-green-400 mt-2 font-medium"">{metric.change} from last week</div>
                 </div>
               ))}
             </div>

@@ -133,7 +133,7 @@ export class ProfessionalPDFService {
     // - wkhtmltopdf
     // - jsPDF with html2canvas
 
-    console.log('🔄 Generating professional PDF...');
+    console.info('🔄 Generating professional PDF...');
 
     // Simulate PDF generation
     const mockPDFBuffer = Buffer.from(
@@ -157,7 +157,7 @@ export class ProfessionalPDFService {
 
     const filename = `BOL-${bolData.bolNumber}-${new Date().getTime()}.pdf`;
 
-    console.log(`✅ Professional PDF generated: ${filename}`);
+    console.info(`✅ Professional PDF generated: ${filename}`);
 
     return {
       pdfBuffer: mockPDFBuffer,
@@ -768,18 +768,3 @@ export class ProfessionalPDFService {
 }
 
 export const professionalPDFService = new ProfessionalPDFService();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

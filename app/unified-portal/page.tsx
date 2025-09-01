@@ -1,7 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import GlobalNotificationBell from '../components/GlobalNotificationBell';
 import { Load } from '../services/loadService';
 
@@ -299,71 +300,83 @@ export default function UnifiedPortal() {
   // 🚨 COUNTDOWN TIMER MANAGEMENT
   useEffect(() => {
     const alertTimer = setInterval(() => {
-      setLoadAlerts(prev => {
-        const updatedAlerts = prev.map(alert => {
+      setLoadAlerts((prev) => {
+        const updatedAlerts = prev.map((alert) => {
           if (alert.status === 'active' && alert.timeToExpire > 0) {
             const newTimeToExpire = alert.timeToExpire - 1;
-            
+
             // Warning sounds at specific intervals
-            if (newTimeToExpire === 60 || newTimeToExpire === 30 || newTimeToExpire === 10) {
+            if (
+              newTimeToExpire === 60 ||
+              newTimeToExpire === 30 ||
+              newTimeToExpire === 10
+            ) {
               playAlertSound('urgent_load');
               triggerVibration([100, 50, 100, 50, 100]);
             }
-            
+
             return { ...alert, timeToExpire: newTimeToExpire };
           }
-          
+
           // Expire alert if time runs out
           if (alert.status === 'active' && alert.timeToExpire <= 0) {
             return { ...alert, status: 'expired' as const };
           }
-          
+
           return alert;
         });
 
         // Move expired alerts to history
-        const expiredAlerts = updatedAlerts.filter(a => a.status === 'expired');
+        const expiredAlerts = updatedAlerts.filter(
+          (a) => a.status === 'expired'
+        );
         if (expiredAlerts.length > 0) {
-          setAlertQueue(prev => ({
+          setAlertQueue((prev) => ({
             ...prev,
             alertHistory: [...prev.alertHistory, ...expiredAlerts],
           }));
         }
 
         // Keep only active alerts
-        return updatedAlerts.filter(a => a.status === 'active');
+        return updatedAlerts.filter((a) => a.status === 'active');
       });
     }, 1000); // Update every second
 
     return () => clearInterval(alertTimer);
-  }, [alertSoundsEnabled]);
+  }, [alertSoundsEnabled, playAlertSound, triggerVibration]);
 
   // 🚨 SIMULATE INCOMING LOAD ALERTS (Demo Data)
   useEffect(() => {
     // Create first demo alert after 10 seconds
     const firstAlert = setTimeout(() => {
-      const demoAlert = createLoadAlert({
-        id: `FL-2025-DEMO-${Date.now()}`,
-        status: 'Available',
-        origin: 'Atlanta, GA',
-        destination: 'Miami, FL',
-        rate: 2850,
-        weight: '42,000 lbs',
-        equipment: 'Dry Van',
-        pickupDate: new Date().toISOString().split('T')[0],
-        deliveryDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-        brokerName: 'Express Logistics',
-        distance: '647 mi',
-        brokerId: 'broker_express',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        flowStage: 'broker_board',
-        dispatcherId: 'dispatcher-001',
-        dispatcherName: 'Sarah Martinez',
-      }, 'new_load', 15);
+      const demoAlert = createLoadAlert(
+        {
+          id: `FL-2025-DEMO-${Date.now()}`,
+          status: 'Available',
+          origin: 'Atlanta, GA',
+          destination: 'Miami, FL',
+          rate: 2850,
+          weight: '42,000 lbs',
+          equipment: 'Dry Van',
+          pickupDate: new Date().toISOString().split('T')[0],
+          deliveryDate: new Date(Date.now() + 86400000)
+            .toISOString()
+            .split('T')[0],
+          brokerName: 'Express Logistics',
+          distance: '647 mi',
+          brokerId: 'broker_express',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          flowStage: 'broker_board',
+          dispatcherId: 'dispatcher-001',
+          dispatcherName: 'Sarah Martinez',
+        },
+        'new_load',
+        15
+      );
 
-      setLoadAlerts(prev => [...prev, demoAlert]);
-      setAlertQueue(prev => ({
+      setLoadAlerts((prev) => [...prev, demoAlert]);
+      setAlertQueue((prev) => ({
         ...prev,
         totalAlertsToday: prev.totalAlertsToday + 1,
         activeAlerts: [...prev.activeAlerts, demoAlert],
@@ -371,8 +384,8 @@ export default function UnifiedPortal() {
 
       playAlertSound(demoAlert.alertType);
       triggerVibration([200, 100, 200, 100, 200]);
-      
-      console.log(`🚨 Demo load alert created: ${demoAlert.alertType}`);
+
+      console.info(`🚨 Demo load alert created: ${demoAlert.alertType}`);
     }, 10000);
 
     return () => clearTimeout(firstAlert);
@@ -400,7 +413,7 @@ export default function UnifiedPortal() {
       setAcceptedLoads((prev) => [...prev, updatedLoad]);
       setAssignedLoads((prev) => [...prev, updatedLoad]);
 
-      console.log('✅ Load accepted:', load.id);
+      console.info('✅ Load accepted:', load.id);
 
       // Optional: Send notification to dispatcher
       // notifyDispatcher(load.dispatcherId, `Driver accepted load ${load.id}`);
@@ -447,7 +460,7 @@ export default function UnifiedPortal() {
       setActiveWorkflow(workflow);
       setActiveSection('workflow');
 
-      console.log(
+      console.info(
         '🚛 Workflow started for load:',
         load.id,
         'with',
@@ -499,7 +512,7 @@ export default function UnifiedPortal() {
             setActiveSection('my_loads');
           }, 2000);
 
-          console.log(
+          console.info(
             '✅ Workflow completed for load:',
             updatedWorkflow.loadId
           );
@@ -538,9 +551,11 @@ export default function UnifiedPortal() {
   const renderVehicleImage = (size: string = '32px') => {
     if (currentUser.photos.vehicleEquipment) {
       return (
-        <img
+        <Image
           src={currentUser.photos.vehicleEquipment}
           alt=''
+          width={32}
+          height={32}
           style={{
             width: size,
             height: size,
@@ -557,9 +572,11 @@ export default function UnifiedPortal() {
   const renderUserImage = (size: string = '32px') => {
     if (currentUser.photos.userPhotoOrLogo) {
       return (
-        <img
+        <Image
           src={currentUser.photos.userPhotoOrLogo}
           alt=''
+          width={32}
+          height={32}
           style={{
             width: size,
             height: size,
@@ -574,32 +591,51 @@ export default function UnifiedPortal() {
   };
 
   // 🚨 LOAD ALERT MANAGEMENT FUNCTIONS
-  const playAlertSound = (alertType: 'new_load' | 'urgent_load' | 'replacement_load') => {
-    if (!alertSoundsEnabled) return;
-    try {
-      const frequency = alertType === 'urgent_load' ? 800 : alertType === 'new_load' ? 600 : 500;
-      const context = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = context.createOscillator();
-      const gainNode = context.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(context.destination);
-      oscillator.frequency.value = frequency;
-      oscillator.type = 'sine';
-      gainNode.gain.setValueAtTime(0.3, context.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 1);
-      oscillator.start(context.currentTime);
-      oscillator.stop(context.currentTime + 1);
-    } catch (error) {
-      console.log('Audio not supported');
-    }
-  };
+  const playAlertSound = useCallback(
+    (alertType: 'new_load' | 'urgent_load' | 'replacement_load') => {
+      if (!alertSoundsEnabled) return;
+      try {
+        const frequency =
+          alertType === 'urgent_load'
+            ? 800
+            : alertType === 'new_load'
+              ? 600
+              : 500;
+        const context = new (window.AudioContext ||
+          (window as any).webkitAudioContext)();
+        const oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.3, context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(
+          0.01,
+          context.currentTime + 1
+        );
+        oscillator.start(context.currentTime);
+        oscillator.stop(context.currentTime + 1);
+      } catch (error) {
+        console.info('Audio not supported');
+      }
+    },
+    [alertSoundsEnabled]
+  );
 
-  const triggerVibration = (pattern: number[] = [200, 100, 200]) => {
-    if (!alertVibrationEnabled || !navigator.vibrate) return;
-    navigator.vibrate(pattern);
-  };
+  const triggerVibration = useCallback(
+    (pattern: number[] = [200, 100, 200]) => {
+      if (!alertVibrationEnabled || !navigator.vibrate) return;
+      navigator.vibrate(pattern);
+    },
+    [alertVibrationEnabled]
+  );
 
-  const createLoadAlert = (load: Load, alertType: 'new_load' | 'urgent_load' | 'replacement_load', durationMinutes: number = 15): LoadAlert => {
+  const createLoadAlert = (
+    load: Load,
+    alertType: 'new_load' | 'urgent_load' | 'replacement_load',
+    durationMinutes: number = 15
+  ): LoadAlert => {
     const durationSeconds = durationMinutes * 60;
     return {
       id: `alert-${load.id}-${Date.now()}`,
@@ -620,19 +656,29 @@ export default function UnifiedPortal() {
   };
 
   const acceptLoadAlert = async (alertId: string) => {
-    const alert = loadAlerts.find(a => a.id === alertId);
+    const alert = loadAlerts.find((a) => a.id === alertId);
     if (!alert || alert.status !== 'active') return;
     try {
-      setLoadAlerts(prev => prev.map(a => 
-        a.id === alertId 
-          ? { ...a, status: 'accepted', acceptedBy: currentUser.id, acceptedAt: new Date() }
-          : a
-      ));
-      setAcceptedLoads(prev => [...prev, alert.load]);
-      setAlertQueue(prev => ({
+      setLoadAlerts((prev) =>
+        prev.map((a) =>
+          a.id === alertId
+            ? {
+                ...a,
+                status: 'accepted',
+                acceptedBy: currentUser.id,
+                acceptedAt: new Date(),
+              }
+            : a
+        )
+      );
+      setAcceptedLoads((prev) => [...prev, alert.load]);
+      setAlertQueue((prev) => ({
         ...prev,
         acceptedAlertsToday: prev.acceptedAlertsToday + 1,
-        acceptanceRate: prev.totalAlertsToday > 0 ? ((prev.acceptedAlertsToday + 1) / prev.totalAlertsToday) * 100 : 0,
+        acceptanceRate:
+          prev.totalAlertsToday > 0
+            ? ((prev.acceptedAlertsToday + 1) / prev.totalAlertsToday) * 100
+            : 0,
         alertHistory: [...prev.alertHistory, { ...alert, status: 'accepted' }],
       }));
       const workflow = workflowManager.initializeLoadWorkflow(
@@ -648,25 +694,23 @@ export default function UnifiedPortal() {
       );
       setActiveWorkflow(workflow);
       playAlertSound('new_load');
-      console.log(`✅ Load alert accepted: ${alert.load.id}`);
+      console.info(`✅ Load alert accepted: ${alert.load.id}`);
     } catch (error) {
       console.error('Error accepting load alert:', error);
     }
   };
 
   const declineLoadAlert = (alertId: string) => {
-    const alert = loadAlerts.find(a => a.id === alertId);
+    const alert = loadAlerts.find((a) => a.id === alertId);
     if (!alert) return;
-    setLoadAlerts(prev => prev.map(a => 
-      a.id === alertId 
-        ? { ...a, status: 'declined' }
-        : a
-    ));
-    setAlertQueue(prev => ({
+    setLoadAlerts((prev) =>
+      prev.map((a) => (a.id === alertId ? { ...a, status: 'declined' } : a))
+    );
+    setAlertQueue((prev) => ({
       ...prev,
       alertHistory: [...prev.alertHistory, { ...alert, status: 'declined' }],
     }));
-    console.log(`❌ Load alert declined: ${alertId}`);
+    console.info(`❌ Load alert declined: ${alertId}`);
   };
 
   // 🚨 LOAD ALERT ROW COMPONENT - Linear Grid Loadboard Style
@@ -685,7 +729,7 @@ export default function UnifiedPortal() {
 
     const getTimeColor = (): string => {
       if (timeRemaining <= 30) return '#dc2626'; // Red - Very urgent
-      if (timeRemaining <= 60) return '#f59e0b'; // Amber - Urgent  
+      if (timeRemaining <= 60) return '#f59e0b'; // Amber - Urgent
       if (timeRemaining <= 180) return '#eab308'; // Yellow - Warning
       return '#22c55e'; // Green - Safe
     };
@@ -714,9 +758,10 @@ export default function UnifiedPortal() {
           overflow: 'hidden',
         }}
         onMouseOver={(e) => {
-          e.currentTarget.style.background = alert.alertType === 'urgent_load' 
-            ? 'rgba(220, 38, 38, 0.15)' 
-            : 'rgba(255, 255, 255, 0.1)';
+          e.currentTarget.style.background =
+            alert.alertType === 'urgent_load'
+              ? 'rgba(220, 38, 38, 0.15)'
+              : 'rgba(255, 255, 255, 0.1)';
           e.currentTarget.style.transform = 'translateY(-1px)';
         }}
         onMouseOut={(e) => {
@@ -725,72 +770,86 @@ export default function UnifiedPortal() {
         }}
       >
         {/* Time Left Column */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          background: getTimeColor(),
-          color: 'white',
-          borderRadius: '6px',
-          padding: '4px 8px',
-          fontSize: '12px',
-          fontWeight: 'bold',
-          fontFamily: 'monospace',
-          textAlign: 'center',
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: getTimeColor(),
+            color: 'white',
+            borderRadius: '6px',
+            padding: '4px 8px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            fontFamily: 'monospace',
+            textAlign: 'center',
+          }}
+        >
           {formatTime(timeRemaining)}
         </div>
 
         {/* Origin Column */}
-        <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+        <div
+          style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}
+        >
           {alert.load.origin}
         </div>
 
         {/* Destination Column */}
-        <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+        <div
+          style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}
+        >
           {alert.load.destination}
         </div>
 
         {/* Rate Column */}
-        <div style={{ 
-          fontWeight: '700', 
-          color: '#22c55e', 
-          display: 'flex', 
-          alignItems: 'center' 
-        }}>
+        <div
+          style={{
+            fontWeight: '700',
+            color: '#22c55e',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
           ${alert.load.rate?.toLocaleString()}
         </div>
 
         {/* Details Column */}
-        <div style={{ 
-          fontSize: '12px', 
-          color: 'rgba(255, 255, 255, 0.8)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          lineHeight: '1.3'
-        }}>
+        <div
+          style={{
+            fontSize: '12px',
+            color: 'rgba(255, 255, 255, 0.8)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            lineHeight: '1.3',
+          }}
+        >
           <div>{alert.load.distance}</div>
           <div>{alert.load.equipment}</div>
         </div>
 
         {/* Dispatcher Column */}
-        <div style={{ 
-          color: '#60a5fa', 
-          fontWeight: '600',
-          display: 'flex', 
-          alignItems: 'center',
-          fontSize: '13px'
-        }}>
+        <div
+          style={{
+            color: '#60a5fa',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: '13px',
+          }}
+        >
           {alert.dispatcherName}
         </div>
 
         {/* Action Column */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '4px',
-          alignItems: 'center'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '4px',
+            alignItems: 'center',
+          }}
+        >
           <button
             onClick={() => acceptLoadAlert(alert.id)}
             style={{
@@ -807,7 +866,8 @@ export default function UnifiedPortal() {
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.3)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(34, 197, 94, 0.3)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = 'scale(1)';
@@ -832,7 +892,8 @@ export default function UnifiedPortal() {
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = 'scale(1.05)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(107, 114, 128, 0.3)';
+              e.currentTarget.style.boxShadow =
+                '0 4px 12px rgba(107, 114, 128, 0.3)';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = 'scale(1)';
@@ -946,18 +1007,20 @@ export default function UnifiedPortal() {
 
           <div>
             {/* Load Alert Board Header */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '100px 2fr 2fr 1fr 1fr 1fr 140px',
-              gap: '12px',
-              padding: '12px 20px',
-              background: 'rgba(255, 255, 255, 0.15)',
-              borderRadius: '8px',
-              marginBottom: '8px',
-              fontWeight: '600',
-              color: 'white',
-              fontSize: '14px'
-            }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '100px 2fr 2fr 1fr 1fr 1fr 140px',
+                gap: '12px',
+                padding: '12px 20px',
+                background: 'rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                marginBottom: '8px',
+                fontWeight: '600',
+                color: 'white',
+                fontSize: '14px',
+              }}
+            >
               <div>⏰ Time Left</div>
               <div>📍 Origin</div>
               <div>🏁 Destination</div>
@@ -969,14 +1032,14 @@ export default function UnifiedPortal() {
 
             {/* Load Alert Board Rows */}
             {loadAlerts
-              .filter(alert => alert.status === 'active')
+              .filter((alert) => alert.status === 'active')
               .sort((a, b) => {
                 if (a.priority !== b.priority) {
                   return a.priority === 'high' ? -1 : 1;
                 }
                 return a.timeToExpire - b.timeToExpire;
               })
-              .map(alert => (
+              .map((alert) => (
                 <LoadAlertRow key={alert.id} alert={alert} />
               ))}
           </div>
@@ -1013,34 +1076,66 @@ export default function UnifiedPortal() {
             }}
           >
             <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#60a5fa', fontSize: '24px', fontWeight: 'bold' }}>
+              <div
+                style={{
+                  color: '#60a5fa',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                }}
+              >
                 {alertQueue.totalAlertsToday}
               </div>
-              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}
+              >
                 Total Alerts
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#22c55e', fontSize: '24px', fontWeight: 'bold' }}>
+              <div
+                style={{
+                  color: '#22c55e',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                }}
+              >
                 {alertQueue.acceptedAlertsToday}
               </div>
-              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}
+              >
                 Accepted
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#f59e0b', fontSize: '24px', fontWeight: 'bold' }}>
+              <div
+                style={{
+                  color: '#f59e0b',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                }}
+              >
                 {alertQueue.acceptanceRate.toFixed(1)}%
               </div>
-              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}
+              >
                 Acceptance Rate
               </div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ color: '#8b5cf6', fontSize: '24px', fontWeight: 'bold' }}>
-                {loadAlerts.filter(a => a.status === 'active').length}
+              <div
+                style={{
+                  color: '#8b5cf6',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                }}
+              >
+                {loadAlerts.filter((a) => a.status === 'active').length}
               </div>
-              <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}>
+              <div
+                style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '12px' }}
+              >
                 Active Now
               </div>
             </div>
@@ -1355,7 +1450,14 @@ export default function UnifiedPortal() {
 
         {/* Loads Waiting for Acceptance */}
         {(() => {
-          console.log('🔍 Debug - Permission:', hasPermission('my_loads_workflow'), 'Data Length:', loadsWaitingForAcceptance.length, 'Data:', loadsWaitingForAcceptance);
+          console.info(
+            '🔍 Debug - Permission:',
+            hasPermission('my_loads_workflow'),
+            'Data Length:',
+            loadsWaitingForAcceptance.length,
+            'Data:',
+            loadsWaitingForAcceptance
+          );
           return null;
         })()}
         {hasPermission('my_loads_workflow') &&
@@ -1398,18 +1500,20 @@ export default function UnifiedPortal() {
 
               <div>
                 {/* Loads Waiting for Acceptance - Loadboard Header */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '120px 2fr 2fr 1fr 1fr 1fr 120px',
-                  gap: '12px',
-                  padding: '12px 20px',
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  borderRadius: '8px',
-                  marginBottom: '8px',
-                  fontWeight: '600',
-                  color: 'white',
-                  fontSize: '14px'
-                }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '120px 2fr 2fr 1fr 1fr 1fr 120px',
+                    gap: '12px',
+                    padding: '12px 20px',
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    borderRadius: '8px',
+                    marginBottom: '8px',
+                    fontWeight: '600',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                >
                   <div>📋 Load ID</div>
                   <div>📍 Origin</div>
                   <div>🏁 Destination</div>
@@ -1437,86 +1541,113 @@ export default function UnifiedPortal() {
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.1)';
                       e.currentTarget.style.transform = 'translateY(-1px)';
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.05)';
                       e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
                     {/* Load ID Column */}
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      background: '#dc2626',
-                      color: 'white',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: 'bold',
-                      justifyContent: 'center',
-                    }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        background: '#dc2626',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        justifyContent: 'center',
+                      }}
+                    >
                       {load.id}
                     </div>
 
                     {/* Origin Column */}
-                    <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
                       {load.origin}
                     </div>
 
                     {/* Destination Column */}
-                    <div style={{ fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
                       {load.destination}
                     </div>
 
                     {/* Rate Column */}
-                    <div style={{ 
-                      fontWeight: '700', 
-                      color: '#22c55e', 
-                      display: 'flex', 
-                      alignItems: 'center' 
-                    }}>
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        color: '#22c55e',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
                       ${load.rate ? load.rate.toLocaleString() : 'N/A'}
                     </div>
 
                     {/* Details Column */}
-                    <div style={{ 
-                      fontSize: '12px', 
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      lineHeight: '1.3'
-                    }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        lineHeight: '1.3',
+                      }}
+                    >
                       <div>{load.distance}</div>
                       <div>{load.equipment}</div>
                       {load.photoConfig?.pickupPhotosRequired && (
-                        <div style={{ color: '#fbbf24', fontSize: '11px' }}>📸 Photos Req</div>
+                        <div style={{ color: '#fbbf24', fontSize: '11px' }}>
+                          📸 Photos Req
+                        </div>
                       )}
                     </div>
 
                     {/* Dispatcher Column */}
-                    <div style={{ 
-                      color: '#60a5fa', 
-                      fontWeight: '600',
-                      display: 'flex', 
-                      alignItems: 'center',
-                      fontSize: '13px'
-                    }}>
+                    <div
+                      style={{
+                        color: '#60a5fa',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontSize: '13px',
+                      }}
+                    >
                       {load.dispatcherName}
                     </div>
 
                     {/* Action Column */}
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
                       <button
                         onClick={() => acceptLoad(load)}
                         style={{
-                          background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                          background:
+                            'linear-gradient(135deg, #22c55e, #16a34a)',
                           color: 'white',
                           border: 'none',
                           borderRadius: '6px',
@@ -1529,7 +1660,8 @@ export default function UnifiedPortal() {
                         }}
                         onMouseOver={(e) => {
                           e.currentTarget.style.transform = 'scale(1.05)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(34, 197, 94, 0.3)';
+                          e.currentTarget.style.boxShadow =
+                            '0 4px 12px rgba(34, 197, 94, 0.3)';
                         }}
                         onMouseOut={(e) => {
                           e.currentTarget.style.transform = 'scale(1)';
@@ -1546,7 +1678,8 @@ export default function UnifiedPortal() {
           )}
 
         {/* Debug: Show fallback if conditions not met */}
-        {(!hasPermission('my_loads_workflow') || loadsWaitingForAcceptance.length === 0) && (
+        {(!hasPermission('my_loads_workflow') ||
+          loadsWaitingForAcceptance.length === 0) && (
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.15)',
@@ -1579,18 +1712,31 @@ export default function UnifiedPortal() {
                   margin: 0,
                 }}
               >
-                Permission: {hasPermission('my_loads_workflow') ? '✅ Yes' : '❌ No'} | 
-                Data Length: {loadsWaitingForAcceptance.length} | 
-                {loadsWaitingForAcceptance.length === 0 ? 'No data loaded' : 'Data exists but not showing'}
+                Permission:{' '}
+                {hasPermission('my_loads_workflow') ? '✅ Yes' : '❌ No'} | Data
+                Length: {loadsWaitingForAcceptance.length} |
+                {loadsWaitingForAcceptance.length === 0
+                  ? 'No data loaded'
+                  : 'Data exists but not showing'}
               </p>
             </div>
 
             {loadsWaitingForAcceptance.length > 0 && (
               <div>
-                <h4 style={{ color: 'white', margin: '0 0 10px 0' }}>Available Data:</h4>
+                <h4 style={{ color: 'white', margin: '0 0 10px 0' }}>
+                  Available Data:
+                </h4>
                 {loadsWaitingForAcceptance.map((load, index) => (
-                  <div key={index} style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', marginBottom: '5px' }}>
-                    {load.id}: {load.origin} → {load.destination} (${load.rate ? load.rate.toLocaleString() : 'No rate'})
+                  <div
+                    key={index}
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '12px',
+                      marginBottom: '5px',
+                    }}
+                  >
+                    {load.id}: {load.origin} → {load.destination} ($
+                    {load.rate ? load.rate.toLocaleString() : 'No rate'})
                   </div>
                 ))}
               </div>
@@ -1841,9 +1987,7 @@ export default function UnifiedPortal() {
             </div>
           </div>
         ) : (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
-          >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {acceptedLoads.map((load) => (
               <div
                 key={load.id}
@@ -2027,9 +2171,7 @@ export default function UnifiedPortal() {
             </div>
           </div>
         ) : (
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
-          >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {availableLoads.slice(0, 10).map((load) => (
               <div
                 key={load.id}
@@ -2518,11 +2660,11 @@ export default function UnifiedPortal() {
     const sendDispatcherNotification = async (msg: any) => {
       try {
         // In production, this would use real notification service
-        console.log(
+        console.info(
           '📡 Sending notification to dispatcher:',
           currentUser.dispatcher.name
         );
-        console.log('📱 Message:', msg.message);
+        console.info('📱 Message:', msg.message);
 
         // Mock SMS to dispatcher
         const smsResponse = await fetch('/api/notifications/send', {
@@ -2552,7 +2694,7 @@ export default function UnifiedPortal() {
           }),
         });
 
-        console.log('✅ Dispatcher notification sent');
+        console.info('✅ Dispatcher notification sent');
       } catch (error) {
         console.error('❌ Failed to send dispatcher notification:', error);
       }
@@ -3213,7 +3355,7 @@ export default function UnifiedPortal() {
         backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
         backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Back Button */}
@@ -3361,7 +3503,7 @@ export default function UnifiedPortal() {
                         boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                         animation: 'pulse 2s infinite',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.9)',

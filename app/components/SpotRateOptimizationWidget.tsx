@@ -1713,7 +1713,7 @@ export default function SpotRateOptimizationWidget() {
                 padding: '40px 20px',
               }}
             >
-              Click "Generate Strategies" to see pricing strategies for your
+              Click ""Generate Strategies"" to see pricing strategies for your
               load
             </div>
           )}

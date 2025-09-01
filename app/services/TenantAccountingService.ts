@@ -81,7 +81,7 @@ export class CompanyAccountingService {
     if (isBillingEnabled()) {
       try {
         this.stripeService = new StripeService();
-        console.log('✅ StripeService initialized successfully');
+        console.info('✅ StripeService initialized successfully');
       } catch (error) {
         console.warn(
           '⚠️ StripeService initialization failed, using mock data:',
@@ -90,7 +90,7 @@ export class CompanyAccountingService {
         this.stripeService = null;
       }
     } else {
-      console.log(
+      console.info(
         '⚠️ Stripe environment variables not configured, using mock data'
       );
       this.stripeService = null;
@@ -98,7 +98,7 @@ export class CompanyAccountingService {
 
     try {
       this.billingService = new BillingAutomationService();
-      console.log('✅ BillingAutomationService initialized successfully');
+      console.info('✅ BillingAutomationService initialized successfully');
     } catch (error) {
       console.warn(
         '⚠️ BillingAutomationService initialization failed, using mock data:',
@@ -108,7 +108,7 @@ export class CompanyAccountingService {
     }
 
     this.userDataService = UserDataService.getInstance();
-    console.log(
+    console.info(
       '✅ CompanyAccountingService initialized with user data integration'
     );
   }

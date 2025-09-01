@@ -52,7 +52,7 @@ export default function HomePage() {
         }}>
           
           {/* Dispatch Central */}
-          <Link href="/dispatch" style={{ textDecoration: 'none' }}>
+          <Link href="/dispatch"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
               borderRadius: '12px',
@@ -80,7 +80,7 @@ export default function HomePage() {
           </Link>
 
           {/* Driver Management */}
-          <Link href="/drivers" style={{ textDecoration: 'none' }}>
+          <Link href="/drivers"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #f7c52d, #f4a832)',
               borderRadius: '12px',
@@ -108,7 +108,7 @@ export default function HomePage() {
           </Link>
 
           {/* Fleet Management */}
-          <Link href="/vehicles" style={{ textDecoration: 'none' }}>
+          <Link href="/vehicles"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
               borderRadius: '12px',
@@ -136,7 +136,7 @@ export default function HomePage() {
           </Link>
 
           {/* Broker Box */}
-          <Link href="/broker" style={{ textDecoration: 'none' }}>
+          <Link href="/broker"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #f97316, #ea580c)',
               borderRadius: '12px',
@@ -164,7 +164,7 @@ export default function HomePage() {
           </Link>
 
           {/* Route Optimization */}
-          <Link href="/routes" style={{ textDecoration: 'none' }}>
+          <Link href="/routes"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
               borderRadius: '12px',
@@ -192,7 +192,7 @@ export default function HomePage() {
           </Link>
 
           {/* Analytics Dashboard */}
-          <Link href="/analytics" style={{ textDecoration: 'none' }}>
+          <Link href="/analytics"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
               borderRadius: '12px',
@@ -220,7 +220,7 @@ export default function HomePage() {
           </Link>
 
           {/* Freight Quoting */}
-          <Link href="/quoting" style={{ textDecoration: 'none' }}>
+          <Link href="/quoting"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #22c55e, #16a34a)',
               borderRadius: '12px',
@@ -248,7 +248,7 @@ export default function HomePage() {
           </Link>
 
           {/* Compliance */}
-          <Link href="/compliance" style={{ textDecoration: 'none' }}>
+          <Link href="/compliance"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
               borderRadius: '12px',
@@ -276,7 +276,7 @@ export default function HomePage() {
           </Link>
 
           {/* Maintenance */}
-          <Link href="/maintenance" style={{ textDecoration: 'none' }}>
+          <Link href="/maintenance"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
               borderRadius: '12px',
@@ -304,7 +304,7 @@ export default function HomePage() {
           </Link>
 
           {/* Training */}
-          <Link href="/training" style={{ textDecoration: 'none' }}>
+          <Link href="/training"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #8b4513, #654321)',
               borderRadius: '12px',
@@ -332,7 +332,7 @@ export default function HomePage() {
           </Link>
 
           {/* Notes (Yellowish Gold) - Moved to bottom */}
-          <Link href="/notes" style={{ textDecoration: 'none' }}>
+          <Link href="/notes"" style={{ textDecoration: 'none' }}>
             <div style={{
               background: 'linear-gradient(135deg, #f59e0b, #d97706)',
               borderRadius: '12px',

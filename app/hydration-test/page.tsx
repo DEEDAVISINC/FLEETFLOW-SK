@@ -69,7 +69,7 @@ export default function HydrationTestPage() {
 
         <button
           onClick={() => {
-            console.log('✅ Console test - this should appear in console');
+            console.info('✅ Console test - this should appear in console');
             alert('Alert test - if you see this, JavaScript is working!');
           }}
           style={{
@@ -139,7 +139,7 @@ export default function HydrationTestPage() {
           <li>Count increments when clicked</li>
           <li>Message updates dynamically</li>
           <li>Console test logs without errors</li>
-          <li>Green "Hydrated" indicator appears in top-left</li>
+          <li>Green ""Hydrated"" indicator appears in top-left</li>
           <li>No React hydration errors in console</li>
         </ul>
       </div>

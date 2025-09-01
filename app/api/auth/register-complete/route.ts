@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
     };
 
     // In a real application, save to database
-    console.log('Creating user profile:', {
+    console.info('Creating user profile:', {
       id: userProfile.id,
       email: userProfile.email,
       plan: data.selectedPlan,
@@ -270,7 +270,7 @@ export async function POST(request: NextRequest) {
       `${userProfile.email}-${Date.now()}`
     ).toString('base64');
 
-    console.log('Sending verification email:', {
+    console.info('Sending verification email:', {
       to: userProfile.email,
       token: verificationToken,
       trialEndDate: userProfile.subscription.trialEndDate,

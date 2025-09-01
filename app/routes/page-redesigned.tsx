@@ -45,7 +45,7 @@ export default function RoutesPageRedesigned() {
           'linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #5b21b6 100%)',
         minHeight: '100vh',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       <div className='container mx-auto px-6 py-8'>

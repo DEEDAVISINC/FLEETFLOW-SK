@@ -138,7 +138,7 @@ export default function RoutesPageWithMultiState() {
   };
 
   const handleShareComplete = (shareData: any) => {
-    console.log('Route shared:', shareData);
+    console.info('Route shared:', shareData);
     // Here you would typically send the sharing data to your backend
     // For now, we'll just show a success message
     alert(
@@ -155,14 +155,14 @@ export default function RoutesPageWithMultiState() {
 
   const handleQuoteCreated = (quote: MultiStateConsolidatedQuote) => {
     setMultiStateQuotes((prev) => [...prev, quote]);
-    console.log('New multi-state quote created:', quote);
+    console.info('New multi-state quote created:', quote);
   };
 
   const handleQuoteUpdated = (quote: MultiStateConsolidatedQuote) => {
     setMultiStateQuotes((prev) =>
       prev.map((q) => (q.id === quote.id ? quote : q))
     );
-    console.log('Multi-state quote updated:', quote);
+    console.info('Multi-state quote updated:', quote);
   };
 
   // Load existing quotes on component mount
@@ -735,6 +735,9 @@ export default function RoutesPageWithMultiState() {
     </div>
   );
 }
+
+
+
 
 
 

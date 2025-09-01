@@ -50,7 +50,7 @@ export class SendGridService {
     // Note: ImprovMX handles incoming email forwarding
     // For outgoing emails, you'll need a transactional email service
     if (!this.apiKey) {
-      console.log(
+      console.info(
         '💡 Consider setting up a transactional email service (Brevo, Resend, etc.) for sending emails'
       );
     }
@@ -105,7 +105,7 @@ export class SendGridService {
 
       const result = await this.sendViaSendGrid(emailData);
 
-      console.log(`✅ Email sent via SendGrid:`, {
+      console.info(`✅ Email sent via SendGrid:`, {
         category: options.category,
         recipients: recipients.length,
         messageId: result.messageId,
@@ -249,7 +249,7 @@ export class SendGridService {
   private async sendViaSendGrid(emailData: any): Promise<EmailResult> {
     if (!this.apiKey) {
       // Development mode fallback
-      console.log('📧 Email (Dev Mode):', {
+      console.info('📧 Email (Dev Mode):', {
         to: emailData.personalizations[0].to[0].email,
         subject: emailData.personalizations[0].subject,
         category: emailData.categories?.[1],

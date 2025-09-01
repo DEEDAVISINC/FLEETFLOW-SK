@@ -177,7 +177,7 @@ export default function AIHubPage() {
       response =
         '🆘 **Problem Resolution Assistant:**\n\n🔍 **Current issues detected:**\n- Load: Driver delay detected\n- Dock: Capacity monitoring\n- Invoice: Rate discrepancy detected\n\n🤖 **AI auto-resolution:**\n- Rerouted driver via optimal path\n- Redistributed dock appointments\n- Flagged invoice for quick review\n\n✅ **All issues resolved or escalated appropriately!**';
     } else {
-      response = `🤖 **I can help you with anything in FleetFlow:**\n\n🚛 **Load Management:** Create, track, optimize loads\n🏭 **Dock Scheduling:** Appointments, bottleneck prevention\n💰 **Settlement Processing:** Invoice automation, payments\n📊 **Analytics:** Custom reports, predictions\n🗺️ **Route Optimization:** AI-powered routing\n👥 **Driver Management:** Assignments, compliance\n🤝 **Carrier Relations:** Performance, optimization\n\n**Just ask me to do anything!** Examples:\n- "Create a new load"\n- "What's the status of my loads?"\n- "Optimize my dock schedule"\n- "Process pending invoices with AI"\n- "Show me this week's savings"`;
+      response = `🤖 **I can help you with anything in FleetFlow:**\n\n🚛 **Load Management:** Create, track, optimize loads\n🏭 **Dock Scheduling:** Appointments, bottleneck prevention\n💰 **Settlement Processing:** Invoice automation, payments\n📊 **Analytics:** Custom reports, predictions\n🗺️ **Route Optimization:** AI-powered routing\n👥 **Driver Management:** Assignments, compliance\n🤝 **Carrier Relations:** Performance, optimization\n\n**Just ask me to do anything!** Examples:\n- ""Create a new load""\n- ""What's the status of my loads?""\n- ""Optimize my dock schedule""\n- ""Process pending invoices with AI""\n- ""Show me this week's savings""`;
     }
 
     const assistantMsg = {
@@ -1563,43 +1563,43 @@ export default function AIHubPage() {
                             switch (tab.label) {
                               case 'Platinum Prospects':
                                 setActiveProspectView('platinum');
-                                console.log(
+                                console.info(
                                   'Platinum Prospects clicked - showing detailed view'
                                 );
                                 break;
                               case 'Gold Prospects':
                                 setActiveProspectView('gold');
-                                console.log(
+                                console.info(
                                   'Gold Prospects clicked - showing detailed view'
                                 );
                                 break;
                               case 'Discovery Engine':
                                 setActiveProspectView(null);
                                 setShowCRM(true);
-                                console.log(
+                                console.info(
                                   'Discovery Engine activated - showing CRM Lead Manager'
                                 );
                                 break;
                               case 'Contact Manager':
                                 setActiveProspectView('contacts');
-                                console.log(
+                                console.info(
                                   'Contact Manager clicked - showing detailed view'
                                 );
                                 break;
                               case 'Revenue Tracker':
                                 setActiveProspectView('revenue');
-                                console.log(
+                                console.info(
                                   'Revenue Tracker clicked - showing detailed view'
                                 );
                                 break;
                               case 'AI Insights':
                                 setActiveProspectView('ai-insights');
-                                console.log(
+                                console.info(
                                   'AI Insights clicked - showing detailed view'
                                 );
                                 break;
                               default:
-                                console.log(`${tab.label} clicked`);
+                                console.info(`${tab.label} clicked`);
                             }
                           }}
                         >

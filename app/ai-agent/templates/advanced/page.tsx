@@ -234,7 +234,7 @@ export default function AdvancedTemplateEditor() {
   const insertVariableIntoContent = (variableName: string) => {
     const placeholder = `{{${variableName}}}`;
     const textarea = document.querySelector(
-      'textarea[name="content"]'
+      'textarea[name="content""]'
     ) as HTMLTextAreaElement;
 
     if (textarea) {

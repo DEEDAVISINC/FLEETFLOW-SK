@@ -317,7 +317,7 @@ export class SystemOrchestratorNotificationIntegration {
   // 🚀 INITIALIZE INTEGRATION
   private async initializeIntegration(): Promise<void> {
     try {
-      console.log(
+      console.info(
         '🔄 Initializing System Orchestrator Notification Integration...'
       );
 
@@ -331,7 +331,7 @@ export class SystemOrchestratorNotificationIntegration {
       this.setupSystemHealthMonitoring();
 
       this.isInitialized = true;
-      console.log(
+      console.info(
         '✅ System Orchestrator Notification Integration initialized'
       );
 
@@ -390,7 +390,7 @@ export class SystemOrchestratorNotificationIntegration {
       }
     });
 
-    console.log(
+    console.info(
       `📡 Subscribed to ${workflowEvents.length} workflow event types`
     );
   }
@@ -401,7 +401,7 @@ export class SystemOrchestratorNotificationIntegration {
     eventData: any
   ): Promise<void> {
     try {
-      console.log(`🔔 Workflow event received: ${eventType}`, eventData);
+      console.info(`🔔 Workflow event received: ${eventType}`, eventData);
 
       // Find matching notification configurations
       const matchingConfigs = WORKFLOW_NOTIFICATIONS.filter((config) => {
@@ -496,7 +496,7 @@ export class SystemOrchestratorNotificationIntegration {
           actions,
         });
 
-      console.log(
+      console.info(
         `✅ Workflow notification created: ${notificationId} for ${config.workflowId}:${config.stepId}`
       );
     } catch (error) {
@@ -542,20 +542,20 @@ export class SystemOrchestratorNotificationIntegration {
   private setupWebSocketIntegration(): void {
     // Subscribe to WebSocket events for cross-portal synchronization
     webSocketNotificationService.onMessage('system_status', (data) => {
-      console.log('📡 System status update:', data);
+      console.info('📡 System status update:', data);
     });
 
     webSocketNotificationService.onMessage('connected', () => {
-      console.log('🔗 WebSocket connected - notification sync active');
+      console.info('🔗 WebSocket connected - notification sync active');
     });
 
     webSocketNotificationService.onMessage('disconnected', () => {
-      console.log(
+      console.info(
         '🔌 WebSocket disconnected - falling back to local notifications'
       );
     });
 
-    console.log('🔗 WebSocket notification integration configured');
+    console.info('🔗 WebSocket notification integration configured');
   }
 
   // 🏥 SETUP SYSTEM HEALTH MONITORING
@@ -633,7 +633,7 @@ export class SystemOrchestratorNotificationIntegration {
       5 * 60 * 1000
     ); // 5 minutes
 
-    console.log('🏥 System health monitoring active');
+    console.info('🏥 System health monitoring active');
   }
 
   // 📊 TRIGGER MANUAL WORKFLOW NOTIFICATION
@@ -659,7 +659,7 @@ export class SystemOrchestratorNotificationIntegration {
 
   // 🧪 SEND TEST WORKFLOW NOTIFICATIONS
   public async sendTestNotifications(): Promise<void> {
-    console.log('🧪 Sending test workflow notifications...');
+    console.info('🧪 Sending test workflow notifications...');
 
     // Test load assignment
     await this.triggerWorkflowNotification(
@@ -702,7 +702,7 @@ export class SystemOrchestratorNotificationIntegration {
       }
     );
 
-    console.log('✅ Test workflow notifications sent');
+    console.info('✅ Test workflow notifications sent');
   }
 
   // 📋 GET INTEGRATION STATUS
@@ -729,7 +729,7 @@ export class SystemOrchestratorNotificationIntegration {
 
   // 🗑️ CLEANUP
   public destroy(): void {
-    console.log('🗑️ Cleaning up System Orchestrator Notification Integration');
+    console.info('🗑️ Cleaning up System Orchestrator Notification Integration');
 
     // Unsubscribe from workflow events
     this.workflowSubscriptions.forEach((unsubscribe, eventType) => {

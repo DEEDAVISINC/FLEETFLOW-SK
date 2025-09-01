@@ -68,11 +68,11 @@ export class ContinuousLoadOptimizationService {
    */
   startContinuousOptimization(): void {
     if (!this.config.enabled) {
-      console.log('🚫 Continuous optimization is disabled');
+      console.info('🚫 Continuous optimization is disabled');
       return;
     }
 
-    console.log(
+    console.info(
       '🔄 Starting continuous load optimization for maximum utilization...'
     );
 
@@ -93,7 +93,7 @@ export class ContinuousLoadOptimizationService {
    */
   private async runContinuousOptimizationCycle(): Promise<void> {
     try {
-      console.log('🎯 Running continuous optimization cycle...');
+      console.info('🎯 Running continuous optimization cycle...');
 
       // 1. Get all active drivers and their current status
       const activeDrivers = await this.getActiveDrivers();
@@ -106,7 +106,7 @@ export class ContinuousLoadOptimizationService {
       // 3. Look for cross-driver optimization opportunities
       await this.optimizeCrossDriverOpportunities(activeDrivers);
 
-      console.log('✅ Continuous optimization cycle completed');
+      console.info('✅ Continuous optimization cycle completed');
     } catch (error) {
       console.error('❌ Error in continuous optimization cycle:', error);
     }
@@ -118,13 +118,13 @@ export class ContinuousLoadOptimizationService {
   private async optimizeDriverUtilization(
     driver: DriverUtilizationTarget
   ): Promise<void> {
-    console.log(`🚛 Optimizing utilization for ${driver.driverName}...`);
+    console.info(`🚛 Optimizing utilization for ${driver.driverName}...`);
 
     // Check if driver needs more loads
     const needsOptimization = this.driverNeedsMoreLoads(driver);
 
     if (!needsOptimization) {
-      console.log(`✅ ${driver.driverName} is optimally loaded`);
+      console.info(`✅ ${driver.driverName} is optimally loaded`);
       return;
     }
 
@@ -132,7 +132,7 @@ export class ContinuousLoadOptimizationService {
     const opportunities = await this.findLoadOpportunities(driver);
 
     if (opportunities.length === 0) {
-      console.log(
+      console.info(
         `⚠️ No suitable load opportunities found for ${driver.driverName}`
       );
       await this.handleNoOpportunities(driver);
@@ -331,7 +331,7 @@ export class ContinuousLoadOptimizationService {
       current.score > best.score ? current : best
     );
 
-    console.log(
+    console.info(
       `📊 Selected ${bestStrategy.type} strategy for ${driver.driverName} (score: ${bestStrategy.score.toFixed(1)})`
     );
 
@@ -394,7 +394,7 @@ export class ContinuousLoadOptimizationService {
     driver: DriverUtilizationTarget,
     strategy: LoadOpportunity[]
   ): Promise<void> {
-    console.log(
+    console.info(
       `🚀 Implementing optimization for ${driver.driverName}: ${strategy.length} loads`
     );
 
@@ -433,7 +433,7 @@ export class ContinuousLoadOptimizationService {
       optimizedRoute,
     });
 
-    console.log(
+    console.info(
       `✅ Optimization implemented: +$${totalRevenue.toFixed(2)} revenue, +${totalHours.toFixed(1)} hours`
     );
   }
@@ -452,7 +452,7 @@ export class ContinuousLoadOptimizationService {
         await this.findRepositionOpportunity(driver);
 
       if (repositionOpportunity) {
-        console.log(
+        console.info(
           `📍 Repositioning ${driver.driverName} to ${repositionOpportunity.location} for better opportunities`
         );
         await this.implementRepositioning(driver, repositionOpportunity);
@@ -462,7 +462,7 @@ export class ContinuousLoadOptimizationService {
     // Suggest driver take rest if close to HOS limits
     const remainingHours = 14 - status.hoursWorkedToday;
     if (remainingHours <= 2) {
-      console.log(
+      console.info(
         `😴 Suggesting rest period for ${driver.driverName} (${remainingHours.toFixed(1)} hours remaining)`
       );
       await this.suggestRestPeriod(driver);
@@ -475,7 +475,7 @@ export class ContinuousLoadOptimizationService {
   private async optimizeCrossDriverOpportunities(
     drivers: DriverUtilizationTarget[]
   ): Promise<void> {
-    console.log('🔄 Analyzing cross-driver optimization opportunities...');
+    console.info('🔄 Analyzing cross-driver optimization opportunities...');
 
     // Look for load swaps that improve overall utilization
     for (let i = 0; i < drivers.length; i++) {
@@ -486,7 +486,7 @@ export class ContinuousLoadOptimizationService {
         );
 
         if (swapOpportunity && swapOpportunity.benefit > 1000) {
-          console.log(
+          console.info(
             `🔄 Beneficial load swap found between ${drivers[i].driverName} and ${drivers[j].driverName}`
           );
           await this.implementLoadSwap(drivers[i], drivers[j], swapOpportunity);
@@ -636,7 +636,7 @@ export class ContinuousLoadOptimizationService {
 
   private async notifyDispatch(notification: any): Promise<void> {
     // Notify dispatch of optimization
-    console.log('📢 Dispatch notification:', notification);
+    console.info('📢 Dispatch notification:', notification);
   }
 
   private async findRepositionOpportunity(
@@ -677,22 +677,3 @@ export class ContinuousLoadOptimizationService {
 }
 
 export default ContinuousLoadOptimizationService;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

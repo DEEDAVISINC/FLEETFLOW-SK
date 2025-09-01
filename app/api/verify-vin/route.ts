@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'VIN is required' }, { status: 400 });
     }
 
-    console.log(`🔍 API: Starting VIN verification for: ${vin}`);
+    console.info(`🔍 API: Starting VIN verification for: ${vin}`);
 
     // If we have all data for comprehensive verification
     if (licensePlate && state) {

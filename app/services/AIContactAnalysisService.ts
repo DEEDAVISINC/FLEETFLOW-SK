@@ -1081,7 +1081,7 @@ export default class AIContactAnalysisService {
 const aiAnalysis = new AIContactAnalysisService('your-org-id');
 const analysis = await aiAnalysis.analyzeContactWithAI('contact-123');
 
-console.log('Analysis Results:', {
+console.info('Analysis Results:', {
   leadScore: analysis.lead_score,
   personalityProfile: analysis.personality_profile,
   buyingSignals: analysis.buying_signals,

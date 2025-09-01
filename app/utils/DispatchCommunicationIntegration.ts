@@ -17,7 +17,7 @@ export class DispatchCommunicationIntegration {
     newStatus: string,
     loadData: any
   ) {
-    console.log(`🚛 Load ${loadId}: ${oldStatus} → ${newStatus}`);
+    console.info(`🚛 Load ${loadId}: ${oldStatus} → ${newStatus}`);
 
     // Determine communication trigger based on status change
     let triggerType = '';
@@ -70,7 +70,7 @@ export class DispatchCommunicationIntegration {
         break;
 
       default:
-        console.log(
+        console.info(
           `No communication trigger defined for status: ${newStatus}`
         );
         return;
@@ -94,7 +94,7 @@ export class DispatchCommunicationIntegration {
     eventType: string,
     eventData: any
   ) {
-    console.log(`👨‍💼 Driver event for ${loadId}: ${eventType}`);
+    console.info(`👨‍💼 Driver event for ${loadId}: ${eventType}`);
 
     let triggerType = '';
     const context = {
@@ -137,7 +137,7 @@ export class DispatchCommunicationIntegration {
         break;
 
       default:
-        console.log(`No communication trigger for driver event: ${eventType}`);
+        console.info(`No communication trigger for driver event: ${eventType}`);
         return;
     }
 
@@ -158,7 +158,7 @@ export class DispatchCommunicationIntegration {
     inquiryType: string,
     inquiryData: any
   ) {
-    console.log(`📞 Customer inquiry: ${inquiryType}`);
+    console.info(`📞 Customer inquiry: ${inquiryType}`);
 
     let triggerType = '';
     const context = {
@@ -199,7 +199,7 @@ export class DispatchCommunicationIntegration {
         break;
 
       default:
-        console.log(`No trigger defined for inquiry type: ${inquiryType}`);
+        console.info(`No trigger defined for inquiry type: ${inquiryType}`);
         return;
     }
 
@@ -242,7 +242,7 @@ export class DispatchCommunicationIntegration {
       const result = await response.json();
 
       if (result.success) {
-        console.log(`✅ Communication executed: ${result.message}`);
+        console.info(`✅ Communication executed: ${result.message}`);
 
         // Log to dispatch system
         this.logDispatchCommunication(identifier, triggerType, result);
@@ -305,7 +305,7 @@ export class DispatchCommunicationIntegration {
     result: any
   ) {
     // Log communication result in dispatch system
-    console.log(`📋 Logging dispatch communication for ${identifier}:`, {
+    console.info(`📋 Logging dispatch communication for ${identifier}:`, {
       triggerType,
       communicationType: result.result.communicationType,
       escalated: result.result.escalationScheduled,
@@ -316,7 +316,7 @@ export class DispatchCommunicationIntegration {
 
   private static updateDispatchUI(identifier: string, result: any) {
     // Update dispatch UI with communication status
-    console.log(`🖥️ Updating dispatch UI for ${identifier}:`, {
+    console.info(`🖥️ Updating dispatch UI for ${identifier}:`, {
       communicationSent: true,
       escalated: result.result.escalationScheduled,
       lastCommunication: new Date().toISOString(),
@@ -393,7 +393,7 @@ export class BrokerCommunicationIntegration {
     negotiationType: string,
     negotiationData: any
   ) {
-    console.log(`💰 Rate negotiation: ${negotiationType}`);
+    console.info(`💰 Rate negotiation: ${negotiationType}`);
 
     const triggerType = 'financial_dispute';
     const context = {
@@ -424,7 +424,7 @@ export class BrokerCommunicationIntegration {
     eventType: string,
     eventData: any
   ) {
-    console.log(`🤝 Customer relationship event: ${eventType}`);
+    console.info(`🤝 Customer relationship event: ${eventType}`);
 
     let triggerType = '';
     const context = {
@@ -457,7 +457,7 @@ export class BrokerCommunicationIntegration {
         break;
 
       default:
-        console.log(`No trigger for relationship event: ${eventType}`);
+        console.info(`No trigger for relationship event: ${eventType}`);
         return;
     }
 
@@ -476,7 +476,7 @@ export class BrokerCommunicationIntegration {
     originalData: any
   ) {
     // Similar to dispatch integration but focused on broker operations
-    console.log(
+    console.info(
       `📞 Executing broker communication for ${customerId}: ${triggerType}`
     );
   }

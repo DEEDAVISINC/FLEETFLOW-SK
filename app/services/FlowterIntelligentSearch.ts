@@ -132,7 +132,7 @@ export class FlowterIntelligentSearch {
   ): Promise<FlowterSearchResults> {
     this.userContext = context;
 
-    console.log(`🔍 Flowter Search: "${query}" for user ${context.userId}`);
+    console.info(`🔍 Flowter Search: "${query}" for user ${context.userId}`);
 
     // Step 1: Security validation
     const validation = await this.validateSearchQuery(query, context);
@@ -156,7 +156,7 @@ export class FlowterIntelligentSearch {
       intent
     );
 
-    console.log(
+    console.info(
       `✅ Search complete: ${response.type} with ${accessibleResults.accessible.length} accessible results`
     );
     return response;
@@ -745,7 +745,7 @@ export class FlowterIntelligentSearch {
   // ============================================================================
 
   private buildSearchIndex(): void {
-    console.log('🔧 Building Flowter search index...');
+    console.info('🔧 Building Flowter search index...');
 
     this.searchData.forEach((item) => {
       const searchTerms = [
@@ -774,7 +774,7 @@ export class FlowterIntelligentSearch {
       });
     });
 
-    console.log(
+    console.info(
       `✅ Search index built with ${this.searchIndex.size} terms covering ${this.searchData.length} features`
     );
   }
@@ -851,7 +851,7 @@ export class FlowterIntelligentSearch {
       });
     });
 
-    console.log(`✅ Synonym map built with ${this.synonymMap.size} terms`);
+    console.info(`✅ Synonym map built with ${this.synonymMap.size} terms`);
   }
 
   // ============================================================================
@@ -981,7 +981,7 @@ export class FlowterIntelligentSearch {
       intent.confidence += 10;
     }
 
-    console.log(
+    console.info(
       `🎯 Intent parsed: ${intent.action} ${intent.target} (confidence: ${intent.confidence}%)`
     );
     return intent;
@@ -1028,7 +1028,7 @@ export class FlowterIntelligentSearch {
       .map(([itemId, _]) => this.searchData.find((item) => item.id === itemId))
       .filter((item) => item !== undefined) as FlowterSearchItem[];
 
-    console.log(`🔍 Found ${results.length} matches for "${query}"`);
+    console.info(`🔍 Found ${results.length} matches for "${query}"`);
     return results.slice(0, 10); // Limit to top 10 results
   }
 
@@ -1069,7 +1069,7 @@ export class FlowterIntelligentSearch {
       }
     }
 
-    console.log(
+    console.info(
       `🔒 Access filter: ${accessible.length} accessible, ${restricted.length} restricted`
     );
     return { accessible, restricted };

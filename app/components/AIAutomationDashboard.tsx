@@ -2039,7 +2039,7 @@ export default function AIAutomationDashboard() {
                         Step 3: Test AI Dispatch
                       </h4>
                       <p className='text-sm text-purple-800'>
-                        Use the "Test AI Dispatch" quick action to see AI
+                        Use the ""Test AI Dispatch"" quick action to see AI
                         recommendations for load-carrier matching with
                         confidence scores.
                       </p>

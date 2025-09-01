@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(
+    console.info(
       `🚀 Setting up FleetFlow email aliases forwarding to: ${forwardToEmail}`
     );
 

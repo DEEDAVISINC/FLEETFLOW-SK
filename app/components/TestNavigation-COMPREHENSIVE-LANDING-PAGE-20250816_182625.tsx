@@ -9,7 +9,7 @@ export default function TestNavigation() {
   const navRef = useRef<HTMLDivElement>(null);
 
   const handleDropdownClick = (dropdownName: string) => {
-    console.log(
+    console.info(
       'Dropdown clicked:',
       dropdownName,
       'Current active:',
@@ -19,7 +19,7 @@ export default function TestNavigation() {
   };
 
   const handleDropdownClose = () => {
-    console.log('Closing dropdown');
+    console.info('Closing dropdown');
     setActiveDropdown(null);
   };
 
@@ -27,7 +27,7 @@ export default function TestNavigation() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(event.target as Node)) {
-        console.log('Clicked outside, closing dropdown');
+        console.info('Clicked outside, closing dropdown');
         setActiveDropdown(null);
       }
     };
@@ -38,7 +38,7 @@ export default function TestNavigation() {
     };
   }, []);
 
-  console.log('Navigation render - activeDropdown:', activeDropdown);
+  console.info('Navigation render - activeDropdown:', activeDropdown);
 
   return (
     <nav

@@ -783,7 +783,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'busy',
       currentTask:
-        'Creating shipper acquisition content - 15 articles on "Why Choose DEPOINTE for Freight" - 847K impressions targeting logistics managers',
+        'Creating shipper acquisition content - 15 articles on ""Why Choose DEPOINTE for Freight"" - 847K impressions targeting logistics managers',
       tasksCompleted: 234,
       revenue: 28900,
       efficiency: 97.3,
@@ -825,7 +825,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'busy',
       currentTask:
-        'Producing freight brokerage video content - "Shipper Success Stories" and "Carrier Opportunity Showcase" - 23 videos, 67K views',
+        'Producing freight brokerage video content - ""Shipper Success Stories"" and ""Carrier Opportunity Showcase"" - 23 videos, 67K views',
       tasksCompleted: 89,
       revenue: 22300,
       efficiency: 95.2,
@@ -853,7 +853,7 @@ export default function AICompanyDashboard() {
       department: 'marketing',
       status: 'active',
       currentTask:
-        'Optimizing freight brokerage brand messaging - "Go With the Flow" across 47 shipper/carrier touchpoints - 92% consistency achieved',
+        'Optimizing freight brokerage brand messaging - ""Go With the Flow"" across 47 shipper/carrier touchpoints - 92% consistency achieved',
       tasksCompleted: 78,
       revenue: 18700,
       efficiency: 96.4,
@@ -1119,7 +1119,7 @@ export default function AICompanyDashboard() {
       id: 'alert-marketing-001',
       type: 'success',
       message:
-        'AI Content Creator achieved 847K impressions with "DEPOINTE Freight Opportunities" LinkedIn series - 89 shipper prospects engaged',
+        'AI Content Creator achieved 847K impressions with ""DEPOINTE Freight Opportunities"" LinkedIn series - 89 shipper prospects engaged',
       timestamp: '2 min ago',
       department: 'marketing',
     },
@@ -1305,7 +1305,7 @@ export default function AICompanyDashboard() {
         }))
       );
 
-      console.log('✅ Square & Bill.com financial data loaded successfully');
+      console.info('✅ Square & Bill.com financial data loaded successfully');
     } catch (error) {
       console.warn(
         '⚠️ Financial data loading failed, using fallback data:',
@@ -1335,7 +1335,7 @@ export default function AICompanyDashboard() {
   useEffect(() => {
     const loadRealData = async () => {
       try {
-        console.log('🔄 Loading real AI Company Dashboard data...');
+        console.info('🔄 Loading real AI Company Dashboard data...');
 
         // Fetch comprehensive real data from the new integration service
         const response = await fetch('/api/ai-dashboard?action=comprehensive', {
@@ -1390,8 +1390,8 @@ export default function AICompanyDashboard() {
           }))
         );
 
-        console.log(`✅ Real data loaded successfully (${data.dataSource})`);
-        console.log('📊 Dashboard metrics:', {
+        console.info(`✅ Real data loaded successfully (${data.dataSource})`);
+        console.info('📊 Dashboard metrics:', {
           revenue: data.realTimeMetrics.totalRevenue,
           loads: data.realTimeMetrics.activeLoads,
           efficiency: data.realTimeMetrics.systemEfficiency,
@@ -1429,7 +1429,7 @@ export default function AICompanyDashboard() {
           }));
 
           await loadFinancialData();
-          console.log('✅ Fallback data loaded from individual services');
+          console.info('✅ Fallback data loaded from individual services');
         } catch (fallbackError) {
           console.warn(
             '⚠️ Fallback data loading also failed, using static values:',
@@ -4475,8 +4475,9 @@ export default function AICompanyDashboard() {
                     lineHeight: '1.5',
                   }}
                 >
-                  When {selectedStaffMember.name} secures a contract, here's the
-                  complete automated workflow that happens instantly:
+                  When {selectedStaffMember.name} secures a contract,
+                  here&apos;s the complete automated workflow that happens
+                  instantly:
                 </p>
 
                 <div
@@ -5077,7 +5078,7 @@ export default function AICompanyDashboard() {
                         marginBottom: '12px',
                       }}
                     >
-                      📈 Today's Secured Contracts
+                      📈 Today&apos;s Secured Contracts
                     </div>
                     {[
                       {
@@ -5672,7 +5673,7 @@ export default function AICompanyDashboard() {
                                 'Develop freight brokerage content calendar for shipper/carrier education',
                                 'A/B test email campaigns for shipper acquisition and carrier recruitment',
                                 'Design freight brokerage ROI infographics for shipper decision makers',
-                                'Optimize Google Ads for "freight broker services" and "load matching"',
+                                'Optimize Google Ads for ""freight broker services"" and ""load matching""',
                                 'Schedule social media posts highlighting successful freight transactions',
                                 'Analyze freight brokerage competitor strategies and market positioning',
                                 'Monitor freight industry trends and load board optimization opportunities',
@@ -5755,7 +5756,7 @@ export default function AICompanyDashboard() {
                   onClick={() => {
                     // Simulate task assignment
                     alert(
-                      `Task "${newTaskTitle}" assigned to ${selectedStaffMember.name}!`
+                      `Task ""${newTaskTitle}"" assigned to ${selectedStaffMember.name}!`
                     );
                     setNewTaskTitle('');
                     setNewTaskDescription('');
@@ -5876,7 +5877,7 @@ export default function AICompanyDashboard() {
                   marginBottom: '32px',
                 }}
               >
-                Adjust {selectedStaffMember.name}'s AI parameters and
+                Adjust {selectedStaffMember.name}&apos;s AI parameters and
                 capabilities
               </p>
 

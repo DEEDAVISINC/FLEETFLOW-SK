@@ -91,7 +91,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
           filter: `user_id=eq.${userId}`,
         },
         (payload) => {
-          console.log('🔔 Bell: Real-time notification update:', payload);
+          console.info('🔔 Bell: Real-time notification update:', payload);
           // Reload unread counts
           loadUnreadCounts();
         }
@@ -105,7 +105,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
           filter: `to_user_ids.cs.{${userId}}`,
         },
         (payload) => {
-          console.log('📬 Bell: Real-time message update:', payload);
+          console.info('📬 Bell: Real-time message update:', payload);
           // Reload unread counts
           loadUnreadCounts();
         }

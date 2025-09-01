@@ -50,7 +50,7 @@ export class EmailAuthenticationSetupGuide {
 
   constructor() {
     this.initializeDomainProviders();
-    console.log('📧 Email Authentication Setup Guide initialized');
+    console.info('📧 Email Authentication Setup Guide initialized');
   }
 
   /**

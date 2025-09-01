@@ -50,9 +50,9 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    console.log('🚛 Processing route optimization request...')
-    console.log(`- ${body.vehicles.length} vehicles`)
-    console.log(`- ${body.stops.length} stops`)
+    console.info('🚛 Processing route optimization request...')
+    console.info(`- ${body.vehicles.length} vehicles`)
+    console.info(`- ${body.stops.length} stops`)
 
     // Check for quantum optimization preference
     const useQuantumOptimization = request.headers.get('X-Quantum-Optimization') === 'true' ||
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     if (useQuantumOptimization) {
       // Use quantum-inspired optimization
-      console.log('🔬 Using quantum-inspired optimization...')
+      console.info('🔬 Using quantum-inspired optimization...')
       const quantumOptimizer = new QuantumRouteOptimizer()
       optimizedResult = await quantumOptimizer.optimizeRoutes(body as QuantumOptimizationRequest)
       

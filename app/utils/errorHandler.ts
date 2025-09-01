@@ -7,7 +7,7 @@
 if (typeof window !== 'undefined') {
   // Wait for hydration to complete before attaching handlers
   setTimeout(() => {
-    console.log('🔧 FleetFlow Error Handler initialized');
+    console.info('🔧 FleetFlow Error Handler initialized');
 
     window.addEventListener('unhandledrejection', (event) => {
       console.error('🚨 UNHANDLED PROMISE REJECTION:', event.reason);

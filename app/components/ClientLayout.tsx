@@ -38,10 +38,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // ✅ Initialize Platform AI on app startup
   useEffect(() => {
-    console.log('🚀 FleetFlow app starting - initializing Platform AI...');
+    console.info('🚀 FleetFlow app starting - initializing Platform AI...');
     try {
       initializeFleetFlowAI();
-      console.log('✅ Platform AI initialized successfully');
+      console.info('✅ Platform AI initialized successfully');
     } catch (error) {
       console.error('❌ Platform AI initialization failed:', error);
       console.warn('⚠️ FleetFlow will continue with original AI behavior');
@@ -49,7 +49,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
     // Initialize test notification generator in development
     if (process.env.NODE_ENV === 'development') {
-      console.log(
+      console.info(
         '🧪 Test notification generator initialized. Use testNotifications.help() in console.'
       );
     }
@@ -75,7 +75,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
           user.id,
           'default'
         );
-        console.log('🎯 Sample notifications generated for user:', user.id);
+        console.info('🎯 Sample notifications generated for user:', user.id);
 
         // Generate sample messages
         const { messageService } = await import('../services/MessageService');
@@ -85,7 +85,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
           user.role || 'employee',
           'default'
         );
-        console.log('📬 Sample messages generated for user:', user.id);
+        console.info('📬 Sample messages generated for user:', user.id);
 
         sessionStorage.setItem('fleetflow-sample-data-generated', 'true');
       } catch (error) {
@@ -150,7 +150,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // Debug logging
   if (isHydrated) {
-    console.log('🔍 ClientLayout Debug:', {
+    console.info('🔍 ClientLayout Debug:', {
       pathname,
       shouldShowFlowter,
       shouldShowPhoneWidget,
@@ -171,7 +171,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // Debug logging for DEPOINTE dashboard
   if (pathname === '/depointe-dashboard') {
-    console.log('🔍 DEPOINTE Dashboard Debug:', {
+    console.info('🔍 DEPOINTE Dashboard Debug:', {
       pathname,
       isAdminDashboard,
       isHydrated,
@@ -229,7 +229,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
               {/* Flowter AI Button - appears on all pages except university */}
               {isHydrated && shouldShowFlowter && (
                 <>
-                  {console.log('🎯 Rendering Flowter AI Button')}
+                  {console.info('🎯 Rendering Flowter AI Button')}
                   <FlowterButton onOpen={handleFlowterOpen} />
                 </>
               )}
@@ -237,7 +237,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
               {/* Phone System Widget - Only for logged-in users on operations pages */}
               {isHydrated && shouldShowPhoneWidget && (
                 <>
-                  {console.log(
+                  {console.info(
                     '📞 Rendering Phone System Widget for operations'
                   )}
                   <PhoneSystemWidget position='bottom-left' />

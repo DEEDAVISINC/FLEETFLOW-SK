@@ -606,7 +606,7 @@ export default function SearchBar() {
               }}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔍</div>
-              <div>No results found for "{searchTerm}"</div>
+              <div>No results found for ""{searchTerm}""</div>
               <div style={{ fontSize: '14px', marginTop: '4px' }}>
                 Try searching for pages, features, or content
               </div>

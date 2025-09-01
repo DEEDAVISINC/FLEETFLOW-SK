@@ -199,7 +199,7 @@ export function FleetFlowAppVideo() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('🎙️ Voice API Response:', {
+        console.info('🎙️ Voice API Response:', {
           provider: data.provider,
           hasAudio: !!data.audioUrl,
           voiceUsed: data.voiceUsed,
@@ -208,7 +208,7 @@ export function FleetFlowAppVideo() {
 
         // Play ElevenLabs audio if available
         if (data.audioUrl && data.provider === 'elevenlabs') {
-          console.log('🎙️ Playing ElevenLabs audio...');
+          console.info('🎙️ Playing ElevenLabs audio...');
           setIsUsingElevenLabs(true);
           const audio = new Audio(data.audioUrl);
           audio.volume = 0.8;
@@ -287,7 +287,7 @@ export function FleetFlowAppVideo() {
 
         if (chosenVoice) {
           utterance.voice = chosenVoice;
-          console.log(
+          console.info(
             `🔊 Using enhanced browser voice: ${chosenVoice.name} for ${selectedVoice}`
           );
         }
@@ -331,7 +331,7 @@ export function FleetFlowAppVideo() {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
           setVoicesLoaded(true);
-          console.log(
+          console.info(
             '🎙️ Available voices loaded:',
             voices.map((v) => `${v.name} (${v.lang})`)
           );

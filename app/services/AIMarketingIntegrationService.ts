@@ -43,7 +43,7 @@ export class AIMarketingIntegrationService {
   private constructor() {
     this.salesEmailService = new SalesEmailAutomationService();
     this.emailABService = new EmailABTestingService();
-    console.log(
+    console.info(
       '🤖 AI Marketing Integration Service initialized with REAL SendGrid connection'
     );
   }

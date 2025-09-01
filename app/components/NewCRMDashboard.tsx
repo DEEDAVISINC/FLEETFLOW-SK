@@ -25,7 +25,7 @@ interface Lead {
 
 export default function NewCRMDashboard() {
   // FORCE REFRESH: 2024-12-21 23:52:00
-  console.log('🔥 NewCRMDashboard LOADED - TIMESTAMP: 2024-12-21 23:52:00');
+  console.info('🔥 NewCRMDashboard LOADED - TIMESTAMP: 2024-12-21 23:52:00');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -81,21 +81,21 @@ export default function NewCRMDashboard() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        console.log('🔄 NewCRMDashboard: Starting data fetch...');
+        console.info('🔄 NewCRMDashboard: Starting data fetch...');
         const response = await fetch(
           '/api/ai-flow/services-sales?tenantId=tenant-demo-123'
         );
-        console.log('📡 NewCRMDashboard: Response status:', response.status);
+        console.info('📡 NewCRMDashboard: Response status:', response.status);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        console.log('📊 NewCRMDashboard: Data received:', data);
+        console.info('📊 NewCRMDashboard: Data received:', data);
 
         if (data.success && data.data?.serviceLeads) {
-          console.log(
+          console.info(
             '✅ NewCRMDashboard: Setting leads:',
             data.data.serviceLeads.length
           );
@@ -105,7 +105,7 @@ export default function NewCRMDashboard() {
         }
       } catch (error) {
         console.error('❌ NewCRMDashboard: Fetch error:', error);
-        console.log('🔄 NewCRMDashboard: Using fallback mock data');
+        console.info('🔄 NewCRMDashboard: Using fallback mock data');
         setLeads(mockLeads);
       } finally {
         setLoading(false);

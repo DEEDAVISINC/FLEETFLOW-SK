@@ -295,7 +295,7 @@ export class DocumentTemplateEngine {
       branding: this.getDefaultBranding(),
     });
 
-    console.log(`✅ Initialized ${this.templates.size} document templates`);
+    console.info(`✅ Initialized ${this.templates.size} document templates`);
   }
 
   // 📄 GENERATE DOCUMENT

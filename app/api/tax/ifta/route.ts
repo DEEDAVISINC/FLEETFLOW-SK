@@ -244,7 +244,7 @@ async function handleRecordFuelPurchase(request: NextRequest) {
   const tenantId = getTenantId(request);
   const purchaseData = await request.json();
 
-  console.log('⛽ Recording fuel purchase for tenant:', tenantId);
+  console.info('⛽ Recording fuel purchase for tenant:', tenantId);
 
   // Validate fuel purchase data
   const validation = iftaStatePortalService.validateFuelPurchase(purchaseData);
@@ -261,7 +261,7 @@ async function handleRecordFuelPurchase(request: NextRequest) {
       ...purchaseData,
     });
 
-    console.log('✅ Fuel purchase recorded:', savedPurchase.id);
+    console.info('✅ Fuel purchase recorded:', savedPurchase.id);
 
     return NextResponse.json({
       success: true,
@@ -290,7 +290,7 @@ async function handleRecordMileage(request: NextRequest) {
   const tenantId = getTenantId(request);
   const mileageData = await request.json();
 
-  console.log('🛣️ Recording mileage for tenant:', tenantId);
+  console.info('🛣️ Recording mileage for tenant:', tenantId);
 
   // Validate mileage record data
   const validation = iftaStatePortalService.validateMileageRecord(mileageData);
@@ -307,7 +307,7 @@ async function handleRecordMileage(request: NextRequest) {
       ...mileageData,
     });
 
-    console.log('✅ Mileage record saved:', savedRecord.id);
+    console.info('✅ Mileage record saved:', savedRecord.id);
 
     return NextResponse.json({
       success: true,
@@ -343,7 +343,7 @@ async function handleGenerateReturn(request: NextRequest) {
   }
 
   try {
-    console.log('📊 Generating IFTA return:', { tenantId, year, quarter });
+    console.info('📊 Generating IFTA return:', { tenantId, year, quarter });
 
     // Get fuel purchases and mileage for the quarter
     const fuelPurchases = await mockDb.getFuelPurchasesByTenantAndQuarter(
@@ -379,7 +379,7 @@ async function handleGenerateReturn(request: NextRequest) {
       returnData: quarterlyReturn,
     });
 
-    console.log('✅ IFTA return generated:', savedReturn.id);
+    console.info('✅ IFTA return generated:', savedReturn.id);
 
     return NextResponse.json({
       success: true,
@@ -448,7 +448,7 @@ async function handleGetComplianceStatus(
   tenantId: string
 ) {
   try {
-    console.log('📋 Getting compliance status for tenant:', tenantId);
+    console.info('📋 Getting compliance status for tenant:', tenantId);
 
     const complianceStatus =
       await iftaStatePortalService.getComplianceStatus(tenantId);
@@ -471,7 +471,7 @@ async function handleGetComplianceStatus(
 
 async function handleGetReturnsHistory(request: NextRequest, tenantId: string) {
   try {
-    console.log('📚 Getting returns history for tenant:', tenantId);
+    console.info('📚 Getting returns history for tenant:', tenantId);
 
     const returns = await mockDb.getReturnsByTenant(tenantId);
 

@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         ];
 
         // Send test notification
-        console.log('🧪 Sending test SAM.gov notification...');
+        console.info('🧪 Sending test SAM.gov notification...');
         return NextResponse.json({
           success: true,
           data: { testOpportunities: mockOpportunities },

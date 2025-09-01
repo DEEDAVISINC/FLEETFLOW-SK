@@ -398,7 +398,7 @@ export default function SearchBar({
       {isOpen && searchTerm && results.length === 0 && (
         <div className='absolute z-50 mt-1 w-full rounded-lg border border-gray-300 bg-white shadow-lg'>
           <div className='px-4 py-3 text-center text-gray-500'>
-            No results found for "{searchTerm}"
+            No results found for ""{searchTerm}""
           </div>
         </div>
       )}

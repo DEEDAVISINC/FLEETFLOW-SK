@@ -196,7 +196,7 @@ export class ExternalBrokerDocumentMappingService {
     fleetflowDocumentId: string
   ): Promise<DocumentIdMapping | null> {
     // Implementation would query the mapping database
-    console.log(
+    console.info(
       `Finding mapping for FleetFlow document: ${fleetflowDocumentId}`
     );
 
@@ -212,9 +212,9 @@ export class ExternalBrokerDocumentMappingService {
     externalBrokerMC?: string
   ): Promise<DocumentIdMapping[]> {
     // Implementation would query the mapping database
-    console.log(`Finding mapping for external document: ${externalDocumentId}`);
+    console.info(`Finding mapping for external document: ${externalDocumentId}`);
     if (externalBrokerMC) {
-      console.log(`Filtering by broker MC: ${externalBrokerMC}`);
+      console.info(`Filtering by broker MC: ${externalBrokerMC}`);
     }
 
     // Mock implementation
@@ -234,8 +234,8 @@ export class ExternalBrokerDocumentMappingService {
     requiresResolution: boolean;
   }> {
     // Implementation would verify the mapping
-    console.log(`Verifying document mapping: ${mappingId}`);
-    console.log(`Verified by: ${verifiedByUserId}`);
+    console.info(`Verifying document mapping: ${mappingId}`);
+    console.info(`Verified by: ${verifiedByUserId}`);
 
     const result = {
       verified: true,
@@ -264,9 +264,9 @@ export class ExternalBrokerDocumentMappingService {
       endDate: string;
     }
   ): Promise<DocumentIdMapping[]> {
-    console.log(`Getting mappings for broker MC: ${brokerMC}`);
+    console.info(`Getting mappings for broker MC: ${brokerMC}`);
     if (dateRange) {
-      console.log(`Date range: ${dateRange.startDate} to ${dateRange.endDate}`);
+      console.info(`Date range: ${dateRange.startDate} to ${dateRange.endDate}`);
     }
 
     // Mock implementation
@@ -290,7 +290,7 @@ export class ExternalBrokerDocumentMappingService {
     documentTypeBreakdown: Record<string, number>;
     mappings: DocumentIdMapping[];
   }> {
-    console.log('Generating mapping report with criteria:', criteria);
+    console.info('Generating mapping report with criteria:', criteria);
 
     // Mock implementation
     return {
@@ -309,7 +309,7 @@ export class ExternalBrokerDocumentMappingService {
    */
   static async addBrokerPattern(pattern: BrokerDocumentPattern): Promise<void> {
     // Implementation would store the new pattern
-    console.log('Adding new broker pattern:', pattern);
+    console.info('Adding new broker pattern:', pattern);
 
     // Validate pattern
     const validation = this.validateBrokerPattern(pattern);
@@ -406,7 +406,7 @@ export class ExternalBrokerDocumentMappingService {
     mapping: DocumentIdMapping
   ): Promise<void> {
     // Implementation would store in database
-    console.log('Storing document mapping:', mapping);
+    console.info('Storing document mapping:', mapping);
   }
 
   private static async createMappingAuditTrail(
@@ -425,7 +425,7 @@ export class ExternalBrokerDocumentMappingService {
       },
     };
 
-    console.log('Creating mapping audit trail:', auditEntry);
+    console.info('Creating mapping audit trail:', auditEntry);
   }
 
   private static async updateMappingVerification(
@@ -434,9 +434,9 @@ export class ExternalBrokerDocumentMappingService {
     verifiedByUserId: string,
     notes?: string
   ): Promise<void> {
-    console.log(`Updating mapping verification for: ${mappingId}`);
-    console.log('Verification result:', verificationResult);
-    console.log('Notes:', notes);
+    console.info(`Updating mapping verification for: ${mappingId}`);
+    console.info('Verification result:', verificationResult);
+    console.info('Notes:', notes);
   }
 
   private static validateBrokerPattern(pattern: BrokerDocumentPattern): {

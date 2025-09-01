@@ -158,7 +158,7 @@ export class SmartNegotiationService {
     customerRequest: string,
     reason: string
   ): Promise<NegotiationOutcome> {
-    console.log(`🔄 Escalating negotiation to human: ${reason}`);
+    console.info(`🔄 Escalating negotiation to human: ${reason}`);
 
     // Create comprehensive handoff package for human negotiator
     const handoffPackage = {
@@ -353,7 +353,7 @@ RESPOND WITH:
     };
 
     // Integration with existing notification system
-    console.log('📧 Notifying human negotiator:', notification.title);
+    console.info('📧 Notifying human negotiator:', notification.title);
 
     // Here you would integrate with your actual notification system
     // await notificationService.sendUrgentNotification(notification);

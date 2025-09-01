@@ -318,7 +318,7 @@ const DriverRow = React.memo(
                   driverName={driver.name}
                   driverStatus={driver.status}
                   onScheduleCreate={() => {
-                    console.log(`Schedule created for ${driver.name}`);
+                    console.info(`Schedule created for ${driver.name}`);
                   }}
                 />
               </div>
@@ -910,9 +910,22 @@ export default function DriverManagement() {
             }}
           >
             {/* Empty state for communications and alerts */}
-            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'rgba(139, 69, 19, 0.6)' }}>
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '40px 20px',
+                color: 'rgba(139, 69, 19, 0.6)',
+              }}
+            >
               <div style={{ fontSize: '48px', marginBottom: '16px' }}>📨</div>
-              <p style={{ fontSize: '16px', margin: '0 0 8px 0', fontWeight: '600', color: '#6b7280' }}>
+              <p
+                style={{
+                  fontSize: '16px',
+                  margin: '0 0 8px 0',
+                  fontWeight: '600',
+                  color: '#6b7280',
+                }}
+              >
                 No communications or alerts
               </p>
               <p style={{ fontSize: '14px', margin: 0, color: '#9ca3af' }}>

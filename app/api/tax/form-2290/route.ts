@@ -155,7 +155,7 @@ async function handleFileFiling(request: NextRequest) {
   const tenantId = getTenantId(request);
   const formData = await request.json();
 
-  console.log('📋 Filing Form 2290 for tenant:', tenantId);
+  console.info('📋 Filing Form 2290 for tenant:', tenantId);
 
   // Validate required fields
   if (!formData.businessInfo || !formData.vehicles || !formData.taxPeriod) {
@@ -184,7 +184,7 @@ async function handleFileFiling(request: NextRequest) {
       vehicleCount: formData.vehicles.length,
     });
 
-    console.log('✅ Form 2290 filed and saved:', filing.id);
+    console.info('✅ Form 2290 filed and saved:', filing.id);
 
     return NextResponse.json({
       success: true,
@@ -214,7 +214,7 @@ async function handleAmendFiling(request: NextRequest) {
   const tenantId = getTenantId(request);
   const { originalSubmissionId, amendmentData, reason } = await request.json();
 
-  console.log('📝 Filing amended Form 2290 for tenant:', tenantId);
+  console.info('📝 Filing amended Form 2290 for tenant:', tenantId);
 
   if (!originalSubmissionId || !amendmentData) {
     return NextResponse.json(
@@ -285,7 +285,7 @@ async function handleGetStatus(request: NextRequest) {
   }
 
   try {
-    console.log('🔍 Checking status for submission:', submissionId);
+    console.info('🔍 Checking status for submission:', submissionId);
 
     // Get status from TaxBandits
     const status = await taxBanditsService.getFilingStatus(submissionId);
@@ -329,7 +329,7 @@ async function handleGetHistory(request: NextRequest, tenantId: string) {
   const limit = parseInt(searchParams.get('limit') || '50');
 
   try {
-    console.log('📚 Getting filing history for tenant:', tenantId);
+    console.info('📚 Getting filing history for tenant:', tenantId);
 
     const filings = await mockDb.getFilingsByTenant(tenantId, limit);
 
@@ -368,7 +368,7 @@ async function handleValidateForm(request: NextRequest) {
   const formData = await request.json();
 
   try {
-    console.log('✅ Validating Form 2290 data...');
+    console.info('✅ Validating Form 2290 data...');
 
     // This would normally call the service validation
     // For now, we'll do basic validation
@@ -415,7 +415,7 @@ async function handleCalculateTax(request: NextRequest) {
   }
 
   try {
-    console.log('💰 Calculating HVUT for vehicles:', vehicles.length);
+    console.info('💰 Calculating HVUT for vehicles:', vehicles.length);
 
     const calculation = taxBanditsService.calculateHVUT(vehicles);
 

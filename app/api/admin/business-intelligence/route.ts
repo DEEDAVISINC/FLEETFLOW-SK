@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const dateRange = searchParams.get('dateRange') || '30d';
     const analyticsType = searchParams.get('type') || 'overview';
 
-    console.log(
+    console.info(
       `📊 Business Intelligence API - Type: ${analyticsType}, Range: ${dateRange}`
     );
 
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { action, dateRange = '30d', parameters = {} } = body;
 
-    console.log(`📊 Business Intelligence POST - Action: ${action}`);
+    console.info(`📊 Business Intelligence POST - Action: ${action}`);
 
     switch (action) {
       case 'refresh-analytics':

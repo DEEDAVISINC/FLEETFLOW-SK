@@ -314,7 +314,7 @@ export const AgreementSigning: React.FC<AgreementSigningProps> = ({
       requesterEmail
     );
 
-    console.log(`📧 Agreement distributed:`, distributions);
+    console.info(`📧 Agreement distributed:`, distributions);
     return distributions.some((d) => d.status === 'sent');
   };
 
@@ -332,9 +332,9 @@ export const AgreementSigning: React.FC<AgreementSigningProps> = ({
   };
 
   const showSigningSuccessNotification = (agreementTitle: string) => {
-    console.log(`✅ Agreement signed successfully: ${agreementTitle}`);
-    console.log(`📧 Copies sent to carrier and requester`);
-    console.log(`📄 Digital signature and distribution complete`);
+    console.info(`✅ Agreement signed successfully: ${agreementTitle}`);
+    console.info(`📧 Copies sent to carrier and requester`);
+    console.info(`📄 Digital signature and distribution complete`);
   };
 
   const showSigningErrorNotification = (error: string) => {
@@ -637,7 +637,7 @@ export const AgreementSigning: React.FC<AgreementSigningProps> = ({
                         }}
                         onClick={() => {
                           // Mock download
-                          console.log(`Downloading: ${agreement.documentUrl}`);
+                          console.info(`Downloading: ${agreement.documentUrl}`);
                         }}
                       >
                         📄 Download

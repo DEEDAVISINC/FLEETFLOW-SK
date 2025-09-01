@@ -335,9 +335,9 @@ class ShipperAccountService {
     account: ShipperAccount,
     accessToken: string
   ): Promise<void> {
-    console.log(`📧 Welcome Email Sent to ${account.email}`);
-    console.log(`🔐 Access Token: ${accessToken}`);
-    console.log(
+    console.info(`📧 Welcome Email Sent to ${account.email}`);
+    console.info(`🔐 Access Token: ${accessToken}`);
+    console.info(
       `🌐 Portal URL: ${typeof window !== 'undefined' ? window.location.origin : 'https://fleetflowapp.com'}/shipper-portal?token=${accessToken}`
     );
 
@@ -367,7 +367,7 @@ class ShipperAccountService {
     };
 
     // In production, integrate with email service (SendGrid, AWS SES, etc.)
-    console.log('📧 Email Content:', emailContent);
+    console.info('📧 Email Content:', emailContent);
     return Promise.resolve();
   }
 

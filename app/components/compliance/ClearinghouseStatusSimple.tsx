@@ -45,29 +45,29 @@ export default function ClearinghouseStatus({
 
   // Mock data for demonstration
   const mockData: DriverClearinghouseData = {
-    driverId: driverId || "DRV-001",
-    licenseNumber: licenseNumber || "WA123456789",
-    firstName: "John",
-    lastName: "Driver",
-    clearinghouseStatus: "clear",
-    enrollmentDate: "2023-01-15",
-    lastQueryDate: "2024-07-08",
+    driverId: driverId || ""DRV-001"",
+    licenseNumber: licenseNumber || ""WA123456789"",
+    firstName: ""John"",
+    lastName: ""Driver"",
+    clearinghouseStatus: ""clear"",
+    enrollmentDate: ""2023-01-15"",
+    lastQueryDate: ""2024-07-08"",
     prohibitionsActive: 0,
     violationsResolved: 1,
     records: [
       {
-        recordId: "CH-2023-001",
-        type: "return_to_duty",
-        substanceType: "Alcohol",
-        testType: "Random",
-        date: "2023-06-15",
-        employer: "Previous Carrier Inc",
-        status: "resolved",
-        details: "Successfully completed SAP program and return-to-duty process"
+        recordId: ""CH-2023-001"",
+        type: ""return_to_duty"",
+        substanceType: ""Alcohol"",
+        testType: ""Random"",
+        date: ""2023-06-15"",
+        employer: ""Previous Carrier Inc"",
+        status: ""resolved"",
+        details: ""Successfully completed SAP program and return-to-duty process""
       }
     ],
-    consentStatus: "active",
-    consentExpiryDate: "2025-01-15"
+    consentStatus: ""active"",
+    consentExpiryDate: ""2025-01-15""
   };
 
   const fetchClearinghouseData = async () => {
@@ -264,9 +264,9 @@ export default function ClearinghouseStatus({
             🔄 Refresh
           </button>
           <a 
-            href="https://clearinghouse.fmcsa.dot.gov/" 
-            target="_blank" 
-            rel="noopener noreferrer"
+            href="https://clearinghouse.fmcsa.dot.gov/"" 
+            target=""_blank"" 
+            rel=""noopener noreferrer""
             style={{
               background: 'rgba(255, 255, 255, 0.2)',
               color: 'white',

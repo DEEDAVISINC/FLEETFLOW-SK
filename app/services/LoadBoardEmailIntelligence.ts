@@ -16,7 +16,7 @@ export class LoadBoardEmailIntelligenceService {
     tenantId: string
   ): Promise<EmailResponse> {
     try {
-      console.log(
+      console.info(
         '🔍 Processing load inquiry email from:',
         inboundEmail.fromEmail,
         'for tenant:',
@@ -373,7 +373,7 @@ export class LoadBoardEmailIntelligenceService {
         priority: details.urgency === 'high' ? 'high' : 'medium',
       };
 
-      console.log('📋 Created carrier lead:', leadData.id);
+      console.info('📋 Created carrier lead:', leadData.id);
       // Save to database here
     } catch (error) {
       console.error('Lead creation error:', error);
@@ -474,7 +474,7 @@ export class EmailWebhookHandler {
 
       // Check if this is a load inquiry
       if (this.isLoadInquiry(inboundEmail)) {
-        console.log('🎯 Load inquiry detected, processing...');
+        console.info('🎯 Load inquiry detected, processing...');
         // Extract tenantId from email headers or domain
         const tenantId = this.extractTenantId(inboundEmail);
         await this.intelligence.processLoadInquiryEmail(inboundEmail, tenantId);

@@ -668,24 +668,24 @@ export class DispatchFeeCollectionService {
     payment: DispatchFeePayment
   ): Promise<void> {
     // Implementation would store to database
-    console.log('Storing dispatch fee payment:', payment.id);
+    console.info('Storing dispatch fee payment:', payment.id);
   }
 
   private async storeDispatchFeeCompany(
     company: DispatchFeeCompany
   ): Promise<void> {
     // Implementation would store to database
-    console.log('Storing dispatch fee company:', company.id);
+    console.info('Storing dispatch fee company:', company.id);
   }
 
   private async storeCheckPayment(payment: any): Promise<void> {
     // Implementation would store to database
-    console.log('Storing check payment:', payment.id);
+    console.info('Storing check payment:', payment.id);
   }
 
   private async storeWirePayment(payment: any): Promise<void> {
     // Implementation would store to database
-    console.log('Storing wire payment:', payment.id);
+    console.info('Storing wire payment:', payment.id);
   }
 
   async getDispatchFeePayments(filters?: {

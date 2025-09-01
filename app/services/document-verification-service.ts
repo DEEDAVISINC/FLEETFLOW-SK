@@ -341,7 +341,7 @@ export class DocumentVerificationService {
 
       // 🚛 CRITICAL: VIN Verification for Vehicle Documents
       if (documentType.includes('vehicle_') && extractedData.vin) {
-        console.log(
+        console.info(
           `🔍 Vehicle document detected: ${documentType} - Starting VIN verification`
         );
 
@@ -383,7 +383,7 @@ export class DocumentVerificationService {
               );
             }
           } else {
-            console.log(
+            console.info(
               '✅ Vehicle verification passed - vehicle is properly insured'
             );
 
@@ -678,12 +678,12 @@ export class DocumentVerificationService {
         ...additionalData,
       });
 
-      console.log(`📧 Email Notification Sent:`);
-      console.log(`To: ${carrierData.email}`);
-      console.log(
+      console.info(`📧 Email Notification Sent:`);
+      console.info(`To: ${carrierData.email}`);
+      console.info(
         `Subject: ${this.populateTemplate(template.subject, documentData)}`
       );
-      console.log(`Content: ${emailContent}`);
+      console.info(`Content: ${emailContent}`);
 
       // Simulate SMS if template exists
       let smsSent = false;
@@ -694,9 +694,9 @@ export class DocumentVerificationService {
           ...additionalData,
         });
 
-        console.log(`📱 SMS Notification Sent:`);
-        console.log(`To: ${carrierData.phone}`);
-        console.log(`Content: ${smsContent}`);
+        console.info(`📱 SMS Notification Sent:`);
+        console.info(`To: ${carrierData.phone}`);
+        console.info(`Content: ${smsContent}`);
         smsSent = true;
       }
 
@@ -859,7 +859,7 @@ export class DocumentVerificationService {
       };
 
       // Send to notification service (mock for now)
-      console.log('🚨 VEHICLE REJECTION NOTIFICATION:', notificationData);
+      console.info('🚨 VEHICLE REJECTION NOTIFICATION:', notificationData);
 
       // In production, this would send actual email/SMS notifications
       await this.sendNotification(

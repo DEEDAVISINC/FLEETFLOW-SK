@@ -129,12 +129,12 @@ export async function POST(
       callOptions.url = `${getBaseUrl(request)}/api/twilio-calls/twiml?message=${encodeURIComponent(message)}`;
     }
 
-    console.log(`📞 Making call for ${phoneConfig.tenantName}:`);
-    console.log(
+    console.info(`📞 Making call for ${phoneConfig.tenantName}:`);
+    console.info(
       `From: ${phoneConfig.primaryPhone} (${phoneConfig.callerIdName})`
     );
-    console.log(`To: ${to}`);
-    console.log(`Message: ${message || 'Default greeting'}`);
+    console.info(`To: ${to}`);
+    console.info(`Message: ${message || 'Default greeting'}`);
 
     // Make the call
     const call = await client.calls.create(callOptions);
@@ -230,7 +230,7 @@ async function logTenantCall(callData: {
   message: string;
 }): Promise<void> {
   // In production, this would save to database
-  console.log(`📝 Call Log for Tenant ${callData.tenantId}:`, {
+  console.info(`📝 Call Log for Tenant ${callData.tenantId}:`, {
     callSid: callData.callSid,
     from: callData.fromNumber,
     to: callData.toNumber,

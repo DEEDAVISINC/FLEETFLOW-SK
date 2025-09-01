@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
         const userId = searchParams.get('user_id');
         const includeDetails = searchParams.get('include_details') === 'true';
 
-        console.log('📅 Checking Plaid data retention status...');
+        console.info('📅 Checking Plaid data retention status...');
 
         const plaidService = PlaidService.getInstance();
         const retentionStatus = plaidService.getRetentionStatus();
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
           }));
         }
 
-        console.log(
+        console.info(
           `✅ Retention status check completed. ${connectedUsers.length} users, ${retentionAnalytics.expiring_30_days} expiring soon`
         );
 
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
         const body = await request.json();
         const { action, user_id, tenant_id } = body;
 
-        console.log(`🔧 Processing retention management action: ${action}`);
+        console.info(`🔧 Processing retention management action: ${action}`);
 
         const plaidService = PlaidService.getInstance();
 

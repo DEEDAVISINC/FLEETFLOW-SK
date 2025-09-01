@@ -105,12 +105,12 @@ export default function SeasonalLoadPlanningWidget() {
   const isEnabled = useFeatureFlag('SEASONAL_LOAD_PLANNING');
 
   // Debug logging
-  console.log('SeasonalLoadPlanningWidget - isEnabled:', isEnabled);
-  console.log(
+  console.info('SeasonalLoadPlanningWidget - isEnabled:', isEnabled);
+  console.info(
     'SeasonalLoadPlanningWidget - process.env.ENABLE_SEASONAL_LOAD_PLANNING:',
     process.env.ENABLE_SEASONAL_LOAD_PLANNING
   );
-  console.log(
+  console.info(
     'SeasonalLoadPlanningWidget - process.env.NEXT_PUBLIC_ENABLE_SEASONAL_LOAD_PLANNING:',
     process.env.NEXT_PUBLIC_ENABLE_SEASONAL_LOAD_PLANNING
   );

@@ -97,7 +97,7 @@ export class AutomatedDispatcherFeeService {
     loadData: any,
     documentPackage: any
   ): Promise<DispatcherFeeTracking> {
-    console.log(
+    console.info(
       `🚛 Load ${loadId} completed - Auto-generating dispatcher fee invoice...`
     );
 
@@ -172,7 +172,7 @@ export class AutomatedDispatcherFeeService {
     // Send notification to management for approval (if required)
     await this.notifyManagementIfRequired(feeTracking, autoInvoice);
 
-    console.log(
+    console.info(
       `✅ Auto-invoice ${invoiceNumber} generated for load ${loadId}`
     );
 
@@ -410,13 +410,13 @@ export class AutomatedDispatcherFeeService {
   private static async storeFeeTracking(
     feeTracking: DispatcherFeeTracking
   ): Promise<void> {
-    console.log('Storing fee tracking:', feeTracking);
+    console.info('Storing fee tracking:', feeTracking);
   }
 
   private static async storeAutoInvoice(
     autoInvoice: AutoInvoiceTemplate
   ): Promise<void> {
-    console.log('Storing auto-invoice:', autoInvoice);
+    console.info('Storing auto-invoice:', autoInvoice);
   }
 
   private static async getFeeTrackingByInvoice(
@@ -434,13 +434,13 @@ export class AutomatedDispatcherFeeService {
   private static async updateFeeTracking(
     feeTracking: DispatcherFeeTracking
   ): Promise<void> {
-    console.log('Updating fee tracking:', feeTracking);
+    console.info('Updating fee tracking:', feeTracking);
   }
 
   private static async autoApproveInvoice(
     invoiceNumber: string
   ): Promise<void> {
-    console.log(`Auto-approving invoice: ${invoiceNumber}`);
+    console.info(`Auto-approving invoice: ${invoiceNumber}`);
   }
 
   private static async getLoadRoute(loadId: string): Promise<string> {
@@ -453,7 +453,7 @@ export class AutomatedDispatcherFeeService {
     autoInvoice: AutoInvoiceTemplate
   ): Promise<void> {
     if (autoInvoice.requiresApproval) {
-      console.log(
+      console.info(
         `Notifying management for approval: ${autoInvoice.invoiceNumber}`
       );
     }

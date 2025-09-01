@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
   try {
     const requestData: PartnerDiscoveryRequest = await request.json();
 
-    console.log('🔍 AI Partner Discovery Started:', {
+    console.info('🔍 AI Partner Discovery Started:', {
       analysisType: requestData.analysisType,
       includeCompetitorAnalysis: requestData.includeCompetitorAnalysis,
       timestamp: new Date().toISOString(),
@@ -389,7 +389,7 @@ export async function POST(request: NextRequest) {
       ],
     };
 
-    console.log('✅ AI Partner Discovery Completed:', {
+    console.info('✅ AI Partner Discovery Completed:', {
       opportunitiesFound: opportunities.length,
       avgFitScore: marketAnalysis.avgFitScore,
       potentialRevenue: marketAnalysis.potentialAnnualRevenue,

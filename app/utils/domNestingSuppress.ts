@@ -50,7 +50,7 @@ if (typeof window !== 'undefined') {
     originalConsoleWarn.apply(console, args);
   };
 
-  console.log(
+  console.info(
     '🔧 DOM nesting warnings temporarily suppressed - fix in progress'
   );
 }

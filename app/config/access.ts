@@ -2266,6 +2266,6 @@ export const assignDispatcherToBroker = (
   dispatcherId: string
 ): boolean => {
   // Mock assignment logic - in real app this would update database
-  console.log(`Assigning dispatcher ${dispatcherId} to broker ${brokerId}`);
+  console.info(`Assigning dispatcher ${dispatcherId} to broker ${brokerId}`);
   return true;
 };

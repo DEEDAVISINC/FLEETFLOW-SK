@@ -15,7 +15,7 @@ interface Lead {
 }
 
 export default function AIHubCRMDashboard() {
-  console.log('🚀 AIHubCRMDashboard LOADED - MATCHES AI HUB STYLING');
+  console.info('🚀 AIHubCRMDashboard LOADED - MATCHES AI HUB STYLING');
 
   const [leads] = useState<Lead[]>([]);
 
@@ -28,17 +28,17 @@ export default function AIHubCRMDashboard() {
 
   const handleContactLead = (lead: Lead) => {
     alert(`📞 Contacting ${lead.companyName}`);
-    console.log(`Contacting lead: ${lead.companyName}`);
+    console.info(`Contacting lead: ${lead.companyName}`);
   };
 
   const handleScheduleDemo = (lead: Lead) => {
     alert(`📅 Scheduling demo for ${lead.companyName}`);
-    console.log(`Scheduling demo for lead: ${lead.companyName}`);
+    console.info(`Scheduling demo for lead: ${lead.companyName}`);
   };
 
   const handleSendProposal = (lead: Lead) => {
     alert(`📄 Sending proposal to ${lead.companyName}`);
-    console.log(`Sending proposal to lead: ${lead.companyName}`);
+    console.info(`Sending proposal to lead: ${lead.companyName}`);
   };
 
   return (
@@ -412,7 +412,7 @@ export default function AIHubCRMDashboard() {
         >
           <button
             onClick={() => {
-              console.log('🔍 Analyzing all leads...');
+              console.info('🔍 Analyzing all leads...');
               alert('AI Analysis started for all leads');
             }}
             style={{
@@ -443,7 +443,7 @@ export default function AIHubCRMDashboard() {
 
           <button
             onClick={() => {
-              console.log('📊 Generating pipeline report...');
+              console.info('📊 Generating pipeline report...');
               alert('Pipeline report generated');
             }}
             style={{
@@ -474,7 +474,7 @@ export default function AIHubCRMDashboard() {
 
           <button
             onClick={() => {
-              console.log('📧 Starting bulk email campaign...');
+              console.info('📧 Starting bulk email campaign...');
               alert('Bulk email campaign started');
             }}
             style={{

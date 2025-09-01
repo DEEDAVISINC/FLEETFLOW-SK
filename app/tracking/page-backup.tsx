@@ -209,55 +209,62 @@ export default function LiveTrackingPage() {
   }, []);
 
   // Weather data fetching
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      setWeatherLoading(true);
-      try {
-        const activeShipments = shipments.filter(
-          (s) => s.status === 'in-transit'
-        );
-        const weatherMap = new Map<string, WeatherData>();
+  const fetchWeatherData = useCallback(async () => {
+    setWeatherLoading(true);
+    try {
+      const activeShipments = shipments.filter(
+        (s) => s.status === 'in-transit'
+      );
+      const weatherMap = new Map<string, WeatherData>();
 
-        for (const shipment of activeShipments) {
-          const weather = await weatherService.getWeatherForLocation(
-            shipment.currentLocation[0],
-            shipment.currentLocation[1]
-          );
-          if (weather) {
-            weatherMap.set(shipment.id, weather);
-          }
+      for (const shipment of activeShipments) {
+        const weather = await weatherService.getWeatherForLocation(
+          shipment.currentLocation[0],
+          shipment.currentLocation[1]
+        );
+        if (weather) {
+          weatherMap.set(shipment.id, weather);
         }
-
-        setWeatherData(weatherMap);
-
-        // Update shipments with weather data and risk levels
-        setShipments((prevShipments) =>
-          prevShipments.map((shipment) => {
-            const weather = weatherMap.get(shipment.id);
-            if (weather && shipment.status === 'in-transit') {
-              const impact = weatherService.getWeatherImpact(weather);
-              return {
-                ...shipment,
-                weather,
-                weatherRisk: impact.riskLevel,
-              };
-            }
-            return shipment;
-          })
-        );
-      } catch (error) {
-        console.error('Failed to fetch weather data:', error);
-      } finally {
-        setWeatherLoading(false);
       }
-    };
 
+      setWeatherData(weatherMap);
+
+      // Update shipments with weather data and risk levels
+      setShipments((prevShipments) =>
+        prevShipments.map((shipment) => {
+          const weather = weatherMap.get(shipment.id);
+          if (weather && shipment.status === 'in-transit') {
+            const impact = weatherService.getWeatherImpact(weather);
+            return {
+              ...shipment,
+              weather,
+              weatherRisk: impact.riskLevel,
+            };
+          }
+          return shipment;
+        })
+      );
+    } catch (error) {
+      console.error('Failed to fetch weather data:', error);
+    } finally {
+      setWeatherLoading(false);
+    }
+  }, [
+    shipments,
+    weatherService,
+    setWeatherData,
+    setWeatherLoading,
+    setShipments,
+  ]);
+
+  // Weather data fetching effect
+  useEffect(() => {
     // Fetch weather data on mount and every 10 minutes
     fetchWeatherData();
     const weatherInterval = setInterval(fetchWeatherData, 10 * 60 * 1000);
 
     return () => clearInterval(weatherInterval);
-  }, [shipments.length]);
+  }, [fetchWeatherData, shipments.length]);
 
   // Weather icon helper
   const getWeatherIcon = (condition: string) => {

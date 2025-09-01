@@ -114,7 +114,7 @@ export class FreightNetworkService {
   async postLoad(
     load: Omit<NetworkLoad, 'id' | 'bids' | 'createdAt' | 'updatedAt'>
   ): Promise<NetworkLoad> {
-    console.log('📦 Posting load to freight network...');
+    console.info('📦 Posting load to freight network...');
 
     const response = await fetch(`${this.API_BASE}/loads`, {
       method: 'POST',
@@ -136,7 +136,7 @@ export class FreightNetworkService {
     maxDistance?: number;
     minRate?: number;
   }): Promise<NetworkLoad[]> {
-    console.log('🔍 Fetching network loads...');
+    console.info('🔍 Fetching network loads...');
 
     const queryParams = new URLSearchParams();
     if (filters) {
@@ -158,7 +158,7 @@ export class FreightNetworkService {
     loadId: string,
     bid: Omit<NetworkBid, 'id' | 'status' | 'submittedAt'>
   ): Promise<NetworkBid> {
-    console.log('💰 Submitting bid to network load...');
+    console.info('💰 Submitting bid to network load...');
 
     const response = await fetch(`${this.API_BASE}/loads/${loadId}/bids`, {
       method: 'POST',
@@ -174,7 +174,7 @@ export class FreightNetworkService {
   }
 
   async acceptBid(loadId: string, bidId: string): Promise<NetworkTransaction> {
-    console.log('✅ Accepting bid and creating transaction...');
+    console.info('✅ Accepting bid and creating transaction...');
 
     const response = await fetch(
       `${this.API_BASE}/loads/${loadId}/bids/${bidId}/accept`,
@@ -194,7 +194,7 @@ export class FreightNetworkService {
   async postCapacity(
     capacity: Omit<NetworkCapacity, 'id' | 'createdAt'>
   ): Promise<NetworkCapacity> {
-    console.log('🚛 Posting available capacity to network...');
+    console.info('🚛 Posting available capacity to network...');
 
     const response = await fetch(`${this.API_BASE}/capacity`, {
       method: 'POST',
@@ -215,7 +215,7 @@ export class FreightNetworkService {
     availableDate?: string;
     maxRatePerMile?: number;
   }): Promise<NetworkCapacity[]> {
-    console.log('🔍 Searching available network capacity...');
+    console.info('🔍 Searching available network capacity...');
 
     const queryParams = new URLSearchParams();
     if (filters) {
@@ -235,7 +235,7 @@ export class FreightNetworkService {
 
   // Partner Management
   async getNetworkPartners(): Promise<NetworkPartner[]> {
-    console.log('👥 Fetching network partners...');
+    console.info('👥 Fetching network partners...');
 
     const response = await fetch(`${this.API_BASE}/partners`);
 
@@ -250,7 +250,7 @@ export class FreightNetworkService {
     email: string,
     message?: string
   ): Promise<{ success: boolean; inviteId: string }> {
-    console.log('📧 Sending partner invitation...');
+    console.info('📧 Sending partner invitation...');
 
     const response = await fetch(`${this.API_BASE}/partners/invite`, {
       method: 'POST',
@@ -270,7 +270,7 @@ export class FreightNetworkService {
     rating: number,
     feedback?: string
   ): Promise<void> {
-    console.log('⭐ Rating network partner...');
+    console.info('⭐ Rating network partner...');
 
     const response = await fetch(
       `${this.API_BASE}/partners/${partnerId}/rate`,
@@ -288,7 +288,7 @@ export class FreightNetworkService {
 
   // Smart Matching
   async findMatchingLoads(capacityId: string): Promise<NetworkLoad[]> {
-    console.log('🎯 Finding matching loads for capacity...');
+    console.info('🎯 Finding matching loads for capacity...');
 
     const response = await fetch(
       `${this.API_BASE}/capacity/${capacityId}/matches`
@@ -302,7 +302,7 @@ export class FreightNetworkService {
   }
 
   async findMatchingCapacity(loadId: string): Promise<NetworkCapacity[]> {
-    console.log('🎯 Finding matching capacity for load...');
+    console.info('🎯 Finding matching capacity for load...');
 
     const response = await fetch(`${this.API_BASE}/loads/${loadId}/matches`);
 
@@ -319,7 +319,7 @@ export class FreightNetworkService {
     suggestedPartners: NetworkPartner[];
     optimizationOpportunities: any[];
   }> {
-    console.log('🤖 Getting AI-powered network recommendations...');
+    console.info('🤖 Getting AI-powered network recommendations...');
 
     const response = await fetch(`${this.API_BASE}/recommendations`);
 
@@ -332,7 +332,7 @@ export class FreightNetworkService {
 
   // Analytics & Metrics
   async getNetworkMetrics(): Promise<NetworkMetrics> {
-    console.log('📊 Fetching network performance metrics...');
+    console.info('📊 Fetching network performance metrics...');
 
     const response = await fetch(`${this.API_BASE}/metrics`);
 
@@ -357,7 +357,7 @@ export class FreightNetworkService {
       count: number;
     }>;
   }> {
-    console.log('💰 Fetching revenue analytics...');
+    console.info('💰 Fetching revenue analytics...');
 
     const response = await fetch(
       `${this.API_BASE}/analytics/revenue?period=${period}`
@@ -382,7 +382,7 @@ export class FreightNetworkService {
     networkSavings: number;
     participantBenefits: Record<string, number>;
   }> {
-    console.log('🔄 Running network-wide route optimization...');
+    console.info('🔄 Running network-wide route optimization...');
 
     const response = await fetch(`${this.API_BASE}/optimize`, {
       method: 'POST',

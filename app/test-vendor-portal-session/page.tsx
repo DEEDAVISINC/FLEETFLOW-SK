@@ -16,7 +16,7 @@ export default function TestVendorPortalSession() {
 
     localStorage.setItem('vendorSession', JSON.stringify(testSession));
 
-    console.log('🧪 Test session created:', testSession);
+    console.info('🧪 Test session created:', testSession);
 
     // Redirect to vendor portal
     setTimeout(() => {

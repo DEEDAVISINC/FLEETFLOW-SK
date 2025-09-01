@@ -110,7 +110,7 @@ export const FMCSAVerification: React.FC<FMCSAVerificationProps> = ({
       });
 
       setFraudAnalysis(analysis);
-      console.log('🛡️ FleetGuard AI Analysis Complete:', analysis);
+      console.info('🛡️ FleetGuard AI Analysis Complete:', analysis);
     } catch (error) {
       console.error('FleetGuard AI analysis failed:', error);
       setFraudAnalysis({

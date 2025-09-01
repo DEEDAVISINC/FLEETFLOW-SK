@@ -84,7 +84,7 @@ export class QuantumRouteOptimizer {
   private readonly MIN_TEMPERATURE = 0.1
 
   async optimizeRoutes(request: QuantumOptimizationRequest): Promise<QuantumOptimizationResult> {
-    console.log('🔬 Initializing quantum-inspired route optimization...')
+    console.info('🔬 Initializing quantum-inspired route optimization...')
     
     const startTime = Date.now()
     
@@ -104,7 +104,7 @@ export class QuantumRouteOptimizer {
     const finalRoutes = this.measureAndCollapse(coordinatedRoutes, request)
     
     const optimizationTime = Date.now() - startTime
-    console.log(`✨ Quantum optimization completed in ${optimizationTime}ms`)
+    console.info(`✨ Quantum optimization completed in ${optimizationTime}ms`)
     
     return {
       routes: finalRoutes,
@@ -119,7 +119,7 @@ export class QuantumRouteOptimizer {
   }
 
   private initializeQuantumStates(request: QuantumOptimizationRequest) {
-    console.log('🌀 Initializing quantum states...')
+    console.info('🌀 Initializing quantum states...')
     
     const states = []
     const { vehicles, stops } = request
@@ -152,7 +152,7 @@ export class QuantumRouteOptimizer {
   }
 
   private async exploreSuperpositionPaths(quantumStates: any[], request: QuantumOptimizationRequest) {
-    console.log('🔄 Exploring superposition paths...')
+    console.info('🔄 Exploring superposition paths...')
     
     const exploredPaths = []
     const maxPaths = 20 // Limit to prevent exponential explosion
@@ -194,7 +194,7 @@ export class QuantumRouteOptimizer {
   }
 
   private async quantumAnnealing(exploredPaths: any[], request: QuantumOptimizationRequest) {
-    console.log('🔥 Starting quantum annealing simulation...')
+    console.info('🔥 Starting quantum annealing simulation...')
     
     const iterations = request.constraints.quantumIterations || this.QUANTUM_ITERATIONS
     let temperature = request.constraints.annealingTemperature || this.INITIAL_TEMPERATURE
@@ -224,7 +224,7 @@ export class QuantumRouteOptimizer {
       temperature *= this.COOLING_RATE
       
       if (iteration % 10 === 0) {
-        console.log(`🌡️ Annealing iteration ${iteration}, temperature: ${temperature.toFixed(2)}`)
+        console.info(`🌡️ Annealing iteration ${iteration}, temperature: ${temperature.toFixed(2)}`)
       }
     }
     
@@ -232,7 +232,7 @@ export class QuantumRouteOptimizer {
   }
 
   private entanglementCoordination(annealedRoutes: any[], request: QuantumOptimizationRequest) {
-    console.log('🔗 Applying entanglement-based coordination...')
+    console.info('🔗 Applying entanglement-based coordination...')
     
     // Simulate quantum entanglement between vehicles for coordinated optimization
     const coordinatedRoutes = []
@@ -260,7 +260,7 @@ export class QuantumRouteOptimizer {
   }
 
   private measureAndCollapse(coordinatedRoutes: any[], request: QuantumOptimizationRequest): QuantumRoute[] {
-    console.log('📏 Performing quantum measurement and wave function collapse...')
+    console.info('📏 Performing quantum measurement and wave function collapse...')
     
     const finalRoutes: QuantumRoute[] = []
     const usedStops = new Set<string>()

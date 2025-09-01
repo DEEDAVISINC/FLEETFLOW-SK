@@ -335,11 +335,11 @@ async function sendConfirmationEmail(
 
     const emailResult = await emailResponse.json();
 
-    console.log(`Insurance quote confirmation for ${submission.email}:`);
-    console.log(`Company: ${submission.companyName}`);
-    console.log(`Successful submissions: ${successfulSubmissions.length}`);
-    console.log('Partners contacted:', partnerNames.join(', '));
-    console.log('Email sent:', emailResult.success ? 'Yes' : 'Failed');
+    console.info(`Insurance quote confirmation for ${submission.email}:`);
+    console.info(`Company: ${submission.companyName}`);
+    console.info(`Successful submissions: ${successfulSubmissions.length}`);
+    console.info('Partners contacted:', partnerNames.join(', '));
+    console.info('Email sent:', emailResult.success ? 'Yes' : 'Failed');
 
     return {
       sent: emailResult.success,

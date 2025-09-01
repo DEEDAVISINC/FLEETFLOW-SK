@@ -46,7 +46,7 @@ const assignDispatcherToBroker = (
   brokerId: string,
   dispatcherId: string
 ): boolean => {
-  console.log(`Assigning dispatcher ${dispatcherId} to broker ${brokerId}`);
+  console.info(`Assigning dispatcher ${dispatcherId} to broker ${brokerId}`);
   return true;
 };
 

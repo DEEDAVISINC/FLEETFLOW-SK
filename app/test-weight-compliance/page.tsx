@@ -64,7 +64,7 @@ export default function TestWeightCompliance() {
 
     for (const scenario of testScenarios) {
       try {
-        console.log(`\n🧪 Testing: ${scenario.name}`);
+        console.info(`\n🧪 Testing: ${scenario.name}`);
 
         const assessment = weightService.assessLoadWeight(
           `test-${scenario.name}`,
@@ -85,7 +85,7 @@ export default function TestWeightCompliance() {
           details: assessment,
         });
 
-        console.log(
+        console.info(
           `   Expected: ${scenario.expectedResult} | Actual: ${assessment.weightCompliance.safetyRating} | ${passed ? '✅ PASS' : '❌ FAIL'}`
         );
       } catch (error) {
@@ -103,33 +103,33 @@ export default function TestWeightCompliance() {
     setIsRunning(false);
 
     const passedTests = results.filter((r) => r.passed).length;
-    console.log(
+    console.info(
       `\n📊 Test Results: ${passedTests}/${results.length} tests passed`
     );
   };
 
   const testTruckConfigurations = () => {
     const configs = weightService.getStandardConfigurations();
-    console.log('\n🚛 Available Truck Configurations:');
+    console.info('\n🚛 Available Truck Configurations:');
 
     configs.forEach((config) => {
-      console.log(`\n${config.name}:`);
-      console.log(
+      console.info(`\n${config.name}:`);
+      console.info(
         `   • ${config.totalAxles} axles (${config.steerAxles}S + ${config.driveAxles}D + ${config.trailerAxles}T)`
       );
-      console.log(
+      console.info(
         `   • Max Gross Weight: ${config.maxGrossWeight.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Steer Axle Limit: ${config.maxSteerAxleWeight.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Drive Axle Limit: ${config.maxDriveAxleWeight.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Trailer Axle Limit: ${config.maxTrailerAxleWeight.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Bridge Formula Required: ${config.bridgeFormulaRequired ? 'Yes' : 'No'}`
       );
     });
@@ -139,23 +139,23 @@ export default function TestWeightCompliance() {
     const states = ['CA', 'TX', 'FL', 'MI', 'NY'];
     const stateLimits = weightService.getStateWeightLimits(states);
 
-    console.log('\n🗺️ State Weight Limits:');
+    console.info('\n🗺️ State Weight Limits:');
     stateLimits.forEach((state) => {
-      console.log(`\n${state.state}:`);
-      console.log(
+      console.info(`\n${state.state}:`);
+      console.info(
         `   • Max Gross: ${state.maxGrossWeight.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Max Steer Axle: ${state.maxSteerAxle.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Max Drive Axle: ${state.maxDriveAxle.toLocaleString()} lbs`
       );
-      console.log(
+      console.info(
         `   • Max Trailer Axle: ${state.maxTrailerAxle.toLocaleString()} lbs`
       );
       if (state.specialRestrictions) {
-        console.log(
+        console.info(
           `   • Restrictions: ${state.specialRestrictions.join(', ')}`
         );
       }

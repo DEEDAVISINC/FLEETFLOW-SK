@@ -245,7 +245,7 @@ class DriverPreferencesService {
   // Notify dispatch of urgent load request
   private notifyDispatch(request: any): void {
     // In a real app, this would send a notification to dispatch
-    console.log('🚨 Urgent load request submitted:', {
+    console.info('🚨 Urgent load request submitted:', {
       driver: request.driverName,
       location: `${request.currentLocation.city}, ${request.currentLocation.state}`,
       requestType: request.requestType,
@@ -281,7 +281,7 @@ class DriverPreferencesService {
       // 3. Switch to manual dispatch mode
       // 4. Log the event for audit purposes
 
-      console.log('🚨 Emergency override activated by:', userId);
+      console.info('🚨 Emergency override activated by:', userId);
       return true;
     } catch (error) {
       console.error('Error activating emergency override:', error);

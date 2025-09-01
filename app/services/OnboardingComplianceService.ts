@@ -51,7 +51,7 @@ class OnboardingComplianceService {
   async processOnboarding(
     request: OnboardingComplianceRequest
   ): Promise<OnboardingComplianceVerification> {
-    console.log(
+    console.info(
       `🔍 Processing compliance verification for carrier ${request.carrierId} (DOT# ${request.dotNumber})`
     );
 
@@ -143,7 +143,7 @@ class OnboardingComplianceService {
       // Set safety rating (this would come from the API)
       verification.safetyRating = this.getSimulatedSafetyRating(dotNumber);
 
-      console.log(
+      console.info(
         `DOT Authority verification for ${dotNumber}: ${isValidDot ? 'VALID' : 'INVALID'}`
       );
     } catch (error) {

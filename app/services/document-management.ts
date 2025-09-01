@@ -2,7 +2,16 @@
 interface Document {
   id: string;
   driverId: string;
-  type: 'bol' | 'rate_confirmation' | 'photo' | 'signature' | 'invoice' | 'receipt' | 'permit' | 'insurance' | 'dvir';
+  type:
+    | 'bol'
+    | 'rate_confirmation'
+    | 'photo'
+    | 'signature'
+    | 'invoice'
+    | 'receipt'
+    | 'permit'
+    | 'insurance'
+    | 'dvir';
   name: string;
   url: string;
   size: number;
@@ -26,7 +35,7 @@ class DocumentManagementServiceClass {
         mimeType: 'application/pdf',
         uploadedAt: '2024-12-23T08:00:00Z',
         loadId: 'LOAD-2024-001',
-        status: 'approved'
+        status: 'approved',
       },
       {
         id: 'doc-002',
@@ -38,8 +47,8 @@ class DocumentManagementServiceClass {
         mimeType: 'image/jpeg',
         uploadedAt: '2024-12-23T07:30:00Z',
         loadId: 'LOAD-2024-001',
-        status: 'approved'
-      }
+        status: 'approved',
+      },
     ],
     'DRV-002': [
       {
@@ -52,9 +61,9 @@ class DocumentManagementServiceClass {
         mimeType: 'application/pdf',
         uploadedAt: '2024-12-22T14:30:00Z',
         loadId: 'LOAD-2024-002',
-        status: 'approved'
-      }
-    ]
+        status: 'approved',
+      },
+    ],
   };
 
   async getDocuments(driverId: string): Promise<Document[]> {
@@ -66,27 +75,39 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async getDocumentsByLoad(driverId: string, loadId: string): Promise<Document[]> {
+  async getDocumentsByLoad(
+    driverId: string,
+    loadId: string
+  ): Promise<Document[]> {
     try {
       const documents = this.documents[driverId] || [];
-      return documents.filter(doc => doc.loadId === loadId);
+      return documents.filter((doc) => doc.loadId === loadId);
     } catch (error) {
       console.error('Error getting documents by load:', error);
       return [];
     }
   }
 
-  async getDocumentsByType(driverId: string, type: Document['type']): Promise<Document[]> {
+  async getDocumentsByType(
+    driverId: string,
+    type: Document['type']
+  ): Promise<Document[]> {
     try {
       const documents = this.documents[driverId] || [];
-      return documents.filter(doc => doc.type === type);
+      return documents.filter((doc) => doc.type === type);
     } catch (error) {
       console.error('Error getting documents by type:', error);
       return [];
     }
   }
 
-  async uploadDocument(driverId: string, file: File, type: Document['type'], loadId?: string, metadata?: any): Promise<{ success: boolean; documentId?: string }> {
+  async uploadDocument(
+    driverId: string,
+    file: File,
+    type: Document['type'],
+    loadId?: string,
+    metadata?: any
+  ): Promise<{ success: boolean; documentId?: string }> {
     try {
       // In a real implementation, this would upload to cloud storage
       const documentId = `doc-${Date.now()}`;
@@ -101,7 +122,7 @@ class DocumentManagementServiceClass {
         uploadedAt: new Date().toISOString(),
         loadId,
         metadata,
-        status: 'pending'
+        status: 'pending',
       };
 
       if (!this.documents[driverId]) {
@@ -111,7 +132,7 @@ class DocumentManagementServiceClass {
       this.documents[driverId].push(document);
 
       // Simulate file upload
-      console.log(`Document uploaded: ${documentId} - ${file.name}`);
+      console.info(`Document uploaded: ${documentId} - ${file.name}`);
 
       return { success: true, documentId };
     } catch (error) {
@@ -127,7 +148,7 @@ class DocumentManagementServiceClass {
         return false;
       }
 
-      const index = documents.findIndex(doc => doc.id === documentId);
+      const index = documents.findIndex((doc) => doc.id === documentId);
       if (index === -1) {
         return false;
       }
@@ -140,14 +161,18 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async updateDocumentStatus(driverId: string, documentId: string, status: Document['status']): Promise<boolean> {
+  async updateDocumentStatus(
+    driverId: string,
+    documentId: string,
+    status: Document['status']
+  ): Promise<boolean> {
     try {
       const documents = this.documents[driverId];
       if (!documents) {
         return false;
       }
 
-      const document = documents.find(doc => doc.id === documentId);
+      const document = documents.find((doc) => doc.id === documentId);
       if (!document) {
         return false;
       }
@@ -160,14 +185,17 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async downloadDocument(driverId: string, documentId: string): Promise<{ success: boolean; url?: string }> {
+  async downloadDocument(
+    driverId: string,
+    documentId: string
+  ): Promise<{ success: boolean; url?: string }> {
     try {
       const documents = this.documents[driverId];
       if (!documents) {
         return { success: false };
       }
 
-      const document = documents.find(doc => doc.id === documentId);
+      const document = documents.find((doc) => doc.id === documentId);
       if (!document) {
         return { success: false };
       }
@@ -180,7 +208,12 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async saveSignature(driverId: string, signatureData: string, loadId: string, stepId: string): Promise<{ success: boolean; documentId?: string }> {
+  async saveSignature(
+    driverId: string,
+    signatureData: string,
+    loadId: string,
+    stepId: string
+  ): Promise<{ success: boolean; documentId?: string }> {
     try {
       const documentId = `sig-${Date.now()}`;
       const document: Document = {
@@ -194,7 +227,7 @@ class DocumentManagementServiceClass {
         uploadedAt: new Date().toISOString(),
         loadId,
         metadata: { stepId, signatureData },
-        status: 'approved'
+        status: 'approved',
       };
 
       if (!this.documents[driverId]) {
@@ -209,7 +242,13 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async savePhoto(driverId: string, photoData: string, loadId: string, stepId: string, description?: string): Promise<{ success: boolean; documentId?: string }> {
+  async savePhoto(
+    driverId: string,
+    photoData: string,
+    loadId: string,
+    stepId: string,
+    description?: string
+  ): Promise<{ success: boolean; documentId?: string }> {
     try {
       const documentId = `photo-${Date.now()}`;
       const document: Document = {
@@ -223,7 +262,7 @@ class DocumentManagementServiceClass {
         uploadedAt: new Date().toISOString(),
         loadId,
         metadata: { stepId, photoData, description },
-        status: 'approved'
+        status: 'approved',
       };
 
       if (!this.documents[driverId]) {
@@ -241,17 +280,21 @@ class DocumentManagementServiceClass {
   async getPendingDocuments(driverId: string): Promise<Document[]> {
     try {
       const documents = this.documents[driverId] || [];
-      return documents.filter(doc => doc.status === 'pending');
+      return documents.filter((doc) => doc.status === 'pending');
     } catch (error) {
       console.error('Error getting pending documents:', error);
       return [];
     }
   }
 
-  async getDocumentsByDateRange(driverId: string, startDate: string, endDate: string): Promise<Document[]> {
+  async getDocumentsByDateRange(
+    driverId: string,
+    startDate: string,
+    endDate: string
+  ): Promise<Document[]> {
     try {
       const documents = this.documents[driverId] || [];
-      return documents.filter(doc => {
+      return documents.filter((doc) => {
         const docDate = new Date(doc.uploadedAt);
         return docDate >= new Date(startDate) && docDate <= new Date(endDate);
       });
@@ -261,13 +304,19 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async getStorageUsage(driverId: string): Promise<{ totalSize: number; documentCount: number; breakdown: { [type: string]: number } }> {
+  async getStorageUsage(
+    driverId: string
+  ): Promise<{
+    totalSize: number;
+    documentCount: number;
+    breakdown: { [type: string]: number };
+  }> {
     try {
       const documents = this.documents[driverId] || [];
       const totalSize = documents.reduce((sum, doc) => sum + doc.size, 0);
       const breakdown: { [type: string]: number } = {};
 
-      documents.forEach(doc => {
+      documents.forEach((doc) => {
         if (!breakdown[doc.type]) {
           breakdown[doc.type] = 0;
         }
@@ -277,7 +326,7 @@ class DocumentManagementServiceClass {
       return {
         totalSize,
         documentCount: documents.length,
-        breakdown
+        breakdown,
       };
     } catch (error) {
       console.error('Error getting storage usage:', error);
@@ -288,10 +337,11 @@ class DocumentManagementServiceClass {
   async searchDocuments(driverId: string, query: string): Promise<Document[]> {
     try {
       const documents = this.documents[driverId] || [];
-      return documents.filter(doc => 
-        doc.name.toLowerCase().includes(query.toLowerCase()) ||
-        doc.type.toLowerCase().includes(query.toLowerCase()) ||
-        doc.loadId?.toLowerCase().includes(query.toLowerCase())
+      return documents.filter(
+        (doc) =>
+          doc.name.toLowerCase().includes(query.toLowerCase()) ||
+          doc.type.toLowerCase().includes(query.toLowerCase()) ||
+          doc.loadId?.toLowerCase().includes(query.toLowerCase())
       );
     } catch (error) {
       console.error('Error searching documents:', error);
@@ -299,7 +349,10 @@ class DocumentManagementServiceClass {
     }
   }
 
-  async generateDocumentReport(driverId: string, period: 'week' | 'month' | 'quarter'): Promise<{ success: boolean; data?: any }> {
+  async generateDocumentReport(
+    driverId: string,
+    period: 'week' | 'month' | 'quarter'
+  ): Promise<{ success: boolean; data?: any }> {
     try {
       const documents = this.documents[driverId] || [];
       const now = new Date();
@@ -317,11 +370,13 @@ class DocumentManagementServiceClass {
           break;
       }
 
-      const periodDocuments = documents.filter(doc => new Date(doc.uploadedAt) >= startDate);
+      const periodDocuments = documents.filter(
+        (doc) => new Date(doc.uploadedAt) >= startDate
+      );
       const typeBreakdown: { [type: string]: number } = {};
       const statusBreakdown: { [status: string]: number } = {};
 
-      periodDocuments.forEach(doc => {
+      periodDocuments.forEach((doc) => {
         typeBreakdown[doc.type] = (typeBreakdown[doc.type] || 0) + 1;
         statusBreakdown[doc.status] = (statusBreakdown[doc.status] || 0) + 1;
       });
@@ -334,9 +389,9 @@ class DocumentManagementServiceClass {
           totalDocuments: periodDocuments.length,
           totalSize: periodDocuments.reduce((sum, doc) => sum + doc.size, 0),
           typeBreakdown,
-          statusBreakdown
+          statusBreakdown,
         },
-        documents: periodDocuments
+        documents: periodDocuments,
       };
 
       return { success: true, data: report };
@@ -347,4 +402,4 @@ class DocumentManagementServiceClass {
   }
 }
 
-export const DocumentManagementService = new DocumentManagementServiceClass(); 
+export const DocumentManagementService = new DocumentManagementServiceClass();

@@ -12,7 +12,7 @@ export interface BrokerSnapshotData {
 export const brokersnapshot = {
   async getCarrierInfo(mcNumber: string): Promise<BrokerSnapshotData | null> {
     // Stub implementation - in production this would call the actual BrokerSnapshot API
-    console.log(
+    console.info(
       `📊 BrokerSnapshot: Looking up MC-${mcNumber} (stub implementation)`
     );
 
@@ -29,7 +29,7 @@ export const brokersnapshot = {
   async enableTracking(
     mcNumber: string
   ): Promise<{ success: boolean; message: string }> {
-    console.log(
+    console.info(
       `📊 BrokerSnapshot: Enabling tracking for MC-${mcNumber} (stub implementation)`
     );
 
@@ -47,7 +47,7 @@ export const brokersnapshot = {
   async getTrackingUpdate(
     mcNumber: string
   ): Promise<{ success: boolean; data?: any; message: string }> {
-    console.log(
+    console.info(
       `📊 BrokerSnapshot: Getting tracking update for MC-${mcNumber} (stub implementation)`
     );
 

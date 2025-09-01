@@ -52,7 +52,7 @@ export async function aiSecurityMiddleware(
 
   // Set tenant context for AI operations
   aiTenantContextService.setTenantContext(sessionId, tenantId);
-  console.log(
+  console.info(
     `🏢 AI request for tenant: ${tenantId}, session: ${sessionId}, operation: ${operation}`
   );
 
@@ -77,7 +77,7 @@ export async function aiSecurityMiddleware(
     // Apply tenant-specific data context filtering
     const tenantFilteredData =
       aiTenantContextService.getTenantAIConfig(tenantId);
-    console.log(
+    console.info(
       `🔍 Applied tenant-specific context for ${tenantConfig.organizationName} (${tenantConfig.businessType})`
     );
 
@@ -229,7 +229,7 @@ export async function aiSecurityMiddleware(
         sessionId,
       });
 
-    console.log(
+    console.info(
       `🏢 Applied ${tenantConfig.organizationName} business context and rules`
     );
 

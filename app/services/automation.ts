@@ -5,8 +5,6 @@ import { rfxAutomation } from './RFxAutomationService';
 import { samGovMonitor } from './SAMGovOpportunityMonitor';
 import { thomasNetAutomation } from './ThomasNetAutomationService';
 import { fleetAI } from './ai';
-import { smsService } from './sms';
-import { sendInvoiceEmail } from './email';
 // Add route generation template integration
 import {
   generateAgriculturalRouteDocument,
@@ -22,30 +20,30 @@ export class AIAutomationEngine {
   private isRunning: boolean = false;
 
   constructor() {
-    console.log('🤖 AI Automation Engine initialized');
+    console.info('🤖 AI Automation Engine initialized');
   }
 
   // Start all automation tasks (server-side only)
   start() {
     if (typeof window !== 'undefined') {
-      console.log(
+      console.info(
         '⏭️ Automation engine runs server-side only, skipping client-side start'
       );
       return;
     }
 
     if (this.isRunning) {
-      console.log('⚠️ Automation engine already running');
+      console.info('⚠️ Automation engine already running');
       return;
     }
 
     if (!cron) {
-      console.log('⚠️ node-cron not available, automation engine disabled');
+      console.info('⚠️ node-cron not available, automation engine disabled');
       return;
     }
 
     this.isRunning = true;
-    console.log('🚀 Starting AI Automation Engine (Server-Side)...');
+    console.info('🚀 Starting AI Automation Engine (Server-Side)...');
 
     // Schedule predictive maintenance checks (daily at 6 AM)
     this.scheduleTask('predictive-maintenance', '0 6 * * *', () => {
@@ -107,33 +105,33 @@ export class AIAutomationEngine {
       this.runRFxOpportunityDiscovery();
     });
 
-    console.log('✅ All AI automation tasks scheduled');
+    console.info('✅ All AI automation tasks scheduled');
   }
 
   // Stop all automation tasks (server-side only)
   stop() {
     if (typeof window !== 'undefined') {
-      console.log(
+      console.info(
         '⏭️ Automation engine runs server-side only, skipping client-side stop'
       );
       return;
     }
 
     if (!this.isRunning) {
-      console.log('⚠️ Automation engine not running');
+      console.info('⚠️ Automation engine not running');
       return;
     }
 
     this.tasks.forEach((task, name) => {
       if (task && task.stop) {
         task.stop();
-        console.log(`🛑 Stopped task: ${name}`);
+        console.info(`🛑 Stopped task: ${name}`);
       }
     });
 
     this.tasks.clear();
     this.isRunning = false;
-    console.log('⏹️ AI Automation Engine stopped');
+    console.info('⏹️ AI Automation Engine stopped');
   }
 
   // Schedule a new automation task
@@ -146,9 +144,9 @@ export class AIAutomationEngine {
         });
 
         this.tasks.set(name, task);
-        console.log(`📅 Scheduled task: ${name} (${schedule})`);
+        console.info(`📅 Scheduled task: ${name} (${schedule})`);
       } else {
-        console.log(`⏭️ Skipping client-side scheduling for: ${name}`);
+        console.info(`⏭️ Skipping client-side scheduling for: ${name}`);
       }
     } catch (error) {
       console.error(`❌ Failed to schedule task ${name}:`, error);
@@ -157,7 +155,7 @@ export class AIAutomationEngine {
 
   // Run predictive maintenance analysis
   private async runPredictiveMaintenance() {
-    console.log('🔧 Running AI Predictive Maintenance Analysis...');
+    console.info('🔧 Running AI Predictive Maintenance Analysis...');
 
     try {
       // Get vehicle data (in real app, this would come from database)
@@ -172,7 +170,7 @@ export class AIAutomationEngine {
         }
       }
 
-      console.log('✅ Predictive maintenance analysis completed');
+      console.info('✅ Predictive maintenance analysis completed');
     } catch (error) {
       console.error('❌ Predictive maintenance analysis failed:', error);
     }
@@ -180,7 +178,7 @@ export class AIAutomationEngine {
 
   // Run route optimization
   private async runRouteOptimization() {
-    console.log('🗺️ Running AI Route Optimization...');
+    console.info('🗺️ Running AI Route Optimization...');
 
     try {
       const vehicles = await this.getActiveVehicles();
@@ -196,7 +194,7 @@ export class AIAutomationEngine {
         await this.sendRouteOptimizationAlert(optimization);
       }
 
-      console.log('✅ Route optimization completed');
+      console.info('✅ Route optimization completed');
     } catch (error) {
       console.error('❌ Route optimization failed:', error);
     }
@@ -204,7 +202,7 @@ export class AIAutomationEngine {
 
   // Run driver performance analysis
   private async runDriverAnalysis() {
-    console.log('👨‍💼 Running AI Driver Performance Analysis...');
+    console.info('👨‍💼 Running AI Driver Performance Analysis...');
 
     try {
       const drivers = await this.getDriverData();
@@ -218,7 +216,7 @@ export class AIAutomationEngine {
         }
       }
 
-      console.log('✅ Driver performance analysis completed');
+      console.info('✅ Driver performance analysis completed');
     } catch (error) {
       console.error('❌ Driver performance analysis failed:', error);
     }
@@ -226,7 +224,7 @@ export class AIAutomationEngine {
 
   // Run cost optimization analysis
   private async runCostOptimization() {
-    console.log('💰 Running AI Cost Optimization Analysis...');
+    console.info('💰 Running AI Cost Optimization Analysis...');
 
     try {
       const fleetData = await this.getFleetData();
@@ -235,7 +233,7 @@ export class AIAutomationEngine {
       // Send cost optimization recommendations to management
       await this.sendCostOptimizationReport(optimization);
 
-      console.log('✅ Cost optimization analysis completed');
+      console.info('✅ Cost optimization analysis completed');
     } catch (error) {
       console.error('❌ Cost optimization analysis failed:', error);
     }
@@ -243,7 +241,7 @@ export class AIAutomationEngine {
 
   // Run smart monitoring
   private async runSmartMonitoring() {
-    console.log('🧠 Running Smart Monitoring...');
+    console.info('🧠 Running Smart Monitoring...');
 
     try {
       // Monitor various fleet metrics
@@ -255,7 +253,7 @@ export class AIAutomationEngine {
         await this.sendSmartAlert(smartNotification);
       }
 
-      console.log('✅ Smart monitoring completed');
+      console.info('✅ Smart monitoring completed');
     } catch (error) {
       console.error('❌ Smart monitoring failed:', error);
     }
@@ -263,7 +261,7 @@ export class AIAutomationEngine {
 
   // NEW: Run automated route document generation
   private async runAutomatedRouteDocumentGeneration() {
-    console.log('📋 Running Automated Route Document Generation...');
+    console.info('📋 Running Automated Route Document Generation...');
 
     try {
       const pendingRoutes = await this.getPendingRoutes();
@@ -276,7 +274,7 @@ export class AIAutomationEngine {
         await this.saveAndDistributeRouteDocument(route, routeDocument);
       }
 
-      console.log('✅ Automated route document generation completed');
+      console.info('✅ Automated route document generation completed');
     } catch (error) {
       console.error('❌ Automated route document generation failed:', error);
     }
@@ -284,7 +282,7 @@ export class AIAutomationEngine {
 
   // NEW: Run driver brief generation
   private async runDriverBriefGeneration() {
-    console.log('👨‍💼 Running Driver Brief Generation...');
+    console.info('👨‍💼 Running Driver Brief Generation...');
 
     try {
       const drivers = await this.getDriverData();
@@ -304,7 +302,7 @@ export class AIAutomationEngine {
         }
       }
 
-      console.log('✅ Driver brief generation completed');
+      console.info('✅ Driver brief generation completed');
     } catch (error) {
       console.error('❌ Driver brief generation failed:', error);
     }
@@ -312,30 +310,30 @@ export class AIAutomationEngine {
 
   // NEW: Run SAM.gov opportunity monitoring
   private async runSAMGovMonitoring() {
-    console.log('🏛️ Running SAM.gov Opportunity Monitoring...');
+    console.info('🏛️ Running SAM.gov Opportunity Monitoring...');
 
     try {
       const result = await samGovMonitor.checkForNewOpportunities();
 
       if (result.newOpportunities.length > 0) {
-        console.log(
+        console.info(
           `✅ Found ${result.newOpportunities.length} new government contract opportunities`
         );
-        console.log(
+        console.info(
           `📱 Sent ${result.notificationsSent} notifications to stakeholders`
         );
 
         // Log opportunity details
         result.newOpportunities.forEach((opp) => {
-          console.log(
+          console.info(
             `📋 New Opportunity: ${opp.title} - ${opp.agency} (Due: ${opp.responseDeadline})`
           );
         });
       } else {
-        console.log('ℹ️ No new government contract opportunities found');
+        console.info('ℹ️ No new government contract opportunities found');
       }
 
-      console.log(
+      console.info(
         `📊 Total opportunities tracked: ${result.totalOpportunities}`
       );
     } catch (error) {
@@ -345,7 +343,7 @@ export class AIAutomationEngine {
 
   // NEW: Run FMCSA Shipper Intelligence Discovery
   private async runFMCSAShipperIntelligence() {
-    console.log('🧠 Running FMCSA Shipper Intelligence Discovery...');
+    console.info('🧠 Running FMCSA Shipper Intelligence Discovery...');
 
     try {
       const discoveredShippers =
@@ -367,7 +365,7 @@ export class AIAutomationEngine {
             topProspects
           );
 
-        console.log(
+        console.info(
           `✅ FMCSA Intelligence: Discovered ${exportResult.summary.totalShippers} shippers, ${exportResult.summary.highValueProspects} high-value prospects`
         );
 
@@ -378,7 +376,7 @@ export class AIAutomationEngine {
           'normal'
         );
       } else {
-        console.log('ℹ️ No high-value shipper prospects found today');
+        console.info('ℹ️ No high-value shipper prospects found today');
       }
     } catch (error) {
       console.error('❌ FMCSA shipper intelligence failed:', error);
@@ -387,7 +385,7 @@ export class AIAutomationEngine {
 
   // NEW: Run ThomasNet Manufacturer Processing
   private async runThomasNetAutomation() {
-    console.log('🏭 Running ThomasNet Manufacturer Data Processing...');
+    console.info('🏭 Running ThomasNet Manufacturer Data Processing...');
 
     try {
       // Check for new CSV files (simulate file system check)
@@ -397,7 +395,7 @@ export class AIAutomationEngine {
         const result =
           await thomasNetAutomation.processThomasNetCSV(csvContent);
 
-        console.log(
+        console.info(
           `📊 ThomasNet Processing: ${result.totalProcessed} manufacturers processed, ${result.qualified} qualified, ${result.highPotential} high-potential`
         );
 
@@ -408,7 +406,7 @@ export class AIAutomationEngine {
             75
           );
 
-          console.log(
+          console.info(
             `📈 Exported ${exportResult.summary.totalExported} qualified manufacturers to lead generation`
           );
 
@@ -427,17 +425,17 @@ export class AIAutomationEngine {
 
   // NEW: Run Automated RFx Bidding
   private async runAutomatedRFxBidding() {
-    console.log('📋 Running Automated RFx Bidding...');
+    console.info('📋 Running Automated RFx Bidding...');
 
     try {
       const results = await rfxAutomation.runAutomatedRFxDiscovery();
 
-      console.log(`🤖 RFx Automation Results:`);
-      console.log(`  📊 Total Opportunities: ${results.discovered.length}`);
-      console.log(`  🚀 Auto-Submitted: ${results.autoSubmitted.length}`);
-      console.log(`  📋 Queued for Review: ${results.queuedForReview.length}`);
-      console.log(`  ❌ Declined: ${results.declined.length}`);
-      console.log(
+      console.info(`🤖 RFx Automation Results:`);
+      console.info(`  📊 Total Opportunities: ${results.discovered.length}`);
+      console.info(`  🚀 Auto-Submitted: ${results.autoSubmitted.length}`);
+      console.info(`  📋 Queued for Review: ${results.queuedForReview.length}`);
+      console.info(`  ❌ Declined: ${results.declined.length}`);
+      console.info(
         `  💰 Est. Revenue Generated: $${Math.round(results.metrics.revenueGenerated)}`
       );
 
@@ -471,22 +469,22 @@ export class AIAutomationEngine {
 
   // NEW: Run RFx Opportunity Discovery
   private async runRFxOpportunityDiscovery() {
-    console.log('🔍 Running RFx Opportunity Discovery...');
+    console.info('🔍 Running RFx Opportunity Discovery...');
 
     try {
       const dashboard = await rfxAutomation.getAutomationDashboard();
 
-      console.log(`📊 RFx Discovery Status: ${dashboard.currentStatus}`);
-      console.log(
+      console.info(`📊 RFx Discovery Status: ${dashboard.currentStatus}`);
+      console.info(
         `📈 Today Processed: ${dashboard.todayProcessed} opportunities`
       );
-      console.log(
+      console.info(
         `🎯 Top Opportunities: ${dashboard.topOpportunities.length} high-scoring`
       );
 
       // Log top opportunities for visibility
       dashboard.topOpportunities.slice(0, 3).forEach((op) => {
-        console.log(
+        console.info(
           `  🏆 ${op.title} - Score: ${op.aiScore.score}, Value: $${op.estimatedValue}`
         );
       });
@@ -558,9 +556,9 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
     const message = `🚨 HIGH MAINTENANCE RISK: Vehicle ${vehicle.name} requires immediate attention. Risk: ${analysis.riskLevel}. Next service due: ${analysis.nextServiceDue}`;
 
     // Log alert (SMS/Email functionality temporarily disabled for TS compatibility)
-    console.log('MAINTENANCE ALERT:', message);
-    console.log('Vehicle:', vehicle);
-    console.log('Analysis:', analysis);
+    console.info('MAINTENANCE ALERT:', message);
+    console.info('Vehicle:', vehicle);
+    console.info('Analysis:', analysis);
   }
 
   // Send route optimization alert
@@ -568,8 +566,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
     const message = `🗺️ AI Route Optimization Complete! Efficiency Score: ${optimization.efficiencyScore}%. Estimated savings: $${optimization.totalEstimatedCost}`;
 
     // Log alert (SMS functionality temporarily disabled for TS compatibility)
-    console.log('ROUTE OPTIMIZATION ALERT:', message);
-    console.log('Optimization:', optimization);
+    console.info('ROUTE OPTIMIZATION ALERT:', message);
+    console.info('Optimization:', optimization);
   }
 
   // Send driver performance alert
@@ -577,9 +575,9 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
     const subject = `📊 Driver Performance Review: ${driver.name}`;
 
     // Log alert (Email functionality temporarily disabled for TS compatibility)
-    console.log('DRIVER PERFORMANCE ALERT:', subject);
-    console.log('Driver:', driver);
-    console.log('Analysis:', analysis);
+    console.info('DRIVER PERFORMANCE ALERT:', subject);
+    console.info('Driver:', driver);
+    console.info('Analysis:', analysis);
   }
 
   // Send cost optimization report
@@ -587,8 +585,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
     const subject = `💰 Monthly Cost Optimization Report - Potential Savings: ${optimization.totalPotentialSavings}`;
 
     // Log report (Email functionality temporarily disabled for TS compatibility)
-    console.log('COST OPTIMIZATION REPORT:', subject);
-    console.log('Optimization:', optimization);
+    console.info('COST OPTIMIZATION REPORT:', subject);
+    console.info('Optimization:', optimization);
   }
 
   // Send smart alert
@@ -598,8 +596,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
       notification.priority === 'high'
     ) {
       // Log alert (SMS functionality temporarily disabled for TS compatibility)
-      console.log('SMART ALERT:', notification.message);
-      console.log('Priority:', notification.priority);
+      console.info('SMART ALERT:', notification.message);
+      console.info('Priority:', notification.priority);
     }
   }
 
@@ -714,8 +712,8 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   private async saveAndDistributeRouteDocument(route: any, document: string) {
     try {
       // Log the generated document (in real app, save to database)
-      console.log(`📋 Route document generated for ${route.routeName}`);
-      console.log(
+      console.info(`📋 Route document generated for ${route.routeName}`);
+      console.info(
         'Document preview (first 200 chars):',
         document.substring(0, 200) + '...'
       );
@@ -783,7 +781,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
   // NEW: Send driver brief
   private async sendDriverBrief(driver: any, brief: string) {
     try {
-      console.log(`📱 Driver brief generated for ${driver.name}`);
+      console.info(`📱 Driver brief generated for ${driver.name}`);
 
       // Send via SMS for quick mobile access
       const driverPhone = await this.getDriverPhoneById(driver.id);

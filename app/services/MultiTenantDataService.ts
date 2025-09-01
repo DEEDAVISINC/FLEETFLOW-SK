@@ -1,188 +1,315 @@
-// Multi-Tenant Data Service
-// Provides user-specific data filtering while maintaining global load board access
-// Supports both individual dispatchers and dispatch companies
+// Organization-Aware Data Service
+// Provides organization-specific data filtering for multi-user organizations
+// Supports brokerage, dispatch, carrier, and shipper organizations
 
 import { getCurrentUser } from '../config/access';
+import { OrganizationUser, PERMISSIONS } from '../models/OrganizationUser';
+import { organizationService } from './OrganizationService';
 import { Load } from './loadService';
 
-export interface TenantContext {
+export interface OrganizationContext {
   userId: string;
-  userRole: 'admin' | 'dispatcher' | 'driver' | 'broker';
+  userRole: OrganizationUser['role'];
   userName: string;
   userEmail: string;
-  brokerId?: string;
+  organizationId: string;
+  organizationName: string;
+  organizationType: string;
+  permissions: string[];
 }
 
-export class MultiTenantDataService {
+export class OrganizationDataService {
   /**
-   * Get current user's tenant context
+   * Get current user's organization context
    */
-  static getTenantContext(): TenantContext {
-    const { user } = getCurrentUser();
-    return {
-      userId: user.id,
-      userRole: user.role,
-      userName: user.name,
-      userEmail: user.email,
-      brokerId: user.brokerId,
-    };
+  static async getOrganizationContext(): Promise<OrganizationContext | null> {
+    try {
+      // Get current organization from localStorage or context
+      const currentOrgId = localStorage.getItem('currentOrganizationId');
+      if (!currentOrgId) {
+        return null;
+      }
+
+      const { user } = getCurrentUser();
+      const userOrg = await organizationService.getUserOrganizationRole(
+        user.id,
+        currentOrgId
+      );
+
+      if (!userOrg) {
+        return null;
+      }
+
+      const organization =
+        await organizationService.getOrganization(currentOrgId);
+
+      return {
+        userId: user.id,
+        userRole: userOrg.role,
+        userName: user.name,
+        userEmail: user.email,
+        organizationId: currentOrgId,
+        organizationName: organization?.name || 'Unknown Organization',
+        organizationType: organization?.type || 'brokerage',
+        permissions: userOrg.permissions,
+      };
+    } catch (error) {
+      console.error('Error getting organization context:', error);
+      return null;
+    }
   }
 
   /**
-   * Filter loads for current tenant (user-specific data isolation)
-   * Returns only loads assigned to or managed by the current user
+   * Filter loads for current organization (organization-specific data isolation)
+   * Returns only loads belonging to the current organization
    */
-  static filterLoadsForTenant(allLoads: Load[]): Load[] {
-    const context = this.getTenantContext();
-    
-    // Admin sees all loads
-    if (context.userRole === 'admin') {
-      return allLoads;
+  static async filterLoadsForOrganization(allLoads: Load[]): Promise<Load[]> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return [];
     }
 
-    // Dispatchers see:
-    // 1. Loads assigned to them (dispatcherId matches)
-    // 2. Available loads they can pick up
-    // 3. Loads they created/managed
-    if (context.userRole === 'dispatcher') {
-      return allLoads.filter(load => 
-        load.dispatcherId === context.userId ||
-        load.status === 'Available' ||
-        load.brokerId === context.userId ||
-        load.assignedBy === context.userId
+    // Owners and admins see all organization loads
+    if (context.userRole === 'owner' || context.userRole === 'admin') {
+      return allLoads.filter(
+        (load) => load.organizationId === context.organizationId
       );
     }
 
-    // Brokers see:
-    // 1. Loads they created (brokerId matches)
-    // 2. Available loads in the marketplace
-    if (context.userRole === 'broker') {
-      return allLoads.filter(load =>
-        load.brokerId === context.brokerId ||
-        load.brokerId === context.userId ||
-        load.status === 'Available'
-      );
-    }
+    // Agents and dispatchers see loads they can access based on permissions
+    if (context.permissions.includes(PERMISSIONS.VIEW_LOADS)) {
+      return allLoads.filter((load) => {
+        const isOrgLoad = load.organizationId === context.organizationId;
 
-    // Drivers see loads assigned to them or available for pickup
-    if (context.userRole === 'driver') {
-      return allLoads.filter(load =>
-        load.assignedTo === context.userId ||
-        load.status === 'Available'
-      );
+        // If user can create/manage loads, they see more
+        if (
+          context.permissions.includes(PERMISSIONS.CREATE_LOADS) ||
+          context.permissions.includes(PERMISSIONS.EDIT_LOADS)
+        ) {
+          return isOrgLoad;
+        }
+
+        // Otherwise, only loads they're assigned to or created
+        return (
+          isOrgLoad &&
+          (load.dispatcherId === context.userId ||
+            load.brokerId === context.userId ||
+            load.assignedBy === context.userId ||
+            load.assignedTo === context.userId ||
+            load.status === 'Available') // Available loads within organization
+        );
+      });
     }
 
     return [];
   }
 
   /**
-   * Filter notifications for current tenant
+   * Filter notifications for current organization
    */
-  static filterNotificationsForTenant(allNotifications: any[]): any[] {
-    const context = this.getTenantContext();
-    
-    // Admin sees all notifications
-    if (context.userRole === 'admin') {
-      return allNotifications;
+  static async filterNotificationsForOrganization(
+    allNotifications: any[]
+  ): Promise<any[]> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return [];
     }
 
-    // Filter notifications by user involvement
-    return allNotifications.filter(notification => {
+    // Owners and admins see all organization notifications
+    if (context.userRole === 'owner' || context.userRole === 'admin') {
+      return allNotifications.filter(
+        (notification) => notification.organizationId === context.organizationId
+      );
+    }
+
+    // Filter notifications by user involvement within organization
+    return allNotifications.filter((notification) => {
+      const isOrgNotification =
+        notification.organizationId === context.organizationId;
+
+      if (!isOrgNotification) return false;
+
       // Include notifications that mention this user
-      const messageContent = notification.message.toLowerCase();
+      const messageContent = notification.message?.toLowerCase() || '';
       const userName = context.userName.toLowerCase();
       const userId = context.userId.toLowerCase();
-      
+
       return (
         messageContent.includes(userName) ||
         messageContent.includes(userId) ||
         notification.userId === context.userId ||
         notification.assignedTo === context.userId ||
-        notification.type === 'system_alert' // System alerts go to everyone
+        notification.type === 'system_alert' || // System alerts go to everyone
+        notification.type === 'organization_alert' // Organization-wide alerts
       );
     });
   }
 
   /**
-   * Filter drivers for current tenant
+   * Filter drivers for current organization
    */
-  static filterDriversForTenant(allDrivers: any[]): any[] {
-    const context = this.getTenantContext();
-    
-    // Admin sees all drivers
-    if (context.userRole === 'admin') {
-      return allDrivers;
+  static async filterDriversForOrganization(allDrivers: any[]): Promise<any[]> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return [];
     }
 
-    // Dispatchers and brokers see drivers assigned to them or available
-    return allDrivers.filter(driver =>
-      driver.assignedDispatcher === context.userId ||
-      driver.managedBy === context.userId ||
-      driver.status === 'available' ||
-      !driver.assignedDispatcher // Unassigned drivers available to all
-    );
-  }
-
-  /**
-   * Filter carriers for current tenant
-   */
-  static filterCarriersForTenant(allCarriers: any[]): any[] {
-    const context = this.getTenantContext();
-    
-    // Admin sees all carriers
-    if (context.userRole === 'admin') {
-      return allCarriers;
+    // Owners and admins see all organization drivers
+    if (context.userRole === 'owner' || context.userRole === 'admin') {
+      return allDrivers.filter(
+        (driver) => driver.organizationId === context.organizationId
+      );
     }
 
-    // Dispatchers and brokers see carriers they work with or available ones
-    return allCarriers.filter(carrier =>
-      carrier.primaryContact === context.userId ||
-      carrier.managedBy === context.userId ||
-      carrier.status === 'active' ||
-      !carrier.primaryContact // Available carriers
-    );
-  }
+    // Users with driver management permissions see drivers they can access
+    if (context.permissions.includes(PERMISSIONS.VIEW_DRIVERS)) {
+      return allDrivers.filter((driver) => {
+        const isOrgDriver = driver.organizationId === context.organizationId;
 
-  /**
-   * Filter invoices for current tenant
-   */
-  static filterInvoicesForTenant(allInvoices: any[]): any[] {
-    const context = this.getTenantContext();
-    
-    // Admin sees all invoices
-    if (context.userRole === 'admin') {
-      return allInvoices;
+        // If user can manage drivers, they see more
+        if (
+          context.permissions.includes(PERMISSIONS.CREATE_DRIVERS) ||
+          context.permissions.includes(PERMISSIONS.EDIT_DRIVERS)
+        ) {
+          return isOrgDriver;
+        }
+
+        // Otherwise, only drivers they're assigned to
+        return (
+          isOrgDriver &&
+          (driver.assignedDispatcher === context.userId ||
+            driver.managedBy === context.userId ||
+            driver.status === 'available')
+        );
+      });
     }
 
-    // Filter invoices by user involvement
-    return allInvoices.filter(invoice =>
-      invoice.createdBy === context.userId ||
-      invoice.dispatcherId === context.userId ||
-      invoice.brokerId === context.userId ||
-      invoice.assignedTo === context.userId
+    return [];
+  }
+
+  /**
+   * Filter carriers for current organization
+   */
+  static async filterCarriersForOrganization(
+    allCarriers: any[]
+  ): Promise<any[]> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return [];
+    }
+
+    // Owners and admins see all organization carriers
+    if (context.userRole === 'owner' || context.userRole === 'admin') {
+      return allCarriers.filter(
+        (carrier) => carrier.organizationId === context.organizationId
+      );
+    }
+
+    // Users with carrier management permissions see carriers they can access
+    if (context.permissions.includes(PERMISSIONS.VIEW_CARRIERS)) {
+      return allCarriers.filter((carrier) => {
+        const isOrgCarrier = carrier.organizationId === context.organizationId;
+
+        // If user can manage carriers, they see more
+        if (
+          context.permissions.includes(PERMISSIONS.CREATE_CARRIERS) ||
+          context.permissions.includes(PERMISSIONS.EDIT_CARRIERS)
+        ) {
+          return isOrgCarrier;
+        }
+
+        // Otherwise, only carriers they're assigned to
+        return (
+          isOrgCarrier &&
+          (carrier.primaryContact === context.userId ||
+            carrier.managedBy === context.userId ||
+            carrier.status === 'active')
+        );
+      });
+    }
+
+    return [];
+  }
+
+  /**
+   * Filter invoices for current organization
+   */
+  static async filterInvoicesForOrganization(
+    allInvoices: any[]
+  ): Promise<any[]> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return [];
+    }
+
+    // Owners and admins see all organization invoices
+    if (context.userRole === 'owner' || context.userRole === 'admin') {
+      return allInvoices.filter(
+        (invoice) => invoice.organizationId === context.organizationId
+      );
+    }
+
+    // Users with financial permissions see invoices they can access
+    if (context.permissions.includes(PERMISSIONS.VIEW_FINANCIALS)) {
+      return allInvoices.filter((invoice) => {
+        const isOrgInvoice = invoice.organizationId === context.organizationId;
+
+        // If user can manage invoices, they see more
+        if (
+          context.permissions.includes(PERMISSIONS.CREATE_INVOICES) ||
+          context.permissions.includes(PERMISSIONS.EDIT_INVOICES)
+        ) {
+          return isOrgInvoice;
+        }
+
+        // Otherwise, only invoices they're involved with
+        return (
+          isOrgInvoice &&
+          (invoice.createdBy === context.userId ||
+            invoice.dispatcherId === context.userId ||
+            invoice.brokerId === context.userId ||
+            invoice.assignedTo === context.userId)
+        );
+      });
+    }
+
+    return [];
+  }
+
+  /**
+   * Get organization-specific load board data
+   * Shows available loads within the organization
+   */
+  static async getOrganizationLoadBoard(allLoads: Load[]): Promise<Load[]> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return [];
+    }
+
+    // Return available loads for the organization's marketplace
+    return allLoads.filter(
+      (load) =>
+        load.organizationId === context.organizationId &&
+        (load.status === 'Available' || load.status === 'Draft')
     );
   }
 
   /**
-   * Get global load board data (shared marketplace)
-   * This is NOT filtered by tenant - all users see the same load board
+   * Check if user has access to specific load within organization
    */
-  static getGlobalLoadBoard(allLoads: Load[]): Load[] {
-    // Return all available loads for the global marketplace
-    return allLoads.filter(load => 
-      load.status === 'Available' || 
-      load.status === 'Draft'
-    );
-  }
+  static async hasAccessToLoad(load: Load): Promise<boolean> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return false;
+    }
 
-  /**
-   * Check if user has access to specific load
-   */
-  static hasAccessToLoad(load: Load): boolean {
-    const context = this.getTenantContext();
-    
-    // Admin has access to everything
-    if (context.userRole === 'admin') {
+    // Must be from the same organization
+    if (load.organizationId !== context.organizationId) {
+      return false;
+    }
+
+    // Owners and admins have access to everything in their organization
+    if (context.userRole === 'owner' || context.userRole === 'admin') {
       return true;
     }
 
@@ -192,50 +319,137 @@ export class MultiTenantDataService {
       load.brokerId === context.userId ||
       load.assignedBy === context.userId ||
       load.assignedTo === context.userId ||
-      load.status === 'Available' // Available loads are public
+      load.status === 'Available' // Available loads within organization
     );
   }
 
   /**
-   * Get tenant-specific dashboard statistics
+   * Get organization-specific dashboard statistics
    */
-  static getTenantStats(allLoads: Load[]): any {
-    const tenantLoads = this.filterLoadsForTenant(allLoads);
-    
+  static async getOrganizationStats(allLoads: Load[]): Promise<any> {
+    const orgLoads = await this.filterLoadsForOrganization(allLoads);
+    const context = await this.getOrganizationContext();
+
+    if (!context) {
+      return {};
+    }
+
+    const stats = {
+      total: orgLoads.length,
+      available: orgLoads.filter((l) => l.status === 'Available').length,
+      assigned: orgLoads.filter((l) => l.status === 'Assigned').length,
+      broadcasted: orgLoads.filter((l) => l.status === 'Broadcasted').length,
+      driverSelected: orgLoads.filter((l) => l.status === 'Driver Selected')
+        .length,
+      orderSent: orgLoads.filter((l) => l.status === 'Order Sent').length,
+      inTransit: orgLoads.filter((l) => l.status === 'In Transit').length,
+      delivered: orgLoads.filter((l) => l.status === 'Delivered').length,
+      unassigned: orgLoads.filter(
+        (l) => !l.dispatcherId && l.status !== 'Available'
+      ).length,
+      organization: {
+        id: context.organizationId,
+        name: context.organizationName,
+        type: context.organizationType,
+        userRole: context.userRole,
+      },
+    };
+
+    return stats;
+  }
+
+  /**
+   * Get organization dashboard metrics for display
+   */
+  static async getOrganizationDashboardMetrics(
+    allLoads: Load[],
+    allDrivers: any[],
+    allCarriers: any[]
+  ): Promise<any> {
+    const context = await this.getOrganizationContext();
+    if (!context) {
+      return {};
+    }
+
+    const orgLoads = await this.filterLoadsForOrganization(allLoads);
+    const orgDrivers = await this.filterDriversForOrganization(allDrivers);
+    const orgCarriers = await this.filterCarriersForOrganization(allCarriers);
+
+    // Calculate revenue metrics (mock for now - would come from invoices)
+    const totalRevenue = orgLoads
+      .filter((l) => l.status === 'Delivered')
+      .reduce((sum, load) => sum + (load.rate || 0), 0);
+
+    const monthlyRevenue = totalRevenue; // Simplified - would calculate for current month
+
     return {
-      total: tenantLoads.length,
-      available: tenantLoads.filter(l => l.status === 'Available').length,
-      assigned: tenantLoads.filter(l => l.status === 'Assigned').length,
-      broadcasted: tenantLoads.filter(l => l.status === 'Broadcasted').length,
-      driverSelected: tenantLoads.filter(l => l.status === 'Driver Selected').length,
-      orderSent: tenantLoads.filter(l => l.status === 'Order Sent').length,
-      inTransit: tenantLoads.filter(l => l.status === 'In Transit').length,
-      delivered: tenantLoads.filter(l => l.status === 'Delivered').length,
-      unassigned: tenantLoads.filter(l => !l.dispatcherId && l.status !== 'Available').length,
+      organization: {
+        name: context.organizationName,
+        type: context.organizationType,
+        role: context.userRole,
+      },
+      loads: {
+        total: orgLoads.length,
+        active: orgLoads.filter((l) =>
+          ['Assigned', 'In Transit', 'Driver Selected', 'Order Sent'].includes(
+            l.status
+          )
+        ).length,
+        available: orgLoads.filter((l) => l.status === 'Available').length,
+        completed: orgLoads.filter((l) => l.status === 'Delivered').length,
+      },
+      drivers: {
+        total: orgDrivers.length,
+        available: orgDrivers.filter((d) => d.status === 'available').length,
+        active: orgDrivers.filter((d) => d.status === 'active').length,
+      },
+      carriers: {
+        total: orgCarriers.length,
+        active: orgCarriers.filter((c) => c.status === 'active').length,
+      },
+      revenue: {
+        total: totalRevenue,
+        monthly: monthlyRevenue,
+      },
+      performance: {
+        completionRate:
+          orgLoads.length > 0
+            ? (orgLoads.filter((l) => l.status === 'Delivered').length /
+                orgLoads.length) *
+              100
+            : 0,
+        activeLoadRatio:
+          orgLoads.length > 0
+            ? (orgLoads.filter((l) => l.status === 'In Transit').length /
+                orgLoads.length) *
+              100
+            : 0,
+      },
     };
   }
 
   /**
-   * Log tenant activity for audit trail
+   * Log organization activity for audit trail
    */
-  static logTenantActivity(action: string, data: any): void {
-    const context = this.getTenantContext();
-    
-    console.log(`[TENANT-${context.userId}] ${action}:`, {
-      userId: context.userId,
-      userName: context.userName,
-      userRole: context.userRole,
-      timestamp: new Date().toISOString(),
-      action,
-      data,
-    });
+  static async logOrganizationActivity(
+    action: string,
+    data: any
+  ): Promise<void> {
+    const context = await this.getOrganizationContext();
+
+    if (context) {
+      console.info(`[ORG-${context.organizationId}] ${action}:`, {
+        organizationId: context.organizationId,
+        organizationName: context.organizationName,
+        userId: context.userId,
+        userName: context.userName,
+        userRole: context.userRole,
+        timestamp: new Date().toISOString(),
+        action,
+        data,
+      });
+    }
   }
 }
 
-export default MultiTenantDataService;
-
-
-
-
-
-
+export default OrganizationDataService;

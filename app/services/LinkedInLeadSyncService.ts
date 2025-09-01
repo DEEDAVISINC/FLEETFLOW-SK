@@ -265,8 +265,8 @@ class LinkedInLeadSyncService extends EventEmitter {
     );
 
     this.updateMetrics();
-    console.log('🔗 LinkedIn Lead Sync Service initialized with demo data');
-    console.log(
+    console.info('🔗 LinkedIn Lead Sync Service initialized with demo data');
+    console.info(
       `📋 Case: ${this.apiCredentials.caseId} | CRM: ${this.apiCredentials.clientId}`
     );
   }
@@ -274,7 +274,7 @@ class LinkedInLeadSyncService extends EventEmitter {
   // REAL API METHODS (Ready for LinkedIn API credentials)
   private async syncLeadsFromLinkedIn(): Promise<void> {
     if (!this.apiCredentials.accessToken) {
-      console.log('⏳ LinkedIn Lead Sync: Waiting for API credentials...');
+      console.info('⏳ LinkedIn Lead Sync: Waiting for API credentials...');
       return;
     }
 
@@ -294,7 +294,7 @@ class LinkedInLeadSyncService extends EventEmitter {
       if (response.ok) {
         const data = await response.json();
         await this.processLinkedInLeads(data.elements || []);
-        console.log(
+        console.info(
           `✅ LinkedIn Lead Sync: ${data.elements?.length || 0} leads processed`
         );
       } else {
@@ -325,7 +325,7 @@ class LinkedInLeadSyncService extends EventEmitter {
         lead.leadStatus = qualification.status;
         lead.tags = qualification.tags;
 
-        console.log(
+        console.info(
           `📧 New LinkedIn Lead: ${lead.firstName} ${lead.lastName} (${lead.company}) - Score: ${lead.leadScore}`
         );
       }
@@ -545,7 +545,7 @@ class LinkedInLeadSyncService extends EventEmitter {
     this.emit('leadStatusUpdated', { leadId, status, notes });
     this.updateMetrics();
 
-    console.log(`📝 Lead ${leadId} status updated to: ${status}`);
+    console.info(`📝 Lead ${leadId} status updated to: ${status}`);
     return true;
   }
 
@@ -567,7 +567,7 @@ class LinkedInLeadSyncService extends EventEmitter {
 
     try {
       // Integration point for FleetFlow CRM
-      console.log(`🔄 Syncing lead ${leadId} to FleetFlow CRM...`);
+      console.info(`🔄 Syncing lead ${leadId} to FleetFlow CRM...`);
 
       // This would call FleetFlow CRM service
       // await crmService.createLead(lead);

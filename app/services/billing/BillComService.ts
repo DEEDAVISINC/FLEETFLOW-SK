@@ -296,7 +296,7 @@ export class BillComService {
         });
 
       if (lineItems.length === 0) {
-        console.log('No approved accessorials to invoice');
+        console.info('No approved accessorials to invoice');
         return null;
       }
 
@@ -669,7 +669,7 @@ export class BillComService {
 
   private async storeRecurringBilling(recurringBilling: any): Promise<void> {
     // TODO: Implement database storage for recurring billing schedules
-    console.log('Storing recurring billing:', recurringBilling);
+    console.info('Storing recurring billing:', recurringBilling);
   }
 
   private async getDueRecurringBills(): Promise<any[]> {
@@ -682,7 +682,7 @@ export class BillComService {
     interval: string
   ): Promise<void> {
     // TODO: Implement database update for next billing date
-    console.log('Updating next billing date for:', billId);
+    console.info('Updating next billing date for:', billId);
   }
 
   private async getOverdueInvoices(): Promise<Invoice[]> {
@@ -703,7 +703,7 @@ export class BillComService {
     paymentId: string
   ): Promise<void> {
     // TODO: Update invoice status in Bill.com and local database
-    console.log('Marking invoice as paid:', invoiceId, paymentId);
+    console.info('Marking invoice as paid:', invoiceId, paymentId);
   }
 
   private async handleFailedPayment(
@@ -711,7 +711,7 @@ export class BillComService {
     error: string
   ): Promise<void> {
     // TODO: Implement failed payment handling (notifications, retries, etc.)
-    console.log('Handling failed payment for invoice:', invoiceId, error);
+    console.info('Handling failed payment for invoice:', invoiceId, error);
   }
 }
 

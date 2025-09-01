@@ -46,7 +46,7 @@ interface ProcessedLead {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log('JotForm webhook received:', JSON.stringify(body, null, 2));
+    console.info('JotForm webhook received:', JSON.stringify(body, null, 2));
 
     // Validate webhook signature if provided
     const signature = request.headers.get('jotform-signature');
@@ -368,7 +368,7 @@ async function logWebhookEvent(eventData: {
   error?: string;
 }) {
   // This would insert into the webhook_events table
-  console.log('Logging webhook event:', eventData);
+  console.info('Logging webhook event:', eventData);
 
   // In a real implementation, you would:
   // await database.webhookEvents.create({

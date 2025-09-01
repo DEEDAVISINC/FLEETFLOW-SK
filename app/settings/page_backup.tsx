@@ -13,7 +13,7 @@ export default function SettingsPage() {
       paddingTop: '80px'
     }}>
       <div style={{ padding: '24px' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
+        <Link href="/"" style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',

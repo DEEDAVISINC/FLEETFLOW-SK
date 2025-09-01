@@ -94,7 +94,7 @@ export default function AIFlowDashboard() {
 
         system.on('system:initialized', () => {
           setIsSystemInitialized(true);
-          console.log('AI Flow System initialized successfully');
+          console.info('AI Flow System initialized successfully');
         });
 
         system.on('system:error', (error) => {

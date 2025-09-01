@@ -427,7 +427,7 @@ export default function DocumentsPage() {
         paddingTop: '80px',
         position: 'relative',
         fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          '-apple-system, BlinkMacSystemFont, ""Segoe UI"", Roboto, sans-serif',
       }}
     >
       {/* Back Button */}
@@ -1066,7 +1066,7 @@ export default function DocumentsPage() {
                         e.preventDefault();
                         e.stopPropagation();
                         setSelectedLoad(load);
-                        console.log('Load selected:', load.id);
+                        console.info('Load selected:', load.id);
                       }}
                       style={{
                         background:

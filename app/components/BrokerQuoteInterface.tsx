@@ -274,7 +274,7 @@ export const BrokerQuoteInterface: React.FC<BrokerQuoteInterfaceProps> = ({
       onQuoteGenerated(quote);
 
       // Auto-send quote via email simulation
-      console.log(
+      console.info(
         `📧 Quote ${quote.quoteNumber} sent to ${quote.shipper.email}`
       );
 

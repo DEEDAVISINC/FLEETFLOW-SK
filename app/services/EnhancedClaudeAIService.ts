@@ -141,7 +141,7 @@ export class EnhancedClaudeAIService {
       this.isConfigured = false;
     } else {
       this.isConfigured = true;
-      console.log(
+      console.info(
         '✅ Enhanced Claude AI service initialized with production features'
       );
     }
@@ -232,7 +232,7 @@ export class EnhancedClaudeAIService {
           if (attempt < maxRetries) {
             // Exponential backoff
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-            console.log(
+            console.info(
               `⚠️ Claude AI attempt ${attempt} failed, retrying in ${delay}ms...`
             );
             await new Promise((resolve) => setTimeout(resolve, delay));
@@ -244,7 +244,7 @@ export class EnhancedClaudeAIService {
       this.updateMetrics(false, Date.now() - startTime, lastError);
 
       if (request.fallbackEnabled !== false) {
-        console.log('🔄 Claude AI failed, using fallback response');
+        console.info('🔄 Claude AI failed, using fallback response');
         return this.getFallbackResponse(request, Date.now() - startTime);
       }
 
@@ -799,7 +799,7 @@ User Request: ${prompt}`;
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('✅ Claude AI cache cleared');
+    console.info('✅ Claude AI cache cleared');
   }
 
   /**

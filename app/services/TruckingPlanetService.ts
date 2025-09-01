@@ -236,7 +236,7 @@ export class TruckingPlanetService {
 
   constructor() {
     if (this.credentials.username && this.credentials.password) {
-      console.log(
+      console.info(
         '🌐 TruckingPlanet Network service initialized - DEE DAVIS INC account active'
       );
     }
@@ -245,7 +245,7 @@ export class TruckingPlanetService {
   async searchShippers(
     filters: TruckingPlanetFilters = {}
   ): Promise<TruckingPlanetShipper[]> {
-    console.log('🔍 Searching TruckingPlanet shipper database:', filters);
+    console.info('🔍 Searching TruckingPlanet shipper database:', filters);
 
     let results = [...this.shipperDatabase];
 
@@ -269,7 +269,7 @@ export class TruckingPlanetService {
     }
 
     results.sort((a, b) => b.truckingPlanetScore - a.truckingPlanetScore);
-    console.log(`✅ Found ${results.length} matching shippers`);
+    console.info(`✅ Found ${results.length} matching shippers`);
     return results;
   }
 
