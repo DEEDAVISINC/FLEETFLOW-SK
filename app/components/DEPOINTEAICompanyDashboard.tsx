@@ -17,11 +17,11 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { TruckingPlanetDashboard } from '../ai-company-dashboard-enhanced';
 import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
 import CampaignTemplates from './CampaignTemplates';
 import TaskCreationInterface from './TaskCreationInterface';
+import TruckingPlanetIntelligence from './TruckingPlanetIntelligence';
 
 interface CompanyStats {
   totalRevenue: number;
@@ -70,6 +70,24 @@ export default function DEPOINTEAICompanyDashboard() {
   });
   const [isTaskCreationOpen, setIsTaskCreationOpen] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
+
+  // DEPOINTE AI is a FLEETFLOW tenant with full access to all platform services
+  const fleetflowTenantServices = {
+    goWithTheFlow: true, // Instant carrier matching
+    marketplaceBidding: true, // Competitive pricing auctions
+    instantMatching: true, // Real-time load-to-carrier matching
+    competitivePricing: true, // Transparent auction system
+    aiOptimization: true, // AI-powered route optimization
+    realTimeTracking: true, // Live shipment visibility
+    predictiveAnalytics: true, // ML-powered forecasting
+    enterpriseIntegration: true, // TMS/ERP connectivity
+    mobileApps: true, // iOS/Android applications
+    securityCompliance: true, // SOC 2, HIPAA, GDPR compliance
+    campaignTemplates: true, // Full arsenal of 17 campaign templates
+    aiCommunicationScripts: true, // 8 specialized communication scripts
+    performanceTracking: true, // Real-time KPI monitoring
+    resourceOptimization: true, // AI staff and budget optimization
+  };
 
   // Quick Assignment Presets for easy configuration
   const quickPresets: QuickAssignmentPreset[] = [
@@ -321,10 +339,27 @@ export default function DEPOINTEAICompanyDashboard() {
             <h1 className='flex items-center gap-3 text-4xl font-bold text-white'>
               <Building2 className='h-10 w-10 text-blue-400' />
               DEPOINTE AI Company Dashboard
+              <span className='rounded-full bg-green-600 px-3 py-1 text-sm font-normal'>
+                FLEETFLOW Tenant
+              </span>
             </h1>
             <p className='mt-2 text-slate-300'>
               Executive AI Workforce Management & Revenue Operations
             </p>
+            <div className='mt-3 flex flex-wrap gap-2'>
+              <span className='rounded-full bg-blue-600/20 px-3 py-1 text-xs text-blue-300'>
+                ✓ GO WITH THE FLOW
+              </span>
+              <span className='rounded-full bg-purple-600/20 px-3 py-1 text-xs text-purple-300'>
+                ✓ MARKETPLACE BIDDING
+              </span>
+              <span className='rounded-full bg-green-600/20 px-3 py-1 text-xs text-green-300'>
+                ✓ 17 Campaign Templates
+              </span>
+              <span className='rounded-full bg-orange-600/20 px-3 py-1 text-xs text-orange-300'>
+                ✓ Full Platform Access
+              </span>
+            </div>
           </div>
           <div className='flex items-center gap-4'>
             <button
@@ -448,7 +483,171 @@ export default function DEPOINTEAICompanyDashboard() {
         {activeView === 'overview' && (
           <div className='space-y-6'>
             {/* TruckingPlanet Integration */}
-            <TruckingPlanetDashboard />
+            <TruckingPlanetIntelligence />
+
+            {/* FLEETFLOW Tenant Services */}
+            <div className='rounded-xl bg-gradient-to-r from-blue-900/50 to-purple-900/50 p-6'>
+              <div className='mb-6'>
+                <h2 className='flex items-center gap-3 text-2xl font-bold text-white'>
+                  <span className='text-2xl'>🏢</span>
+                  FLEETFLOW Tenant Services - Full Platform Access
+                </h2>
+                <p className='mt-2 text-slate-300'>
+                  DEPOINTE AI has complete access to all FLEETFLOW platform
+                  capabilities and services
+                </p>
+              </div>
+
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+                {/* Core Services */}
+                <div className='rounded-lg bg-slate-800/50 p-4'>
+                  <div className='mb-3 flex items-center gap-3'>
+                    <span className='text-xl'>🏃</span>
+                    <h3 className='text-lg font-semibold text-white'>
+                      GO WITH THE FLOW
+                    </h3>
+                  </div>
+                  <p className='mb-2 text-sm text-slate-300'>
+                    Instant carrier matching system - from hours to minutes
+                  </p>
+                  <div className='flex flex-wrap gap-1'>
+                    <span className='rounded-full bg-green-600/20 px-2 py-1 text-xs text-green-400'>
+                      ✓ Instant Matching
+                    </span>
+                    <span className='rounded-full bg-green-600/20 px-2 py-1 text-xs text-green-400'>
+                      ✓ Real-time Capacity
+                    </span>
+                  </div>
+                </div>
+
+                <div className='rounded-lg bg-slate-800/50 p-4'>
+                  <div className='mb-3 flex items-center gap-3'>
+                    <span className='text-xl'>🏛️</span>
+                    <h3 className='text-lg font-semibold text-white'>
+                      MARKETPLACE BIDDING
+                    </h3>
+                  </div>
+                  <p className='mb-2 text-sm text-slate-300'>
+                    Competitive carrier auctions - best rates through
+                    competition
+                  </p>
+                  <div className='flex flex-wrap gap-1'>
+                    <span className='rounded-full bg-purple-600/20 px-2 py-1 text-xs text-purple-400'>
+                      ✓ Auction System
+                    </span>
+                    <span className='rounded-full bg-purple-600/20 px-2 py-1 text-xs text-purple-400'>
+                      ✓ Cost Savings
+                    </span>
+                  </div>
+                </div>
+
+                <div className='rounded-lg bg-slate-800/50 p-4'>
+                  <div className='mb-3 flex items-center gap-3'>
+                    <span className='text-xl'>🎯</span>
+                    <h3 className='text-lg font-semibold text-white'>
+                      17 Campaign Templates
+                    </h3>
+                  </div>
+                  <p className='mb-2 text-sm text-slate-300'>
+                    Complete arsenal of specialized lead generation campaigns
+                  </p>
+                  <div className='flex flex-wrap gap-1'>
+                    <span className='rounded-full bg-blue-600/20 px-2 py-1 text-xs text-blue-400'>
+                      ✓ Healthcare/Pharma
+                    </span>
+                    <span className='rounded-full bg-blue-600/20 px-2 py-1 text-xs text-blue-400'>
+                      ✓ Enterprise Focus
+                    </span>
+                  </div>
+                </div>
+
+                <div className='rounded-lg bg-slate-800/50 p-4'>
+                  <div className='mb-3 flex items-center gap-3'>
+                    <span className='text-xl'>🤖</span>
+                    <h3 className='text-lg font-semibold text-white'>
+                      AI Communication Scripts
+                    </h3>
+                  </div>
+                  <p className='mb-2 text-sm text-slate-300'>
+                    8 specialized conversation flows for different scenarios
+                  </p>
+                  <div className='flex flex-wrap gap-1'>
+                    <span className='rounded-full bg-orange-600/20 px-2 py-1 text-xs text-orange-400'>
+                      ✓ Natural Scripts
+                    </span>
+                    <span className='rounded-full bg-orange-600/20 px-2 py-1 text-xs text-orange-400'>
+                      ✓ Conversion Optimized
+                    </span>
+                  </div>
+                </div>
+
+                <div className='rounded-lg bg-slate-800/50 p-4'>
+                  <div className='mb-3 flex items-center gap-3'>
+                    <span className='text-xl'>📊</span>
+                    <h3 className='text-lg font-semibold text-white'>
+                      Real-Time Analytics
+                    </h3>
+                  </div>
+                  <p className='mb-2 text-sm text-slate-300'>
+                    Live performance tracking and optimization insights
+                  </p>
+                  <div className='flex flex-wrap gap-1'>
+                    <span className='rounded-full bg-green-600/20 px-2 py-1 text-xs text-green-400'>
+                      ✓ KPI Monitoring
+                    </span>
+                    <span className='rounded-full bg-green-600/20 px-2 py-1 text-xs text-green-400'>
+                      ✓ Predictive Insights
+                    </span>
+                  </div>
+                </div>
+
+                <div className='rounded-lg bg-slate-800/50 p-4'>
+                  <div className='mb-3 flex items-center gap-3'>
+                    <span className='text-xl'>🔒</span>
+                    <h3 className='text-lg font-semibold text-white'>
+                      Enterprise Security
+                    </h3>
+                  </div>
+                  <p className='mb-2 text-sm text-slate-300'>
+                    SOC 2, HIPAA, GDPR compliant with military-grade encryption
+                  </p>
+                  <div className='flex flex-wrap gap-1'>
+                    <span className='rounded-full bg-red-600/20 px-2 py-1 text-xs text-red-400'>
+                      ✓ SOC 2 Compliant
+                    </span>
+                    <span className='rounded-full bg-red-600/20 px-2 py-1 text-xs text-red-400'>
+                      ✓ HIPAA Ready
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className='mt-6 rounded-lg bg-slate-800/30 p-4'>
+                <h4 className='mb-3 text-lg font-semibold text-white'>
+                  🎯 Platform Launch Status
+                </h4>
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-green-400'>17</div>
+                    <div className='text-sm text-slate-300'>
+                      Campaign Templates
+                    </div>
+                  </div>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-blue-400'>8</div>
+                    <div className='text-sm text-slate-300'>
+                      AI Communication Scripts
+                    </div>
+                  </div>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-purple-400'>24</div>
+                    <div className='text-sm text-slate-300'>
+                      Platform Features Ready
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Quick Assignment Presets */}
             <div className='rounded-xl bg-slate-800 p-6'>

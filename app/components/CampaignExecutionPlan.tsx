@@ -17,7 +17,7 @@ export default function CampaignExecutionPlan() {
     'phase1' | 'phase2' | 'phase3'
   >('phase1');
 
-  // PHASE 1: TOP 3 PRIORITY CAMPAIGNS (CONSERVATIVE PROJECTIONS)
+  // PHASE 1: TOP 4 CAMPAIGNS (ACCELERATED PROJECTIONS)
   const phase1Campaigns: CampaignMetrics[] = [
     {
       name: 'Desperate Shippers Blitz',
@@ -38,12 +38,21 @@ export default function CampaignExecutionPlan() {
       status: 'planned',
     },
     {
+      name: 'Carrier/Owner Operator Acquisition',
+      monthlyRevenue: 40750, // Tiered structure: $40,750/month from 6-10% carrier fees
+      duration: 45,
+      difficulty: 'medium',
+      priority: 3,
+      startDate: 'Week 3',
+      status: 'planned',
+    },
+    {
       name: 'High-Value Prospect Acceleration',
       monthlyRevenue: 15000, // Conservative: $15,000/month based on 12 conversions at $50K average
       duration: 30,
       difficulty: 'hard',
-      priority: 3,
-      startDate: 'Week 4',
+      priority: 4,
+      startDate: 'Week 6',
       status: 'planned',
     },
   ];
@@ -143,12 +152,12 @@ export default function CampaignExecutionPlan() {
         </p>
         <div className='mt-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
           <div className='rounded-lg bg-white/10 p-4'>
-            <div className='text-2xl font-bold'>$51,000</div>
+            <div className='text-2xl font-bold'>$104,333</div>
             <div className='text-sm'>
-              Monthly Revenue (3 Campaigns + Dispatch)
+              Monthly Revenue (4 Campaigns + Tiered Dispatch)
             </div>
             <div className='mt-1 text-xs text-green-600'>
-              Includes $22.5K dispatch fees (10% of carrier load fees)
+              Includes $98.3K dispatch/carrier fees • Daily: $3,478
             </div>
           </div>
           <div className='rounded-lg bg-white/10 p-4'>
@@ -438,27 +447,35 @@ export default function CampaignExecutionPlan() {
             <div className='rounded-lg bg-white p-3 text-center'>
               <div className='text-lg font-bold text-green-600'>Month 1-2</div>
               <div className='text-sm text-gray-600'>Phase 1</div>
-              <div className='text-xl font-bold text-green-800'>$1,700/day</div>
-              <div className='text-xs text-green-600'>+$750 dispatch</div>
+              <div className='text-xl font-bold text-green-800'>$3,478/day</div>
+              <div className='text-xs text-green-600'>
+                +$2,728 tiered carrier fees
+              </div>
             </div>
             <div className='rounded-lg bg-white p-3 text-center'>
-              <div className='text-lg font-bold text-blue-600'>Month 3-4</div>
-              <div className='text-sm text-gray-600'>Phase 2</div>
-              <div className='text-xl font-bold text-blue-800'>$2,833/day</div>
-              <div className='text-xs text-blue-600'>+$555 dispatch</div>
+              <div className='text-lg font-bold text-blue-600'>Month 2</div>
+              <div className='text-sm text-gray-600'>Network Scale</div>
+              <div className='text-xl font-bold text-blue-800'>$4,500/day</div>
+              <div className='text-xs text-blue-600'>
+                +$942 carrier expansion
+              </div>
             </div>
             <div className='rounded-lg bg-white p-3 text-center'>
-              <div className='text-lg font-bold text-purple-600'>Month 5-6</div>
-              <div className='text-sm text-gray-600'>Phase 3</div>
-              <div className='text-xl font-bold text-purple-800'>$3,500/day</div>
-              <div className='text-xs text-purple-600'>+$381 dispatch</div>
-            </div>
-            <div className='rounded-lg border-2 border-red-300 bg-white p-3 text-center'>
-              <div className='text-lg font-bold text-red-600'>Month 7-8</div>
+              <div className='text-lg font-bold text-purple-600'>Month 2-3</div>
               <div className='text-sm text-gray-600'>Full Scale</div>
-              <div className='text-xl font-bold text-red-800'>$3,667/day</div>
-              <div className='mt-1 text-xs text-red-600'>
-                🎯 TARGET ACHIEVED (6 months faster!)
+              <div className='text-xl font-bold text-purple-800'>
+                $6,000/day
+              </div>
+              <div className='text-xs text-purple-600'>
+                🚀 TARGET EXCEEDED BY 64%
+              </div>
+            </div>
+            <div className='rounded-lg border-2 border-yellow-400 bg-gradient-to-r from-yellow-400 to-yellow-600 p-3 text-center text-white'>
+              <div className='text-lg font-bold'>Month 3+</div>
+              <div className='text-sm opacity-90'>Enterprise Scale</div>
+              <div className='text-xl font-bold'>$8,000+/day</div>
+              <div className='text-xs opacity-90'>
+                💎 ENTERPRISE ACHIEVEMENT
               </div>
             </div>
           </div>
@@ -466,25 +483,25 @@ export default function CampaignExecutionPlan() {
           <div className='space-y-3 text-sm'>
             <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Campaigns Running:</span>
-              <span className='font-bold'>4 → 7 → 10 → 14+</span>
+              <span className='font-bold'>4 → 6 → 8 → 10+</span>
             </div>
             <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Monthly Revenue Target:</span>
-              <span className='font-bold'>
-                $51K → $85K → $105K → $110K+
-              </span>
+              <span className='font-bold'>$104K → $131K → $176K → $236K+</span>
             </div>
             <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Team Size:</span>
-              <span className='font-bold'>4 AI Staff → 6 → 9 → 12+</span>
+              <span className='font-bold'>4 AI Staff → 6 → 8 → 10+</span>
             </div>
             <div className='flex items-center justify-between rounded bg-white p-2'>
-              <span className='font-medium'>Conversion Rate Target:</span>
-              <span className='font-bold'>30% → 35% → 40% → 45%+</span>
+              <span className='font-medium'>Carrier Network:</span>
+              <span className='font-bold'>80 → 200 → 400 → 600+</span>
             </div>
             <div className='flex items-center justify-between rounded bg-white p-2'>
-              <span className='font-medium'>Dispatch Revenue:</span>
-              <span className='font-bold'>$22.5K → $42K → $57K → $66K+</span>
+              <span className='font-medium'>Combined Revenue Streams:</span>
+              <span className='font-bold'>
+                Freight + Dispatch + Carrier Fees
+              </span>
             </div>
           </div>
 
@@ -498,25 +515,29 @@ export default function CampaignExecutionPlan() {
                 <div className='flex justify-between'>
                   <span>Month 1-2 (Phase 1):</span>
                   <span className='font-medium'>
-                    Add Carrier Dispatch Services ($22.5K/month)
+                    Carrier Acquisition Campaign + Dispatch Services
+                    ($55.8K/month combined)
                   </span>
                 </div>
                 <div className='flex justify-between'>
-                  <span>Month 3-4 (Phase 2):</span>
+                  <span>Month 2-3 (Carrier Scale):</span>
                   <span className='font-medium'>
-                    Enterprise Manufacturer Hunt + Warehouse & 3PL + Dispatch Scale
+                    Scale carrier network to 200+ carriers (double dispatch
+                    revenue)
                   </span>
                 </div>
                 <div className='flex justify-between'>
-                  <span>Month 5-6 (Phase 3):</span>
+                  <span>Month 3-4 (Full Network):</span>
                   <span className='font-medium'>
-                    Food & Bev + Construction + Retail + Supply Chain + Dispatch Network
+                    High-Value Prospects + Enterprise campaigns (reach
+                    $3,667/day target)
                   </span>
                 </div>
                 <div className='flex justify-between'>
-                  <span>Month 7-8 (Full Scale):</span>
+                  <span>Month 4+ (Scale Phase):</span>
                   <span className='font-medium'>
-                    Client Loyalty + High-Value + Vertical Expansions + Full Dispatch
+                    Add vertical campaigns + expand carrier network (exceed
+                    $4,500/day)
                   </span>
                 </div>
               </div>
@@ -542,22 +563,28 @@ export default function CampaignExecutionPlan() {
                   <span className='font-medium text-green-700'>
                     Carrier Network:
                   </span>
-                  <span className='ml-2'>38 → 150 carriers (dispatch partnerships)</span>
+                  <span className='ml-2'>
+                    80 → 600+ carriers (comprehensive network)
+                  </span>
                 </div>
                 <div>
-                                    <span className='font-medium text-green-700'>
+                  <span className='font-medium text-green-700'>
                     Team Productivity:
                   </span>
-                    <span className='ml-2'>4 → 10 staff (dispatch + campaigns)</span>
+                  <span className='ml-2'>
+                    4 → 10 staff (dispatch + campaigns)
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className='rounded border border-yellow-200 bg-yellow-50 p-3'>
               <p className='text-sm text-yellow-800'>
-                <strong>⚠️ Accelerated Timeline:</strong> With dispatch revenue (10% of carrier fees),
-                achieving $3,667/day is now possible in 7-8 months vs 12 months originally.
-                Dispatch creates immediate revenue and carrier partnerships for faster scaling.
+                <strong>🚀 DRAMATICALLY ACCELERATED TIMELINE:</strong> With
+                carrier acquisition campaign ($33K/month) + dispatch services
+                ($22.5K/month), reaching $3,667/day is now possible in 3-4
+                months! Carrier network creates exponential revenue growth
+                through 10% load fees.
               </p>
             </div>
           </div>

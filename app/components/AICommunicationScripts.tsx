@@ -42,12 +42,15 @@ We've been working together for a while now, and I really value our partnership.
 
 Would you be open to coming down to $[rate] for this one? I know fuel costs have been fluctuating, but we're looking to keep things competitive for our mutual benefit.
 
-What do you think - can we make this work at $[rate]? I'd really appreciate it, and it would help us continue prioritizing your trucks for future loads.`,
+What do you think - can we make this work at $[rate]? I'd really appreciate it, and it would help us continue prioritizing your trucks for future loads.
+
+By the way, have you heard about our GO WITH THE FLOW instant matching system? It could really help you get more loads faster and more efficiently.`,
       keyPhrases: [
         'I really value our partnership',
         'Would you be open to...',
         'What do you think - can we make this work?',
         "I'd really appreciate it",
+        'By the way, have you heard about our GO WITH THE FLOW instant matching system?',
         'For our mutual benefit',
       ],
       conversationFlow: [
@@ -170,6 +173,110 @@ Please know that I'm here to make this right and rebuild your trust in us.`,
       ],
       aiInstructions:
         'Respond quickly and show genuine empathy. Use "I" statements to take personal responsibility. Never make excuses - focus on solutions. Always offer more than expected. End by focusing on rebuilding trust and future relationship.',
+    },
+    {
+      id: 'go_with_the_flow_pitch',
+      scenario: 'Introducing GO WITH THE FLOW Instant Matching Service',
+      category: 'customer_service',
+      naturalScript: `Hi [Prospect Name], thanks for taking my call today. I wanted to tell you about something really exciting that could transform how you handle your freight logistics.
+
+We just launched GO WITH THE FLOW - our revolutionary instant carrier matching system. Instead of waiting hours or days for quotes like traditional brokers, GO WITH THE FLOW connects you with available carriers instantly.
+
+Here's how it works: You tell us what you need shipped, and within minutes, we show you real-time carrier availability, rates, and capacity. If everything looks good, you can book the shipment right then and there - no back-and-forth, no delays.
+
+This is perfect for your [specific need - healthcare supplies/emergency shipments/seasonal rushes/etc.] because you get instant solutions when timing is critical.
+
+Would you like me to show you how GO WITH THE FLOW works with a quick example based on one of your typical shipments?`,
+      keyPhrases: [
+        'GO WITH THE FLOW - our revolutionary instant carrier matching system',
+        'Instead of waiting hours or days',
+        'Within minutes, we show you real-time carrier availability',
+        'You can book the shipment right then and there',
+        'Perfect for your [specific need]',
+        'Would you like me to show you how it works?',
+      ],
+      conversationFlow: [
+        '1. Thank them for their time and build rapport',
+        '2. Introduce GO WITH THE FLOW as revolutionary',
+        '3. Explain the problem it solves (waiting times)',
+        '4. Describe how it works simply',
+        '5. Connect it to their specific shipping needs',
+        '6. Ask for permission to demonstrate',
+      ],
+      aiInstructions:
+        'Be enthusiastic and confident about the technology. Focus on speed and convenience benefits. Use their specific industry/shipping needs to make it relevant. Always ask for permission before diving into a demo.',
+    },
+    {
+      id: 'marketplace_bidding_pitch',
+      scenario: 'Introducing MARKETPLACE BIDDING Competitive Pricing Service',
+      category: 'customer_service',
+      naturalScript: `Great connecting with you today, [Prospect Name]. One of the biggest challenges I hear from shippers like you is getting the best possible rates while maintaining service quality.
+
+That's exactly why we created MARKETPLACE BIDDING - our competitive carrier auction system. Instead of negotiating with one carrier at a time, MARKETPLACE BIDDING lets multiple qualified carriers bid on your loads simultaneously.
+
+Here's what that means for you: Better rates through healthy competition, transparent pricing so you can see exactly what you're getting, and the ability to choose the best carrier for your specific needs.
+
+For example, if you're shipping [their typical freight], you could see carriers competing to offer you their best rates and service levels. It's like having a private auction for your freight needs.
+
+The best part? You get to review all the bids and choose the winning combination of price, service, and reliability that works best for your business.
+
+Would you be interested in seeing how MARKETPLACE BIDDING could help you optimize your shipping costs on your next load?`,
+      keyPhrases: [
+        'MARKETPLACE BIDDING - our competitive carrier auction system',
+        'Multiple qualified carriers bid on your loads simultaneously',
+        'Better rates through healthy competition',
+        "Transparent pricing so you can see exactly what you're getting",
+        'Choose the winning combination of price, service, and reliability',
+        'Would you be interested in seeing how it works?',
+      ],
+      conversationFlow: [
+        '1. Acknowledge the common challenge of getting best rates',
+        '2. Introduce MARKETPLACE BIDDING as the solution',
+        '3. Explain the competitive bidding process',
+        '4. Highlight benefits (better rates, transparency, choice)',
+        '5. Make it relevant to their specific shipping needs',
+        '6. Ask for interest in a demonstration',
+      ],
+      aiInstructions:
+        'Emphasize cost savings and transparency benefits. Use their industry/shipping examples to make it concrete. Position it as a smarter way to get better deals, not just cheaper. Always focus on the quality + price combination.',
+    },
+    {
+      id: 'combined_services_pitch',
+      scenario:
+        'Presenting Both GO WITH THE FLOW + MARKETPLACE BIDDING Together',
+      category: 'customer_service',
+      naturalScript: `[Prospect Name], I think what would really transform your freight operations is our complete platform solution that combines both of our flagship services.
+
+First, GO WITH THE FLOW gives you instant access to carrier capacity and real-time booking - perfect when you need something shipped NOW and can't wait for traditional processes.
+
+Then, MARKETPLACE BIDDING ensures you get competitive pricing by having multiple carriers bid against each other, giving you the best possible rates for your budget.
+
+Together, they create the ultimate freight solution: Speed when you need it + Savings when you want them.
+
+For your [their business/industry], this means:
+- Emergency shipments get booked instantly via GO WITH THE FLOW
+- Regular shipments get optimized pricing through MARKETPLACE BIDDING
+- You always have the best of both worlds
+
+Would you like me to walk you through a scenario where both services work together to handle your typical shipping needs?`,
+      keyPhrases: [
+        'Our complete platform solution',
+        'GO WITH THE FLOW + MARKETPLACE BIDDING',
+        'Speed when you need it + Savings when you want them',
+        'Emergency shipments get booked instantly',
+        'Regular shipments get optimized pricing',
+        'The best of both worlds',
+      ],
+      conversationFlow: [
+        '1. Introduce the combined platform solution',
+        '2. Explain GO WITH THE FLOW benefits for speed',
+        '3. Explain MARKETPLACE BIDDING benefits for savings',
+        '4. Show how they complement each other',
+        '5. Connect to their specific business needs',
+        '6. Offer to demonstrate the combined workflow',
+      ],
+      aiInstructions:
+        'Present this as the ultimate solution that covers all their needs. Show how the services complement each other. Use their specific use cases to demonstrate value. Focus on the comprehensive nature of the solution.',
     },
   ];
 

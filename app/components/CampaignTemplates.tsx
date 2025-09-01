@@ -93,7 +93,7 @@ export default function CampaignTemplates() {
       id: 'desperate_shippers_blitz',
       name: 'Desperate Shippers Blitz (Balanced Multi-Channel)',
       description:
-        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data - Balanced Email/Phone Approach',
+        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing - Balanced Email/Phone Approach',
       category: 'lead_generation',
       targetAudience:
         'Companies with compliance issues, capacity shortages, expiring contracts',
@@ -188,7 +188,7 @@ export default function CampaignTemplates() {
       id: 'new_businesses_freight_blitz',
       name: 'New Businesses Freight Blitz (PHASE 1 PRIORITY)',
       description:
-        'Target newly established manufacturers, wholesalers, and warehouses actively seeking freight solutions - FASTEST REVENUE',
+        'Target newly established manufacturers, wholesalers, and warehouses actively seeking freight solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing - FASTEST REVENUE',
       category: 'lead_generation',
       targetAudience:
         'New manufacturers, wholesalers, and warehouses (1-5 years old) needing immediate logistics partnerships - HIGH INTENT BUYERS',
@@ -640,7 +640,8 @@ export default function CampaignTemplates() {
         {
           id: 'carrier_identification',
           name: 'Carrier Network Analysis',
-          description: 'Identify carriers who could benefit from professional dispatch services',
+          description:
+            'Identify carriers who could benefit from professional dispatch services',
           timing: 'Day 1-5',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -649,7 +650,8 @@ export default function CampaignTemplates() {
         {
           id: 'dispatch_value_proposition',
           name: 'Dispatch Value Proposition',
-          description: 'Present the 10% fee structure and service benefits to carriers',
+          description:
+            'Present the 10% fee structure and service benefits to carriers',
           timing: 'Day 6-15',
           channel: 'Phone/Email',
           aiStaff: 'Logan',
@@ -667,7 +669,8 @@ export default function CampaignTemplates() {
         {
           id: 'dispatch_service_onboarding',
           name: 'Dispatch Service Onboarding',
-          description: 'Onboard carriers to dispatch services and fee collection',
+          description:
+            'Onboard carriers to dispatch services and fee collection',
           timing: 'Day 26-30',
           channel: 'Multi-Channel',
           aiStaff: 'Logan',
@@ -680,6 +683,563 @@ export default function CampaignTemplates() {
         '$225K+ dispatch fee revenue (10% of carrier load fees)',
         '85%+ carrier satisfaction rate',
         '90%+ on-time fee collection',
+      ],
+    },
+
+    // CARRIER ACQUISITION CAMPAIGNS - Feed Dispatch Network
+    {
+      id: 'carrier_owner_operator_acquisition',
+      name: 'Carrier/Owner Operator Acquisition Campaign',
+      description:
+        'Proactively recruit carriers and owner operators to build dispatch network featuring GO WITH THE FLOW instant load matching and MARKETPLACE BIDDING competitive opportunities - earn 6-10% load fees',
+      category: 'carrier_acquisition',
+      targetAudience:
+        'Independent carriers, owner operators, and small trucking companies seeking dispatch partnerships',
+      expectedResults: {
+        leads: 200,
+        conversions: 80, // Tiered across different carrier sizes
+        revenue: 489000, // From tiered dispatch fees (6-10% of carrier loads)
+      },
+      duration: '45 days',
+      difficulty: 'medium',
+      aiStaff: ['Miles', 'Logan', 'Desiree'],
+      channels: ['LinkedIn', 'Phone', 'Email', 'Industry Events'],
+      icon: '🚛',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'carrier_prospect_identification',
+          name: 'Carrier Prospect Research',
+          description:
+            'Identify independent carriers and owner operators through industry databases and networking',
+          timing: 'Day 1-10',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'carrier_value_proposition_outreach',
+          name: 'Carrier Value Proposition Outreach',
+          description:
+            'Present dispatch services benefits: load consistency, fee collection, administrative support',
+          timing: 'Day 11-25',
+          channel: 'LinkedIn/Phone',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'carrier_onboarding_process',
+          name: 'Carrier Onboarding & Integration',
+          description:
+            'Streamlined onboarding process with technology integration and dispatch training',
+          timing: 'Day 26-35',
+          channel: 'Email/Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'carrier_network_expansion',
+          name: 'Carrier Network Expansion',
+          description:
+            'Referral program and network building to attract additional carriers',
+          timing: 'Day 36-45',
+          channel: 'Multi-Channel',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '200+ carrier prospects identified and contacted',
+        '80+ carriers onboarded to dispatch network (tiered structure)',
+        '$489K+ annual dispatch revenue (tiered 6-10% of carrier load fees)',
+        '85%+ carrier retention rate in first 6 months',
+        '90%+ on-time payment processing for carriers',
+        '70%+ carrier satisfaction with tiered service levels',
+      ],
+    },
+
+    // SPECIALIZED INDUSTRY CAMPAIGNS
+    {
+      id: 'healthcare_pharma_distribution',
+      name: 'Healthcare & Pharma Distribution Blitz - PREMIER CAMPAIGN',
+      description:
+        'Target hospitals, pharmacies, and medical suppliers with temperature-controlled and time-sensitive freight needs - HIGH VALUE SPECIALIZATION featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing',
+      category: 'industry_specific',
+      targetAudience:
+        'Healthcare facilities, pharmaceutical distributors, medical suppliers, and biotech companies',
+      expectedResults: {
+        leads: 85,
+        conversions: 26,
+        revenue: 195000,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Gary', 'Logan', 'Kameelah'],
+      channels: ['Email', 'LinkedIn', 'Phone'],
+      icon: '🏥',
+      color: 'bg-red-500',
+      steps: [
+        {
+          id: 'healthcare_prospect_identification',
+          name: 'Healthcare Network Mapping',
+          description:
+            'Identify hospitals, pharmacies, and medical suppliers using industry databases',
+          timing: 'Day 1-7',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'compliance_certification_focus',
+          name: 'Compliance & Certification Focus',
+          description:
+            'Highlight specialized handling, temperature control, and regulatory compliance capabilities',
+          timing: 'Day 8-15',
+          channel: 'Email/LinkedIn',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'medical_logistics_value_prop',
+          name: 'Medical Logistics Value Proposition',
+          description:
+            'Present specialized services featuring GO WITH THE FLOW instant carrier matching and MARKETPLACE BIDDING competitive pricing for medical supplies, vaccines, and pharmaceutical distribution',
+          timing: 'Day 16-25',
+          channel: 'Phone/Email',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'healthcare_relationship_building',
+          name: 'Healthcare Relationship Building',
+          description:
+            'Build long-term partnerships with healthcare providers and establish preferred carrier status',
+          timing: 'Day 26-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '85+ healthcare prospects identified and contacted',
+        '26+ healthcare clients onboarded with specialized service agreements',
+        '$195K+ annual revenue from healthcare/pharma freight',
+        '95%+ on-time delivery rate for medical shipments',
+        '100% compliance with healthcare shipping regulations',
+      ],
+    },
+    {
+      id: 'ecommerce_seasonal_rush',
+      name: 'E-commerce Seasonal Rush Blitz',
+      description:
+        'Target online retailers and e-commerce companies during peak shopping seasons with express delivery solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing',
+      category: 'seasonal_ecommerce',
+      targetAudience:
+        'E-commerce retailers, online marketplaces, and direct-to-consumer brands',
+      expectedResults: {
+        leads: 120,
+        conversions: 36,
+        revenue: 270000,
+      },
+      duration: '45 days',
+      difficulty: 'high',
+      aiStaff: ['Cliff', 'Desiree', 'Miles'],
+      channels: ['Email', 'Phone', 'LinkedIn', 'Industry Events'],
+      icon: '🛒',
+      color: 'bg-purple-500',
+      steps: [
+        {
+          id: 'ecommerce_platform_analysis',
+          name: 'E-commerce Platform Analysis',
+          description:
+            'Identify high-volume e-commerce businesses using sales data and platform analytics',
+          timing: 'Day 1-10',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'seasonal_capacity_offering',
+          name: 'Seasonal Capacity Offering',
+          description:
+            'Present scalable freight solutions for holiday rushes and seasonal peaks',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Cliff',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'express_delivery_network',
+          name: 'Express Delivery Network',
+          description:
+            'Showcase expedited shipping options and guaranteed delivery times',
+          timing: 'Day 21-30',
+          channel: 'Phone/LinkedIn',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'retail_logistics_partnership',
+          name: 'Retail Logistics Partnership',
+          description:
+            'Establish ongoing partnerships for year-round e-commerce freight needs',
+          timing: 'Day 31-45',
+          channel: 'Multi-Channel',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '120+ e-commerce businesses identified and contacted',
+        '36+ online retailers onboarded with seasonal freight agreements',
+        '$270K+ annual revenue from e-commerce freight',
+        '98%+ on-time delivery during peak seasons',
+        '85%+ client retention for year-round shipping needs',
+      ],
+    },
+    {
+      id: 'regional_market_penetration',
+      name: 'Regional Market Penetration Blitz',
+      description:
+        'Target specific geographic regions with localized freight solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with regional carrier partnerships',
+      category: 'geographic_focus',
+      targetAudience:
+        'Regional manufacturers, distributors, and businesses in target markets',
+      expectedResults: {
+        leads: 95,
+        conversions: 29,
+        revenue: 218000,
+      },
+      duration: '35 days',
+      difficulty: 'medium',
+      aiStaff: ['Logan', 'Desiree', 'Will'],
+      channels: ['Phone', 'Email', 'Local Networking'],
+      icon: '📍',
+      color: 'bg-green-500',
+      steps: [
+        {
+          id: 'regional_market_research',
+          name: 'Regional Market Research',
+          description:
+            'Analyze local business directories and economic data for target regions',
+          timing: 'Day 1-8',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'local_carrier_network',
+          name: 'Local Carrier Network Development',
+          description:
+            'Build relationships with regional carriers for comprehensive coverage',
+          timing: 'Day 9-18',
+          channel: 'Phone/Networking',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'regional_value_proposition',
+          name: 'Regional Value Proposition',
+          description:
+            'Present localized freight solutions with regional expertise and faster transit times',
+          timing: 'Day 19-28',
+          channel: 'Email/Phone',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'local_market_domination',
+          name: 'Local Market Domination',
+          description:
+            'Establish dominant presence in target region through comprehensive service offerings',
+          timing: 'Day 29-35',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '95+ regional businesses identified and contacted',
+        '29+ local clients onboarded with regional freight agreements',
+        '$218K+ annual revenue from regional market penetration',
+        '90%+ local market share in target regions',
+        '95%+ customer satisfaction with regional service',
+      ],
+    },
+    {
+      id: 'enterprise_account_conversion',
+      name: 'Enterprise Account Conversion Blitz',
+      description:
+        'Target large corporations currently using multiple carriers with comprehensive enterprise freight solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing',
+      category: 'enterprise_focus',
+      targetAudience:
+        'Large corporations, Fortune 1000 companies, and enterprise-level shippers',
+      expectedResults: {
+        leads: 65,
+        conversions: 13,
+        revenue: 650000,
+      },
+      duration: '60 days',
+      difficulty: 'hard',
+      aiStaff: ['Drew', 'Cliff', 'Logan'],
+      channels: ['LinkedIn', 'Phone', 'Executive Presentations'],
+      icon: '🏢',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'enterprise_prospect_identification',
+          name: 'Enterprise Prospect Identification',
+          description:
+            'Identify large corporations with high freight volumes using enterprise databases',
+          timing: 'Day 1-15',
+          channel: 'Data Analysis',
+          aiStaff: 'Drew',
+          automationLevel: 'full',
+        },
+        {
+          id: 'executive_relationship_building',
+          name: 'Executive Relationship Building',
+          description:
+            'Connect with C-level executives and procurement decision-makers',
+          timing: 'Day 16-30',
+          channel: 'LinkedIn/Phone',
+          aiStaff: 'Cliff',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'enterprise_solution_presentation',
+          name: 'Enterprise Solution Presentation',
+          description:
+            'Present comprehensive freight solutions, volume discounts, and dedicated account management',
+          timing: 'Day 31-45',
+          channel: 'Presentations/Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'contract_negotiation_closure',
+          name: 'Contract Negotiation & Closure',
+          description:
+            'Navigate complex procurement processes and secure enterprise-level contracts',
+          timing: 'Day 46-60',
+          channel: 'Executive Meetings',
+          aiStaff: 'Drew',
+          automationLevel: 'manual',
+        },
+      ],
+      successMetrics: [
+        '65+ enterprise prospects identified and qualified',
+        '13+ large corporations converted to enterprise freight agreements',
+        '$650K+ annual revenue from enterprise accounts',
+        '85%+ reduction in carrier management costs for clients',
+        '95%+ service level agreement compliance',
+      ],
+    },
+    {
+      id: 'recovery_relationship_campaign',
+      name: 'Recovery Relationship Blitz',
+      description:
+        'Target businesses that have had bad freight experiences and are seeking reliable alternatives',
+      category: 'recovery_focus',
+      targetAudience:
+        'Businesses recovering from poor freight experiences, damaged relationships, or service failures',
+      expectedResults: {
+        leads: 75,
+        conversions: 30,
+        revenue: 180000,
+      },
+      duration: '25 days',
+      difficulty: 'easy',
+      aiStaff: ['Shanell', 'Desiree', 'Brook R.'],
+      channels: ['Phone', 'Email', 'Personal Outreach'],
+      icon: '🔄',
+      color: 'bg-orange-500',
+      steps: [
+        {
+          id: 'recovery_opportunity_identification',
+          name: 'Recovery Opportunity Identification',
+          description:
+            'Identify businesses with recent freight service issues or carrier changes',
+          timing: 'Day 1-5',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'empathy_based_outreach',
+          name: 'Empathy-Based Outreach',
+          description:
+            'Connect with understanding and present reliable alternatives to past problems',
+          timing: 'Day 6-12',
+          channel: 'Phone/Email',
+          aiStaff: 'Shanell',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'service_guarantee_presentation',
+          name: 'Service Guarantee Presentation',
+          description:
+            'Present service guarantees, reliability commitments, and problem-resolution processes',
+          timing: 'Day 13-18',
+          channel: 'Phone/Personal',
+          aiStaff: 'Brook R.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'relationship_rebuilding',
+          name: 'Relationship Rebuilding',
+          description:
+            'Rebuild trust through consistent service delivery and proactive communication',
+          timing: 'Day 19-25',
+          channel: 'Multi-Channel',
+          aiStaff: 'Shanell',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '75+ recovery opportunities identified and contacted',
+        '30+ businesses converted from negative freight experiences',
+        '$180K+ annual revenue from recovered relationships',
+        '90%+ client retention rate in first 6 months',
+        '95%+ positive feedback on service recovery',
+      ],
+    },
+    {
+      id: 'referral_network_acceleration',
+      name: 'Referral Network Acceleration Blitz',
+      description:
+        'Leverage existing satisfied customers to generate high-quality referrals and expand network rapidly',
+      category: 'referral_focus',
+      targetAudience:
+        'Existing satisfied customers and their professional networks',
+      expectedResults: {
+        leads: 110,
+        conversions: 44,
+        revenue: 330000,
+      },
+      duration: '40 days',
+      difficulty: 'easy',
+      aiStaff: ['Carrie R.', 'Brook R.', 'Will'],
+      channels: ['Phone', 'Email', 'Networking Events'],
+      icon: '🤝',
+      color: 'bg-indigo-500',
+      steps: [
+        {
+          id: 'satisfied_customer_identification',
+          name: 'Satisfied Customer Identification',
+          description:
+            'Identify top-performing customers with high satisfaction scores',
+          timing: 'Day 1-8',
+          channel: 'Data Analysis',
+          aiStaff: 'Carrie R.',
+          automationLevel: 'full',
+        },
+        {
+          id: 'referral_program_launch',
+          name: 'Referral Program Launch',
+          description:
+            'Launch structured referral program with incentives and easy sharing mechanisms',
+          timing: 'Day 9-18',
+          channel: 'Email/Phone',
+          aiStaff: 'Brook R.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'network_expansion_outreach',
+          name: 'Network Expansion Outreach',
+          description:
+            'Leverage customer networks through introductions and professional connections',
+          timing: 'Day 19-30',
+          channel: 'Phone/Networking',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'referral_relationship_conversion',
+          name: 'Referral Relationship Conversion',
+          description:
+            'Convert warm referrals into long-term freight partnerships',
+          timing: 'Day 31-40',
+          channel: 'Multi-Channel',
+          aiStaff: 'Carrie R.',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '110+ referral leads generated from existing customers',
+        '44+ new clients acquired through referral network',
+        '$330K+ annual revenue from referral-driven business',
+        '85%+ conversion rate from referrals to clients',
+        '90%+ referral source satisfaction and participation',
+      ],
+    },
+    {
+      id: 'food_beverage_supply_chain',
+      name: 'Food & Beverage Supply Chain Blitz',
+      description:
+        'Target food manufacturers, distributors, and restaurants with temperature-controlled and time-critical freight',
+      category: 'industry_specific',
+      targetAudience:
+        'Food manufacturers, beverage producers, restaurants, and grocery chains',
+      expectedResults: {
+        leads: 90,
+        conversions: 27,
+        revenue: 203000,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Logan', 'Desiree', 'Kameelah'],
+      channels: ['Phone', 'Email', 'Industry Trade Shows'],
+      icon: '🍕',
+      color: 'bg-yellow-500',
+      steps: [
+        {
+          id: 'food_industry_prospecting',
+          name: 'Food Industry Prospecting',
+          description:
+            'Identify food and beverage businesses with distribution needs',
+          timing: 'Day 1-7',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'temperature_control_specialization',
+          name: 'Temperature Control Specialization',
+          description:
+            'Highlight refrigerated and frozen freight capabilities and certifications',
+          timing: 'Day 8-15',
+          channel: 'Email/Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'food_safety_compliance',
+          name: 'Food Safety Compliance',
+          description:
+            'Present HACCP compliance, food-grade transportation, and quality assurance',
+          timing: 'Day 16-23',
+          channel: 'Phone/Industry Events',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'restaurant_distribution_network',
+          name: 'Restaurant Distribution Network',
+          description:
+            'Build comprehensive distribution network for restaurants and food service',
+          timing: 'Day 24-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '90+ food and beverage businesses identified and contacted',
+        '27+ food industry clients onboarded with specialized service',
+        '$203K+ annual revenue from food/beverage freight',
+        '100% compliance with food safety regulations',
+        '98%+ on-time delivery for perishable goods',
       ],
     },
 
