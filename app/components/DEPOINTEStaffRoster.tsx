@@ -512,6 +512,56 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
     emailSignature:
       'Lea D. Johnson\nBusiness Development Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Lead Nurturing & Business Development',
   },
+
+  // 🎯 EXECUTIVE OPERATIONS DEPARTMENT (DAY-TO-DAY MANAGEMENT)
+  {
+    id: 'alexa',
+    firstName: 'Alexa',
+    fullName: 'Alexa',
+    department: 'Executive Operations',
+    internalRole: 'Executive Operations Specialist',
+    customerFacingTitle: 'Chief Operating Officer',
+    avatar: '🎯',
+    hint: 'Alexa → Executive Assistant (like Amazon Alexa)',
+    personality: 'Executive powerhouse who manages daily operations with precision and anticipates needs',
+    specializations: [
+      'Executive Support',
+      'Operations Coordination',
+      'Daily Management',
+      'Task Prioritization',
+      'Schedule Management',
+      'Strategic Planning',
+      'Crisis Management',
+    ],
+    contactMethods: ['phone', 'email', 'chat'],
+    emailSignature:
+      'Alexa Thompson\nChief Operating Officer\nDEPOINTE/ Freight 1st Direct\nSpecializing in Executive Operations & Strategic Management',
+  },
+
+  // 📞 FRONT OFFICE DEPARTMENT (RECEPTION & COMMUNICATIONS)
+  {
+    id: 'reese',
+    firstName: 'Reese',
+    fullName: 'Reese',
+    department: 'Front Office',
+    internalRole: 'Front Office Coordinator',
+    customerFacingTitle: 'Client Experience Manager',
+    avatar: '📞',
+    hint: 'Reese → Receptionist (like Reese Witherspoon)',
+    personality: 'Front office maestro who handles all incoming communications with grace and efficiency',
+    specializations: [
+      'Client Reception',
+      'Communication Management',
+      'First Contact Handling',
+      'Appointment Coordination',
+      'Phone Support',
+      'General Inquiries',
+      'Welcome Experience',
+    ],
+    contactMethods: ['phone', 'email', 'chat'],
+    emailSignature:
+      'Reese Williams\nClient Experience Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Client Reception & Experience Management',
+  },
 ];
 
 // 🚀 PHASE 2 EXPANSION PLAN (AVAILABLE WHEN FUNDS PERMIT)

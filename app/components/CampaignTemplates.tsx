@@ -1,24 +1,24 @@
 'use client';
 
 import {
+  Activity,
+  ArrowUpDown,
   Calendar,
   CheckCircle,
   Clock,
   DollarSign,
+  Filter,
+  Grid,
+  List,
   MessageSquare,
   Play,
+  Search,
+  Star,
   Target,
   TrendingUp,
   Users,
-  Search,
-  Filter,
-  Star,
-  Activity,
-  ArrowUpDown,
-  Grid,
-  List,
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 interface CampaignTemplate {
   id: string;
@@ -817,7 +817,8 @@ export default function CampaignTemplates() {
         {
           id: 'flatbed_market_research',
           name: 'Flatbed Market Intelligence',
-          description: 'Identify flatbed carriers through specialized trucking associations and equipment directories',
+          description:
+            'Identify flatbed carriers through specialized trucking associations and equipment directories',
           timing: 'Day 1-3',
           channel: 'Research',
           aiStaff: 'Roland',
@@ -826,7 +827,8 @@ export default function CampaignTemplates() {
         {
           id: 'premium_equipment_outreach',
           name: 'Premium Equipment Outreach',
-          description: 'Target carriers with flatbed/oversized equipment for high-margin loads',
+          description:
+            'Target carriers with flatbed/oversized equipment for high-margin loads',
           timing: 'Day 4-15',
           channel: 'LinkedIn/Phone',
           aiStaff: 'Roland & Miles',
@@ -835,7 +837,8 @@ export default function CampaignTemplates() {
         {
           id: 'specialized_load_matching',
           name: 'Specialized Load Matching',
-          description: 'Connect flatbed carriers with construction and equipment shippers',
+          description:
+            'Connect flatbed carriers with construction and equipment shippers',
           timing: 'Day 16-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Logan',
@@ -846,7 +849,7 @@ export default function CampaignTemplates() {
         'Premium load fee collection (12-15%)',
         'Construction equipment shipment volume',
         'Oversized load capacity utilization',
-        'Carrier retention rate for specialized loads'
+        'Carrier retention rate for specialized loads',
       ],
     },
 
@@ -875,7 +878,8 @@ export default function CampaignTemplates() {
         {
           id: 'reefer_capacity_analysis',
           name: 'Reefer Capacity Analysis',
-          description: 'Map refrigerated carrier availability and temperature-controlled equipment',
+          description:
+            'Map refrigerated carrier availability and temperature-controlled equipment',
           timing: 'Day 1-5',
           channel: 'Data Analysis',
           aiStaff: 'Roland',
@@ -884,7 +888,8 @@ export default function CampaignTemplates() {
         {
           id: 'cold_chain_outreach',
           name: 'Cold Chain Outreach',
-          description: 'Target carriers with temperature monitoring and cold chain certification',
+          description:
+            'Target carriers with temperature monitoring and cold chain certification',
           timing: 'Day 6-20',
           channel: 'Industry Networks',
           aiStaff: 'Roland & Desiree',
@@ -904,7 +909,7 @@ export default function CampaignTemplates() {
         'Temperature-controlled shipment volume',
         'Cold chain compliance certifications',
         'Perishable goods capacity utilization',
-        'Seasonal demand management'
+        'Seasonal demand management',
       ],
     },
 
@@ -933,7 +938,8 @@ export default function CampaignTemplates() {
         {
           id: 'dry_van_market_mapping',
           name: 'Dry Van Market Mapping',
-          description: 'Identify dry van carriers through carrier directories and transportation networks',
+          description:
+            'Identify dry van carriers through carrier directories and transportation networks',
           timing: 'Day 1-5',
           channel: 'Research',
           aiStaff: 'Roland',
@@ -942,7 +948,8 @@ export default function CampaignTemplates() {
         {
           id: 'general_freight_outreach',
           name: 'General Freight Outreach',
-          description: 'Target carriers for consumer goods, retail, and general merchandise',
+          description:
+            'Target carriers for consumer goods, retail, and general merchandise',
           timing: 'Day 6-20',
           channel: 'Multi-Channel',
           aiStaff: 'Roland & Miles',
@@ -951,7 +958,8 @@ export default function CampaignTemplates() {
         {
           id: 'ltl_load_optimization',
           name: 'LTL Load Optimization',
-          description: 'Connect dry van carriers with LTL shippers and consolidate loads',
+          description:
+            'Connect dry van carriers with LTL shippers and consolidate loads',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Logan',
@@ -962,7 +970,7 @@ export default function CampaignTemplates() {
         'LTL shipment consolidation efficiency',
         'General freight capacity utilization',
         'Load factor improvement (85%+ target)',
-        'Carrier onboarding speed'
+        'Carrier onboarding speed',
       ],
     },
 
@@ -991,7 +999,8 @@ export default function CampaignTemplates() {
         {
           id: 'owner_operator_profiling',
           name: 'Owner-Operator Profiling',
-          description: 'Identify independent carriers seeking dispatch partnerships',
+          description:
+            'Identify independent carriers seeking dispatch partnerships',
           timing: 'Day 1-7',
           channel: 'Data Mining',
           aiStaff: 'Roland',
@@ -1009,7 +1018,8 @@ export default function CampaignTemplates() {
         {
           id: 'owner_operator_onboarding',
           name: 'Owner-Operator Onboarding',
-          description: 'Rapid onboarding and load assignment for qualified owner-operators',
+          description:
+            'Rapid onboarding and load assignment for qualified owner-operators',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -1020,7 +1030,7 @@ export default function CampaignTemplates() {
         'Owner-operator retention rate (90%+ target)',
         'Average load acceptance rate',
         'Premium dispatch fee collection',
-        'Rapid deployment capability'
+        'Rapid deployment capability',
       ],
     },
 
@@ -1049,7 +1059,8 @@ export default function CampaignTemplates() {
         {
           id: 'regional_market_analysis',
           name: 'Regional Market Analysis',
-          description: 'Map regional carrier availability and local transportation networks',
+          description:
+            'Map regional carrier availability and local transportation networks',
           timing: 'Day 1-5',
           channel: 'Market Research',
           aiStaff: 'Roland',
@@ -1058,7 +1069,8 @@ export default function CampaignTemplates() {
         {
           id: 'local_network_building',
           name: 'Local Network Building',
-          description: 'Build relationships with regional carriers through local associations',
+          description:
+            'Build relationships with regional carriers through local associations',
           timing: 'Day 6-20',
           channel: 'Networking',
           aiStaff: 'Roland & Lea D.',
@@ -1067,7 +1079,8 @@ export default function CampaignTemplates() {
         {
           id: 'regional_load_distribution',
           name: 'Regional Load Distribution',
-          description: 'Connect regional carriers with local shippers and receivers',
+          description:
+            'Connect regional carriers with local shippers and receivers',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Logan',
@@ -1078,7 +1091,7 @@ export default function CampaignTemplates() {
         'Regional market penetration',
         'Local delivery reliability',
         'Network expansion rate',
-        'Regional carrier satisfaction'
+        'Regional carrier satisfaction',
       ],
     },
 
@@ -1101,14 +1114,19 @@ export default function CampaignTemplates() {
       duration: '30 days',
       difficulty: 'high', // Specialized equipment requirements
       aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for DOT compliance
-      channels: ['Construction Trade Shows', 'Industry Associations', 'LinkedIn'],
+      channels: [
+        'Construction Trade Shows',
+        'Industry Associations',
+        'LinkedIn',
+      ],
       icon: '🚛',
       color: 'bg-amber-600',
       steps: [
         {
           id: 'construction_equipment_mapping',
           name: 'Construction Equipment Mapping',
-          description: 'Identify dump truck carriers through construction associations and equipment directories',
+          description:
+            'Identify dump truck carriers through construction associations and equipment directories',
           timing: 'Day 1-5',
           channel: 'Industry Research',
           aiStaff: 'Roland',
@@ -1117,7 +1135,8 @@ export default function CampaignTemplates() {
         {
           id: 'bulk_material_outreach',
           name: 'Bulk Material Outreach',
-          description: 'Target carriers with proper licensing for gravel, sand, dirt, and construction debris',
+          description:
+            'Target carriers with proper licensing for gravel, sand, dirt, and construction debris',
           timing: 'Day 6-20',
           channel: 'Industry Networks',
           aiStaff: 'Roland & Miles',
@@ -1126,7 +1145,8 @@ export default function CampaignTemplates() {
         {
           id: 'specialty_load_matching',
           name: 'Specialty Load Matching',
-          description: 'Connect dump truck carriers with construction and aggregate shippers',
+          description:
+            'Connect dump truck carriers with construction and aggregate shippers',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -1137,7 +1157,7 @@ export default function CampaignTemplates() {
         'Construction material shipment volume',
         'Aggregate transportation capacity utilization',
         'Premium load fee collection (15-20%)',
-        'Construction season peak performance'
+        'Construction season peak performance',
       ],
     },
 
@@ -1159,14 +1179,19 @@ export default function CampaignTemplates() {
       duration: '30 days',
       difficulty: 'hard', // Extremely specialized equipment
       aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for specialized compliance
-      channels: ['Construction Industry Events', 'Cement Association Networks', 'Direct Outreach'],
+      channels: [
+        'Construction Industry Events',
+        'Cement Association Networks',
+        'Direct Outreach',
+      ],
       icon: '🚛',
       color: 'bg-gray-700',
       steps: [
         {
           id: 'cement_industry_mapping',
           name: 'Cement Industry Mapping',
-          description: 'Identify cement carriers through construction and building material associations',
+          description:
+            'Identify cement carriers through construction and building material associations',
           timing: 'Day 1-7',
           channel: 'Industry Directories',
           aiStaff: 'Roland',
@@ -1175,7 +1200,8 @@ export default function CampaignTemplates() {
         {
           id: 'ready_mix_specialization',
           name: 'Ready-Mix Specialization',
-          description: 'Target carriers with temperature control and specialized cement handling equipment',
+          description:
+            'Target carriers with temperature control and specialized cement handling equipment',
           timing: 'Day 8-20',
           channel: 'Construction Networks',
           aiStaff: 'Roland & Kameelah',
@@ -1184,7 +1210,8 @@ export default function CampaignTemplates() {
         {
           id: 'construction_site_matching',
           name: 'Construction Site Matching',
-          description: 'Connect cement carriers with construction sites and ready-mix plants',
+          description:
+            'Connect cement carriers with construction sites and ready-mix plants',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -1195,7 +1222,7 @@ export default function CampaignTemplates() {
         'Cement/concrete shipment volume',
         'Construction project on-time delivery',
         'Ultra-premium load fee collection (18-25%)',
-        'Ready-mix temperature compliance'
+        'Ready-mix temperature compliance',
       ],
     },
 
@@ -1217,14 +1244,19 @@ export default function CampaignTemplates() {
       duration: '30 days',
       difficulty: 'hard', // Permits, pilot cars, specialized equipment required
       aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for permit compliance
-      channels: ['Heavy Haul Associations', 'Permitting Agencies', 'Direct Industry Contacts'],
+      channels: [
+        'Heavy Haul Associations',
+        'Permitting Agencies',
+        'Direct Industry Contacts',
+      ],
       icon: '🚛',
       color: 'bg-red-700',
       steps: [
         {
           id: 'heavy_haul_equipment_mapping',
           name: 'Heavy Haul Equipment Mapping',
-          description: 'Identify carriers with oversized load permits and heavy haul capabilities',
+          description:
+            'Identify carriers with oversized load permits and heavy haul capabilities',
           timing: 'Day 1-7',
           channel: 'Specialized Directories',
           aiStaff: 'Roland',
@@ -1233,7 +1265,8 @@ export default function CampaignTemplates() {
         {
           id: 'permit_compliance_outreach',
           name: 'Permit Compliance Outreach',
-          description: 'Target carriers with current permits and pilot car coordination services',
+          description:
+            'Target carriers with current permits and pilot car coordination services',
           timing: 'Day 8-20',
           channel: 'Regulatory Networks',
           aiStaff: 'Roland & Kameelah',
@@ -1242,7 +1275,8 @@ export default function CampaignTemplates() {
         {
           id: 'oversized_load_matching',
           name: 'Oversized Load Matching',
-          description: 'Connect heavy haul carriers with industrial equipment manufacturers and construction sites',
+          description:
+            'Connect heavy haul carriers with industrial equipment manufacturers and construction sites',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -1253,7 +1287,7 @@ export default function CampaignTemplates() {
         'Oversized equipment shipment volume',
         'Permit compliance success rate',
         'Maximum premium load fee collection (20-30%)',
-        'Pilot car coordination efficiency'
+        'Pilot car coordination efficiency',
       ],
     },
 
@@ -1275,14 +1309,19 @@ export default function CampaignTemplates() {
       duration: '30 days',
       difficulty: 'high', // Specialized trailers and equipment knowledge required
       aiStaff: ['Roland', 'Miles', 'Logan'],
-      channels: ['Construction Equipment Dealers', 'Machinery Associations', 'Industry Trade Shows'],
+      channels: [
+        'Construction Equipment Dealers',
+        'Machinery Associations',
+        'Industry Trade Shows',
+      ],
       icon: '🚛',
       color: 'bg-slate-700',
       steps: [
         {
           id: 'machinery_transport_mapping',
           name: 'Machinery Transport Mapping',
-          description: 'Identify lowboy carriers through construction equipment and machinery associations',
+          description:
+            'Identify lowboy carriers through construction equipment and machinery associations',
           timing: 'Day 1-5',
           channel: 'Equipment Directories',
           aiStaff: 'Roland',
@@ -1291,7 +1330,8 @@ export default function CampaignTemplates() {
         {
           id: 'heavy_equipment_outreach',
           name: 'Heavy Equipment Outreach',
-          description: 'Target carriers experienced with bulldozers, excavators, and industrial machinery',
+          description:
+            'Target carriers experienced with bulldozers, excavators, and industrial machinery',
           timing: 'Day 6-20',
           channel: 'Construction Networks',
           aiStaff: 'Roland & Miles',
@@ -1300,7 +1340,8 @@ export default function CampaignTemplates() {
         {
           id: 'equipment_transport_matching',
           name: 'Equipment Transport Matching',
-          description: 'Connect lowboy carriers with construction equipment manufacturers and rental companies',
+          description:
+            'Connect lowboy carriers with construction equipment manufacturers and rental companies',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Logan',
@@ -1311,7 +1352,7 @@ export default function CampaignTemplates() {
         'Heavy machinery shipment volume',
         'Construction equipment transport capacity',
         'Premium load fee collection (16-22%)',
-        'Equipment damage prevention rate'
+        'Equipment damage prevention rate',
       ],
     },
 
@@ -1333,14 +1374,19 @@ export default function CampaignTemplates() {
       duration: '30 days',
       difficulty: 'hard', // HazMat certifications and compliance required
       aiStaff: ['Roland', 'Kameelah', 'Miles'], // Kameelah for HazMat compliance
-      channels: ['Chemical Industry Associations', 'HazMat Training Centers', 'Regulatory Networks'],
+      channels: [
+        'Chemical Industry Associations',
+        'HazMat Training Centers',
+        'Regulatory Networks',
+      ],
       icon: '🚛',
       color: 'bg-orange-800',
       steps: [
         {
           id: 'chemical_transport_mapping',
           name: 'Chemical Transport Mapping',
-          description: 'Identify tanker carriers through chemical industry and HazMat associations',
+          description:
+            'Identify tanker carriers through chemical industry and HazMat associations',
           timing: 'Day 1-7',
           channel: 'Industry Certifications',
           aiStaff: 'Roland',
@@ -1349,7 +1395,8 @@ export default function CampaignTemplates() {
         {
           id: 'hazmat_compliance_outreach',
           name: 'HazMat Compliance Outreach',
-          description: 'Target carriers with current HazMat certifications and proper tanker equipment',
+          description:
+            'Target carriers with current HazMat certifications and proper tanker equipment',
           timing: 'Day 8-20',
           channel: 'Regulatory Networks',
           aiStaff: 'Roland & Kameelah',
@@ -1358,7 +1405,8 @@ export default function CampaignTemplates() {
         {
           id: 'chemical_load_matching',
           name: 'Chemical Load Matching',
-          description: 'Connect tanker carriers with chemical manufacturers and distributors',
+          description:
+            'Connect tanker carriers with chemical manufacturers and distributors',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -1369,7 +1417,7 @@ export default function CampaignTemplates() {
         'Chemical/hazardous material shipment volume',
         'HazMat compliance certification rate',
         'High compliance load fee collection (15-20%)',
-        'Environmental safety record'
+        'Environmental safety record',
       ],
     },
 
@@ -1391,14 +1439,19 @@ export default function CampaignTemplates() {
       duration: '30 days',
       difficulty: 'medium',
       aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for permit coordination
-      channels: ['Pilot Car Associations', 'State DOT Networks', 'Oversized Load Services'],
+      channels: [
+        'Pilot Car Associations',
+        'State DOT Networks',
+        'Oversized Load Services',
+      ],
       icon: '🚗',
       color: 'bg-yellow-600',
       steps: [
         {
           id: 'pilot_car_service_mapping',
           name: 'Pilot Car Service Mapping',
-          description: 'Identify certified pilot car drivers and escort service providers',
+          description:
+            'Identify certified pilot car drivers and escort service providers',
           timing: 'Day 1-5',
           channel: 'State DOT Directories',
           aiStaff: 'Roland',
@@ -1407,7 +1460,8 @@ export default function CampaignTemplates() {
         {
           id: 'oversized_load_coordination',
           name: 'Oversized Load Coordination',
-          description: 'Target drivers experienced with permit coordination and route planning',
+          description:
+            'Target drivers experienced with permit coordination and route planning',
           timing: 'Day 6-20',
           channel: 'Regulatory Networks',
           aiStaff: 'Roland & Kameelah',
@@ -1416,7 +1470,8 @@ export default function CampaignTemplates() {
         {
           id: 'escort_service_matching',
           name: 'Escort Service Matching',
-          description: 'Connect pilot car services with heavy haul carriers and oversized load shippers',
+          description:
+            'Connect pilot car services with heavy haul carriers and oversized load shippers',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -1427,7 +1482,7 @@ export default function CampaignTemplates() {
         'Oversized load escort coordination',
         'Permit approval success rate',
         'On-time delivery for oversized shipments',
-        'State DOT compliance partnerships'
+        'State DOT compliance partnerships',
       ],
     },
 
@@ -2496,9 +2551,11 @@ export default function CampaignTemplates() {
     {
       id: 'construction_dump_truck_sales',
       name: 'Construction Dump Truck Load Acquisition',
-      description: 'Target construction companies, demolition firms, and earth-moving contractors who need dump truck services for bulk material transport',
+      description:
+        'Target construction companies, demolition firms, and earth-moving contractors who need dump truck services for bulk material transport',
       category: 'carrier_specialization',
-      targetAudience: 'Construction companies, demolition contractors, landscaping firms, mining operations',
+      targetAudience:
+        'Construction companies, demolition contractors, landscaping firms, mining operations',
       expectedResults: {
         leads: 120,
         conversions: 36,
@@ -2516,7 +2573,8 @@ export default function CampaignTemplates() {
         {
           id: 'construction_lead_identification',
           name: 'Construction Lead Identification',
-          description: 'Identify active construction projects and companies needing bulk material transport',
+          description:
+            'Identify active construction projects and companies needing bulk material transport',
           timing: 'Day 1-10',
           channel: 'Thomas.net + FMCSA Data',
           aiStaff: 'Desiree',
@@ -2525,7 +2583,8 @@ export default function CampaignTemplates() {
         {
           id: 'bulk_material_transport_pitch',
           name: 'Bulk Material Transport Pitch',
-          description: 'Present dump truck fleet availability for soil, gravel, concrete, and demolition debris',
+          description:
+            'Present dump truck fleet availability for soil, gravel, concrete, and demolition debris',
           timing: 'Day 11-20',
           channel: 'Email/Phone',
           aiStaff: 'Will',
@@ -2534,7 +2593,8 @@ export default function CampaignTemplates() {
         {
           id: 'construction_site_logistics',
           name: 'Construction Site Logistics',
-          description: 'Coordinate pickup/delivery scheduling with construction project timelines',
+          description:
+            'Coordinate pickup/delivery scheduling with construction project timelines',
           timing: 'Day 21-30',
           channel: 'Phone + GO WITH THE FLOW',
           aiStaff: 'Miles',
@@ -2552,9 +2612,11 @@ export default function CampaignTemplates() {
     {
       id: 'cement_bulk_carrier_sales',
       name: 'Cement & Bulk Carrier Load Acquisition',
-      description: 'Target cement plants, ready-mix concrete producers, and bulk material suppliers needing pneumatic and dry bulk transport',
+      description:
+        'Target cement plants, ready-mix concrete producers, and bulk material suppliers needing pneumatic and dry bulk transport',
       category: 'carrier_specialization',
-      targetAudience: 'Cement manufacturers, ready-mix plants, aggregate suppliers, chemical processors',
+      targetAudience:
+        'Cement manufacturers, ready-mix plants, aggregate suppliers, chemical processors',
       expectedResults: {
         leads: 95,
         conversions: 29,
@@ -2572,7 +2634,8 @@ export default function CampaignTemplates() {
         {
           id: 'bulk_material_supplier_mapping',
           name: 'Bulk Material Supplier Mapping',
-          description: 'Identify suppliers of cement, aggregates, and dry bulk materials',
+          description:
+            'Identify suppliers of cement, aggregates, and dry bulk materials',
           timing: 'Day 1-10',
           channel: 'Thomas.net + Industry Databases',
           aiStaff: 'Desiree',
@@ -2581,7 +2644,8 @@ export default function CampaignTemplates() {
         {
           id: 'pneumatic_transport_solutions',
           name: 'Pneumatic Transport Solutions',
-          description: 'Present pneumatic trailer fleet for contamination-free bulk transport',
+          description:
+            'Present pneumatic trailer fleet for contamination-free bulk transport',
           timing: 'Day 11-20',
           channel: 'Email/Phone',
           aiStaff: 'Roland',
@@ -2590,7 +2654,8 @@ export default function CampaignTemplates() {
         {
           id: 'bulk_logistics_coordination',
           name: 'Bulk Logistics Coordination',
-          description: 'Schedule bulk material deliveries with production planning',
+          description:
+            'Schedule bulk material deliveries with production planning',
           timing: 'Day 21-30',
           channel: 'MARKETPLACE BIDDING',
           aiStaff: 'Logan',
@@ -2608,9 +2673,11 @@ export default function CampaignTemplates() {
     {
       id: 'oversized_heavy_haul_sales',
       name: 'Oversized Heavy Haul Load Acquisition',
-      description: 'Target industrial manufacturers, construction equipment dealers, and machinery movers needing oversized transport services',
+      description:
+        'Target industrial manufacturers, construction equipment dealers, and machinery movers needing oversized transport services',
       category: 'carrier_specialization',
-      targetAudience: 'Heavy equipment manufacturers, construction machinery dealers, industrial plant builders',
+      targetAudience:
+        'Heavy equipment manufacturers, construction machinery dealers, industrial plant builders',
       expectedResults: {
         leads: 75,
         conversions: 23,
@@ -2628,7 +2695,8 @@ export default function CampaignTemplates() {
         {
           id: 'heavy_equipment_inventory_analysis',
           name: 'Heavy Equipment Inventory Analysis',
-          description: 'Identify companies with oversized equipment needing transport',
+          description:
+            'Identify companies with oversized equipment needing transport',
           timing: 'Day 1-10',
           channel: 'Industry Databases + FMCSA',
           aiStaff: 'Desiree',
@@ -2637,7 +2705,8 @@ export default function CampaignTemplates() {
         {
           id: 'permit_coordination_services',
           name: 'Permit Coordination Services',
-          description: 'Offer complete DOT permit coordination and route planning',
+          description:
+            'Offer complete DOT permit coordination and route planning',
           timing: 'Day 11-20',
           channel: 'Phone + Email',
           aiStaff: 'Kameelah',
@@ -2664,9 +2733,11 @@ export default function CampaignTemplates() {
     {
       id: 'lowboy_trailer_sales',
       name: 'Lowboy Trailer Load Acquisition',
-      description: 'Target construction equipment dealers, crane companies, and industrial equipment manufacturers needing lowboy transport',
+      description:
+        'Target construction equipment dealers, crane companies, and industrial equipment manufacturers needing lowboy transport',
       category: 'carrier_specialization',
-      targetAudience: 'Construction equipment dealers, crane rental companies, industrial equipment manufacturers',
+      targetAudience:
+        'Construction equipment dealers, crane rental companies, industrial equipment manufacturers',
       expectedResults: {
         leads: 85,
         conversions: 26,
@@ -2684,7 +2755,8 @@ export default function CampaignTemplates() {
         {
           id: 'equipment_dealer_network',
           name: 'Equipment Dealer Network',
-          description: 'Build network of construction and industrial equipment dealers',
+          description:
+            'Build network of construction and industrial equipment dealers',
           timing: 'Day 1-10',
           channel: 'Thomas.net + Industry Associations',
           aiStaff: 'Desiree',
@@ -2693,7 +2765,8 @@ export default function CampaignTemplates() {
         {
           id: 'lowboy_transport_specialization',
           name: 'Lowboy Transport Specialization',
-          description: 'Present specialized lowboy fleet for heavy machinery transport',
+          description:
+            'Present specialized lowboy fleet for heavy machinery transport',
           timing: 'Day 11-20',
           channel: 'Email/Phone',
           aiStaff: 'Roland',
@@ -2720,9 +2793,11 @@ export default function CampaignTemplates() {
     {
       id: 'tanker_chemical_sales',
       name: 'Tanker & Chemical Transport Load Acquisition',
-      description: 'Target chemical manufacturers, petroleum distributors, and hazardous material shippers needing specialized tanker transport',
+      description:
+        'Target chemical manufacturers, petroleum distributors, and hazardous material shippers needing specialized tanker transport',
       category: 'carrier_specialization',
-      targetAudience: 'Chemical manufacturers, petroleum distributors, hazardous waste companies',
+      targetAudience:
+        'Chemical manufacturers, petroleum distributors, hazardous waste companies',
       expectedResults: {
         leads: 65,
         conversions: 20,
@@ -2740,7 +2815,8 @@ export default function CampaignTemplates() {
         {
           id: 'chemical_manufacturer_identification',
           name: 'Chemical Manufacturer Identification',
-          description: 'Identify chemical and petroleum companies needing tanker transport',
+          description:
+            'Identify chemical and petroleum companies needing tanker transport',
           timing: 'Day 1-10',
           channel: 'FMCSA + Industry Databases',
           aiStaff: 'Desiree',
@@ -2749,7 +2825,8 @@ export default function CampaignTemplates() {
         {
           id: 'hazmat_transport_compliance',
           name: 'Hazmat Transport Compliance',
-          description: 'Ensure all tanker operations meet DOT hazmat regulations',
+          description:
+            'Ensure all tanker operations meet DOT hazmat regulations',
           timing: 'Day 11-20',
           channel: 'Regulatory Coordination',
           aiStaff: 'Kameelah',
@@ -2758,7 +2835,8 @@ export default function CampaignTemplates() {
         {
           id: 'chemical_logistics_execution',
           name: 'Chemical Logistics Execution',
-          description: 'Execute chemical and petroleum transport with safety protocols',
+          description:
+            'Execute chemical and petroleum transport with safety protocols',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Logan',
@@ -2776,9 +2854,11 @@ export default function CampaignTemplates() {
     {
       id: 'pilot_car_escort_sales',
       name: 'Pilot Car Escort Service Load Acquisition',
-      description: 'Target oversized load shippers and heavy haul carriers needing certified pilot car escort services',
+      description:
+        'Target oversized load shippers and heavy haul carriers needing certified pilot car escort services',
       category: 'carrier_specialization',
-      targetAudience: 'Heavy haul carriers, oversized load shippers, construction companies',
+      targetAudience:
+        'Heavy haul carriers, oversized load shippers, construction companies',
       expectedResults: {
         leads: 90,
         conversions: 27,
@@ -2796,7 +2876,8 @@ export default function CampaignTemplates() {
         {
           id: 'pilot_car_certification_network',
           name: 'Pilot Car Certification Network',
-          description: 'Build network of certified pilot car drivers across all states',
+          description:
+            'Build network of certified pilot car drivers across all states',
           timing: 'Day 1-10',
           channel: 'State DOT Directories',
           aiStaff: 'Desiree',
@@ -2814,7 +2895,8 @@ export default function CampaignTemplates() {
         {
           id: 'escort_service_matching',
           name: 'Escort Service Matching',
-          description: 'Match pilot car services with heavy haul transport needs',
+          description:
+            'Match pilot car services with heavy haul transport needs',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Miles',
@@ -2833,9 +2915,11 @@ export default function CampaignTemplates() {
     {
       id: 'general_freight_pipeline',
       name: 'General Freight Pipeline Development',
-      description: 'Build comprehensive load pipeline from diverse shipper sources to feed all specialty carrier types',
+      description:
+        'Build comprehensive load pipeline from diverse shipper sources to feed all specialty carrier types',
       category: 'lead_generation',
-      targetAudience: 'All freight shippers with regular or irregular shipping needs',
+      targetAudience:
+        'All freight shippers with regular or irregular shipping needs',
       expectedResults: {
         leads: 200,
         conversions: 60,
@@ -2853,7 +2937,8 @@ export default function CampaignTemplates() {
         {
           id: 'multi_source_lead_generation',
           name: 'Multi-Source Lead Generation',
-          description: 'Generate leads from Thomas.net, TruckingPlanet, FMCSA data, and direct outreach',
+          description:
+            'Generate leads from Thomas.net, TruckingPlanet, FMCSA data, and direct outreach',
           timing: 'Day 1-10',
           channel: 'All Platforms',
           aiStaff: 'Desiree',
@@ -2871,7 +2956,8 @@ export default function CampaignTemplates() {
         {
           id: 'carrier_matching_pipeline',
           name: 'Carrier Matching Pipeline',
-          description: 'Match qualified loads with appropriate specialty carriers',
+          description:
+            'Match qualified loads with appropriate specialty carriers',
           timing: 'Day 21-30',
           channel: 'GO WITH THE FLOW Platform',
           aiStaff: 'Gary',
@@ -2889,7 +2975,8 @@ export default function CampaignTemplates() {
     {
       id: 'seasonal_load_forecasting',
       name: 'Seasonal Load Forecasting & Acquisition',
-      description: 'Predict and acquire seasonal freight loads for construction, agriculture, and retail industries',
+      description:
+        'Predict and acquire seasonal freight loads for construction, agriculture, and retail industries',
       category: 'lead_generation',
       targetAudience: 'Companies with seasonal shipping patterns',
       expectedResults: {
@@ -2909,7 +2996,8 @@ export default function CampaignTemplates() {
         {
           id: 'seasonal_pattern_analysis',
           name: 'Seasonal Pattern Analysis',
-          description: 'Analyze historical shipping data to predict seasonal demand',
+          description:
+            'Analyze historical shipping data to predict seasonal demand',
           timing: 'Day 1-10',
           channel: 'Data Analysis',
           aiStaff: 'Ana Lytics',
@@ -2946,7 +3034,11 @@ export default function CampaignTemplates() {
   const categories = [
     { id: 'all', name: 'All Campaigns', icon: '🎯' },
     { id: 'lead_generation', name: 'Lead Generation', icon: '👥' },
-    { id: 'carrier_specialization', name: 'Carrier Specialization', icon: '🚛' },
+    {
+      id: 'carrier_specialization',
+      name: 'Carrier Specialization',
+      icon: '🚛',
+    },
     { id: 'specialty_equipment', name: 'Specialty Equipment', icon: '🚛' },
     { id: 'follow_up', name: 'Follow-Up', icon: '📧' },
     { id: 'nurture', name: 'Nurture', icon: '📈' },
@@ -2960,21 +3052,26 @@ export default function CampaignTemplates() {
 
     // Category filtering
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(template => template.category === selectedCategory);
+      filtered = filtered.filter(
+        (template) => template.category === selectedCategory
+      );
     }
 
     // Priority campaigns filter
     if (showOnlyPriority) {
-      filtered = filtered.filter(template => priorityCampaigns.includes(template.id));
+      filtered = filtered.filter((template) =>
+        priorityCampaigns.includes(template.id)
+      );
     }
 
     // Search filtering
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(template =>
-        template.name.toLowerCase().includes(query) ||
-        template.description.toLowerCase().includes(query) ||
-        template.targetAudience.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (template) =>
+          template.name.toLowerCase().includes(query) ||
+          template.description.toLowerCase().includes(query) ||
+          template.targetAudience.toLowerCase().includes(query)
       );
     }
 
@@ -3013,7 +3110,14 @@ export default function CampaignTemplates() {
     });
 
     return filtered;
-  }, [campaignTemplates, selectedCategory, showOnlyPriority, searchQuery, sortBy, sortOrder]);
+  }, [
+    campaignTemplates,
+    selectedCategory,
+    showOnlyPriority,
+    searchQuery,
+    sortBy,
+    sortOrder,
+  ]);
 
   const filteredTemplates = processedTemplates;
 
@@ -3061,12 +3165,22 @@ export default function CampaignTemplates() {
             minWidth: '180px',
           }}
         >
-          <Activity style={{ width: '16px', height: '16px', color: '#10b981' }} />
+          <Activity
+            style={{ width: '16px', height: '16px', color: '#10b981' }}
+          />
           <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#10b981' }}>
+            <div
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#10b981',
+              }}
+            >
               {activeCampaigns.length}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+            <div
+              style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}
+            >
               Active Campaigns
             </div>
           </div>
@@ -3085,12 +3199,30 @@ export default function CampaignTemplates() {
             minWidth: '200px',
           }}
         >
-          <DollarSign style={{ width: '16px', height: '16px', color: '#22c55e' }} />
+          <DollarSign
+            style={{ width: '16px', height: '16px', color: '#22c55e' }}
+          />
           <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#22c55e' }}>
-              ${(filteredTemplates.reduce((sum, template) => sum + template.expectedResults.monthlyRevenue, 0) / 1000).toFixed(1)}K
+            <div
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#22c55e',
+              }}
+            >
+              $
+              {(
+                filteredTemplates.reduce(
+                  (sum, template) =>
+                    sum + template.expectedResults.monthlyRevenue,
+                  0
+                ) / 1000
+              ).toFixed(1)}
+              K
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+            <div
+              style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}
+            >
               Filtered Revenue Potential
             </div>
           </div>
@@ -3111,10 +3243,18 @@ export default function CampaignTemplates() {
         >
           <Star style={{ width: '16px', height: '16px', color: '#fbbf24' }} />
           <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fbbf24' }}>
+            <div
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#fbbf24',
+              }}
+            >
               {priorityCampaigns.length}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+            <div
+              style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}
+            >
               Priority Campaigns
             </div>
           </div>
@@ -3135,10 +3275,18 @@ export default function CampaignTemplates() {
         >
           <Filter style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
           <div>
-            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#3b82f6' }}>
+            <div
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#3b82f6',
+              }}
+            >
               {categories.length}
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+            <div
+              style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}
+            >
               Campaign Categories
             </div>
           </div>
@@ -3212,11 +3360,24 @@ export default function CampaignTemplates() {
           }}
         >
           {/* Search Bar */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '300px' }}>
-            <Search style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.6)' }} />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              minWidth: '300px',
+            }}
+          >
+            <Search
+              style={{
+                width: '16px',
+                height: '16px',
+                color: 'rgba(255, 255, 255, 0.6)',
+              }}
+            />
             <input
-              type="text"
-              placeholder="Search campaigns..."
+              type='text'
+              placeholder='Search campaigns...'
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
@@ -3234,7 +3395,13 @@ export default function CampaignTemplates() {
 
           {/* Sort Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ArrowUpDown style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.6)' }} />
+            <ArrowUpDown
+              style={{
+                width: '16px',
+                height: '16px',
+                color: 'rgba(255, 255, 255, 0.6)',
+              }}
+            />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -3249,10 +3416,10 @@ export default function CampaignTemplates() {
                 cursor: 'pointer',
               }}
             >
-              <option value="revenue">Sort by Revenue</option>
-              <option value="name">Sort by Name</option>
-              <option value="difficulty">Sort by Difficulty</option>
-              <option value="duration">Sort by Duration</option>
+              <option value='revenue'>Sort by Revenue</option>
+              <option value='name'>Sort by Name</option>
+              <option value='difficulty'>Sort by Difficulty</option>
+              <option value='duration'>Sort by Duration</option>
             </select>
 
             <button
@@ -3278,8 +3445,14 @@ export default function CampaignTemplates() {
             <button
               onClick={() => setViewMode('grid')}
               style={{
-                background: viewMode === 'grid' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                border: viewMode === 'grid' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(148, 163, 184, 0.2)',
+                background:
+                  viewMode === 'grid'
+                    ? 'rgba(59, 130, 246, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  viewMode === 'grid'
+                    ? '1px solid rgba(59, 130, 246, 0.3)'
+                    : '1px solid rgba(148, 163, 184, 0.2)',
                 borderRadius: '6px',
                 padding: '8px',
                 color: 'white',
@@ -3291,8 +3464,14 @@ export default function CampaignTemplates() {
             <button
               onClick={() => setViewMode('list')}
               style={{
-                background: viewMode === 'list' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                border: viewMode === 'list' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(148, 163, 184, 0.2)',
+                background:
+                  viewMode === 'list'
+                    ? 'rgba(59, 130, 246, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  viewMode === 'list'
+                    ? '1px solid rgba(59, 130, 246, 0.3)'
+                    : '1px solid rgba(148, 163, 184, 0.2)',
                 borderRadius: '6px',
                 padding: '8px',
                 color: 'white',
@@ -3305,16 +3484,18 @@ export default function CampaignTemplates() {
 
           {/* Priority Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '0.875rem',
-              color: 'rgba(255, 255, 255, 0.8)',
-              cursor: 'pointer',
-            }}>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '0.875rem',
+                color: 'rgba(255, 255, 255, 0.8)',
+                cursor: 'pointer',
+              }}
+            >
               <input
-                type="checkbox"
+                type='checkbox'
                 checked={showOnlyPriority}
                 onChange={(e) => setShowOnlyPriority(e.target.checked)}
                 style={{
@@ -3323,7 +3504,9 @@ export default function CampaignTemplates() {
                   accentColor: '#22c55e',
                 }}
               />
-              <Star style={{ width: '14px', height: '14px', color: '#fbbf24' }} />
+              <Star
+                style={{ width: '14px', height: '14px', color: '#fbbf24' }}
+              />
               Priority Only
             </label>
           </div>
@@ -3559,7 +3742,9 @@ export default function CampaignTemplates() {
                     >
                       {template.duration}
                     </span>
-                    {activeCampaigns.some(campaign => campaign.templateId === template.id) && (
+                    {activeCampaigns.some(
+                      (campaign) => campaign.templateId === template.id
+                    ) && (
                       <div
                         style={{
                           display: 'flex',
@@ -3787,7 +3972,8 @@ export default function CampaignTemplates() {
                       textAlign: 'center',
                     }}
                   >
-                    ${(template.expectedResults.totalRevenue / 1000).toFixed(1)}K Total
+                    ${(template.expectedResults.totalRevenue / 1000).toFixed(1)}
+                    K Total
                   </div>
                   <div
                     style={{
