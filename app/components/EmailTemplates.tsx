@@ -29,10 +29,12 @@ export const desperateShipperEmailTemplates: EmailTemplate[] = [
   {
     id: 'crisis_alert_email_1',
     name: 'Crisis Alert Email #1',
-    subject: '🚨 URGENT: We Detected Your Carrier Insurance Crisis - Immediate Solutions Available',
+    subject:
+      '🚨 URGENT: We Detected Your Carrier Insurance Crisis - Immediate Solutions Available',
     category: 'crisis_alert',
     timing: 'Day 1 - Immediate',
-    purpose: 'Alert shippers to carrier crisis and position as immediate solution',
+    purpose:
+      'Alert shippers to carrier crisis and position as immediate solution',
     content: {
       greeting: 'Dear [Company Name] Leadership Team,',
       opening: `We noticed a critical situation with your transportation partner that requires immediate attention.`,
@@ -58,26 +60,27 @@ export const desperateShipperEmailTemplates: EmailTemplate[] = [
 Cliff - Crisis Response Specialist
 DEPOINTE/Freight 1st Direct
 📞 555-0101 | 📧 cliff@depointe.com
-P.S. Carrier insurance crises don't wait - let's address this before it becomes an emergency.`
+P.S. Carrier insurance crises don't wait - let's address this before it becomes an emergency.`,
     },
     personalization: [
       'Company name and specific carrier details',
       'Industry-specific pain points',
       'Local market conditions',
-      'Specific compliance risks'
+      'Specific compliance risks',
     ],
     expectedMetrics: {
       openRate: '65%+ (crisis relevance)',
       clickRate: '25%+ (immediate need)',
-      replyRate: '15%+ (urgency drives response)'
-    }
+      replyRate: '15%+ (urgency drives response)',
+    },
   },
 
   // EMAIL 2: Problem Deep Dive (Day 2 - Sequence #1)
   {
     id: 'problem_deep_dive_email_2',
     name: 'Problem Deep Dive Email #2',
-    subject: 'The Hidden Dangers of Carrier Insurance Lapses - Your Risk Assessment',
+    subject:
+      'The Hidden Dangers of Carrier Insurance Lapses - Your Risk Assessment',
     category: 'education',
     timing: 'Day 2 - Sequence #1',
     purpose: 'Educate on specific risks and build credibility',
@@ -110,19 +113,19 @@ This isn't just a paperwork issue - it's a business continuity crisis.`,
 Best regards,
 Cliff - Compliance & Crisis Specialist
 DEPOINTE/Freight 1st Direct
-📞 555-0101 | 📧 cliff@depointe.com`
+📞 555-0101 | 📧 cliff@depointe.com`,
     },
     personalization: [
       'Specific carrier name and expiration date',
       'Percentage of shipments affected',
       'Industry-specific examples',
-      'Local market conditions'
+      'Local market conditions',
     ],
     expectedMetrics: {
       openRate: '55%+ (follow-up relevance)',
       clickRate: '18%+ (valuable content)',
-      replyRate: '12%+ (building relationship)'
-    }
+      replyRate: '12%+ (building relationship)',
+    },
   },
 
   // EMAIL 3: Solution Positioning (Day 4 - Sequence #2)
@@ -168,19 +171,19 @@ Sound familiar?`,
 Best regards,
 Gary - Solution Specialist
 DEPOINTE/Freight 1st Direct
-📞 555-0102 | 📧 gary@depointe.com`
+📞 555-0102 | 📧 gary@depointe.com`,
     },
     personalization: [
       'Similar company in same industry',
       'Specific carrier details',
       'Comparable crisis situation',
-      'Industry-specific metrics'
+      'Industry-specific metrics',
     ],
     expectedMetrics: {
       openRate: '52%+ (case study appeal)',
       clickRate: '22%+ (proof of results)',
-      replyRate: '14%+ (social proof works)'
-    }
+      replyRate: '14%+ (social proof works)',
+    },
   },
 
   // EMAIL 4: ROI Calculator (Day 6 - Sequence #3)
@@ -228,26 +231,27 @@ DEPOINTE/Freight 1st Direct
 Best regards,
 Gary - ROI Specialist
 DEPOINTE/Freight 1st Direct
-📞 555-0102 | 📧 gary@depointe.com`
+📞 555-0102 | 📧 gary@depointe.com`,
     },
     personalization: [
       'Specific shipping volume data',
       'Exact carrier expiration date',
       'Industry-specific cost estimates',
-      'Comparable ROI examples'
+      'Comparable ROI examples',
     ],
     expectedMetrics: {
       openRate: '58%+ (financial interest)',
       clickRate: '28%+ (ROI curiosity)',
-      replyRate: '16%+ (money motivates action)'
-    }
+      replyRate: '16%+ (money motivates action)',
+    },
   },
 
   // EMAIL 5: Final Urgency (Day 8 - Sequence #4)
   {
     id: 'final_urgency_email_5',
     name: 'Final Urgency Email #5',
-    subject: '⏰ FINAL NOTICE: [X] Days Until [Carrier] Loses Insurance - Act Now',
+    subject:
+      '⏰ FINAL NOTICE: [X] Days Until [Carrier] Loses Insurance - Act Now',
     category: 'urgency',
     timing: 'Day 8 - Sequence #4',
     purpose: 'Create final urgency and drive immediate action',
@@ -290,26 +294,27 @@ Cliff - Crisis Response Team Lead
 DEPOINTE/Freight 1st Direct
 📞 555-0101 | 📧 cliff@depointe.com
 
-P.S. We've successfully prevented 150+ carrier crises this year. Don't become another statistic.`
+P.S. We've successfully prevented 150+ carrier crises this year. Don't become another statistic.`,
     },
     personalization: [
       'Exact days remaining until expiration',
       'Specific carrier name and details',
       'Industry-specific risk examples',
-      'Time-sensitive urgency language'
+      'Time-sensitive urgency language',
     ],
     expectedMetrics: {
       openRate: '62%+ (urgency drives opens)',
       clickRate: '32%+ (fear motivates action)',
-      replyRate: '18%+ (crisis creates responsiveness)'
-    }
+      replyRate: '18%+ (crisis creates responsiveness)',
+    },
   },
 
   // EMAIL 6: Follow-up Nurture (Day 15 - Re-engagement)
   {
     id: 'follow_up_nurture_email_6',
     name: 'Follow-up Nurture Email #6',
-    subject: 'Following Up: Still Protecting Your Supply Chain from Carrier Risks?',
+    subject:
+      'Following Up: Still Protecting Your Supply Chain from Carrier Risks?',
     category: 'nurture',
     timing: 'Day 15 - Re-engagement',
     purpose: 'Gentle re-engagement for non-responders',
@@ -334,20 +339,20 @@ P.S. We've successfully prevented 150+ carrier crises this year. Don't become an
 Best regards,
 Cliff - Supply Chain Protection Specialist
 DEPOINTE/Freight 1st Direct
-📞 555-0101 | 📧 cliff@depointe.com`
+📞 555-0101 | 📧 cliff@depointe.com`,
     },
     personalization: [
       'Reference to previous communications',
       'Updated carrier status if available',
       'Industry-specific context',
-      'Time-sensitive but non-urgent tone'
+      'Time-sensitive but non-urgent tone',
     ],
     expectedMetrics: {
       openRate: '45%+ (relationship building)',
       clickRate: '15%+ (resource interest)',
-      replyRate: '8%+ (follow-up timing)'
-    }
-  }
+      replyRate: '8%+ (follow-up timing)',
+    },
+  },
 ];
 
 export default desperateShipperEmailTemplates;

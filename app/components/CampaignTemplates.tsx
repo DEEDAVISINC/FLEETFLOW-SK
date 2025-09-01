@@ -78,22 +78,22 @@ export default function CampaignTemplates() {
     // LEAD GENERATION CAMPAIGNS
     {
       id: 'desperate_shippers_blitz',
-      name: 'Desperate Shippers Blitz (Email-Focused)',
+      name: 'Desperate Shippers Blitz (Balanced Multi-Channel)',
       description:
-        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data - Email-First Approach',
+        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data - Balanced Email/Phone Approach',
       category: 'lead_generation',
       targetAudience:
         'Companies with compliance issues, capacity shortages, expiring contracts',
       expectedResults: {
-        leads: 180, // Increased due to email efficiency
-        conversions: 54, // Higher conversion with email nurture
-        revenue: 270000, // Increased revenue projection
+        leads: 200, // Increased due to multi-channel approach
+        conversions: 65, // Higher conversion with personal touch
+        revenue: 300000, // Increased revenue projection
       },
       duration: '30 days',
-      difficulty: 'easy',
-      aiStaff: ['Cliff', 'Gary', 'Desiree'], // Email experts first
-      channels: ['Email', 'Phone', 'LinkedIn'], // Email primary
-      icon: '📧',
+      difficulty: 'medium', // Slightly higher due to phone component
+      aiStaff: ['Desiree', 'Cliff', 'Gary'], // Phone expert first for balance
+      channels: ['Phone', 'Email', 'LinkedIn'], // Phone primary for immediate crisis response
+      icon: '📞',
       color: 'bg-red-500',
       steps: [
         {
@@ -107,63 +107,65 @@ export default function CampaignTemplates() {
           automationLevel: 'full',
         },
         {
-          id: 'urgent_crisis_email_blast',
-          name: 'Urgent Crisis Email Blast',
+          id: 'urgent_crisis_outreach_blast',
+          name: 'Urgent Crisis Outreach Blast',
           description:
-            'Immediate email campaign to shippers affected by carrier insurance crises - "We Know Your Carrier Crisis"',
+            'Immediate email and phone campaign to shippers affected by carrier insurance crises - "We Know Your Carrier Crisis"',
           timing: 'Day 1',
-          channel: 'Email',
-          aiStaff: 'Cliff',
-          automationLevel: 'full',
+          channel: 'Email/Phone (50/50)',
+          aiStaff: 'Cliff & Desiree',
+          automationLevel: 'semi',
         },
         {
           id: 'compliance_solution_sequence',
-          name: 'Compliance Solution Email Sequence',
+          name: 'Compliance Solution Multi-Channel Sequence',
           description:
-            '5-email sequence: Problem identification → Solution positioning → Case studies → ROI calculation → Call-to-action',
+            '3-email + 2-phone sequence: Problem identification → Solution positioning → Case studies → ROI calculation → Call-to-action',
           timing: 'Day 2-7',
-          channel: 'Email',
-          aiStaff: 'Gary',
-          automationLevel: 'full',
+          channel: 'Email/Phone (60/40)',
+          aiStaff: 'Gary & Desiree',
+          automationLevel: 'semi',
         },
         {
           id: 'personalized_capacity_offers',
           name: 'Personalized Capacity Offers',
           description:
-            'Customized email offers with specific capacity availability, rates, and guaranteed timelines',
+            'Customized email and phone offers with specific capacity availability, rates, and guaranteed timelines',
           timing: 'Day 8-14',
-          channel: 'Email',
-          aiStaff: 'Gary',
+          channel: 'Email/Phone (50/50)',
+          aiStaff: 'Gary & Desiree',
           automationLevel: 'semi',
         },
         {
-          id: 'crisis_follow_up_cadence',
-          name: 'Crisis Follow-Up Cadence',
+          id: 'crisis_relationship_building',
+          name: 'Crisis Relationship Building',
           description:
-            'Strategic follow-up emails with urgency reminders, additional case studies, and limited-time offers',
+            'Strategic phone and LinkedIn outreach to build relationships with crisis-affected shippers',
           timing: 'Day 15-25',
-          channel: 'Email',
-          aiStaff: 'Cliff',
-          automationLevel: 'full',
+          channel: 'Phone/LinkedIn (70/30)',
+          aiStaff: 'Desiree & Cliff',
+          automationLevel: 'semi',
         },
         {
-          id: 'decision_maker_phone_touch',
-          name: 'Decision Maker Phone Touch',
+          id: 'decision_maker_closing_sequence',
+          name: 'Decision Maker Closing Sequence',
           description:
-            'Targeted phone calls to high-value prospects who engaged with emails but haven\'t converted',
+            'Intensive phone and email follow-up to high-value prospects with customized proposals and urgency creation',
           timing: 'Day 26-30',
-          channel: 'Phone',
-          aiStaff: 'Desiree',
+          channel: 'Phone/Email (60/40)',
+          aiStaff: 'Desiree & Gary',
           automationLevel: 'semi',
         },
       ],
       successMetrics: [
-        '180+ qualified leads generated (20% increase)',
-        '54+ proposal meetings booked (20% increase)',
-        '$270K+ pipeline created (20% increase)',
+        '200+ qualified leads generated (33% increase)',
+        '65+ proposal meetings booked (35% increase)',
+        '$300K+ pipeline created (40% increase)',
         '65%+ email open rate (crisis relevance)',
-        '25%+ click-through rate (solution interest)',
-        '75%+ qualification rate (email nurture)',
+        '25%+ email click-through rate (solution interest)',
+        '35%+ phone connection rate (crisis urgency)',
+        '20%+ phone-to-meeting conversion (personal touch)',
+        '80%+ qualification rate (multi-channel nurture)',
       ],
     },
 
@@ -512,9 +514,11 @@ export default function CampaignTemplates() {
     {
       id: 'food_beverage_manufacturer_targeting',
       name: 'Food & Beverage Manufacturer Initiative',
-      description: 'Target food/beverage manufacturers with temperature-controlled and time-sensitive logistics',
+      description:
+        'Target food/beverage manufacturers with temperature-controlled and time-sensitive logistics',
       category: 'lead_generation',
-      targetAudience: 'Food/beverage manufacturers with refrigerated/frozen product shipping needs',
+      targetAudience:
+        'Food/beverage manufacturers with refrigerated/frozen product shipping needs',
       expectedResults: {
         leads: 85,
         conversions: 26,
@@ -530,7 +534,8 @@ export default function CampaignTemplates() {
         {
           id: 'fda_compliance_focus',
           name: 'FDA Compliance & Cold Chain Focus',
-          description: 'Target manufacturers with FDA compliance and cold chain shipping requirements',
+          description:
+            'Target manufacturers with FDA compliance and cold chain shipping requirements',
           timing: 'Day 1-7',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -539,7 +544,8 @@ export default function CampaignTemplates() {
         {
           id: 'temperature_controlled_outreach',
           name: 'Temperature-Controlled Logistics Pitch',
-          description: 'Specialized outreach for refrigerated and frozen product transportation',
+          description:
+            'Specialized outreach for refrigerated and frozen product transportation',
           timing: 'Day 8-14',
           channel: 'Email/Phone',
           aiStaff: 'Logan',
@@ -548,7 +554,8 @@ export default function CampaignTemplates() {
         {
           id: 'food_safety_certification_emphasis',
           name: 'Food Safety & Certification Emphasis',
-          description: 'Highlight HACCP, SQF, and other food safety certifications',
+          description:
+            'Highlight HACCP, SQF, and other food safety certifications',
           timing: 'Day 15-25',
           channel: 'LinkedIn/Email',
           aiStaff: 'Gary',
@@ -557,7 +564,8 @@ export default function CampaignTemplates() {
         {
           id: 'seasonal_capacity_planning',
           name: 'Seasonal Capacity Planning',
-          description: 'Address peak season capacity needs and contingency planning',
+          description:
+            'Address peak season capacity needs and contingency planning',
           timing: 'Day 26-35',
           channel: 'Multi-Channel',
           aiStaff: 'Logan',
@@ -575,9 +583,11 @@ export default function CampaignTemplates() {
     {
       id: 'wholesaler_distribution_network',
       name: 'Wholesaler Distribution Network',
-      description: 'Target wholesalers and distributors with complex multi-location shipping needs',
+      description:
+        'Target wholesalers and distributors with complex multi-location shipping needs',
       category: 'lead_generation',
-      targetAudience: 'Wholesale distributors with regional/national distribution networks',
+      targetAudience:
+        'Wholesale distributors with regional/national distribution networks',
       expectedResults: {
         leads: 95,
         conversions: 29,
@@ -593,7 +603,8 @@ export default function CampaignTemplates() {
         {
           id: 'distribution_network_analysis',
           name: 'Distribution Network Analysis',
-          description: 'Map out wholesaler distribution networks and shipping patterns',
+          description:
+            'Map out wholesaler distribution networks and shipping patterns',
           timing: 'Day 1-10',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -611,7 +622,8 @@ export default function CampaignTemplates() {
         {
           id: 'cost_optimization_focus',
           name: 'Cost Optimization Focus',
-          description: 'Demonstrate freight cost reduction and efficiency improvements',
+          description:
+            'Demonstrate freight cost reduction and efficiency improvements',
           timing: 'Day 21-30',
           channel: 'LinkedIn/Email',
           aiStaff: 'Gary',
@@ -620,7 +632,8 @@ export default function CampaignTemplates() {
         {
           id: 'route_optimization_proposals',
           name: 'Route Optimization Proposals',
-          description: 'Custom proposals with optimized routing and consolidation',
+          description:
+            'Custom proposals with optimized routing and consolidation',
           timing: 'Day 31-40',
           channel: 'Multi-Channel',
           aiStaff: 'Will',
@@ -638,9 +651,11 @@ export default function CampaignTemplates() {
     {
       id: 'warehouse_3pl_targeting',
       name: 'Warehouse & 3PL Provider Initiative',
-      description: 'Target warehouses and 3PL providers needing carrier network expansion',
+      description:
+        'Target warehouses and 3PL providers needing carrier network expansion',
       category: 'lead_generation',
-      targetAudience: 'Warehouses and 3PL providers seeking carrier network expansion',
+      targetAudience:
+        'Warehouses and 3PL providers seeking carrier network expansion',
       expectedResults: {
         leads: 65,
         conversions: 20,
@@ -656,7 +671,8 @@ export default function CampaignTemplates() {
         {
           id: '3pl_capacity_analysis',
           name: '3PL Capacity Analysis',
-          description: 'Analyze warehouse and 3PL capacity utilization and carrier needs',
+          description:
+            'Analyze warehouse and 3PL capacity utilization and carrier needs',
           timing: 'Day 1-10',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -665,7 +681,8 @@ export default function CampaignTemplates() {
         {
           id: 'carrier_network_expansion_pitch',
           name: 'Carrier Network Expansion Pitch',
-          description: 'Present carrier network expansion and capacity solutions',
+          description:
+            'Present carrier network expansion and capacity solutions',
           timing: 'Day 11-20',
           channel: 'Email/Phone',
           aiStaff: 'Brook R.',
@@ -683,7 +700,8 @@ export default function CampaignTemplates() {
         {
           id: 'executive_relationship_building',
           name: 'Executive Relationship Building',
-          description: 'Build relationships with 3PL executives and decision-makers',
+          description:
+            'Build relationships with 3PL executives and decision-makers',
           timing: 'Day 31-45',
           channel: 'Phone/In-Person',
           aiStaff: 'Brook R.',
@@ -701,9 +719,11 @@ export default function CampaignTemplates() {
     {
       id: 'retail_chain_logistics',
       name: 'Retail Chain Logistics Initiative',
-      description: 'Target retail chains with store replenishment and distribution center needs',
+      description:
+        'Target retail chains with store replenishment and distribution center needs',
       category: 'lead_generation',
-      targetAudience: 'Retail chains with multi-store replenishment and DC shipping needs',
+      targetAudience:
+        'Retail chains with multi-store replenishment and DC shipping needs',
       expectedResults: {
         leads: 75,
         conversions: 23,
@@ -719,7 +739,8 @@ export default function CampaignTemplates() {
         {
           id: 'retail_distribution_analysis',
           name: 'Retail Distribution Analysis',
-          description: 'Analyze retail chain distribution networks and store replenishment patterns',
+          description:
+            'Analyze retail chain distribution networks and store replenishment patterns',
           timing: 'Day 1-8',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -728,7 +749,8 @@ export default function CampaignTemplates() {
         {
           id: 'store_replenishment_pitch',
           name: 'Store Replenishment Pitch',
-          description: 'Present solutions for efficient store replenishment logistics',
+          description:
+            'Present solutions for efficient store replenishment logistics',
           timing: 'Day 9-18',
           channel: 'Email/Phone',
           aiStaff: 'Will',
@@ -746,7 +768,8 @@ export default function CampaignTemplates() {
         {
           id: 'retail_logistics_optimization',
           name: 'Retail Logistics Optimization',
-          description: 'Custom proposals for retail-specific logistics optimization',
+          description:
+            'Custom proposals for retail-specific logistics optimization',
           timing: 'Day 29-38',
           channel: 'Multi-Channel',
           aiStaff: 'Will',
@@ -764,9 +787,11 @@ export default function CampaignTemplates() {
     {
       id: 'construction_materials_targeting',
       name: 'Construction Materials Initiative',
-      description: 'Target construction companies with heavy equipment and materials shipping',
+      description:
+        'Target construction companies with heavy equipment and materials shipping',
       category: 'lead_generation',
-      targetAudience: 'Construction companies with heavy equipment and materials transportation needs',
+      targetAudience:
+        'Construction companies with heavy equipment and materials transportation needs',
       expectedResults: {
         leads: 70,
         conversions: 21,
@@ -782,7 +807,8 @@ export default function CampaignTemplates() {
         {
           id: 'construction_project_analysis',
           name: 'Construction Project Analysis',
-          description: 'Identify construction projects and equipment/materials shipping needs',
+          description:
+            'Identify construction projects and equipment/materials shipping needs',
           timing: 'Day 1-10',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -791,7 +817,8 @@ export default function CampaignTemplates() {
         {
           id: 'heavy_equipment_transport',
           name: 'Heavy Equipment Transport Focus',
-          description: 'Specialized outreach for heavy equipment and oversized loads',
+          description:
+            'Specialized outreach for heavy equipment and oversized loads',
           timing: 'Day 11-21',
           channel: 'Email/Phone',
           aiStaff: 'Logan',
@@ -800,7 +827,8 @@ export default function CampaignTemplates() {
         {
           id: 'project_timeline_optimization',
           name: 'Project Timeline Optimization',
-          description: 'Address construction project timelines and material delivery deadlines',
+          description:
+            'Address construction project timelines and material delivery deadlines',
           timing: 'Day 22-32',
           channel: 'LinkedIn/Email',
           aiStaff: 'Gary',
@@ -809,7 +837,8 @@ export default function CampaignTemplates() {
         {
           id: 'construction_logistics_proposals',
           name: 'Construction Logistics Proposals',
-          description: 'Custom proposals for construction-specific logistics needs',
+          description:
+            'Custom proposals for construction-specific logistics needs',
           timing: 'Day 33-42',
           channel: 'Multi-Channel',
           aiStaff: 'Logan',
@@ -827,9 +856,11 @@ export default function CampaignTemplates() {
     {
       id: 'healthcare_medical_supplies',
       name: 'Healthcare & Medical Supplies Initiative',
-      description: 'Target healthcare facilities and medical suppliers with specialized shipping requirements',
+      description:
+        'Target healthcare facilities and medical suppliers with specialized shipping requirements',
       category: 'lead_generation',
-      targetAudience: 'Healthcare facilities and medical suppliers with urgent/critical shipping needs',
+      targetAudience:
+        'Healthcare facilities and medical suppliers with urgent/critical shipping needs',
       expectedResults: {
         leads: 55,
         conversions: 17,
@@ -845,7 +876,8 @@ export default function CampaignTemplates() {
         {
           id: 'healthcare_facility_identification',
           name: 'Healthcare Facility Identification',
-          description: 'Identify hospitals, clinics, and healthcare facilities with shipping needs',
+          description:
+            'Identify hospitals, clinics, and healthcare facilities with shipping needs',
           timing: 'Day 1-8',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -854,7 +886,8 @@ export default function CampaignTemplates() {
         {
           id: 'medical_supplies_compliance',
           name: 'Medical Supplies Compliance Focus',
-          description: 'Emphasize FDA compliance and specialized medical shipping requirements',
+          description:
+            'Emphasize FDA compliance and specialized medical shipping requirements',
           timing: 'Day 9-18',
           channel: 'Email/Phone',
           aiStaff: 'Kameelah',
@@ -863,7 +896,8 @@ export default function CampaignTemplates() {
         {
           id: 'urgent_delivery_capabilities',
           name: 'Urgent Delivery Capabilities',
-          description: 'Highlight emergency and time-critical delivery capabilities',
+          description:
+            'Highlight emergency and time-critical delivery capabilities',
           timing: 'Day 19-26',
           channel: 'LinkedIn/Email',
           aiStaff: 'Gary',
@@ -890,9 +924,11 @@ export default function CampaignTemplates() {
     {
       id: 'ecommerce_fulfillment_targeting',
       name: 'E-Commerce Fulfillment Initiative',
-      description: 'Target e-commerce businesses with last-mile delivery and fulfillment needs',
+      description:
+        'Target e-commerce businesses with last-mile delivery and fulfillment needs',
       category: 'lead_generation',
-      targetAudience: 'E-commerce businesses with order fulfillment and last-mile delivery challenges',
+      targetAudience:
+        'E-commerce businesses with order fulfillment and last-mile delivery challenges',
       expectedResults: {
         leads: 90,
         conversions: 27,
@@ -908,7 +944,8 @@ export default function CampaignTemplates() {
         {
           id: 'ecommerce_platform_analysis',
           name: 'E-Commerce Platform Analysis',
-          description: 'Identify e-commerce businesses and their fulfillment challenges',
+          description:
+            'Identify e-commerce businesses and their fulfillment challenges',
           timing: 'Day 1-6',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -917,7 +954,8 @@ export default function CampaignTemplates() {
         {
           id: 'last_mile_delivery_pitch',
           name: 'Last-Mile Delivery Pitch',
-          description: 'Present solutions for efficient last-mile delivery and customer satisfaction',
+          description:
+            'Present solutions for efficient last-mile delivery and customer satisfaction',
           timing: 'Day 7-16',
           channel: 'Email/Phone',
           aiStaff: 'Miles',
@@ -926,7 +964,8 @@ export default function CampaignTemplates() {
         {
           id: 'peak_season_capacity_planning',
           name: 'Peak Season Capacity Planning',
-          description: 'Address holiday and peak season fulfillment capacity needs',
+          description:
+            'Address holiday and peak season fulfillment capacity needs',
           timing: 'Day 17-24',
           channel: 'LinkedIn/Email',
           aiStaff: 'Gary',
