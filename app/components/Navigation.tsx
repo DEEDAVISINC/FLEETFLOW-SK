@@ -12,7 +12,7 @@ import OrganizationSwitcher from './OrganizationSwitcher';
 export default function ProfessionalNavigation() {
   const pathname = usePathname();
   const isCarrierPlatform = pathname === '/carrier-landing';
-  
+
   // Hide navigation on landing page and other marketing pages
   const hiddenPaths = ['/', '/plans', '/privacy', '/terms'];
   if (hiddenPaths.includes(pathname)) {

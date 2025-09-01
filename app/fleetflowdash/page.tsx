@@ -3,145 +3,213 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+interface Load {
+  id: string;
+  status: 'active' | 'pending' | 'delivered';
+  origin: string;
+  destination: string;
+  driver: string;
+  truck: string;
+  revenue: string;
+  distance: string;
+  eta: string;
+  progress: number;
+  commodity: string;
+  weight: string;
+  priority: 'high' | 'medium' | 'low';
+  broker?: {
+    company: string;
+    contact: string;
+    phone: string;
+    email: string;
+    mcNumber: string;
+    rating: number;
+    paymentTerms: string;
+    creditRating: string;
+  };
+}
+
 export default function HomePage() {
   const [selectedLoad, setSelectedLoad] = useState<string>('');
   const [showLoadDetails, setShowLoadDetails] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [loads, setLoads] = useState<Load[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock loads data
-  const loads = [
-    {
-      id: 'FL-001-ATL-MIA',
-      status: 'active',
-      origin: 'Atlanta, GA',
-      destination: 'Miami, FL',
-      driver: 'John Smith',
-      truck: 'TRK-045',
-      revenue: '$2,850',
-      distance: '647 mi',
-      eta: '14:30 EST',
-      progress: 65,
-      commodity: 'Electronics',
-      weight: '42,000 lbs',
-      priority: 'high',
-      broker: {
-        company: 'Elite Freight Solutions',
-        contact: 'Michael Rodriguez',
-        phone: '(555) 234-5678',
-        email: 'mrodriguez@elitefreight.com',
-        mcNumber: 'MC-789456',
-        rating: 4.8,
-        paymentTerms: 'Net 30',
-        creditRating: 'A+',
-      },
-    },
-    {
-      id: 'FL-002-CHI-HOU',
-      status: 'pending',
-      origin: 'Chicago, IL',
-      destination: 'Houston, TX',
-      driver: 'Sarah Johnson',
-      truck: 'TRK-023',
-      revenue: '$3,200',
-      distance: '1,082 mi',
-      eta: '16:45 CST',
-      progress: 0,
-      commodity: 'Automotive Parts',
-      weight: '45,500 lbs',
-      priority: 'medium',
-      broker: {
-        company: 'Swift Logistics Group',
-        contact: 'Jennifer Martinez',
-        phone: '(555) 567-8901',
-        email: 'jmartinez@swiftlogistics.com',
-        mcNumber: 'MC-345789',
-        rating: 4.5,
-        paymentTerms: 'Net 45',
-        creditRating: 'A',
-      },
-    },
-    {
-      id: 'FL-003-LAX-SEA',
-      status: 'delivered',
-      origin: 'Los Angeles, CA',
-      destination: 'Seattle, WA',
-      driver: 'Mike Davis',
-      truck: 'TRK-067',
-      revenue: '$2,950',
-      distance: '1,135 mi',
-      eta: 'Delivered',
-      progress: 100,
-      commodity: 'Consumer Goods',
-      weight: '38,200 lbs',
-      priority: 'low',
-      broker: {
-        company: 'Pacific Coast Freight',
-        contact: 'David Thompson',
-        phone: '(555) 890-1234',
-        email: 'dthompson@pacificfreight.com',
-        mcNumber: 'MC-567890',
-        rating: 4.9,
-        paymentTerms: 'Net 15',
-        creditRating: 'A+',
-      },
-    },
-    {
-      id: 'FL-004-NYC-BOS',
-      status: 'active',
-      origin: 'New York, NY',
-      destination: 'Boston, MA',
-      driver: 'Lisa Chen',
-      truck: 'TRK-089',
-      revenue: '$1,450',
-      distance: '215 mi',
-      eta: '11:20 EST',
-      progress: 85,
-      commodity: 'Food Products',
-      weight: '28,500 lbs',
-      priority: 'high',
-      broker: {
-        company: 'Northeast Transport Partners',
-        contact: 'Sarah Wilson',
-        phone: '(555) 345-6789',
-        email: 'swilson@netransport.com',
-        mcNumber: 'MC-123456',
-        rating: 4.6,
-        paymentTerms: 'Net 30',
-        creditRating: 'A-',
-      },
-    },
-  ];
+  // Real KPI metrics from FleetFlow platform
+  const [kpis, setKpis] = useState({
+    activeLoads: 0,
+    fleetUtilization: 0,
+    mtdRevenue: 0,
+    onTimePerformance: 0,
+    fleetUtilizationChange: 0,
+    revenueChange: 0,
+    onTimeChange: 0,
+  });
+
+  // Real available drivers from tenant carrier database
+  const [availableDrivers, setAvailableDrivers] = useState([]);
+
+  // Real urgent loads from tenant dispatch system
+  const [urgentLoads, setUrgentLoads] = useState([]);
+
+  // Real automation activity feed from tenant operations
+  const [activityFeed, setActivityFeed] = useState([]);
+
+  // Fetch real loads data from FleetFlow platform
+  useEffect(() => {
+    const fetchLoads = async () => {
+      try {
+        // FleetFlow platform endpoint - tenant data fetched based on authentication
+        const response = await fetch('/api/fleetflow/loads');
+        if (response.ok) {
+          const data = await response.json();
+          setLoads(data.loads || []);
+        } else {
+          console.warn('Failed to fetch loads data, using empty array');
+          setLoads([]);
+        }
+      } catch (error) {
+        console.warn('Error fetching loads:', error);
+        setLoads([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLoads();
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchLoads, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Real-time alerts state management
-  const alerts = [
-    {
-      id: 1,
-      type: 'critical',
-      title: 'Load SHP-003 Delayed',
-      message: 'Mechanical breakdown on I-95. ETA pushed by 4 hours',
-      timestamp: '3:45 PM',
-      actionRequired: true,
-      loadId: 'SHP-003',
-    },
-    {
-      id: 2,
-      type: 'warning',
-      title: 'Driver Hours Alert',
-      message: 'Driver Mike Wilson approaching HOS limit in 2 hours',
-      timestamp: '3:40 PM',
-      actionRequired: true,
-      driverId: 'DRV-789',
-    },
-    {
-      id: 3,
-      type: 'info',
-      title: 'Load Delivered',
-      message: 'SHP-002 successfully delivered to Atlanta, GA',
-      timestamp: '3:35 PM',
-      actionRequired: false,
-      loadId: 'SHP-002',
-    },
-  ];
+  const [alerts, setAlerts] = useState([]);
+
+  // Fetch real alerts from FleetFlow platform
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        // FleetFlow platform endpoint - tenant data fetched based on authentication
+        const response = await fetch('/api/fleetflow/alerts');
+        if (response.ok) {
+          const data = await response.json();
+          setAlerts(data.alerts || []);
+        } else {
+          setAlerts([]);
+        }
+      } catch (error) {
+        console.warn('Error fetching alerts:', error);
+        setAlerts([]);
+      }
+    };
+
+    fetchAlerts();
+    // Refresh alerts every 15 seconds
+    const interval = setInterval(fetchAlerts, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch real KPI metrics from FleetFlow platform
+  useEffect(() => {
+    const fetchKpis = async () => {
+      try {
+        // FleetFlow platform endpoint - tenant data fetched based on authentication
+        const response = await fetch('/api/fleetflow/kpis');
+        if (response.ok) {
+          const data = await response.json();
+          setKpis({
+            activeLoads: data.activeLoads || 0,
+            fleetUtilization: data.fleetUtilization || 0,
+            mtdRevenue: data.mtdRevenue || 0,
+            onTimePerformance: data.onTimePerformance || 0,
+            fleetUtilizationChange: data.fleetUtilizationChange || 0,
+            revenueChange: data.revenueChange || 0,
+            onTimeChange: data.onTimeChange || 0,
+          });
+        }
+      } catch (error) {
+        console.warn('Error fetching KPIs:', error);
+      }
+    };
+
+    fetchKpis();
+    // Refresh KPIs every 60 seconds
+    const interval = setInterval(fetchKpis, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch available drivers from FleetFlow platform
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        // FleetFlow platform endpoint - tenant data fetched based on authentication
+        const response = await fetch('/api/fleetflow/drivers/available');
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableDrivers(data.drivers || []);
+        } else {
+          setAvailableDrivers([]);
+        }
+      } catch (error) {
+        console.warn('Error fetching drivers:', error);
+        setAvailableDrivers([]);
+      }
+    };
+
+    fetchDrivers();
+    // Refresh drivers every 30 seconds
+    const interval = setInterval(fetchDrivers, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch urgent loads from FleetFlow platform
+  useEffect(() => {
+    const fetchUrgentLoads = async () => {
+      try {
+        // FleetFlow platform endpoint - tenant data fetched based on authentication
+        const response = await fetch('/api/fleetflow/loads/urgent');
+        if (response.ok) {
+          const data = await response.json();
+          setUrgentLoads(data.loads || []);
+        } else {
+          setUrgentLoads([]);
+        }
+      } catch (error) {
+        console.warn('Error fetching urgent loads:', error);
+        setUrgentLoads([]);
+      }
+    };
+
+    fetchUrgentLoads();
+    // Refresh urgent loads every 15 seconds
+    const interval = setInterval(fetchUrgentLoads, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch automation activity feed from FleetFlow platform
+  useEffect(() => {
+    const fetchActivityFeed = async () => {
+      try {
+        // FleetFlow platform endpoint - tenant data fetched based on authentication
+        const response = await fetch('/api/fleetflow/activity');
+        if (response.ok) {
+          const data = await response.json();
+          setActivityFeed(data.activities || []);
+        } else {
+          setActivityFeed([]);
+        }
+      } catch (error) {
+        console.warn('Error fetching activity feed:', error);
+        setActivityFeed([]);
+      }
+    };
+
+    fetchActivityFeed();
+    // Refresh activity feed every 10 seconds
+    const interval = setInterval(fetchActivityFeed, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const quickLinks = [
     {
@@ -355,6 +423,15 @@ export default function HomePage() {
               Real-time Fleet Operations Dashboard •{' '}
               {currentTime.toLocaleString()}
             </p>
+            <p
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255, 255, 255, 0.6)',
+                margin: '5px 0 0 0',
+              }}
+            >
+              Multi-tenant TMS platform serving freight brokerage operations
+            </p>
           </div>
           <div style={{ display: 'flex', gap: '15px' }}>
             <Link href='/dispatch' style={{ textDecoration: 'none' }}>
@@ -428,7 +505,7 @@ export default function HomePage() {
               marginBottom: '5px',
             }}
           >
-            247
+            {loading ? '' : kpis.activeLoads.toLocaleString()}
           </div>
           <div
             style={{
@@ -438,11 +515,6 @@ export default function HomePage() {
             }}
           >
             Active Loads
-          </div>
-          <div
-            style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
-          >
-            +12% from last week
           </div>
         </div>
 
@@ -468,7 +540,7 @@ export default function HomePage() {
               marginBottom: '5px',
             }}
           >
-            89%
+            {loading ? '...' : `${kpis.fleetUtilization}%`}
           </div>
           <div
             style={{
@@ -482,7 +554,8 @@ export default function HomePage() {
           <div
             style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
           >
-            +5% from last month
+            {kpis.fleetUtilizationChange >= 0 ? '+' : ''}
+            {kpis.fleetUtilizationChange}% from last month
           </div>
         </div>
 
@@ -508,7 +581,7 @@ export default function HomePage() {
               marginBottom: '5px',
             }}
           >
-            $2.4M
+            {loading ? '...' : `$${kpis.mtdRevenue.toLocaleString()}`}
           </div>
           <div
             style={{
@@ -522,7 +595,8 @@ export default function HomePage() {
           <div
             style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
           >
-            +8% from last month
+            {kpis.revenueChange >= 0 ? '+' : ''}
+            {kpis.revenueChange}% from last month
           </div>
         </div>
 
@@ -548,7 +622,7 @@ export default function HomePage() {
               marginBottom: '5px',
             }}
           >
-            96.2%
+            {loading ? '...' : `${kpis.onTimePerformance}%`}
           </div>
           <div
             style={{
@@ -562,7 +636,8 @@ export default function HomePage() {
           <div
             style={{ fontSize: '12px', color: '#10b981', fontWeight: '600' }}
           >
-            +2.1% from last month
+            {kpis.onTimeChange >= 0 ? '+' : ''}
+            {kpis.onTimeChange}% from last month
           </div>
         </div>
       </div>
@@ -686,9 +761,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#22c55e', fontSize: '28px', fontWeight: '700' }}
-            >
-              94%
-            </div>
+            ></div>
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -704,9 +777,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            >
-              847 Total Automated Loads
-            </div>
+            ></div>
           </div>
           <div
             style={{
@@ -720,9 +791,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#3b82f6', fontSize: '28px', fontWeight: '700' }}
-            >
-              2.3m
-            </div>
+            ></div>
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -738,9 +807,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            >
-              99.8% System Uptime
-            </div>
+            ></div>
           </div>
           <div
             style={{
@@ -754,9 +821,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#f59e0b', fontSize: '28px', fontWeight: '700' }}
-            >
-              12
-            </div>
+            ></div>
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -772,9 +837,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            >
-              Real-time Processing
-            </div>
+            ></div>
           </div>
           <div
             style={{
@@ -788,9 +851,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#10b981', fontSize: '28px', fontWeight: '700' }}
-            >
-              4
-            </div>
+            ></div>
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -806,9 +867,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            >
-              24 Total Active Drivers
-            </div>
+            ></div>
           </div>
         </div>
 
@@ -844,117 +903,102 @@ export default function HomePage() {
             <div
               style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
             >
-              {[
-                {
-                  name: 'John Rodriguez',
-                  location: 'Dallas, TX',
-                  distance: '12 mi',
-                  equipment: 'Dry Van',
-                  status: 'Available',
-                },
-                {
-                  name: 'Maria Santos',
-                  location: 'Houston, TX',
-                  distance: '45 mi',
-                  equipment: 'Refrigerated',
-                  status: 'Available',
-                },
-                {
-                  name: 'David Thompson',
-                  location: 'Austin, TX',
-                  distance: '78 mi',
-                  equipment: 'Flatbed',
-                  status: 'Available',
-                },
-                {
-                  name: 'Carlos Martinez',
-                  location: 'San Antonio, TX',
-                  distance: '165 mi',
-                  equipment: 'Dry Van',
-                  status: 'Available',
-                },
-              ].map((driver, index) => (
-                <div
-                  key={index}
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                  }}
-                >
+              {availableDrivers.length > 0 ? (
+                availableDrivers.map((driver, index) => (
                   <div
+                    key={index}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '8px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(16, 185, 129, 0.3)',
                     }}
                   >
-                    <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: '#ffffff',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {driver.name}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '11px',
+                          }}
+                        >
+                          {driver.location} • {driver.distance}
+                        </div>
+                      </div>
                       <div
                         style={{
-                          color: '#ffffff',
-                          fontSize: '13px',
+                          background: 'rgba(16, 185, 129, 0.3)',
+                          color: '#10b981',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '9px',
                           fontWeight: '600',
                         }}
                       >
-                        {driver.name}
+                        {driver.status}
                       </div>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div
                         style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
+                          color: 'rgba(255, 255, 255, 0.7)',
                           fontSize: '11px',
                         }}
                       >
-                        {driver.location} • {driver.distance}
+                        🚚 {driver.equipment}
                       </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.3)',
-                        color: '#10b981',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '9px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {driver.status}
+                      <button
+                        style={{
+                          background:
+                            'linear-gradient(135deg, #10b981, #059669)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ⚡ Instant Match
+                      </button>
                     </div>
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '11px',
-                      }}
-                    >
-                      🚚 {driver.equipment}
-                    </div>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #10b981, #059669)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '6px 12px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      ⚡ Instant Match
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                ></div>
+              )}
             </div>
           </div>
 
@@ -982,137 +1026,127 @@ export default function HomePage() {
             <div
               style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
             >
-              {[
-                {
-                  id: 'FL-001-URGENT',
-                  route: 'Dallas → Miami',
-                  priority: 'CRITICAL',
-                  revenue: '$3,850',
-                  equipment: 'Dry Van',
-                  pickup: 'Today 2:00 PM',
-                },
-                {
-                  id: 'FL-002-HOT',
-                  route: 'Houston → Atlanta',
-                  priority: 'HIGH',
-                  revenue: '$2,750',
-                  equipment: 'Refrigerated',
-                  pickup: 'Today 4:30 PM',
-                },
-                {
-                  id: 'FL-003-RUSH',
-                  route: 'Austin → Denver',
-                  priority: 'HIGH',
-                  revenue: '$2,950',
-                  equipment: 'Flatbed',
-                  pickup: 'Tomorrow 6:00 AM',
-                },
-              ].map((load, index) => (
-                <div
-                  key={index}
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                  }}
-                >
+              {urgentLoads.length > 0 ? (
+                urgentLoads.map((load, index) => (
                   <div
+                    key={index}
                     style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: '8px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
                     }}
                   >
-                    <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: '#ffffff',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {load.id}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '11px',
+                          }}
+                        >
+                          {load.route}
+                        </div>
+                      </div>
                       <div
                         style={{
-                          color: '#ffffff',
-                          fontSize: '13px',
+                          background:
+                            load.priority === 'CRITICAL'
+                              ? 'rgba(239, 68, 68, 0.3)'
+                              : 'rgba(245, 158, 11, 0.3)',
+                          color:
+                            load.priority === 'CRITICAL'
+                              ? '#ef4444'
+                              : '#f59e0b',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '9px',
                           fontWeight: '600',
                         }}
                       >
-                        {load.id}
+                        {load.priority}
                       </div>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '6px',
+                      }}
+                    >
                       <div
                         style={{
-                          color: 'rgba(255, 255, 255, 0.8)',
+                          color: 'rgba(255, 255, 255, 0.7)',
                           fontSize: '11px',
                         }}
                       >
-                        {load.route}
+                        🚚 {load.equipment} • {load.revenue}
                       </div>
                     </div>
                     <div
                       style={{
-                        background:
-                          load.priority === 'CRITICAL'
-                            ? 'rgba(239, 68, 68, 0.3)'
-                            : 'rgba(245, 158, 11, 0.3)',
-                        color:
-                          load.priority === 'CRITICAL' ? '#ef4444' : '#f59e0b',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '9px',
-                        fontWeight: '600',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
-                      {load.priority}
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          fontSize: '10px',
+                        }}
+                      >
+                        📅 {load.pickup}
+                      </div>
+                      <button
+                        style={{
+                          background:
+                            load.priority === 'CRITICAL'
+                              ? 'linear-gradient(135deg, #ef4444, #dc2626)'
+                              : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '6px 12px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ⚡ Auto Match
+                      </button>
                     </div>
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '11px',
-                      }}
-                    >
-                      🚚 {load.equipment} • {load.revenue}
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        fontSize: '10px',
-                      }}
-                    >
-                      📅 {load.pickup}
-                    </div>
-                    <button
-                      style={{
-                        background:
-                          load.priority === 'CRITICAL'
-                            ? 'linear-gradient(135deg, #ef4444, #dc2626)'
-                            : 'linear-gradient(135deg, #f59e0b, #d97706)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '6px 12px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      ⚡ Auto Match
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                  }}
+                ></div>
+              )}
             </div>
           </div>
         </div>
@@ -1139,82 +1173,70 @@ export default function HomePage() {
               overflowY: 'auto' as const,
             }}
           >
-            {[
-              {
-                time: '2:47 PM',
-                action: '🤖 FL-001-URGENT auto-matched to John Rodriguez',
-                status: 'success',
-              },
-              {
-                time: '2:45 PM',
-                action: '📋 BOL workflow initiated for FL-002-HOT',
-                status: 'info',
-              },
-              {
-                time: '2:42 PM',
-                action:
-                  '⚡ Maria Santos accepted FL-004-EXPRESS (2.1m response)',
-                status: 'success',
-              },
-              {
-                time: '2:38 PM',
-                action: '🔄 Auto-match triggered for 3 new urgent loads',
-                status: 'info',
-              },
-              {
-                time: '2:35 PM',
-                action: '📞 Driver notification sent to Carlos Martinez',
-                status: 'warning',
-              },
-            ].map((activity, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '6px 0',
-                  borderBottom:
-                    index < 4 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
-                }}
-              >
+            {activityFeed.length > 0 ? (
+              activityFeed.slice(0, 5).map((activity, index) => (
                 <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '6px 0',
+                    borderBottom:
+                      index < 4 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                  }}
                 >
                   <div
                     style={{
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                      minWidth: '45px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
                     }}
                   >
-                    {activity.time}
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                        minWidth: '45px',
+                      }}
+                    >
+                      {activity.time}
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '11px',
+                      }}
+                    >
+                      {activity.action}
+                    </div>
                   </div>
                   <div
                     style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '11px',
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background:
+                        activity.status === 'success'
+                          ? '#10b981'
+                          : activity.status === 'warning'
+                            ? '#f59e0b'
+                            : '#3b82f6',
                     }}
-                  >
-                    {activity.action}
-                  </div>
+                  ></div>
                 </div>
-                <div
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background:
-                      activity.status === 'success'
-                        ? '#10b981'
-                        : activity.status === 'warning'
-                          ? '#f59e0b'
-                          : '#3b82f6',
-                  }}
-                ></div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div
+                style={{
+                  padding: '20px',
+                  textAlign: 'center',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontSize: '14px',
+                }}
+              ></div>
+            )}
           </div>
         </div>
       </div>
@@ -1405,9 +1427,7 @@ export default function HomePage() {
                 fontWeight: '700',
                 marginBottom: '5px',
               }}
-            >
-              15
-            </div>
+            ></div>
             <div
               style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
             >
@@ -1693,9 +1713,7 @@ export default function HomePage() {
                 fontWeight: '700',
                 marginBottom: '5px',
               }}
-            >
-              0
-            </div>
+            ></div>
             <div
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
             >
