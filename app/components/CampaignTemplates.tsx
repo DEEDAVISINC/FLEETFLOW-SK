@@ -11,6 +11,22 @@ import {
   Target,
   TrendingUp,
   Users,
+  Zap,
+  Building2,
+  Truck,
+  Phone,
+  Heart,
+  Shield,
+  Briefcase,
+  Factory,
+  Package,
+  Stethoscope,
+  ShoppingCart,
+  Coffee,
+  Plane,
+  MapPin,
+  Award,
+  UserPlus,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -36,7 +52,7 @@ interface CampaignTemplate {
   channels: string[];
   steps: CampaignStep[];
   successMetrics: string[];
-  icon: string;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   color: string;
 }
 
@@ -106,7 +122,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium', // Slightly higher due to phone component
       aiStaff: ['Desiree', 'Cliff', 'Gary', 'Charin'], // Added Charin for phone outreach support
       channels: ['Phone', 'Email', 'LinkedIn'], // Phone primary for immediate crisis response
-      icon: '📞',
+      icon: Phone,
       color: 'bg-red-500',
       steps: [
         {
@@ -201,7 +217,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Gary', 'Desiree', 'Logan', 'Lea D.'], // Added Lea D. for lead nurturing
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '🚀',
+      icon: Building2,
       color: 'bg-green-500',
       steps: [
         {
@@ -292,7 +308,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Will', 'Gary'],
       channels: ['LinkedIn', 'Email', 'Phone'],
-      icon: '🏭',
+      icon: Factory,
       color: 'bg-blue-500',
       steps: [
         {
@@ -358,7 +374,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Logan', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '⚡',
+      icon: Zap,
       color: 'bg-orange-500',
       steps: [
         {
@@ -424,7 +440,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Gary', 'Will'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '📧',
+      icon: Mail,
       color: 'bg-green-500',
       steps: [
         {
@@ -492,7 +508,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Gary', 'Desiree'],
       channels: ['Email', 'LinkedIn', 'Content'],
-      icon: '🔥',
+      icon: TrendingUp,
       color: 'bg-purple-500',
       steps: [
         {
@@ -559,7 +575,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Will', 'Gary', 'Resse A. Bell', 'Charin', 'Lea D.'], // Added Charin (phone) + Lea D. (nurturing)
       channels: ['Phone', 'Email', 'LinkedIn', 'In-Person'],
-      icon: '🚀',
+      icon: Zap,
       color: 'bg-indigo-500',
       steps: [
         {
@@ -634,7 +650,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Logan', 'Desiree', 'Miles'],
       channels: ['Phone', 'Email', 'LinkedIn'],
-      icon: '🚛',
+      icon: Truck,
       color: 'bg-orange-500',
       steps: [
         {
@@ -704,7 +720,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Miles', 'Logan', 'Desiree', 'Roland'], // Added Roland for carrier relations
       channels: ['LinkedIn', 'Phone', 'Email', 'Industry Events'],
-      icon: '🚛',
+      icon: Truck,
       color: 'bg-blue-600',
       steps: [
         {
@@ -776,7 +792,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Gary', 'Logan', 'Kameelah'],
       channels: ['Email', 'LinkedIn', 'Phone'],
-      icon: '🏥',
+      icon: Stethoscope,
       color: 'bg-red-500',
       steps: [
         {
@@ -845,7 +861,7 @@ export default function CampaignTemplates() {
       difficulty: 'high',
       aiStaff: ['Cliff', 'Desiree', 'Miles'],
       channels: ['Email', 'Phone', 'LinkedIn', 'Industry Events'],
-      icon: '🛒',
+      icon: ShoppingCart,
       color: 'bg-purple-500',
       steps: [
         {
@@ -914,7 +930,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Logan', 'Desiree', 'Will'],
       channels: ['Phone', 'Email', 'Local Networking'],
-      icon: '📍',
+      icon: MapPin,
       color: 'bg-green-500',
       steps: [
         {
@@ -983,7 +999,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Drew', 'Cliff', 'Logan'],
       channels: ['LinkedIn', 'Phone', 'Executive Presentations'],
-      icon: '🏢',
+      icon: Building2,
       color: 'bg-blue-600',
       steps: [
         {
@@ -1052,7 +1068,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Shanell', 'Desiree', 'Brook R.'],
       channels: ['Phone', 'Email', 'Personal Outreach'],
-      icon: '🔄',
+      icon: Target,
       color: 'bg-orange-500',
       steps: [
         {
@@ -1121,7 +1137,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Carrie R.', 'Brook R.', 'Will'],
       channels: ['Phone', 'Email', 'Networking Events'],
-      icon: '🤝',
+      icon: UserPlus,
       color: 'bg-indigo-500',
       steps: [
         {
@@ -1190,7 +1206,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Logan', 'Desiree', 'Kameelah'],
       channels: ['Phone', 'Email', 'Industry Trade Shows'],
-      icon: '🍕',
+      icon: Coffee,
       color: 'bg-yellow-500',
       steps: [
         {
@@ -1261,7 +1277,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Logan', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '🥤',
+      icon: Coffee,
       color: 'bg-orange-400',
       steps: [
         {
@@ -1330,7 +1346,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Will', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '📦',
+      icon: Package,
       color: 'bg-purple-500',
       steps: [
         {
@@ -1398,7 +1414,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Desiree', 'Brook R.', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn', 'In-Person'],
-      icon: '🏭',
+      icon: Factory,
       color: 'bg-cyan-500',
       steps: [
         {
@@ -1466,7 +1482,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Will', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '🛍️',
+      icon: ShoppingCart,
       color: 'bg-pink-500',
       steps: [
         {
@@ -1534,7 +1550,7 @@ export default function CampaignTemplates() {
       difficulty: 'medium',
       aiStaff: ['Desiree', 'Logan', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '🏗️',
+      icon: Building2,
       color: 'bg-yellow-600',
       steps: [
         {
@@ -1603,7 +1619,7 @@ export default function CampaignTemplates() {
       difficulty: 'hard',
       aiStaff: ['Desiree', 'Kameelah', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '🏥',
+      icon: Stethoscope,
       color: 'bg-red-600',
       steps: [
         {
@@ -1671,7 +1687,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Desiree', 'Miles', 'Gary'],
       channels: ['Email', 'Phone', 'LinkedIn'],
-      icon: '🛒',
+      icon: ShoppingCart,
       color: 'bg-indigo-500',
       steps: [
         {
@@ -1739,7 +1755,7 @@ export default function CampaignTemplates() {
       difficulty: 'easy',
       aiStaff: ['Shanell', 'Gary', 'Brook R.'],
       channels: ['Email', 'Phone', 'Survey', 'Newsletter'],
-      icon: '💎',
+      icon: Award,
       color: 'bg-teal-500',
       steps: [
         {
@@ -1829,56 +1845,68 @@ export default function CampaignTemplates() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
-      <div style={{
-        background: 'rgba(0, 0, 0, 0.3)',
-        border: '1px solid rgba(148, 163, 184, 0.2)',
-        borderRadius: '12px',
-        padding: '24px'
-      }}>
-        <div style={{ 
-          marginBottom: '24px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between' 
-        }}>
+      <div
+        style={{
+          background: 'rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          borderRadius: '12px',
+          padding: '24px',
+        }}
+      >
+        <div
+          style={{
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
           <div>
-            <h2 style={{
-              fontSize: '1.5rem',
-              fontWeight: '700',
-              color: 'white',
-              marginBottom: '4px'
-            }}>
+            <h2
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                color: 'white',
+                marginBottom: '4px',
+              }}
+            >
               🎯 Campaign Templates
             </h2>
-            <p style={{
-              color: 'rgba(255, 255, 255, 0.6)',
-              fontSize: '1rem'
-            }}>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: '1rem',
+              }}
+            >
               Pre-configured campaign strategies powered by DEPOINTE AI staff
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{
-              background: 'rgba(34, 197, 94, 0.2)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
-              borderRadius: '20px',
-              padding: '6px 12px',
-              fontSize: '0.875rem',
-              fontWeight: '600',
-              color: '#22c55e'
-            }}>
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.2)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                borderRadius: '20px',
+                padding: '6px 12px',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                color: '#22c55e',
+              }}
+            >
               {filteredTemplates.length} Templates Available
             </div>
           </div>
         </div>
 
         {/* Category Filter */}
-        <div style={{ 
-          marginBottom: '24px', 
-          display: 'flex', 
-          flexWrap: 'wrap', 
-          gap: '8px' 
-        }}>
+        <div
+          style={{
+            marginBottom: '24px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px',
+          }}
+        >
           {categories.map((category) => (
             <button
               key={category.id}
@@ -1893,19 +1921,23 @@ export default function CampaignTemplates() {
                 fontWeight: '600',
                 transition: 'all 0.2s',
                 cursor: 'pointer',
-                background: selectedCategory === category.id 
-                  ? 'rgba(59, 130, 246, 0.2)' 
-                  : 'rgba(255, 255, 255, 0.1)',
-                border: selectedCategory === category.id
-                  ? '1px solid rgba(59, 130, 246, 0.3)'
-                  : '1px solid rgba(148, 163, 184, 0.2)',
-                color: selectedCategory === category.id 
-                  ? '#3b82f6' 
-                  : 'rgba(255, 255, 255, 0.7)'
+                background:
+                  selectedCategory === category.id
+                    ? 'rgba(59, 130, 246, 0.2)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  selectedCategory === category.id
+                    ? '1px solid rgba(59, 130, 246, 0.3)'
+                    : '1px solid rgba(148, 163, 184, 0.2)',
+                color:
+                  selectedCategory === category.id
+                    ? '#3b82f6'
+                    : 'rgba(255, 255, 255, 0.7)',
               }}
               onMouseEnter={(e) => {
                 if (selectedCategory !== category.id) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.15)';
                 }
               }}
               onMouseLeave={(e) => {
@@ -1974,11 +2006,13 @@ export default function CampaignTemplates() {
       )}
 
       {/* Campaign Templates Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '24px'
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+          gap: '24px',
+        }}
+      >
         {filteredTemplates.map((template) => (
           <div
             key={template.id}
@@ -1988,7 +2022,7 @@ export default function CampaignTemplates() {
               borderRadius: '12px',
               padding: '24px',
               transition: 'all 0.2s',
-              cursor: 'pointer'
+              cursor: 'pointer',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)';
@@ -2000,65 +2034,88 @@ export default function CampaignTemplates() {
             }}
           >
             {/* Template Header */}
-            <div style={{ 
-              marginBottom: '16px', 
-              display: 'flex', 
-              alignItems: 'flex-start', 
-              justifyContent: 'space-between' 
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  borderRadius: '8px',
-                  padding: '8px',
-                  background: template.color.includes('bg-') ? 
-                    (template.color.includes('red') ? '#dc2626' :
-                     template.color.includes('green') ? '#16a34a' :
-                     template.color.includes('blue') ? '#2563eb' :
-                     template.color.includes('purple') ? '#9333ea' :
-                     template.color.includes('yellow') ? '#ca8a04' :
-                     template.color.includes('indigo') ? '#4f46e5' : '#6b7280') : 
-                    template.color,
-                  color: 'white'
-                }}>
-                  <span style={{ fontSize: '1.25rem' }}>{template.icon}</span>
+            <div
+              style={{
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    padding: '8px',
+                    background: template.color.includes('bg-')
+                      ? template.color.includes('red')
+                        ? '#dc2626'
+                        : template.color.includes('green')
+                          ? '#16a34a'
+                          : template.color.includes('blue')
+                            ? '#2563eb'
+                            : template.color.includes('purple')
+                              ? '#9333ea'
+                              : template.color.includes('yellow')
+                                ? '#ca8a04'
+                                : template.color.includes('indigo')
+                                  ? '#4f46e5'
+                                  : '#6b7280'
+                      : template.color,
+                    color: 'white',
+                  }}
+                >
+                  <template.icon style={{ width: '20px', height: '20px' }} />
                 </div>
                 <div>
-                  <h3 style={{
-                    fontWeight: '600',
-                    color: 'white',
-                    fontSize: '1rem',
-                    marginBottom: '4px'
-                  }}>
+                  <h3
+                    style={{
+                      fontWeight: '600',
+                      color: 'white',
+                      fontSize: '1rem',
+                      marginBottom: '4px',
+                    }}
+                  >
                     {template.name}
                   </h3>
-                  <div style={{ 
-                    marginTop: '4px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px' 
-                  }}>
-                    <span style={{
-                      borderRadius: '4px',
-                      padding: '2px 8px',
-                      fontSize: '0.75rem',
-                      fontWeight: '600',
-                      background: template.difficulty === 'easy'
-                        ? 'rgba(34, 197, 94, 0.2)'
-                        : template.difficulty === 'medium'
-                          ? 'rgba(245, 158, 11, 0.2)'
-                          : 'rgba(239, 68, 68, 0.2)',
-                      color: template.difficulty === 'easy'
-                        ? '#22c55e'
-                        : template.difficulty === 'medium'
-                          ? '#f59e0b'
-                          : '#ef4444'
-                    }}>
+                  <div
+                    style={{
+                      marginTop: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        borderRadius: '4px',
+                        padding: '2px 8px',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        background:
+                          template.difficulty === 'easy'
+                            ? 'rgba(34, 197, 94, 0.2)'
+                            : template.difficulty === 'medium'
+                              ? 'rgba(245, 158, 11, 0.2)'
+                              : 'rgba(239, 68, 68, 0.2)',
+                        color:
+                          template.difficulty === 'easy'
+                            ? '#22c55e'
+                            : template.difficulty === 'medium'
+                              ? '#f59e0b'
+                              : '#ef4444',
+                      }}
+                    >
                       {template.difficulty}
                     </span>
-                    <span style={{
-                      fontSize: '0.75rem',
-                      color: 'rgba(255, 255, 255, 0.5)'
-                    }}>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'rgba(255, 255, 255, 0.5)',
+                      }}
+                    >
                       {template.duration}
                     </span>
                   </div>
@@ -2067,127 +2124,191 @@ export default function CampaignTemplates() {
             </div>
 
             {/* Description */}
-            <p style={{
-              marginBottom: '16px',
-              fontSize: '0.875rem',
-              color: 'rgba(255, 255, 255, 0.6)',
-              lineHeight: '1.4'
-            }}>{template.description}</p>
+            <p
+              style={{
+                marginBottom: '16px',
+                fontSize: '0.875rem',
+                color: 'rgba(255, 255, 255, 0.6)',
+                lineHeight: '1.4',
+              }}
+            >
+              {template.description}
+            </p>
 
             {/* Target Audience */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ 
-                marginBottom: '8px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px' 
-              }}>
-                <Target style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
-                <span style={{
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: 'rgba(255, 255, 255, 0.7)'
-                }}>
+              <div
+                style={{
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Target
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'rgba(255, 255, 255, 0.4)',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
                   Target Audience
                 </span>
               </div>
-              <p style={{
-                fontSize: '0.75rem',
-                color: 'rgba(255, 255, 255, 0.6)'
-              }}>{template.targetAudience}</p>
+              <p
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                }}
+              >
+                {template.targetAudience}
+              </p>
             </div>
 
             {/* Expected Results */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ 
-                marginBottom: '8px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px' 
-              }}>
-                <TrendingUp style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
-                <span style={{
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: 'rgba(255, 255, 255, 0.7)'
-                }}>
+              <div
+                style={{
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <TrendingUp
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'rgba(255, 255, 255, 0.4)',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
                   Expected Results
                 </span>
               </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '8px',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  borderRadius: '6px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '8px'
-                }}>
-                  <div style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '700',
-                    color: 'white'
-                  }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '8px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '700',
+                      color: 'white',
+                    }}
+                  >
                     {template.expectedResults.leads}
                   </div>
-                  <div style={{
-                    fontSize: '0.75rem',
-                    color: 'rgba(255, 255, 255, 0.6)'
-                  }}>Leads</div>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
+                    Leads
+                  </div>
                 </div>
-                <div style={{
-                  borderRadius: '6px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '8px'
-                }}>
-                  <div style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '700',
-                    color: 'white'
-                  }}>
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '700',
+                      color: 'white',
+                    }}
+                  >
                     {template.expectedResults.conversions}
                   </div>
-                  <div style={{
-                    fontSize: '0.75rem',
-                    color: 'rgba(255, 255, 255, 0.6)'
-                  }}>Conversions</div>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
+                    Conversions
+                  </div>
                 </div>
-                <div style={{
-                  borderRadius: '6px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '8px'
-                }}>
-                  <div style={{
-                    fontSize: '1.125rem',
-                    fontWeight: '700',
-                    color: '#22c55e'
-                  }}>
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.125rem',
+                      fontWeight: '700',
+                      color: '#22c55e',
+                    }}
+                  >
                     ${(template.expectedResults.revenue / 1000).toFixed(0)}K
                   </div>
-                  <div style={{
-                    fontSize: '0.75rem',
-                    color: 'rgba(255, 255, 255, 0.6)'
-                  }}>Revenue</div>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
+                    Revenue
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* AI Staff */}
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ 
-                marginBottom: '8px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px' 
-              }}>
-                <Users style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
-                <span style={{
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: 'rgba(255, 255, 255, 0.7)'
-                }}>
+              <div
+                style={{
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Users
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'rgba(255, 255, 255, 0.4)',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
                   AI Staff Assigned
                 </span>
               </div>
@@ -2201,7 +2322,7 @@ export default function CampaignTemplates() {
                       padding: '4px 8px',
                       fontSize: '0.75rem',
                       color: '#3b82f6',
-                      fontWeight: '600'
+                      fontWeight: '600',
                     }}
                   >
                     {staff}
@@ -2212,30 +2333,45 @@ export default function CampaignTemplates() {
 
             {/* Success Metrics */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ 
-                marginBottom: '8px', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px' 
-              }}>
-                <CheckCircle style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
-                <span style={{
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  color: 'rgba(255, 255, 255, 0.7)'
-                }}>
+              <div
+                style={{
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <CheckCircle
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    color: 'rgba(255, 255, 255, 0.4)',
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
                   Success Metrics
                 </span>
               </div>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <ul
+                style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}
+              >
                 {template.successMetrics.slice(0, 2).map((metric, index) => (
-                  <li key={index} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '4px',
-                    fontSize: '0.75rem',
-                    color: 'rgba(255, 255, 255, 0.6)'
-                  }}>
+                  <li
+                    key={index}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     <span style={{ color: '#22c55e' }}>•</span>
                     <span>{metric}</span>
                   </li>
@@ -2257,10 +2393,11 @@ export default function CampaignTemplates() {
                   fontWeight: '600',
                   color: 'rgba(255, 255, 255, 0.7)',
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.background =
+                    'rgba(255, 255, 255, 0.15)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
@@ -2284,7 +2421,7 @@ export default function CampaignTemplates() {
                   fontWeight: '600',
                   color: 'white',
                   cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = '#1d4ed8';
@@ -2303,63 +2440,84 @@ export default function CampaignTemplates() {
 
       {/* Template Detail Modal */}
       {selectedTemplate && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 50,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'rgba(0, 0, 0, 0.8)',
-          padding: '16px'
-        }}>
-          <div style={{
-            maxHeight: '90vh',
-            width: '100%',
-            maxWidth: '1024px',
-            overflowY: 'auto',
-            borderRadius: '12px',
-            background: 'rgba(15, 23, 42, 0.95)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
-            backdropFilter: 'blur(10px)'
-          }}>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0, 0, 0, 0.8)',
+            padding: '16px',
+          }}
+        >
+          <div
+            style={{
+              maxHeight: '90vh',
+              width: '100%',
+              maxWidth: '1024px',
+              overflowY: 'auto',
+              borderRadius: '12px',
+              background: 'rgba(15, 23, 42, 0.95)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              backdropFilter: 'blur(10px)',
+            }}
+          >
             <div style={{ padding: '24px' }}>
               {/* Modal Header */}
-              <div style={{ 
-                marginBottom: '24px', 
-                display: 'flex', 
-                alignItems: 'flex-start', 
-                justifyContent: 'space-between' 
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <div style={{
-                    borderRadius: '8px',
-                    padding: '12px',
-                    background: selectedTemplate.color.includes('bg-') ? 
-                      (selectedTemplate.color.includes('red') ? '#dc2626' :
-                       selectedTemplate.color.includes('green') ? '#16a34a' :
-                       selectedTemplate.color.includes('blue') ? '#2563eb' :
-                       selectedTemplate.color.includes('purple') ? '#9333ea' :
-                       selectedTemplate.color.includes('yellow') ? '#ca8a04' :
-                       selectedTemplate.color.includes('indigo') ? '#4f46e5' : '#6b7280') : 
-                      selectedTemplate.color,
-                    color: 'white'
-                  }}>
-                    <span style={{ fontSize: '1.5rem' }}>{selectedTemplate.icon}</span>
+              <div
+                style={{
+                  marginBottom: '24px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '16px' }}
+                >
+                  <div
+                    style={{
+                      borderRadius: '8px',
+                      padding: '12px',
+                      background: selectedTemplate.color.includes('bg-')
+                        ? selectedTemplate.color.includes('red')
+                          ? '#dc2626'
+                          : selectedTemplate.color.includes('green')
+                            ? '#16a34a'
+                            : selectedTemplate.color.includes('blue')
+                              ? '#2563eb'
+                              : selectedTemplate.color.includes('purple')
+                                ? '#9333ea'
+                                : selectedTemplate.color.includes('yellow')
+                                  ? '#ca8a04'
+                                  : selectedTemplate.color.includes('indigo')
+                                    ? '#4f46e5'
+                                    : '#6b7280'
+                        : selectedTemplate.color,
+                      color: 'white',
+                    }}
+                  >
+                    <selectedTemplate.icon style={{ width: '24px', height: '24px' }} />
                   </div>
                   <div>
-                    <h2 style={{
-                      fontSize: '1.5rem',
-                      fontWeight: '700',
-                      color: 'white',
-                      marginBottom: '4px'
-                    }}>
+                    <h2
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '700',
+                        color: 'white',
+                        marginBottom: '4px',
+                      }}
+                    >
                       {selectedTemplate.name}
                     </h2>
-                    <p style={{
-                      marginTop: '4px',
-                      color: 'rgba(255, 255, 255, 0.6)'
-                    }}>
+                    <p
+                      style={{
+                        marginTop: '4px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
                       {selectedTemplate.description}
                     </p>
                   </div>
@@ -2372,7 +2530,7 @@ export default function CampaignTemplates() {
                     background: 'none',
                     border: 'none',
                     fontSize: '1.5rem',
-                    padding: '4px'
+                    padding: '4px',
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
