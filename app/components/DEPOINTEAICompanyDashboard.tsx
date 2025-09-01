@@ -23,6 +23,7 @@ import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
 import ShipperVendorQuestionnaireTemplate from './ShipperVendorQuestionnaireTemplate';
 import TaskCreationInterface from './TaskCreationInterface';
+import CampaignTemplates from './CampaignTemplates';
 
 interface CompanyStats {
   totalRevenue: number;
@@ -627,59 +628,7 @@ export default function DEPOINTEAICompanyDashboard() {
 
         {activeView === 'templates' && (
           <div className='rounded-xl bg-slate-800 p-6'>
-            <div className='mb-6'>
-              <h2 className='mb-2 text-2xl font-bold text-white'>
-                📄 Professional Templates
-              </h2>
-              <p className='text-slate-400'>
-                Generate professional questionnaires and templates for your
-                logistics operations
-              </p>
-            </div>
-
-            <div className='space-y-6'>
-              {/* Shipper/Vendor Questionnaire */}
-              <div className='rounded-lg border border-slate-600 bg-slate-700 p-6'>
-                <h3 className='mb-2 text-lg font-semibold text-white'>
-                  📋 Shipper/Vendor Questionnaire
-                </h3>
-                <p className='mb-4 text-sm text-slate-300'>
-                  Professional questionnaire template for gathering
-                  comprehensive logistics requirements from potential shippers
-                  and vendors.
-                </p>
-                <ShipperVendorQuestionnaireTemplate companyName='DEPOINTE/Freight 1st Direct' />
-              </div>
-
-              {/* AI Communication Scripts */}
-              <div className='rounded-lg border border-slate-600 bg-slate-700 p-6'>
-                <h3 className='mb-2 text-lg font-semibold text-white'>
-                  💬 AI Communication Scripts
-                </h3>
-                <p className='mb-4 text-sm text-slate-300'>
-                  Natural conversation templates designed for authentic,
-                  human-like AI interactions with customers and carriers.
-                </p>
-                <AICommunicationScripts companyName='DEPOINTE/Freight 1st Direct' />
-              </div>
-
-              {/* Carrier Onboarding Template */}
-              <div className='rounded-lg border border-slate-600 bg-slate-700 p-6'>
-                <h3 className='mb-2 text-lg font-semibold text-white'>
-                  🚛 Carrier Onboarding Template
-                </h3>
-                <p className='text-sm text-slate-300'>
-                  Comprehensive questionnaire for gathering essential carrier
-                  information including equipment, service areas, insurance, and
-                  compliance details.
-                </p>
-                <div className='mt-4 text-center'>
-                  <span className='text-xs text-slate-400'>
-                    Coming Soon - Currently in Development
-                  </span>
-                </div>
-              </div>
-            </div>
+            <CampaignTemplates />
           </div>
         )}
 
