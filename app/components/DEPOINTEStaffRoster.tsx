@@ -565,31 +565,32 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
       'Riley Williams\nClient Experience Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Client Reception & Experience Management',
   },
 
-  // 👑 EXECUTIVE LEADERSHIP (SENIOR EXECUTIVE)
+  // 👑 EXECUTIVE LEADERSHIP (FOUNDER & CEO)
   {
     id: 'deeva-deveraux',
     firstName: 'Deeva',
     lastName: 'Deveraux',
     fullName: 'Deeva Deveraux',
     department: 'Executive Leadership',
-    internalRole: 'Senior Executive',
-    customerFacingTitle: 'Senior Executive',
+    internalRole: 'Founder & CEO',
+    customerFacingTitle: 'Founder & CEO',
     avatar: '👑',
-    hint: 'Deeva Deveraux → Senior Executive (work identity)',
+    hint: 'Deeva Deveraux → Founder & CEO (work identity)',
     personality:
-      "Dynamic executive leader who drives strategic initiatives and represents DEPOINTE's vision in the freight brokerage industry",
+      "Visionary founder who leads with innovation and drives DEPOINTE's mission to revolutionize freight brokerage through AI excellence",
     specializations: [
       'Strategic Leadership',
-      'Executive Relations',
+      'Company Vision',
+      'Executive Decision Making',
       'Business Development',
       'Team Leadership',
-      'Industry Networking',
-      'Freight Brokerage Operations',
-      'Executive Decision Making',
+      'Industry Innovation',
+      'Freight Brokerage Expertise',
+      'AI System Architecture',
     ],
     contactMethods: ['phone', 'email', 'linkedin'],
     emailSignature:
-      'Deeva Deveraux\nSenior Executive\nDEPOINTE/ Freight 1st Direct\nDriving Strategic Excellence in Freight Brokerage',
+      'Deeva Deveraux\nFounder & CEO\nDEPOINTE/ Freight 1st Direct\nRevolutionizing Freight Brokerage Through Innovation',
   },
 ];
 
