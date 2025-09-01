@@ -169,6 +169,98 @@ export default function CampaignTemplates() {
       ],
     },
 
+    // NEW BUSINESSES CAMPAIGN - HIGH INTENT PROSPECTS
+    {
+      id: 'new_businesses_freight_blitz',
+      name: 'New Businesses Freight Blitz',
+      description:
+        'Target newly established manufacturers, wholesalers, and warehouses actively seeking freight solutions',
+      category: 'lead_generation',
+      targetAudience:
+        'New manufacturers, wholesalers, and warehouses (1-5 years old) needing immediate logistics partnerships',
+      expectedResults: {
+        leads: 120,
+        conversions: 36,
+        revenue: 225000,
+      },
+      duration: '30 days',
+      difficulty: 'easy',
+      aiStaff: ['Gary', 'Desiree', 'Logan'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🚀',
+      color: 'bg-green-500',
+      steps: [
+        {
+          id: 'new_business_intelligence',
+          name: 'New Business Intelligence Gathering',
+          description:
+            'Identify recently established manufacturers, wholesalers, and warehouses using business registries and industry sources',
+          timing: 'Day 1',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'immediate_value_email_blast',
+          name: 'Immediate Value Email Blast',
+          description:
+            'Send urgent value proposition emails to new businesses highlighting quick setup and immediate capacity availability',
+          timing: 'Day 1-3',
+          channel: 'Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'rapid_response_phone_outreach',
+          name: 'Rapid Response Phone Outreach',
+          description:
+            'Immediate phone calls to engaged prospects offering same-day consultations and quick implementation',
+          timing: 'Day 2-7',
+          channel: 'Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'startup_friendly_proposals',
+          name: 'Startup-Friendly Proposals',
+          description:
+            'Customized proposals with flexible terms, quick implementation, and growth-oriented service packages',
+          timing: 'Day 8-15',
+          channel: 'Email/Phone',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'relationship_acceleration',
+          name: 'Relationship Acceleration',
+          description:
+            'Accelerated relationship building with weekly check-ins and milestone-based service adjustments',
+          timing: 'Day 16-25',
+          channel: 'Phone/Email',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'loyalty_lock_in_sequence',
+          name: 'Loyalty Lock-In Sequence',
+          description:
+            'Long-term partnership offers with loyalty discounts and dedicated support for growing businesses',
+          timing: 'Day 26-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '120+ new business leads generated',
+        '36+ quick-start partnerships secured',
+        '$225K+ immediate revenue pipeline',
+        '75%+ response rate (high intent prospects)',
+        '40%+ meeting booking rate (immediate needs)',
+        '30%+ same-week implementation rate',
+      ],
+    },
+
     {
       id: 'enterprise_manufacturer_hunt',
       name: 'Enterprise Manufacturer Hunt',

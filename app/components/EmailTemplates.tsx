@@ -355,4 +355,219 @@ DEPOINTE/Freight 1st Direct
   },
 ];
 
+export const newBusinessEmailTemplates: EmailTemplate[] = [
+  // EMAIL 1: Immediate Value Proposition (Day 1 - Quick Start Offer)
+  {
+    id: 'quick_start_offer_email_1',
+    name: 'Quick Start Offer Email #1',
+    subject: '🚀 [Company Name] - Same-Week Freight Setup + 30-Day Free Trial',
+    category: 'quick_start',
+    timing: 'Day 1 - Immediate',
+    purpose: 'Offer immediate freight setup for new businesses',
+    content: {
+      greeting: 'Hi [Founder/Owner Name],',
+      opening: `Congratulations on launching [Company Name]! As a fellow entrepreneur, I know how critical reliable freight partners are to your success.`,
+      problem: `Many new businesses struggle with freight logistics because:
+• **Established carriers want long-term commitments** you might not be ready for
+• **Complex contracts** that don't fit startup flexibility
+• **High minimums** that strain your cash flow
+• **Slow onboarding** that delays your growth
+
+But you need freight solutions NOW to serve your customers and grow your business.`,
+      solution: `We specialize in helping NEW businesses like yours get freight solutions FAST:
+
+✅ **Same-week setup** - Get shipping within 3 business days
+✅ **30-day free trial** - Test our service risk-free
+✅ **Flexible terms** - No long-term commitments required
+✅ **Startup pricing** - Competitive rates designed for growing businesses
+✅ **Dedicated support** - Personal account manager for your growth phase
+✅ **Scalable solutions** - Grow with you as your business expands`,
+      proof: `We've helped 200+ new manufacturers, wholesalers, and warehouses get their freight operations running smoothly within the first 90 days of business.`,
+      callToAction: `Ready to get your freight logistics handled immediately?
+
+[Claim Your Free 30-Day Trial] - Same-week implementation
+[Schedule 15-Minute Quick Start Call] - Available today/tomorrow`,
+      closing: `Let's get your freight operations running so you can focus on growing your business.
+
+Best regards,
+Gary - New Business Growth Specialist
+DEPOINTE/Freight 1st Direct
+📞 555-0104 | 📧 gary@depointe.com
+P.S. Most new businesses see 40% faster growth with reliable freight partners in place from day one.`
+    },
+    personalization: [
+      'Business age and industry',
+      'Specific growth challenges',
+      'Competitor freight solutions',
+      'Local market conditions'
+    ],
+    expectedMetrics: {
+      openRate: '78%+ (congratulatory + urgent subject)',
+      clickRate: '35%+ (immediate value proposition)',
+      replyRate: '22%+ (entrepreneurial responsiveness)'
+    }
+  },
+
+  // EMAIL 2: Growth-Focused Partnership (Day 3 - Partnership Building)
+  {
+    id: 'growth_partnership_email_2',
+    name: 'Growth Partnership Email #2',
+    subject: 'How [Company Name] Can Scale 3x Faster with Strategic Freight Partners',
+    category: 'growth_focused',
+    timing: 'Day 3 - Partnership Building',
+    purpose: 'Position as long-term growth partner',
+    content: {
+      greeting: 'Hello [Founder/Owner Name],',
+      opening: `Following up on our quick-start offer - I wanted to share how strategic freight partnerships accelerate new business growth.`,
+      problem: `Most new businesses focus on product development and customer acquisition, but neglect logistics until it's a crisis. This creates:
+
+• **Cash flow bottlenecks** from delayed payments
+• **Customer dissatisfaction** from shipping delays
+• **Missed growth opportunities** due to logistics constraints
+• **Competitive disadvantages** against established players
+• **Operational stress** that distracts from core business`,
+      solution: `We provide NEW BUSINESS freight solutions that GROW WITH YOU:
+
+🌱 **Phase 1 (Months 1-6)**: Basic freight coverage + free consultation
+🌱 **Phase 2 (Months 7-12)**: Volume discounts + dedicated account management
+🌱 **Phase 3 (Months 13-24)**: Strategic logistics optimization + technology integration
+🌱 **Phase 4 (Ongoing)**: Preferred partner status + co-marketing opportunities
+
+**Your Success = Our Success** - We earn more as you grow`,
+      proof: `Our new business clients typically experience:
+• **3x faster shipping volume growth** in year 1
+• **40% lower logistics costs** through strategic partnerships
+• **95% on-time delivery** building customer loyalty
+• **Zero freight-related business disruptions**`,
+      callToAction: `Would you like to see a customized growth roadmap for [Company Name]?
+
+[View Growth Roadmap] - Personalized for your business stage
+[Book Growth Strategy Call] - 30 minutes, completely free`,
+      closing: `Let's build a freight partnership that supports your entrepreneurial vision.
+
+Best regards,
+Gary - Growth Partnership Specialist
+DEPOINTE/Freight 1st Direct
+📞 555-0104 | 📧 gary@depointe.com`
+    },
+    personalization: [
+      'Business growth stage and goals',
+      'Industry-specific challenges',
+      'Competitive landscape',
+      'Local market opportunities'
+    ],
+    expectedMetrics: {
+      openRate: '65%+ (growth-focused subject)',
+      clickRate: '28%+ (valuable roadmap offer)',
+      replyRate: '18%+ (partnership interest)'
+    }
+  },
+
+  // EMAIL 3: Success Stories & ROI (Day 7 - Proof of Results)
+  {
+    id: 'success_stories_email_3',
+    name: 'Success Stories Email #3',
+    subject: '[Company Name] - Real Results: How [Similar Business] Grew 300% with Freight Partners',
+    category: 'case_study',
+    timing: 'Day 7 - Proof of Results',
+    purpose: 'Provide social proof and ROI data',
+    content: {
+      greeting: '[Founder/Owner Name],',
+      opening: `I wanted to share a success story from a business very similar to [Company Name] that launched around the same time you did.`,
+      problem: `[Similar Business] faced the same challenges you likely encounter:
+• **Limited capital** for logistics investments
+• **Unpredictable shipping costs** eating into margins
+• **Customer complaints** about delivery times
+• **Difficulty scaling** operations during growth spurts
+• **Lack of industry connections** for better rates`,
+      solution: `They partnered with us 18 months ago and here's what happened:
+
+📈 **Month 1-3**: Immediate cost savings of 35% on shipping
+📈 **Month 4-6**: 200% increase in on-time deliveries
+📈 **Month 7-12**: Expanded to 3 new markets with reliable logistics
+📈 **Month 13-18**: 300% overall business growth with 40% higher margins
+📈 **Current**: Preferred partner status with co-marketing benefits
+
+**Total ROI**: 450% return on their logistics investment`,
+      proof: `The numbers speak for themselves:
+• **35% immediate cost reduction**
+• **300% business growth acceleration**
+• **95% customer satisfaction improvement**
+• **40% margin improvement**
+• **Zero service disruptions during peak seasons**`,
+      callToAction: `Ready to replicate these results for [Company Name]?
+
+[Get Your ROI Calculator] - Custom analysis for your business
+[Schedule Success Story Call] - Learn exactly how they did it`,
+      closing: `Success leaves clues. Let's apply these proven strategies to your business.
+
+Best regards,
+Gary - Results Specialist
+DEPOINTE/Freight 1st Direct
+📞 555-0104 | 📧 gary@depointe.com`
+    },
+    personalization: [
+      'Similar business in same industry/location',
+      'Comparable business age and size',
+      'Specific growth metrics',
+      'Industry-specific challenges solved'
+    ],
+    expectedMetrics: {
+      openRate: '62%+ (results-focused subject)',
+      clickRate: '32%+ (ROI curiosity)',
+      replyRate: '20%+ (success story appeal)'
+    }
+  },
+
+  // EMAIL 4: Limited-Time Partnership Offer (Day 10 - Urgency Creation)
+  {
+    id: 'partnership_offer_email_4',
+    name: 'Partnership Offer Email #4',
+    subject: '⏰ LIMITED TIME: Exclusive New Business Partnership - Ends [Date]',
+    category: 'urgency_offer',
+    timing: 'Day 10 - Urgency Creation',
+    purpose: 'Create urgency with exclusive new business offer',
+    content: {
+      greeting: 'Hi [Founder/Owner Name],',
+      opening: `As a token of appreciation for being an entrepreneur building something new, I'd like to offer you an exclusive partnership opportunity.`,
+      problem: `Most logistics companies treat new businesses as an afterthought, but we believe the most important partnerships are formed at the beginning of the journey.`,
+      solution: `**EXCLUSIVE NEW BUSINESS PARTNERSHIP PACKAGE:**
+
+🎯 **6 Months Free Freight Consulting** - Strategic logistics planning
+🎯 **Preferred Partner Rates** - 25% below standard pricing
+🎯 **Priority Service** - Fast-track all your shipments
+🎯 **Growth Mentorship** - Monthly strategy sessions with logistics experts
+🎯 **Technology Integration** - Free shipping software setup
+🎯 **Marketing Support** - Co-branded content for your customers
+
+**Total Value: $12,000+ in savings and services**
+**Your Investment: Just getting started with us**`,
+      proof: `This exclusive package is only available to the first 50 new businesses we partner with this quarter. 35 have already been claimed by smart entrepreneurs like you.`,
+      callToAction: `This offer expires [Date] - don't miss this opportunity to give your business the logistics foundation it needs.
+
+[Claim Your Partnership Package] - Exclusive new business offer
+[Call to Discuss] - 555-0104 (immediate priority booking)`,
+      closing: `Let's build something great together. Your success story starts with the right partners.
+
+URGENTLY,
+Gary - New Business Partnership Director
+DEPOINTE/Freight 1st Direct
+📞 555-0104 | 📧 gary@depointe.com
+
+P.S. Only 15 packages remaining. First come, first served for qualified new businesses.`
+    },
+    personalization: [
+      'Specific offer expiration date',
+      'Remaining package count',
+      'Business stage and needs',
+      'Industry-specific value propositions'
+    ],
+    expectedMetrics: {
+      openRate: '70%+ (limited-time urgency)',
+      clickRate: '38%+ (exclusive offer appeal)',
+      replyRate: '25%+ (scarcity creates action)'
+    }
+  }
+];
+
 export default desperateShipperEmailTemplates;
