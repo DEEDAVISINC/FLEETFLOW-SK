@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
 import DesperateProspectsBatchDeployment, {
   DesperateProspectsTask,
@@ -12,7 +13,6 @@ import ShipperBatchDeployment, {
   ShipperTask,
 } from '../components/ShipperBatchDeployment';
 import TaskCreationInterface from '../components/TaskCreationInterface';
-import AIStaffScheduler from '../components/AIStaffScheduler';
 
 // DEPOINTE AI Staff with Human Names (all 18 members) - No mock data
 const depointeStaff = [
