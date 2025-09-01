@@ -1,6 +1,6 @@
 // AI API Cost Reduction Service - Advanced Batching & Caching
 // TARGET: Reduce API calls from 500/day to 20/day (96% reduction)
-// CURRENT: $15/day limit (91% reduction from $175 before optimization)
+// CURRENT: $6.27/day limit ($188/month - 91% reduction from $2,100 before optimization)
 
 interface BatchTask {
   id: string;
@@ -42,7 +42,7 @@ class AIBatchService {
   private batchInterval = 5 * 60 * 1000; // 5 minutes
   private dailyTokenLimit = 100000; // 100k tokens/day limit
   private dailyTokensUsed = 0;
-  private dailyCostLimit = 15; // $15/day limit (91% reduction from $175 before optimization)
+  private dailyCostLimit = 6.27; // $6.27/day limit ($188/month target - 91% reduction from $2,100 before optimization)
 
   // Advanced caching system
   private responseCache = new Map<string, CacheEntry>();

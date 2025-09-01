@@ -35,9 +35,9 @@ interface SavingsData {
 export default function AICostMonitor() {
   const [stats, setStats] = useState<UsageStats | null>(null);
   const [monthlySavings, setMonthlySavings] = useState<SavingsData>({
-    individualCalls: 3500, // What we would have spent WITHOUT any optimization
-    batchCall: 350, // What we actually spent WITH full optimization
-    saved: 3150, // Amount saved (91% reduction)
+    individualCalls: 2100, // What we would have spent WITHOUT any optimization
+    batchCall: 188, // What we actually spent WITH full optimization ($188 target)
+    saved: 1912, // Amount saved (91% reduction from $2,100 to $188)
     percentage: 91, // Percentage saved with all optimizations
   });
   const [isExpanded, setIsExpanded] = useState(false);
