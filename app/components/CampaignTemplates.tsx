@@ -5,14 +5,20 @@ import {
   CheckCircle,
   Clock,
   DollarSign,
-  Mail,
   MessageSquare,
   Play,
   Target,
   TrendingUp,
   Users,
+  Search,
+  Filter,
+  Star,
+  Activity,
+  ArrowUpDown,
+  Grid,
+  List,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 interface CampaignTemplate {
   id: string;
@@ -28,7 +34,9 @@ interface CampaignTemplate {
   expectedResults: {
     leads: number;
     conversions: number;
-    revenue: number;
+    dailyRevenue: number;
+    monthlyRevenue: number;
+    totalRevenue: number;
   };
   duration: string;
   difficulty: 'easy' | 'medium' | 'hard';
@@ -73,6 +81,13 @@ export default function CampaignTemplates() {
     []
   );
 
+  // ORGANIZATION & FILTERING STATE
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('revenue');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showOnlyPriority, setShowOnlyPriority] = useState<boolean>(false);
+
   // PRIORITY CAMPAIGN EXECUTION PLAN
   // PHASE 1: TOP 3 CAMPAIGNS FOR MAXIMUM REVENUE
   const priorityCampaigns = [
@@ -100,7 +115,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 150, // Conservative: Based on FMCSA data quality
         conversions: 45, // Realistic: 30% conversion rate for crisis prospects
-        revenue: 225000, // Realistic: $7,500/month based on historical freight rates
+        dailyRevenue: 7500, // $225,000 ÷ 30 days
+        monthlyRevenue: 225000, // Realistic: $7,500/month based on historical freight rates
+        totalRevenue: 225000, // 30-day campaign total
       },
       duration: '30 days',
       difficulty: 'medium', // Slightly higher due to phone component
@@ -195,7 +212,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 95, // Conservative: Based on new business registration data
         conversions: 29, // Realistic: 30% conversion for high-intent prospects
-        revenue: 180000, // Realistic: $6,000/month based on startup freight needs
+        dailyRevenue: 6000, // $180,000 ÷ 30 days
+        monthlyRevenue: 180000, // Realistic: $6,000/month based on startup freight needs
+        totalRevenue: 180000, // 30-day campaign total
       },
       duration: '30 days',
       difficulty: 'easy',
@@ -286,7 +305,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 75,
         conversions: 15,
-        revenue: 750000,
+        dailyRevenue: 16667, // $750,000 ÷ 45 days
+        monthlyRevenue: 750000, // Enterprise-level revenue projection
+        totalRevenue: 750000, // 45-day campaign total
       },
       duration: '45 days',
       difficulty: 'medium',
@@ -352,7 +373,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 120,
         conversions: 36,
-        revenue: 180000,
+        dailyRevenue: 7200, // $180,000 ÷ 25 days
+        monthlyRevenue: 180000,
+        totalRevenue: 180000, // 25-day campaign total
       },
       duration: '25 days',
       difficulty: 'medium',
@@ -418,7 +441,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 0,
         conversions: 25,
-        revenue: 125000,
+        dailyRevenue: 5952, // $125,000 ÷ 21 days
+        monthlyRevenue: 125000,
+        totalRevenue: 125000, // 21-day campaign total
       },
       duration: '21 days',
       difficulty: 'easy',
@@ -486,7 +511,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 0,
         conversions: 30,
-        revenue: 150000,
+        dailyRevenue: 2500, // $150,000 ÷ 60 days
+        monthlyRevenue: 150000,
+        totalRevenue: 150000, // 60-day campaign total
       },
       duration: '60 days',
       difficulty: 'medium',
@@ -553,7 +580,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 0,
         conversions: 12,
-        revenue: 600000,
+        dailyRevenue: 20000, // $600,000 ÷ 30 days
+        monthlyRevenue: 600000,
+        totalRevenue: 600000, // 30-day campaign total
       },
       duration: '30 days',
       difficulty: 'hard',
@@ -628,7 +657,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 75,
         conversions: 38,
-        revenue: 225000, // 10% of carrier load fees
+        dailyRevenue: 7500, // $225,000 ÷ 30 days
+        monthlyRevenue: 225000, // 10% of carrier load fees
+        totalRevenue: 225000, // 30-day campaign total
       },
       duration: '30 days',
       difficulty: 'medium',
@@ -698,7 +729,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 200,
         conversions: 80, // Tiered across different carrier sizes
-        revenue: 489000, // From tiered dispatch fees (6-10% of carrier loads)
+        dailyRevenue: 10867, // $489,000 ÷ 45 days
+        monthlyRevenue: 489000, // From tiered dispatch fees (6-10% of carrier loads)
+        totalRevenue: 489000, // 45-day campaign total
       },
       duration: '45 days',
       difficulty: 'medium',
@@ -758,6 +791,646 @@ export default function CampaignTemplates() {
       ],
     },
 
+    // SPECIALIZED CARRIER ACQUISITION CAMPAIGNS
+    {
+      id: 'flatbed_carrier_specialization',
+      name: 'Flatbed Carrier Network Expansion',
+      description:
+        'Target flatbed carriers specializing in construction materials, machinery, and oversized equipment - HIGH MARGIN OPPORTUNITY featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with premium rates (12-15% load fees)',
+      category: 'carrier_specialization',
+      targetAudience:
+        'Flatbed carriers, heavy haul specialists, and equipment transporters with oversized load experience',
+      expectedResults: {
+        leads: 120,
+        conversions: 48, // Higher conversion due to specialized demand
+        dailyRevenue: 14000, // $420,000 ÷ 30 days (premium rates)
+        monthlyRevenue: 420000, // Premium 12-15% load fees
+        totalRevenue: 420000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Roland', 'Miles', 'Logan'], // Roland for carrier relations
+      channels: ['LinkedIn', 'Industry Associations', 'Phone'],
+      icon: '🚛',
+      color: 'bg-orange-600',
+      steps: [
+        {
+          id: 'flatbed_market_research',
+          name: 'Flatbed Market Intelligence',
+          description: 'Identify flatbed carriers through specialized trucking associations and equipment directories',
+          timing: 'Day 1-3',
+          channel: 'Research',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'premium_equipment_outreach',
+          name: 'Premium Equipment Outreach',
+          description: 'Target carriers with flatbed/oversized equipment for high-margin loads',
+          timing: 'Day 4-15',
+          channel: 'LinkedIn/Phone',
+          aiStaff: 'Roland & Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'specialized_load_matching',
+          name: 'Specialized Load Matching',
+          description: 'Connect flatbed carriers with construction and equipment shippers',
+          timing: 'Day 16-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Premium load fee collection (12-15%)',
+        'Construction equipment shipment volume',
+        'Oversized load capacity utilization',
+        'Carrier retention rate for specialized loads'
+      ],
+    },
+
+    {
+      id: 'reefer_carrier_network',
+      name: 'Refrigerated Carrier Acquisition',
+      description:
+        'Target temperature-controlled carriers for food, pharmaceuticals, and perishable goods - CONSISTENT HIGH DEMAND featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with steady revenue streams',
+      category: 'carrier_specialization',
+      targetAudience:
+        'Reefer carriers, temperature-controlled specialists, and cold chain logistics providers',
+      expectedResults: {
+        leads: 95,
+        conversions: 38,
+        dailyRevenue: 11000, // $330,000 ÷ 30 days
+        monthlyRevenue: 330000, // Steady 10-12% load fees
+        totalRevenue: 330000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Roland', 'Desiree', 'Kameelah'], // Kameelah for compliance
+      channels: ['Industry Trade Shows', 'Email', 'Phone'],
+      icon: '🚛',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'reefer_capacity_analysis',
+          name: 'Reefer Capacity Analysis',
+          description: 'Map refrigerated carrier availability and temperature-controlled equipment',
+          timing: 'Day 1-5',
+          channel: 'Data Analysis',
+          aiStaff: 'Roland',
+          automationLevel: 'full',
+        },
+        {
+          id: 'cold_chain_outreach',
+          name: 'Cold Chain Outreach',
+          description: 'Target carriers with temperature monitoring and cold chain certification',
+          timing: 'Day 6-20',
+          channel: 'Industry Networks',
+          aiStaff: 'Roland & Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'perishable_load_matching',
+          name: 'Perishable Load Matching',
+          description: 'Connect reefer carriers with food and pharma shippers',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Temperature-controlled shipment volume',
+        'Cold chain compliance certifications',
+        'Perishable goods capacity utilization',
+        'Seasonal demand management'
+      ],
+    },
+
+    {
+      id: 'dry_van_carrier_expansion',
+      name: 'Dry Van Carrier Fleet Growth',
+      description:
+        'Target dry van carriers for general freight and LTL shipments - HIGH VOLUME OPPORTUNITY featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with consistent load availability',
+      category: 'carrier_specialization',
+      targetAudience:
+        'Dry van carriers, general freight specialists, and LTL transportation providers',
+      expectedResults: {
+        leads: 180,
+        conversions: 72, // Higher volume due to general freight demand
+        dailyRevenue: 9500, // $285,000 ÷ 30 days
+        monthlyRevenue: 285000, // 8-10% load fees on high volume
+        totalRevenue: 285000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'easy',
+      aiStaff: ['Roland', 'Miles', 'Logan'],
+      channels: ['LinkedIn', 'Email', 'Phone'],
+      icon: '🚛',
+      color: 'bg-green-600',
+      steps: [
+        {
+          id: 'dry_van_market_mapping',
+          name: 'Dry Van Market Mapping',
+          description: 'Identify dry van carriers through carrier directories and transportation networks',
+          timing: 'Day 1-5',
+          channel: 'Research',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'general_freight_outreach',
+          name: 'General Freight Outreach',
+          description: 'Target carriers for consumer goods, retail, and general merchandise',
+          timing: 'Day 6-20',
+          channel: 'Multi-Channel',
+          aiStaff: 'Roland & Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'ltl_load_optimization',
+          name: 'LTL Load Optimization',
+          description: 'Connect dry van carriers with LTL shippers and consolidate loads',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'LTL shipment consolidation efficiency',
+        'General freight capacity utilization',
+        'Load factor improvement (85%+ target)',
+        'Carrier onboarding speed'
+      ],
+    },
+
+    {
+      id: 'owner_operator_recruitment',
+      name: 'Owner-Operator Acquisition Blitz',
+      description:
+        'Target independent owner-operators and solo drivers - FLEXIBLE HIGH-MARGIN RECRUITMENT featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with premium dispatch fees',
+      category: 'carrier_specialization',
+      targetAudience:
+        'Independent owner-operators, solo drivers, and small carrier businesses',
+      expectedResults: {
+        leads: 150,
+        conversions: 60, // Higher conversion for owner-operators seeking dispatch
+        dailyRevenue: 13333, // $400,000 ÷ 30 days (premium fees)
+        monthlyRevenue: 400000, // Premium 10-12% dispatch fees
+        totalRevenue: 400000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Roland', 'Miles', 'Charin'], // Charin for phone outreach
+      channels: ['Phone', 'LinkedIn', 'Industry Events'],
+      icon: '🚛',
+      color: 'bg-purple-600',
+      steps: [
+        {
+          id: 'owner_operator_profiling',
+          name: 'Owner-Operator Profiling',
+          description: 'Identify independent carriers seeking dispatch partnerships',
+          timing: 'Day 1-7',
+          channel: 'Data Mining',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'personalized_dispatch_outreach',
+          name: 'Personalized Dispatch Outreach',
+          description: 'Direct phone and LinkedIn outreach to owner-operators',
+          timing: 'Day 8-20',
+          channel: 'Phone/LinkedIn',
+          aiStaff: 'Roland & Charin',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'owner_operator_onboarding',
+          name: 'Owner-Operator Onboarding',
+          description: 'Rapid onboarding and load assignment for qualified owner-operators',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Owner-operator retention rate (90%+ target)',
+        'Average load acceptance rate',
+        'Premium dispatch fee collection',
+        'Rapid deployment capability'
+      ],
+    },
+
+    {
+      id: 'regional_carrier_network',
+      name: 'Regional Carrier Partnership Program',
+      description:
+        'Target regional carriers for local and short-haul opportunities - STEADY RELIABLE REVENUE featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing within defined geographic areas',
+      category: 'carrier_specialization',
+      targetAudience:
+        'Regional carriers, local trucking companies, and short-haul specialists',
+      expectedResults: {
+        leads: 110,
+        conversions: 44,
+        dailyRevenue: 8000, // $240,000 ÷ 30 days
+        monthlyRevenue: 240000, // Steady 8-10% fees on regional loads
+        totalRevenue: 240000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'easy',
+      aiStaff: ['Roland', 'Logan', 'Lea D.'], // Lea D. for relationship building
+      channels: ['Local Networking', 'Email', 'Phone'],
+      icon: '🚛',
+      color: 'bg-indigo-600',
+      steps: [
+        {
+          id: 'regional_market_analysis',
+          name: 'Regional Market Analysis',
+          description: 'Map regional carrier availability and local transportation networks',
+          timing: 'Day 1-5',
+          channel: 'Market Research',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'local_network_building',
+          name: 'Local Network Building',
+          description: 'Build relationships with regional carriers through local associations',
+          timing: 'Day 6-20',
+          channel: 'Networking',
+          aiStaff: 'Roland & Lea D.',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'regional_load_distribution',
+          name: 'Regional Load Distribution',
+          description: 'Connect regional carriers with local shippers and receivers',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Regional market penetration',
+        'Local delivery reliability',
+        'Network expansion rate',
+        'Regional carrier satisfaction'
+      ],
+    },
+
+    // SPECIALTY EQUIPMENT CARRIER CAMPAIGNS
+    {
+      id: 'dump_truck_specialization',
+      name: 'Dump Truck Network Development',
+      description:
+        'Target dump truck carriers for construction materials, aggregates, and bulk commodities - PREMIUM RATES (15-20% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for high-demand construction materials',
+      category: 'specialty_equipment',
+      targetAudience:
+        'Dump truck carriers, construction material haulers, and aggregate transportation specialists with proper licensing and equipment',
+      expectedResults: {
+        leads: 95,
+        conversions: 38, // Specialized equipment = higher conversion
+        dailyRevenue: 16667, // $500,000 ÷ 30 days (premium rates)
+        monthlyRevenue: 500000, // Premium 15-20% load fees for specialty equipment
+        totalRevenue: 500000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'high', // Specialized equipment requirements
+      aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for DOT compliance
+      channels: ['Construction Trade Shows', 'Industry Associations', 'LinkedIn'],
+      icon: '🚛',
+      color: 'bg-amber-600',
+      steps: [
+        {
+          id: 'construction_equipment_mapping',
+          name: 'Construction Equipment Mapping',
+          description: 'Identify dump truck carriers through construction associations and equipment directories',
+          timing: 'Day 1-5',
+          channel: 'Industry Research',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'bulk_material_outreach',
+          name: 'Bulk Material Outreach',
+          description: 'Target carriers with proper licensing for gravel, sand, dirt, and construction debris',
+          timing: 'Day 6-20',
+          channel: 'Industry Networks',
+          aiStaff: 'Roland & Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'specialty_load_matching',
+          name: 'Specialty Load Matching',
+          description: 'Connect dump truck carriers with construction and aggregate shippers',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Construction material shipment volume',
+        'Aggregate transportation capacity utilization',
+        'Premium load fee collection (15-20%)',
+        'Construction season peak performance'
+      ],
+    },
+
+    {
+      id: 'cement_bulk_carrier_network',
+      name: 'Cement & Bulk Carrier Acquisition',
+      description:
+        'Target cement mixers and bulk carriers for construction materials - ULTRA-PREMIUM RATES (18-25% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for time-critical construction projects',
+      category: 'specialty_equipment',
+      targetAudience:
+        'Cement carriers, bulk material haulers, and ready-mix concrete transportation specialists',
+      expectedResults: {
+        leads: 75,
+        conversions: 30, // Very specialized equipment = premium value
+        dailyRevenue: 20000, // $600,000 ÷ 30 days (ultra-premium rates)
+        monthlyRevenue: 600000, // Ultra-premium 18-25% load fees
+        totalRevenue: 600000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Extremely specialized equipment
+      aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for specialized compliance
+      channels: ['Construction Industry Events', 'Cement Association Networks', 'Direct Outreach'],
+      icon: '🚛',
+      color: 'bg-gray-700',
+      steps: [
+        {
+          id: 'cement_industry_mapping',
+          name: 'Cement Industry Mapping',
+          description: 'Identify cement carriers through construction and building material associations',
+          timing: 'Day 1-7',
+          channel: 'Industry Directories',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'ready_mix_specialization',
+          name: 'Ready-Mix Specialization',
+          description: 'Target carriers with temperature control and specialized cement handling equipment',
+          timing: 'Day 8-20',
+          channel: 'Construction Networks',
+          aiStaff: 'Roland & Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'construction_site_matching',
+          name: 'Construction Site Matching',
+          description: 'Connect cement carriers with construction sites and ready-mix plants',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Cement/concrete shipment volume',
+        'Construction project on-time delivery',
+        'Ultra-premium load fee collection (18-25%)',
+        'Ready-mix temperature compliance'
+      ],
+    },
+
+    {
+      id: 'oversized_heavy_haul_network',
+      name: 'Oversized Heavy Haul Carrier Network',
+      description:
+        'Target heavy haul carriers for oversized and overweight equipment - MAXIMUM PREMIUM RATES (20-30% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with pilot car coordination',
+      category: 'specialty_equipment',
+      targetAudience:
+        'Heavy haul carriers, oversized load specialists, and industrial equipment transporters with proper permits and pilot car services',
+      expectedResults: {
+        leads: 60,
+        conversions: 24, // Extremely specialized = highest value
+        dailyRevenue: 33333, // $1,000,000 ÷ 30 days (maximum premium rates)
+        monthlyRevenue: 1000000, // Maximum premium 20-30% load fees
+        totalRevenue: 1000000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Permits, pilot cars, specialized equipment required
+      aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for permit compliance
+      channels: ['Heavy Haul Associations', 'Permitting Agencies', 'Direct Industry Contacts'],
+      icon: '🚛',
+      color: 'bg-red-700',
+      steps: [
+        {
+          id: 'heavy_haul_equipment_mapping',
+          name: 'Heavy Haul Equipment Mapping',
+          description: 'Identify carriers with oversized load permits and heavy haul capabilities',
+          timing: 'Day 1-7',
+          channel: 'Specialized Directories',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'permit_compliance_outreach',
+          name: 'Permit Compliance Outreach',
+          description: 'Target carriers with current permits and pilot car coordination services',
+          timing: 'Day 8-20',
+          channel: 'Regulatory Networks',
+          aiStaff: 'Roland & Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'oversized_load_matching',
+          name: 'Oversized Load Matching',
+          description: 'Connect heavy haul carriers with industrial equipment manufacturers and construction sites',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Oversized equipment shipment volume',
+        'Permit compliance success rate',
+        'Maximum premium load fee collection (20-30%)',
+        'Pilot car coordination efficiency'
+      ],
+    },
+
+    {
+      id: 'lowboy_trailer_specialization',
+      name: 'Lowboy Trailer Carrier Network',
+      description:
+        'Target lowboy trailer carriers for heavy machinery and equipment transport - PREMIUM RATES (16-22% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for construction equipment',
+      category: 'specialty_equipment',
+      targetAudience:
+        'Lowboy trailer carriers, heavy equipment haulers, and machinery transportation specialists',
+      expectedResults: {
+        leads: 70,
+        conversions: 28,
+        dailyRevenue: 20000, // $600,000 ÷ 30 days
+        monthlyRevenue: 600000, // Premium 16-22% load fees
+        totalRevenue: 600000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'high', // Specialized trailers and equipment knowledge required
+      aiStaff: ['Roland', 'Miles', 'Logan'],
+      channels: ['Construction Equipment Dealers', 'Machinery Associations', 'Industry Trade Shows'],
+      icon: '🚛',
+      color: 'bg-slate-700',
+      steps: [
+        {
+          id: 'machinery_transport_mapping',
+          name: 'Machinery Transport Mapping',
+          description: 'Identify lowboy carriers through construction equipment and machinery associations',
+          timing: 'Day 1-5',
+          channel: 'Equipment Directories',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'heavy_equipment_outreach',
+          name: 'Heavy Equipment Outreach',
+          description: 'Target carriers experienced with bulldozers, excavators, and industrial machinery',
+          timing: 'Day 6-20',
+          channel: 'Construction Networks',
+          aiStaff: 'Roland & Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'equipment_transport_matching',
+          name: 'Equipment Transport Matching',
+          description: 'Connect lowboy carriers with construction equipment manufacturers and rental companies',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Heavy machinery shipment volume',
+        'Construction equipment transport capacity',
+        'Premium load fee collection (16-22%)',
+        'Equipment damage prevention rate'
+      ],
+    },
+
+    {
+      id: 'tanker_chemical_carrier_network',
+      name: 'Tanker & Chemical Carrier Acquisition',
+      description:
+        'Target tanker carriers for liquids, chemicals, and hazardous materials - HIGH COMPLIANCE PREMIUM RATES (15-20% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with HazMat expertise',
+      category: 'specialty_equipment',
+      targetAudience:
+        'Tanker carriers, chemical haulers, and hazardous materials transportation specialists with proper certifications',
+      expectedResults: {
+        leads: 80,
+        conversions: 32,
+        dailyRevenue: 15000, // $450,000 ÷ 30 days
+        monthlyRevenue: 450000, // High compliance 15-20% load fees
+        totalRevenue: 450000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // HazMat certifications and compliance required
+      aiStaff: ['Roland', 'Kameelah', 'Miles'], // Kameelah for HazMat compliance
+      channels: ['Chemical Industry Associations', 'HazMat Training Centers', 'Regulatory Networks'],
+      icon: '🚛',
+      color: 'bg-orange-800',
+      steps: [
+        {
+          id: 'chemical_transport_mapping',
+          name: 'Chemical Transport Mapping',
+          description: 'Identify tanker carriers through chemical industry and HazMat associations',
+          timing: 'Day 1-7',
+          channel: 'Industry Certifications',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'hazmat_compliance_outreach',
+          name: 'HazMat Compliance Outreach',
+          description: 'Target carriers with current HazMat certifications and proper tanker equipment',
+          timing: 'Day 8-20',
+          channel: 'Regulatory Networks',
+          aiStaff: 'Roland & Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'chemical_load_matching',
+          name: 'Chemical Load Matching',
+          description: 'Connect tanker carriers with chemical manufacturers and distributors',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Chemical/hazardous material shipment volume',
+        'HazMat compliance certification rate',
+        'High compliance load fee collection (15-20%)',
+        'Environmental safety record'
+      ],
+    },
+
+    {
+      id: 'pilot_car_escort_services',
+      name: 'Pilot Car Escort Service Network',
+      description:
+        'Target pilot car drivers and escort services for oversized loads - ESSENTIAL SUPPORT SERVICE (8-12% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for oversized load coordination',
+      category: 'specialty_equipment',
+      targetAudience:
+        'Pilot car drivers, escort service providers, and oversized load coordination specialists',
+      expectedResults: {
+        leads: 120,
+        conversions: 48, // High demand for oversized load escorts
+        dailyRevenue: 6667, // $200,000 ÷ 30 days
+        monthlyRevenue: 200000, // Essential service 8-12% fees
+        totalRevenue: 200000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for permit coordination
+      channels: ['Pilot Car Associations', 'State DOT Networks', 'Oversized Load Services'],
+      icon: '🚗',
+      color: 'bg-yellow-600',
+      steps: [
+        {
+          id: 'pilot_car_service_mapping',
+          name: 'Pilot Car Service Mapping',
+          description: 'Identify certified pilot car drivers and escort service providers',
+          timing: 'Day 1-5',
+          channel: 'State DOT Directories',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'oversized_load_coordination',
+          name: 'Oversized Load Coordination',
+          description: 'Target drivers experienced with permit coordination and route planning',
+          timing: 'Day 6-20',
+          channel: 'Regulatory Networks',
+          aiStaff: 'Roland & Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'escort_service_matching',
+          name: 'Escort Service Matching',
+          description: 'Connect pilot car services with heavy haul carriers and oversized load shippers',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Oversized load escort coordination',
+        'Permit approval success rate',
+        'On-time delivery for oversized shipments',
+        'State DOT compliance partnerships'
+      ],
+    },
+
     // SPECIALIZED INDUSTRY CAMPAIGNS
     {
       id: 'healthcare_pharma_distribution',
@@ -770,7 +1443,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 85,
         conversions: 26,
-        revenue: 195000,
+        dailyRevenue: 6500, // $195,000 ÷ 30 days
+        monthlyRevenue: 195000,
+        totalRevenue: 195000, // 30-day campaign total
       },
       duration: '30 days',
       difficulty: 'medium',
@@ -839,7 +1514,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 120,
         conversions: 36,
-        revenue: 270000,
+        dailyRevenue: 6000, // $270,000 ÷ 45 days
+        monthlyRevenue: 270000,
+        totalRevenue: 270000, // 45-day campaign total
       },
       duration: '45 days',
       difficulty: 'high',
@@ -908,7 +1585,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 95,
         conversions: 29,
-        revenue: 218000,
+        dailyRevenue: 6229, // $218,000 ÷ 35 days
+        monthlyRevenue: 218000,
+        totalRevenue: 218000, // 35-day campaign total
       },
       duration: '35 days',
       difficulty: 'medium',
@@ -977,7 +1656,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 65,
         conversions: 13,
-        revenue: 650000,
+        dailyRevenue: 10833, // $650,000 ÷ 60 days
+        monthlyRevenue: 650000,
+        totalRevenue: 650000, // 60-day campaign total
       },
       duration: '60 days',
       difficulty: 'hard',
@@ -1046,7 +1727,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 75,
         conversions: 30,
-        revenue: 180000,
+        dailyRevenue: 7200, // $180,000 ÷ 25 days
+        monthlyRevenue: 180000,
+        totalRevenue: 180000, // 25-day campaign total
       },
       duration: '25 days',
       difficulty: 'easy',
@@ -1115,7 +1798,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 110,
         conversions: 44,
-        revenue: 330000,
+        dailyRevenue: 8250, // $330,000 ÷ 40 days
+        monthlyRevenue: 330000,
+        totalRevenue: 330000, // 40-day campaign total
       },
       duration: '40 days',
       difficulty: 'easy',
@@ -1184,7 +1869,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 90,
         conversions: 27,
-        revenue: 203000,
+        dailyRevenue: 6767, // $203,000 ÷ 30 days
+        monthlyRevenue: 203000,
+        totalRevenue: 203000, // 30-day campaign total
       },
       duration: '30 days',
       difficulty: 'medium',
@@ -1255,7 +1942,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 85,
         conversions: 26,
-        revenue: 325000,
+        dailyRevenue: 9286, // $325,000 ÷ 35 days
+        monthlyRevenue: 325000,
+        totalRevenue: 325000, // 35-day campaign total
       },
       duration: '35 days',
       difficulty: 'medium',
@@ -1324,7 +2013,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 95,
         conversions: 29,
-        revenue: 290000,
+        dailyRevenue: 6444, // $290,000 ÷ 45 days
+        monthlyRevenue: 290000,
+        totalRevenue: 290000, // 45-day campaign total
       },
       duration: '40 days',
       difficulty: 'medium',
@@ -1392,7 +2083,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 65,
         conversions: 20,
-        revenue: 400000,
+        dailyRevenue: 8889, // $400,000 ÷ 45 days
+        monthlyRevenue: 400000,
+        totalRevenue: 400000, // 45-day campaign total
       },
       duration: '45 days',
       difficulty: 'hard',
@@ -1460,7 +2153,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 75,
         conversions: 23,
-        revenue: 345000,
+        dailyRevenue: 9200, // $345,000 ÷ 38 days (rounded)
+        monthlyRevenue: 345000,
+        totalRevenue: 345000, // 38-day campaign total
       },
       duration: '38 days',
       difficulty: 'medium',
@@ -1528,7 +2223,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 70,
         conversions: 21,
-        revenue: 315000,
+        dailyRevenue: 7000, // $315,000 ÷ 45 days
+        monthlyRevenue: 315000,
+        totalRevenue: 315000, // 45-day campaign total
       },
       duration: '42 days',
       difficulty: 'medium',
@@ -1597,7 +2294,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 55,
         conversions: 17,
-        revenue: 255000,
+        dailyRevenue: 7229, // $255,000 ÷ 35 days
+        monthlyRevenue: 255000,
+        totalRevenue: 255000, // 35-day campaign total
       },
       duration: '35 days',
       difficulty: 'hard',
@@ -1665,7 +2364,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 90,
         conversions: 27,
-        revenue: 270000,
+        dailyRevenue: 7714, // $270,000 ÷ 35 days
+        monthlyRevenue: 270000,
+        totalRevenue: 270000, // 35-day campaign total
       },
       duration: '32 days',
       difficulty: 'easy',
@@ -1733,7 +2434,9 @@ export default function CampaignTemplates() {
       expectedResults: {
         leads: 0,
         conversions: 0,
-        revenue: 300000,
+        dailyRevenue: 3333, // $300,000 ÷ 90 days
+        monthlyRevenue: 300000,
+        totalRevenue: 300000, // 90-day campaign total
       },
       duration: '90 days',
       difficulty: 'easy',
@@ -1788,23 +2491,531 @@ export default function CampaignTemplates() {
         'NPS score improvement of 15+ points',
       ],
     },
+
+    // SHIPPER SALES SUB-CAMPAIGNS FOR SPECIALTY CARRIER LOAD ACQUISITION
+    {
+      id: 'construction_dump_truck_sales',
+      name: 'Construction Dump Truck Load Acquisition',
+      description: 'Target construction companies, demolition firms, and earth-moving contractors who need dump truck services for bulk material transport',
+      category: 'carrier_specialization',
+      targetAudience: 'Construction companies, demolition contractors, landscaping firms, mining operations',
+      expectedResults: {
+        leads: 120,
+        conversions: 36,
+        dailyRevenue: 4500,
+        monthlyRevenue: 135000,
+        totalRevenue: 135000,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Will'],
+      channels: ['Email', 'Phone', 'Thomas.net'],
+      icon: '🏗️',
+      color: 'bg-orange-500',
+      steps: [
+        {
+          id: 'construction_lead_identification',
+          name: 'Construction Lead Identification',
+          description: 'Identify active construction projects and companies needing bulk material transport',
+          timing: 'Day 1-10',
+          channel: 'Thomas.net + FMCSA Data',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'bulk_material_transport_pitch',
+          name: 'Bulk Material Transport Pitch',
+          description: 'Present dump truck fleet availability for soil, gravel, concrete, and demolition debris',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'construction_site_logistics',
+          name: 'Construction Site Logistics',
+          description: 'Coordinate pickup/delivery scheduling with construction project timelines',
+          timing: 'Day 21-30',
+          channel: 'Phone + GO WITH THE FLOW',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '120+ construction leads contacted',
+        '36+ confirmed load bookings',
+        '$135K revenue from construction industry',
+        '85% on-time delivery for bulk materials',
+      ],
+    },
+
+    {
+      id: 'cement_bulk_carrier_sales',
+      name: 'Cement & Bulk Carrier Load Acquisition',
+      description: 'Target cement plants, ready-mix concrete producers, and bulk material suppliers needing pneumatic and dry bulk transport',
+      category: 'carrier_specialization',
+      targetAudience: 'Cement manufacturers, ready-mix plants, aggregate suppliers, chemical processors',
+      expectedResults: {
+        leads: 95,
+        conversions: 29,
+        dailyRevenue: 5800,
+        monthlyRevenue: 174000,
+        totalRevenue: 174000,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Roland'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🏭',
+      color: 'bg-gray-600',
+      steps: [
+        {
+          id: 'bulk_material_supplier_mapping',
+          name: 'Bulk Material Supplier Mapping',
+          description: 'Identify suppliers of cement, aggregates, and dry bulk materials',
+          timing: 'Day 1-10',
+          channel: 'Thomas.net + Industry Databases',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'pneumatic_transport_solutions',
+          name: 'Pneumatic Transport Solutions',
+          description: 'Present pneumatic trailer fleet for contamination-free bulk transport',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'bulk_logistics_coordination',
+          name: 'Bulk Logistics Coordination',
+          description: 'Schedule bulk material deliveries with production planning',
+          timing: 'Day 21-30',
+          channel: 'MARKETPLACE BIDDING',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '95+ bulk material suppliers contacted',
+        '29+ bulk transport contracts secured',
+        '$174K revenue from bulk industry',
+        '95% contamination-free delivery guarantee',
+      ],
+    },
+
+    {
+      id: 'oversized_heavy_haul_sales',
+      name: 'Oversized Heavy Haul Load Acquisition',
+      description: 'Target industrial manufacturers, construction equipment dealers, and machinery movers needing oversized transport services',
+      category: 'carrier_specialization',
+      targetAudience: 'Heavy equipment manufacturers, construction machinery dealers, industrial plant builders',
+      expectedResults: {
+        leads: 75,
+        conversions: 23,
+        dailyRevenue: 9200,
+        monthlyRevenue: 276000,
+        totalRevenue: 276000,
+      },
+      duration: '30 days',
+      difficulty: 'high',
+      aiStaff: ['Desiree', 'Kameelah', 'Roland'],
+      channels: ['Email', 'Phone', 'Regulatory Networks'],
+      icon: '🚛',
+      color: 'bg-red-600',
+      steps: [
+        {
+          id: 'heavy_equipment_inventory_analysis',
+          name: 'Heavy Equipment Inventory Analysis',
+          description: 'Identify companies with oversized equipment needing transport',
+          timing: 'Day 1-10',
+          channel: 'Industry Databases + FMCSA',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'permit_coordination_services',
+          name: 'Permit Coordination Services',
+          description: 'Offer complete DOT permit coordination and route planning',
+          timing: 'Day 11-20',
+          channel: 'Phone + Email',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'oversized_transport_execution',
+          name: 'Oversized Transport Execution',
+          description: 'Execute heavy haul moves with pilot car coordination',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '75+ heavy equipment companies contacted',
+        '23+ oversized transport contracts',
+        '$276K revenue from heavy haul',
+        '100% permit compliance success rate',
+      ],
+    },
+
+    {
+      id: 'lowboy_trailer_sales',
+      name: 'Lowboy Trailer Load Acquisition',
+      description: 'Target construction equipment dealers, crane companies, and industrial equipment manufacturers needing lowboy transport',
+      category: 'carrier_specialization',
+      targetAudience: 'Construction equipment dealers, crane rental companies, industrial equipment manufacturers',
+      expectedResults: {
+        leads: 85,
+        conversions: 26,
+        dailyRevenue: 7800,
+        monthlyRevenue: 234000,
+        totalRevenue: 234000,
+      },
+      duration: '30 days',
+      difficulty: 'high',
+      aiStaff: ['Desiree', 'Roland'],
+      channels: ['Email', 'Phone', 'Equipment Directories'],
+      icon: '🚛',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'equipment_dealer_network',
+          name: 'Equipment Dealer Network',
+          description: 'Build network of construction and industrial equipment dealers',
+          timing: 'Day 1-10',
+          channel: 'Thomas.net + Industry Associations',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'lowboy_transport_specialization',
+          name: 'Lowboy Transport Specialization',
+          description: 'Present specialized lowboy fleet for heavy machinery transport',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'equipment_delivery_coordination',
+          name: 'Equipment Delivery Coordination',
+          description: 'Coordinate equipment deliveries with dealer schedules',
+          timing: 'Day 21-30',
+          channel: 'MARKETPLACE BIDDING',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '85+ equipment dealers contacted',
+        '26+ lowboy transport contracts',
+        '$234K revenue from equipment transport',
+        '90% on-time equipment deliveries',
+      ],
+    },
+
+    {
+      id: 'tanker_chemical_sales',
+      name: 'Tanker & Chemical Transport Load Acquisition',
+      description: 'Target chemical manufacturers, petroleum distributors, and hazardous material shippers needing specialized tanker transport',
+      category: 'carrier_specialization',
+      targetAudience: 'Chemical manufacturers, petroleum distributors, hazardous waste companies',
+      expectedResults: {
+        leads: 65,
+        conversions: 20,
+        dailyRevenue: 6400,
+        monthlyRevenue: 192000,
+        totalRevenue: 192000,
+      },
+      duration: '30 days',
+      difficulty: 'high',
+      aiStaff: ['Desiree', 'Kameelah'],
+      channels: ['Email', 'Phone', 'Regulatory Compliance Networks'],
+      icon: '🚛',
+      color: 'bg-yellow-600',
+      steps: [
+        {
+          id: 'chemical_manufacturer_identification',
+          name: 'Chemical Manufacturer Identification',
+          description: 'Identify chemical and petroleum companies needing tanker transport',
+          timing: 'Day 1-10',
+          channel: 'FMCSA + Industry Databases',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'hazmat_transport_compliance',
+          name: 'Hazmat Transport Compliance',
+          description: 'Ensure all tanker operations meet DOT hazmat regulations',
+          timing: 'Day 11-20',
+          channel: 'Regulatory Coordination',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'chemical_logistics_execution',
+          name: 'Chemical Logistics Execution',
+          description: 'Execute chemical and petroleum transport with safety protocols',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '65+ chemical companies contacted',
+        '20+ hazmat transport contracts',
+        '$192K revenue from chemical transport',
+        '100% regulatory compliance maintained',
+      ],
+    },
+
+    {
+      id: 'pilot_car_escort_sales',
+      name: 'Pilot Car Escort Service Load Acquisition',
+      description: 'Target oversized load shippers and heavy haul carriers needing certified pilot car escort services',
+      category: 'carrier_specialization',
+      targetAudience: 'Heavy haul carriers, oversized load shippers, construction companies',
+      expectedResults: {
+        leads: 90,
+        conversions: 27,
+        dailyRevenue: 2700,
+        monthlyRevenue: 81000,
+        totalRevenue: 81000,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Roland'],
+      channels: ['Email', 'Phone', 'State DOT Networks'],
+      icon: '🚗',
+      color: 'bg-green-600',
+      steps: [
+        {
+          id: 'pilot_car_certification_network',
+          name: 'Pilot Car Certification Network',
+          description: 'Build network of certified pilot car drivers across all states',
+          timing: 'Day 1-10',
+          channel: 'State DOT Directories',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'oversized_load_coordination',
+          name: 'Oversized Load Coordination',
+          description: 'Coordinate pilot car escorts with heavy haul carriers',
+          timing: 'Day 11-20',
+          channel: 'Phone/Email',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'escort_service_matching',
+          name: 'Escort Service Matching',
+          description: 'Match pilot car services with heavy haul transport needs',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '90+ oversized load shippers contacted',
+        '27+ pilot car escort contracts',
+        '$81K revenue from escort services',
+        '100% state compliance for oversized loads',
+      ],
+    },
+
+    // GENERAL LOAD ACQUISITION PIPELINE CAMPAIGNS
+    {
+      id: 'general_freight_pipeline',
+      name: 'General Freight Pipeline Development',
+      description: 'Build comprehensive load pipeline from diverse shipper sources to feed all specialty carrier types',
+      category: 'lead_generation',
+      targetAudience: 'All freight shippers with regular or irregular shipping needs',
+      expectedResults: {
+        leads: 200,
+        conversions: 60,
+        dailyRevenue: 7500,
+        monthlyRevenue: 225000,
+        totalRevenue: 225000,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Will', 'Gary'],
+      channels: ['Email', 'Phone', 'Thomas.net', 'TruckingPlanet'],
+      icon: '📦',
+      color: 'bg-indigo-600',
+      steps: [
+        {
+          id: 'multi_source_lead_generation',
+          name: 'Multi-Source Lead Generation',
+          description: 'Generate leads from Thomas.net, TruckingPlanet, FMCSA data, and direct outreach',
+          timing: 'Day 1-10',
+          channel: 'All Platforms',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'freight_needs_assessment',
+          name: 'Freight Needs Assessment',
+          description: 'Qualify shippers and assess their freight requirements',
+          timing: 'Day 11-20',
+          channel: 'Phone/Email',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'carrier_matching_pipeline',
+          name: 'Carrier Matching Pipeline',
+          description: 'Match qualified loads with appropriate specialty carriers',
+          timing: 'Day 21-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '200+ shipper leads qualified',
+        '60+ loads matched to carriers',
+        '$225K revenue from diverse freight',
+        '85% carrier utilization rate',
+      ],
+    },
+
+    {
+      id: 'seasonal_load_forecasting',
+      name: 'Seasonal Load Forecasting & Acquisition',
+      description: 'Predict and acquire seasonal freight loads for construction, agriculture, and retail industries',
+      category: 'lead_generation',
+      targetAudience: 'Companies with seasonal shipping patterns',
+      expectedResults: {
+        leads: 150,
+        conversions: 45,
+        dailyRevenue: 6750,
+        monthlyRevenue: 202500,
+        totalRevenue: 202500,
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Ana Lytics'],
+      channels: ['Email', 'Phone', 'Industry Reports'],
+      icon: '📈',
+      color: 'bg-teal-600',
+      steps: [
+        {
+          id: 'seasonal_pattern_analysis',
+          name: 'Seasonal Pattern Analysis',
+          description: 'Analyze historical shipping data to predict seasonal demand',
+          timing: 'Day 1-10',
+          channel: 'Data Analysis',
+          aiStaff: 'Ana Lytics',
+          automationLevel: 'full',
+        },
+        {
+          id: 'seasonal_shipper_outreach',
+          name: 'Seasonal Shipper Outreach',
+          description: 'Contact companies during their peak shipping seasons',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'peak_season_capacity_planning',
+          name: 'Peak Season Capacity Planning',
+          description: 'Ensure carrier capacity matches seasonal load demand',
+          timing: 'Day 21-30',
+          channel: 'MARKETPLACE BIDDING',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '150+ seasonal shippers contacted',
+        '45+ peak season contracts secured',
+        '$202K revenue from seasonal freight',
+        '95% capacity utilization during peak seasons',
+      ],
+    },
   ];
 
   const categories = [
-    { id: 'all', name: 'All Campaigns', icon: Target },
-    { id: 'lead_generation', name: 'Lead Generation', icon: Users },
-    { id: 'follow_up', name: 'Follow-Up', icon: Mail },
-    { id: 'nurture', name: 'Nurture', icon: TrendingUp },
-    { id: 'conversion', name: 'Conversion', icon: DollarSign },
-    { id: 'retention', name: 'Retention', icon: CheckCircle },
+    { id: 'all', name: 'All Campaigns', icon: '🎯' },
+    { id: 'lead_generation', name: 'Lead Generation', icon: '👥' },
+    { id: 'carrier_specialization', name: 'Carrier Specialization', icon: '🚛' },
+    { id: 'specialty_equipment', name: 'Specialty Equipment', icon: '🚛' },
+    { id: 'follow_up', name: 'Follow-Up', icon: '📧' },
+    { id: 'nurture', name: 'Nurture', icon: '📈' },
+    { id: 'conversion', name: 'Conversion', icon: '💰' },
+    { id: 'retention', name: 'Retention', icon: '❤️' },
   ];
 
-  const filteredTemplates =
-    selectedCategory === 'all'
-      ? campaignTemplates
-      : campaignTemplates.filter(
-          (template) => template.category === selectedCategory
-        );
+  // ORGANIZED FILTERING & SORTING LOGIC
+  const processedTemplates = useMemo(() => {
+    let filtered = campaignTemplates;
+
+    // Category filtering
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(template => template.category === selectedCategory);
+    }
+
+    // Priority campaigns filter
+    if (showOnlyPriority) {
+      filtered = filtered.filter(template => priorityCampaigns.includes(template.id));
+    }
+
+    // Search filtering
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(template =>
+        template.name.toLowerCase().includes(query) ||
+        template.description.toLowerCase().includes(query) ||
+        template.targetAudience.toLowerCase().includes(query)
+      );
+    }
+
+    // Sorting
+    filtered.sort((a, b) => {
+      let aValue: any, bValue: any;
+
+      switch (sortBy) {
+        case 'revenue':
+          aValue = a.expectedResults.monthlyRevenue;
+          bValue = b.expectedResults.monthlyRevenue;
+          break;
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'difficulty':
+          const difficultyOrder = { easy: 1, medium: 2, hard: 3 };
+          aValue = difficultyOrder[a.difficulty];
+          bValue = difficultyOrder[b.difficulty];
+          break;
+        case 'duration':
+          aValue = parseInt(a.duration);
+          bValue = parseInt(b.duration);
+          break;
+        default:
+          aValue = a.expectedResults.monthlyRevenue;
+          bValue = b.expectedResults.monthlyRevenue;
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    return filtered;
+  }, [campaignTemplates, selectedCategory, showOnlyPriority, searchQuery, sortBy, sortOrder]);
+
+  const filteredTemplates = processedTemplates;
 
   const launchCampaign = (template: CampaignTemplate) => {
     const newCampaign: CampaignInstance = {
@@ -1828,6 +3039,112 @@ export default function CampaignTemplates() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* CAMPAIGN SUMMARY OVERVIEW */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '16px',
+          marginBottom: '8px',
+        }}
+      >
+        {/* Active Campaigns */}
+        <div
+          style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            minWidth: '180px',
+          }}
+        >
+          <Activity style={{ width: '16px', height: '16px', color: '#10b981' }} />
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#10b981' }}>
+              {activeCampaigns.length}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+              Active Campaigns
+            </div>
+          </div>
+        </div>
+
+        {/* Total Revenue Potential */}
+        <div
+          style={{
+            background: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid rgba(34, 197, 94, 0.2)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            minWidth: '200px',
+          }}
+        >
+          <DollarSign style={{ width: '16px', height: '16px', color: '#22c55e' }} />
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#22c55e' }}>
+              ${(filteredTemplates.reduce((sum, template) => sum + template.expectedResults.monthlyRevenue, 0) / 1000).toFixed(1)}K
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+              Filtered Revenue Potential
+            </div>
+          </div>
+        </div>
+
+        {/* Priority Campaigns */}
+        <div
+          style={{
+            background: 'rgba(251, 191, 36, 0.1)',
+            border: '1px solid rgba(251, 191, 36, 0.2)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            minWidth: '180px',
+          }}
+        >
+          <Star style={{ width: '16px', height: '16px', color: '#fbbf24' }} />
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fbbf24' }}>
+              {priorityCampaigns.length}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+              Priority Campaigns
+            </div>
+          </div>
+        </div>
+
+        {/* Categories Available */}
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            minWidth: '180px',
+          }}
+        >
+          <Filter style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
+          <div>
+            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#3b82f6' }}>
+              {categories.length}
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)' }}>
+              Campaign Categories
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div
         style={{
@@ -1882,6 +3199,136 @@ export default function CampaignTemplates() {
           </div>
         </div>
 
+        {/* ORGANIZATION CONTROLS */}
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '16px',
+            alignItems: 'center',
+            marginTop: '16px',
+            paddingTop: '16px',
+            borderTop: '1px solid rgba(148, 163, 184, 0.2)',
+          }}
+        >
+          {/* Search Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '300px' }}>
+            <Search style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.6)' }} />
+            <input
+              type="text"
+              placeholder="Search campaigns..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '6px',
+                padding: '8px 12px',
+                color: 'white',
+                fontSize: '0.875rem',
+                minWidth: '250px',
+                outline: 'none',
+              }}
+            />
+          </div>
+
+          {/* Sort Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ArrowUpDown style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.6)' }} />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '6px',
+                padding: '8px 12px',
+                color: 'white',
+                fontSize: '0.875rem',
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="revenue">Sort by Revenue</option>
+              <option value="name">Sort by Name</option>
+              <option value="difficulty">Sort by Difficulty</option>
+              <option value="duration">Sort by Duration</option>
+            </select>
+
+            <button
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '6px',
+                padding: '8px',
+                color: 'white',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {sortOrder === 'asc' ? '↑' : '↓'}
+            </button>
+          </div>
+
+          {/* View Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <button
+              onClick={() => setViewMode('grid')}
+              style={{
+                background: viewMode === 'grid' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border: viewMode === 'grid' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '6px',
+                padding: '8px',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+            >
+              <Grid style={{ width: '16px', height: '16px' }} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              style={{
+                background: viewMode === 'list' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border: viewMode === 'list' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '6px',
+                padding: '8px',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+            >
+              <List style={{ width: '16px', height: '16px' }} />
+            </button>
+          </div>
+
+          {/* Priority Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.875rem',
+              color: 'rgba(255, 255, 255, 0.8)',
+              cursor: 'pointer',
+            }}>
+              <input
+                type="checkbox"
+                checked={showOnlyPriority}
+                onChange={(e) => setShowOnlyPriority(e.target.checked)}
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  accentColor: '#22c55e',
+                }}
+              />
+              <Star style={{ width: '14px', height: '14px', color: '#fbbf24' }} />
+              Priority Only
+            </label>
+          </div>
+        </div>
+
         {/* Category Filter */}
         <div
           style={{
@@ -1930,7 +3377,7 @@ export default function CampaignTemplates() {
                 }
               }}
             >
-              <category.icon style={{ width: '16px', height: '16px' }} />
+              <span style={{ fontSize: '1rem' }}>{category.icon}</span>
               <span>{category.name}</span>
             </button>
           ))}
@@ -2053,6 +3500,16 @@ export default function CampaignTemplates() {
                 >
                   <span style={{ fontSize: '1.25rem' }}>{template.icon}</span>
                 </div>
+                {priorityCampaigns.includes(template.id) && (
+                  <Star
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      color: '#fbbf24',
+                      filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.5))',
+                    }}
+                  />
+                )}
                 <div>
                   <h3
                     style={{
@@ -2102,6 +3559,21 @@ export default function CampaignTemplates() {
                     >
                       {template.duration}
                     </span>
+                    {activeCampaigns.some(campaign => campaign.templateId === template.id) && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.75rem',
+                          color: '#10b981',
+                          fontWeight: '600',
+                        }}
+                      >
+                        <Activity style={{ width: '12px', height: '12px' }} />
+                        Active
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -2186,11 +3658,12 @@ export default function CampaignTemplates() {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
                   gap: '8px',
                   textAlign: 'center',
                 }}
               >
+                {/* Top Row: Leads and Conversions */}
                 <div
                   style={{
                     borderRadius: '6px',
@@ -2241,29 +3714,89 @@ export default function CampaignTemplates() {
                     Conversions
                   </div>
                 </div>
+
+                {/* Bottom Row: Revenue Breakdown */}
                 <div
                   style={{
                     borderRadius: '6px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    padding: '8px',
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    padding: '6px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
                   }}
                 >
                   <div
                     style={{
-                      fontSize: '1.125rem',
+                      fontSize: '0.875rem',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    ${template.expectedResults.dailyRevenue.toLocaleString()}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.625rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
+                    Daily
+                  </div>
+                </div>
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    padding: '6px',
+                    border: '1px solid rgba(34, 197, 94, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '0.875rem',
                       fontWeight: '700',
                       color: '#22c55e',
                     }}
                   >
-                    ${(template.expectedResults.revenue / 1000).toFixed(0)}K
+                    ${template.expectedResults.monthlyRevenue.toLocaleString()}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.625rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
+                    Monthly
+                  </div>
+                </div>
+
+                {/* Total Revenue - Full Width */}
+                <div
+                  style={{
+                    gridColumn: '1 / -1',
+                    borderRadius: '6px',
+                    background: 'rgba(34, 197, 94, 0.15)',
+                    padding: '8px',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.25rem',
+                      fontWeight: '800',
+                      color: '#22c55e',
+                      textAlign: 'center',
+                    }}
+                  >
+                    ${(template.expectedResults.totalRevenue / 1000).toFixed(1)}K Total
                   </div>
                   <div
                     style={{
                       fontSize: '0.75rem',
                       color: 'rgba(255, 255, 255, 0.6)',
+                      textAlign: 'center',
                     }}
                   >
-                    Revenue
+                    Projected Revenue
                   </div>
                 </div>
               </div>
