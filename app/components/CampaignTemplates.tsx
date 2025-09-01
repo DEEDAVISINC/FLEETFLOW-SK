@@ -2075,59 +2075,134 @@ export default function CampaignTemplates() {
             }}>{template.description}</p>
 
             {/* Target Audience */}
-            <div className='mb-4'>
-              <div className='mb-2 flex items-center space-x-2'>
-                <Target className='h-4 w-4 text-gray-400' />
-                <span className='text-xs font-medium text-gray-700'>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ 
+                marginBottom: '8px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px' 
+              }}>
+                <Target style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
+                <span style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.7)'
+                }}>
                   Target Audience
                 </span>
               </div>
-              <p className='text-xs text-gray-600'>{template.targetAudience}</p>
+              <p style={{
+                fontSize: '0.75rem',
+                color: 'rgba(255, 255, 255, 0.6)'
+              }}>{template.targetAudience}</p>
             </div>
 
             {/* Expected Results */}
-            <div className='mb-4'>
-              <div className='mb-2 flex items-center space-x-2'>
-                <TrendingUp className='h-4 w-4 text-gray-400' />
-                <span className='text-xs font-medium text-gray-700'>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ 
+                marginBottom: '8px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px' 
+              }}>
+                <TrendingUp style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
+                <span style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.7)'
+                }}>
                   Expected Results
                 </span>
               </div>
-              <div className='grid grid-cols-3 gap-2 text-center'>
-                <div className='rounded bg-gray-50 p-2'>
-                  <div className='text-lg font-bold text-gray-900'>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  borderRadius: '6px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '8px'
+                }}>
+                  <div style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '700',
+                    color: 'white'
+                  }}>
                     {template.expectedResults.leads}
                   </div>
-                  <div className='text-xs text-gray-600'>Leads</div>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.6)'
+                  }}>Leads</div>
                 </div>
-                <div className='rounded bg-gray-50 p-2'>
-                  <div className='text-lg font-bold text-gray-900'>
+                <div style={{
+                  borderRadius: '6px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '8px'
+                }}>
+                  <div style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '700',
+                    color: 'white'
+                  }}>
                     {template.expectedResults.conversions}
                   </div>
-                  <div className='text-xs text-gray-600'>Conversions</div>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.6)'
+                  }}>Conversions</div>
                 </div>
-                <div className='rounded bg-gray-50 p-2'>
-                  <div className='text-lg font-bold text-gray-900'>
+                <div style={{
+                  borderRadius: '6px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '8px'
+                }}>
+                  <div style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '700',
+                    color: '#22c55e'
+                  }}>
                     ${(template.expectedResults.revenue / 1000).toFixed(0)}K
                   </div>
-                  <div className='text-xs text-gray-600'>Revenue</div>
+                  <div style={{
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.6)'
+                  }}>Revenue</div>
                 </div>
               </div>
             </div>
 
             {/* AI Staff */}
-            <div className='mb-4'>
-              <div className='mb-2 flex items-center space-x-2'>
-                <Users className='h-4 w-4 text-gray-400' />
-                <span className='text-xs font-medium text-gray-700'>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ 
+                marginBottom: '8px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px' 
+              }}>
+                <Users style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
+                <span style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.7)'
+                }}>
                   AI Staff Assigned
                 </span>
               </div>
-              <div className='flex flex-wrap gap-1'>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                 {template.aiStaff.map((staff, index) => (
                   <span
                     key={index}
-                    className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700'
+                    style={{
+                      borderRadius: '4px',
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      padding: '4px 8px',
+                      fontSize: '0.75rem',
+                      color: '#3b82f6',
+                      fontWeight: '600'
+                    }}
                   >
                     {staff}
                   </span>
@@ -2136,17 +2211,32 @@ export default function CampaignTemplates() {
             </div>
 
             {/* Success Metrics */}
-            <div className='mb-6'>
-              <div className='mb-2 flex items-center space-x-2'>
-                <CheckCircle className='h-4 w-4 text-gray-400' />
-                <span className='text-xs font-medium text-gray-700'>
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ 
+                marginBottom: '8px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px' 
+              }}>
+                <CheckCircle style={{ width: '16px', height: '16px', color: 'rgba(255, 255, 255, 0.4)' }} />
+                <span style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.7)'
+                }}>
                   Success Metrics
                 </span>
               </div>
-              <ul className='space-y-1 text-xs text-gray-600'>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 {template.successMetrics.slice(0, 2).map((metric, index) => (
-                  <li key={index} className='flex items-center space-x-1'>
-                    <span className='text-green-500'>•</span>
+                  <li key={index} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '4px',
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.6)'
+                  }}>
+                    <span style={{ color: '#22c55e' }}>•</span>
                     <span>{metric}</span>
                   </li>
                 ))}
@@ -2154,18 +2244,56 @@ export default function CampaignTemplates() {
             </div>
 
             {/* Action Buttons */}
-            <div className='flex space-x-2'>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 onClick={() => setSelectedTemplate(template)}
-                className='flex-1 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200'
+                style={{
+                  flex: 1,
+                  borderRadius: '8px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  padding: '8px 16px',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
               >
                 View Details
               </button>
               <button
                 onClick={() => launchCampaign(template)}
-                className='flex flex-1 items-center justify-center space-x-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700'
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  borderRadius: '8px',
+                  background: '#2563eb',
+                  border: 'none',
+                  padding: '8px 16px',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#1d4ed8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#2563eb';
+                }}
               >
-                <Play className='h-4 w-4' />
+                <Play style={{ width: '16px', height: '16px' }} />
                 <span>Launch</span>
               </button>
             </div>
@@ -2175,31 +2303,85 @@ export default function CampaignTemplates() {
 
       {/* Template Detail Modal */}
       {selectedTemplate && (
-        <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4'>
-          <div className='max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white'>
-            <div className='p-6'>
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 50,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(0, 0, 0, 0.8)',
+          padding: '16px'
+        }}>
+          <div style={{
+            maxHeight: '90vh',
+            width: '100%',
+            maxWidth: '1024px',
+            overflowY: 'auto',
+            borderRadius: '12px',
+            background: 'rgba(15, 23, 42, 0.95)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <div style={{ padding: '24px' }}>
               {/* Modal Header */}
-              <div className='mb-6 flex items-start justify-between'>
-                <div className='flex items-center space-x-4'>
-                  <div
-                    className={`rounded-lg p-3 ${selectedTemplate.color} text-white`}
-                  >
-                    <span className='text-2xl'>{selectedTemplate.icon}</span>
+              <div style={{ 
+                marginBottom: '24px', 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                justifyContent: 'space-between' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{
+                    borderRadius: '8px',
+                    padding: '12px',
+                    background: selectedTemplate.color.includes('bg-') ? 
+                      (selectedTemplate.color.includes('red') ? '#dc2626' :
+                       selectedTemplate.color.includes('green') ? '#16a34a' :
+                       selectedTemplate.color.includes('blue') ? '#2563eb' :
+                       selectedTemplate.color.includes('purple') ? '#9333ea' :
+                       selectedTemplate.color.includes('yellow') ? '#ca8a04' :
+                       selectedTemplate.color.includes('indigo') ? '#4f46e5' : '#6b7280') : 
+                      selectedTemplate.color,
+                    color: 'white'
+                  }}>
+                    <span style={{ fontSize: '1.5rem' }}>{selectedTemplate.icon}</span>
                   </div>
                   <div>
-                    <h2 className='text-2xl font-bold text-gray-900'>
+                    <h2 style={{
+                      fontSize: '1.5rem',
+                      fontWeight: '700',
+                      color: 'white',
+                      marginBottom: '4px'
+                    }}>
                       {selectedTemplate.name}
                     </h2>
-                    <p className='mt-1 text-gray-600'>
+                    <p style={{
+                      marginTop: '4px',
+                      color: 'rgba(255, 255, 255, 0.6)'
+                    }}>
                       {selectedTemplate.description}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedTemplate(null)}
-                  className='text-gray-400 hover:text-gray-600'
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.4)',
+                    cursor: 'pointer',
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '1.5rem',
+                    padding: '4px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.4)';
+                  }}
                 >
-                  <span className='text-2xl'>×</span>
+                  ×
                 </button>
               </div>
 
