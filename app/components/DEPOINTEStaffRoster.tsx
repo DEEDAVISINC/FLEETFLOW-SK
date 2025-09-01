@@ -564,6 +564,32 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
     emailSignature:
       'Riley Williams\nClient Experience Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Client Reception & Experience Management',
   },
+
+  // 👑 EXECUTIVE LEADERSHIP (FOUNDER & CEO)
+  {
+    id: 'deeva-deveraux',
+    firstName: 'Deeva',
+    lastName: 'Deveraux',
+    fullName: 'Deeva Deveraux',
+    department: 'Executive Leadership',
+    internalRole: 'Founder & CEO',
+    customerFacingTitle: 'Founder & CEO',
+    avatar: '👑',
+    hint: 'Deeva Deveraux → Founder & CEO (work identity)',
+    personality: 'Visionary founder who leads with innovation and drives DEPOINTE\'s mission to revolutionize freight brokerage',
+    specializations: [
+      'Strategic Leadership',
+      'Company Vision',
+      'Executive Decision Making',
+      'Business Development',
+      'Team Leadership',
+      'Industry Innovation',
+      'Freight Brokerage Expertise',
+    ],
+    contactMethods: ['phone', 'email', 'linkedin'],
+    emailSignature:
+      'Deeva Deveraux\nFounder & CEO\nDEPOINTE/ Freight 1st Direct\nRevolutionizing Freight Brokerage Through Innovation',
+  },
 ];
 
 // 🚀 PHASE 2 EXPANSION PLAN (AVAILABLE WHEN FUNDS PERMIT)
