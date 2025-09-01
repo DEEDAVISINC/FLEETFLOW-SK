@@ -74,17 +74,20 @@ export default function CampaignTemplates() {
   );
 
   // PRIORITY CAMPAIGN EXECUTION PLAN
-  // PHASE 1: TOP 2 MOST PROFITABLE & FASTEST REVENUE CAMPAIGNS
+  // PHASE 1: TOP 3 MOST PROFITABLE & FASTEST REVENUE CAMPAIGNS
   const priorityCampaigns = [
     'desperate_shippers_blitz',
-    'new_businesses_freight_blitz'
+    'new_businesses_freight_blitz',
+    'high_value_prospect_acceleration', // ADDED: Highest revenue potential
   ];
 
   // Comprehensive Campaign Templates
   const campaignTemplates: CampaignTemplate[] = [
     // PHASE 1: PRIORITY CAMPAIGNS (START FIRST)
-    // 🚨 #1 MOST PROFITABLE - CRISIS RESPONSE
-    // 🏭 #2 HIGH INTENT - NEW BUSINESSES
+    // 🚨 #1 CRISIS RESPONSE - $16,000/month
+    // 🏭 #2 NEW BUSINESSES - $12,000/month
+    // 💎 #3 HIGH-VALUE ENTERPRISE - $20,000/month
+    // TOTAL: $48,000/month combined revenue
 
     // LEAD GENERATION CAMPAIGNS
     {
@@ -96,9 +99,9 @@ export default function CampaignTemplates() {
       targetAudience:
         'Companies with compliance issues, capacity shortages, expiring contracts',
       expectedResults: {
-        leads: 200, // Increased due to multi-channel approach
-        conversions: 65, // Higher conversion with personal touch
-        revenue: 300000, // Increased revenue projection
+        leads: 280, // Aggressive: 40% increase from optimization
+        conversions: 98, // Aggressive: 51% increase from optimization
+        revenue: 480000, // Aggressive: 60% increase ($16,000/month)
       },
       duration: '30 days',
       difficulty: 'medium', // Slightly higher due to phone component
@@ -191,9 +194,9 @@ export default function CampaignTemplates() {
       targetAudience:
         'New manufacturers, wholesalers, and warehouses (1-5 years old) needing immediate logistics partnerships - HIGH INTENT BUYERS',
       expectedResults: {
-        leads: 120,
-        conversions: 36,
-        revenue: 225000,
+        leads: 180, // Aggressive: 50% increase from optimization
+        conversions: 63, // Aggressive: 75% increase from optimization
+        revenue: 360000, // Aggressive: 60% increase ($12,000/month)
       },
       duration: '30 days',
       difficulty: 'easy',
