@@ -78,69 +78,92 @@ export default function CampaignTemplates() {
     // LEAD GENERATION CAMPAIGNS
     {
       id: 'desperate_shippers_blitz',
-      name: 'Desperate Shippers Blitz',
+      name: 'Desperate Shippers Blitz (Email-Focused)',
       description:
-        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data',
+        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data - Email-First Approach',
       category: 'lead_generation',
       targetAudience:
         'Companies with compliance issues, capacity shortages, expiring contracts',
       expectedResults: {
-        leads: 150,
-        conversions: 45,
-        revenue: 225000,
+        leads: 180, // Increased due to email efficiency
+        conversions: 54, // Higher conversion with email nurture
+        revenue: 270000, // Increased revenue projection
       },
       duration: '30 days',
       difficulty: 'easy',
-      aiStaff: ['Desiree', 'Cliff', 'Gary'],
-      channels: ['Phone', 'Email', 'LinkedIn'],
-      icon: '🎯',
+      aiStaff: ['Cliff', 'Gary', 'Desiree'], // Email experts first
+      channels: ['Email', 'Phone', 'LinkedIn'], // Email primary
+      icon: '📧',
       color: 'bg-red-500',
       steps: [
         {
-          id: 'initial_research',
-          name: 'Data Intelligence Gathering',
+          id: 'crisis_intelligence_gathering',
+          name: 'Crisis Intelligence Gathering',
           description:
-            'Leverage FMCSA and TruckingPlanet APIs to identify desperate shippers',
+            'Leverage FMCSA and TruckingPlanet APIs to identify desperate shippers with expiring carrier insurance',
           timing: 'Day 1',
           channel: 'Data Analysis',
           aiStaff: 'Cliff',
           automationLevel: 'full',
         },
         {
-          id: 'urgent_phone_outreach',
-          name: 'Urgent Phone Outreach',
+          id: 'urgent_crisis_email_blast',
+          name: 'Urgent Crisis Email Blast',
           description:
-            'Immediate phone calls to companies with critical capacity issues',
-          timing: 'Day 1-3',
-          channel: 'Phone',
-          aiStaff: 'Desiree',
-          automationLevel: 'semi',
-        },
-        {
-          id: 'compliance_focused_email',
-          name: 'Compliance-Focused Email Campaign',
-          description:
-            'Target carriers with DOT violations and compliance issues',
-          timing: 'Day 2-7',
+            'Immediate email campaign to shippers affected by carrier insurance crises - "We Know Your Carrier Crisis"',
+          timing: 'Day 1',
           channel: 'Email',
           aiStaff: 'Cliff',
           automationLevel: 'full',
         },
         {
-          id: 'follow_up_sequence',
-          name: 'Multi-Touch Follow-Up',
-          description: 'Automated follow-up sequences with personalized offers',
-          timing: 'Day 4-30',
-          channel: 'Multi-Channel',
+          id: 'compliance_solution_sequence',
+          name: 'Compliance Solution Email Sequence',
+          description:
+            '5-email sequence: Problem identification → Solution positioning → Case studies → ROI calculation → Call-to-action',
+          timing: 'Day 2-7',
+          channel: 'Email',
           aiStaff: 'Gary',
           automationLevel: 'full',
         },
+        {
+          id: 'personalized_capacity_offers',
+          name: 'Personalized Capacity Offers',
+          description:
+            'Customized email offers with specific capacity availability, rates, and guaranteed timelines',
+          timing: 'Day 8-14',
+          channel: 'Email',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'crisis_follow_up_cadence',
+          name: 'Crisis Follow-Up Cadence',
+          description:
+            'Strategic follow-up emails with urgency reminders, additional case studies, and limited-time offers',
+          timing: 'Day 15-25',
+          channel: 'Email',
+          aiStaff: 'Cliff',
+          automationLevel: 'full',
+        },
+        {
+          id: 'decision_maker_phone_touch',
+          name: 'Decision Maker Phone Touch',
+          description:
+            'Targeted phone calls to high-value prospects who engaged with emails but haven\'t converted',
+          timing: 'Day 26-30',
+          channel: 'Phone',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
       ],
       successMetrics: [
-        '150+ qualified leads generated',
-        '45+ proposal meetings booked',
-        '$225K+ pipeline created',
-        '60%+ qualification rate',
+        '180+ qualified leads generated (20% increase)',
+        '54+ proposal meetings booked (20% increase)',
+        '$270K+ pipeline created (20% increase)',
+        '65%+ email open rate (crisis relevance)',
+        '25%+ click-through rate (solution interest)',
+        '75%+ qualification rate (email nurture)',
       ],
     },
 
