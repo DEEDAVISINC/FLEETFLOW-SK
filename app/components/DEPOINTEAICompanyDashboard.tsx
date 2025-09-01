@@ -18,12 +18,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { TruckingPlanetDashboard } from '../ai-company-dashboard-enhanced';
-import AICommunicationScripts from './AICommunicationScripts';
 import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
-import ShipperVendorQuestionnaireTemplate from './ShipperVendorQuestionnaireTemplate';
-import TaskCreationInterface from './TaskCreationInterface';
 import CampaignTemplates from './CampaignTemplates';
+import TaskCreationInterface from './TaskCreationInterface';
 
 interface CompanyStats {
   totalRevenue: number;

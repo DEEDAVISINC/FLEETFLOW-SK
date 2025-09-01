@@ -1,19 +1,16 @@
 'use client';
 
 import {
-  ArrowRight,
   Calendar,
   CheckCircle,
   Clock,
   DollarSign,
   Mail,
   MessageSquare,
-  Phone,
   Play,
   Target,
   TrendingUp,
   Users,
-  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -21,7 +18,12 @@ interface CampaignTemplate {
   id: string;
   name: string;
   description: string;
-  category: 'lead_generation' | 'follow_up' | 'nurture' | 'conversion' | 'retention';
+  category:
+    | 'lead_generation'
+    | 'follow_up'
+    | 'nurture'
+    | 'conversion'
+    | 'retention';
   targetAudience: string;
   expectedResults: {
     leads: number;
@@ -65,8 +67,11 @@ interface CampaignInstance {
 
 export default function CampaignTemplates() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedTemplate, setSelectedTemplate] = useState<CampaignTemplate | null>(null);
-  const [activeCampaigns, setActiveCampaigns] = useState<CampaignInstance[]>([]);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<CampaignTemplate | null>(null);
+  const [activeCampaigns, setActiveCampaigns] = useState<CampaignInstance[]>(
+    []
+  );
 
   // Comprehensive Campaign Templates
   const campaignTemplates: CampaignTemplate[] = [
@@ -74,9 +79,11 @@ export default function CampaignTemplates() {
     {
       id: 'desperate_shippers_blitz',
       name: 'Desperate Shippers Blitz',
-      description: 'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data',
+      description:
+        'Target companies with urgent shipping needs using FMCSA and TruckingPlanet data',
       category: 'lead_generation',
-      targetAudience: 'Companies with compliance issues, capacity shortages, expiring contracts',
+      targetAudience:
+        'Companies with compliance issues, capacity shortages, expiring contracts',
       expectedResults: {
         leads: 150,
         conversions: 45,
@@ -92,7 +99,8 @@ export default function CampaignTemplates() {
         {
           id: 'initial_research',
           name: 'Data Intelligence Gathering',
-          description: 'Leverage FMCSA and TruckingPlanet APIs to identify desperate shippers',
+          description:
+            'Leverage FMCSA and TruckingPlanet APIs to identify desperate shippers',
           timing: 'Day 1',
           channel: 'Data Analysis',
           aiStaff: 'Cliff',
@@ -101,7 +109,8 @@ export default function CampaignTemplates() {
         {
           id: 'urgent_phone_outreach',
           name: 'Urgent Phone Outreach',
-          description: 'Immediate phone calls to companies with critical capacity issues',
+          description:
+            'Immediate phone calls to companies with critical capacity issues',
           timing: 'Day 1-3',
           channel: 'Phone',
           aiStaff: 'Desiree',
@@ -110,7 +119,8 @@ export default function CampaignTemplates() {
         {
           id: 'compliance_focused_email',
           name: 'Compliance-Focused Email Campaign',
-          description: 'Target carriers with DOT violations and compliance issues',
+          description:
+            'Target carriers with DOT violations and compliance issues',
           timing: 'Day 2-7',
           channel: 'Email',
           aiStaff: 'Cliff',
@@ -137,9 +147,11 @@ export default function CampaignTemplates() {
     {
       id: 'enterprise_manufacturer_hunt',
       name: 'Enterprise Manufacturer Hunt',
-      description: 'Target large manufacturers with substantial shipping volumes using Thomas.net',
+      description:
+        'Target large manufacturers with substantial shipping volumes using Thomas.net',
       category: 'lead_generation',
-      targetAudience: 'Enterprise manufacturers (500+ employees) with high shipping volumes',
+      targetAudience:
+        'Enterprise manufacturers (500+ employees) with high shipping volumes',
       expectedResults: {
         leads: 75,
         conversions: 15,
@@ -155,7 +167,8 @@ export default function CampaignTemplates() {
         {
           id: 'thomas_net_research',
           name: 'Thomas.net Intelligence',
-          description: 'Research large manufacturers and their shipping patterns',
+          description:
+            'Research large manufacturers and their shipping patterns',
           timing: 'Day 1-7',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -200,9 +213,11 @@ export default function CampaignTemplates() {
     {
       id: 'supply_chain_disruption_targeting',
       name: 'Supply Chain Disruption Targeting',
-      description: 'Identify and target companies experiencing supply chain disruptions',
+      description:
+        'Identify and target companies experiencing supply chain disruptions',
       category: 'lead_generation',
-      targetAudience: 'Companies with supply chain issues, inventory problems, production delays',
+      targetAudience:
+        'Companies with supply chain issues, inventory problems, production delays',
       expectedResults: {
         leads: 120,
         conversions: 36,
@@ -218,7 +233,8 @@ export default function CampaignTemplates() {
         {
           id: 'disruption_detection',
           name: 'Disruption Intelligence',
-          description: 'Monitor news, social media, and industry reports for disruptions',
+          description:
+            'Monitor news, social media, and industry reports for disruptions',
           timing: 'Ongoing',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -245,7 +261,8 @@ export default function CampaignTemplates() {
         {
           id: 'recovery_solution_proposals',
           name: 'Recovery Solution Proposals',
-          description: 'Present comprehensive recovery and prevention solutions',
+          description:
+            'Present comprehensive recovery and prevention solutions',
           timing: 'Day 4-25',
           channel: 'Multi-Channel',
           aiStaff: 'Gary',
@@ -282,7 +299,8 @@ export default function CampaignTemplates() {
         {
           id: 'proposal_review',
           name: 'Proposal Status Review',
-          description: 'Review outstanding proposals and identify follow-up opportunities',
+          description:
+            'Review outstanding proposals and identify follow-up opportunities',
           timing: 'Day 1',
           channel: 'CRM Analysis',
           aiStaff: 'Gary',
@@ -291,7 +309,8 @@ export default function CampaignTemplates() {
         {
           id: 'gentle_reminder_email',
           name: 'Gentle Reminder Email',
-          description: 'Send value-add reminder emails with updated information',
+          description:
+            'Send value-add reminder emails with updated information',
           timing: 'Day 2-7',
           channel: 'Email',
           aiStaff: 'Gary',
@@ -300,7 +319,8 @@ export default function CampaignTemplates() {
         {
           id: 'decision_maker_phone',
           name: 'Decision Maker Phone Call',
-          description: 'Connect with decision-makers to discuss proposal status',
+          description:
+            'Connect with decision-makers to discuss proposal status',
           timing: 'Day 8-14',
           channel: 'Phone',
           aiStaff: 'Will',
@@ -328,7 +348,8 @@ export default function CampaignTemplates() {
     {
       id: 'cold_lead_warming_sequence',
       name: 'Cold Lead Warming Sequence',
-      description: 'Transform cold leads into warm prospects through value-driven content',
+      description:
+        'Transform cold leads into warm prospects through value-driven content',
       category: 'nurture',
       targetAudience: 'Cold leads (60+ days since last contact)',
       expectedResults: {
@@ -346,7 +367,8 @@ export default function CampaignTemplates() {
         {
           id: 'lead_segmentation',
           name: 'Lead Segmentation & Scoring',
-          description: 'Analyze cold leads and segment by industry and potential value',
+          description:
+            'Analyze cold leads and segment by industry and potential value',
           timing: 'Day 1',
           channel: 'Data Analysis',
           aiStaff: 'Desiree',
@@ -392,9 +414,11 @@ export default function CampaignTemplates() {
     {
       id: 'high_value_prospect_acceleration',
       name: 'High-Value Prospect Acceleration',
-      description: 'Accelerate conversion of high-value prospects through intensive outreach',
+      description:
+        'Accelerate conversion of high-value prospects through intensive outreach',
       category: 'conversion',
-      targetAudience: 'High-value prospects ($50K+ potential) in consideration phase',
+      targetAudience:
+        'High-value prospects ($50K+ potential) in consideration phase',
       expectedResults: {
         leads: 0,
         conversions: 12,
@@ -461,11 +485,454 @@ export default function CampaignTemplates() {
       ],
     },
 
+    // VERTICAL-SPECIFIC MANUFACTURER CAMPAIGNS
+    {
+      id: 'food_beverage_manufacturer_targeting',
+      name: 'Food & Beverage Manufacturer Initiative',
+      description: 'Target food/beverage manufacturers with temperature-controlled and time-sensitive logistics',
+      category: 'lead_generation',
+      targetAudience: 'Food/beverage manufacturers with refrigerated/frozen product shipping needs',
+      expectedResults: {
+        leads: 85,
+        conversions: 26,
+        revenue: 325000,
+      },
+      duration: '35 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Logan', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🥤',
+      color: 'bg-orange-400',
+      steps: [
+        {
+          id: 'fda_compliance_focus',
+          name: 'FDA Compliance & Cold Chain Focus',
+          description: 'Target manufacturers with FDA compliance and cold chain shipping requirements',
+          timing: 'Day 1-7',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'temperature_controlled_outreach',
+          name: 'Temperature-Controlled Logistics Pitch',
+          description: 'Specialized outreach for refrigerated and frozen product transportation',
+          timing: 'Day 8-14',
+          channel: 'Email/Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'food_safety_certification_emphasis',
+          name: 'Food Safety & Certification Emphasis',
+          description: 'Highlight HACCP, SQF, and other food safety certifications',
+          timing: 'Day 15-25',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'seasonal_capacity_planning',
+          name: 'Seasonal Capacity Planning',
+          description: 'Address peak season capacity needs and contingency planning',
+          timing: 'Day 26-35',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '85+ food/beverage manufacturer leads',
+        '26+ specialized logistics contracts',
+        '$325K+ revenue from food industry',
+        '90%+ cold chain compliance guarantee',
+      ],
+    },
+
+    {
+      id: 'wholesaler_distribution_network',
+      name: 'Wholesaler Distribution Network',
+      description: 'Target wholesalers and distributors with complex multi-location shipping needs',
+      category: 'lead_generation',
+      targetAudience: 'Wholesale distributors with regional/national distribution networks',
+      expectedResults: {
+        leads: 95,
+        conversions: 29,
+        revenue: 290000,
+      },
+      duration: '40 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Will', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '📦',
+      color: 'bg-purple-500',
+      steps: [
+        {
+          id: 'distribution_network_analysis',
+          name: 'Distribution Network Analysis',
+          description: 'Map out wholesaler distribution networks and shipping patterns',
+          timing: 'Day 1-10',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'multi_location_logistics_pitch',
+          name: 'Multi-Location Logistics Pitch',
+          description: 'Present solutions for complex distribution networks',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'cost_optimization_focus',
+          name: 'Cost Optimization Focus',
+          description: 'Demonstrate freight cost reduction and efficiency improvements',
+          timing: 'Day 21-30',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'route_optimization_proposals',
+          name: 'Route Optimization Proposals',
+          description: 'Custom proposals with optimized routing and consolidation',
+          timing: 'Day 31-40',
+          channel: 'Multi-Channel',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '95+ wholesaler/distributor leads',
+        '29+ distribution network contracts',
+        '$290K+ revenue from wholesale sector',
+        '25%+ average freight cost reduction',
+      ],
+    },
+
+    {
+      id: 'warehouse_3pl_targeting',
+      name: 'Warehouse & 3PL Provider Initiative',
+      description: 'Target warehouses and 3PL providers needing carrier network expansion',
+      category: 'lead_generation',
+      targetAudience: 'Warehouses and 3PL providers seeking carrier network expansion',
+      expectedResults: {
+        leads: 65,
+        conversions: 20,
+        revenue: 400000,
+      },
+      duration: '45 days',
+      difficulty: 'hard',
+      aiStaff: ['Desiree', 'Brook R.', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn', 'In-Person'],
+      icon: '🏭',
+      color: 'bg-cyan-500',
+      steps: [
+        {
+          id: '3pl_capacity_analysis',
+          name: '3PL Capacity Analysis',
+          description: 'Analyze warehouse and 3PL capacity utilization and carrier needs',
+          timing: 'Day 1-10',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'carrier_network_expansion_pitch',
+          name: 'Carrier Network Expansion Pitch',
+          description: 'Present carrier network expansion and capacity solutions',
+          timing: 'Day 11-20',
+          channel: 'Email/Phone',
+          aiStaff: 'Brook R.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'warehouse_integration_focus',
+          name: 'Warehouse Integration Focus',
+          description: 'Emphasize seamless warehouse-to-carrier integration',
+          timing: 'Day 21-30',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'executive_relationship_building',
+          name: 'Executive Relationship Building',
+          description: 'Build relationships with 3PL executives and decision-makers',
+          timing: 'Day 31-45',
+          channel: 'Phone/In-Person',
+          aiStaff: 'Brook R.',
+          automationLevel: 'manual',
+        },
+      ],
+      successMetrics: [
+        '65+ warehouse/3PL provider leads',
+        '20+ carrier network expansion contracts',
+        '$400K+ revenue from 3PL partnerships',
+        '30+ new carrier relationships established',
+      ],
+    },
+
+    {
+      id: 'retail_chain_logistics',
+      name: 'Retail Chain Logistics Initiative',
+      description: 'Target retail chains with store replenishment and distribution center needs',
+      category: 'lead_generation',
+      targetAudience: 'Retail chains with multi-store replenishment and DC shipping needs',
+      expectedResults: {
+        leads: 75,
+        conversions: 23,
+        revenue: 345000,
+      },
+      duration: '38 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Will', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🛍️',
+      color: 'bg-pink-500',
+      steps: [
+        {
+          id: 'retail_distribution_analysis',
+          name: 'Retail Distribution Analysis',
+          description: 'Analyze retail chain distribution networks and store replenishment patterns',
+          timing: 'Day 1-8',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'store_replenishment_pitch',
+          name: 'Store Replenishment Pitch',
+          description: 'Present solutions for efficient store replenishment logistics',
+          timing: 'Day 9-18',
+          channel: 'Email/Phone',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'peak_season_capacity_planning',
+          name: 'Peak Season Capacity Planning',
+          description: 'Address holiday and peak season capacity challenges',
+          timing: 'Day 19-28',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'retail_logistics_optimization',
+          name: 'Retail Logistics Optimization',
+          description: 'Custom proposals for retail-specific logistics optimization',
+          timing: 'Day 29-38',
+          channel: 'Multi-Channel',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '75+ retail chain leads',
+        '23+ store replenishment contracts',
+        '$345K+ revenue from retail sector',
+        '20%+ faster store replenishment times',
+      ],
+    },
+
+    {
+      id: 'construction_materials_targeting',
+      name: 'Construction Materials Initiative',
+      description: 'Target construction companies with heavy equipment and materials shipping',
+      category: 'lead_generation',
+      targetAudience: 'Construction companies with heavy equipment and materials transportation needs',
+      expectedResults: {
+        leads: 70,
+        conversions: 21,
+        revenue: 315000,
+      },
+      duration: '42 days',
+      difficulty: 'medium',
+      aiStaff: ['Desiree', 'Logan', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🏗️',
+      color: 'bg-yellow-600',
+      steps: [
+        {
+          id: 'construction_project_analysis',
+          name: 'Construction Project Analysis',
+          description: 'Identify construction projects and equipment/materials shipping needs',
+          timing: 'Day 1-10',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'heavy_equipment_transport',
+          name: 'Heavy Equipment Transport Focus',
+          description: 'Specialized outreach for heavy equipment and oversized loads',
+          timing: 'Day 11-21',
+          channel: 'Email/Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'project_timeline_optimization',
+          name: 'Project Timeline Optimization',
+          description: 'Address construction project timelines and material delivery deadlines',
+          timing: 'Day 22-32',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'construction_logistics_proposals',
+          name: 'Construction Logistics Proposals',
+          description: 'Custom proposals for construction-specific logistics needs',
+          timing: 'Day 33-42',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '70+ construction company leads',
+        '21+ heavy equipment transport contracts',
+        '$315K+ revenue from construction sector',
+        '95%+ on-time material delivery rate',
+      ],
+    },
+
+    {
+      id: 'healthcare_medical_supplies',
+      name: 'Healthcare & Medical Supplies Initiative',
+      description: 'Target healthcare facilities and medical suppliers with specialized shipping requirements',
+      category: 'lead_generation',
+      targetAudience: 'Healthcare facilities and medical suppliers with urgent/critical shipping needs',
+      expectedResults: {
+        leads: 55,
+        conversions: 17,
+        revenue: 255000,
+      },
+      duration: '35 days',
+      difficulty: 'hard',
+      aiStaff: ['Desiree', 'Kameelah', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🏥',
+      color: 'bg-red-600',
+      steps: [
+        {
+          id: 'healthcare_facility_identification',
+          name: 'Healthcare Facility Identification',
+          description: 'Identify hospitals, clinics, and healthcare facilities with shipping needs',
+          timing: 'Day 1-8',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'medical_supplies_compliance',
+          name: 'Medical Supplies Compliance Focus',
+          description: 'Emphasize FDA compliance and specialized medical shipping requirements',
+          timing: 'Day 9-18',
+          channel: 'Email/Phone',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'urgent_delivery_capabilities',
+          name: 'Urgent Delivery Capabilities',
+          description: 'Highlight emergency and time-critical delivery capabilities',
+          timing: 'Day 19-26',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'healthcare_logistics_partnerships',
+          name: 'Healthcare Logistics Partnerships',
+          description: 'Build long-term partnerships with healthcare providers',
+          timing: 'Day 27-35',
+          channel: 'Multi-Channel',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '55+ healthcare facility leads',
+        '17+ medical logistics contracts',
+        '$255K+ revenue from healthcare sector',
+        '100% compliance with medical shipping regulations',
+      ],
+    },
+
+    {
+      id: 'ecommerce_fulfillment_targeting',
+      name: 'E-Commerce Fulfillment Initiative',
+      description: 'Target e-commerce businesses with last-mile delivery and fulfillment needs',
+      category: 'lead_generation',
+      targetAudience: 'E-commerce businesses with order fulfillment and last-mile delivery challenges',
+      expectedResults: {
+        leads: 90,
+        conversions: 27,
+        revenue: 270000,
+      },
+      duration: '32 days',
+      difficulty: 'easy',
+      aiStaff: ['Desiree', 'Miles', 'Gary'],
+      channels: ['Email', 'Phone', 'LinkedIn'],
+      icon: '🛒',
+      color: 'bg-indigo-500',
+      steps: [
+        {
+          id: 'ecommerce_platform_analysis',
+          name: 'E-Commerce Platform Analysis',
+          description: 'Identify e-commerce businesses and their fulfillment challenges',
+          timing: 'Day 1-6',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'last_mile_delivery_pitch',
+          name: 'Last-Mile Delivery Pitch',
+          description: 'Present solutions for efficient last-mile delivery and customer satisfaction',
+          timing: 'Day 7-16',
+          channel: 'Email/Phone',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'peak_season_capacity_planning',
+          name: 'Peak Season Capacity Planning',
+          description: 'Address holiday and peak season fulfillment capacity needs',
+          timing: 'Day 17-24',
+          channel: 'LinkedIn/Email',
+          aiStaff: 'Gary',
+          automationLevel: 'full',
+        },
+        {
+          id: 'ecommerce_integration_solutions',
+          name: 'E-Commerce Integration Solutions',
+          description: 'Custom proposals with e-commerce platform integration',
+          timing: 'Day 25-32',
+          channel: 'Multi-Channel',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '90+ e-commerce business leads',
+        '27+ fulfillment partnerships',
+        '$270K+ revenue from e-commerce sector',
+        '25%+ improvement in delivery times',
+      ],
+    },
+
     // RETENTION CAMPAIGNS
     {
       id: 'client_loyalty_acceleration',
       name: 'Client Loyalty Acceleration',
-      description: 'Strengthen relationships with existing clients through proactive engagement',
+      description:
+        'Strengthen relationships with existing clients through proactive engagement',
       category: 'retention',
       targetAudience: 'Current clients with 6+ months relationship',
       expectedResults: {
@@ -483,7 +950,8 @@ export default function CampaignTemplates() {
         {
           id: 'satisfaction_assessment',
           name: 'Client Satisfaction Assessment',
-          description: 'Survey clients to identify satisfaction levels and improvement areas',
+          description:
+            'Survey clients to identify satisfaction levels and improvement areas',
           timing: 'Day 1-7',
           channel: 'Email/Survey',
           aiStaff: 'Shanell',
@@ -492,7 +960,8 @@ export default function CampaignTemplates() {
         {
           id: 'proactive_value_delivery',
           name: 'Proactive Value Delivery',
-          description: 'Provide additional services and optimization recommendations',
+          description:
+            'Provide additional services and optimization recommendations',
           timing: 'Day 8-60',
           channel: 'Email/Phone',
           aiStaff: 'Gary',
@@ -535,9 +1004,12 @@ export default function CampaignTemplates() {
     { id: 'retention', name: 'Retention', icon: CheckCircle },
   ];
 
-  const filteredTemplates = selectedCategory === 'all'
-    ? campaignTemplates
-    : campaignTemplates.filter(template => template.category === selectedCategory);
+  const filteredTemplates =
+    selectedCategory === 'all'
+      ? campaignTemplates
+      : campaignTemplates.filter(
+          (template) => template.category === selectedCategory
+        );
 
   const launchCampaign = (template: CampaignTemplate) => {
     const newCampaign: CampaignInstance = {
@@ -560,38 +1032,38 @@ export default function CampaignTemplates() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className='rounded-lg border border-gray-200 bg-white p-6'>
+        <div className='mb-6 flex items-center justify-between'>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className='text-2xl font-bold text-gray-900'>
               🎯 Campaign Templates
             </h2>
-            <p className="text-gray-600 mt-1">
+            <p className='mt-1 text-gray-600'>
               Pre-configured campaign strategies powered by DEPOINTE AI staff
             </p>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          <div className='flex items-center space-x-2'>
+            <div className='rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800'>
               {filteredTemplates.length} Templates Available
             </div>
           </div>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className='mb-6 flex flex-wrap gap-2'>
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 selectedCategory === category.id
-                  ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                  ? 'border border-blue-200 bg-blue-100 text-blue-700'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              <category.icon className="h-4 w-4" />
+              <category.icon className='h-4 w-4' />
               <span>{category.name}</span>
             </button>
           ))}
@@ -600,39 +1072,46 @@ export default function CampaignTemplates() {
 
       {/* Active Campaigns */}
       {activeCampaigns.length > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className='rounded-lg border border-gray-200 bg-white p-6'>
+          <h3 className='mb-4 text-lg font-semibold text-gray-900'>
             🎯 Active Campaigns
           </h3>
-          <div className="space-y-3">
+          <div className='space-y-3'>
             {activeCampaigns.map((campaign) => {
-              const template = campaignTemplates.find(t => t.id === campaign.templateId);
+              const template = campaignTemplates.find(
+                (t) => t.id === campaign.templateId
+              );
               return (
                 <div
                   key={campaign.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  className='flex items-center justify-between rounded-lg bg-gray-50 p-4'
                 >
-                  <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{template?.icon}</span>
+                  <div className='flex items-center space-x-3'>
+                    <span className='text-2xl'>{template?.icon}</span>
                     <div>
-                      <h4 className="font-medium text-gray-900">{campaign.name}</h4>
-                      <p className="text-sm text-gray-600">
-                        Started {new Date(campaign.startDate).toLocaleDateString()}
+                      <h4 className='font-medium text-gray-900'>
+                        {campaign.name}
+                      </h4>
+                      <p className='text-sm text-gray-600'>
+                        Started{' '}
+                        {new Date(campaign.startDate).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <div className="text-sm text-gray-600">Progress</div>
-                      <div className="font-medium">{campaign.progress}%</div>
+                  <div className='flex items-center space-x-4'>
+                    <div className='text-right'>
+                      <div className='text-sm text-gray-600'>Progress</div>
+                      <div className='font-medium'>{campaign.progress}%</div>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      campaign.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : campaign.status === 'paused'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <div
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${
+                        campaign.status === 'active'
+                          ? 'bg-green-100 text-green-800'
+                          : campaign.status === 'paused'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
                       {campaign.status}
                     </div>
                   </div>
@@ -644,81 +1123,99 @@ export default function CampaignTemplates() {
       )}
 
       {/* Campaign Templates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {filteredTemplates.map((template) => (
           <div
             key={template.id}
-            className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+            className='rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg'
           >
             {/* Template Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className={`p-2 rounded-lg ${template.color} text-white`}>
-                  <span className="text-xl">{template.icon}</span>
+            <div className='mb-4 flex items-start justify-between'>
+              <div className='flex items-center space-x-3'>
+                <div className={`rounded-lg p-2 ${template.color} text-white`}>
+                  <span className='text-xl'>{template.icon}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{template.name}</h3>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      template.difficulty === 'easy'
-                        ? 'bg-green-100 text-green-800'
-                        : template.difficulty === 'medium'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}>
+                  <h3 className='font-semibold text-gray-900'>
+                    {template.name}
+                  </h3>
+                  <div className='mt-1 flex items-center space-x-2'>
+                    <span
+                      className={`rounded px-2 py-1 text-xs font-medium ${
+                        template.difficulty === 'easy'
+                          ? 'bg-green-100 text-green-800'
+                          : template.difficulty === 'medium'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
+                      }`}
+                    >
                       {template.difficulty}
                     </span>
-                    <span className="text-xs text-gray-500">{template.duration}</span>
+                    <span className='text-xs text-gray-500'>
+                      {template.duration}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Description */}
-            <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+            <p className='mb-4 text-sm text-gray-600'>{template.description}</p>
 
             {/* Target Audience */}
-            <div className="mb-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Target className="h-4 w-4 text-gray-400" />
-                <span className="text-xs font-medium text-gray-700">Target Audience</span>
+            <div className='mb-4'>
+              <div className='mb-2 flex items-center space-x-2'>
+                <Target className='h-4 w-4 text-gray-400' />
+                <span className='text-xs font-medium text-gray-700'>
+                  Target Audience
+                </span>
               </div>
-              <p className="text-xs text-gray-600">{template.targetAudience}</p>
+              <p className='text-xs text-gray-600'>{template.targetAudience}</p>
             </div>
 
             {/* Expected Results */}
-            <div className="mb-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <TrendingUp className="h-4 w-4 text-gray-400" />
-                <span className="text-xs font-medium text-gray-700">Expected Results</span>
+            <div className='mb-4'>
+              <div className='mb-2 flex items-center space-x-2'>
+                <TrendingUp className='h-4 w-4 text-gray-400' />
+                <span className='text-xs font-medium text-gray-700'>
+                  Expected Results
+                </span>
               </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-gray-50 rounded p-2">
-                  <div className="text-lg font-bold text-gray-900">{template.expectedResults.leads}</div>
-                  <div className="text-xs text-gray-600">Leads</div>
+              <div className='grid grid-cols-3 gap-2 text-center'>
+                <div className='rounded bg-gray-50 p-2'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    {template.expectedResults.leads}
+                  </div>
+                  <div className='text-xs text-gray-600'>Leads</div>
                 </div>
-                <div className="bg-gray-50 rounded p-2">
-                  <div className="text-lg font-bold text-gray-900">{template.expectedResults.conversions}</div>
-                  <div className="text-xs text-gray-600">Conversions</div>
+                <div className='rounded bg-gray-50 p-2'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    {template.expectedResults.conversions}
+                  </div>
+                  <div className='text-xs text-gray-600'>Conversions</div>
                 </div>
-                <div className="bg-gray-50 rounded p-2">
-                  <div className="text-lg font-bold text-gray-900">${(template.expectedResults.revenue / 1000).toFixed(0)}K</div>
-                  <div className="text-xs text-gray-600">Revenue</div>
+                <div className='rounded bg-gray-50 p-2'>
+                  <div className='text-lg font-bold text-gray-900'>
+                    ${(template.expectedResults.revenue / 1000).toFixed(0)}K
+                  </div>
+                  <div className='text-xs text-gray-600'>Revenue</div>
                 </div>
               </div>
             </div>
 
             {/* AI Staff */}
-            <div className="mb-4">
-              <div className="flex items-center space-x-2 mb-2">
-                <Users className="h-4 w-4 text-gray-400" />
-                <span className="text-xs font-medium text-gray-700">AI Staff Assigned</span>
+            <div className='mb-4'>
+              <div className='mb-2 flex items-center space-x-2'>
+                <Users className='h-4 w-4 text-gray-400' />
+                <span className='text-xs font-medium text-gray-700'>
+                  AI Staff Assigned
+                </span>
               </div>
-              <div className="flex flex-wrap gap-1">
+              <div className='flex flex-wrap gap-1'>
                 {template.aiStaff.map((staff, index) => (
                   <span
                     key={index}
-                    className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs"
+                    className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700'
                   >
                     {staff}
                   </span>
@@ -727,15 +1224,17 @@ export default function CampaignTemplates() {
             </div>
 
             {/* Success Metrics */}
-            <div className="mb-6">
-              <div className="flex items-center space-x-2 mb-2">
-                <CheckCircle className="h-4 w-4 text-gray-400" />
-                <span className="text-xs font-medium text-gray-700">Success Metrics</span>
+            <div className='mb-6'>
+              <div className='mb-2 flex items-center space-x-2'>
+                <CheckCircle className='h-4 w-4 text-gray-400' />
+                <span className='text-xs font-medium text-gray-700'>
+                  Success Metrics
+                </span>
               </div>
-              <ul className="text-xs text-gray-600 space-y-1">
+              <ul className='space-y-1 text-xs text-gray-600'>
                 {template.successMetrics.slice(0, 2).map((metric, index) => (
-                  <li key={index} className="flex items-center space-x-1">
-                    <span className="text-green-500">•</span>
+                  <li key={index} className='flex items-center space-x-1'>
+                    <span className='text-green-500'>•</span>
                     <span>{metric}</span>
                   </li>
                 ))}
@@ -743,18 +1242,18 @@ export default function CampaignTemplates() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-2">
+            <div className='flex space-x-2'>
               <button
                 onClick={() => setSelectedTemplate(template)}
-                className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+                className='flex-1 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200'
               >
                 View Details
               </button>
               <button
                 onClick={() => launchCampaign(template)}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-1"
+                className='flex flex-1 items-center justify-center space-x-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700'
               >
-                <Play className="h-4 w-4" />
+                <Play className='h-4 w-4' />
                 <span>Launch</span>
               </button>
             </div>
@@ -764,50 +1263,54 @@ export default function CampaignTemplates() {
 
       {/* Template Detail Modal */}
       {selectedTemplate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
+        <div className='bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4'>
+          <div className='max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white'>
+            <div className='p-6'>
               {/* Modal Header */}
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-lg ${selectedTemplate.color} text-white`}>
-                    <span className="text-2xl">{selectedTemplate.icon}</span>
+              <div className='mb-6 flex items-start justify-between'>
+                <div className='flex items-center space-x-4'>
+                  <div
+                    className={`rounded-lg p-3 ${selectedTemplate.color} text-white`}
+                  >
+                    <span className='text-2xl'>{selectedTemplate.icon}</span>
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
+                    <h2 className='text-2xl font-bold text-gray-900'>
                       {selectedTemplate.name}
                     </h2>
-                    <p className="text-gray-600 mt-1">{selectedTemplate.description}</p>
+                    <p className='mt-1 text-gray-600'>
+                      {selectedTemplate.description}
+                    </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedTemplate(null)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className='text-gray-400 hover:text-gray-600'
                 >
-                  <span className="text-2xl">×</span>
+                  <span className='text-2xl'>×</span>
                 </button>
               </div>
 
               {/* Campaign Overview */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Clock className="h-5 w-5 text-gray-600" />
-                    <span className="font-medium text-gray-900">Duration</span>
+              <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-3'>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='mb-2 flex items-center space-x-2'>
+                    <Clock className='h-5 w-5 text-gray-600' />
+                    <span className='font-medium text-gray-900'>Duration</span>
                   </div>
-                  <p className="text-gray-600">{selectedTemplate.duration}</p>
+                  <p className='text-gray-600'>{selectedTemplate.duration}</p>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Users className="h-5 w-5 text-gray-600" />
-                    <span className="font-medium text-gray-900">AI Staff</span>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='mb-2 flex items-center space-x-2'>
+                    <Users className='h-5 w-5 text-gray-600' />
+                    <span className='font-medium text-gray-900'>AI Staff</span>
                   </div>
-                  <div className="flex flex-wrap gap-1">
+                  <div className='flex flex-wrap gap-1'>
                     {selectedTemplate.aiStaff.map((staff, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm"
+                        className='rounded bg-blue-100 px-2 py-1 text-sm text-blue-700'
                       >
                         {staff}
                       </span>
@@ -815,57 +1318,71 @@ export default function CampaignTemplates() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <DollarSign className="h-5 w-5 text-gray-600" />
-                    <span className="font-medium text-gray-900">Expected Revenue</span>
+                <div className='rounded-lg bg-gray-50 p-4'>
+                  <div className='mb-2 flex items-center space-x-2'>
+                    <DollarSign className='h-5 w-5 text-gray-600' />
+                    <span className='font-medium text-gray-900'>
+                      Expected Revenue
+                    </span>
                   </div>
-                  <p className="text-2xl font-bold text-green-600">
-                    ${(selectedTemplate.expectedResults.revenue / 1000).toFixed(0)}K
+                  <p className='text-2xl font-bold text-green-600'>
+                    $
+                    {(selectedTemplate.expectedResults.revenue / 1000).toFixed(
+                      0
+                    )}
+                    K
                   </p>
                 </div>
               </div>
 
               {/* Campaign Steps */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Campaign Steps</h3>
-                <div className="space-y-4">
+              <div className='mb-6'>
+                <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+                  Campaign Steps
+                </h3>
+                <div className='space-y-4'>
                   {selectedTemplate.steps.map((step, index) => (
                     <div
                       key={step.id}
-                      className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg"
+                      className='flex items-start space-x-4 rounded-lg bg-gray-50 p-4'
                     >
-                      <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                      <div className='flex-shrink-0'>
+                        <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white'>
                           {index + 1}
                         </div>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h4 className="font-medium text-gray-900">{step.name}</h4>
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            step.automationLevel === 'full'
-                              ? 'bg-green-100 text-green-800'
-                              : step.automationLevel === 'semi'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
+                      <div className='flex-1'>
+                        <div className='mb-1 flex items-center space-x-2'>
+                          <h4 className='font-medium text-gray-900'>
+                            {step.name}
+                          </h4>
+                          <span
+                            className={`rounded px-2 py-1 text-xs ${
+                              step.automationLevel === 'full'
+                                ? 'bg-green-100 text-green-800'
+                                : step.automationLevel === 'semi'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-red-100 text-red-800'
+                            }`}
+                          >
                             {step.automationLevel}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{step.description}</p>
-                        <div className="flex items-center space-x-4 text-xs text-gray-500">
-                          <span className="flex items-center space-x-1">
-                            <Calendar className="h-3 w-3" />
+                        <p className='mb-2 text-sm text-gray-600'>
+                          {step.description}
+                        </p>
+                        <div className='flex items-center space-x-4 text-xs text-gray-500'>
+                          <span className='flex items-center space-x-1'>
+                            <Calendar className='h-3 w-3' />
                             <span>{step.timing}</span>
                           </span>
-                          <span className="flex items-center space-x-1">
-                            <MessageSquare className="h-3 w-3" />
+                          <span className='flex items-center space-x-1'>
+                            <MessageSquare className='h-3 w-3' />
                             <span>{step.channel}</span>
                           </span>
                           {step.aiStaff && (
-                            <span className="flex items-center space-x-1">
-                              <Users className="h-3 w-3" />
+                            <span className='flex items-center space-x-1'>
+                              <Users className='h-3 w-3' />
                               <span>{step.aiStaff}</span>
                             </span>
                           )}
@@ -877,26 +1394,28 @@ export default function CampaignTemplates() {
               </div>
 
               {/* Success Metrics */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Success Metrics</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className='mb-6'>
+                <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+                  Success Metrics
+                </h3>
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                   {selectedTemplate.successMetrics.map((metric, index) => (
                     <div
                       key={index}
-                      className="flex items-center space-x-2 p-3 bg-green-50 rounded-lg"
+                      className='flex items-center space-x-2 rounded-lg bg-green-50 p-3'
                     >
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                      <span className="text-sm text-gray-900">{metric}</span>
+                      <CheckCircle className='h-5 w-5 text-green-600' />
+                      <span className='text-sm text-gray-900'>{metric}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+              <div className='flex justify-end space-x-3 border-t border-gray-200 pt-6'>
                 <button
                   onClick={() => setSelectedTemplate(null)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800'
                 >
                   Close
                 </button>
@@ -905,9 +1424,9 @@ export default function CampaignTemplates() {
                     launchCampaign(selectedTemplate);
                     setSelectedTemplate(null);
                   }}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                  className='flex items-center space-x-2 rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
                 >
-                  <Play className="h-4 w-4" />
+                  <Play className='h-4 w-4' />
                   <span>Launch Campaign</span>
                 </button>
               </div>
