@@ -12,6 +12,7 @@ import ShipperBatchDeployment, {
   ShipperTask,
 } from '../components/ShipperBatchDeployment';
 import TaskCreationInterface from '../components/TaskCreationInterface';
+import AIStaffScheduler from '../components/AIStaffScheduler';
 
 // DEPOINTE AI Staff with Human Names (all 18 members) - No mock data
 const depointeStaff = [
@@ -259,7 +260,7 @@ export default function DEPOINTEDashboard() {
   >([]);
   const [selectedView, setSelectedView] = useState('overview');
   const [selectedMainView, setSelectedMainView] = useState<
-    'overview' | 'crm' | 'analytics' | 'campaigns'
+    'overview' | 'crm' | 'analytics' | 'campaigns' | 'scheduler'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
@@ -1257,6 +1258,7 @@ export default function DEPOINTEDashboard() {
           { key: 'crm', label: '📞 CRM & Leads', icon: '📞' },
           { key: 'analytics', label: '📈 Analytics', icon: '📈' },
           { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
+          { key: 'scheduler', label: '📅 AI Staff Scheduler', icon: '📅' },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -4775,6 +4777,60 @@ export default function DEPOINTEDashboard() {
             }}
           >
             <CampaignTemplates />
+          </div>
+        </div>
+      )}
+
+      {/* SCHEDULER VIEW - AI STAFF SCHEDULER */}
+      {selectedMainView === 'scheduler' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <div
+            style={{
+              marginBottom: '20px',
+              textAlign: 'center',
+            }}
+          >
+            <h2
+              style={{
+                color: 'white',
+                marginBottom: '10px',
+                fontSize: '1.8rem',
+                fontWeight: '700',
+              }}
+            >
+              📅 AI Staff Scheduler & Workforce Management
+            </h2>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                marginBottom: '20px',
+                fontSize: '1.1rem',
+              }}
+            >
+              Monitor your DEPOINTE AI team schedules, real-time activities, and workforce optimization
+            </p>
+          </div>
+
+          {/* AI Staff Scheduler Container */}
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '8px',
+              padding: '16px',
+              border: '1px solid rgba(148, 163, 184, 0.1)',
+            }}
+          >
+            <AIStaffScheduler />
           </div>
         </div>
       )}
