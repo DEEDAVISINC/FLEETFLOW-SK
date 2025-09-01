@@ -330,20 +330,20 @@ Looking forward to potentially being part of your growth story.
 Best regards,
 Logan - New Business Growth Partner
 DEPOINTE/Freight 1st Direct
-📞 555-0105 | 📧 logan@depointe.com`
+📞 555-0105 | 📧 logan@depointe.com`,
     },
     keyPoints: [
       'Founder-to-founder connection',
       'Immediate value and quick setup focus',
       'Flexible terms and low commitment',
       'Growth partnership positioning',
-      'Multiple engagement options'
+      'Multiple engagement options',
     ],
     expectedMetrics: {
       connectionRate: '35%+ (entrepreneurial accessibility)',
       engagementRate: '75%+ (shared founder experience)',
-      meetingRate: '28%+ (immediate need + quick solution)'
-    }
+      meetingRate: '28%+ (immediate need + quick solution)',
+    },
   },
 
   // PHONE SCRIPT 2: Growth Partnership Call (Day 5 - Relationship Building)
@@ -395,20 +395,20 @@ Keep crushing it with [Company Name]!
 Best regards,
 Logan - Growth Partnership Specialist
 DEPOINTE/Freight 1st Direct
-📞 555-0105 | 📧 logan@depointe.com`
+📞 555-0105 | 📧 logan@depointe.com`,
     },
     keyPoints: [
       'Entrepreneurial language and shared experience',
       'Long-term partnership focus',
       'Growth-oriented solutions',
       'Flexible timing and low pressure',
-      'Multiple follow-up options'
+      'Multiple follow-up options',
     ],
     expectedMetrics: {
       connectionRate: '28%+ (relationship building timing)',
       engagementRate: '65%+ (growth conversation)',
-      meetingRate: '22%+ (partnership interest)'
-    }
+      meetingRate: '22%+ (partnership interest)',
+    },
   },
 
   // PHONE SCRIPT 3: Success Story Call (Day 10 - Proof & Urgency)
@@ -458,20 +458,20 @@ Keep building something amazing!
 Best regards,
 Logan - Success Story Specialist
 DEPOINTE/Freight 1st Direct
-📞 555-0105 | 📧 logan@depointe.com`
+📞 555-0105 | 📧 logan@depointe.com`,
     },
     keyPoints: [
       'Specific success metrics and timelines',
       'Comparable business examples',
       'Quantified ROI and results',
       'Limited-time urgency',
-      'Clear next steps and options'
+      'Clear next steps and options',
     ],
     expectedMetrics: {
       connectionRate: '25%+ (value-driven timing)',
       engagementRate: '70%+ (results-focused conversation)',
-      meetingRate: '30%+ (proof + urgency combination)'
-    }
+      meetingRate: '30%+ (proof + urgency combination)',
+    },
   },
 
   // PHONE SCRIPT 4: Partnership Close Call (Day 15 - Final Push)
@@ -525,21 +525,21 @@ Keep building!
 Best regards,
 Logan - Partnership Director
 DEPOINTE/Freight 1st Direct
-📞 555-0105 | 📧 logan@depointe.com`
+📞 555-0105 | 📧 logan@depointe.com`,
     },
     keyPoints: [
       'Entrepreneurial journey language',
       'Specific package benefits and value',
       'Objection-specific responses',
       'Clear urgency with expiration',
-      'Flexible commitment options'
+      'Flexible commitment options',
     ],
     expectedMetrics: {
       connectionRate: '22%+ (relationship-based timing)',
       engagementRate: '75%+ (partnership-focused conversation)',
-      meetingRate: '32%+ (value + urgency combination)'
-    }
-  }
+      meetingRate: '32%+ (value + urgency combination)',
+    },
+  },
 ];
 
 export default desperateShipperPhoneScripts;
