@@ -104,7 +104,7 @@ export default function CampaignTemplates() {
       },
       duration: '30 days',
       difficulty: 'medium', // Slightly higher due to phone component
-      aiStaff: ['Desiree', 'Cliff', 'Gary'], // Phone expert first for balance
+      aiStaff: ['Desiree', 'Cliff', 'Gary', 'Charin'], // Added Charin for phone outreach support
       channels: ['Phone', 'Email', 'LinkedIn'], // Phone primary for immediate crisis response
       icon: '📞',
       color: 'bg-red-500',
@@ -199,7 +199,7 @@ export default function CampaignTemplates() {
       },
       duration: '30 days',
       difficulty: 'easy',
-      aiStaff: ['Gary', 'Desiree', 'Logan'],
+      aiStaff: ['Gary', 'Desiree', 'Logan', 'Lea D.'], // Added Lea D. for lead nurturing
       channels: ['Email', 'Phone', 'LinkedIn'],
       icon: '🚀',
       color: 'bg-green-500',
@@ -557,7 +557,7 @@ export default function CampaignTemplates() {
       },
       duration: '30 days',
       difficulty: 'hard',
-      aiStaff: ['Will', 'Gary', 'Resse A. Bell'],
+      aiStaff: ['Will', 'Gary', 'Resse A. Bell', 'Charin', 'Lea D.'], // Added Charin (phone) + Lea D. (nurturing)
       channels: ['Phone', 'Email', 'LinkedIn', 'In-Person'],
       icon: '🚀',
       color: 'bg-indigo-500',
@@ -702,7 +702,7 @@ export default function CampaignTemplates() {
       },
       duration: '45 days',
       difficulty: 'medium',
-      aiStaff: ['Miles', 'Logan', 'Desiree'],
+      aiStaff: ['Miles', 'Logan', 'Desiree', 'Roland'], // Added Roland for carrier relations
       channels: ['LinkedIn', 'Phone', 'Email', 'Industry Events'],
       icon: '🚛',
       color: 'bg-blue-600',
@@ -1827,38 +1827,94 @@ export default function CampaignTemplates() {
   };
 
   return (
-    <div className='space-y-6'>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
-      <div className='rounded-lg border border-gray-200 bg-white p-6'>
-        <div className='mb-6 flex items-center justify-between'>
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.3)',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
+        borderRadius: '12px',
+        padding: '24px'
+      }}>
+        <div style={{ 
+          marginBottom: '24px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between' 
+        }}>
           <div>
-            <h2 className='text-2xl font-bold text-gray-900'>
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: 'white',
+              marginBottom: '4px'
+            }}>
               🎯 Campaign Templates
             </h2>
-            <p className='mt-1 text-gray-600'>
+            <p style={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '1rem'
+            }}>
               Pre-configured campaign strategies powered by DEPOINTE AI staff
             </p>
           </div>
-          <div className='flex items-center space-x-2'>
-            <div className='rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800'>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{
+              background: 'rgba(34, 197, 94, 0.2)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '20px',
+              padding: '6px 12px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: '#22c55e'
+            }}>
               {filteredTemplates.length} Templates Available
             </div>
           </div>
         </div>
 
         {/* Category Filter */}
-        <div className='mb-6 flex flex-wrap gap-2'>
+        <div style={{ 
+          marginBottom: '24px', 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '8px' 
+        }}>
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`flex items-center space-x-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                selectedCategory === category.id
-                  ? 'border border-blue-200 bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                transition: 'all 0.2s',
+                cursor: 'pointer',
+                background: selectedCategory === category.id 
+                  ? 'rgba(59, 130, 246, 0.2)' 
+                  : 'rgba(255, 255, 255, 0.1)',
+                border: selectedCategory === category.id
+                  ? '1px solid rgba(59, 130, 246, 0.3)'
+                  : '1px solid rgba(148, 163, 184, 0.2)',
+                color: selectedCategory === category.id 
+                  ? '#3b82f6' 
+                  : 'rgba(255, 255, 255, 0.7)'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== category.id) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== category.id) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }
+              }}
             >
-              <category.icon className='h-4 w-4' />
+              <category.icon style={{ width: '16px', height: '16px' }} />
               <span>{category.name}</span>
             </button>
           ))}
@@ -1918,35 +1974,91 @@ export default function CampaignTemplates() {
       )}
 
       {/* Campaign Templates Grid */}
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+        gap: '24px'
+      }}>
         {filteredTemplates.map((template) => (
           <div
             key={template.id}
-            className='rounded-lg border border-gray-200 bg-white p-6 transition-shadow hover:shadow-lg'
+            style={{
+              background: 'rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              borderRadius: '12px',
+              padding: '24px',
+              transition: 'all 0.2s',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             {/* Template Header */}
-            <div className='mb-4 flex items-start justify-between'>
-              <div className='flex items-center space-x-3'>
-                <div className={`rounded-lg p-2 ${template.color} text-white`}>
-                  <span className='text-xl'>{template.icon}</span>
+            <div style={{ 
+              marginBottom: '16px', 
+              display: 'flex', 
+              alignItems: 'flex-start', 
+              justifyContent: 'space-between' 
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  borderRadius: '8px',
+                  padding: '8px',
+                  background: template.color.includes('bg-') ? 
+                    (template.color.includes('red') ? '#dc2626' :
+                     template.color.includes('green') ? '#16a34a' :
+                     template.color.includes('blue') ? '#2563eb' :
+                     template.color.includes('purple') ? '#9333ea' :
+                     template.color.includes('yellow') ? '#ca8a04' :
+                     template.color.includes('indigo') ? '#4f46e5' : '#6b7280') : 
+                    template.color,
+                  color: 'white'
+                }}>
+                  <span style={{ fontSize: '1.25rem' }}>{template.icon}</span>
                 </div>
                 <div>
-                  <h3 className='font-semibold text-gray-900'>
+                  <h3 style={{
+                    fontWeight: '600',
+                    color: 'white',
+                    fontSize: '1rem',
+                    marginBottom: '4px'
+                  }}>
                     {template.name}
                   </h3>
-                  <div className='mt-1 flex items-center space-x-2'>
-                    <span
-                      className={`rounded px-2 py-1 text-xs font-medium ${
-                        template.difficulty === 'easy'
-                          ? 'bg-green-100 text-green-800'
-                          : template.difficulty === 'medium'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-red-100 text-red-800'
-                      }`}
-                    >
+                  <div style={{ 
+                    marginTop: '4px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px' 
+                  }}>
+                    <span style={{
+                      borderRadius: '4px',
+                      padding: '2px 8px',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      background: template.difficulty === 'easy'
+                        ? 'rgba(34, 197, 94, 0.2)'
+                        : template.difficulty === 'medium'
+                          ? 'rgba(245, 158, 11, 0.2)'
+                          : 'rgba(239, 68, 68, 0.2)',
+                      color: template.difficulty === 'easy'
+                        ? '#22c55e'
+                        : template.difficulty === 'medium'
+                          ? '#f59e0b'
+                          : '#ef4444'
+                    }}>
                       {template.difficulty}
                     </span>
-                    <span className='text-xs text-gray-500'>
+                    <span style={{
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.5)'
+                    }}>
                       {template.duration}
                     </span>
                   </div>
@@ -1955,7 +2067,12 @@ export default function CampaignTemplates() {
             </div>
 
             {/* Description */}
-            <p className='mb-4 text-sm text-gray-600'>{template.description}</p>
+            <p style={{
+              marginBottom: '16px',
+              fontSize: '0.875rem',
+              color: 'rgba(255, 255, 255, 0.6)',
+              lineHeight: '1.4'
+            }}>{template.description}</p>
 
             {/* Target Audience */}
             <div className='mb-4'>

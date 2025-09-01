@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import CampaignTemplates from '../components/CampaignTemplates';
 import DesperateProspectsBatchDeployment, {
   DesperateProspectsTask,
 } from '../components/DesperateProspectsBatchDeployment';
@@ -4728,16 +4729,53 @@ export default function DEPOINTEDashboard() {
         </div>
       )}
 
-      {/* CAMPAIGNS VIEW */}
+      {/* CAMPAIGNS VIEW - CAMPAIGN TEMPLATES */}
       {selectedMainView === 'campaigns' && (
-        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🚀</div>
-          <h2 style={{ color: 'white', marginBottom: '10px' }}>
-            Campaign Management Center
-          </h2>
-          <p style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-            Advanced campaign management and templates coming soon
-          </p>
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <div style={{ marginBottom: '20px' }}>
+            <h2
+              style={{
+                color: 'white',
+                marginBottom: '10px',
+                fontSize: '1.8rem',
+                fontWeight: '700',
+              }}
+            >
+              🚀 Campaign Templates & Management Center
+            </h2>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                marginBottom: '20px',
+                fontSize: '1.1rem',
+              }}
+            >
+              Launch and manage your 17+ specialized campaign templates with AI
+              staff assignments including Charin, Roland, and Lea D.
+            </p>
+          </div>
+
+          {/* Campaign Templates Container */}
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '8px',
+              padding: '16px',
+              border: '1px solid rgba(148, 163, 184, 0.1)',
+            }}
+          >
+            <CampaignTemplates />
+          </div>
         </div>
       )}
 

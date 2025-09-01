@@ -436,7 +436,90 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
     emailSignature:
       'Deanna Smith\nBusiness Intelligence Analyst\nDEPOINTE/ Freight 1st Direct',
   },
+
+  // 📞 PHONE OUTREACH DEPARTMENT (PHASE 1 EXPANSION - FIRST 4 CAMPAIGNS)
+  {
+    id: 'charin',
+    firstName: 'Charin',
+    fullName: 'Charin',
+    department: 'Phone Outreach',
+    internalRole: 'Phone Outreach Specialist',
+    customerFacingTitle: 'Communications Manager',
+    avatar: '📞',
+    hint: 'Charin → Sharing (phone conversations)',
+    personality:
+      'Master of phone conversations who turns cold calls into warm relationships',
+    specializations: [
+      'Cold Calling',
+      'Crisis Communication',
+      'Appointment Setting',
+      'Phone Sales',
+      'Lead Qualification',
+      'Urgent Outreach',
+    ],
+    contactMethods: ['phone', 'email'],
+    emailSignature:
+      'Charin Williams\nCommunications Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Phone Outreach & Client Communication',
+  },
+
+  // 🚛 CARRIER RELATIONS DEPARTMENT (PHASE 1 EXPANSION - FIRST 4 CAMPAIGNS)
+  {
+    id: 'roland',
+    firstName: 'Roland',
+    fullName: 'Roland',
+    department: 'Carrier Relations',
+    internalRole: 'Carrier Relations Specialist',
+    customerFacingTitle: 'Carrier Partnership Manager',
+    avatar: '🚛',
+    hint: 'Roland → Rolling (trucks on the road)',
+    personality:
+      'Carrier whisperer who builds lasting partnerships with drivers and fleet owners',
+    specializations: [
+      'Carrier Onboarding',
+      'Dispatch Partnerships',
+      'Driver Relations',
+      'Fleet Management',
+      'Carrier Recruitment',
+      'Partnership Development',
+    ],
+    contactMethods: ['phone', 'email', 'linkedin'],
+    emailSignature:
+      'Roland Martinez\nCarrier Partnership Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Carrier Relations & Fleet Partnerships',
+  },
+
+  // 📧 LEAD NURTURING DEPARTMENT (PHASE 1 EXPANSION - FIRST 4 CAMPAIGNS)
+  {
+    id: 'lea-d',
+    firstName: 'Lea',
+    lastName: 'D.',
+    fullName: 'Lea D.',
+    department: 'Lead Nurturing',
+    internalRole: 'Lead Nurturing Specialist',
+    customerFacingTitle: 'Business Development Manager',
+    avatar: '📧',
+    hint: 'Lea D. → Lead (nurturing leads)',
+    personality:
+      'Relationship architect who transforms prospects into loyal customers through strategic nurturing',
+    specializations: [
+      'Email Sequences',
+      'Lead Qualification',
+      'Relationship Building',
+      'Follow-up Campaigns',
+      'Prospect Nurturing',
+      'Conversion Optimization',
+    ],
+    contactMethods: ['email', 'linkedin', 'phone'],
+    emailSignature:
+      'Lea D. Johnson\nBusiness Development Manager\nDEPOINTE/ Freight 1st Direct\nSpecializing in Lead Nurturing & Business Development',
+  },
 ];
+
+// 🚀 PHASE 2 EXPANSION PLAN (AVAILABLE WHEN FUNDS PERMIT)
+// Future additions ready for implementation:
+// - Cole D. Chain (Food & Beverage Specialist) - $203K revenue potential
+// - Victor P. Enterprise (Enterprise Account Manager) - $650K revenue potential
+// - Ana Lyze (Market Research Analyst) - 30% lead quality improvement
+// Additional cost: ~$47/month for 3 more specialists
 
 // 🎯 UTILITY FUNCTIONS
 export const getCustomerEmailSignature = (staffId: string): string => {
