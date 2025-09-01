@@ -4817,7 +4817,8 @@ export default function DEPOINTEDashboard() {
                 fontSize: '1.1rem',
               }}
             >
-              Monitor your DEPOINTE AI team schedules, real-time activities, and workforce optimization
+              Monitor your DEPOINTE AI team schedules, real-time activities, and
+              workforce optimization
             </p>
           </div>
 

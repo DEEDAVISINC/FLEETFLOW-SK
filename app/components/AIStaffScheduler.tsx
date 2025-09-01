@@ -526,153 +526,329 @@ export default function AIStaffScheduler() {
   );
 
   return (
-    <div className='mx-auto w-full max-w-7xl space-y-6 p-6'>
+    <div style={{ width: '100%' }}>
       {/* Header */}
-      <div className='flex items-center justify-between'>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '20px',
+        }}
+      >
         <div>
-          <h1 className='flex items-center gap-3 text-3xl font-bold text-gray-900'>
-            <Users className='h-8 w-8 text-blue-600' />
+          <h1
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: 'white',
+              marginBottom: '8px',
+            }}
+          >
+            <Users style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />
             DEPOINTE AI Staff Scheduler
           </h1>
-          <p className='mt-1 text-gray-600'>
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '1rem',
+            }}
+          >
             Workforce Management & Schedule Optimization
           </p>
         </div>
-        <div className='flex items-center gap-3'>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Select
             value={scheduleMode}
             onValueChange={(value) =>
               setScheduleMode(value as 'auto' | 'manual')
             }
           >
-            <SelectTrigger className='w-40'>
+            <SelectTrigger
+              style={{
+                width: '160px',
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                color: 'white',
+              }}
+            >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent
+              style={{
+                background: 'rgba(15, 23, 42, 0.95)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                color: 'white',
+              }}
+            >
               <SelectItem value='auto'>Auto Schedule</SelectItem>
               <SelectItem value='manual'>Manual Control</SelectItem>
             </SelectContent>
           </Select>
-          <Button className='bg-blue-600 hover:bg-blue-700'>
-            <Play className='mr-2 h-4 w-4' />
+          <button
+            style={{
+              background: '#8b5cf6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#7c3aed';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#8b5cf6';
+            }}
+          >
+            <Play style={{ width: '16px', height: '16px' }} />
             Optimize Schedules
-          </Button>
+          </button>
         </div>
       </div>
 
       {/* Key Metrics */}
-      <div className='grid grid-cols-1 gap-4 md:grid-cols-4'>
-        <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-600'>Active Staff</p>
-                <p className='text-2xl font-bold text-green-600'>
-                  {
-                    aiStaff.filter(
-                      (s) => s.status === 'active' || s.status === 'busy'
-                    ).length
-                  }
-                </p>
-                <p className='text-xs text-gray-500'>
-                  of {aiStaff.length} total
-                </p>
-              </div>
-              <Activity className='h-8 w-8 text-green-600' />
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '16px',
+          marginBottom: '24px',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                Active Staff
+              </p>
+              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#22c55e', marginBottom: '4px' }}>
+                {
+                  aiStaff.filter(
+                    (s) => s.status === 'active' || s.status === 'busy'
+                  ).length
+                }
+              </p>
+              <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)' }}>
+                of {aiStaff.length} total
+              </p>
             </div>
-          </CardContent>
-        </Card>
+            <Activity style={{ width: '32px', height: '32px', color: '#22c55e' }} />
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-600'>Total Revenue</p>
-                <p className='text-2xl font-bold text-blue-600'>
-                  ${totalRevenue.toLocaleString()}
-                </p>
-                <p className='text-xs text-green-600'>+12.4% from last week</p>
-              </div>
-              <TrendingUp className='h-8 w-8 text-blue-600' />
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                Total Revenue
+              </p>
+              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3b82f6', marginBottom: '4px' }}>
+                ${totalRevenue.toLocaleString()}
+              </p>
+              <p style={{ fontSize: '0.75rem', color: '#22c55e' }}>+12.4% from last week</p>
             </div>
-          </CardContent>
-        </Card>
+            <TrendingUp style={{ width: '32px', height: '32px', color: '#3b82f6' }} />
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-600'>Avg Efficiency</p>
-                <p className='text-2xl font-bold text-purple-600'>
-                  {avgEfficiency.toFixed(1)}%
-                </p>
-                <p className='text-xs text-green-600'>Above target (85%)</p>
-              </div>
-              <Zap className='h-8 w-8 text-purple-600' />
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                Avg Efficiency
+              </p>
+              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#8b5cf6', marginBottom: '4px' }}>
+                {avgEfficiency.toFixed(1)}%
+              </p>
+              <p style={{ fontSize: '0.75rem', color: '#22c55e' }}>Above target (85%)</p>
             </div>
-          </CardContent>
-        </Card>
+            <Zap style={{ width: '32px', height: '32px', color: '#8b5cf6' }} />
+          </div>
+        </div>
 
-        <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <p className='text-sm text-gray-600'>Tasks Completed</p>
-                <p className='text-2xl font-bold text-orange-600'>
-                  {totalTasksCompleted}
-                </p>
-                <p className='text-xs text-gray-500'>This week</p>
-              </div>
-              <CheckCircle className='h-8 w-8 text-orange-600' />
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '16px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                Tasks Completed
+              </p>
+              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b', marginBottom: '4px' }}>
+                {totalTasksCompleted}
+              </p>
+              <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)' }}>This week</p>
             </div>
-          </CardContent>
-        </Card>
+            <CheckCircle style={{ width: '32px', height: '32px', color: '#f59e0b' }} />
+          </div>
+        </div>
       </div>
 
       {/* Main Dashboard */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className='grid w-full grid-cols-6'>
-          <TabsTrigger value='overview'>Overview</TabsTrigger>
-          <TabsTrigger value='schedules'>Schedules</TabsTrigger>
-          <TabsTrigger value='assignments'>Task Assignments</TabsTrigger>
-          <TabsTrigger value='performance'>Performance</TabsTrigger>
-          <TabsTrigger value='templates'>Templates</TabsTrigger>
-          <TabsTrigger value='analytics'>Analytics</TabsTrigger>
-        </TabsList>
+      <div style={{ marginBottom: '24px' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            marginBottom: '20px',
+            borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
+            paddingBottom: '12px',
+          }}
+        >
+          {[
+            { id: 'overview', label: 'Overview' },
+            { id: 'schedules', label: 'Schedules' },
+            { id: 'assignments', label: 'Task Assignments' },
+            { id: 'performance', label: 'Performance' },
+            { id: 'templates', label: 'Templates' },
+            { id: 'analytics', label: 'Analytics' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                background:
+                  activeTab === tab.id
+                    ? 'rgba(139, 92, 246, 0.2)'
+                    : 'transparent',
+                border:
+                  activeTab === tab.id
+                    ? '2px solid #8b5cf6'
+                    : '1px solid rgba(148, 163, 184, 0.2)',
+                color:
+                  activeTab === tab.id
+                    ? '#8b5cf6'
+                    : 'rgba(255, 255, 255, 0.7)',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab.id) {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
         {/* Overview Tab */}
-        <TabsContent value='overview' className='space-y-6'>
-          <div className='flex items-center gap-4'>
-            <Select
-              value={selectedDepartment}
-              onValueChange={setSelectedDepartment}
-            >
-              <SelectTrigger className='w-48'>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Departments</SelectItem>
-                <SelectItem value='sales'>
-                  Sales ({departmentStats.sales})
-                </SelectItem>
-                <SelectItem value='lead_generation'>
-                  Lead Generation ({departmentStats.lead_generation})
-                </SelectItem>
-                <SelectItem value='operations'>
-                  Operations ({departmentStats.operations})
-                </SelectItem>
-                <SelectItem value='support'>
-                  Support ({departmentStats.support})
-                </SelectItem>
-                <SelectItem value='analytics'>
-                  Analytics ({departmentStats.analytics})
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            <div className='text-sm text-gray-600'>
-              Showing {filteredStaff.length} staff members
+        {activeTab === 'overview' && (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+              <Select
+                value={selectedDepartment}
+                onValueChange={setSelectedDepartment}
+              >
+                <SelectTrigger
+                  style={{
+                    width: '200px',
+                    background: 'rgba(15, 23, 42, 0.8)',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                    color: 'white',
+                  }}
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent
+                  style={{
+                    background: 'rgba(15, 23, 42, 0.95)',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                    color: 'white',
+                  }}
+                >
+                  <SelectItem value='all'>All Departments</SelectItem>
+                  <SelectItem value='sales'>
+                    Sales ({departmentStats.sales})
+                  </SelectItem>
+                  <SelectItem value='lead_generation'>
+                    Lead Generation ({departmentStats.lead_generation})
+                  </SelectItem>
+                  <SelectItem value='operations'>
+                    Operations ({departmentStats.operations})
+                  </SelectItem>
+                  <SelectItem value='support'>
+                    Support ({departmentStats.support})
+                  </SelectItem>
+                  <SelectItem value='analytics'>
+                    Analytics ({departmentStats.analytics})
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+                Showing {filteredStaff.length} staff members
+              </div>
             </div>
-          </div>
 
           <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
             {filteredStaff.map((staff) => (
