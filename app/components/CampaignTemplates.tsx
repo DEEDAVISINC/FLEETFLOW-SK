@@ -616,6 +616,73 @@ export default function CampaignTemplates() {
       ],
     },
 
+    // DISPATCH SERVICE CAMPAIGNS - 10% of Carrier Load Fees
+    {
+      id: 'carrier_dispatch_services',
+      name: 'Carrier Dispatch Services Campaign',
+      description:
+        'Target carriers who need professional dispatch services - 10% of their load fees revenue stream',
+      category: 'dispatch_services',
+      targetAudience:
+        'Carriers needing dispatch support, load management, and fee collection services',
+      expectedResults: {
+        leads: 75,
+        conversions: 38,
+        revenue: 225000, // 10% of carrier load fees
+      },
+      duration: '30 days',
+      difficulty: 'medium',
+      aiStaff: ['Logan', 'Desiree', 'Miles'],
+      channels: ['Phone', 'Email', 'LinkedIn'],
+      icon: '🚛',
+      color: 'bg-orange-500',
+      steps: [
+        {
+          id: 'carrier_identification',
+          name: 'Carrier Network Analysis',
+          description: 'Identify carriers who could benefit from professional dispatch services',
+          timing: 'Day 1-5',
+          channel: 'Data Analysis',
+          aiStaff: 'Desiree',
+          automationLevel: 'full',
+        },
+        {
+          id: 'dispatch_value_proposition',
+          name: 'Dispatch Value Proposition',
+          description: 'Present the 10% fee structure and service benefits to carriers',
+          timing: 'Day 6-15',
+          channel: 'Phone/Email',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'carrier_relationship_building',
+          name: 'Carrier Relationship Building',
+          description: 'Build long-term partnerships with carrier network',
+          timing: 'Day 16-25',
+          channel: 'Phone/LinkedIn',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'dispatch_service_onboarding',
+          name: 'Dispatch Service Onboarding',
+          description: 'Onboard carriers to dispatch services and fee collection',
+          timing: 'Day 26-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '75+ carrier leads identified',
+        '38+ carriers onboarded to dispatch services',
+        '$225K+ dispatch fee revenue (10% of carrier load fees)',
+        '85%+ carrier satisfaction rate',
+        '90%+ on-time fee collection',
+      ],
+    },
+
     // VERTICAL-SPECIFIC MANUFACTURER CAMPAIGNS
     {
       id: 'food_beverage_manufacturer_targeting',

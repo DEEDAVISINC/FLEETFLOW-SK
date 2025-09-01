@@ -143,14 +143,17 @@ export default function CampaignExecutionPlan() {
         </p>
         <div className='mt-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
           <div className='rounded-lg bg-white/10 p-4'>
-            <div className='text-2xl font-bold'>$28,500</div>
+            <div className='text-2xl font-bold'>$51,000</div>
             <div className='text-sm'>
-              Monthly Revenue (Phase 1 - 3 Campaigns)
+              Monthly Revenue (3 Campaigns + Dispatch)
+            </div>
+            <div className='mt-1 text-xs text-green-600'>
+              Includes $22.5K dispatch fees (10% of carrier load fees)
             </div>
           </div>
           <div className='rounded-lg bg-white/10 p-4'>
             <div className='text-2xl font-bold'>90 Days</div>
-            <div className='text-sm'>Time to Full Revenue (3 Campaigns)</div>
+            <div className='text-sm'>Time to Full Revenue (4 Campaigns)</div>
           </div>
           <div className='rounded-lg bg-white/10 p-4'>
             <div className='text-2xl font-bold'>91%</div>
@@ -385,7 +388,7 @@ export default function CampaignExecutionPlan() {
             <div className='text-sm text-gray-600'>
               Phase 1 Monthly Revenue (3 Campaigns)
             </div>
-            <div className='text-xs text-gray-500 mt-1'>
+            <div className='mt-1 text-xs text-gray-500'>
               Daily: $950 | Target Gap: $2,717/day
             </div>
           </div>
@@ -400,20 +403,24 @@ export default function CampaignExecutionPlan() {
             <div className='text-sm text-gray-600'>
               All Phase Revenue Potential
             </div>
-            <div className='text-xs text-gray-500 mt-1'>
+            <div className='mt-1 text-xs text-gray-500'>
               Daily: $3,119 | Still below $3,667 target
             </div>
           </div>
-          <div className='col-span-full mt-4 p-4 bg-blue-50 rounded-lg'>
-            <h4 className='font-bold text-blue-800 mb-2'>🎯 YOUR TARGET: $3,667 Daily Revenue</h4>
+          <div className='col-span-full mt-4 rounded-lg bg-blue-50 p-4'>
+            <h4 className='mb-2 font-bold text-blue-800'>
+              🎯 YOUR TARGET: $3,667 Daily Revenue
+            </h4>
             <div className='grid grid-cols-2 gap-4 text-sm'>
               <div>
                 <span className='text-gray-600'>Monthly Equivalent:</span>
-                <span className='font-bold text-blue-600 ml-2'>$110,010</span>
+                <span className='ml-2 font-bold text-blue-600'>$110,010</span>
               </div>
               <div>
                 <span className='text-gray-600'>Annual Equivalent:</span>
-                <span className='font-bold text-blue-600 ml-2'>$1,320,000+</span>
+                <span className='ml-2 font-bold text-blue-600'>
+                  $1,320,000+
+                </span>
               </div>
             </div>
             <div className='mt-2 text-xs text-blue-700'>
@@ -422,78 +429,109 @@ export default function CampaignExecutionPlan() {
           </div>
         </div>
         {/* Scaling Plan for $3,667 Daily Target */}
-        <div className='mt-6 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-200'>
-          <h4 className='text-xl font-bold text-green-800 mb-4'>🚀 SCALING ROADMAP TO $3,667 DAILY REVENUE</h4>
+        <div className='mt-6 rounded-lg border-2 border-green-200 bg-gradient-to-r from-green-50 to-blue-50 p-6'>
+          <h4 className='mb-4 text-xl font-bold text-green-800'>
+            🚀 SCALING ROADMAP TO $3,667 DAILY REVENUE
+          </h4>
 
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-4'>
-            <div className='text-center p-3 bg-white rounded-lg'>
+          <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-4'>
+            <div className='rounded-lg bg-white p-3 text-center'>
               <div className='text-lg font-bold text-green-600'>Month 1-2</div>
               <div className='text-sm text-gray-600'>Phase 1</div>
-              <div className='text-xl font-bold text-green-800'>$950/day</div>
+              <div className='text-xl font-bold text-green-800'>$1,700/day</div>
+              <div className='text-xs text-green-600'>+$750 dispatch</div>
             </div>
-            <div className='text-center p-3 bg-white rounded-lg'>
+            <div className='rounded-lg bg-white p-3 text-center'>
               <div className='text-lg font-bold text-blue-600'>Month 3-4</div>
               <div className='text-sm text-gray-600'>Phase 2</div>
-              <div className='text-xl font-bold text-blue-800'>$2,278/day</div>
+              <div className='text-xl font-bold text-blue-800'>$2,833/day</div>
+              <div className='text-xs text-blue-600'>+$555 dispatch</div>
             </div>
-            <div className='text-center p-3 bg-white rounded-lg'>
-              <div className='text-lg font-bold text-purple-600'>Month 5-8</div>
+            <div className='rounded-lg bg-white p-3 text-center'>
+              <div className='text-lg font-bold text-purple-600'>Month 5-6</div>
               <div className='text-sm text-gray-600'>Phase 3</div>
-              <div className='text-xl font-bold text-purple-800'>$3,119/day</div>
+              <div className='text-xl font-bold text-purple-800'>$3,500/day</div>
+              <div className='text-xs text-purple-600'>+$381 dispatch</div>
             </div>
-            <div className='text-center p-3 bg-white rounded-lg border-2 border-red-300'>
-              <div className='text-lg font-bold text-red-600'>Month 9-12</div>
+            <div className='rounded-lg border-2 border-red-300 bg-white p-3 text-center'>
+              <div className='text-lg font-bold text-red-600'>Month 7-8</div>
               <div className='text-sm text-gray-600'>Full Scale</div>
               <div className='text-xl font-bold text-red-800'>$3,667/day</div>
-              <div className='text-xs text-red-600 mt-1'>🎯 TARGET ACHIEVED</div>
+              <div className='mt-1 text-xs text-red-600'>
+                🎯 TARGET ACHIEVED (6 months faster!)
+              </div>
             </div>
           </div>
 
           <div className='space-y-3 text-sm'>
-            <div className='flex justify-between items-center p-2 bg-white rounded'>
+            <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Campaigns Running:</span>
-              <span className='font-bold'>3 → 6 → 9 → 12+</span>
+              <span className='font-bold'>4 → 7 → 10 → 14+</span>
             </div>
-            <div className='flex justify-between items-center p-2 bg-white rounded'>
+            <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Monthly Revenue Target:</span>
-              <span className='font-bold'>$28.5K → $68.5K → $93.5K → $110K+</span>
+              <span className='font-bold'>
+                $51K → $85K → $105K → $110K+
+              </span>
             </div>
-            <div className='flex justify-between items-center p-2 bg-white rounded'>
+            <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Team Size:</span>
-              <span className='font-bold'>3 AI Staff → 5 → 8 → 10+</span>
+              <span className='font-bold'>4 AI Staff → 6 → 9 → 12+</span>
             </div>
-            <div className='flex justify-between items-center p-2 bg-white rounded'>
+            <div className='flex items-center justify-between rounded bg-white p-2'>
               <span className='font-medium'>Conversion Rate Target:</span>
               <span className='font-bold'>30% → 35% → 40% → 45%+</span>
+            </div>
+            <div className='flex items-center justify-between rounded bg-white p-2'>
+              <span className='font-medium'>Dispatch Revenue:</span>
+              <span className='font-bold'>$22.5K → $42K → $57K → $66K+</span>
             </div>
           </div>
 
           <div className='mt-4 space-y-3'>
             {/* Campaign Addition Strategy */}
-            <div className='p-3 bg-blue-50 border border-blue-200 rounded'>
-              <h5 className='font-bold text-blue-800 mb-2'>📋 CAMPAIGNS TO ADD FOR SCALING:</h5>
+            <div className='rounded border border-blue-200 bg-blue-50 p-3'>
+              <h5 className='mb-2 font-bold text-blue-800'>
+                📋 CAMPAIGNS TO ADD FOR SCALING:
+              </h5>
               <div className='space-y-2 text-sm'>
                 <div className='flex justify-between'>
+                  <span>Month 1-2 (Phase 1):</span>
+                  <span className='font-medium'>
+                    Add Carrier Dispatch Services ($22.5K/month)
+                  </span>
+                </div>
+                <div className='flex justify-between'>
                   <span>Month 3-4 (Phase 2):</span>
-                  <span className='font-medium'>Enterprise Manufacturer Hunt + Warehouse & 3PL</span>
+                  <span className='font-medium'>
+                    Enterprise Manufacturer Hunt + Warehouse & 3PL + Dispatch Scale
+                  </span>
                 </div>
                 <div className='flex justify-between'>
-                  <span>Month 5-8 (Phase 3):</span>
-                  <span className='font-medium'>Food & Bev + Construction + Retail + Supply Chain</span>
+                  <span>Month 5-6 (Phase 3):</span>
+                  <span className='font-medium'>
+                    Food & Bev + Construction + Retail + Supply Chain + Dispatch Network
+                  </span>
                 </div>
                 <div className='flex justify-between'>
-                  <span>Month 9-12 (Full Scale):</span>
-                  <span className='font-medium'>Client Loyalty + High-Value + Vertical Expansions</span>
+                  <span>Month 7-8 (Full Scale):</span>
+                  <span className='font-medium'>
+                    Client Loyalty + High-Value + Vertical Expansions + Full Dispatch
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Optimization Strategy */}
-            <div className='p-3 bg-green-50 border border-green-200 rounded'>
-              <h5 className='font-bold text-green-800 mb-2'>⚡ OPTIMIZATION STRATEGY:</h5>
+            <div className='rounded border border-green-200 bg-green-50 p-3'>
+              <h5 className='mb-2 font-bold text-green-800'>
+                ⚡ OPTIMIZATION STRATEGY:
+              </h5>
               <div className='grid grid-cols-2 gap-4 text-sm'>
                 <div>
-                  <span className='font-medium text-green-700'>Conversion Rate:</span>
+                  <span className='font-medium text-green-700'>
+                    Conversion Rate:
+                  </span>
                   <span className='ml-2'>30% → 40% (optimize messaging)</span>
                 </div>
                 <div>
@@ -501,27 +539,33 @@ export default function CampaignExecutionPlan() {
                   <span className='ml-2'>$15K → $25K (enterprise focus)</span>
                 </div>
                 <div>
-                  <span className='font-medium text-green-700'>Lead Volume:</span>
-                  <span className='ml-2'>200 → 400/month (expanded sources)</span>
+                  <span className='font-medium text-green-700'>
+                    Carrier Network:
+                  </span>
+                  <span className='ml-2'>38 → 150 carriers (dispatch partnerships)</span>
                 </div>
                 <div>
-                  <span className='font-medium text-green-700'>Team Productivity:</span>
-                  <span className='ml-2'>3 → 8 staff (scale operations)</span>
+                                    <span className='font-medium text-green-700'>
+                    Team Productivity:
+                  </span>
+                    <span className='ml-2'>4 → 10 staff (dispatch + campaigns)</span>
                 </div>
               </div>
             </div>
 
-            <div className='p-3 bg-yellow-50 border border-yellow-200 rounded'>
+            <div className='rounded border border-yellow-200 bg-yellow-50 p-3'>
               <p className='text-sm text-yellow-800'>
-                <strong>⚠️ Realistic Timeline:</strong> Achieving $3,667/day will take 9-12 months of systematic scaling,
-                optimization, and team expansion. This is an ambitious but achievable target with proper execution.
+                <strong>⚠️ Accelerated Timeline:</strong> With dispatch revenue (10% of carrier fees),
+                achieving $3,667/day is now possible in 7-8 months vs 12 months originally.
+                Dispatch creates immediate revenue and carrier partnerships for faster scaling.
               </p>
             </div>
           </div>
         </div>
 
         <div className='mt-4 text-center text-sm text-gray-600'>
-          Start with Phase 1 for fastest revenue, then expand strategically to reach $3,667 daily target
+          Start with Phase 1 for fastest revenue, then expand strategically to
+          reach $3,667 daily target
         </div>
       </div>
     </div>
