@@ -17,7 +17,7 @@ export default function CampaignExecutionPlan() {
     'phase1' | 'phase2' | 'phase3'
   >('phase1');
 
-  // PHASE 1: TOP 2 PRIORITY CAMPAIGNS (CONSERVATIVE PROJECTIONS)
+  // PHASE 1: TOP 3 PRIORITY CAMPAIGNS (CONSERVATIVE PROJECTIONS)
   const phase1Campaigns: CampaignMetrics[] = [
     {
       name: 'Desperate Shippers Blitz',
@@ -35,6 +35,15 @@ export default function CampaignExecutionPlan() {
       difficulty: 'easy',
       priority: 2,
       startDate: 'Week 2',
+      status: 'planned',
+    },
+    {
+      name: 'High-Value Prospect Acceleration',
+      monthlyRevenue: 15000, // Conservative: $15,000/month based on 12 conversions at $50K average
+      duration: 30,
+      difficulty: 'hard',
+      priority: 3,
+      startDate: 'Week 4',
       status: 'planned',
     },
   ];
@@ -129,15 +138,19 @@ export default function CampaignExecutionPlan() {
         <h1 className='mb-2 text-3xl font-bold'>
           🎯 Strategic Campaign Execution Plan
         </h1>
-        <p className='text-xl'>Focus on 2 Most Realistic Campaigns for Sustainable Revenue</p>
+        <p className='text-xl'>
+          Focus on 3 High-Value Campaigns for Maximum Revenue
+        </p>
         <div className='mt-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
           <div className='rounded-lg bg-white/10 p-4'>
-            <div className='text-2xl font-bold'>$13,500</div>
-            <div className='text-sm'>Monthly Revenue (Phase 1 - Conservative)</div>
+            <div className='text-2xl font-bold'>$28,500</div>
+            <div className='text-sm'>
+              Monthly Revenue (Phase 1 - 3 Campaigns)
+            </div>
           </div>
           <div className='rounded-lg bg-white/10 p-4'>
-            <div className='text-2xl font-bold'>60 Days</div>
-            <div className='text-sm'>Time to Full Revenue (2 Campaigns)</div>
+            <div className='text-2xl font-bold'>90 Days</div>
+            <div className='text-sm'>Time to Full Revenue (3 Campaigns)</div>
           </div>
           <div className='rounded-lg bg-white/10 p-4'>
             <div className='text-2xl font-bold'>91%</div>
@@ -187,7 +200,8 @@ export default function CampaignExecutionPlan() {
               🚀 PHASE 1: CONSERVATIVE REVENUE EXECUTION
             </h2>
             <p className='mb-4 text-green-700'>
-              Start with the 2 most realistic campaigns for sustainable revenue generation
+              Start with the 3 most valuable campaigns for maximum revenue
+              generation
             </p>
             <div className='rounded-lg bg-white p-4'>
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
@@ -367,8 +381,10 @@ export default function CampaignExecutionPlan() {
         <h3 className='mb-4 text-xl font-bold'>🎯 Strategic Summary</h3>
         <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
           <div className='text-center'>
-            <div className='text-3xl font-bold text-green-600'>$48,000</div>
-            <div className='text-sm text-gray-600'>Phase 1 Monthly Revenue (Aggressive)</div>
+            <div className='text-3xl font-bold text-green-600'>$28,500</div>
+            <div className='text-sm text-gray-600'>
+              Phase 1 Monthly Revenue (3 Campaigns)
+            </div>
           </div>
           <div className='text-center'>
             <div className='text-3xl font-bold text-blue-600'>$68,667</div>

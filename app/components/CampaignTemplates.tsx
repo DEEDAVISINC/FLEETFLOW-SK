@@ -74,10 +74,11 @@ export default function CampaignTemplates() {
   );
 
   // PRIORITY CAMPAIGN EXECUTION PLAN
-  // PHASE 1: TOP 2 MOST REALISTIC & FASTEST REVENUE CAMPAIGNS
+  // PHASE 1: TOP 3 CAMPAIGNS FOR MAXIMUM REVENUE
   const priorityCampaigns = [
     'desperate_shippers_blitz',
     'new_businesses_freight_blitz',
+    'high_value_prospect_acceleration', // RECOMMENDED ADDITION
   ];
 
   // Comprehensive Campaign Templates
