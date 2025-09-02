@@ -2988,7 +2988,7 @@ export default function CampaignTemplates() {
       },
       duration: '30 days',
       difficulty: 'medium',
-      aiStaff: ['Desiree', 'Ana Lytics'],
+      aiStaff: ['Desiree', 'Ana Lyles'],
       channels: ['Email', 'Phone', 'Industry Reports'],
       icon: '📈',
       color: 'bg-teal-600',
@@ -3000,7 +3000,7 @@ export default function CampaignTemplates() {
             'Analyze historical shipping data to predict seasonal demand',
           timing: 'Day 1-10',
           channel: 'Data Analysis',
-          aiStaff: 'Ana Lytics',
+          aiStaff: 'Ana Lyles',
           automationLevel: 'full',
         },
         {

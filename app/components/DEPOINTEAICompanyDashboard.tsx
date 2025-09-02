@@ -296,7 +296,7 @@ export default function DEPOINTEAICompanyDashboard() {
     },
     {
       id: 'ana',
-      name: 'Ana Lytics',
+      name: 'Ana Lyles',
       role: 'Data Analysis Specialist',
       department: 'Operations',
       avatar: '📊',

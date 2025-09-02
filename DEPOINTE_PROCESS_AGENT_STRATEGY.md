@@ -625,7 +625,7 @@ Schedule legal consultation this week to understand requirements and begin the p
 - **Kameelah (DOT Compliance):** Process agent compliance and monitoring
 - **Dell (IT Support):** Technology platform development and maintenance
 - **Shanell (Customer Service):** Student support and communication
-- **Ana Lytics (Data Analysis):** Performance metrics and optimization
+- **Ana Lyles (Data Analysis):** Performance metrics and optimization
 
 **Ready to transform DEPOINTE into the complete freight brokerage business launch ecosystem?** 🤝🚛
 

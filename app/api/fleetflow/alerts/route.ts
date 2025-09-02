@@ -118,7 +118,7 @@ const productionAlerts = [
     category: 'market_update',
     rateChange: '+2.5%',
     effectiveDate: 'immediate',
-    assignedTo: 'Ana Lytics (Data Analysis)',
+    assignedTo: 'Ana Lyles (Data Analysis)',
     status: 'resolved',
   },
 ];

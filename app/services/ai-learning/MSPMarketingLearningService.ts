@@ -132,7 +132,7 @@ export class MSPMarketingLearningService {
         'Performance Analytics',
         'System Implementation',
       ],
-      'Ana Lytics': [
+      'Ana Lyles': [
         'Data-Driven Insights',
         'Client Analytics',
         'Performance Prediction',

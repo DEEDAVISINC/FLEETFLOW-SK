@@ -344,7 +344,7 @@ services.
 - **Kameelah (DOT Compliance):** Regulatory guidance and monitoring
 - **Dell (IT Support):** Technology platform maintenance
 - **Shanell (Customer Service):** Student communication and support
-- **Ana Lytics (Data Analysis):** Performance metrics and optimization
+- **Ana Lyles (Data Analysis):** Performance metrics and optimization
 ```
 
 ### **Technology Infrastructure**
@@ -595,7 +595,7 @@ Start the FMCSA third-party agent registration process this week!
 - **Kameelah (DOT Compliance):** Regulatory guidance and compliance monitoring
 - **Dell (IT Support):** Technology platform development and maintenance
 - **Shanell (Customer Service):** Student communication and support
-- **Ana Lytics (Data Analysis):** Performance metrics and optimization
+- **Ana Lyles (Data Analysis):** Performance metrics and optimization
 - **Gary (Lead Generation):** Market expansion and business development
 
 **Ready to begin the transformation of DEPOINTE into the industry's most comprehensive processing

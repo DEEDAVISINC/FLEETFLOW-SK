@@ -13,9 +13,9 @@ marketing mastery, sales expertise, and industry knowledge for unprecedented tra
 yet only 15% of new entrants succeed beyond 2 years.
 
 **Competitive Advantage:** Complete ecosystem integration with FleetFlow's AI-powered TMS platform
-with embedded AI learning capabilities, providing unparalleled support from licensing to load booking.
-AI staff possess natural intelligence through embedded learning, eliminating the need for external
-knowledge lookup and creating seamless, authentic training experiences.
+with embedded AI learning capabilities, providing unparalleled support from licensing to load
+booking. AI staff possess natural intelligence through embedded learning, eliminating the need for
+external knowledge lookup and creating seamless, authentic training experiences.
 
 ---
 
@@ -82,9 +82,11 @@ knowledge lookup and creating seamless, authentic training experiences.
 
 #### 2. **Comprehensive Support Ecosystem**
 
-- **AI-Enhanced Coaching:** Weekly 1-on-1 sessions with AI staff featuring embedded marketing mastery
+- **AI-Enhanced Coaching:** Weekly 1-on-1 sessions with AI staff featuring embedded marketing
+  mastery
 - **Live Coaching:** Industry veterans supported by AI intelligence
-- **Embedded Learning Support:** AI staff with instant access to resistance removal and sales optimization
+- **Embedded Learning Support:** AI staff with instant access to resistance removal and sales
+  optimization
 - **Peer Community:** Private Slack channel with active brokers
 - **24/7 Technical Support:** Dedicated LaunchPad support team with AI assistance
 - **Resource Library:** 500+ templates, scripts, and guides enhanced with AI insights
@@ -620,7 +622,8 @@ knowledge lookup and creating seamless, authentic training experiences.
 
 **FleetFlow LaunchPad℠ represents a transformative opportunity in the $2.3 trillion transportation
 industry.** By addressing the critical gap between industry knowledge and business execution through
-revolutionary embedded AI learning integration, LaunchPad creates a scalable, high-margin business with:
+revolutionary embedded AI learning integration, LaunchPad creates a scalable, high-margin business
+with:
 
 - **$136M+ annual revenue potential** by Year 3 (enhanced by AI capabilities)
 - **62% gross margins** through efficient AI-enhanced delivery model
@@ -628,11 +631,12 @@ revolutionary embedded AI learning integration, LaunchPad creates a scalable, hi
 - **98% student success rates** creating sustainable competitive advantage through embedded learning
 - **Industry-first AI learning integration** creating unparalleled competitive moat
 
-**The combination of FleetFlow's AI-powered platform with embedded learning integration, comprehensive
-curriculum enhanced by MSP marketing mastery, and experienced coaching network supported by AI intelligence
-positions LaunchPad as the definitive solution for transportation career success.**
+**The combination of FleetFlow's AI-powered platform with embedded learning integration,
+comprehensive curriculum enhanced by MSP marketing mastery, and experienced coaching network
+supported by AI intelligence positions LaunchPad as the definitive solution for transportation
+career success.**
 
 **LaunchPad is not just a training program—it's a career transformation platform powered by embedded
 AI learning that will reshape how professionals enter the transportation industry. The revolutionary
-embedded learning approach ensures AI staff possess natural intelligence, creating authentic, seamless
-training experiences that dramatically improve success rates.** 🚀✨🧠
+embedded learning approach ensures AI staff possess natural intelligence, creating authentic,
+seamless training experiences that dramatically improve success rates.** 🚀✨🧠

@@ -152,7 +152,7 @@
 
 🎯 **Supporting Roles:**
 - **Shanell (Customer Service):** Student communication and scheduling
-- **Ana Lytics (Data Analysis):** Performance tracking and optimization
+- **Ana Lyles (Data Analysis):** Performance tracking and optimization
 - **Gary (Business Development):** Service expansion and partnership opportunities
 ```
 

@@ -61,12 +61,12 @@ export function getDesireeLearningMaterials() {
   };
 }
 
-// Example: Ana Lytics accessing data-driven strategies
+// Example: Ana Lyles accessing data-driven strategies
 export function getAnaLyticsStrategies() {
-  console.log('🤖 Ana Lytics AI accessing analytics-focused strategies...');
+  console.log('🤖 Ana Lyles AI accessing analytics-focused strategies...');
 
-  const anaStrategies = getStrategiesForRole('Ana Lytics');
-  console.log(`📊 Ana Lytics has access to ${anaStrategies.length} strategies`);
+  const anaStrategies = getStrategiesForRole('Ana Lyles');
+  console.log(`📊 Ana Lyles has access to ${anaStrategies.length} strategies`);
 
   // Focus on data-driven strategies
   const dataStrategies =
@@ -117,8 +117,8 @@ export function demonstrateAIStrategyUsage() {
   });
   console.log('Result:', resistanceResult);
 
-  // Ana Lytics analyzing client data
-  console.log('\n📊 Scenario 2: Ana Lytics analyzing QBR data');
+  // Ana Lyles analyzing client data
+  console.log('\n📊 Scenario 2: Ana Lyles analyzing QBR data');
   const analyticsResult = applyStrategyInRealTime('qbr-management', {
     type: 'analytics',
     clientName: 'XYZ Logistics',

@@ -31,7 +31,7 @@ ensure complete business launch success.
 - Gary: Business development and partnerships
 - Kameelah: Regulatory compliance and consulting
 - Shanell: Student support and communication
-- Ana Lytics: Performance tracking and optimization
+- Ana Lyles: Performance tracking and optimization
 ```
 
 ### **Program Pricing:**
@@ -80,7 +80,7 @@ ensure complete business launch success.
 - 3-month milestone plan
 
 **DEPOINTE AI Role:**
-- **Ana Lytics:** Market analysis and financial modeling
+- **Ana Lyles:** Market analysis and financial modeling
 - **Kameelah:** Regulatory overview and compliance basics
 - **Shanell:** Student goal assessment and motivation coaching
 
@@ -140,7 +140,7 @@ ensure complete business launch success.
 **DEPOINTE AI Role:**
 - **Kameelah:** MC Authority and FMCSA compliance expertise
 - **Gary:** Partnership coordination for MC Authority processing
-- **Ana Lytics:** Regulatory timeline and cost analysis
+- **Ana Lyles:** Regulatory timeline and cost analysis
 
 **Partnership Integration:**
 - **MC Authority Consultation Service:** Direct guidance through application
@@ -199,7 +199,7 @@ ensure complete business launch success.
 
 **DEPOINTE AI Role:**
 - **Dell:** Technology integration and setup guidance
-- **Ana Lytics:** Performance tracking and analytics systems
+- **Ana Lyles:** Performance tracking and analytics systems
 - **Logan:** Operational procedures and workflow design
 
 **Partnership Integration:**
@@ -258,7 +258,7 @@ ensure complete business launch success.
 - Performance tracking framework
 
 **DEPOINTE AI Role:**
-- **Ana Lytics:** Financial modeling and analysis
+- **Ana Lyles:** Financial modeling and analysis
 - **Gary:** Growth strategy and market expansion
 - **Resse A. Bell:** Financial management and accounting integration
 
@@ -288,7 +288,7 @@ ensure complete business launch success.
 - 90-day growth plan
 
 **DEPOINTE AI Role:**
-- **Ana Lytics:** Launch performance tracking and optimization
+- **Ana Lyles:** Launch performance tracking and optimization
 - **Shanell:** Student launch support and success coaching
 - **Gary:** Growth acceleration and market expansion guidance
 
@@ -326,7 +326,7 @@ ensure complete business launch success.
 - Launch support and success celebration (Week 8)
 - Alumni network coordination
 
-**Ana Lytics (Data Analysis):**
+**Ana Lyles (Data Analysis):**
 - Business assessment and market analysis (Week 1)
 - Financial modeling and projections (Weeks 2, 7)
 - Performance tracking and optimization (Weeks 5, 8)
@@ -677,7 +677,7 @@ ensure complete business launch success.
 - Gary: Business development and partnership management
 - Kameelah: Regulatory compliance and consultation
 - Shanell: Student support and success coaching
-- Ana Lytics: Performance tracking and optimization
+- Ana Lyles: Performance tracking and optimization
 
 ### **Partnership Integration:**
 

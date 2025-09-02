@@ -3440,7 +3440,7 @@ export default function AboutUsPage() {
                       </h4>
                       <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>
                         <strong>
-                          C. Allen Durr (Scheduling), Ana Lytics (Data Analysis)
+                          C. Allen Durr (Scheduling), Ana Lyles (Data Analysis)
                         </strong>{' '}
                         - Advanced operational analytics with predictive
                         scheduling and real-time performance optimization.

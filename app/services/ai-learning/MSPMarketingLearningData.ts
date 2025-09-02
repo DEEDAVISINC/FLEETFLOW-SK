@@ -111,7 +111,7 @@ export const mspMarketingStrategies: MarketingStrategy[] = [
       'Relationship health scoring',
       'Predictive opportunity identification',
     ],
-    relevantRoles: ['Ana Lytics', 'C. Allen Durr', 'Brook R.', 'Carrie R.'],
+    relevantRoles: ['Ana Lyles', 'C. Allen Durr', 'Brook R.', 'Carrie R.'],
   },
   {
     id: 'referrals',
@@ -197,7 +197,7 @@ export const mspMarketingStrategies: MarketingStrategy[] = [
       'Competitive pricing intelligence',
       'ROI-based pricing recommendations',
     ],
-    relevantRoles: ['Resse A. Bell', 'Dell', 'Will', 'Ana Lytics'],
+    relevantRoles: ['Resse A. Bell', 'Dell', 'Will', 'Ana Lyles'],
   },
   {
     id: 'sales-process',
@@ -283,6 +283,6 @@ export const mspMarketingStrategies: MarketingStrategy[] = [
       'Predictive follow-up timing algorithms',
       'Multi-channel communication orchestration',
     ],
-    relevantRoles: ['Ana Lytics', 'C. Allen Durr', 'Shanell', 'Clarence'],
+    relevantRoles: ['Ana Lyles', 'C. Allen Durr', 'Shanell', 'Clarence'],
   },
 ];

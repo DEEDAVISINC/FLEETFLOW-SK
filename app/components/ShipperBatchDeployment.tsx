@@ -60,7 +60,7 @@ const SHIPPER_STAFF_MAPPING = {
     department: 'Business Development',
   },
   'ana-018': {
-    name: 'Ana Lytics',
+    name: 'Ana Lyles',
     role: 'Data Analysis',
     avatar: '📊',
     department: 'Operations',

@@ -64,7 +64,7 @@ Microsoft, Salesforce, Google, Oracle
 - **COMPLIANCE**: Kameelah, Regina (AI compliance and safety)
 - **SUPPORT**: Shanell, Clarence (AI customer service and claims)
 - **BUSINESS DEVELOPMENT**: Gary, Desiree, Cliff, Drew (4-person AI growth team)
-- **OPERATIONS**: C. Allen Durr, Ana Lytics (AI scheduling and data analysis)
+- **OPERATIONS**: C. Allen Durr, Ana Lyles (AI scheduling and data analysis)
 
 **Strategic Acquisition Value**:
 

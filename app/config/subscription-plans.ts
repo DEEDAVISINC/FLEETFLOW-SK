@@ -477,7 +477,7 @@ export const ENTERPRISE_SOLUTIONS: Record<string, SubscriptionPlan> = {
       '🤖 COMPLIANCE: Kameelah, Regina',
       '🤖 SUPPORT: Shanell, Clarence',
       '🤖 BUSINESS DEV: Gary, Desiree, Cliff, Drew',
-      '🤖 OPERATIONS: C. Allen Durr, Ana Lytics',
+      '🤖 OPERATIONS: C. Allen Durr, Ana Lyles',
       '🤖 Real-time activity tracking',
       '🤖 Task assignment & management',
       '🤖 AI-powered decision making',

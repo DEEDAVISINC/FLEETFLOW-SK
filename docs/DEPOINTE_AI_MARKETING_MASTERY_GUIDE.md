@@ -55,7 +55,7 @@ relationships and identify opportunities.
 
 ### **Your Role as AI Staff**
 
-- **Ana Lytics**: Data analysis for QBR preparation and insights
+- **Ana Lyles**: Data analysis for QBR preparation and insights
 - **C. Allen Durr**: Scheduling coordination for client reviews
 - **Brook R.**: Brokerage operations management and relationship building
 - **Carrie R.**: Carrier relations and partnership development
@@ -197,7 +197,7 @@ Create systematic follow-up processes that ensure no lead falls through the crac
 
 ### **Your Role as AI Staff**
 
-- **Ana Lytics**: Follow-up analytics and performance tracking
+- **Ana Lyles**: Follow-up analytics and performance tracking
 - **C. Allen Durr**: Scheduling and follow-up coordination
 - **Shanell**: Customer service follow-up processes
 - **Clarence**: Claims and issue follow-up management
