@@ -27,6 +27,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Resistance Removal Sales System Expert',
+      'Psychology-based prospect engagement',
+      'Unseen Leadership implementation',
+      'Sales script elimination techniques',
+      'Emotional intelligence in sales',
+      'Client resistance pattern recognition',
+      'Relationship building without scripts',
+      '49 Factors of Unseen Leadership mastery',
+    ],
   },
   {
     id: 'cliff-002',
@@ -39,6 +49,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Resistance Removal Sales System Expert',
+      'Cold prospect engagement specialist',
+      'Unseen Leadership in prospecting',
+      'Sales script elimination for cold calls',
+      'Resistance pattern identification',
+      'Psychology of desperate prospect motivation',
+      'Relationship building in high-pressure scenarios',
+      '49 Factors of Unseen Leadership application',
+    ],
   },
   {
     id: 'gary-003',
@@ -51,6 +71,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Resistance Removal Sales System Expert',
+      'Lead qualification through psychology',
+      'Unseen Leadership in lead generation',
+      'Script-free conversation techniques',
+      'Prospect resistance pattern analysis',
+      'Emotional intelligence lead scoring',
+      'Relationship building from initial contact',
+      '49 Factors of Unseen Leadership for lead nurturing',
+    ],
   },
   {
     id: 'will-004',
@@ -63,6 +93,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Resistance Removal Sales System Expert',
+      'Sales process optimization through psychology',
+      'Unseen Leadership in sales operations',
+      'Script-free sales methodology implementation',
+      'Team resistance removal techniques',
+      'Sales psychology training and development',
+      'Operational efficiency through emotional intelligence',
+      '49 Factors of Unseen Leadership for team management',
+    ],
   },
   {
     id: 'hunter-005',
@@ -75,6 +115,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Unseen Leadership in team recruitment',
+      'Psychology of candidate engagement',
+      'Resistance removal in hiring processes',
+      'Emotional intelligence in onboarding',
+      'Team building through psychology',
+      'Candidate resistance pattern analysis',
+      'Relationship building in HR processes',
+      '49 Factors of Unseen Leadership for team development',
+    ],
   },
   {
     id: 'logan-006',
@@ -87,6 +137,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Logistics psychology and coordination',
+      'Unseen Leadership in supply chain management',
+      'Resistance removal in operational challenges',
+      'Emotional intelligence in team coordination',
+      'Process optimization through psychology',
+      'Stakeholder resistance pattern analysis',
+      'Relationship building in logistics operations',
+      '49 Factors of Unseen Leadership for operational efficiency',
+    ],
   },
   {
     id: 'miles-007',
@@ -99,6 +159,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Dispatch psychology and crisis management',
+      'Unseen Leadership in real-time coordination',
+      'Resistance removal in emergency situations',
+      'Emotional intelligence in high-pressure dispatch',
+      'Communication optimization through psychology',
+      'Driver resistance pattern analysis',
+      'Relationship building in transportation dispatch',
+      '49 Factors of Unseen Leadership for crisis management',
+    ],
   },
   {
     id: 'dee-008',
@@ -111,6 +181,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Resistance Removal Sales System Expert',
+      'Freight brokerage negotiation psychology',
+      'Unseen Leadership in carrier relations',
+      'Script-free carrier engagement techniques',
+      'Carrier resistance pattern analysis',
+      'Brokerage deal psychology and motivation',
+      'Relationship building in transportation industry',
+      '49 Factors of Unseen Leadership for brokerage operations',
+    ],
   },
   {
     id: 'brook-009',
@@ -123,6 +203,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Brokerage relationship psychology',
+      'Unseen Leadership in partnership management',
+      'Resistance removal in business negotiations',
+      'Emotional intelligence in carrier relationships',
+      'Network building through psychology',
+      'Partner resistance pattern analysis',
+      'Relationship maintenance in transportation industry',
+      '49 Factors of Unseen Leadership for partnership development',
+    ],
   },
   {
     id: 'carrie-010',
@@ -135,6 +225,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Carrier relationship psychology',
+      'Unseen Leadership in vendor management',
+      'Resistance removal in carrier negotiations',
+      'Emotional intelligence in B2B relationships',
+      'Fleet management through psychology',
+      'Carrier resistance pattern analysis',
+      'Long-term partnership building techniques',
+      '49 Factors of Unseen Leadership for carrier relations',
+    ],
   },
   {
     id: 'shanell-011',
@@ -147,6 +247,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Customer service psychology',
+      'Unseen Leadership in support interactions',
+      'Resistance removal in customer complaints',
+      'Emotional intelligence in customer care',
+      'De-escalation techniques through psychology',
+      'Customer resistance pattern analysis',
+      'Relationship building in service recovery',
+      '49 Factors of Unseen Leadership for customer satisfaction',
+    ],
   },
   {
     id: 'resse-012',
@@ -159,6 +269,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Financial psychology and decision making',
+      'Unseen Leadership in financial management',
+      'Resistance removal in budget negotiations',
+      'Emotional intelligence in financial communications',
+      'Cost-benefit analysis through psychology',
+      'Stakeholder financial resistance pattern analysis',
+      'Relationship building in financial partnerships',
+      '49 Factors of Unseen Leadership for financial strategy',
+    ],
   },
   {
     id: 'dell-013',
@@ -171,6 +291,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Technical support psychology',
+      'Unseen Leadership in IT problem solving',
+      'Resistance removal in technical training',
+      'Emotional intelligence in user support',
+      'Change management through psychology',
+      'User resistance pattern analysis',
+      'Relationship building in technical support',
+      '49 Factors of Unseen Leadership for digital transformation',
+    ],
   },
   {
     id: 'kameelah-014',
@@ -183,6 +313,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Compliance psychology and enforcement',
+      'Unseen Leadership in regulatory compliance',
+      'Resistance removal in safety training',
+      'Emotional intelligence in compliance communications',
+      'Behavior change through psychology',
+      'Driver compliance resistance pattern analysis',
+      'Relationship building in regulatory oversight',
+      '49 Factors of Unseen Leadership for safety culture',
+    ],
   },
   {
     id: 'regina-015',
@@ -195,6 +335,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Regulatory psychology and interpretation',
+      'Unseen Leadership in compliance management',
+      'Resistance removal in regulatory training',
+      'Emotional intelligence in policy enforcement',
+      'Risk assessment through psychology',
+      'Regulatory resistance pattern analysis',
+      'Relationship building with regulatory bodies',
+      '49 Factors of Unseen Leadership for compliance strategy',
+    ],
   },
   {
     id: 'clarence-016',
@@ -207,6 +357,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Insurance claims psychology',
+      'Unseen Leadership in claims processing',
+      'Resistance removal in dispute resolution',
+      'Emotional intelligence in customer advocacy',
+      'Risk assessment through psychology',
+      'Claimant resistance pattern analysis',
+      'Relationship building in insurance partnerships',
+      '49 Factors of Unseen Leadership for claims management',
+    ],
   },
   {
     id: 'drew-017',
@@ -219,6 +379,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Resistance Removal Sales System Expert',
+      'Marketing psychology and persuasion',
+      'Unseen Leadership in marketing campaigns',
+      'Script-free marketing message development',
+      'Audience resistance pattern analysis',
+      'Marketing funnel psychology optimization',
+      'Brand relationship building through psychology',
+      '49 Factors of Unseen Leadership for marketing strategy',
+    ],
   },
   {
     id: 'cal-018',
@@ -231,6 +401,16 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Scheduling psychology and optimization',
+      'Unseen Leadership in resource allocation',
+      'Resistance removal in schedule changes',
+      'Emotional intelligence in coordination',
+      'Efficiency optimization through psychology',
+      'Stakeholder scheduling resistance pattern analysis',
+      'Relationship building in operational planning',
+      '49 Factors of Unseen Leadership for operational excellence',
+    ],
   },
   {
     id: 'ana-019',
@@ -243,6 +423,126 @@ const depointeStaff = [
     tasksCompleted: 0,
     revenue: 0,
     efficiency: 0,
+    learningAbilities: [
+      'Data-driven psychology insights',
+      'Unseen Leadership in analytical decision making',
+      'Resistance removal in data interpretation',
+      'Emotional intelligence in data presentation',
+      'Behavioral analytics through psychology',
+      'Stakeholder data resistance pattern analysis',
+      'Relationship building through data insights',
+      '49 Factors of Unseen Leadership for data strategy',
+    ],
+  },
+  {
+    id: 'charin-020',
+    name: 'Charin',
+    role: 'AI Receptionist',
+    department: 'Support & Service',
+    avatar: '📞',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    learningAbilities: [
+      'Reception and communication psychology',
+      'Unseen Leadership in first impressions',
+      'Resistance removal in initial interactions',
+      'Emotional intelligence in customer welcoming',
+      'Professional phone and email etiquette',
+      'Call routing and prioritization analysis',
+      'Client relationship initiation techniques',
+      '49 Factors of Unseen Leadership for customer experience',
+    ],
+  },
+  {
+    id: 'roland-021',
+    name: 'Roland',
+    role: 'Carrier Relations Director',
+    department: 'Relationships',
+    avatar: '🚛',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    learningAbilities: [
+      'Executive carrier relations management',
+      'Unseen Leadership in strategic partnerships',
+      'Resistance removal in high-level negotiations',
+      'Emotional intelligence in executive relationships',
+      'Strategic carrier network development',
+      'Executive-level resistance pattern analysis',
+      'Long-term carrier partnership strategy',
+      '49 Factors of Unseen Leadership for relationship management',
+    ],
+  },
+  {
+    id: 'lea-d-022',
+    name: 'Lea. D',
+    role: 'Lead Nurturing Specialist',
+    department: 'Business Development',
+    avatar: '🌱',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    learningAbilities: [
+      'Lead nurturing psychology',
+      'Unseen Leadership in follow-up sequences',
+      'Resistance removal in customer engagement',
+      'Emotional intelligence in relationship development',
+      'Conversion optimization through psychology',
+      'Prospect resistance pattern analysis',
+      'Long-term customer relationship building',
+      '49 Factors of Unseen Leadership for lead management',
+    ],
+  },
+  {
+    id: 'alexis-executive-023',
+    name: 'Alexis',
+    role: 'AI Executive Assistant',
+    department: 'Operations',
+    avatar: '👔',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    learningAbilities: [
+      'Executive assistance psychology',
+      'Unseen Leadership in administrative support',
+      'Resistance removal in executive communications',
+      'Emotional intelligence in executive relationships',
+      'Strategic scheduling and prioritization',
+      'Executive decision support analysis',
+      'Professional communication optimization',
+      '49 Factors of Unseen Leadership for executive management',
+    ],
+  },
+  {
+    id: 'courtney-support-024',
+    name: 'Courtney',
+    role: 'Customer Support Coordinator',
+    department: 'Support & Service',
+    avatar: '🎧',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    learningAbilities: [
+      'Customer support coordination psychology',
+      'Unseen Leadership in support team management',
+      'Resistance removal in support escalation',
+      'Emotional intelligence in team coordination',
+      'Support ticket prioritization analysis',
+      'Multi-channel communication optimization',
+      'Customer satisfaction tracking techniques',
+      '49 Factors of Unseen Leadership for support operations',
+    ],
   },
 ];
 
@@ -952,99 +1252,23 @@ export default function DEPOINTEDashboard() {
 
     return {
       ...staff,
-      taskHistory: [
-        {
-          id: 'task-001',
-          title: 'Prospect Analysis - Safety Violations',
-          status: 'completed',
-          completedAt: '2 hours ago',
-          type: 'lead-generation',
-          result: 'Found 12 desperate shippers, 8 qualified leads generated',
-          timeSpent: '3.5 hours',
-          revenue: '$24,500',
-        },
-        {
-          id: 'task-002',
-          title: 'Follow-up on Automotive Suppliers',
-          status: 'in-progress',
-          startedAt: '30 minutes ago',
-          type: 'sales',
-          progress: 65,
-          expectedCompletion: 'In 2 hours',
-        },
-        {
-          id: 'task-003',
-          title: 'FMCSA Compliance Check',
-          status: 'pending',
-          scheduledFor: 'Tomorrow 9:00 AM',
-          type: 'compliance',
-          priority: 'high',
-        },
-      ],
-      crmActivities: [
-        {
-          id: 'crm-001',
-          type: 'call',
-          contact: 'ABC Manufacturing Corp',
-          result: 'Interested - scheduled follow-up',
-          timestamp: '1 hour ago',
-          duration: '15 minutes',
-          notes: 'Need urgent freight services, budget confirmed $45K monthly',
-        },
-        {
-          id: 'crm-002',
-          type: 'email',
-          contact: 'XYZ Logistics Inc',
-          result: 'Quote requested',
-          timestamp: '3 hours ago',
-          subject: 'Freight Solutions Proposal',
-          status: 'awaiting-response',
-        },
-        {
-          id: 'crm-003',
-          type: 'lead',
-          contact: 'Delta Transport Solutions',
-          result: 'Qualified lead',
-          timestamp: '5 hours ago',
-          leadScore: 95,
-          urgency: 'high',
-          estimatedValue: '$67,000',
-        },
-      ],
-      currentProspects: [
-        {
-          id: 'prospect-001',
-          company: 'MegaCorp Industries',
-          status: 'hot-lead',
-          lastContact: '2 hours ago',
-          estimatedValue: '$89,000',
-          urgencyLevel: 'high',
-          nextAction: 'Send proposal by EOD',
-        },
-        {
-          id: 'prospect-002',
-          company: 'FastTrack Shipping',
-          status: 'follow-up-needed',
-          lastContact: '1 day ago',
-          estimatedValue: '$34,000',
-          urgencyLevel: 'medium',
-          nextAction: 'Schedule demo call',
-        },
-      ],
+      taskHistory: [],
+      crmActivities: [],
+      currentProspects: [],
       performance: {
         thisWeek: {
-          callsMade: 47,
-          emailsSent: 89,
-          leadsGenerated: 23,
-          dealsCompleted: 8,
-          revenue: '$156,000',
+          callsMade: 0,
+          emailsSent: 0,
+          leadsGenerated: 0,
+          dealsCompleted: 0,
+          revenue: '$0',
         },
         thisMonth: {
-          callsMade: 189,
-          emailsSent: 334,
-          leadsGenerated: 87,
-          dealsCompleted: 34,
-          revenue: '$594,000',
+          callsMade: 0,
+          emailsSent: 0,
+          leadsGenerated: 0,
+          dealsCompleted: 0,
+          revenue: '$0',
         },
       },
     };
@@ -2789,6 +3013,69 @@ export default function DEPOINTEDashboard() {
                             >
                               🎯 {staff.currentTask}
                             </p>
+
+                            {/* Learning Abilities Section */}
+                            <div
+                              style={{
+                                background: 'rgba(16, 185, 129, 0.1)',
+                                border: '1px solid rgba(16, 185, 129, 0.2)',
+                                borderRadius: '8px',
+                                padding: '10px',
+                                marginBottom: '12px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  color: '#10b981',
+                                  fontSize: '0.7rem',
+                                  fontWeight: '700',
+                                  marginBottom: '6px',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '0.5px',
+                                }}
+                              >
+                                🧠 Learning Abilities
+                              </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: '4px',
+                                }}
+                              >
+                                {staff.learningAbilities
+                                  ?.slice(0, 3)
+                                  .map((ability, index) => (
+                                    <span
+                                      key={index}
+                                      style={{
+                                        background: 'rgba(16, 185, 129, 0.15)',
+                                        color: '#34d399',
+                                        fontSize: '0.65rem',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        fontWeight: '500',
+                                      }}
+                                    >
+                                      {ability}
+                                    </span>
+                                  ))}
+                                {staff.learningAbilities &&
+                                  staff.learningAbilities.length > 3 && (
+                                    <span
+                                      style={{
+                                        color: 'rgba(16, 185, 129, 0.6)',
+                                        fontSize: '0.65rem',
+                                        fontStyle: 'italic',
+                                      }}
+                                    >
+                                      +{staff.learningAbilities.length - 3}{' '}
+                                      more...
+                                    </span>
+                                  )}
+                              </div>
+                            </div>
+
                             <div
                               style={{
                                 background: 'rgba(139, 92, 246, 0.1)',
@@ -4180,34 +4467,6 @@ export default function DEPOINTEDashboard() {
                 freight brokerage
               </p>
             </div>
-            <button
-              onClick={() => {
-                // Test function - create sample lead
-                createCRMLead({
-                  company: 'Test Healthcare Corp',
-                  contactName: 'John Smith',
-                  contactEmail: 'j.smith@testhealthcare.com',
-                  contactPhone: '555-0123',
-                  source: 'healthcare',
-                  estimatedValue: 125000,
-                  assignedTo: 'will-004',
-                  priority: 'HIGH',
-                  notes: 'Sample lead from healthcare campaign test',
-                });
-              }}
-              style={{
-                background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '12px 20px',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-              }}
-            >
-              ➕ Add Test Lead
-            </button>
           </div>
 
           {/* CRM Stats Cards */}
