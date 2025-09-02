@@ -42,14 +42,14 @@ export class MSPMarketingLearningService {
    * Get a specific strategy by ID
    */
   static getStrategyById(id: string): MarketingStrategy | undefined {
-    return mspMarketingStrategies.find(strategy => strategy.id === id);
+    return mspMarketingStrategies.find((strategy) => strategy.id === id);
   }
 
   /**
    * Get strategies relevant to specific AI staff roles
    */
   static getStrategiesForRole(roleName: string): MarketingStrategy[] {
-    return mspMarketingStrategies.filter(strategy =>
+    return mspMarketingStrategies.filter((strategy) =>
       strategy.relevantRoles.includes(roleName)
     );
   }
@@ -58,8 +58,8 @@ export class MSPMarketingLearningService {
    * Get strategies by key principles
    */
   static getStrategiesByPrinciple(principle: string): MarketingStrategy[] {
-    return mspMarketingStrategies.filter(strategy =>
-      strategy.keyPrinciples.some(p =>
+    return mspMarketingStrategies.filter((strategy) =>
+      strategy.keyPrinciples.some((p) =>
         p.toLowerCase().includes(principle.toLowerCase())
       )
     );
@@ -70,7 +70,7 @@ export class MSPMarketingLearningService {
    */
   static getAISpecificApplications(): string[] {
     const applications: string[] = [];
-    mspMarketingStrategies.forEach(strategy => {
+    mspMarketingStrategies.forEach((strategy) => {
       applications.push(...strategy.aiApplication);
     });
     return [...new Set(applications)]; // Remove duplicates
@@ -88,8 +88,9 @@ export class MSPMarketingLearningService {
     const allStrategies = this.getAllStrategies();
 
     // Get supporting strategies (strategies that complement primary ones)
-    const supportingStrategies = allStrategies.filter(strategy =>
-      !primaryStrategies.some(primary => primary.id === strategy.id)
+    const supportingStrategies = allStrategies.filter(
+      (strategy) =>
+        !primaryStrategies.some((primary) => primary.id === strategy.id)
     );
 
     // Create learning path based on role
@@ -107,25 +108,25 @@ export class MSPMarketingLearningService {
    */
   private static generateLearningPath(roleName: string): string[] {
     const paths: Record<string, string[]> = {
-      'Desiree': [
+      Desiree: [
         'Resistance Removal Sales System',
         'Value-Based Communication',
         'Lead Qualification Optimization',
         'Referral Generation Systems',
       ],
-      'Cliff': [
+      Cliff: [
         'Resistance Pattern Recognition',
         'Cold Prospect Engagement',
         'Psychology-Based Motivation',
         'Unseen Leadership Application',
       ],
-      'Gary': [
+      Gary: [
         'Lead Scoring Algorithms',
         'Qualification Optimization',
         'Value-Based Communication',
         'Referral Network Management',
       ],
-      'Will': [
+      Will: [
         'Process Optimization Algorithms',
         'Sales Operations Psychology',
         'Performance Analytics',
@@ -139,12 +140,14 @@ export class MSPMarketingLearningService {
       ],
     };
 
-    return paths[roleName] || [
-      'General Sales Psychology',
-      'AI-Specific Applications',
-      'Performance Optimization',
-      'Continuous Learning',
-    ];
+    return (
+      paths[roleName] || [
+        'General Sales Psychology',
+        'AI-Specific Applications',
+        'Performance Optimization',
+        'Continuous Learning',
+      ]
+    );
   }
 
   /**
@@ -167,7 +170,7 @@ export class MSPMarketingLearningService {
       'Measurement & Scaling',
     ];
 
-    const successMetrics = strategy.expectedResults.map(result =>
+    const successMetrics = strategy.expectedResults.map((result) =>
       result.replace('%', 'percentage').replace('$', 'dollar')
     );
 
@@ -190,33 +193,63 @@ export class MSPMarketingLearningService {
     improvementAreas: string[];
   } {
     const metrics: Record<string, any> = {
-      'Desiree': {
-        keyMetrics: ['Conversion Rate', 'Lead Quality Score', 'Resistance Overcoming Rate'],
+      Desiree: {
+        keyMetrics: [
+          'Conversion Rate',
+          'Lead Quality Score',
+          'Resistance Overcoming Rate',
+        ],
         trackingFrequency: 'Daily',
-        improvementAreas: ['Objection Handling', 'Value Communication', 'Lead Qualification'],
+        improvementAreas: [
+          'Objection Handling',
+          'Value Communication',
+          'Lead Qualification',
+        ],
       },
-      'Cliff': {
-        keyMetrics: ['Prospect Engagement Rate', 'Follow-up Compliance', 'Conversion Velocity'],
+      Cliff: {
+        keyMetrics: [
+          'Prospect Engagement Rate',
+          'Follow-up Compliance',
+          'Conversion Velocity',
+        ],
         trackingFrequency: 'Daily',
-        improvementAreas: ['Cold Outreach Effectiveness', 'Relationship Building', 'Motivation Techniques'],
+        improvementAreas: [
+          'Cold Outreach Effectiveness',
+          'Relationship Building',
+          'Motivation Techniques',
+        ],
       },
     };
 
-    return metrics[roleName] || {
-      keyMetrics: ['Task Completion Rate', 'Quality Score', 'Efficiency Metrics'],
-      trackingFrequency: 'Weekly',
-      improvementAreas: ['Process Optimization', 'Skill Development', 'Performance Tracking'],
-    };
+    return (
+      metrics[roleName] || {
+        keyMetrics: [
+          'Task Completion Rate',
+          'Quality Score',
+          'Efficiency Metrics',
+        ],
+        trackingFrequency: 'Weekly',
+        improvementAreas: [
+          'Process Optimization',
+          'Skill Development',
+          'Performance Tracking',
+        ],
+      }
+    );
   }
 }
 
 // Export convenience functions
-export const getStrategiesForRole = MSPMarketingLearningService.getStrategiesForRole;
+export const getStrategiesForRole =
+  MSPMarketingLearningService.getStrategiesForRole;
 export const getAllStrategies = MSPMarketingLearningService.getAllStrategies;
 export const getStrategyById = MSPMarketingLearningService.getStrategyById;
-export const getLearningRecommendations = MSPMarketingLearningService.getLearningRecommendations;
-export const getImplementationGuidance = MSPMarketingLearningService.getImplementationGuidance;
-export const getPerformanceTracking = MSPMarketingLearningService.getPerformanceTracking;
+export const getLearningRecommendations =
+  MSPMarketingLearningService.getLearningRecommendations;
+export const getImplementationGuidance =
+  MSPMarketingLearningService.getImplementationGuidance;
+export const getPerformanceTracking =
+  MSPMarketingLearningService.getPerformanceTracking;
 
 // Import the strategies data
 export { mspMarketingStrategies } from './MSPMarketingLearningData';

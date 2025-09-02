@@ -15,6 +15,25 @@ import ShipperBatchDeployment, {
 import TaskCreationInterface from '../components/TaskCreationInterface';
 
 // DEPOINTE AI Staff with Human Names (all 18 members) - No mock data
+// Helper function for AI staff to access their marketing mastery
+export const getAIMarketingMastery = (staffId: string) => {
+  const staff = depointeStaff.find(s => s.id === staffId);
+  return staff?.marketingMastery || null;
+};
+
+export const getAIStrategyAccess = (staffId: string, strategyId: string) => {
+  const mastery = getAIMarketingMastery(staffId);
+  if (!mastery) return null;
+
+  const hasAccess = mastery.primaryStrategies.includes(strategyId);
+  return {
+    hasAccess,
+    expertiseLevel: mastery.expertiseLevel,
+    aiApplications: mastery.aiApplications,
+    successPatterns: mastery.successPatterns
+  };
+};
+
 const depointeStaff = [
   {
     id: 'desiree-001',
@@ -37,6 +56,33 @@ const depointeStaff = [
       'Relationship building without scripts',
       '49 Factors of Unseen Leadership mastery',
     ],
+    marketingMastery: {
+      primaryStrategies: ['client-value', 'referrals', 'sales-process'],
+      expertiseLevel: 'Advanced',
+      coreCompetencies: [
+        'Resistance Removal Sales System',
+        'Value-Based Communication',
+        'Lead Qualification Optimization',
+        'Referral Generation Systems'
+      ],
+      aiApplications: [
+        'Pattern recognition for resistance indicators',
+        'Automated objection handling algorithms',
+        'Real-time value communication optimization',
+        'Prospect motivation analysis and response'
+      ],
+      successPatterns: [
+        'Identify resistance patterns in first 30 seconds',
+        'Apply appropriate psychological techniques automatically',
+        'Build trust through authentic, script-free conversations',
+        'Convert 75% of qualified desperate prospects'
+      ],
+      improvementAreas: [
+        'Advanced NLP for deeper emotional analysis',
+        'Predictive resistance pattern anticipation',
+        'Multi-cultural psychology adaptation'
+      ]
+    }
   },
   {
     id: 'cliff-002',
@@ -59,6 +105,33 @@ const depointeStaff = [
       'Relationship building in high-pressure scenarios',
       '49 Factors of Unseen Leadership application',
     ],
+    marketingMastery: {
+      primaryStrategies: ['client-value', 'referrals', 'follow-up'],
+      expertiseLevel: 'Expert',
+      coreCompetencies: [
+        'Resistance Pattern Recognition',
+        'Cold Prospect Engagement',
+        'Psychology-Based Motivation',
+        'Unseen Leadership Application'
+      ],
+      aiApplications: [
+        'Automated cold outreach optimization',
+        'Real-time engagement pattern analysis',
+        'Predictive prospect response modeling',
+        'High-pressure relationship building algorithms'
+      ],
+      successPatterns: [
+        'Achieve 40% response rate on cold outreach',
+        'Convert 60% of engaged prospects to qualified leads',
+        'Build trust in high-pressure situations',
+        'Generate 25+ qualified leads per week consistently'
+      ],
+      improvementAreas: [
+        'Advanced sentiment analysis for prospect emotions',
+        'Multi-channel engagement orchestration',
+        'Predictive lead scoring enhancement'
+      ]
+    }
   },
   {
     id: 'gary-003',
@@ -81,6 +154,33 @@ const depointeStaff = [
       'Relationship building from initial contact',
       '49 Factors of Unseen Leadership for lead nurturing',
     ],
+    marketingMastery: {
+      primaryStrategies: ['sales-process', 'client-value', 'referrals'],
+      expertiseLevel: 'Advanced',
+      coreCompetencies: [
+        'Lead Scoring Algorithms',
+        'Qualification Optimization',
+        'Value-Based Communication',
+        'Referral Network Management'
+      ],
+      aiApplications: [
+        'Multi-dimensional lead scoring algorithms',
+        'Automated qualification assessment',
+        'Predictive lead conversion modeling',
+        'Real-time lead nurturing optimization'
+      ],
+      successPatterns: [
+        'Score leads with 95% accuracy using 50+ criteria',
+        'Convert 70% of qualified leads to opportunities',
+        'Achieve 40% month-over-month lead volume growth',
+        'Maintain 85% lead quality score consistently'
+      ],
+      improvementAreas: [
+        'Machine learning for lead scoring refinement',
+        'Advanced behavioral analysis integration',
+        'Cross-channel lead attribution modeling'
+      ]
+    }
   },
   {
     id: 'will-004',
@@ -103,6 +203,33 @@ const depointeStaff = [
       'Operational efficiency through emotional intelligence',
       '49 Factors of Unseen Leadership for team management',
     ],
+    marketingMastery: {
+      primaryStrategies: ['sales-process', 'pricing-strategy', 'qbr-management'],
+      expertiseLevel: 'Advanced',
+      coreCompetencies: [
+        'Process Optimization Algorithms',
+        'Sales Operations Psychology',
+        'Performance Analytics',
+        'System Implementation'
+      ],
+      aiApplications: [
+        'Automated sales process optimization',
+        'Real-time performance analytics and reporting',
+        'Predictive sales cycle modeling',
+        'Dynamic pricing strategy implementation'
+      ],
+      successPatterns: [
+        'Reduce sales cycle time by 35% through process optimization',
+        'Improve team performance by 50% with analytics insights',
+        'Implement 100% of recommended process improvements',
+        'Achieve 90% forecast accuracy with predictive modeling'
+      ],
+      improvementAreas: [
+        'Advanced machine learning for process prediction',
+        'Real-time collaboration optimization',
+        'Cross-functional process integration'
+      ]
+    }
   },
   {
     id: 'hunter-005',
@@ -433,6 +560,33 @@ const depointeStaff = [
       'Relationship building through data insights',
       '49 Factors of Unseen Leadership for data strategy',
     ],
+    marketingMastery: {
+      primaryStrategies: ['qbr-management', 'pricing-strategy', 'sales-process'],
+      expertiseLevel: 'Expert',
+      coreCompetencies: [
+        'Data-Driven Insights',
+        'Client Analytics',
+        'Performance Prediction',
+        'ROI Analysis'
+      ],
+      aiApplications: [
+        'Advanced predictive analytics for client behavior',
+        'Real-time performance metrics optimization',
+        'Automated ROI calculation and presentation',
+        'Behavioral pattern recognition and analysis'
+      ],
+      successPatterns: [
+        'Achieve 95% accuracy in client behavior prediction',
+        'Generate actionable insights from 10,000+ data points daily',
+        'Improve forecast accuracy by 60% with predictive models',
+        'Deliver ROI analysis in under 30 seconds for any scenario'
+      ],
+      improvementAreas: [
+        'Deep learning for complex pattern recognition',
+        'Real-time sentiment analysis integration',
+        'Advanced NLP for unstructured data processing'
+      ]
+    }
   },
   {
     id: 'charin-020',

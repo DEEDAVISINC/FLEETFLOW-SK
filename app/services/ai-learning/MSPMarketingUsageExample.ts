@@ -6,10 +6,10 @@
 
 import {
   MSPMarketingLearningService,
-  getStrategiesForRole,
-  getLearningRecommendations,
   getImplementationGuidance,
-  getPerformanceTracking
+  getLearningRecommendations,
+  getPerformanceTracking,
+  getStrategiesForRole,
 } from './MSPMarketingLearningService';
 
 // Example: Desiree (Desperate Prospects Specialist) accessing her learning materials
@@ -19,23 +19,31 @@ export function getDesireeLearningMaterials() {
   // Get strategies specific to Desiree's role
   const desireeStrategies = getStrategiesForRole('Desiree');
   console.log(`📚 Found ${desireeStrategies.length} strategies for Desiree:`);
-  desireeStrategies.forEach(strategy => {
+  desireeStrategies.forEach((strategy) => {
     console.log(`  - ${strategy.title}`);
   });
 
   // Get personalized learning recommendations
   const recommendations = getLearningRecommendations('Desiree');
   console.log('\n🎯 Learning Recommendations for Desiree:');
-  console.log(`Primary Strategies: ${recommendations.primaryStrategies.length}`);
-  console.log(`Supporting Strategies: ${recommendations.supportingStrategies.length}`);
+  console.log(
+    `Primary Strategies: ${recommendations.primaryStrategies.length}`
+  );
+  console.log(
+    `Supporting Strategies: ${recommendations.supportingStrategies.length}`
+  );
   console.log(`Learning Path: ${recommendations.learningPath.join(' → ')}`);
 
   // Get implementation guidance for a specific strategy
   const guidance = getImplementationGuidance('client-value');
   if (guidance) {
     console.log('\n📋 Implementation Guidance for Client Value Strategy:');
-    console.log(`Implementation Order: ${guidance.implementationOrder.join(' → ')}`);
-    console.log(`AI Automation Opportunities: ${guidance.aiAutomationOpportunities.length} available`);
+    console.log(
+      `Implementation Order: ${guidance.implementationOrder.join(' → ')}`
+    );
+    console.log(
+      `AI Automation Opportunities: ${guidance.aiAutomationOpportunities.length} available`
+    );
   }
 
   // Get performance tracking recommendations
@@ -49,7 +57,7 @@ export function getDesireeLearningMaterials() {
     strategies: desireeStrategies,
     recommendations,
     guidance,
-    tracking
+    tracking,
   };
 }
 
@@ -61,12 +69,13 @@ export function getAnaLyticsStrategies() {
   console.log(`📊 Ana Lytics has access to ${anaStrategies.length} strategies`);
 
   // Focus on data-driven strategies
-  const dataStrategies = MSPMarketingLearningService.getStrategiesByPrinciple('data');
+  const dataStrategies =
+    MSPMarketingLearningService.getStrategiesByPrinciple('data');
   console.log(`📈 Data-driven strategies available: ${dataStrategies.length}`);
 
   return {
     roleStrategies: anaStrategies,
-    dataStrategies
+    dataStrategies,
   };
 }
 
@@ -81,7 +90,7 @@ export function applyStrategyInRealTime(strategyId: string, context: any) {
   }
 
   // AI analyzes context and applies strategy
-  const aiApplication = strategy.aiApplication.find(app =>
+  const aiApplication = strategy.aiApplication.find((app) =>
     app.toLowerCase().includes(context.type?.toLowerCase() || '')
   );
 
@@ -91,7 +100,7 @@ export function applyStrategyInRealTime(strategyId: string, context: any) {
   return {
     strategy: strategy.title,
     appliedTechnique: aiApplication,
-    expectedResults: strategy.expectedResults
+    expectedResults: strategy.expectedResults,
   };
 }
 
@@ -104,7 +113,7 @@ export function demonstrateAIStrategyUsage() {
   const resistanceResult = applyStrategyInRealTime('client-value', {
     type: 'resistance',
     prospectName: 'ABC Corp',
-    objection: 'Too expensive'
+    objection: 'Too expensive',
   });
   console.log('Result:', resistanceResult);
 
@@ -113,7 +122,7 @@ export function demonstrateAIStrategyUsage() {
   const analyticsResult = applyStrategyInRealTime('qbr-management', {
     type: 'analytics',
     clientName: 'XYZ Logistics',
-    dataPoints: 1500
+    dataPoints: 1500,
   });
   console.log('Result:', analyticsResult);
 
@@ -122,7 +131,7 @@ export function demonstrateAIStrategyUsage() {
   const leadResult = applyStrategyInRealTime('sales-process', {
     type: 'qualification',
     leadCount: 50,
-    conversionRate: 0.15
+    conversionRate: 0.15,
   });
   console.log('Result:', leadResult);
 }
@@ -130,8 +139,8 @@ export function demonstrateAIStrategyUsage() {
 // Export for use by AI staff members
 export {
   MSPMarketingLearningService,
-  getStrategiesForRole,
-  getLearningRecommendations,
   getImplementationGuidance,
-  getPerformanceTracking
+  getLearningRecommendations,
+  getPerformanceTracking,
+  getStrategiesForRole,
 };
