@@ -3,7 +3,7 @@
 import { AlertCircle, Calendar, CheckCircle, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import BrokerageHierarchyService, {
+import {
   BrokerAgent,
   UserSession,
 } from '../../services/BrokerageHierarchyService';
@@ -209,7 +209,8 @@ export default function AgentPortal() {
 
     if (specializedData.serviceType === 'White Glove') baseRate *= 1.8;
     else if (specializedData.serviceType === 'Art/Antiques') baseRate *= 2.2;
-    else if (specializedData.serviceType === 'Medical Equipment') baseRate *= 1.6;
+    else if (specializedData.serviceType === 'Medical Equipment')
+      baseRate *= 1.6;
 
     const insuranceFee = value * 0.005; // 0.5% insurance
     const total = baseRate + insuranceFee;
@@ -316,38 +317,15 @@ export default function AgentPortal() {
     },
   ]);
 
-  // Initialize session (mock for demo)
+  // Initialize session from authentication
   useEffect(() => {
-    // In production, this would come from authentication
-    const mockSession: UserSession = {
-      userId: 'ED-BB-2024061',
-      email: 'emily@wilsonfreight.com',
-      role: 'BB',
-      firstName: 'Emily',
-      lastName: 'Davis',
-      parentBrokerageId: 'MW-FBB-2024046',
-      permissions: {
-        canCreateLoads: true,
-        canModifyRates: true,
-        canAccessFinancials: false,
-        canViewAllCompanyLoads: false,
-        canManageCarriers: true,
-        canGenerateReports: true,
-        maxContractValue: 50000,
-        requiresApprovalOver: 25000,
-        territories: ['West Coast', 'Southwest'],
-        loadTypes: ['Dry Van', 'Refrigerated', 'Flatbed'],
-      },
-      sessionId: 'session-agent-demo',
-      loginTime: new Date().toISOString(),
-      lastActivity: new Date().toISOString(),
-    };
+    // TODO: Implement real authentication integration
+    // For now, use placeholder - authentication service will provide real session data
+    setSession(null); // Will be populated by real auth service
 
-    setSession(mockSession);
-
-    // Get agent dashboard data
-    const agentData = BrokerageHierarchyService.getAgentDashboardData('ED');
-    setCurrentAgent(agentData?.agent || null);
+    // Get agent dashboard data (will be called after authentication)
+    // const agentData = BrokerageHierarchyService.getAgentDashboardData(userId);
+    // setCurrentAgent(agentData?.agent || null);
     setLoading(false);
   }, []);
 
@@ -711,7 +689,8 @@ export default function AgentPortal() {
                     fontWeight: 'bold',
                   }}
                 >
-                  $45,230
+                  {/* TODO: Replace with real revenue data */}
+                  --
                 </div>
               </div>
             </div>
@@ -896,7 +875,12 @@ export default function AgentPortal() {
 
               {/* Quote Type Tabs */}
               <div
-                style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  marginBottom: '24px',
+                  flexWrap: 'wrap',
+                }}
               >
                 {[
                   { id: 'LTL', label: 'LTL', icon: '📦', color: '#8b5cf6' },
@@ -1617,9 +1601,15 @@ export default function AgentPortal() {
                       >
                         <option value='White Glove'>White Glove Service</option>
                         <option value='Art/Antiques'>Art & Antiques</option>
-                        <option value='Medical Equipment'>Medical Equipment</option>
-                        <option value='Electronics'>High-Value Electronics</option>
-                        <option value='Trade Shows'>Trade Show Logistics</option>
+                        <option value='Medical Equipment'>
+                          Medical Equipment
+                        </option>
+                        <option value='Electronics'>
+                          High-Value Electronics
+                        </option>
+                        <option value='Trade Shows'>
+                          Trade Show Logistics
+                        </option>
                       </select>
                     </div>
                     <div>
@@ -1830,93 +1820,84 @@ export default function AgentPortal() {
                       gap: '12px',
                     }}
                   >
-                    {[
-                      {
-                        id: 'LTL-1234567',
-                        type: 'LTL',
-                        route: 'Atlanta, GA → Miami, FL',
-                        amount: '$1,245',
-                        status: 'Accepted',
-                        date: '2024-01-15',
-                      },
-                      {
-                        id: 'FTL-1234568',
-                        type: 'FTL',
-                        route: 'Jacksonville, FL → Tampa, FL',
-                        amount: '$2,850',
-                        status: 'Pending',
-                        date: '2024-01-14',
-                      },
-                      {
-                        id: 'SPZ-1234569',
-                        type: 'Specialized',
-                        route: 'Savannah, GA → Orlando, FL',
-                        amount: '$4,125',
-                        status: 'Accepted',
-                        date: '2024-01-13',
-                      },
-                    ].map((quote, index) => (
+                    {/* TODO: Replace with real quote data from freight quoting API */}
+                    {quotes.length > 0 ? (
+                      quotes.map((quote, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '16px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '8px',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              {quote.id}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '12px',
+                              }}
+                            >
+                              {quote.route}
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '11px',
+                              }}
+                            >
+                              {quote.type} • {quote.date}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div
+                              style={{
+                                color: '#10b981',
+                                fontSize: '16px',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              {quote.amount}
+                            </div>
+                            <div
+                              style={{
+                                color:
+                                  quote.status === 'Accepted'
+                                    ? '#10b981'
+                                    : '#f59e0b',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              {quote.status}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
                       <div
-                        key={index}
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          borderRadius: '8px',
+                          textAlign: 'center',
+                          padding: '32px',
+                          color: 'rgba(255, 255, 255, 0.6)',
                         }}
                       >
-                        <div>
-                          <div
-                            style={{
-                              color: 'white',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            {quote.id}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              fontSize: '12px',
-                            }}
-                          >
-                            {quote.route}
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.6)',
-                              fontSize: '11px',
-                            }}
-                          >
-                            {quote.type} • {quote.date}
-                          </div>
-                        </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div
-                            style={{
-                              color: '#10b981',
-                              fontSize: '16px',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            {quote.amount}
-                          </div>
-                          <div
-                            style={{
-                              color:
-                                quote.status === 'Accepted' ? '#10b981' : '#f59e0b',
-                              fontSize: '12px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            {quote.status}
-                          </div>
-                        </div>
+                        No quotes available. Generate quotes using the form
+                        above.
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}
@@ -1936,8 +1917,10 @@ export default function AgentPortal() {
                   }}
                 >
                   <h3 style={{ marginBottom: '24px', color: '#6b7280' }}>
-                    {activeQuoteTab === 'Warehousing' && '🏢 Warehousing Services'}
-                    {activeQuoteTab === 'Multi-Service' && '🔄 Multi-Service Quotes'}
+                    {activeQuoteTab === 'Warehousing' &&
+                      '🏢 Warehousing Services'}
+                    {activeQuoteTab === 'Multi-Service' &&
+                      '🔄 Multi-Service Quotes'}
                     {activeQuoteTab === 'SpotRates' && '📈 Spot Rate Analysis'}
                   </h3>
                   <p style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
@@ -2071,81 +2054,76 @@ export default function AgentPortal() {
                     gap: '8px',
                   }}
                 >
-                  {[
-                    {
-                      id: 'Q-001',
-                      route: 'ATL → MIA',
-                      amount: '$2,450',
-                      status: 'accepted',
-                    },
-                    {
-                      id: 'Q-002',
-                      route: 'JAX → TPA',
-                      amount: '$1,850',
-                      status: 'pending',
-                    },
-                    {
-                      id: 'Q-003',
-                      route: 'ORL → SAV',
-                      amount: '$2,100',
-                      status: 'sent',
-                    },
-                  ].map((quote) => (
+                  {/* TODO: Replace with real quote data from freight quoting API */}
+                  {quotes.length > 0 ? (
+                    quotes.slice(0, 3).map((quote) => (
+                      <div
+                        key={quote.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '8px 12px',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRadius: '6px',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {quote.id}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              fontSize: '11px',
+                            }}
+                          >
+                            {quote.route}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div
+                            style={{
+                              color: '#10b981',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {quote.amount}
+                          </div>
+                          <div
+                            style={{
+                              color:
+                                quote.status === 'accepted'
+                                  ? '#10b981'
+                                  : '#f59e0b',
+                              fontSize: '10px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {quote.status.toUpperCase()}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
                     <div
-                      key={quote.id}
                       style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '8px 12px',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        borderRadius: '6px',
+                        textAlign: 'center',
+                        padding: '16px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '12px',
                       }}
                     >
-                      <div>
-                        <div
-                          style={{
-                            color: 'white',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                          }}
-                        >
-                          {quote.id}
-                        </div>
-                        <div
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            fontSize: '11px',
-                          }}
-                        >
-                          {quote.route}
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div
-                          style={{
-                            color: '#10b981',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                          }}
-                        >
-                          {quote.amount}
-                        </div>
-                        <div
-                          style={{
-                            color:
-                              quote.status === 'accepted'
-                                ? '#10b981'
-                                : '#f59e0b',
-                            fontSize: '10px',
-                            fontWeight: '600',
-                          }}
-                        >
-                          {quote.status.toUpperCase()}
-                        </div>
-                      </div>
+                      No recent quotes available
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
@@ -2751,7 +2729,8 @@ export default function AgentPortal() {
                       fontWeight: 'bold',
                     }}
                   >
-                    $45,230
+                    {/* TODO: Replace with real revenue data */}
+                    --
                   </div>
                   <div
                     style={{

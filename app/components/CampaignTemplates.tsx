@@ -3029,6 +3029,463 @@ export default function CampaignTemplates() {
         '95% capacity utilization during peak seasons',
       ],
     },
+
+    // AIR FREIGHT & MARITIME CAMPAIGNS
+    {
+      id: 'air_freight_express_network',
+      name: 'Air Freight Express Network Blitz - PREMIUM SPEED CAMPAIGN',
+      description:
+        'Target time-critical shippers and high-value cargo companies with air freight solutions - PREMIUM RATES (18-25% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with airport partnerships',
+      category: 'air_freight',
+      targetAudience:
+        'E-commerce companies, electronics manufacturers, pharmaceuticals, perishables, and time-sensitive cargo shippers',
+      expectedResults: {
+        leads: 75,
+        conversions: 30,
+        dailyRevenue: 16667, // $500,000 ÷ 30 days
+        monthlyRevenue: 500000, // Premium 18-25% load fees on high-value cargo
+        totalRevenue: 500000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Airport security, customs coordination
+      aiStaff: ['Miles', 'Logan', 'Kameelah'], // Kameelah for customs compliance
+      channels: [
+        'Airport Cargo Centers',
+        'Customs Brokers',
+        'Express Networks',
+      ],
+      icon: '✈️',
+      color: 'bg-sky-500',
+      steps: [
+        {
+          id: 'airport_cargo_mapping',
+          name: 'Airport Cargo Mapping',
+          description:
+            'Identify major airports, cargo terminals, and express freight handlers',
+          timing: 'Day 1-5',
+          channel: 'Industry Directories',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+        {
+          id: 'time_critical_prospecting',
+          name: 'Time-Critical Prospect Outreach',
+          description:
+            'Target e-commerce, electronics, and pharma companies with urgent delivery needs',
+          timing: 'Day 6-15',
+          channel: 'LinkedIn/Phone',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'customs_clearance_coordination',
+          name: 'Customs Clearance Coordination',
+          description:
+            'Highlight customs expertise, bonded warehousing, and expedited processing',
+          timing: 'Day 16-25',
+          channel: 'Customs Networks',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'express_delivery_network',
+          name: 'Express Air Network Integration',
+          description:
+            'Connect shippers with global air freight network for next-day delivery',
+          timing: 'Day 26-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '75+ time-critical shippers identified and contacted',
+        '30+ high-value clients onboarded with air freight agreements',
+        '$500K+ monthly revenue from premium air freight services',
+        '98%+ on-time delivery with customs clearance',
+        '95%+ client satisfaction with speed and reliability',
+      ],
+    },
+
+    {
+      id: 'maritime_container_network',
+      name: 'Maritime Container Network Blitz - GLOBAL TRADE CAMPAIGN',
+      description:
+        'Target international shippers and importers with ocean freight solutions - CONTAINER RATES (12-18% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with port partnerships',
+      category: 'maritime_freight',
+      targetAudience:
+        'International manufacturers, importers, retailers, and global supply chain companies',
+      expectedResults: {
+        leads: 85,
+        conversions: 26,
+        dailyRevenue: 11111, // $333,000 ÷ 30 days
+        monthlyRevenue: 333000, // Container shipping 12-18% load fees
+        totalRevenue: 333000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // International shipping, customs, documentation
+      aiStaff: ['Miles', 'Logan', 'Kameelah'], // Kameelah for international compliance
+      channels: [
+        'Port Authorities',
+        'Customs Brokers',
+        'Shipping Associations',
+      ],
+      icon: '🚢',
+      color: 'bg-blue-700',
+      steps: [
+        {
+          id: 'port_terminal_mapping',
+          name: 'Port Terminal Mapping',
+          description:
+            'Identify major ports, container terminals, and shipping lines',
+          timing: 'Day 1-7',
+          channel: 'Port Directories',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+        {
+          id: 'international_trade_prospecting',
+          name: 'International Trade Prospecting',
+          description:
+            'Target importers, exporters, and global manufacturers with container needs',
+          timing: 'Day 8-18',
+          channel: 'Trade Associations',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'customs_documentation_specialization',
+          name: 'Customs Documentation Specialization',
+          description:
+            'Highlight expertise in international shipping documentation and compliance',
+          timing: 'Day 19-25',
+          channel: 'Customs Networks',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'container_shipping_integration',
+          name: 'Container Shipping Network Integration',
+          description:
+            'Connect shippers with global maritime network for cost-effective ocean freight',
+          timing: 'Day 26-30',
+          channel: 'GO WITH THE FLOW Platform',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '85+ international shippers identified and contacted',
+        '26+ global clients onboarded with container shipping agreements',
+        '$333K+ monthly revenue from international freight services',
+        '95%+ on-time delivery with proper documentation',
+        '90%+ client satisfaction with cost-effective global shipping',
+      ],
+    },
+
+    {
+      id: 'express_air_cargo_acceleration',
+      name: 'Express Air Cargo Acceleration Blitz - URGENT DELIVERY FOCUS',
+      description:
+        'Target pharmaceutical, electronics, and e-commerce companies with same-day/next-day air cargo solutions - PREMIUM EXPRESS RATES (20-28% load fees) featuring GO WITH THE FLOW instant matching with emergency routing',
+      category: 'air_freight',
+      targetAudience:
+        'Pharmaceutical distributors, electronics manufacturers, urgent e-commerce, medical supplies, and perishable goods companies',
+      expectedResults: {
+        leads: 60,
+        conversions: 24,
+        dailyRevenue: 20000, // $600,000 ÷ 30 days
+        monthlyRevenue: 600000, // Premium 20-28% express air rates
+        totalRevenue: 600000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Priority handling, customs expediting
+      aiStaff: ['Miles', 'Logan', 'Kameelah'], // Kameelah for priority customs
+      channels: [
+        'Airport Priority Services',
+        'Express Cargo Networks',
+        'Emergency Logistics',
+      ],
+      icon: '🚀',
+      color: 'bg-purple-600',
+      steps: [
+        {
+          id: 'priority_cargo_identification',
+          name: 'Priority Cargo Prospecting',
+          description:
+            'Identify shippers with urgent, time-critical, or emergency cargo needs',
+          timing: 'Day 1-5',
+          channel: 'Emergency Networks',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'express_routing_specialization',
+          name: 'Express Routing Specialization',
+          description:
+            'Showcase ability to route cargo through fastest available air connections',
+          timing: 'Day 6-15',
+          channel: 'Priority Networks',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'customs_priority_processing',
+          name: 'Customs Priority Processing',
+          description:
+            'Highlight expedited customs clearance for urgent pharmaceutical and medical cargo',
+          timing: 'Day 16-25',
+          channel: 'Customs Priority',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'emergency_delivery_network',
+          name: 'Emergency Delivery Network',
+          description:
+            'Connect urgent shippers with express air cargo network for critical deliveries',
+          timing: 'Day 26-30',
+          channel: 'GO WITH THE FLOW Priority',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '60+ urgent shippers identified and contacted',
+        '24+ high-priority clients onboarded with express air agreements',
+        '$600K+ monthly revenue from premium express air services',
+        '99%+ on-time delivery for urgent shipments',
+        '95%+ client satisfaction with emergency response times',
+      ],
+    },
+
+    {
+      id: 'international_shipping_container',
+      name: 'International Container Shipping Blitz - GLOBAL EXPANSION',
+      description:
+        'Target multinational corporations and global manufacturers with full container shipping solutions - ENTERPRISE RATES (10-15% load fees) featuring GO WITH THE FLOW instant matching with international consolidation',
+      category: 'maritime_freight',
+      targetAudience:
+        'Multinational corporations, global manufacturers, international retailers, and enterprise-level importers',
+      expectedResults: {
+        leads: 50,
+        conversions: 15,
+        dailyRevenue: 13333, // $400,000 ÷ 30 days
+        monthlyRevenue: 400000, // Enterprise 10-15% container rates
+        totalRevenue: 400000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Enterprise relationships, complex documentation
+      aiStaff: ['Drew', 'Miles', 'Kameelah'], // Drew for enterprise relationships
+      channels: [
+        'Enterprise Networks',
+        'Trade Associations',
+        'International Chambers',
+      ],
+      icon: '🌍',
+      color: 'bg-green-600',
+      steps: [
+        {
+          id: 'enterprise_international_prospecting',
+          name: 'Enterprise International Prospecting',
+          description:
+            'Identify multinational corporations with international shipping volume',
+          timing: 'Day 1-10',
+          channel: 'Enterprise Databases',
+          aiStaff: 'Drew',
+          automationLevel: 'full',
+        },
+        {
+          id: 'global_supply_chain_analysis',
+          name: 'Global Supply Chain Analysis',
+          description:
+            'Analyze shipping patterns and identify consolidation opportunities',
+          timing: 'Day 11-20',
+          channel: 'Data Analysis',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'international_compliance_specialization',
+          name: 'International Compliance Specialization',
+          description:
+            'Highlight expertise in international regulations, tariffs, and documentation',
+          timing: 'Day 21-25',
+          channel: 'Compliance Networks',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'enterprise_container_network',
+          name: 'Enterprise Container Network Integration',
+          description:
+            'Connect enterprises with global container shipping network and consolidation services',
+          timing: 'Day 26-30',
+          channel: 'GO WITH THE FLOW Enterprise',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '50+ enterprise shippers identified and contacted',
+        '15+ multinational clients onboarded with container agreements',
+        '$400K+ monthly revenue from enterprise international shipping',
+        '98%+ documentation accuracy for international shipments',
+        '92%+ client satisfaction with global shipping solutions',
+      ],
+    },
+
+    {
+      id: 'air_charter_emergency_response',
+      name: 'Air Charter Emergency Response Blitz - CRITICAL MISSIONS',
+      description:
+        'Target emergency services, disaster relief, and critical medical transport with air charter solutions - EMERGENCY RATES (25-35% load fees) featuring GO WITH THE FLOW instant matching with priority aircraft availability',
+      category: 'air_freight',
+      targetAudience:
+        'Emergency services, disaster relief organizations, medical transport companies, and critical supply chain providers',
+      expectedResults: {
+        leads: 40,
+        conversions: 16,
+        dailyRevenue: 25000, // $500,000 ÷ 20 days
+        monthlyRevenue: 500000, // Emergency 25-35% charter rates
+        totalRevenue: 500000, // 20-day campaign total
+      },
+      duration: '20 days',
+      difficulty: 'hard', // Emergency coordination, aircraft availability
+      aiStaff: ['Miles', 'Kameelah', 'Logan'], // Kameelah for emergency compliance
+      channels: [
+        'Emergency Networks',
+        'Aviation Authorities',
+        'Medical Transport',
+      ],
+      icon: '🚁',
+      color: 'bg-red-600',
+      steps: [
+        {
+          id: 'emergency_services_mapping',
+          name: 'Emergency Services Mapping',
+          description:
+            'Identify hospitals, emergency services, and disaster relief organizations',
+          timing: 'Day 1-3',
+          channel: 'Emergency Directories',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+        {
+          id: 'critical_medical_transport',
+          name: 'Critical Medical Transport Coordination',
+          description:
+            'Target organ transport, medical supplies, and emergency medical evacuation',
+          timing: 'Day 4-8',
+          channel: 'Medical Networks',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'disaster_relief_logistics',
+          name: 'Disaster Relief Logistics',
+          description:
+            'Connect disaster relief organizations with emergency air transport capabilities',
+          timing: 'Day 9-15',
+          channel: 'Relief Networks',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'emergency_charter_network',
+          name: 'Emergency Charter Network Integration',
+          description:
+            'Establish emergency air charter network for critical mission support',
+          timing: 'Day 16-20',
+          channel: 'GO WITH THE FLOW Emergency',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '40+ emergency organizations identified and contacted',
+        '16+ critical clients onboarded with emergency charter agreements',
+        '$500K+ monthly revenue from emergency air charter services',
+        '100% mission success rate for critical transports',
+        '98%+ client satisfaction with emergency response capabilities',
+      ],
+    },
+
+    {
+      id: 'bulk_ocean_shipping_network',
+      name: 'Bulk Ocean Shipping Network Blitz - VOLUME OPTIMIZATION',
+      description:
+        'Target manufacturers and commodity traders with bulk ocean shipping solutions - VOLUME DISCOUNTS (8-12% load fees) featuring GO WITH THE FLOW instant matching with bulk consolidation services',
+      category: 'maritime_freight',
+      targetAudience:
+        'Agricultural exporters, mining companies, chemical manufacturers, and bulk commodity traders',
+      expectedResults: {
+        leads: 70,
+        conversions: 21,
+        dailyRevenue: 7143, // $200,000 ÷ 28 days
+        monthlyRevenue: 200000, // Volume 8-12% bulk rates
+        totalRevenue: 200000, // 28-day campaign total
+      },
+      duration: '28 days',
+      difficulty: 'medium', // Bulk handling, volume optimization
+      aiStaff: ['Miles', 'Logan', 'Roland'], // Roland for bulk carrier relationships
+      channels: [
+        'Commodity Exchanges',
+        'Bulk Terminals',
+        'Agricultural Associations',
+      ],
+      icon: '🚢',
+      color: 'bg-indigo-700',
+      steps: [
+        {
+          id: 'bulk_terminal_mapping',
+          name: 'Bulk Terminal Mapping',
+          description:
+            'Identify bulk cargo terminals, breakbulk facilities, and specialized ports',
+          timing: 'Day 1-5',
+          channel: 'Port Directories',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+        {
+          id: 'commodity_trader_prospecting',
+          name: 'Commodity Trader Prospecting',
+          description:
+            'Target agricultural exporters, mining companies, and bulk commodity traders',
+          timing: 'Day 6-15',
+          channel: 'Commodity Networks',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'bulk_consolidation_specialization',
+          name: 'Bulk Consolidation Specialization',
+          description:
+            'Highlight expertise in bulk cargo consolidation and volume optimization',
+          timing: 'Day 16-22',
+          channel: 'Bulk Networks',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'bulk_shipping_integration',
+          name: 'Bulk Shipping Network Integration',
+          description:
+            'Connect bulk shippers with global ocean shipping network for volume-optimized freight',
+          timing: 'Day 23-28',
+          channel: 'GO WITH THE FLOW Bulk',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        '70+ bulk shippers identified and contacted',
+        '21+ volume clients onboarded with bulk shipping agreements',
+        '$200K+ monthly revenue from bulk ocean shipping services',
+        '90%+ capacity utilization with volume optimization',
+        '88%+ client satisfaction with cost-effective bulk shipping',
+      ],
+    },
   ];
 
   const categories = [
@@ -3040,6 +3497,8 @@ export default function CampaignTemplates() {
       icon: '🚛',
     },
     { id: 'specialty_equipment', name: 'Specialty Equipment', icon: '🚛' },
+    { id: 'air_freight', name: 'Air Freight', icon: '✈️' },
+    { id: 'maritime_freight', name: 'Maritime Freight', icon: '🚢' },
     { id: 'follow_up', name: 'Follow-Up', icon: '📧' },
     { id: 'nurture', name: 'Nurture', icon: '📈' },
     { id: 'conversion', name: 'Conversion', icon: '💰' },

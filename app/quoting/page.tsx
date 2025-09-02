@@ -79,13 +79,37 @@ export default function FreightFlowQuotingEngine() {
     | 'History'
     | 'Rules'
     | 'Workflow'
-  >('Workflow');
+    | 'AirFreight'
+    | 'Maritime'
+  >('AirFreight');
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [priceRules, setPriceRules] = useState<PriceRule[]>([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingQuote, setPendingQuote] = useState<Quote | null>(null);
   const [editingRule, setEditingRule] = useState<PriceRule | null>(null);
   const [showRuleForm, setShowRuleForm] = useState(false);
+
+  // Air Freight Form State
+  const [airFreightForm, setAirFreightForm] = useState({
+    originAirport: '',
+    destinationAirport: '',
+    weight: '',
+    serviceLevel: 'standard' as 'standard' | 'express' | 'charter',
+  });
+
+  // Maritime Freight Form State
+  const [maritimeForm, setMaritimeForm] = useState({
+    originPort: '',
+    destinationPort: '',
+    containerType: '20ft' as '20ft' | '40ft' | 'reefer' | 'lcl',
+    cargoWeight: '',
+  });
+
+  // Advanced Quotes State
+  const [airQuotes, setAirQuotes] = useState<any[]>([]);
+  const [maritimeQuotes, setMaritimeQuotes] = useState<any[]>([]);
+  const [isLoadingQuotes, setIsLoadingQuotes] = useState(false);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
 
   // LTL State
   const [ltlData, setLtlData] = useState({
@@ -241,6 +265,184 @@ export default function FreightFlowQuotingEngine() {
       },
     }[customerId] || { id: '', name: '', tier: '', discountRate: 0 };
     updateWorkflowData('customer', customerData);
+  };
+
+  // Generate Air Freight Quotes
+  const generateAirFreightQuote = async () => {
+    if (
+      !airFreightForm.originAirport ||
+      !airFreightForm.destinationAirport ||
+      !airFreightForm.weight
+    ) {
+      setQuoteError('Please fill in all required fields for Air Freight quote');
+      return;
+    }
+
+    setIsLoadingQuotes(true);
+    setQuoteError(null);
+
+    try {
+      const quoteRequest = {
+        id: `air-${Date.now()}`,
+        type: 'air' as const,
+        mode:
+          airFreightForm.serviceLevel === 'charter'
+            ? 'charter'
+            : airFreightForm.serviceLevel,
+        origin: {
+          city:
+            airFreightForm.originAirport.split(',')[0] ||
+            airFreightForm.originAirport,
+          state: 'N/A',
+          country: 'US',
+          airport: airFreightForm.originAirport,
+        },
+        destination: {
+          city:
+            airFreightForm.destinationAirport.split(',')[0] ||
+            airFreightForm.destinationAirport,
+          state: 'N/A',
+          country: 'US',
+          airport: airFreightForm.destinationAirport,
+        },
+        cargo: {
+          weight: parseFloat(airFreightForm.weight) || 1000,
+          dimensions: { length: 48, width: 40, height: 46 },
+          value: 10000,
+          commodity: 'General Freight',
+          hazmat: false,
+          temperature: 'ambient' as const,
+          specialHandling: [],
+        },
+        serviceRequirements: {
+          pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          deliveryDate: new Date(
+            Date.now() + 72 * 60 * 60 * 1000
+          ).toISOString(),
+          urgency:
+            airFreightForm.serviceLevel === 'express'
+              ? 'expedited'
+              : ('standard' as const),
+          insurance: true,
+          customsClearance: true,
+          doorToDoor: true,
+        },
+        customerTier: 'gold' as const,
+        specialRequirements: [],
+      };
+
+      const response = await fetch('/api/advanced-air-maritime-quoting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'air', quoteRequest }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setAirQuotes(data.quotes || []);
+      console.info(
+        '✅ Air freight quotes generated:',
+        data.quotes?.length || 0
+      );
+    } catch (error) {
+      console.error('❌ Air freight quote generation failed:', error);
+      setQuoteError('Failed to generate air freight quotes. Please try again.');
+    } finally {
+      setIsLoadingQuotes(false);
+    }
+  };
+
+  // Generate Maritime Freight Quotes
+  const generateMaritimeFreightQuote = async () => {
+    if (
+      !maritimeForm.originPort ||
+      !maritimeForm.destinationPort ||
+      !maritimeForm.cargoWeight
+    ) {
+      setQuoteError(
+        'Please fill in all required fields for Maritime Freight quote'
+      );
+      return;
+    }
+
+    setIsLoadingQuotes(true);
+    setQuoteError(null);
+
+    try {
+      const quoteRequest = {
+        id: `maritime-${Date.now()}`,
+        type: 'maritime' as const,
+        mode: maritimeForm.containerType === 'lcl' ? 'lcl' : 'container',
+        origin: {
+          city:
+            maritimeForm.originPort.split(',')[0] || maritimeForm.originPort,
+          state: 'N/A',
+          country: 'US',
+          port: maritimeForm.originPort,
+        },
+        destination: {
+          city:
+            maritimeForm.destinationPort.split(',')[0] ||
+            maritimeForm.destinationPort,
+          state: 'N/A',
+          country: 'International',
+          port: maritimeForm.destinationPort,
+        },
+        cargo: {
+          weight: parseFloat(maritimeForm.cargoWeight) || 20000,
+          dimensions: { length: 240, width: 96, height: 102 },
+          value: 50000,
+          commodity: 'General Cargo',
+          hazmat: false,
+          temperature:
+            maritimeForm.containerType === 'reefer'
+              ? 'refrigerated'
+              : ('ambient' as const),
+          specialHandling: [],
+        },
+        serviceRequirements: {
+          pickupDate: new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+          deliveryDate: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+          urgency: 'standard' as const,
+          insurance: true,
+          customsClearance: true,
+          doorToDoor: false,
+        },
+        customerTier: 'gold' as const,
+        specialRequirements: [],
+      };
+
+      const response = await fetch('/api/advanced-air-maritime-quoting', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'maritime', quoteRequest }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMaritimeQuotes(data.quotes || []);
+      console.info(
+        '✅ Maritime freight quotes generated:',
+        data.quotes?.length || 0
+      );
+    } catch (error) {
+      console.error('❌ Maritime freight quote generation failed:', error);
+      setQuoteError(
+        'Failed to generate maritime freight quotes. Please try again.'
+      );
+    } finally {
+      setIsLoadingQuotes(false);
+    }
   };
 
   const runAIAnalysis = async () => {
@@ -1177,6 +1379,8 @@ export default function FreightFlowQuotingEngine() {
             { id: 'LTL', label: '📦 LTL Freight', icon: '📦' },
             { id: 'FTL', label: '🚛 FTL Freight', icon: '🚛' },
             { id: 'Specialized', label: '⚡ Specialized', icon: '⚡' },
+            { id: 'AirFreight', label: '✈️ Air Freight', icon: '✈️' },
+            { id: 'Maritime', label: '🚢 Maritime Freight', icon: '🚢' },
             {
               id: 'Warehousing',
               label: '🏢 Warehousing Solutions',
@@ -2948,6 +3152,955 @@ export default function FreightFlowQuotingEngine() {
           </div>
         )}
 
+        {/* Air Freight Tab */}
+        {activeTab === 'AirFreight' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                padding: '24px',
+                color: 'white',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <div style={{ fontSize: '2rem' }}>✈️</div>
+                  <div>
+                    <h2
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: 'bold',
+                        margin: 0,
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Air Freight Express
+                    </h2>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        margin: 0,
+                      }}
+                    >
+                      Premium speed air cargo solutions
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{ padding: '32px' }}>
+              {/* Air Freight Quote Form */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginBottom: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    marginBottom: '16px',
+                    fontSize: '20px',
+                  }}
+                >
+                  🎯 Get Air Freight Quote
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Origin Airport/City
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='e.g., LAX, Los Angeles, CA'
+                      value={airFreightForm.originAirport}
+                      onChange={(e) =>
+                        setAirFreightForm((prev) => ({
+                          ...prev,
+                          originAirport: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Destination Airport/City
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='e.g., JFK, New York, NY'
+                      value={airFreightForm.destinationAirport}
+                      onChange={(e) =>
+                        setAirFreightForm((prev) => ({
+                          ...prev,
+                          destinationAirport: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Weight (lbs)
+                    </label>
+                    <input
+                      type='number'
+                      placeholder='e.g., 500'
+                      value={airFreightForm.weight}
+                      onChange={(e) =>
+                        setAirFreightForm((prev) => ({
+                          ...prev,
+                          weight: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Service Level
+                    </label>
+                    <select
+                      value={airFreightForm.serviceLevel}
+                      onChange={(e) =>
+                        setAirFreightForm((prev) => ({
+                          ...prev,
+                          serviceLevel: e.target.value as
+                            | 'standard'
+                            | 'express'
+                            | 'charter',
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option value='standard'>Standard Air (2-3 days)</option>
+                      <option value='express'>Express Air (Next day)</option>
+                      <option value='charter'>
+                        Emergency Charter (Same day)
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  onClick={generateAirFreightQuote}
+                  disabled={isLoadingQuotes}
+                  style={{
+                    background: isLoadingQuotes
+                      ? 'rgba(59, 130, 246, 0.5)'
+                      : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: isLoadingQuotes ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isLoadingQuotes) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 25px rgba(59, 130, 246, 0.3)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {isLoadingQuotes
+                    ? '⏳ Generating Quotes...'
+                    : '✈️ Calculate Air Freight Quote'}
+                </button>
+
+                {/* Error Display */}
+                {quoteError && (
+                  <div
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      color: '#ef4444',
+                      fontSize: '14px',
+                      marginTop: '16px',
+                    }}
+                  >
+                    ⚠️ {quoteError}
+                  </div>
+                )}
+
+                {/* Air Freight Quote Results */}
+                {airQuotes.length > 0 && (
+                  <div style={{ marginTop: '24px' }}>
+                    <h3
+                      style={{
+                        color: 'white',
+                        marginBottom: '16px',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      ✈️ Air Freight Quotes ({airQuotes.length} carriers)
+                    </h3>
+                    <div style={{ display: 'grid', gap: '12px' }}>
+                      {airQuotes.slice(0, 3).map((quote, index) => (
+                        <div
+                          key={quote.quoteId}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '8px',
+                            padding: '16px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600' }}>
+                              {quote.carrier}
+                            </span>
+                            <span
+                              style={{
+                                color: '#10b981',
+                                fontSize: '18px',
+                                fontWeight: '700',
+                              }}
+                            >
+                              ${quote.totalQuote.toLocaleString()}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '8px',
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            <div>Service: {quote.serviceLevel}</div>
+                            <div>Transit: {quote.transitTime.estimated}h</div>
+                            <div>
+                              Win Rate: {Math.round(quote.winProbability * 100)}
+                              %
+                            </div>
+                            <div>Market: {quote.marketPosition}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      marginBottom: '12px',
+                      fontSize: '18px',
+                    }}
+                  >
+                    🚀 Express Air Cargo
+                  </h3>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Same-day and next-day delivery for high-value cargo
+                  </div>
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    $3,750 - $6,500
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.2)',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      marginBottom: '12px',
+                      fontSize: '18px',
+                    }}
+                  >
+                    🛫 Emergency Charter
+                  </h3>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Critical medical supplies and emergency air transport
+                  </div>
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#10b981',
+                    }}
+                  >
+                    $7,500 - $12,500
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginTop: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    marginBottom: '16px',
+                    fontSize: '20px',
+                  }}
+                >
+                  ✈️ Air Freight Features
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    • Next-day delivery guaranteed
+                    <br />
+                    • Door-to-door service
+                    <br />
+                    • Real-time tracking
+                    <br />
+                    • Customs clearance included
+                    <br />• Temperature-controlled options
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    • Airport-to-airport service
+                    <br />
+                    • Hazardous materials handling
+                    <br />
+                    • Live animal transport
+                    <br />
+                    • Valuable cargo insurance
+                    <br />• Priority boarding
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Maritime Freight Tab */}
+        {activeTab === 'Maritime' && (
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #1e40af, #3730a3)',
+                padding: '24px',
+                color: 'white',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <div style={{ fontSize: '2rem' }}>🚢</div>
+                  <div>
+                    <h2
+                      style={{
+                        fontSize: '1.5rem',
+                        fontWeight: 'bold',
+                        margin: 0,
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Maritime Container Shipping
+                    </h2>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        margin: 0,
+                      }}
+                    >
+                      Global ocean freight and container solutions
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={{ padding: '32px' }}>
+              {/* Maritime Freight Quote Form */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginBottom: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    marginBottom: '16px',
+                    fontSize: '20px',
+                  }}
+                >
+                  🎯 Get Maritime Freight Quote
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Origin Port/City
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='e.g., Los Angeles, CA'
+                      value={maritimeForm.originPort}
+                      onChange={(e) =>
+                        setMaritimeForm((prev) => ({
+                          ...prev,
+                          originPort: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Destination Port/Country
+                    </label>
+                    <input
+                      type='text'
+                      placeholder='e.g., Shanghai, China'
+                      value={maritimeForm.destinationPort}
+                      onChange={(e) =>
+                        setMaritimeForm((prev) => ({
+                          ...prev,
+                          destinationPort: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Container Type
+                    </label>
+                    <select
+                      value={maritimeForm.containerType}
+                      onChange={(e) =>
+                        setMaritimeForm((prev) => ({
+                          ...prev,
+                          containerType: e.target.value as
+                            | '20ft'
+                            | '40ft'
+                            | 'reefer'
+                            | 'lcl',
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <option value='20ft'>20ft Standard Container</option>
+                      <option value='40ft'>40ft Standard Container</option>
+                      <option value='reefer'>Refrigerated Container</option>
+                      <option value='lcl'>
+                        LCL (Less than Container Load)
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'white',
+                        fontSize: '14px',
+                        marginBottom: '8px',
+                        display: 'block',
+                      }}
+                    >
+                      Cargo Weight (lbs)
+                    </label>
+                    <input
+                      type='number'
+                      placeholder='e.g., 25000'
+                      value={maritimeForm.cargoWeight}
+                      onChange={(e) =>
+                        setMaritimeForm((prev) => ({
+                          ...prev,
+                          cargoWeight: e.target.value,
+                        }))
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        fontSize: '14px',
+                      }}
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={generateMaritimeFreightQuote}
+                  disabled={isLoadingQuotes}
+                  style={{
+                    background: isLoadingQuotes
+                      ? 'rgba(30, 64, 175, 0.5)'
+                      : 'linear-gradient(135deg, #1e40af, #3730a3)',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: isLoadingQuotes ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isLoadingQuotes) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 25px rgba(30, 64, 175, 0.3)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {isLoadingQuotes
+                    ? '⏳ Generating Quotes...'
+                    : '🚢 Calculate Maritime Freight Quote'}
+                </button>
+
+                {/* Maritime Freight Quote Results */}
+                {maritimeQuotes.length > 0 && (
+                  <div style={{ marginTop: '24px' }}>
+                    <h3
+                      style={{
+                        color: 'white',
+                        marginBottom: '16px',
+                        fontSize: '18px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🚢 Maritime Freight Quotes ({maritimeQuotes.length}{' '}
+                      carriers)
+                    </h3>
+                    <div style={{ display: 'grid', gap: '12px' }}>
+                      {maritimeQuotes.slice(0, 3).map((quote, index) => (
+                        <div
+                          key={quote.quoteId}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '8px',
+                            padding: '16px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            <span style={{ color: 'white', fontWeight: '600' }}>
+                              {quote.carrier}
+                            </span>
+                            <span
+                              style={{
+                                color: '#10b981',
+                                fontSize: '18px',
+                                fontWeight: '700',
+                              }}
+                            >
+                              ${quote.totalQuote.toLocaleString()}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '8px',
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            <div>Service: {quote.serviceLevel}</div>
+                            <div>
+                              Transit:{' '}
+                              {Math.round(quote.transitTime.estimated / 24)}d
+                            </div>
+                            <div>
+                              Win Rate: {Math.round(quote.winProbability * 100)}
+                              %
+                            </div>
+                            <div>Market: {quote.marketPosition}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(30, 64, 175, 0.2)',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(30, 64, 175, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      marginBottom: '12px',
+                      fontSize: '18px',
+                    }}
+                  >
+                    📦 Container Shipping
+                  </h3>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Full container loads and LCL consolidation services
+                  </div>
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#1e40af',
+                    }}
+                  >
+                    $2,500 - $8,500
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(139, 69, 19, 0.2)',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(139, 69, 19, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      color: 'white',
+                      marginBottom: '12px',
+                      fontSize: '18px',
+                    }}
+                  >
+                    🚢 Bulk Ocean Shipping
+                  </h3>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    Breakbulk, project cargo, and bulk commodity transport
+                  </div>
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#8b4513',
+                    }}
+                  >
+                    $1,800 - $4,200
+                  </div>
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginTop: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    marginBottom: '16px',
+                    fontSize: '20px',
+                  }}
+                >
+                  🚢 Maritime Freight Features
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    • Full container loads (FCL)
+                    <br />
+                    • Less than container loads (LCL)
+                    <br />
+                    • Door-to-door delivery
+                    <br />
+                    • Customs clearance services
+                    <br />• Real-time vessel tracking
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '14px',
+                    }}
+                  >
+                    • Breakbulk and project cargo
+                    <br />
+                    • Bulk commodity shipping
+                    <br />
+                    • Refrigerated container options
+                    <br />
+                    • Hazardous materials handling
+                    <br />• Port-to-port and door-to-door
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Warehousing Tab */}
         {activeTab === 'Warehousing' && (
           <div
@@ -4221,21 +5374,21 @@ export default function FreightFlowQuotingEngine() {
                                     .toUpperCase(),
                                 name:
                                   'Customer from Quote ' + quote.quoteNumber,
-                                email: 'customer@example.com',
-                                phone: '+1-555-0123',
+                                email: 'customer@company.com', // TODO: Replace with real customer data
+                                phone: '+1-555-0123', // TODO: Replace with real customer phone
                               },
                               origin: {
-                                address: '123 Origin St',
+                                address: 'Origin Address', // TODO: Replace with real origin address
                                 city:
                                   quote.details.origin?.split(',')[0] ||
                                   'Unknown City',
                                 state:
                                   quote.details.origin?.split(',')[1]?.trim() ||
                                   'Unknown State',
-                                zipCode: '12345',
+                                zipCode: '00000', // TODO: Replace with real zip code
                               },
                               destination: {
-                                address: '456 Destination Ave',
+                                address: 'Destination Address', // TODO: Replace with real destination address
                                 city:
                                   quote.details.destination?.split(',')[0] ||
                                   'Unknown City',
@@ -4243,7 +5396,7 @@ export default function FreightFlowQuotingEngine() {
                                   quote.details.destination
                                     ?.split(',')[1]
                                     ?.trim() || 'Unknown State',
-                                zipCode: '54321',
+                                zipCode: '00000', // TODO: Replace with real zip code
                               },
                               cargo: {
                                 weight: quote.details.weight || 10000,
@@ -5088,6 +6241,9 @@ export default function FreightFlowQuotingEngine() {
                       'Tanker',
                       'Auto Carrier',
                       'Conestoga',
+                      'Air Freight',
+                      'Maritime Container',
+                      'Bulk Ocean Shipping',
                     ].map((type) => (
                       <option key={type} value={type}>
                         {type}

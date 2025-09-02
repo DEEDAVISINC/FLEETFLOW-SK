@@ -1,27 +1,7 @@
 'use client';
 
-import {
-  Activity,
-  CheckCircle,
-  Play,
-  Target,
-  TrendingUp,
-  Users,
-  Zap,
-} from 'lucide-react';
-import { useState } from 'react';
-import AITaskAssignmentSystem from './AITaskAssignmentSystem';
-import { Badge } from './ui/badge';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Activity, TrendingUp, Zap } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface AIStaffMember {
   id: string;
@@ -75,1151 +55,982 @@ interface ScheduleTemplate {
   };
 }
 
-export default function AIStaffScheduler() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
-  const [scheduleMode, setScheduleMode] = useState<'auto' | 'manual'>('auto');
-  const [currentTime] = useState(new Date());
+export default function AIStaffScheduler(): JSX.Element {
+  const [activeTab, setActiveTab] = useState<string>('overview');
 
-  // AI Staff Database
-  const [aiStaff, setAiStaff] = useState<AIStaffMember[]>([
-    // LEAD GENERATION DEPARTMENT
+  return React.createElement(
+    'div',
     {
-      id: 'desiree-001',
-      name: 'Desiree',
-      role: 'Desperate Prospects Specialist',
-      department: 'lead_generation',
-      avatar: '🎯',
-      status: 'busy',
-      currentTask:
-        'Analyzing 47 companies with safety violations - found 12 desperate shippers',
-      tasksCompleted: 156,
-      revenue: 24500,
-      efficiency: 94.2,
-      lastActivity: '2 min ago',
-      schedule: {
-        shift: '24/7',
-        workHours: '24/7 Continuous',
-        breakTime: '2 min every 30 min',
-        weeklyHours: 168,
-        overtime: 0,
-      },
-      performance: {
-        weeklyGoal: 50,
-        monthlyGoal: 200,
-        completionRate: 87.3,
-        qualityScore: 96.1,
-        responseTime: '1.2s',
-      },
-      specializations: [
-        'Safety Issues',
-        'Compliance Problems',
-        'Desperate Prospects',
-      ],
-    },
-    {
-      id: 'cliff-002',
-      name: 'Cliff',
-      role: 'Desperate Prospects Hunter',
-      department: 'lead_generation',
-      avatar: '⛰️',
-      status: 'active',
-      currentTask:
-        'Processing edge-case prospects - 23 urgent carriers identified',
-      tasksCompleted: 89,
-      revenue: 34200,
-      efficiency: 98.7,
-      lastActivity: '45 sec ago',
-      schedule: {
-        shift: 'morning',
-        workHours: '6:00 AM - 2:00 PM',
-        breakTime: '10:00 AM - 10:15 AM',
-        weeklyHours: 40,
-        overtime: 8,
-      },
-      performance: {
-        weeklyGoal: 30,
-        monthlyGoal: 120,
-        completionRate: 92.4,
-        qualityScore: 94.8,
-        responseTime: '0.8s',
-      },
-      specializations: ['Edge Prospects', 'Urgent Needs', 'Crisis Situations'],
-    },
-    {
-      id: 'gary-003',
-      name: 'Gary',
-      role: 'Lead Generation Specialist',
-      department: 'lead_generation',
-      avatar: '📈',
-      status: 'active',
-      currentTask:
-        'Generating 234 new leads - qualification pipeline flowing smoothly',
-      tasksCompleted: 178,
-      revenue: 28900,
-      efficiency: 91.5,
-      lastActivity: '3 min ago',
-      schedule: {
-        shift: 'morning',
-        workHours: '7:00 AM - 3:00 PM',
-        breakTime: '11:00 AM - 11:15 AM',
-        weeklyHours: 40,
-        overtime: 4,
-      },
-      performance: {
-        weeklyGoal: 60,
-        monthlyGoal: 240,
-        completionRate: 89.2,
-        qualityScore: 92.1,
-        responseTime: '1.1s',
-      },
-      specializations: [
-        'General Leads',
-        'Pipeline Management',
-        'Lead Qualification',
-      ],
-    },
-
-    // SALES DEPARTMENT
-    {
-      id: 'will-004',
-      name: 'Will',
-      role: 'Sales Operations Specialist',
-      department: 'sales',
-      avatar: '💼',
-      status: 'busy',
-      currentTask:
-        'Closing deals on 47 automotive suppliers - industrial sales goldmine',
-      tasksCompleted: 234,
-      revenue: 67500,
-      efficiency: 96.8,
-      lastActivity: '15 sec ago',
-      schedule: {
-        shift: 'morning',
-        workHours: '8:00 AM - 4:00 PM',
-        breakTime: '12:00 PM - 12:30 PM',
-        weeklyHours: 40,
-        overtime: 12,
-      },
-      performance: {
-        weeklyGoal: 80,
-        monthlyGoal: 320,
-        completionRate: 94.7,
-        qualityScore: 97.2,
-        responseTime: '0.3s',
-      },
-      specializations: ['Deal Closing', 'Client Relations', 'Sales Strategy'],
-    },
-    {
-      id: 'hunter-005',
-      name: 'Hunter',
-      role: 'Recruiting & Onboarding Specialist',
-      department: 'sales',
-      avatar: '🎯',
-      status: 'active',
-      currentTask:
-        'Hunting for talent - contacted 156 owner-operators, building recruitment army',
-      tasksCompleted: 145,
-      revenue: 45300,
-      efficiency: 93.4,
-      lastActivity: '1 min ago',
-      schedule: {
-        shift: 'afternoon',
-        workHours: '1:00 PM - 9:00 PM',
-        breakTime: '5:00 PM - 5:15 PM',
-        weeklyHours: 40,
-        overtime: 6,
-      },
-      performance: {
-        weeklyGoal: 45,
-        monthlyGoal: 180,
-        completionRate: 88.7,
-        qualityScore: 90.5,
-        responseTime: '1.5s',
-      },
-      specializations: [
-        'Talent Hunting',
-        'Driver Recruitment',
-        'Carrier Onboarding',
-      ],
-    },
-
-    // OPERATIONS DEPARTMENT
-    {
-      id: 'c-allen-durr-006',
-      name: 'C. Allen Durr',
-      role: 'Schedule Optimization Specialist',
-      department: 'operations',
-      avatar: '📅',
-      status: 'active',
-      currentTask:
-        'Optimizing staff schedules - identified 3 efficiency improvements',
-      tasksCompleted: 45,
-      revenue: 15800,
-      efficiency: 99.1,
-      lastActivity: '30 sec ago',
-      schedule: {
-        shift: '24/7',
-        workHours: 'Continuous Monitoring',
-        breakTime: 'Self-optimizing',
-        weeklyHours: 168,
-        overtime: 0,
-      },
-      performance: {
-        weeklyGoal: 20,
-        monthlyGoal: 80,
-        completionRate: 98.9,
-        qualityScore: 99.5,
-        responseTime: '0.1s',
-      },
-      specializations: [
-        'Schedule Optimization',
-        'Workload Balancing',
-        'Time Management',
-      ],
-    },
-    {
-      id: 'miles-007',
-      name: 'Miles',
-      role: 'Dispatch Coordination Specialist',
-      department: 'operations',
-      avatar: '📍',
-      status: 'active',
-      currentTask:
-        'Coordinating routes across 1,247 miles - optimizing dispatch efficiency',
-      tasksCompleted: 167,
-      revenue: 32100,
-      efficiency: 95.2,
-      lastActivity: '1 min ago',
-      schedule: {
-        shift: 'morning',
-        workHours: '5:00 AM - 1:00 PM',
-        breakTime: '9:00 AM - 9:15 AM',
-        weeklyHours: 40,
-        overtime: 8,
-      },
-      performance: {
-        weeklyGoal: 55,
-        monthlyGoal: 220,
-        completionRate: 91.3,
-        qualityScore: 94.7,
-        responseTime: '0.7s',
-      },
-      specializations: [
-        'Route Optimization',
-        'Dispatch Coordination',
-        'Mileage Planning',
-      ],
-    },
-    {
-      id: 'logan-008',
-      name: 'Logan',
-      role: 'Logistics Coordination Specialist',
-      department: 'operations',
-      avatar: '🚛',
-      status: 'busy',
-      currentTask:
-        'Orchestrating supply chain logistics - managing 89 active shipments',
-      tasksCompleted: 198,
-      revenue: 54700,
-      efficiency: 97.1,
-      lastActivity: '45 sec ago',
-      schedule: {
-        shift: 'afternoon',
-        workHours: '2:00 PM - 10:00 PM',
-        breakTime: '6:00 PM - 6:15 PM',
-        weeklyHours: 40,
-        overtime: 10,
-      },
-      performance: {
-        weeklyGoal: 65,
-        monthlyGoal: 260,
-        completionRate: 93.8,
-        qualityScore: 96.2,
-        responseTime: '0.5s',
-      },
-      specializations: [
-        'Supply Chain',
-        'Shipment Coordination',
-        'Logistics Planning',
-      ],
-    },
-
-    // SUPPORT DEPARTMENT
-    {
-      id: 'shanell-009',
-      name: 'Shanell',
-      role: 'Customer Service Specialist',
-      department: 'support',
-      avatar: '🛠️',
-      status: 'active',
-      currentTask:
-        'Providing excellent service - resolved 67 customer inquiries today',
-      tasksCompleted: 234,
-      revenue: 18500,
-      efficiency: 96.3,
-      lastActivity: '2 min ago',
-      schedule: {
-        shift: 'morning',
-        workHours: '8:00 AM - 4:00 PM',
-        breakTime: '12:00 PM - 12:30 PM',
-        weeklyHours: 40,
-        overtime: 0,
-      },
-      performance: {
-        weeklyGoal: 70,
-        monthlyGoal: 280,
-        completionRate: 94.1,
-        qualityScore: 98.2,
-        responseTime: '0.4s',
-      },
-      specializations: [
-        'Customer Support',
-        'Issue Resolution',
-        'Service Excellence',
-      ],
-    },
-    {
-      id: 'deanna-010',
-      name: 'Deanna',
-      role: 'Data Analysis Specialist',
-      department: 'analytics',
-      avatar: '📊',
-      status: 'active',
-      currentTask:
-        'Analyzing performance metrics - all systems optimal, trends identified',
-      tasksCompleted: 127,
-      revenue: 8900,
-      efficiency: 97.4,
-      lastActivity: '1 min ago',
-      schedule: {
-        shift: 'afternoon',
-        workHours: '1:00 PM - 9:00 PM',
-        breakTime: '5:00 PM - 5:15 PM',
-        weeklyHours: 40,
-        overtime: 0,
-      },
-      performance: {
-        weeklyGoal: 40,
-        monthlyGoal: 160,
-        completionRate: 91.8,
-        qualityScore: 95.6,
-        responseTime: '0.5s',
-      },
-      specializations: [
-        'Data Analysis',
-        'Performance Monitoring',
-        'Trend Analysis',
-      ],
-    },
-  ]);
-
-  // Schedule Templates
-  const scheduleTemplates: ScheduleTemplate[] = [
-    {
-      id: 'high_performance',
-      name: 'High Performance Coverage',
-      description: 'Maximum lead generation with optimal staff distribution',
-      shifts: {
-        morning: ['Cliff', 'Will', 'Deanna'],
-        afternoon: ['Gary', 'Deanna', 'C. Allen Durr'],
-        evening: ['Will', 'Desiree'],
-        overnight: ['Desiree', 'C. Allen Durr'],
-      },
-      coverage: {
-        sales: 60,
-        leadGen: 80,
-        support: 40,
-        analytics: 60,
+      style: {
+        width: '100%',
+        padding: '20px',
+        background: 'rgba(15, 23, 42, 0.8)',
+        borderRadius: '12px',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
       },
     },
-    {
-      id: 'balanced',
-      name: 'Balanced Operations',
-      description: 'Even workload distribution across all departments',
-      shifts: {
-        morning: ['Cliff', 'Will'],
-        afternoon: ['Gary', 'Deanna'],
-        evening: ['Desiree', 'C. Allen Durr'],
-        overnight: ['Desiree'],
-      },
-      coverage: {
-        sales: 50,
-        leadGen: 60,
-        support: 50,
-        analytics: 50,
-      },
-    },
-    {
-      id: 'lead_generation_focus',
-      name: 'Lead Generation Focus',
-      description: 'Maximum lead generation capacity with support coverage',
-      shifts: {
-        morning: ['Desiree', 'Cliff', 'Will'],
-        afternoon: ['Gary', 'Desiree', 'Will'],
-        evening: ['Desiree', 'Cliff'],
-        overnight: ['Desiree', 'C. Allen Durr'],
-      },
-      coverage: {
-        sales: 70,
-        leadGen: 90,
-        support: 30,
-        analytics: 40,
-      },
-    },
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500';
-      case 'busy':
-        return 'bg-yellow-500';
-      case 'idle':
-        return 'bg-blue-500';
-      case 'scheduled_break':
-        return 'bg-purple-500';
-      case 'off_duty':
-        return 'bg-gray-500';
-      default:
-        return 'bg-gray-400';
-    }
-  };
-
-  const getDepartmentColor = (department: string) => {
-    switch (department) {
-      case 'sales':
-        return 'bg-green-100 text-green-800';
-      case 'lead_generation':
-        return 'bg-blue-100 text-blue-800';
-      case 'operations':
-        return 'bg-purple-100 text-purple-800';
-      case 'support':
-        return 'bg-orange-100 text-orange-800';
-      case 'analytics':
-        return 'bg-pink-100 text-pink-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const filteredStaff =
-    selectedDepartment === 'all'
-      ? aiStaff
-      : aiStaff.filter((staff) => staff.department === selectedDepartment);
-
-  const departmentStats = {
-    sales: aiStaff.filter((s) => s.department === 'sales').length,
-    lead_generation: aiStaff.filter((s) => s.department === 'lead_generation')
-      .length,
-    operations: aiStaff.filter((s) => s.department === 'operations').length,
-    support: aiStaff.filter((s) => s.department === 'support').length,
-    analytics: aiStaff.filter((s) => s.department === 'analytics').length,
-  };
-
-  const totalRevenue = aiStaff.reduce((sum, staff) => sum + staff.revenue, 0);
-  const avgEfficiency =
-    aiStaff.reduce((sum, staff) => sum + staff.efficiency, 0) / aiStaff.length;
-  const totalTasksCompleted = aiStaff.reduce(
-    (sum, staff) => sum + staff.tasksCompleted,
-    0
-  );
-
-  return (
-    <div style={{ width: '100%' }}>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+    React.createElement(
+      'div',
+      {
+        style: {
           marginBottom: '20px',
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              fontSize: '1.5rem',
-              fontWeight: '700',
+          textAlign: 'center',
+        },
+      },
+      React.createElement(
+        'h2',
+        {
+          style: {
+            color: 'white',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            marginBottom: '8px',
+          },
+        },
+        '📅 AI Staff Scheduler'
+      ),
+      React.createElement(
+        'p',
+        {
+          style: {
+            color: 'rgba(255, 255, 255, 0.6)',
+            fontSize: '1rem',
+          },
+        },
+        'Workforce Management & Schedule Optimization'
+      )
+    ),
+
+    React.createElement(
+      'div',
+      {
+        style: {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '16px',
+          marginBottom: '20px',
+        },
+      },
+      React.createElement(
+        'div',
+        {
+          style: {
+            background: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center',
+          },
+        },
+        React.createElement(Activity, {
+          style: {
+            width: '32px',
+            height: '32px',
+            color: '#22c55e',
+            margin: '0 auto 8px',
+          },
+        }),
+        React.createElement(
+          'p',
+          {
+            style: {
               color: 'white',
-              marginBottom: '8px',
-            }}
-          >
-            <Users style={{ width: '24px', height: '24px', color: '#8b5cf6' }} />
-            DEPOINTE AI Staff Scheduler
-          </h1>
-          <p
-            style={{
-              color: 'rgba(255, 255, 255, 0.6)',
-              fontSize: '1rem',
-            }}
-          >
-            Workforce Management & Schedule Optimization
-          </p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Select
-            value={scheduleMode}
-            onValueChange={(value) =>
-              setScheduleMode(value as 'auto' | 'manual')
-            }
-          >
-            <SelectTrigger
-              style={{
-                width: '160px',
-                background: 'rgba(15, 23, 42, 0.8)',
-                border: '1px solid rgba(148, 163, 184, 0.2)',
-                color: 'white',
-              }}
-            >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent
-              style={{
-                background: 'rgba(15, 23, 42, 0.95)',
-                border: '1px solid rgba(148, 163, 184, 0.2)',
-                color: 'white',
-              }}
-            >
-              <SelectItem value='auto'>Auto Schedule</SelectItem>
-              <SelectItem value='manual'>Manual Control</SelectItem>
-            </SelectContent>
-          </Select>
-          <button
-            style={{
-              background: '#8b5cf6',
+              fontSize: '0.875rem',
+              marginBottom: '4px',
+            },
+          },
+          'Active Staff'
+        ),
+        React.createElement(
+          'p',
+          {
+            style: { color: '#22c55e', fontSize: '1.5rem', fontWeight: '700' },
+          },
+          '--'
+        )
+      ),
+
+      React.createElement(
+        'div',
+        {
+          style: {
+            background: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center',
+          },
+        },
+        React.createElement(TrendingUp, {
+          style: {
+            width: '32px',
+            height: '32px',
+            color: '#3b82f6',
+            margin: '0 auto 8px',
+          },
+        }),
+        React.createElement(
+          'p',
+          {
+            style: {
               color: 'white',
-              border: 'none',
-              borderRadius: '8px',
+              fontSize: '0.875rem',
+              marginBottom: '4px',
+            },
+          },
+          'Total Revenue'
+        ),
+        React.createElement(
+          'p',
+          {
+            style: { color: '#3b82f6', fontSize: '1.5rem', fontWeight: '700' },
+          },
+          '--'
+        )
+      ),
+
+      React.createElement(
+        'div',
+        {
+          style: {
+            background: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '8px',
+            padding: '16px',
+            textAlign: 'center',
+          },
+        },
+        React.createElement(Zap, {
+          style: {
+            width: '32px',
+            height: '32px',
+            color: '#8b5cf6',
+            margin: '0 auto 8px',
+          },
+        }),
+        React.createElement(
+          'p',
+          {
+            style: {
+              color: 'white',
+              fontSize: '0.875rem',
+              marginBottom: '4px',
+            },
+          },
+          'Avg Efficiency'
+        ),
+        React.createElement(
+          'p',
+          {
+            style: { color: '#8b5cf6', fontSize: '1.5rem', fontWeight: '700' },
+          },
+          '--'
+        )
+      )
+    ),
+
+    React.createElement(
+      'div',
+      {
+        style: {
+          display: 'flex',
+          gap: '8px',
+          flexWrap: 'wrap',
+        },
+      },
+      [
+        { id: 'overview', label: 'Overview', icon: '📊' },
+        { id: 'schedules', label: 'Schedules', icon: '📅' },
+        { id: 'assignments', label: 'Task Assignments', icon: '🎯' },
+        { id: 'performance', label: 'Performance', icon: '📈' },
+        { id: 'templates', label: 'Templates', icon: '📝' },
+        { id: 'analytics', label: 'Analytics', icon: '📊' },
+      ].map((tab) =>
+        React.createElement(
+          'button',
+          {
+            key: tab.id,
+            onClick: () => setActiveTab(tab.id),
+            style: {
+              background:
+                activeTab === tab.id
+                  ? 'rgba(139, 92, 246, 0.2)'
+                  : 'rgba(0, 0, 0, 0.2)',
+              border:
+                activeTab === tab.id
+                  ? '2px solid #8b5cf6'
+                  : '1px solid rgba(148, 163, 184, 0.2)',
+              color:
+                activeTab === tab.id ? '#8b5cf6' : 'rgba(255, 255, 255, 0.7)',
               padding: '10px 16px',
+              borderRadius: '8px',
               fontSize: '0.875rem',
               fontWeight: '600',
               cursor: 'pointer',
+              transition: 'all 0.3s ease',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#7c3aed';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#8b5cf6';
-            }}
-          >
-            <Play style={{ width: '16px', height: '16px' }} />
-            Optimize Schedules
-          </button>
-        </div>
-      </div>
+            },
+          },
+          tab.icon,
+          tab.label
+        )
+      )
+    ),
 
-      {/* Key Metrics */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px',
-        }}
-      >
-        <div
-          style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
-            borderRadius: '12px',
-            padding: '16px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
-                Active Staff
-              </p>
-              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#22c55e', marginBottom: '4px' }}>
+    React.createElement(
+      'div',
+      {
+        style: {
+          marginTop: '20px',
+          padding: '20px',
+          background: 'rgba(0, 0, 0, 0.2)',
+          borderRadius: '8px',
+        },
+      },
+      // Overview Tab
+      activeTab === 'overview' &&
+        React.createElement(
+          'div',
+          null,
+          React.createElement(
+            'h3',
+            {
+              style: {
+                color: 'white',
+                marginBottom: '16px',
+                fontSize: '1.2rem',
+              },
+            },
+            '📊 Staff Overview'
+          ),
+          React.createElement(
+            'p',
+            {
+              style: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '16px',
+              },
+            },
+            'Monitor your AI staff performance and activity across all departments.'
+          ),
+          React.createElement(
+            'div',
+            {
+              style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '16px',
+              },
+            },
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                },
+              },
+              React.createElement(
+                'h4',
+                { style: { color: '#8b5cf6', marginBottom: '8px' } },
+                'Active Sessions'
+              ),
+              React.createElement(
+                'p',
                 {
-                  aiStaff.filter(
-                    (s) => s.status === 'active' || s.status === 'busy'
-                  ).length
-                }
-              </p>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)' }}>
-                of {aiStaff.length} total
-              </p>
-            </div>
-            <Activity style={{ width: '32px', height: '32px', color: '#22c55e' }} />
-          </div>
-        </div>
+                  style: {
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                  },
+                },
+                '--'
+              )
+            ),
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '1px solid rgba(34, 197, 94, 0.2)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                },
+              },
+              React.createElement(
+                'h4',
+                { style: { color: '#22c55e', marginBottom: '8px' } },
+                'Tasks Completed Today'
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                  },
+                },
+                '--'
+              )
+            ),
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                },
+              },
+              React.createElement(
+                'h4',
+                { style: { color: '#3b82f6', marginBottom: '8px' } },
+                'Scheduled Hours'
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                  },
+                },
+                '--'
+              )
+            )
+          )
+        ),
 
-        <div
-          style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
-            borderRadius: '12px',
-            padding: '16px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
-                Total Revenue
-              </p>
-              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#3b82f6', marginBottom: '4px' }}>
-                ${totalRevenue.toLocaleString()}
-              </p>
-              <p style={{ fontSize: '0.75rem', color: '#22c55e' }}>+12.4% from last week</p>
-            </div>
-            <TrendingUp style={{ width: '32px', height: '32px', color: '#3b82f6' }} />
-          </div>
-        </div>
+      // Schedules Tab
+      activeTab === 'schedules' &&
+        React.createElement(
+          'div',
+          null,
+          React.createElement(
+            'h3',
+            {
+              style: {
+                color: 'white',
+                marginBottom: '16px',
+                fontSize: '1.2rem',
+              },
+            },
+            '📅 Schedule Management'
+          ),
+          React.createElement(
+            'p',
+            {
+              style: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '20px',
+              },
+            },
+            'Comprehensive AI staff scheduling with automated optimization, conflict resolution, and performance tracking.'
+          ),
 
-        <div
-          style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
-            borderRadius: '12px',
-            padding: '16px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
-                Avg Efficiency
-              </p>
-              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#8b5cf6', marginBottom: '4px' }}>
-                {avgEfficiency.toFixed(1)}%
-              </p>
-              <p style={{ fontSize: '0.75rem', color: '#22c55e' }}>Above target (85%)</p>
-            </div>
-            <Zap style={{ width: '32px', height: '32px', color: '#8b5cf6' }} />
-          </div>
-        </div>
+          // Schedule Controls
+          React.createElement(
+            'div',
+            {
+              style: {
+                display: 'flex',
+                gap: '12px',
+                marginBottom: '24px',
+                flexWrap: 'wrap',
+              },
+            },
+            React.createElement(
+              'button',
+              {
+                style: {
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                },
+              },
+              '⚡ Auto-Optimize'
+            ),
+            React.createElement(
+              'button',
+              {
+                style: {
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                },
+              },
+              '📋 Create Template'
+            ),
+            React.createElement(
+              'button',
+              {
+                style: {
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                },
+              },
+              '🔄 Bulk Update'
+            )
+          ),
 
-        <div
-          style={{
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
-            borderRadius: '12px',
-            padding: '16px',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <div>
-              <p style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
-                Tasks Completed
-              </p>
-              <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b', marginBottom: '4px' }}>
-                {totalTasksCompleted}
-              </p>
-              <p style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)' }}>This week</p>
-            </div>
-            <CheckCircle style={{ width: '32px', height: '32px', color: '#f59e0b' }} />
-          </div>
-        </div>
-      </div>
+          // Current Schedule Grid
+          React.createElement(
+            'div',
+            {
+              style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '20px',
+                marginBottom: '24px',
+              },
+            },
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                },
+              },
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px',
+                  },
+                },
+                React.createElement(
+                  'h4',
+                  {
+                    style: { color: '#f59e0b', margin: 0, fontSize: '1.1rem' },
+                  },
+                  '🌅 Morning Shift'
+                ),
+                React.createElement(
+                  'span',
+                  {
+                    style: {
+                      color: '#f59e0b',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
+                    },
+                  },
+                  '6AM - 2PM'
+                )
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                    marginBottom: '12px',
+                  },
+                },
+                'Lead generation, sales outreach, and high-value prospecting'
+              ),
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.8rem',
+                  },
+                },
+                '• 8 active staff members',
+                React.createElement('br'),
+                '• Peak performance: 94.2%',
+                React.createElement('br'),
+                '• 45 tasks completed today'
+              )
+            ),
 
-      {/* Main Dashboard */}
-      <div style={{ marginBottom: '24px' }}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '20px',
-            borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
-            paddingBottom: '12px',
-          }}
-        >
-          {[
-            { id: 'overview', label: 'Overview' },
-            { id: 'schedules', label: 'Schedules' },
-            { id: 'assignments', label: 'Task Assignments' },
-            { id: 'performance', label: 'Performance' },
-            { id: 'templates', label: 'Templates' },
-            { id: 'analytics', label: 'Analytics' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                background:
-                  activeTab === tab.id
-                    ? 'rgba(139, 92, 246, 0.2)'
-                    : 'transparent',
-                border:
-                  activeTab === tab.id
-                    ? '2px solid #8b5cf6'
-                    : '1px solid rgba(148, 163, 184, 0.2)',
-                color:
-                  activeTab === tab.id
-                    ? '#8b5cf6'
-                    : 'rgba(255, 255, 255, 0.7)',
-                padding: '8px 16px',
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                },
+              },
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px',
+                  },
+                },
+                React.createElement(
+                  'h4',
+                  {
+                    style: { color: '#8b5cf6', margin: 0, fontSize: '1.1rem' },
+                  },
+                  '🌇 Afternoon Shift'
+                ),
+                React.createElement(
+                  'span',
+                  {
+                    style: {
+                      color: '#8b5cf6',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
+                    },
+                  },
+                  '1PM - 9PM'
+                )
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                    marginBottom: '12px',
+                  },
+                },
+                'Follow-ups, analytics, and relationship building'
+              ),
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.8rem',
+                  },
+                },
+                '• 6 active staff members',
+                React.createElement('br'),
+                '• Steady performance: 87.8%',
+                React.createElement('br'),
+                '• 32 tasks completed today'
+              )
+            ),
+
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(6, 182, 212, 0.1)',
+                  border: '1px solid rgba(6, 182, 212, 0.3)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                },
+              },
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px',
+                  },
+                },
+                React.createElement(
+                  'h4',
+                  {
+                    style: { color: '#06b6d4', margin: 0, fontSize: '1.1rem' },
+                  },
+                  '🌙 Overnight Shift'
+                ),
+                React.createElement(
+                  'span',
+                  {
+                    style: {
+                      color: '#06b6d4',
+                      fontSize: '0.8rem',
+                      fontWeight: '600',
+                    },
+                  },
+                  '10PM - 6AM'
+                )
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                    marginBottom: '12px',
+                  },
+                },
+                'Maintenance, reporting, and background processing'
+              ),
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.8rem',
+                  },
+                },
+                '• 3 active staff members',
+                React.createElement('br'),
+                '• Low-volume processing: 76.4%',
+                React.createElement('br'),
+                '• 12 maintenance tasks completed'
+              )
+            )
+          ),
+
+          // Schedule Features
+          React.createElement(
+            'div',
+            {
+              style: {
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+              },
+            },
+            React.createElement(
+              'h4',
+              {
+                style: {
+                  color: 'white',
+                  marginBottom: '16px',
+                  fontSize: '1.1rem',
+                },
+              },
+              '🎯 Advanced Schedule Management Features'
+            ),
+            React.createElement(
+              'div',
+              {
+                style: {
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '16px',
+                },
+              },
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  },
+                },
+                '• 🤖 AI-powered shift optimization',
+                React.createElement('br'),
+                '• ⚡ Real-time workload balancing',
+                React.createElement('br'),
+                '• 🎯 Smart task distribution',
+                React.createElement('br'),
+                '• 📊 Performance-based scheduling'
+              ),
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  },
+                },
+                '• 🌍 Multi-timezone coordination',
+                React.createElement('br'),
+                '• 🔄 Automated shift rotations',
+                React.createElement('br'),
+                '• 📅 Holiday & event scheduling',
+                React.createElement('br'),
+                '• ⚠️ Conflict detection & resolution'
+              ),
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  },
+                },
+                '• 📈 Historical performance analysis',
+                React.createElement('br'),
+                '• 🎪 Template-based scheduling',
+                React.createElement('br'),
+                '• 🔧 Manual override capabilities',
+                React.createElement('br'),
+                '• 📱 Mobile schedule access'
+              )
+            )
+          )
+        ),
+
+      // Assignments Tab
+      activeTab === 'assignments' &&
+        React.createElement(
+          'div',
+          null,
+          React.createElement(
+            'h3',
+            {
+              style: {
+                color: 'white',
+                marginBottom: '16px',
+                fontSize: '1.2rem',
+              },
+            },
+            '🎯 Task Assignments'
+          ),
+          React.createElement(
+            'p',
+            {
+              style: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '16px',
+              },
+            },
+            'Assign specific tasks and campaigns to your AI staff members.'
+          ),
+          React.createElement(
+            'div',
+            {
+              style: {
+                background: 'rgba(0, 0, 0, 0.3)',
                 borderRadius: '8px',
-                fontSize: '0.875rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                if (activeTab !== tab.id) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeTab !== tab.id) {
-                  e.currentTarget.style.background = 'transparent';
-                }
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+                padding: '16px',
+              },
+            },
+            React.createElement(
+              'h4',
+              { style: { color: '#f59e0b', marginBottom: '12px' } },
+              'Available Tasks'
+            ),
+            React.createElement(
+              'div',
+              { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+              '• Lead generation campaigns',
+              React.createElement('br'),
+              '• Customer outreach sequences',
+              React.createElement('br'),
+              '• Data analysis and reporting',
+              React.createElement('br'),
+              '• Compliance monitoring',
+              React.createElement('br'),
+              '• Performance optimization'
+            )
+          )
+        ),
 
-        {/* Overview Tab */}
-        {activeTab === 'overview' && (
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-              <Select
-                value={selectedDepartment}
-                onValueChange={setSelectedDepartment}
-              >
-                <SelectTrigger
-                  style={{
-                    width: '200px',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
+      // Performance Tab
+      activeTab === 'performance' &&
+        React.createElement(
+          'div',
+          null,
+          React.createElement(
+            'h3',
+            {
+              style: {
+                color: 'white',
+                marginBottom: '16px',
+                fontSize: '1.2rem',
+              },
+            },
+            '📈 Performance Analytics'
+          ),
+          React.createElement(
+            'p',
+            {
+              style: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '16px',
+              },
+            },
+            'Track individual and team performance metrics across all departments.'
+          ),
+          React.createElement(
+            'div',
+            {
+              style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '16px',
+              },
+            },
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '1px solid rgba(34, 197, 94, 0.2)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  textAlign: 'center',
+                },
+              },
+              React.createElement(
+                'h4',
+                { style: { color: '#22c55e', marginBottom: '8px' } },
+                'Success Rate'
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
                     color: 'white',
-                  }}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent
-                  style={{
-                    background: 'rgba(15, 23, 42, 0.95)',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                  },
+                },
+                '--%'
+              )
+            ),
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  textAlign: 'center',
+                },
+              },
+              React.createElement(
+                'h4',
+                { style: { color: '#ef4444', marginBottom: '8px' } },
+                'Response Time'
+              ),
+              React.createElement(
+                'p',
+                {
+                  style: {
                     color: 'white',
-                  }}
-                >
-                  <SelectItem value='all'>All Departments</SelectItem>
-                  <SelectItem value='sales'>
-                    Sales ({departmentStats.sales})
-                  </SelectItem>
-                  <SelectItem value='lead_generation'>
-                    Lead Generation ({departmentStats.lead_generation})
-                  </SelectItem>
-                  <SelectItem value='operations'>
-                    Operations ({departmentStats.operations})
-                  </SelectItem>
-                  <SelectItem value='support'>
-                    Support ({departmentStats.support})
-                  </SelectItem>
-                  <SelectItem value='analytics'>
-                    Analytics ({departmentStats.analytics})
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.6)' }}>
-                Showing {filteredStaff.length} staff members
-              </div>
-            </div>
+                    fontSize: '1.5rem',
+                    fontWeight: '700',
+                  },
+                },
+                '--ms'
+              )
+            )
+          )
+        ),
 
-          <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-            {filteredStaff.map((staff) => (
-              <Card
-                key={staff.id}
-                className='transition-shadow hover:shadow-lg'
-              >
-                <CardContent className='p-6'>
-                  <div className='mb-4 flex items-start justify-between'>
-                    <div className='flex items-center gap-3'>
-                      <div className='text-2xl'>{staff.avatar}</div>
-                      <div>
-                        <h3 className='text-lg font-semibold'>{staff.name}</h3>
-                        <p className='text-sm text-gray-600'>{staff.role}</p>
-                      </div>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      <div
-                        className={`h-3 w-3 rounded-full ${getStatusColor(staff.status)}`}
-                      ></div>
-                      <Badge className={getDepartmentColor(staff.department)}>
-                        {staff.department.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </div>
+      // Templates Tab
+      activeTab === 'templates' &&
+        React.createElement(
+          'div',
+          null,
+          React.createElement(
+            'h3',
+            {
+              style: {
+                color: 'white',
+                marginBottom: '16px',
+                fontSize: '1.2rem',
+              },
+            },
+            '📝 Schedule Templates'
+          ),
+          React.createElement(
+            'p',
+            {
+              style: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '16px',
+              },
+            },
+            'Pre-configured schedule templates for different business scenarios.'
+          ),
+          React.createElement(
+            'div',
+            { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+            'Templates will be available for:',
+            React.createElement('br'),
+            '• High-volume lead generation periods',
+            React.createElement('br'),
+            '• Holiday and peak season schedules',
+            React.createElement('br'),
+            '• Maintenance and system updates',
+            React.createElement('br'),
+            '• Custom department configurations'
+          )
+        ),
 
-                  <div className='space-y-3'>
-                    <div className='rounded-md bg-gray-50 p-3'>
-                      <p className='text-sm font-medium text-gray-700'>
-                        Current Task:
-                      </p>
-                      <p className='mt-1 text-sm text-gray-600'>
-                        {staff.currentTask}
-                      </p>
-                      <p className='mt-1 text-xs text-gray-500'>
-                        Last activity: {staff.lastActivity}
-                      </p>
-                    </div>
-
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div>
-                        <p className='text-sm text-gray-600'>Schedule</p>
-                        <p className='font-medium'>
-                          {staff.schedule.workHours}
-                        </p>
-                        <p className='text-xs text-gray-500'>
-                          {staff.schedule.shift} shift
-                        </p>
-                      </div>
-                      <div>
-                        <p className='text-sm text-gray-600'>Weekly Hours</p>
-                        <p className='font-medium'>
-                          {staff.schedule.weeklyHours}h
-                        </p>
-                        {staff.schedule.overtime > 0 && (
-                          <p className='text-xs text-orange-600'>
-                            +{staff.schedule.overtime}h OT
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className='grid grid-cols-3 gap-4 border-t pt-3'>
-                      <div className='text-center'>
-                        <p className='text-lg font-bold text-green-600'>
-                          {staff.tasksCompleted}
-                        </p>
-                        <p className='text-xs text-gray-600'>Tasks</p>
-                      </div>
-                      <div className='text-center'>
-                        <p className='text-lg font-bold text-blue-600'>
-                          ${staff.revenue.toLocaleString()}
-                        </p>
-                        <p className='text-xs text-gray-600'>Revenue</p>
-                      </div>
-                      <div className='text-center'>
-                        <p className='text-lg font-bold text-purple-600'>
-                          {staff.efficiency}%
-                        </p>
-                        <p className='text-xs text-gray-600'>Efficiency</p>
-                      </div>
-                    </div>
-
-                    <div className='flex flex-wrap gap-1 pt-2'>
-                      {staff.specializations.map((spec, index) => (
-                        <Badge
-                          key={index}
-                          variant='outline'
-                          className='text-xs'
-                        >
-                          {spec}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Schedules Tab */}
-        <TabsContent value='schedules' className='space-y-6'>
-          <Card>
-            <CardHeader>
-              <CardTitle>Current Schedule Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-6'>
-                {/* Time Blocks */}
-                <div className='grid grid-cols-4 gap-4'>
-                  {[
-                    'Morning (6AM-2PM)',
-                    'Afternoon (2PM-10PM)',
-                    'Evening (10PM-6AM)',
-                    '24/7 Coverage',
-                  ].map((period, index) => (
-                    <div key={index} className='rounded-lg bg-gray-50 p-4'>
-                      <h4 className='mb-3 font-semibold'>{period}</h4>
-                      <div className='space-y-2'>
-                        {aiStaff
-                          .filter((staff) => {
-                            if (index === 0)
-                              return staff.schedule.shift === 'morning';
-                            if (index === 1)
-                              return staff.schedule.shift === 'afternoon';
-                            if (index === 2)
-                              return staff.schedule.shift === 'evening';
-                            if (index === 3)
-                              return staff.schedule.shift === '24/7';
-                            return false;
-                          })
-                          .map((staff) => (
-                            <div
-                              key={staff.id}
-                              className='flex items-center gap-2 text-sm'
-                            >
-                              <span className='text-lg'>{staff.avatar}</span>
-                              <span className='truncate'>{staff.name}</span>
-                              <div
-                                className={`h-2 w-2 rounded-full ${getStatusColor(staff.status)}`}
-                              ></div>
-                            </div>
-                          ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Department Coverage Chart */}
-                <div className='grid grid-cols-5 gap-4'>
-                  {Object.entries(departmentStats).map(([dept, count]) => (
-                    <div
-                      key={dept}
-                      className='rounded-lg border bg-white p-4 text-center'
-                    >
-                      <h5 className='mb-2 font-medium capitalize'>
-                        {dept.replace('_', ' ')}
-                      </h5>
-                      <div className='text-2xl font-bold text-blue-600'>
-                        {count}
-                      </div>
-                      <div className='text-xs text-gray-500'>Active Staff</div>
-                      <div className='mt-2'>
-                        <div className='h-2 rounded-full bg-gray-200'>
-                          <div
-                            className='h-2 rounded-full bg-blue-600'
-                            style={{
-                              width: `${(count / Math.max(...Object.values(departmentStats))) * 100}%`,
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Task Assignments Tab */}
-        <TabsContent value='assignments' className='space-y-6'>
-          <div className='mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4'>
-            <div className='flex items-center gap-3'>
-              <Target className='h-6 w-6 text-blue-600' />
-              <div>
-                <h3 className='font-semibold text-blue-900'>
-                  AI Task Assignment System
-                </h3>
-                <p className='text-sm text-blue-700'>
-                  Configure AI staff to target specific prospect types like
-                  desperate shippers, manufacturers, and carriers
-                </p>
-              </div>
-            </div>
-          </div>
-          <AITaskAssignmentSystem />
-        </TabsContent>
-
-        {/* Performance Tab */}
-        <TabsContent value='performance' className='space-y-6'>
-          <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-            {aiStaff.slice(0, 6).map((staff) => (
-              <Card key={staff.id}>
-                <CardHeader className='pb-3'>
-                  <CardTitle className='flex items-center gap-2 text-base'>
-                    <span className='text-xl'>{staff.avatar}</span>
-                    {staff.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-4'>
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div>
-                        <p className='text-sm text-gray-600'>Weekly Goal</p>
-                        <p className='font-bold'>
-                          {staff.performance.weeklyGoal}
-                        </p>
-                      </div>
-                      <div>
-                        <p className='text-sm text-gray-600'>Completion Rate</p>
-                        <p className='font-bold text-green-600'>
-                          {staff.performance.completionRate}%
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div>
-                        <p className='text-sm text-gray-600'>Quality Score</p>
-                        <p className='font-bold text-blue-600'>
-                          {staff.performance.qualityScore}%
-                        </p>
-                      </div>
-                      <div>
-                        <p className='text-sm text-gray-600'>Response Time</p>
-                        <p className='font-bold text-purple-600'>
-                          {staff.performance.responseTime}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className='space-y-2'>
-                      <div className='flex justify-between text-sm'>
-                        <span>Weekly Progress</span>
-                        <span>
-                          {staff.tasksCompleted}/{staff.performance.weeklyGoal}
-                        </span>
-                      </div>
-                      <div className='h-2 rounded-full bg-gray-200'>
-                        <div
-                          className='h-2 rounded-full bg-green-600'
-                          style={{
-                            width: `${Math.min((staff.tasksCompleted / staff.performance.weeklyGoal) * 100, 100)}%`,
-                          }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Templates Tab */}
-        <TabsContent value='templates' className='space-y-6'>
-          <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-            {scheduleTemplates.map((template) => (
-              <Card
-                key={template.id}
-                className='transition-shadow hover:shadow-md'
-              >
-                <CardHeader>
-                  <CardTitle>{template.name}</CardTitle>
-                  <p className='text-sm text-gray-600'>
-                    {template.description}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-4'>
-                    <div className='grid grid-cols-2 gap-4'>
-                      {Object.entries(template.coverage).map(
-                        ([dept, percentage]) => (
-                          <div key={dept} className='flex justify-between'>
-                            <span className='text-sm capitalize'>
-                              {dept.replace(/([A-Z])/g, ' $1')}
-                            </span>
-                            <span className='text-sm font-medium'>
-                              {percentage}%
-                            </span>
-                          </div>
-                        )
-                      )}
-                    </div>
-
-                    <Button className='w-full' variant='outline'>
-                      Apply Template
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Analytics Tab */}
-        <TabsContent value='analytics' className='space-y-6'>
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-            <Card>
-              <CardHeader>
-                <CardTitle>Efficiency Trends</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  {aiStaff.slice(0, 6).map((staff) => (
-                    <div
-                      key={staff.id}
-                      className='flex items-center justify-between'
-                    >
-                      <div className='flex items-center gap-2'>
-                        <span>{staff.avatar}</span>
-                        <span className='text-sm'>{staff.name}</span>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        <div className='h-2 w-16 rounded-full bg-gray-200'>
-                          <div
-                            className='h-2 rounded-full bg-green-600'
-                            style={{ width: `${staff.efficiency}%` }}
-                          ></div>
-                        </div>
-                        <span className='text-sm font-medium'>
-                          {staff.efficiency}%
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Contribution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className='space-y-4'>
-                  {aiStaff
-                    .sort((a, b) => b.revenue - a.revenue)
-                    .slice(0, 6)
-                    .map((staff) => (
-                      <div
-                        key={staff.id}
-                        className='flex items-center justify-between'
-                      >
-                        <div className='flex items-center gap-2'>
-                          <span>{staff.avatar}</span>
-                          <span className='text-sm'>{staff.name}</span>
-                        </div>
-                        <span className='text-sm font-medium'>
-                          ${staff.revenue.toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+      // Analytics Tab
+      activeTab === 'analytics' &&
+        React.createElement(
+          'div',
+          null,
+          React.createElement(
+            'h3',
+            {
+              style: {
+                color: 'white',
+                marginBottom: '16px',
+                fontSize: '1.2rem',
+              },
+            },
+            '📊 Advanced Analytics'
+          ),
+          React.createElement(
+            'p',
+            {
+              style: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '16px',
+              },
+            },
+            'Deep insights into AI staff performance, workload distribution, and optimization opportunities.'
+          ),
+          React.createElement(
+            'div',
+            {
+              style: {
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '8px',
+                padding: '16px',
+              },
+            },
+            React.createElement(
+              'h4',
+              { style: { color: '#8b5cf6', marginBottom: '12px' } },
+              'Available Analytics'
+            ),
+            React.createElement(
+              'div',
+              { style: { color: 'rgba(255, 255, 255, 0.6)' } },
+              '• Workload distribution analysis',
+              React.createElement('br'),
+              '• Performance trend analysis',
+              React.createElement('br'),
+              '• Cost optimization insights',
+              React.createElement('br'),
+              '• Peak usage pattern detection',
+              React.createElement('br'),
+              '• Efficiency correlation studies'
+            )
+          )
+        )
+    )
   );
 }
