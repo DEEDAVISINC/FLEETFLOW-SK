@@ -587,6 +587,11 @@ export default function DEPOINTEDashboard() {
     'overview' | 'tasks' | 'crm' | 'performance'
   >('overview');
 
+  // Debug staff directory state changes
+  useEffect(() => {
+    console.log('Staff directory collapsed state changed:', isStaffDirectoryCollapsed);
+  }, [isStaffDirectoryCollapsed]);
+
   // Load saved healthcare tasks and activity feed on page load
   useEffect(() => {
     // Load healthcare tasks from localStorage
@@ -1554,10 +1559,22 @@ export default function DEPOINTEDashboard() {
                   alignItems: 'center',
                   marginBottom: '20px',
                   cursor: 'pointer',
+                  borderRadius: '8px',
+                  padding: '8px',
+                  transition: 'background-color 0.2s ease',
                 }}
-                onClick={() =>
-                  setIsStaffDirectoryCollapsed(!isStaffDirectoryCollapsed)
-                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Staff directory toggle clicked, current state:', isStaffDirectoryCollapsed);
+                  setIsStaffDirectoryCollapsed(!isStaffDirectoryCollapsed);
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <h2
                   style={{
@@ -1606,7 +1623,9 @@ export default function DEPOINTEDashboard() {
                       transform: isStaffDirectoryCollapsed
                         ? 'rotate(0deg)'
                         : 'rotate(180deg)',
+                      display: 'inline-block',
                     }}
+                    title={isStaffDirectoryCollapsed ? 'Click to expand' : 'Click to collapse'}
                   >
                     ⌄
                   </span>
@@ -1618,887 +1637,887 @@ export default function DEPOINTEDashboard() {
                 <div
                   style={{
                     overflow: 'hidden',
-                    maxHeight: '10000px',
-                    transition: 'max-height 0.3s ease-out',
+                    transition: 'all 0.3s ease-out',
                   }}
                 >
                   {/* Department Sections */}
                   <div style={{ display: 'grid', gap: '24px' }}>
-                {/* Business Development */}
-                <div>
-                  <h3
-                    style={{
-                      color: '#fbbf24',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      marginBottom: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    🎯 Business Development (6 Staff)
-                  </h3>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(300px, 1fr))',
-                      gap: '12px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: 'rgba(251, 191, 36, 0.1)',
-                        border: '1px solid rgba(251, 191, 36, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
+                    {/* Business Development */}
+                    <div>
+                      <h3
                         style={{
-                          fontWeight: '600',
                           color: '#fbbf24',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Desiree - Desperate Prospects Specialist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        High-pressure prospect engagement, resistance removal,
-                        psychology-based sales
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(251, 191, 36, 0.1)',
-                        border: '1px solid rgba(251, 191, 36, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
+                          fontSize: '1.1rem',
                           fontWeight: '600',
-                          color: '#fbbf24',
-                          marginBottom: '4px',
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
                         }}
                       >
-                        Cliff - Desperate Prospects Hunter
-                      </div>
+                        🎯 Business Development (6 Staff)
+                      </h3>
                       <div
                         style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Cold prospect outreach, relationship building,
-                        motivation psychology
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(251, 191, 36, 0.1)',
-                        border: '1px solid rgba(251, 191, 36, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#fbbf24',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Gary - Lead Generation Specialist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Lead qualification, emotional intelligence, prospect
-                        scoring
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(251, 191, 36, 0.1)',
-                        border: '1px solid rgba(251, 191, 36, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#fbbf24',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Drew - Marketing Specialist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Psychology-driven campaigns, persuasion techniques,
-                        brand relationships
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(251, 191, 36, 0.1)',
-                        border: '1px solid rgba(251, 191, 36, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#fbbf24',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Lea. D - Lead Nurturing Specialist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Long-term relationship development, conversion
-                        optimization, follow-up sequences
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Freight Operations */}
-                <div>
-                  <h3
-                    style={{
-                      color: '#10b981',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      marginBottom: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    🚛 Freight Operations (5 Staff)
-                  </h3>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(300px, 1fr))',
-                      gap: '12px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#10b981',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Will - Sales Operations Specialist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Sales process optimization, team psychology, operational
-                        efficiency
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#10b981',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Hunter - Recruiting & Onboarding
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        HR processes, candidate engagement, team building
-                        psychology
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#10b981',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Logan - Logistics Coordination
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Supply chain optimization, stakeholder coordination,
-                        process psychology
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#10b981',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Miles - Dispatch Coordination
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Real-time dispatch, crisis management, high-pressure
-                        communication
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#10b981',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Dee - Freight Brokerage Specialist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Carrier negotiations, brokerage deals, relationship
-                        building
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Relationships */}
-                <div>
-                  <h3
-                    style={{
-                      color: '#8b5cf6',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      marginBottom: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    🤝 Relationships (4 Staff)
-                  </h3>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(300px, 1fr))',
-                      gap: '12px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: 'rgba(139, 92, 246, 0.1)',
-                        border: '1px solid rgba(139, 92, 246, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#8b5cf6',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Brook R. - Brokerage Operations
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Partnership management, network building, negotiation
-                        psychology
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(139, 92, 246, 0.1)',
-                        border: '1px solid rgba(139, 92, 246, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#8b5cf6',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Carrie R. - Carrier Relations
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        B2B relationships, vendor management, long-term
-                        partnerships
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(139, 92, 246, 0.1)',
-                        border: '1px solid rgba(139, 92, 246, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#8b5cf6',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Roland - Carrier Relations Director
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Executive-level strategy, strategic partnerships,
-                        high-level negotiations
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Support & Service */}
-                <div>
-                  <h3
-                    style={{
-                      color: '#f59e0b',
-                      fontSize: '1.1rem',
-                      fontWeight: '600',
-                      marginBottom: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
-                    🛠️ Support & Service (4 Staff)
-                  </h3>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(300px, 1fr))',
-                      gap: '12px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: 'rgba(245, 158, 11, 0.1)',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#f59e0b',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Shanell - Customer Service
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Customer care, complaint resolution, service recovery
-                        psychology
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(245, 158, 11, 0.1)',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#f59e0b',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Clarence - Claims & Insurance
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Insurance claims processing, dispute resolution, risk
-                        assessment
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(245, 158, 11, 0.1)',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#f59e0b',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Charin - AI Receptionist
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        First impressions, client welcoming, call routing
-                        optimization
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        background: 'rgba(245, 158, 11, 0.1)',
-                        border: '1px solid rgba(245, 158, 11, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#f59e0b',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Courtney - Customer Support Coordinator
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Support team management, escalation handling,
-                        coordination
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Other Departments */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                    gap: '24px',
-                  }}
-                >
-                  {/* Compliance & Safety */}
-                  <div>
-                    <h3
-                      style={{
-                        color: '#ef4444',
-                        fontSize: '1.1rem',
-                        fontWeight: '600',
-                        marginBottom: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      ⚖️ Compliance & Safety (2 Staff)
-                    </h3>
-                    <div style={{ display: 'grid', gap: '12px' }}>
-                      <div
-                        style={{
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: '1px solid rgba(239, 68, 68, 0.2)',
-                          borderRadius: '8px',
-                          padding: '12px',
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '12px',
                         }}
                       >
                         <div
                           style={{
-                            fontWeight: '600',
+                            background: 'rgba(251, 191, 36, 0.1)',
+                            border: '1px solid rgba(251, 191, 36, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Desiree - Desperate Prospects Specialist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            High-pressure prospect engagement, resistance
+                            removal, psychology-based sales
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(251, 191, 36, 0.1)',
+                            border: '1px solid rgba(251, 191, 36, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Cliff - Desperate Prospects Hunter
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Cold prospect outreach, relationship building,
+                            motivation psychology
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(251, 191, 36, 0.1)',
+                            border: '1px solid rgba(251, 191, 36, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Gary - Lead Generation Specialist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Lead qualification, emotional intelligence, prospect
+                            scoring
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(251, 191, 36, 0.1)',
+                            border: '1px solid rgba(251, 191, 36, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Drew - Marketing Specialist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Psychology-driven campaigns, persuasion techniques,
+                            brand relationships
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(251, 191, 36, 0.1)',
+                            border: '1px solid rgba(251, 191, 36, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#fbbf24',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Lea. D - Lead Nurturing Specialist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Long-term relationship development, conversion
+                            optimization, follow-up sequences
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Freight Operations */}
+                    <div>
+                      <h3
+                        style={{
+                          color: '#10b981',
+                          fontSize: '1.1rem',
+                          fontWeight: '600',
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        🚛 Freight Operations (5 Staff)
+                      </h3>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: 'rgba(16, 185, 129, 0.1)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#10b981',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Will - Sales Operations Specialist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Sales process optimization, team psychology,
+                            operational efficiency
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(16, 185, 129, 0.1)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#10b981',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Hunter - Recruiting & Onboarding
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            HR processes, candidate engagement, team building
+                            psychology
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(16, 185, 129, 0.1)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#10b981',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Logan - Logistics Coordination
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Supply chain optimization, stakeholder coordination,
+                            process psychology
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(16, 185, 129, 0.1)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#10b981',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Miles - Dispatch Coordination
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Real-time dispatch, crisis management, high-pressure
+                            communication
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(16, 185, 129, 0.1)',
+                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#10b981',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Dee - Freight Brokerage Specialist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Carrier negotiations, brokerage deals, relationship
+                            building
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Relationships */}
+                    <div>
+                      <h3
+                        style={{
+                          color: '#8b5cf6',
+                          fontSize: '1.1rem',
+                          fontWeight: '600',
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        🤝 Relationships (4 Staff)
+                      </h3>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: 'rgba(139, 92, 246, 0.1)',
+                            border: '1px solid rgba(139, 92, 246, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#8b5cf6',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Brook R. - Brokerage Operations
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Partnership management, network building,
+                            negotiation psychology
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(139, 92, 246, 0.1)',
+                            border: '1px solid rgba(139, 92, 246, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#8b5cf6',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Carrie R. - Carrier Relations
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            B2B relationships, vendor management, long-term
+                            partnerships
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(139, 92, 246, 0.1)',
+                            border: '1px solid rgba(139, 92, 246, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#8b5cf6',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Roland - Carrier Relations Director
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Executive-level strategy, strategic partnerships,
+                            high-level negotiations
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Support & Service */}
+                    <div>
+                      <h3
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: '1.1rem',
+                          fontWeight: '600',
+                          marginBottom: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        🛠️ Support & Service (4 Staff)
+                      </h3>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(300px, 1fr))',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#f59e0b',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Shanell - Customer Service
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Customer care, complaint resolution, service
+                            recovery psychology
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#f59e0b',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Clarence - Claims & Insurance
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Insurance claims processing, dispute resolution,
+                            risk assessment
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#f59e0b',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Charin - AI Receptionist
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            First impressions, client welcoming, call routing
+                            optimization
+                          </div>
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#f59e0b',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Courtney - Customer Support Coordinator
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Support team management, escalation handling,
+                            coordination
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Other Departments */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns:
+                          'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '24px',
+                      }}
+                    >
+                      {/* Compliance & Safety */}
+                      <div>
+                        <h3
+                          style={{
                             color: '#ef4444',
-                            marginBottom: '4px',
+                            fontSize: '1.1rem',
+                            fontWeight: '600',
+                            marginBottom: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
                           }}
                         >
-                          Kameelah - DOT Compliance
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.85rem',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                          }}
-                        >
-                          Safety training, regulatory enforcement, behavior
-                          change psychology
+                          ⚖️ Compliance & Safety (2 Staff)
+                        </h3>
+                        <div style={{ display: 'grid', gap: '12px' }}>
+                          <div
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid rgba(239, 68, 68, 0.2)',
+                              borderRadius: '8px',
+                              padding: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: '600',
+                                color: '#ef4444',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Kameelah - DOT Compliance
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                              }}
+                            >
+                              Safety training, regulatory enforcement, behavior
+                              change psychology
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid rgba(239, 68, 68, 0.2)',
+                              borderRadius: '8px',
+                              padding: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: '600',
+                                color: '#ef4444',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Regina - FMCSA Regulations
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                              }}
+                            >
+                              Regulatory interpretation, policy enforcement,
+                              risk assessment
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div
-                        style={{
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: '1px solid rgba(239, 68, 68, 0.2)',
-                          borderRadius: '8px',
-                          padding: '12px',
-                        }}
-                      >
-                        <div
+
+                      {/* Financial */}
+                      <div>
+                        <h3
                           style={{
+                            color: '#06b6d4',
+                            fontSize: '1.1rem',
                             fontWeight: '600',
-                            color: '#ef4444',
-                            marginBottom: '4px',
+                            marginBottom: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
                           }}
                         >
-                          Regina - FMCSA Regulations
-                        </div>
+                          💰 Financial (1 Staff)
+                        </h3>
                         <div
                           style={{
-                            fontSize: '0.85rem',
-                            color: 'rgba(255, 255, 255, 0.8)',
+                            background: 'rgba(6, 182, 212, 0.1)',
+                            border: '1px solid rgba(6, 182, 212, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
                           }}
                         >
-                          Regulatory interpretation, policy enforcement, risk
-                          assessment
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#06b6d4',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Resse A. Bell - Accounting
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Financial management, budget psychology,
+                            cost-benefit analysis
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Technology */}
+                      <div>
+                        <h3
+                          style={{
+                            color: '#6366f1',
+                            fontSize: '1.1rem',
+                            fontWeight: '600',
+                            marginBottom: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          💻 Technology (1 Staff)
+                        </h3>
+                        <div
+                          style={{
+                            background: 'rgba(99, 102, 241, 0.1)',
+                            border: '1px solid rgba(99, 102, 241, 0.2)',
+                            borderRadius: '8px',
+                            padding: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontWeight: '600',
+                              color: '#6366f1',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Dell - IT Support
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                            }}
+                          >
+                            Technical support, user training, change management
+                            psychology
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Operations */}
+                      <div>
+                        <h3
+                          style={{
+                            color: '#84cc16',
+                            fontSize: '1.1rem',
+                            fontWeight: '600',
+                            marginBottom: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          ⚙️ Operations (3 Staff)
+                        </h3>
+                        <div style={{ display: 'grid', gap: '12px' }}>
+                          <div
+                            style={{
+                              background: 'rgba(132, 204, 22, 0.1)',
+                              border: '1px solid rgba(132, 204, 22, 0.2)',
+                              borderRadius: '8px',
+                              padding: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: '600',
+                                color: '#84cc16',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              C. Allen Durr - Schedule Optimization
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                              }}
+                            >
+                              Resource allocation, operational planning,
+                              efficiency optimization
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(132, 204, 22, 0.1)',
+                              border: '1px solid rgba(132, 204, 22, 0.2)',
+                              borderRadius: '8px',
+                              padding: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: '600',
+                                color: '#84cc16',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Ana Lytics - Data Analysis
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                              }}
+                            >
+                              Behavioral analytics, data-driven insights,
+                              analytical decision making
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(132, 204, 22, 0.1)',
+                              border: '1px solid rgba(132, 204, 22, 0.2)',
+                              borderRadius: '8px',
+                              padding: '12px',
+                            }}
+                          >
+                            <div
+                              style={{
+                                fontWeight: '600',
+                                color: '#84cc16',
+                                marginBottom: '4px',
+                              }}
+                            >
+                              Alexis - AI Executive Assistant
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.85rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                              }}
+                            >
+                              Executive support, strategic scheduling, decision
+                              support analysis
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Financial */}
-                  <div>
-                    <h3
+                  {/* Core Competencies Summary */}
+                  <div
+                    style={{
+                      marginTop: '24px',
+                      padding: '16px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <h4
                       style={{
-                        color: '#06b6d4',
-                        fontSize: '1.1rem',
+                        color: '#fbbf24',
+                        fontSize: '1rem',
                         fontWeight: '600',
-                        marginBottom: '12px',
+                        marginBottom: '8px',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
                       }}
                     >
-                      💰 Financial (1 Staff)
-                    </h3>
+                      🧠 Core Training Framework
+                    </h4>
                     <div
                       style={{
-                        background: 'rgba(6, 182, 212, 0.1)',
-                        border: '1px solid rgba(6, 182, 212, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
+                        fontSize: '0.85rem',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        lineHeight: '1.5',
                       }}
                     >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#06b6d4',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Resse A. Bell - Accounting
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Financial management, budget psychology, cost-benefit
-                        analysis
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Technology */}
-                  <div>
-                    <h3
-                      style={{
-                        color: '#6366f1',
-                        fontSize: '1.1rem',
-                        fontWeight: '600',
-                        marginBottom: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      💻 Technology (1 Staff)
-                    </h3>
-                    <div
-                      style={{
-                        background: 'rgba(99, 102, 241, 0.1)',
-                        border: '1px solid rgba(99, 102, 241, 0.2)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: '600',
-                          color: '#6366f1',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        Dell - IT Support
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.85rem',
-                          color: 'rgba(255, 255, 255, 0.8)',
-                        }}
-                      >
-                        Technical support, user training, change management
-                        psychology
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Operations */}
-                  <div>
-                    <h3
-                      style={{
-                        color: '#84cc16',
-                        fontSize: '1.1rem',
-                        fontWeight: '600',
-                        marginBottom: '12px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      ⚙️ Operations (3 Staff)
-                    </h3>
-                    <div style={{ display: 'grid', gap: '12px' }}>
-                      <div
-                        style={{
-                          background: 'rgba(132, 204, 22, 0.1)',
-                          border: '1px solid rgba(132, 204, 22, 0.2)',
-                          borderRadius: '8px',
-                          padding: '12px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontWeight: '600',
-                            color: '#84cc16',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          C. Allen Durr - Schedule Optimization
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.85rem',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                          }}
-                        >
-                          Resource allocation, operational planning, efficiency
-                          optimization
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          background: 'rgba(132, 204, 22, 0.1)',
-                          border: '1px solid rgba(132, 204, 22, 0.2)',
-                          borderRadius: '8px',
-                          padding: '12px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontWeight: '600',
-                            color: '#84cc16',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Ana Lytics - Data Analysis
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.85rem',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                          }}
-                        >
-                          Behavioral analytics, data-driven insights, analytical
-                          decision making
-                        </div>
-                      </div>
-                      <div
-                        style={{
-                          background: 'rgba(132, 204, 22, 0.1)',
-                          border: '1px solid rgba(132, 204, 22, 0.2)',
-                          borderRadius: '8px',
-                          padding: '12px',
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontWeight: '600',
-                            color: '#84cc16',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Alexis - AI Executive Assistant
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.85rem',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                          }}
-                        >
-                          Executive support, strategic scheduling, decision
-                          support analysis
-                        </div>
-                      </div>
+                      All staff trained in:{' '}
+                      <strong>Resistance Removal Sales System</strong> •{' '}
+                      <strong>49 Factors of Unseen Leadership</strong> •{' '}
+                      <strong>Emotional Intelligence</strong> •{' '}
+                      <strong>Psychology-based Decision Making</strong> •{' '}
+                      <strong>Script-free Communication</strong> •{' '}
+                      <strong>Relationship Building</strong>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Core Competencies Summary */}
-              <div
-                style={{
-                  marginTop: '24px',
-                  padding: '16px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h4
-                  style={{
-                    color: '#fbbf24',
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    marginBottom: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  🧠 Core Training Framework
-                </h4>
-                <div
-                  style={{
-                    fontSize: '0.85rem',
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    lineHeight: '1.5',
-                  }}
-                >
-                  All staff trained in:{' '}
-                  <strong>Resistance Removal Sales System</strong> •{' '}
-                  <strong>49 Factors of Unseen Leadership</strong> •{' '}
-                  <strong>Emotional Intelligence</strong> •{' '}
-                  <strong>Psychology-based Decision Making</strong> •{' '}
-                  <strong>Script-free Communication</strong> •{' '}
-                  <strong>Relationship Building</strong>
-                </div>
-              </div>
-              </div>
-            )}
+              )}
             </div>
           </div>
 
