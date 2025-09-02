@@ -9,6 +9,7 @@ import DesperateProspectsBatchDeployment, {
 import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
+import MSPMarketingToolkit from '../components/MSPMarketingToolkit';
 import ShipperBatchDeployment, {
   ShipperTask,
 } from '../components/ShipperBatchDeployment';
@@ -560,7 +561,12 @@ export default function DEPOINTEDashboard() {
   >([]);
   const [selectedView, setSelectedView] = useState('overview');
   const [selectedMainView, setSelectedMainView] = useState<
-    'overview' | 'crm' | 'analytics' | 'campaigns' | 'scheduler'
+    | 'overview'
+    | 'crm'
+    | 'analytics'
+    | 'campaigns'
+    | 'scheduler'
+    | 'marketing-toolkit'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
@@ -1493,6 +1499,11 @@ export default function DEPOINTEDashboard() {
           { key: 'analytics', label: '📈 Analytics', icon: '📈' },
           { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
           { key: 'scheduler', label: '📅 AI Staff Scheduler', icon: '📅' },
+          {
+            key: 'marketing-toolkit',
+            label: '📈 MSP Marketing Toolkit',
+            icon: '📈',
+          },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -6089,6 +6100,61 @@ export default function DEPOINTEDashboard() {
             }}
           >
             <AIStaffScheduler />
+          </div>
+        </div>
+      )}
+
+      {/* MSP Marketing Toolkit */}
+      {selectedMainView === 'marketing-toolkit' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <div
+            style={{
+              marginBottom: '20px',
+              textAlign: 'center',
+            }}
+          >
+            <h2
+              style={{
+                color: 'white',
+                marginBottom: '10px',
+                fontSize: '1.8rem',
+                fontWeight: '700',
+              }}
+            >
+              📈 MSP Marketing Mastery Toolkit
+            </h2>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                marginBottom: '20px',
+                fontSize: '1.1rem',
+              }}
+            >
+              Master the 6 proven strategies to double sales without marketing
+              spend. Based on Robin Robins' MSP Success Blueprint.
+            </p>
+          </div>
+
+          {/* MSP Marketing Toolkit Container */}
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '8px',
+              padding: '16px',
+              border: '1px solid rgba(148, 163, 184, 0.1)',
+            }}
+          >
+            <MSPMarketingToolkit />
           </div>
         </div>
       )}
