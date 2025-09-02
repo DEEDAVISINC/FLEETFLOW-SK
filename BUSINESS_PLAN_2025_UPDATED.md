@@ -4,8 +4,8 @@
 
 FleetFlow represents a comprehensive enterprise software platform positioned as "The Salesforce of
 Transportation," with **revolutionary AI Flow add-on ecosystem**, **DEPOINTE AI Company Dashboard**,
-and **enhanced dual valuation scenarios**: **$45-85 billion realistic acquisition value** and
-**$180-350 billion platform potential**.
+**interactive AI Staff Directory with collapsible functionality**, and **enhanced dual valuation scenarios**:
+**$45-85 billion realistic acquisition value** and **$180-350 billion platform potential**.
 
 Our **98-99% complete** multi-tenant SaaS solution serves carriers, brokers, and 3PLs with:
 
@@ -16,6 +16,8 @@ Our **98-99% complete** multi-tenant SaaS solution serves carriers, brokers, and
 - **🎯 AI Load Optimization**: Monte Carlo simulation + Linear Programming
 - **🔄 Broker Agent Data Hierarchy**: Revolutionary multi-tier data integration
 - **🚛 Comprehensive TMS**: Full transportation management capabilities
+- **👥 DEPOINTE AI Company Dashboard**: Complete AI workforce with 24 specialized staff members
+- **📋 Interactive Staff Directory**: Collapsible directory with detailed duty descriptions and learning abilities
 
 ### **Updated Subscription Architecture (2025)**
 
@@ -36,8 +38,8 @@ Our **98-99% complete** multi-tenant SaaS solution serves carriers, brokers, and
 
 #### **Premium AI Solutions:**
 
-- **AI Company Dashboard** - $4,999/month (DEPOINTE AI with 18 AI staff representatives)
-- **Enterprise Custom Solutions** - $7,999/month (Everything + AI Company Dashboard included)
+- **AI Company Dashboard** - $4,999/month (DEPOINTE AI with 24 AI staff representatives and interactive directory)
+- **Enterprise Custom Solutions** - $7,999/month (Everything + AI Company Dashboard + Interactive Staff Directory included)
 
 ---
 
@@ -50,7 +52,9 @@ FleetFlow's **AI Flow add-on ecosystem** creates a unique market position where 
 - **Start with core TMS functionality** in main subscription tiers
 - **Add AI capabilities** based on specific needs and growth stage
 - **Scale AI usage** from basic automation to enterprise-level intelligence
-- **Access premium AI staff** through DEPOINTE AI Company Dashboard
+- **Access premium AI staff** through DEPOINTE AI Company Dashboard with 24 specialized representatives
+- **Navigate AI team capabilities** with interactive collapsible staff directory
+- **Access detailed duty descriptions** and learning abilities for each AI staff member
 
 ### **Revenue Model Innovation**
 
@@ -80,8 +84,9 @@ Our add-on structure creates multiple revenue expansion opportunities:
 #### **3. Premium AI Positioning**
 
 - DEPOINTE AI Company Dashboard creates ultra-premium tier
-- 18 AI staff representatives justify $4,999 pricing
-- Enterprise Custom includes everything for $7,999 (complete solution)
+- 24 AI staff representatives with interactive directory justify $4,999 pricing
+- Interactive collapsible staff directory provides transparency and ease of use
+- Enterprise Custom includes everything for $7,999 (complete solution with full AI workforce)
 
 ---
 
