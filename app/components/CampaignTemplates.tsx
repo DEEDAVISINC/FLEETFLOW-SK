@@ -3486,6 +3486,251 @@ export default function CampaignTemplates() {
         '88%+ client satisfaction with cost-effective bulk shipping',
       ],
     },
+
+    // =========================================
+    // COMPREHENSIVE FEMA STOS PROGRAM CAMPAIGN
+    // =========================================
+    {
+      id: 'fema_stos_comprehensive',
+      name: 'FEMA Tender of Service Program (STOS) - Complete Registration & LSCMS-C Setup',
+      description:
+        'Complete FEMA STOS Program registration for DEE DAVIS INC freight brokerage (SCAC: DFCL) including $300K cargo insurance verification, ACORD form submission, LSCMS-C access control setup (Document Upload & Web Tenders), TSP registration, and full onboarding process for disaster relief transportation services across all modes: FTL, LTL, Maritime, Air, Rail, and TTHU',
+      category: 'government_contracting',
+      targetAudience:
+        'FEMA Transportation Programs (FEMA-Transportation-Programs@fema.dhs.gov), Federal Emergency Management Agency Logistics Management Directorate, Disaster Relief Organizations, Emergency Services Procurement Officers, FEMA Logistics Supply Chain Management System (LSCMS-C) Administrators',
+      expectedResults: {
+        leads: 20,
+        conversions: 1, // Complete STOS Program approval
+        dailyRevenue: 0, // Contract-based revenue
+        monthlyRevenue: 0, // Long-term contract value
+        totalRevenue: 2500000, // $2.5M+ annual contract potential
+      },
+      duration: '75 days',
+      difficulty: 'hard', // Complex government contracting & system integration
+      aiStaff: [
+        'Gary',
+        'Desiree',
+        'Kameelah',
+        'Regina',
+        'Logan',
+        'Miles',
+        'Will',
+      ],
+      channels: [
+        'FEMA Transportation Programs',
+        'Government Procurement',
+        'Emergency Services Direct',
+        'SAM.gov Integration',
+        'LSCMS-C System Access',
+      ],
+      icon: '🏛️',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'fema_stos_overview',
+          name: 'FEMA STOS Program Overview & Requirements Review',
+          description:
+            'Review complete FEMA STOS Program requirements including: Tender of Service Program Guide (fema_lmd-2025-stos.pdf), Onboarding Guide (fema_lmd-onboarding-guide_07022025.pdf), $300K cargo insurance requirements, LSCMS-C access levels, ACORD form specifications, and all supporting documentation. Prepare DEE DAVIS INC (SCAC: DFCL) for full compliance.',
+          timing: 'Days 1-5',
+          channel: 'FEMA Transportation Programs',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'lscms_access_user_identification',
+          name: 'LSCMS-C User Access Planning & Requirements',
+          description:
+            'Identify all users requiring LSCMS-C access (minimum 1 user required). Plan for two access levels: 1) Carrier Document Upload (immediate access for document submission), 2) Carrier Web Tenders (granted after full onboarding for shipment management). Prepare user information and access level requirements.',
+          timing: 'Days 6-8',
+          channel: 'Government Procurement',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'cargo_insurance_acord_preparation',
+          name: 'ACORD Form & $300K Cargo Insurance Verification',
+          description:
+            'Obtain ACORD form from insurance provider verifying $300K cargo coverage per occurrence for all transportation modes: FTL/TL ($300K), LTL ($300K), Maritime ($300K), Air ($300K), Rail ($300K). Include Standard Carrier Alpha Code (SCAC: DFCL), deductible information, and policy expiration date. Form must be signed by insurance provider.',
+          timing: 'Days 9-13',
+          channel: 'Emergency Services Direct',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'lscms_access_control_forms',
+          name: 'LSCMS-C Access Control Form Preparation',
+          description:
+            'Complete LSCMS-C Access Control Forms (fema_lmd_lscms-c-access-control-form_ff-145-fy-22-102.pdf) for all required users. Include SCAC: DFCL, user details, requested access levels (Document Upload and Web Tenders), and company information. Prepare separate forms for each user requiring system access.',
+          timing: 'Days 14-16',
+          channel: 'SAM.gov Integration',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'tsp_registration_comprehensive',
+          name: 'Complete TSP Registration Form Preparation',
+          description:
+            'Complete FEMA TSP Registration Form 2024 (fema_lmd-tsp-registration-form-2024.pdf) with comprehensive DEE DAVIS INC information: company details, DOT numbers, SCAC code (DFCL), $300K cargo insurance coverage for all modes (FTL, LTL, Maritime, Air, Rail, TTHU), FMCSA authorization, and transportation service capabilities.',
+          timing: 'Days 17-21',
+          channel: 'FEMA Transportation Programs',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'lscms_access_form_submission',
+          name: 'LSCMS-C Access Control Forms Email Submission',
+          description:
+            'Email all completed LSCMS-C Access Control Forms to FEMA-Transportation-Programs@fema.dhs.gov. Include SCAC: DFCL, request both access levels (Document Upload and Web Tenders), and provide timeline expectations. Track submission confirmation and follow up on processing status.',
+          timing: 'Days 22-24',
+          channel: 'Government Procurement',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+        {
+          id: 'urt_capability_statement',
+          name: 'URT Document & Comprehensive Capability Statement',
+          description:
+            'Prepare FEMA 2025 URT document (fema_lmd_2025-urt_07022025.pdf) and detailed capability statement demonstrating DEE DAVIS INC expertise in FTL, LTL, Maritime, Air, Rail, and TTHU transportation with $300K cargo insurance coverage. Include SCAC: DFCL, emergency response capabilities, and disaster relief logistics expertise.',
+          timing: 'Days 25-29',
+          channel: 'Emergency Services Direct',
+          aiStaff: 'Regina',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'rfi_response_development',
+          name: 'FEMA RFI Response Development & Submission',
+          description:
+            'Develop comprehensive response to FEMA 2025 RFI (fema_2025_rfi_final.pdf) including transportation capacity, $300K cargo insurance coverage for all modes, emergency response capabilities, disaster relief logistics expertise, SCAC: DFCL, and detailed service offerings across all transportation modalities.',
+          timing: 'Days 30-34',
+          channel: 'SAM.gov Integration',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'dot_fmsca_compliance_verification',
+          name: 'DOT/FMCSA Compliance & Insurance Verification',
+          description:
+            'Verify all DOT, FMCSA compliance documentation, safety certificates, $300K cargo insurance ACORD form with SCAC: DFCL, bonding requirements, and regulatory compliance for FEMA STOS Program approval. Ensure all transportation modes match insurance coverage and regulatory requirements.',
+          timing: 'Days 35-39',
+          channel: 'FEMA Transportation Programs',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'tsp_agreement_review_signature',
+          name: 'TSP Agreement Review & Electronic Signature',
+          description:
+            'Review FEMA 2025 TSP Agreement (fema_2025-tsp-agreement.pdf) terms and conditions including $300K cargo insurance requirements, SCAC: DFCL, LSCMS-C access commitments, and service level agreements. Prepare for electronic signature and contract execution.',
+          timing: 'Days 40-42',
+          channel: 'Government Procurement',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'lscms_document_upload_process',
+          name: 'LSCMS-C Document Upload & Verification',
+          description:
+            'Use LSCMS-C Carrier Document Upload access to submit all required documents including ACORD form, insurance verification, TSP registration form, and supporting documentation. Follow FEMA Carrier Document Upload Reference Guide (carrier-document-upload-reference-guide_2022.pdf) for proper submission procedures.',
+          timing: 'Days 43-47',
+          channel: 'Emergency Services Direct',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'lscms_system_training_completion',
+          name: 'LSCMS-C System Training & Access Verification',
+          description:
+            'Complete LSCMS-C system training for all approved users. Verify access levels: 1) Carrier Document Upload (for document submission), 2) Carrier Web Tenders (for shipment management - activated after full onboarding). Confirm SCAC: DFCL is properly configured and system access is functional.',
+          timing: 'Days 48-52',
+          channel: 'SAM.gov Integration',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'fema_onboarding_completion',
+          name: 'FEMA Onboarding Guide Completion',
+          description:
+            'Complete all FEMA Onboarding Guide (fema_lmd-onboarding-guide_07022025.pdf) requirements including LSCMS-C system training verification, $300K cargo insurance confirmation, SCAC: DFCL setup, emergency contact establishment, and full vendor verification process for all transportation modes.',
+          timing: 'Days 53-57',
+          channel: 'FEMA Transportation Programs',
+          aiStaff: 'Miles',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'stos_final_registration_submission',
+          name: 'STOS Program Final Registration Submission',
+          description:
+            'Submit complete FEMA STOS Program registration package (fema_lmd-2025-stos.pdf) including all forms, ACORD insurance verification with $300K cargo coverage, SCAC: DFCL, LSCMS-C access confirmation, capability demonstrations, and supporting documentation during open onboarding period.',
+          timing: 'Days 58-62',
+          channel: 'Government Procurement',
+          aiStaff: 'Regina',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'lscms_web_tenders_activation',
+          name: 'LSCMS-C Web Tenders Access Activation',
+          description:
+            'Confirm activation of Carrier Web Tenders access level in LSCMS-C (granted after full onboarding completion). This enables management of FEMA shipments including trailer/container numbers, license plates, delivery status, shipment tracking, and emergency response coordination.',
+          timing: 'Days 63-65',
+          channel: 'Emergency Services Direct',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'fema_stos_approval_verification',
+          name: 'FEMA STOS Program Approval & Vendor ID Verification',
+          description:
+            'Verify FEMA STOS Program approval, receive official FEMA TSP vendor ID, confirm SCAC: DFCL registration, and validate $2.5M+ annual contract eligibility. Ensure all transportation modes (FTL, LTL, Maritime, Air, Rail, TTHU) are approved with $300K cargo insurance coverage.',
+          timing: 'Days 66-68',
+          channel: 'SAM.gov Integration',
+          aiStaff: 'Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'emergency_response_capability_certification',
+          name: 'Emergency Response Capability Certification',
+          description:
+            'Complete emergency response capability certification including disaster relief logistics verification, 24/7 emergency coordination protocols, multi-modal transportation readiness, and FEMA emergency response integration. Confirm all systems are operational for immediate disaster deployment.',
+          timing: 'Days 69-71',
+          channel: 'FEMA Transportation Programs',
+          aiStaff: 'Desiree',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'fema_final_verification_inquiry',
+          name: 'FEMA Transportation Programs Final Status Verification',
+          description:
+            'Send comprehensive verification inquiry to FEMA-Transportation-Programs@fema.dhs.gov regarding complete STOS Program registration status, $300K cargo insurance verification, SCAC: DFCL confirmation, LSCMS-C access levels (Document Upload & Web Tenders), vendor ID assignment, and readiness for FEMA disaster relief transportation contracts.',
+          timing: 'Days 72-75',
+          channel: 'Government Procurement',
+          aiStaff: 'Miles',
+          automationLevel: 'full',
+        },
+      ],
+      successMetrics: [
+        'Complete FEMA STOS Program documentation package assembled',
+        'LSCMS-C Access Control Forms completed for all required users',
+        'ACORD form obtained from insurance provider with $300K cargo coverage',
+        'Complete TSP Registration Form with SCAC: DFCL and all transportation modes',
+        'LSCMS-C Access Control Forms submitted to FEMA email',
+        'Carrier Document Upload access granted in LSCMS-C system',
+        'FEMA 2025 RFI response submitted with comprehensive details',
+        'DOT/FMCSA compliance verified with $300K cargo insurance',
+        'FEMA 2025 TSP Agreement signed with all requirements',
+        'All documents successfully uploaded through LSCMS-C portal',
+        'LSCMS-C system training completed for all approved users',
+        'Carrier Web Tenders access activated post-onboarding',
+        'FEMA Onboarding Guide requirements fully satisfied',
+        'FEMA STOS Program registration approved and processed',
+        'Official FEMA TSP vendor ID received with SCAC: DFCL',
+        '$2.5M+ annual contract eligibility confirmed',
+        'Emergency response capability fully certified',
+        'Multi-modal transportation services approved (FTL, LTL, Maritime, Air, Rail, TTHU)',
+        '24/7 disaster relief coordination protocols established',
+        'FEMA Transportation Programs relationship fully established',
+        'Ready for immediate FEMA disaster relief transportation deployment',
+      ],
+    },
   ];
 
   const categories = [
@@ -3499,6 +3744,11 @@ export default function CampaignTemplates() {
     { id: 'specialty_equipment', name: 'Specialty Equipment', icon: '🚛' },
     { id: 'air_freight', name: 'Air Freight', icon: '✈️' },
     { id: 'maritime_freight', name: 'Maritime Freight', icon: '🚢' },
+    {
+      id: 'government_contracting',
+      name: 'Government Contracting',
+      icon: '🏛️',
+    },
     { id: 'follow_up', name: 'Follow-Up', icon: '📧' },
     { id: 'nurture', name: 'Nurture', icon: '📈' },
     { id: 'conversion', name: 'Conversion', icon: '💰' },

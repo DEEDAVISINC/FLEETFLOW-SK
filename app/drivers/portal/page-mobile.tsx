@@ -1,6 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
+
+// Dynamic import for pallet scanning component
+const PalletScanningSystem = dynamic(
+  () => import('../../components/PalletScanningSystem'),
+  {
+    loading: () => (
+      <div className='flex items-center justify-center p-8'>
+        <div className='text-center'>
+          <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500'></div>
+          <p className='text-gray-600'>Loading scanning system...</p>
+        </div>
+      </div>
+    ),
+  }
+);
 
 export default function DriversPortalMobile() {
   const [activeTab, setActiveTab] = useState('login');
@@ -10,6 +26,7 @@ export default function DriversPortalMobile() {
     { id: 'login', label: 'Login', icon: '🔐' },
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'marketplace', label: 'Marketplace', icon: '🎯' },
+    { id: 'pallet-scan', label: 'Pallet Scan', icon: '📦' },
     { id: 'routes', label: 'Routes', icon: '🗺️' },
     { id: 'schedule', label: 'Schedule', icon: '📅' },
     { id: 'documents', label: 'Documents', icon: '📄' },
@@ -517,6 +534,76 @@ export default function DriversPortalMobile() {
                     </>
                   )}
                 </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Pallet Scanning Tab - Mobile Optimized */}
+          {activeTab === 'pallet-scan' && (
+            <div className='space-y-6'>
+              <div className='mb-6 text-center'>
+                <h2 className='text-xl font-bold text-gray-800 sm:text-2xl'>
+                  📦 Pallet Scanning
+                </h2>
+                <p className='text-sm text-gray-600'>
+                  Scan pallets for real-time shipment visibility
+                </p>
+              </div>
+
+              {/* Mobile Load Selection */}
+              <div className='space-y-4 rounded-xl border border-white/40 bg-white/30 p-4 backdrop-blur-lg'>
+                <h3 className='font-semibold text-gray-800'>Current Load</h3>
+                <select className='w-full rounded-xl border border-white/50 bg-white/80 px-4 py-3 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none'>
+                  <option value=''>Select Load ID</option>
+                  <option value='MKT-001'>MKT-001 - Dallas to Houston</option>
+                  <option value='MKT-002'>
+                    MKT-002 - Austin to San Antonio
+                  </option>
+                  <option value='MKT-003'>MKT-003 - Fort Worth to OKC</option>
+                </select>
+                <select className='w-full rounded-xl border border-white/50 bg-white/80 px-4 py-3 text-base focus:ring-2 focus:ring-blue-500 focus:outline-none'>
+                  <option value=''>Current Location</option>
+                  <option value='crossdock'>🏭 Crossdock (Loading)</option>
+                  <option value='delivery'>📍 Delivery Location</option>
+                </select>
+              </div>
+
+              {/* Important Notice - Mobile */}
+              <div className='rounded-xl border border-blue-500/40 bg-blue-500/20 p-4 backdrop-blur-lg'>
+                <div className='flex items-start gap-3'>
+                  <span className='text-lg text-blue-400'>ℹ️</span>
+                  <div>
+                    <h4 className='text-sm font-medium text-blue-200'>
+                      MARKETPLACE BIDDING
+                    </h4>
+                    <p className='text-xs leading-relaxed text-blue-300'>
+                      All LTL drivers must scan pallets at every touchpoint for
+                      visibility and accuracy.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pallet Scanning Component */}
+              <div className='rounded-xl border border-white/40 bg-white/20 p-4 backdrop-blur-lg'>
+                <PalletScanningSystem
+                  loadId='MKT-001'
+                  driverId='DRV-12345'
+                  currentLocation='crossdock'
+                  workflowMode='loading'
+                  onScanComplete={(scan) => {
+                    console.log('Mobile crossdock scan completed:', scan);
+                  }}
+                  onWorkflowComplete={(summary) => {
+                    console.log(
+                      'Mobile crossdock workflow completed:',
+                      summary
+                    );
+                    alert(
+                      `✅ Loading Complete!\nScanned: ${summary.totalScanned}/${summary.totalExpected} pallets`
+                    );
+                  }}
+                />
               </div>
             </div>
           )}

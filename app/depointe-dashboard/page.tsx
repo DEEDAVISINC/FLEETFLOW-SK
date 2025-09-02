@@ -589,7 +589,10 @@ export default function DEPOINTEDashboard() {
 
   // Debug staff directory state changes
   useEffect(() => {
-    console.log('Staff directory collapsed state changed:', isStaffDirectoryCollapsed);
+    console.log(
+      'Staff directory collapsed state changed:',
+      isStaffDirectoryCollapsed
+    );
   }, [isStaffDirectoryCollapsed]);
 
   // Load saved healthcare tasks and activity feed on page load
@@ -1566,11 +1569,15 @@ export default function DEPOINTEDashboard() {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log('Staff directory toggle clicked, current state:', isStaffDirectoryCollapsed);
+                  console.log(
+                    'Staff directory toggle clicked, current state:',
+                    isStaffDirectoryCollapsed
+                  );
                   setIsStaffDirectoryCollapsed(!isStaffDirectoryCollapsed);
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.currentTarget.style.backgroundColor =
+                    'rgba(255, 255, 255, 0.05)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -1625,7 +1632,11 @@ export default function DEPOINTEDashboard() {
                         : 'rotate(180deg)',
                       display: 'inline-block',
                     }}
-                    title={isStaffDirectoryCollapsed ? 'Click to expand' : 'Click to collapse'}
+                    title={
+                      isStaffDirectoryCollapsed
+                        ? 'Click to expand'
+                        : 'Click to collapse'
+                    }
                   >
                     ⌄
                   </span>

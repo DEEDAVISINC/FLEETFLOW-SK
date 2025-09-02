@@ -120,9 +120,10 @@ Value**: $45-85B (proceeds + residuals + appreciation)
 - **Phase 3 (Year 6-7)**: $25-40B final proceeds
 - **Total Value**: $60-100B over 7-year period
 
-### **Option 4: PASSIVE MAJORITY OWNERSHIP** *(Lazy CEO Strategy)*
+### **Option 4: PASSIVE MAJORITY OWNERSHIP** _(Lazy CEO Strategy)_
 
 #### **🎯 Core Structure:**
+
 - **Ownership Sale**: 40% equity sale to strategic partner
 - **Majority Control**: Retain 60% ownership + CEO title
 - **Passive Role**: Minimal operational involvement (2-4 hours/month)
@@ -130,13 +131,13 @@ Value**: $45-85B (proceeds + residuals + appreciation)
 - **Board Seat**: Optional with 1-2 meetings/year requirement
 
 #### **💰 Financial Model:**
-**Immediate Proceeds**: $20-38B (40% of $50-95B valuation)
-**Annual Residuals**: $750M-3B (12-15% revenue share)
-**Dividend Income**: 8-12% annual dividends on retained equity
-**Total Annual Income**: $1.5-5B passive income
-**Total 5-Year Value**: $60-100B (proceeds + passive income)
+
+**Immediate Proceeds**: $20-38B (40% of $50-95B valuation) **Annual Residuals**: $750M-3B (12-15%
+revenue share) **Dividend Income**: 8-12% annual dividends on retained equity **Total Annual
+Income**: $1.5-5B passive income **Total 5-Year Value**: $60-100B (proceeds + passive income)
 
 #### **🏖️ Minimal Work Requirements:**
+
 - **Monthly Involvement**: 2-4 hours (quarterly board meetings)
 - **Decision Rights**: Veto power on major strategic decisions
 - **Executive Oversight**: Partner handles all day-to-day operations
@@ -144,6 +145,7 @@ Value**: $45-85B (proceeds + residuals + appreciation)
 - **Travel Requirements**: 4-6 trips/year (optional)
 
 #### **🏆 Strategic Advantages:**
+
 - **Complete Control**: Majority ownership with veto power
 - **Passive Income**: $1.5-5B annual cash flow with minimal work
 - **Risk Mitigation**: Strategic partner manages operations
@@ -152,6 +154,7 @@ Value**: $45-85B (proceeds + residuals + appreciation)
 - **Exit Flexibility**: Multiple liquidity options retained
 
 #### **⚠️ Strategic Considerations:**
+
 - **Partner Selection**: Critical - must be operationally excellent
 - **Performance Monitoring**: Quarterly reviews with clear metrics
 - **Succession Planning**: 3-5 year transition timeline
@@ -162,19 +165,19 @@ Value**: $45-85B (proceeds + residuals + appreciation)
 
 ## 📊 **EXIT STRATEGY COMPARISON MATRIX**
 
-| **Criteria**                | **Full Sale + Board**      | **Partial Sale + Residuals**  | **Staged Exit**             | **Passive Majority**        |
-| --------------------------- | -------------------------- | ----------------------------- | --------------------------- | --------------------------- |
-| **Immediate Liquidity**     | ⭐⭐⭐⭐⭐ ($40-43B)       | ⭐⭐⭐ ($20-38B)              | ⭐⭐ ($15-25B)              | ⭐⭐⭐ ($20-38B)             |
-| **Control Retention**       | ⭐⭐ (Board influence)     | ⭐⭐⭐⭐⭐ (Full control)     | ⭐⭐⭐⭐ (Majority control) | ⭐⭐⭐⭐⭐ (Majority + veto) |
-| **Residual Income**         | ⭐⭐ ($1-3M/year)          | ⭐⭐⭐⭐⭐ ($500M-2.5B/year)  | ⭐⭐⭐⭐ ($100M-500M/year)  | ⭐⭐⭐⭐⭐ ($1.5-5B/year)    |
-| **Entrepreneurial Freedom** | ⭐⭐ (Limited)             | ⭐⭐⭐⭐⭐ (Full)             | ⭐⭐⭐⭐ (High)             | ⭐⭐⭐⭐⭐ (Near complete)    |
-| **Work Required**           | ⭐⭐⭐ (Board meetings)     | ⭐⭐⭐⭐ (Executive oversight)| ⭐⭐⭐⭐ (Strategic input)   | ⭐⭐⭐⭐⭐ (2-4 hrs/month)   |
-| **Risk Mitigation**         | ⭐⭐⭐ (Diversified)       | ⭐⭐⭐⭐ (Balanced)           | ⭐⭐⭐⭐⭐ (Staged)         | ⭐⭐⭐⭐⭐ (Partner managed) |
-| **Complexity**              | ⭐⭐⭐ (Moderate)          | ⭐⭐⭐⭐⭐ (High)             | ⭐⭐⭐⭐⭐ (Very High)      | ⭐⭐⭐⭐ (Moderate)          |
-| **Tax Efficiency**          | ⭐⭐⭐⭐⭐ (Capital gains) | ⭐⭐⭐⭐⭐ (Optimized)        | ⭐⭐⭐⭐ (Mixed)            | ⭐⭐⭐⭐⭐ (Passive income)  |
-| **Legacy Impact**           | ⭐⭐⭐ (Board role)        | ⭐⭐⭐⭐⭐ (Full stewardship) | ⭐⭐⭐⭐⭐ (Long-term)      | ⭐⭐⭐⭐⭐ (Title + vision)   |
-| **Market Flexibility**      | ⭐⭐ (Limited)             | ⭐⭐⭐⭐⭐ (High)             | ⭐⭐⭐⭐ (Good)             | ⭐⭐⭐⭐⭐ (High)            |
-| **Total Potential Value**   | ⭐⭐⭐⭐⭐ ($45-95B)       | ⭐⭐⭐⭐⭐ ($45-85B)          | ⭐⭐⭐⭐⭐ ($60-100B)       | ⭐⭐⭐⭐⭐ ($60-100B)        |
+| **Criteria**                | **Full Sale + Board**      | **Partial Sale + Residuals**   | **Staged Exit**             | **Passive Majority**         |
+| --------------------------- | -------------------------- | ------------------------------ | --------------------------- | ---------------------------- |
+| **Immediate Liquidity**     | ⭐⭐⭐⭐⭐ ($40-43B)       | ⭐⭐⭐ ($20-38B)               | ⭐⭐ ($15-25B)              | ⭐⭐⭐ ($20-38B)             |
+| **Control Retention**       | ⭐⭐ (Board influence)     | ⭐⭐⭐⭐⭐ (Full control)      | ⭐⭐⭐⭐ (Majority control) | ⭐⭐⭐⭐⭐ (Majority + veto) |
+| **Residual Income**         | ⭐⭐ ($1-3M/year)          | ⭐⭐⭐⭐⭐ ($500M-2.5B/year)   | ⭐⭐⭐⭐ ($100M-500M/year)  | ⭐⭐⭐⭐⭐ ($1.5-5B/year)    |
+| **Entrepreneurial Freedom** | ⭐⭐ (Limited)             | ⭐⭐⭐⭐⭐ (Full)              | ⭐⭐⭐⭐ (High)             | ⭐⭐⭐⭐⭐ (Near complete)   |
+| **Work Required**           | ⭐⭐⭐ (Board meetings)    | ⭐⭐⭐⭐ (Executive oversight) | ⭐⭐⭐⭐ (Strategic input)  | ⭐⭐⭐⭐⭐ (2-4 hrs/month)   |
+| **Risk Mitigation**         | ⭐⭐⭐ (Diversified)       | ⭐⭐⭐⭐ (Balanced)            | ⭐⭐⭐⭐⭐ (Staged)         | ⭐⭐⭐⭐⭐ (Partner managed) |
+| **Complexity**              | ⭐⭐⭐ (Moderate)          | ⭐⭐⭐⭐⭐ (High)              | ⭐⭐⭐⭐⭐ (Very High)      | ⭐⭐⭐⭐ (Moderate)          |
+| **Tax Efficiency**          | ⭐⭐⭐⭐⭐ (Capital gains) | ⭐⭐⭐⭐⭐ (Optimized)         | ⭐⭐⭐⭐ (Mixed)            | ⭐⭐⭐⭐⭐ (Passive income)  |
+| **Legacy Impact**           | ⭐⭐⭐ (Board role)        | ⭐⭐⭐⭐⭐ (Full stewardship)  | ⭐⭐⭐⭐⭐ (Long-term)      | ⭐⭐⭐⭐⭐ (Title + vision)  |
+| **Market Flexibility**      | ⭐⭐ (Limited)             | ⭐⭐⭐⭐⭐ (High)              | ⭐⭐⭐⭐ (Good)             | ⭐⭐⭐⭐⭐ (High)            |
+| **Total Potential Value**   | ⭐⭐⭐⭐⭐ ($45-95B)       | ⭐⭐⭐⭐⭐ ($45-85B)           | ⭐⭐⭐⭐⭐ ($60-100B)       | ⭐⭐⭐⭐⭐ ($60-100B)        |
 
 ---
 
@@ -243,6 +246,7 @@ Value**: $45-85B (proceeds + residuals + appreciation)
 - **Succession Ready**: Smooth transition if desired
 
 ### **🤑 Your Annual Passive Income Timeline:**
+
 - **Year 1**: $1.5-3B (initial setup)
 - **Year 2**: $2-4B (platform growth)
 - **Year 3**: $2.5-5B (scale expansion)

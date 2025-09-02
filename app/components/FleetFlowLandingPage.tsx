@@ -122,6 +122,23 @@ export default function FleetFlowLandingPage() {
               🌊 GO WITH THE FLOW
             </button>
           </Link>{' '}
+          <Link href='/launchpad'>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                color: 'white',
+                border: '2px solid rgba(99, 102, 241, 0.8)',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 0 8px rgba(99, 102, 241, 0.3)',
+              }}
+            >
+              🚀 LAUNCHPAD℠
+            </button>
+          </Link>{' '}
           <Link href='/fleetflowdash'>
             <button
               style={{
@@ -515,34 +532,74 @@ export default function FleetFlowLandingPage() {
                 </p>
               </div>
 
-              <Link href='/go-with-the-flow'>
-                <button
-                  style={{
-                    background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
-                    color: 'white',
-                    border: '2px solid #f4a832',
-                    padding: '15px 30px',
-                    borderRadius: '10px',
-                    fontSize: '1.1rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    boxShadow: '0 0 15px rgba(244, 168, 50, 0.4)',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow =
-                      '0 0 20px rgba(244, 168, 50, 0.6)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow =
-                      '0 0 15px rgba(244, 168, 50, 0.4)';
-                  }}
-                >
-                  🚀 Start Using Go With the Flow
-                </button>
-              </Link>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: '20px',
+                }}
+              >
+                <Link href='/go-with-the-flow'>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
+                      color: 'white',
+                      border: '2px solid #f4a832',
+                      padding: '15px 30px',
+                      borderRadius: '10px',
+                      fontSize: '1.1rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      boxShadow: '0 0 15px rgba(244, 168, 50, 0.4)',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                      e.currentTarget.style.boxShadow =
+                        '0 0 20px rgba(244, 168, 50, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow =
+                        '0 0 15px rgba(244, 168, 50, 0.4)';
+                    }}
+                  >
+                    🚀 Start Using Go With the Flow
+                  </button>
+                </Link>
+
+                <Link href='/launchpad'>
+                  <button
+                    style={{
+                      background:
+                        'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+                      color: 'white',
+                      border: '2px solid rgba(59, 130, 246, 0.8)',
+                      padding: '15px 30px',
+                      borderRadius: '10px',
+                      fontSize: '1.1rem',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      boxShadow: '0 0 15px rgba(59, 130, 246, 0.4)',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                      e.currentTarget.style.boxShadow =
+                        '0 0 20px rgba(59, 130, 246, 0.6)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow =
+                        '0 0 15px rgba(59, 130, 246, 0.4)';
+                    }}
+                  >
+                    🎯 Explore LaunchPad℠
+                  </button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -1265,9 +1322,6 @@ export default function FleetFlowLandingPage() {
                   <li style={{ color: '#34d399', fontWeight: '600' }}>
                     ✓ Unlimited SMS messages
                   </li>
-                  <li style={{ color: '#f59e0b', fontWeight: '600' }}>
-                    ⚠️ DEPOINTE AI sold separately
-                  </li>
                 </ul>
               </div>
             </div>
@@ -1445,6 +1499,288 @@ export default function FleetFlowLandingPage() {
                   }}
                 >
                   💰 View All Plans
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* FleetFlow LaunchPad℠ Section */}
+        <div style={{ marginTop: '60px', marginBottom: '60px' }}>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '20px',
+              border: '2px solid rgba(59, 130, 246, 0.3)',
+              padding: '40px',
+              maxWidth: '1200px',
+              margin: '0 auto',
+              boxShadow: '0 8px 32px rgba(59, 130, 246, 0.1)',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2
+                style={{
+                  fontSize: '2.5rem',
+                  fontWeight: '800',
+                  background:
+                    'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '20px',
+                }}
+              >
+                🚀 FleetFlow LaunchPad℠
+              </h2>
+              <p
+                style={{
+                  fontSize: '1.3rem',
+                  color: 'rgba(255,255,255,0.9)',
+                  lineHeight: '1.6',
+                  marginBottom: '15px',
+                  fontWeight: '500',
+                }}
+              >
+                Professional Transportation Business Launch Services
+              </p>
+              <p
+                style={{
+                  fontSize: '1.1rem',
+                  color: 'rgba(255,255,255,0.7)',
+                  lineHeight: '1.5',
+                  marginBottom: '30px',
+                }}
+              >
+                Complete guidance for brokers and owner operators starting their
+                transportation careers with our enterprise platform.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '30px',
+                marginBottom: '40px',
+              }}
+            >
+              {/* Broker Launch Program */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '16px',
+                  padding: '30px',
+                  border: '2px solid rgba(59, 130, 246, 0.3)',
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 15px 35px rgba(59, 130, 246, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🤝</div>
+                <h3
+                  style={{
+                    fontSize: '1.4rem',
+                    color: '#3b82f6',
+                    marginBottom: '15px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Broker Launch Program
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $999
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.95rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <li>✓ MC Authority application assistance</li>
+                  <li>✓ BMC-84 Bond setup guidance</li>
+                  <li>✓ FleetFlow University℠ certification</li>
+                  <li>✓ 60 days of weekly coaching calls</li>
+                  <li>✓ 3 months FleetFlow Broker Elite FREE</li>
+                  <li>✓ Complete business formation support</li>
+                </ul>
+                <Link href='/launchpad/broker'>
+                  <button
+                    style={{
+                      background:
+                        'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      width: '100%',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    Learn More →
+                  </button>
+                </Link>
+              </div>
+
+              {/* Owner Operator Launch Program */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '16px',
+                  padding: '30px',
+                  border: '2px solid rgba(16, 185, 129, 0.3)',
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-5px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 15px 35px rgba(16, 185, 129, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🚛</div>
+                <h3
+                  style={{
+                    fontSize: '1.4rem',
+                    color: '#10b981',
+                    marginBottom: '15px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Owner Operator Success Program
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $699
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.95rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                    marginBottom: '20px',
+                  }}
+                >
+                  <li>✓ DOT registration assistance</li>
+                  <li>✓ Authority & compliance setup</li>
+                  <li>✓ FleetFlow University℠ training</li>
+                  <li>✓ 45 days of bi-weekly coaching</li>
+                  <li>✓ 3 months FleetFlow Dispatcher Pro FREE</li>
+                  <li>✓ Complete insurance coordination</li>
+                </ul>
+                <Link href='/launchpad/owner-operator'>
+                  <button
+                    style={{
+                      background:
+                        'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      width: '100%',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    Learn More →
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+            {/* CTA Section */}
+            <div style={{ textAlign: 'center' }}>
+              <p
+                style={{
+                  fontSize: '1.1rem',
+                  color: 'rgba(255,255,255,0.8)',
+                  marginBottom: '25px',
+                }}
+              >
+                <strong style={{ color: '#3b82f6' }}>
+                  Ready to launch your transportation career?
+                </strong>
+                <br />
+                Join hundreds of successful professionals who started with
+                FleetFlow LaunchPad℠
+              </p>
+              <Link href='/launchpad'>
+                <button
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '16px 32px',
+                    borderRadius: '12px',
+                    fontSize: '1.2rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 35px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 25px rgba(59, 130, 246, 0.3)';
+                  }}
+                >
+                  🚀 Explore LaunchPad Services
                 </button>
               </Link>
             </div>

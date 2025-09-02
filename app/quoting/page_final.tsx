@@ -1,7 +1,18 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import {
+  PalletScanningQuoteResult,
+  PalletScanningService,
+} from '../services/pallet-scanning-quote-service';
+
+// Dynamic import to prevent hydration issues
+const PalletScanningQuoteSelector = dynamic(
+  () => import('../components/PalletScanningQuoteSelector'),
+  { ssr: false }
+);
 
 interface QuoteData {
   type: 'LTL' | 'FTL' | 'Specialized';
@@ -12,7 +23,12 @@ interface QuoteData {
     base: string;
     fuel: string;
     accessorials: string;
+    palletScanning?: string;
     total: string;
+  };
+  palletScanningService?: {
+    service: PalletScanningService;
+    quote: PalletScanningQuoteResult;
   };
   timestamp?: Date;
 }
@@ -31,6 +47,13 @@ export default function QuotingPage() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingQuote, setPendingQuote] = useState<QuoteData | null>(null);
 
+  // Pallet Scanning State
+  const [selectedPalletScanningService, setSelectedPalletScanningService] =
+    useState<{
+      service: PalletScanningService;
+      quote: PalletScanningQuoteResult;
+    } | null>(null);
+
   // LTL Form State
   const [ltlForm, setLtlForm] = useState({
     origin: '',
@@ -47,6 +70,7 @@ export default function QuotingPage() {
     origin: '',
     destination: '',
     equipment: '',
+    pallets: '',
   });
 
   // Specialized Form State
@@ -54,6 +78,7 @@ export default function QuotingPage() {
     origin: '',
     destination: '',
     services: [] as string[],
+    pallets: '',
   });
 
   useEffect(() => {
@@ -106,9 +131,17 @@ export default function QuotingPage() {
 
     const subtotal = baseRate * weightMultiplier * classMultiplier;
     const fuelSurcharge = subtotal * 0.18;
-    const total = subtotal + fuelSurcharge + accessorialsCost;
 
-    return {
+    // Add pallet scanning cost if selected
+    let palletScanningCost = 0;
+    if (selectedPalletScanningService) {
+      palletScanningCost = selectedPalletScanningService.quote.finalPrice;
+    }
+
+    const total =
+      subtotal + fuelSurcharge + accessorialsCost + palletScanningCost;
+
+    const quoteData: QuoteData = {
       type: 'LTL',
       origin: ltlForm.origin,
       destination: ltlForm.destination,
@@ -122,9 +155,17 @@ export default function QuotingPage() {
         base: subtotal.toFixed(2),
         fuel: fuelSurcharge.toFixed(2),
         accessorials: accessorialsCost.toFixed(2),
+        palletScanning:
+          palletScanningCost > 0 ? palletScanningCost.toFixed(2) : undefined,
         total: total.toFixed(2),
       },
     };
+
+    if (selectedPalletScanningService) {
+      quoteData.palletScanningService = selectedPalletScanningService;
+    }
+
+    return quoteData;
   };
 
   const calculateFTLQuote = (): QuoteData | null => {
@@ -167,9 +208,16 @@ export default function QuotingPage() {
     }
 
     const fuelSurcharge = baseRate * 0.22;
-    const total = baseRate + fuelSurcharge;
 
-    return {
+    // Add pallet scanning cost if selected
+    let palletScanningCost = 0;
+    if (selectedPalletScanningService) {
+      palletScanningCost = selectedPalletScanningService.quote.finalPrice;
+    }
+
+    const total = baseRate + fuelSurcharge + palletScanningCost;
+
+    const quoteData: QuoteData = {
       type: 'FTL',
       origin: ftlForm.origin,
       destination: ftlForm.destination,
@@ -178,9 +226,17 @@ export default function QuotingPage() {
         base: baseRate.toFixed(2),
         fuel: fuelSurcharge.toFixed(2),
         accessorials: '0.00',
+        palletScanning:
+          palletScanningCost > 0 ? palletScanningCost.toFixed(2) : undefined,
         total: total.toFixed(2),
       },
     };
+
+    if (selectedPalletScanningService) {
+      quoteData.palletScanningService = selectedPalletScanningService;
+    }
+
+    return quoteData;
   };
 
   const calculateSpecializedQuote = (): QuoteData | null => {
@@ -207,9 +263,17 @@ export default function QuotingPage() {
     });
 
     const fuelSurcharge = (baseRate + accessorialsCost) * 0.25;
-    const total = baseRate + accessorialsCost + fuelSurcharge;
 
-    return {
+    // Add pallet scanning cost if selected
+    let palletScanningCost = 0;
+    if (selectedPalletScanningService) {
+      palletScanningCost = selectedPalletScanningService.quote.finalPrice;
+    }
+
+    const total =
+      baseRate + accessorialsCost + fuelSurcharge + palletScanningCost;
+
+    const quoteData: QuoteData = {
       type: 'Specialized',
       origin: specializedForm.origin,
       destination: specializedForm.destination,
@@ -218,9 +282,17 @@ export default function QuotingPage() {
         base: baseRate.toFixed(2),
         fuel: fuelSurcharge.toFixed(2),
         accessorials: accessorialsCost.toFixed(2),
+        palletScanning:
+          palletScanningCost > 0 ? palletScanningCost.toFixed(2) : undefined,
         total: total.toFixed(2),
       },
     };
+
+    if (selectedPalletScanningService) {
+      quoteData.palletScanningService = selectedPalletScanningService;
+    }
+
+    return quoteData;
   };
 
   const handleGetQuote = async () => {
@@ -787,6 +859,25 @@ export default function QuotingPage() {
                         <span>Residential Delivery</span>
                       </label>
                     </div>
+
+                    {/* Pallet Scanning Service Selector */}
+                    {ltlForm.pallets && parseInt(ltlForm.pallets) > 0 && (
+                      <div style={{ marginTop: '24px' }}>
+                        <PalletScanningQuoteSelector
+                          palletCount={parseInt(ltlForm.pallets)}
+                          serviceType='LTL'
+                          onServiceSelected={(service, quote) => {
+                            setSelectedPalletScanningService({
+                              service,
+                              quote,
+                            });
+                          }}
+                          onServiceDeselected={() => {
+                            setSelectedPalletScanningService(null);
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -870,6 +961,43 @@ export default function QuotingPage() {
                       <option value='Box Truck'>26' Straight Box Truck</option>
                       <option value='Sprinter Van'>Sprinter/Cargo Van</option>
                     </select>
+
+                    {/* Pallet Count for FTL */}
+                    <input
+                      type='number'
+                      placeholder='# of Pallets (optional)'
+                      value={ftlForm.pallets}
+                      onChange={(e) =>
+                        setFtlForm({ ...ftlForm, pallets: e.target.value })
+                      }
+                      style={{
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        background: 'white',
+                      }}
+                    />
+
+                    {/* Pallet Scanning Service Selector */}
+                    {ftlForm.pallets && parseInt(ftlForm.pallets) > 0 && (
+                      <div style={{ marginTop: '24px' }}>
+                        <PalletScanningQuoteSelector
+                          palletCount={parseInt(ftlForm.pallets)}
+                          serviceType='FTL'
+                          onServiceSelected={(service, quote) => {
+                            setSelectedPalletScanningService({
+                              service,
+                              quote,
+                            });
+                          }}
+                          onServiceDeselected={() => {
+                            setSelectedPalletScanningService(null);
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1009,6 +1137,50 @@ export default function QuotingPage() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Pallet Count for Specialized */}
+                    <div style={{ marginTop: '16px' }}>
+                      <input
+                        type='number'
+                        placeholder='# of Pallets (optional)'
+                        value={specializedForm.pallets}
+                        onChange={(e) =>
+                          setSpecializedForm({
+                            ...specializedForm,
+                            pallets: e.target.value,
+                          })
+                        }
+                        style={{
+                          padding: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '8px',
+                          fontSize: '14px',
+                          outline: 'none',
+                          background: 'white',
+                          width: '100%',
+                        }}
+                      />
+                    </div>
+
+                    {/* Pallet Scanning Service Selector */}
+                    {specializedForm.pallets &&
+                      parseInt(specializedForm.pallets) > 0 && (
+                        <div style={{ marginTop: '24px' }}>
+                          <PalletScanningQuoteSelector
+                            palletCount={parseInt(specializedForm.pallets)}
+                            serviceType='Specialized'
+                            onServiceSelected={(service, quote) => {
+                              setSelectedPalletScanningService({
+                                service,
+                                quote,
+                              });
+                            }}
+                            onServiceDeselected={() => {
+                              setSelectedPalletScanningService(null);
+                            }}
+                          />
+                        </div>
+                      )}
                   </div>
                 )}
               </div>
@@ -1317,7 +1489,99 @@ export default function QuotingPage() {
                           ${quoteResult.quote.accessorials}
                         </span>
                       </div>
+                      {quoteResult.quote.palletScanning && (
+                        <div className='flex justify-between'>
+                          <span className='text-gray-400'>
+                            📦 Pallet Scanning Service:
+                          </span>{' '}
+                          <span className='font-medium text-blue-400'>
+                            ${quoteResult.quote.palletScanning}
+                          </span>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Pallet Scanning Service Details */}
+                    {quoteResult.palletScanningService && (
+                      <div className='mt-4 border-t border-gray-600 pt-4'>
+                        <div className='rounded-lg bg-blue-900/30 p-4'>
+                          <div className='mb-3 flex items-center justify-between'>
+                            <h4 className='text-lg font-semibold text-blue-300'>
+                              📦{' '}
+                              {quoteResult.palletScanningService.service.name}
+                            </h4>
+                            <span className='rounded-full bg-blue-500 px-2 py-1 text-xs font-medium text-white'>
+                              {quoteResult.palletScanningService.service.tier.toUpperCase()}
+                            </span>
+                          </div>
+                          <p className='mb-3 text-sm text-gray-300'>
+                            {
+                              quoteResult.palletScanningService.service
+                                .description
+                            }
+                          </p>
+
+                          {/* Key Features */}
+                          <div className='mb-3 grid grid-cols-1 gap-2 md:grid-cols-2'>
+                            {quoteResult.palletScanningService.quote.features
+                              .slice(0, 4)
+                              .map((feature, index) => (
+                                <div
+                                  key={index}
+                                  className='flex items-center space-x-2 text-sm text-gray-300'
+                                >
+                                  <span className='text-green-400'>✓</span>
+                                  <span>{feature}</span>
+                                </div>
+                              ))}
+                          </div>
+
+                          {/* Value Propositions */}
+                          <div className='border-t border-blue-800 pt-3'>
+                            <h5 className='mb-2 text-sm font-medium text-blue-200'>
+                              Value Benefits:
+                            </h5>
+                            <div className='grid grid-cols-1 gap-2 md:grid-cols-2'>
+                              {quoteResult.palletScanningService.quote.valuePropositions
+                                .slice(0, 4)
+                                .map((prop, index) => (
+                                  <div
+                                    key={index}
+                                    className='flex items-center space-x-2 text-sm text-gray-300'
+                                  >
+                                    <span className='text-yellow-400'>●</span>
+                                    <span>{prop}</span>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+
+                          {/* Pricing Details */}
+                          {quoteResult.palletScanningService.quote.savings >
+                            0 && (
+                            <div className='mt-3 rounded border border-green-700 bg-green-900/30 p-2'>
+                              <div className='flex items-center justify-between text-sm'>
+                                <span className='text-green-300'>
+                                  Volume Discount Applied:
+                                </span>
+                                <span className='font-medium text-green-400'>
+                                  {
+                                    quoteResult.palletScanningService.quote
+                                      .discountApplied
+                                  }
+                                  % OFF (Save $
+                                  {quoteResult.palletScanningService.quote.savings.toFixed(
+                                    2
+                                  )}
+                                  )
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Reference Links Section */}
                     <div className='mt-4 border-t border-gray-600 pt-4'>
                       <h4 className='mb-3 text-center text-sm font-medium text-gray-300'>

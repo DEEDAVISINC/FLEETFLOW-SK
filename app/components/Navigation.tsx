@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import Logo from './Logo';
@@ -13,12 +13,8 @@ export default function ProfessionalNavigation() {
   const pathname = usePathname();
   const isCarrierPlatform = pathname === '/carrier-landing';
 
-  // Hide navigation on landing page and other marketing pages
-  const hiddenPaths = ['/', '/plans', '/privacy', '/terms'];
-  if (hiddenPaths.includes(pathname)) {
-    console.info('🚫 Navigation not hydrated yet, waiting...');
-    return null;
-  }
+  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
+  // This fixes the React Hooks error by ensuring consistent hook order
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(
     null
@@ -29,6 +25,69 @@ export default function ProfessionalNavigation() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Hide navigation on landing page and other marketing pages
+  const hiddenPaths = ['/', '/plans', '/privacy', '/terms'];
+  const shouldHideNavigation = pathname
+    ? hiddenPaths.includes(pathname)
+    : false;
+
+  // LaunchPad pages have blue backgrounds, so use solid white background
+  const isLaunchPadPage = pathname ? pathname.startsWith('/launchpad') : false;
+
+  // Debug logging for LaunchPad navigation styling
+  if (isLaunchPadPage) {
+    console.info('🚀 LaunchPad page detected:', {
+      pathname,
+      isLaunchPadPage,
+      navBackground: '#ffffff',
+      backdropFilter: 'none',
+    });
+  }
+
+  // Add dynamic CSS for LaunchPad navigation styling
+  React.useEffect(() => {
+    if (isLaunchPadPage) {
+      // Remove any existing style first
+      const existingStyle = document.getElementById('launchpad-nav-override');
+      if (existingStyle) {
+        document.head.removeChild(existingStyle);
+      }
+
+      const style = document.createElement('style');
+      style.id = 'launchpad-nav-override';
+      style.textContent = `
+        nav[data-launchpad="true"] {
+          background: #ffffff !important;
+          background-color: #ffffff !important;
+          background-image: none !important;
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          filter: none !important;
+          opacity: 1 !important;
+
+        }
+        nav[data-launchpad="true"] * {
+          background: transparent !important;
+        }
+        nav[data-launchpad="true"]::before,
+        nav[data-launchpad="true"]::after {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+
+      console.info('🎨 LaunchPad navigation CSS injected');
+
+      return () => {
+        const styleToRemove = document.getElementById('launchpad-nav-override');
+        if (styleToRemove) {
+          document.head.removeChild(styleToRemove);
+          console.info('🧹 LaunchPad navigation CSS removed');
+        }
+      };
+    }
+  }, [isLaunchPadPage]);
 
   // Hydration effect
   useEffect(() => {
@@ -213,18 +272,44 @@ export default function ProfessionalNavigation() {
   return (
     <nav
       ref={navRef}
-      style={{
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-        padding: '12px 20px',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-      }}
+      data-launchpad={isLaunchPadPage ? 'true' : 'false'}
+      style={
+        isLaunchPadPage
+          ? {
+              // LaunchPad specific styling - solid white
+              background: '#ffffff',
+              backgroundColor: '#ffffff',
+              backgroundImage: 'none',
+              backdropFilter: 'none',
+              WebkitBackdropFilter: 'none',
+              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+              padding: '12px 20px',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1000,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              display: shouldHideNavigation ? 'none' : 'block',
+              filter: 'none',
+              opacity: 1,
+            }
+          : {
+              // Regular pages styling - semi-transparent with blur
+              background: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+              padding: '12px 20px',
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1000,
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              display: shouldHideNavigation ? 'none' : 'block',
+            }
+      }
     >
       <div
         style={{
