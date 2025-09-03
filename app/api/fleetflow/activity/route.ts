@@ -45,7 +45,7 @@ const activityFeed = [
     details: '9% fee structure - 80% of loads are medical/pharma',
     carriersOnboarded: 3,
     tier: 'Silver (9%)',
-    aiStaff: 'Miles',
+    aiStaff: 'Miles Rhodes',
   },
   {
     id: 'act-005',
@@ -134,7 +134,7 @@ const activityFeed = [
     campaign: 'Regional Market Penetration',
     carriersConnected: 15,
     region: 'Atlanta, GA',
-    aiStaff: 'Miles',
+    aiStaff: 'Miles Rhodes',
   },
   {
     id: 'act-013',

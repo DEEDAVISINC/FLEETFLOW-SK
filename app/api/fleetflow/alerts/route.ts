@@ -13,7 +13,7 @@ const productionAlerts = [
     priority: 'high',
     category: 'load_delay',
     affectedLoad: 'FLT-2024-001',
-    assignedTo: 'Miles (Dispatch)',
+    assignedTo: 'Miles Rhodes (Dispatch)',
     status: 'active',
   },
   {
@@ -103,7 +103,7 @@ const productionAlerts = [
     availableDrivers: 3,
     requiredDrivers: 5,
     affectedLoad: 'FLT-2024-007',
-    assignedTo: 'Miles (Dispatch)',
+    assignedTo: 'Miles Rhodes (Dispatch)',
     status: 'active',
   },
   {

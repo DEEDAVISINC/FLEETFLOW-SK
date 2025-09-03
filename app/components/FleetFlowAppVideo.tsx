@@ -2,20 +2,26 @@
 
 import { useEffect, useState } from 'react';
 
-export function FleetFlowAppVideo() {
+interface FleetFlowAppVideoProps {
+  autoPlay?: boolean;
+}
+
+export function FleetFlowAppVideo({
+  autoPlay = false,
+}: FleetFlowAppVideoProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [isUsingElevenLabs, setIsUsingElevenLabs] = useState(false);
-  const [selectedVoice, setSelectedVoice] = useState(
-    'american-female-professional'
-  );
+  const [selectedVoice, setSelectedVoice] = useState('custom-dee-voice');
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
     null
   );
   const [voicesLoaded, setVoicesLoaded] = useState(false);
   const [audioCache, setAudioCache] = useState<Map<string, string>>(new Map());
   const [quotaExceeded, setQuotaExceeded] = useState(false);
+  const [playCount, setPlayCount] = useState(0);
+  const MAX_PLAYS_PER_SESSION = 3; // Limit to 3 full playthroughs per session
 
   // App Screenshots Data with Narration
   const appScreenshots = [
@@ -32,11 +38,12 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Welcome to FleetFlow - the complete transportation management platform. Our command center gives you instant visibility across your entire operation.',
-      duration: 6000, // 6 seconds
+      duration: 12000, // 12 seconds for full narration
     },
     {
       title: '🌊 Go With the Flow',
-      description: 'Instant freight marketplace connecting shippers and drivers',
+      description:
+        'Instant freight marketplace connecting shippers and drivers',
       route: '/go-with-the-flow',
       features: [
         'Instant Load Matching',
@@ -46,7 +53,8 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Go With the Flow is our instant freight marketplace. Shippers can request trucks immediately while drivers find high-paying loads nearby - all powered by AI matching and dynamic pricing.',
-      duration: 5500,    },
+      duration: 12000, // Extended for full narration
+    },
     {
       title: 'AI Automation Hub',
       description: 'Claude AI-powered automation for freight operations',
@@ -59,7 +67,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Our AI automation hub uses Claude AI to handle dispatch, routing, and customer communications - reducing manual work by 80%.',
-      duration: 5000,
+      duration: 10000, // Extended for full narration
     },
     {
       title: 'FreightFlow RFx Platform',
@@ -73,7 +81,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Access millions in government contracts and enterprise opportunities through our comprehensive RFx discovery platform.',
-      duration: 5000,
+      duration: 10000, // Extended for full narration
     },
     {
       title: 'Live Load Tracking',
@@ -87,7 +95,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Provide customers with real-time visibility through our advanced tracking system with 30-second GPS updates.',
-      duration: 4000,
+      duration: 9000, // Extended for full narration
     },
     {
       title: 'Driver Management Portal',
@@ -101,7 +109,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Streamline driver operations with our comprehensive management portal and mobile app integration.',
-      duration: 4000,
+      duration: 9000, // Extended for full narration
     },
     {
       title: 'Carrier Network',
@@ -115,7 +123,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Build a reliable carrier network with real-time FMCSA verification and safety monitoring.',
-      duration: 4000,
+      duration: 9000, // Extended for full narration
     },
     {
       title: 'Financial Intelligence',
@@ -129,7 +137,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Automate your entire financial workflow with integrations to QuickBooks, Bill.com, and advanced analytics.',
-      duration: 4000,
+      duration: 9000, // Extended for full narration
     },
     {
       title: 'FleetFlow University',
@@ -143,7 +151,7 @@ export function FleetFlowAppVideo() {
       ],
       narration:
         'Develop your team with our comprehensive training platform covering all aspects of transportation management.',
-      duration: 4000,
+      duration: 9000, // Extended for full narration
     },
   ];
 
@@ -179,8 +187,25 @@ export function FleetFlowAppVideo() {
     }
   }, [audioContext]);
 
-  // ElevenLabs Text-to-Speech narration
+  // Handle autoPlay prop
+  useEffect(() => {
+    if (autoPlay && !isPlaying) {
+      // Only auto-play on pages that explicitly request it
+      setIsPlaying(true);
+    }
+  }, [autoPlay]);
+
+  // ElevenLabs Text-to-Speech narration with cost protection
   const playNarration = async (text: string) => {
+    // Cost protection: After 3 full playthroughs, use browser TTS only
+    if (playCount >= MAX_PLAYS_PER_SESSION) {
+      console.info(
+        '🛡️ ElevenLabs usage limit reached for this session. Using browser TTS to control costs.'
+      );
+      fallbackToSpeechSynthesis(text);
+      return;
+    }
+
     try {
       // First try ElevenLabs for professional voice
       const response = await fetch('/api/ai/voice-conversation', {
@@ -380,8 +405,9 @@ export function FleetFlowAppVideo() {
     } else {
       // Play or Replay
       if (currentSlide >= appScreenshots.length - 1) {
-        // If at the end, restart from beginning
+        // If at the end, restart from beginning and increment play count
         setCurrentSlide(0);
+        setPlayCount((prev) => prev + 1);
       }
       setIsPlaying(true);
     }
@@ -497,6 +523,12 @@ export function FleetFlowAppVideo() {
             }}
           >
             <option
+              value='custom-dee-voice'
+              style={{ background: '#1a1a2e', color: 'white' }}
+            >
+              🎙️ Dee's Custom Voice (Premium)
+            </option>
+            <option
               value='american-female-professional'
               style={{ background: '#1a1a2e', color: 'white' }}
             >
@@ -531,6 +563,11 @@ export function FleetFlowAppVideo() {
           <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>
             🔴 LIVE: FleetFlow Platform Demo ({currentSlide + 1}/
             {appScreenshots.length})
+            {playCount >= MAX_PLAYS_PER_SESSION && (
+              <span style={{ color: '#f59e0b', marginLeft: '8px' }}>
+                🛡️ Cost Protection Active
+              </span>
+            )}
           </div>
         </div>
       </div>

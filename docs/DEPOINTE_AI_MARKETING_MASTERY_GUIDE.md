@@ -128,7 +128,7 @@ delivery.
 
 - **Resse A. Bell**: Accounting and pricing strategy optimization
 - **Dell**: IT support for pricing system implementation
-- **Logan & Miles**: Operations optimization for premium service delivery
+- **Logan & Miles Rhodes**: Operations optimization for premium service delivery
 - **Will**: Sales operations focused on value-based selling
 
 ### **Implementation Tactics**

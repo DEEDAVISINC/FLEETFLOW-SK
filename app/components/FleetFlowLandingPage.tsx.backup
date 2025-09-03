@@ -261,7 +261,7 @@ export default function FleetFlowLandingPage() {
         </div>
 
         {/* Autoplay App Screenshots Video */}
-        <FleetFlowAppVideo autoPlay={true} />
+        <FleetFlowAppVideo />
 
         {/* Go With the Flow Section */}
         <div style={{ marginTop: '50px', marginBottom: '50px' }}>

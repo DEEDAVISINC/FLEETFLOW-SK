@@ -3306,7 +3306,7 @@ export default function AboutUsPage() {
                       </h4>
                       <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>
                         <strong>
-                          Logan (Logistics), Miles (Dispatch), Dee (Brokerage),
+                          Logan (Logistics), Miles Rhodes (Dispatch), Dee (Brokerage),
                           Will (Sales), Hunter (Recruiting)
                         </strong>{' '}
                         - Complete freight operations with AI-powered

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
 import DesperateProspectsBatchDeployment, {
@@ -281,7 +281,7 @@ const depointeStaff = [
   },
   {
     id: 'miles-007',
-    name: 'Miles',
+    name: 'Miles Rhodes',
     role: 'Dispatch Coordination Specialist',
     department: 'Freight Operations',
     avatar: '📍',
@@ -664,7 +664,7 @@ const depointeStaff = [
   },
   {
     id: 'alexis-executive-023',
-    name: 'Alexis',
+    name: 'Alexis Best',
     role: 'AI Executive Assistant',
     department: 'Operations',
     avatar: '👔',
@@ -727,6 +727,32 @@ export default function DEPOINTEDashboard() {
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
   const [liveActivities, setLiveActivities] = useState<any[]>([]);
+
+  // Function to add email response activities to live feed
+  const addEmailActivity = useCallback(
+    (
+      type: 'email_response' | 'email_received',
+      subject: string,
+      recipient: string,
+      priority: 'low' | 'normal' | 'high' | 'urgent' = 'normal'
+    ) => {
+      const activity = {
+        id: `activity-${Date.now()}-${Math.random()}`,
+        type,
+        title:
+          type === 'email_response' ? `Email Response Sent` : `Email Received`,
+        description: `"${subject}" ${type === 'email_response' ? '→' : '←'} ${recipient}`,
+        timestamp: new Date(),
+        priority,
+        icon: type === 'email_response' ? '📧' : '📬',
+        staffMember: 'Alexis Best',
+        department: 'OPERATIONS',
+      };
+
+      setLiveActivities((prev) => [activity, ...prev.slice(0, 49)]); // Keep last 50 activities
+    },
+    []
+  );
   const [staffData, setStaffData] = useState(depointeStaff);
   const [expandedHealthcareCampaign, setExpandedHealthcareCampaign] =
     useState(false);
@@ -756,6 +782,40 @@ export default function DEPOINTEDashboard() {
       isStaffDirectoryCollapsed
     );
   }, [isStaffDirectoryCollapsed]);
+
+  // Fetch email activities from API periodically
+  useEffect(() => {
+    const fetchEmailActivities = async () => {
+      try {
+        const response = await fetch('/api/dashboard/add-email-activity');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.activities.length > 0) {
+            // Update live activities with email activities from API
+            setLiveActivities((prev) => {
+              // Merge API activities with existing activities, avoiding duplicates
+              const merged = [...data.activities];
+              prev.forEach((existing) => {
+                if (!merged.find((api) => api.id === existing.id)) {
+                  merged.push(existing);
+                }
+              });
+              return merged.slice(0, 50); // Keep last 50
+            });
+          }
+        }
+      } catch (error) {
+        // Silently handle fetch errors to avoid console spam
+        console.log('Note: Could not fetch email activities:', error);
+      }
+    };
+
+    // Fetch immediately and then every 30 seconds
+    fetchEmailActivities();
+    const interval = setInterval(fetchEmailActivities, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Load saved healthcare tasks and activity feed on page load
   useEffect(() => {
@@ -2095,7 +2155,7 @@ export default function DEPOINTEDashboard() {
                               marginBottom: '4px',
                             }}
                           >
-                            Miles - Dispatch Coordination
+                            Miles Rhodes - Dispatch Coordination
                           </div>
                           <div
                             style={{
@@ -2633,7 +2693,7 @@ export default function DEPOINTEDashboard() {
                                 marginBottom: '4px',
                               }}
                             >
-                              Alexis - AI Executive Assistant
+                              Alexis Best - AI Executive Assistant
                             </div>
                             <div
                               style={{
@@ -3732,7 +3792,15 @@ export default function DEPOINTEDashboard() {
                             marginBottom: '4px',
                           }}
                         >
-                          {activity.staffName}: {activity.action}
+                          {activity.icon && (
+                            <span style={{ marginRight: '8px' }}>
+                              {activity.icon}
+                            </span>
+                          )}
+                          {activity.staffMember ||
+                            activity.staffName ||
+                            'DEPOINTE AI'}
+                          : {activity.title || activity.action}
                         </div>
                         <div
                           style={{
@@ -3740,7 +3808,7 @@ export default function DEPOINTEDashboard() {
                             fontSize: '0.8rem',
                           }}
                         >
-                          {activity.details}
+                          {activity.description || activity.details}
                         </div>
                       </div>
                       <div
@@ -3749,7 +3817,9 @@ export default function DEPOINTEDashboard() {
                           fontSize: '0.7rem',
                         }}
                       >
-                        {new Date(activity.timestamp).toLocaleTimeString()}
+                        {activity.timestamp
+                          ? new Date(activity.timestamp).toLocaleTimeString()
+                          : 'Just now'}
                       </div>
                     </div>
                   ))}

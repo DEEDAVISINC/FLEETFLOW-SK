@@ -24,10 +24,16 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
   const notificationService = new NotificationService();
   const messageService = new MessageService();
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+
+  // Create Supabase client only if environment variables are available
+  const supabase =
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ? createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        )
+      : null;
 
   // Hydration fix
   useEffect(() => {
@@ -39,6 +45,11 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
     if (!isHydrated) return;
 
     try {
+      console.info(
+        '🔔 NotificationBell: Loading unread counts for user:',
+        userId
+      );
+
       // Load unread notifications
       const notifications = await notificationService.getUserNotifications(
         userId,
@@ -50,6 +61,11 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
       if (notifications && Array.isArray(notifications)) {
         setUnreadCount(notifications.length);
+        console.info(
+          `🔔 NotificationBell: Found ${notifications.length} unread notifications`
+        );
+      } else {
+        console.info('🔔 NotificationBell: No unread notifications found');
       }
 
       // Load unread messages
@@ -63,9 +79,20 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
       if (messageResult.messages) {
         setUnreadMessageCount(messageResult.messages.length);
+        console.info(
+          `📬 NotificationBell: Found ${messageResult.messages.length} unread messages`
+        );
+      } else {
+        console.info('📬 NotificationBell: No unread messages found');
       }
     } catch (error) {
-      console.error('Failed to load unread counts:', error);
+      console.error(
+        '🔔 NotificationBell: Failed to load unread counts:',
+        error
+      );
+      // Set counts to 0 on error to prevent infinite loading states
+      setUnreadCount(0);
+      setUnreadMessageCount(0);
     }
   };
 
@@ -78,43 +105,65 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
   // Real-time updates for unread counts
   useEffect(() => {
-    if (!isHydrated) return;
+    if (!isHydrated || !supabase) {
+      console.info(
+        '🔔 NotificationBell: Skipping real-time setup - Supabase not available or not hydrated'
+      );
+      return;
+    }
 
-    const subscription = supabase
-      .channel('notification_bell')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          console.info('🔔 Bell: Real-time notification update:', payload);
-          // Reload unread counts
-          loadUnreadCounts();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'intraoffice_messages',
-          filter: `to_user_ids.cs.{${userId}}`,
-        },
-        (payload) => {
-          console.info('📬 Bell: Real-time message update:', payload);
-          // Reload unread counts
-          loadUnreadCounts();
-        }
-      )
-      .subscribe();
+    try {
+      const subscription = supabase
+        .channel('notification_bell')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            console.info('🔔 Bell: Real-time notification update:', payload);
+            // Reload unread counts
+            loadUnreadCounts();
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'intraoffice_messages',
+            filter: `to_user_ids.cs.{${userId}}`,
+          },
+          (payload) => {
+            console.info('📬 Bell: Real-time message update:', payload);
+            // Reload unread counts
+            loadUnreadCounts();
+          }
+        )
+        .subscribe();
 
-    return () => {
-      subscription.unsubscribe();
-    };
+      return () => {
+        try {
+          if (subscription) {
+            subscription.unsubscribe();
+          }
+        } catch (error) {
+          console.warn(
+            '🔔 NotificationBell: Error unsubscribing from real-time updates:',
+            error
+          );
+        }
+      };
+    } catch (error) {
+      console.error(
+        '🔔 NotificationBell: Error setting up real-time subscription:',
+        error
+      );
+      return () => {}; // Return empty cleanup function
+    }
   }, [isHydrated, userId]);
 
   const handleBellClick = () => {

@@ -402,6 +402,7 @@ export class ElevenLabsVoiceService {
 
     // Professional American voices for freight business (verified ElevenLabs voice IDs)
     const voiceMap = {
+      'custom-dee-voice': 'XrExE9yKIg1WjnnlVkGX', // Dee's Custom Voice
       'american-female-professional': '21m00Tcm4TlvDq8ikWAM', // Rachel
       'american-male-professional': 'VR6AewLTigWG4xSOukaG', // Josh
       'american-female-friendly': 'EXAVITQu4vr4xnSDxMaL', // Bella
@@ -419,8 +420,8 @@ export class ElevenLabsVoiceService {
     // Map voice name to actual ElevenLabs voice ID
     const selectedVoiceId =
       voiceMap[voiceId] ||
-      voiceMap['american-female-professional'] ||
-      '21m00Tcm4TlvDq8ikWAM';
+      voiceMap['custom-dee-voice'] ||
+      'XrExE9yKIg1WjnnlVkGX';
 
     try {
       const response = await fetch(

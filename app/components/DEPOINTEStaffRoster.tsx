@@ -96,7 +96,7 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
   {
     id: 'miles',
     firstName: 'Miles',
-    fullName: 'Miles',
+<parameter name="new_string">    fullName: 'Miles Rhodes',
     department: 'Dispatch',
     internalRole: 'Dispatch Coordination Specialist',
     customerFacingTitle: 'Transportation Coordinator',
@@ -111,7 +111,7 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
     ],
     contactMethods: ['phone', 'chat'],
     emailSignature:
-      'Miles Rodriguez\nTransportation Coordinator\nDEPOINTE/ Freight 1st Direct',
+      'Miles Rhodes\nTransportation Coordinator\nDEPOINTE/ Freight 1st Direct',
   },
 
   {
@@ -517,7 +517,7 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
   {
     id: 'alexis',
     firstName: 'Alexis',
-    fullName: 'Alexis',
+    fullName: 'Alexis Best',
     department: 'Executive Operations',
     internalRole: 'Executive Operations Specialist',
     customerFacingTitle: 'Chief Operating Officer',
@@ -536,7 +536,7 @@ export const depointeStaffRoster: DEPOINTEStaffMember[] = [
     ],
     contactMethods: ['phone', 'email', 'chat'],
     emailSignature:
-      'Alexis Thompson\nChief Operating Officer\nDEPOINTE/ Freight 1st Direct\nSpecializing in Executive Operations & Strategic Management',
+      'Alexis Best\nChief Operating Officer\nDEPOINTE/ Freight 1st Direct\nSpecializing in Executive Operations & Strategic Management',
   },
 
   // 📞 FRONT OFFICE DEPARTMENT (RECEPTION & COMMUNICATIONS)

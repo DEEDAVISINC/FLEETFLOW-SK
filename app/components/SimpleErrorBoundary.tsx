@@ -26,12 +26,21 @@ export class SimpleErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log the error without preventing the default behavior
+    // Log the error with detailed information
     console.error('🛡️ React Error caught by SimpleErrorBoundary:', {
-      error: error.message,
-      stack: error.stack,
-      componentStack: errorInfo.componentStack,
+      message: error?.message || 'Unknown error message',
+      name: error?.name || 'Unknown error type',
+      stack: error?.stack || 'No stack trace available',
+      componentStack:
+        errorInfo?.componentStack || 'No component stack available',
+      timestamp: new Date().toISOString(),
     });
+
+    // Also log to a more visible location
+    console.warn(
+      '🚨 Component Error Details:',
+      error?.message || 'Error details unavailable'
+    );
   }
 
   render() {

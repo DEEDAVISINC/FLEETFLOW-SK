@@ -26,7 +26,11 @@ interface NewTask {
     | 'research'
     | 'compliance'
     | 'support'
-    | 'analysis';
+    | 'analysis'
+    | 'email_monitoring'
+    | 'phone_answering'
+    | 'email_response'
+    | 'call_routing';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   assignedTo: string[];
   targetProspects: {
@@ -127,6 +131,10 @@ export default function TaskCreationInterface({
     { value: 'compliance', label: 'Compliance Check', icon: '✅' },
     { value: 'support', label: 'Customer Support', icon: '🛟' },
     { value: 'analysis', label: 'Data Analysis', icon: '📊' },
+    { value: 'email_monitoring', label: 'Email Monitoring', icon: '📧' },
+    { value: 'phone_answering', label: 'Phone Answering', icon: '📞' },
+    { value: 'email_response', label: 'Email Response', icon: '✉️' },
+    { value: 'call_routing', label: 'Call Routing', icon: '📱' },
   ];
 
   const priorityLevels = [

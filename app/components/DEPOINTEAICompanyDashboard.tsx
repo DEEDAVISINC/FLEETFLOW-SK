@@ -233,7 +233,7 @@ export default function DEPOINTEAICompanyDashboard() {
     },
     {
       id: 'miles',
-      name: 'Miles',
+      name: 'Miles Rhodes',
       role: 'Dispatch Coordination Specialist',
       department: 'Operations',
       avatar: '📍',

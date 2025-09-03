@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "seed": "node scripts/seed-database.js",
@@ -83,6 +83,7 @@
     "esl": "^11.2.1",
     "glpk.js": "^4.0.2",
     "html2canvas": "^1.4.1",
+    "imapflow": "^1.0.195",
     "jspdf": "^3.0.1",
     "jspdf-html2canvas": "^1.1.0",
     "leaflet": "^1.9.4",

@@ -472,7 +472,7 @@ export const ENTERPRISE_SOLUTIONS: Record<string, SubscriptionPlan> = {
       '🤖 Complete AI company management',
       '🤖 FINANCIAL: Resse A. Bell (Accounting)',
       '🤖 TECHNOLOGY: Dell (IT support)',
-      '🤖 FREIGHT OPS: Logan, Miles, Dee, Will, Hunter',
+      '🤖 FREIGHT OPS: Logan, Miles Rhodes, Dee, Will, Hunter',
       '🤖 RELATIONSHIPS: Brook R., Carrie R.',
       '🤖 COMPLIANCE: Kameelah, Regina',
       '🤖 SUPPORT: Shanell, Clarence',

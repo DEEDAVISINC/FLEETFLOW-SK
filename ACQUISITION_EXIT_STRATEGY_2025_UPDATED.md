@@ -59,7 +59,7 @@ Microsoft, Salesforce, Google, Oracle
 **DEPOINTE AI Staff Structure:**
 
 - **FINANCIAL**: Resse A. Bell (Accounting), Dell (IT support)
-- **FREIGHT OPERATIONS**: Logan, Miles, Dee, Will, Hunter (5-person AI operations team)
+- **FREIGHT OPERATIONS**: Logan, Miles Rhodes, Dee, Will, Hunter (5-person AI operations team)
 - **RELATIONSHIPS**: Brook R., Carrie R. (AI relationship management)
 - **COMPLIANCE**: Kameelah, Regina (AI compliance and safety)
 - **SUPPORT**: Shanell, Clarence (AI customer service and claims)

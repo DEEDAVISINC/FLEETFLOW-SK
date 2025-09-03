@@ -44,10 +44,16 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationService = new NotificationService();
   const messageService = new MessageService();
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+
+  // Create Supabase client only if environment variables are available
+  const supabase =
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ? createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        )
+      : null;
 
   // Load notifications and messages
   useEffect(() => {
@@ -91,41 +97,63 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
   // Real-time updates
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !supabase) {
+      console.info(
+        '🔔 NotificationDropdown: Skipping real-time setup - Supabase not available or dropdown not open'
+      );
+      return;
+    }
 
-    const subscription = supabase
-      .channel('notifications_and_messages')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          console.info('🔔 Real-time notification update:', payload);
-          loadData();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'intraoffice_messages',
-          filter: `to_user_ids.cs.{${userId}}`,
-        },
-        (payload) => {
-          console.info('📬 Real-time message update:', payload);
-          loadData();
-        }
-      )
-      .subscribe();
+    try {
+      const subscription = supabase
+        .channel('notifications_and_messages')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'notifications',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            console.info('🔔 Real-time notification update:', payload);
+            loadData();
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'intraoffice_messages',
+            filter: `to_user_ids.cs.{${userId}}`,
+          },
+          (payload) => {
+            console.info('📬 Real-time message update:', payload);
+            loadData();
+          }
+        )
+        .subscribe();
 
-    return () => {
-      subscription.unsubscribe();
-    };
+      return () => {
+        try {
+          if (subscription) {
+            subscription.unsubscribe();
+          }
+        } catch (error) {
+          console.warn(
+            '🔔 NotificationDropdown: Error unsubscribing from real-time updates:',
+            error
+          );
+        }
+      };
+    } catch (error) {
+      console.error(
+        '🔔 NotificationDropdown: Error setting up real-time subscription:',
+        error
+      );
+      return () => {}; // Return empty cleanup function
+    }
   }, [isOpen, userId]);
 
   // Click outside to close
