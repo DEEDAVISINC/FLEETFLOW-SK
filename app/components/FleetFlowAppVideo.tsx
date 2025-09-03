@@ -410,7 +410,9 @@ export function FleetFlowAppVideo({
           utterance.volume = 0.9;
           utterance.lang = 'en-US';
         } catch (configError) {
-          console.warn('🔊 Some utterance properties not supported, using defaults');
+          console.warn(
+            '🔊 Some utterance properties not supported, using defaults'
+          );
           // Continue with defaults if some properties aren't supported
         }
 
@@ -495,7 +497,9 @@ export function FleetFlowAppVideo({
           }
 
           // Show user-friendly error message with specific guidance
-          alert(`${errorMessage}\n\nTroubleshooting:\n${troubleshootingSteps}`);
+          const enhancedMessage = `${errorMessage}\n\nTroubleshooting:\n${troubleshootingSteps}\n\n💡 Tip: Click the 🔧 Diagnose button for detailed system information.`;
+
+          alert(enhancedMessage);
 
           // Log additional diagnostic information
           console.warn('🔊 TTS Diagnostics:', {
@@ -529,7 +533,7 @@ export function FleetFlowAppVideo({
             window.speechSynthesis.cancel(); // Cancel immediately
 
             // Wait a bit for voices to load
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise((resolve) => setTimeout(resolve, 500));
             voiceList = window.speechSynthesis.getVoices();
 
             if (voiceList.length === 0) {
@@ -608,7 +612,16 @@ export function FleetFlowAppVideo({
             window.speechSynthesis.speak(fallbackUtterance);
             console.info('🔊 Fallback speech synthesis initiated');
           } catch (fallbackError) {
-            console.error('🔊 All speech synthesis attempts failed:', fallbackError);
+            console.error(
+              '🔊 All speech synthesis attempts failed:',
+              fallbackError
+            );
+
+            // Show final fallback message
+            alert(
+              '🎵 Voice narration is currently unavailable due to technical issues.\n\nThis is normal when using browser TTS fallback.\n\n• Try using Chrome or Firefox for better voice support\n• Check browser audio permissions\n• The video will continue to play without narration\n\nFor professional voice narration, ElevenLabs API integration is recommended.'
+            );
+
             throw new Error('All speech synthesis attempts failed');
           }
         }
@@ -782,6 +795,42 @@ export function FleetFlowAppVideo({
             }}
           ></div>
         </div>
+        {/* TTS Status Indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)' }}>
+            🎵 TTS Status:
+          </div>
+          <div
+            style={{
+              padding: '2px 8px',
+              borderRadius: '12px',
+              fontSize: '11px',
+              fontWeight: '600',
+              background: isUsingElevenLabs ? 'rgba(59, 130, 246, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+              color: isUsingElevenLabs ? '#3b82f6' : '#10b981',
+              border: `1px solid ${isUsingElevenLabs ? 'rgba(59, 130, 246, 0.5)' : 'rgba(16, 185, 129, 0.5)'}`,
+            }}
+          >
+            {isUsingElevenLabs ? '🎙️ ElevenLabs' : '🔊 Browser TTS'}
+          </div>
+          {isBrowserSpeaking && (
+            <div
+              style={{
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '11px',
+                fontWeight: '600',
+                background: 'rgba(245, 158, 11, 0.3)',
+                color: '#f59e0b',
+                border: '1px solid rgba(245, 158, 11, 0.5)',
+                animation: 'pulse 1s ease-in-out infinite',
+              }}
+            >
+              🔊 Speaking...
+            </div>
+          )}
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <button
             onClick={handlePlayPause}
@@ -848,13 +897,33 @@ export function FleetFlowAppVideo({
             🔧 Diagnose
           </button>
 
-          {/* Voice Info Button */}
+          {/* Quick TTS Diagnostic Button */}
           <button
             onClick={() => {
-              const voiceCount = checkAvailableVoices();
-              alert(
-                `Browser Voices Available: ${voiceCount}\n\nCheck console for details.\n\nIf no voices or voice fails:\n• Try Chrome/Firefox\n• Enable voice permissions\n• Check audio settings`
-              );
+              const browserSupport = !!window.speechSynthesis;
+              const voiceCount = window.speechSynthesis?.getVoices().length || 0;
+              const isSpeaking = window.speechSynthesis?.speaking || false;
+
+              let status = '✅ Working';
+              let issues = [];
+
+              if (!browserSupport) {
+                status = '❌ Not Supported';
+                issues.push('Browser does not support speech synthesis');
+              } else if (voiceCount === 0) {
+                status = '⚠️ No Voices';
+                issues.push('No voice data available');
+              } else if (isSpeaking) {
+                status = '🔊 Speaking';
+              }
+
+              const message = `🎵 TTS Quick Diagnostic\n\nStatus: ${status}\nVoices: ${voiceCount}\nBrowser Support: ${browserSupport ? 'Yes' : 'No'}\nCurrently Speaking: ${isSpeaking ? 'Yes' : 'No'}\n\n${
+                issues.length > 0
+                  ? `Issues Found:\n${issues.map(issue => `• ${issue}`).join('\n')}\n\nTroubleshooting:\n• Try Chrome or Firefox\n• Enable voice permissions\n• Refresh the page\n• Check browser audio settings`
+                  : 'No issues detected. If TTS fails, check browser console for detailed diagnostics.'
+              }`;
+
+              alert(message);
             }}
             style={{
               background: 'rgba(255,255,255,0.2)',
