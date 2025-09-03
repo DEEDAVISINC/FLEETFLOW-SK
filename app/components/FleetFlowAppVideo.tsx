@@ -578,18 +578,22 @@ export function FleetFlowAppVideo({
           console.info('🔊 Looking for fallback voice options...');
 
           // First try to find any English voice
-          const englishVoices = voiceList.filter(voice =>
-            voice.lang && voice.lang.includes('en')
+          const englishVoices = voiceList.filter(
+            (voice) => voice.lang && voice.lang.includes('en')
           );
 
           if (englishVoices.length > 0) {
             chosenVoice = englishVoices[0]; // Take first available English voice
-            console.info(`🔊 Found English voice: ${chosenVoice.name} (${chosenVoice.lang})`);
+            console.info(
+              `🔊 Found English voice: ${chosenVoice.name} (${chosenVoice.lang})`
+            );
           } else {
             // Last resort: use any available voice
             if (voiceList.length > 0) {
               chosenVoice = voiceList[0];
-              console.info(`🔊 Using first available voice: ${chosenVoice.name} (${chosenVoice.lang})`);
+              console.info(
+                `🔊 Using first available voice: ${chosenVoice.name} (${chosenVoice.lang})`
+              );
             }
           }
         }
@@ -612,7 +616,9 @@ export function FleetFlowAppVideo({
 
         // Final safety check before speaking
         if (!chosenVoice) {
-          console.warn('🔊 No voice selected, attempting to speak without voice specification');
+          console.warn(
+            '🔊 No voice selected, attempting to speak without voice specification'
+          );
         }
 
         // Try to speak with enhanced error handling
@@ -624,10 +630,26 @@ export function FleetFlowAppVideo({
             pitch: utterance.pitch,
             volume: utterance.volume,
             lang: utterance.lang,
-            voice: chosenVoice ? `${chosenVoice.name} (${chosenVoice.lang})` : 'default'
+            voice: chosenVoice
+              ? `${chosenVoice.name} (${chosenVoice.lang})`
+              : 'default',
           });
 
-          window.speechSynthesis.speak(utterance);
+          // Clear any existing speech before starting
+          if (window.speechSynthesis.speaking) {
+            console.info('🔊 Canceling existing speech...');
+            window.speechSynthesis.cancel();
+            
+            // Wait a moment for cancellation to complete
+            setTimeout(() => {
+              console.info('🔊 Starting speech after cancellation...');
+              window.speechSynthesis.speak(utterance);
+            }, 100);
+          } else {
+            console.info('🔊 Starting speech immediately...');
+            window.speechSynthesis.speak(utterance);
+          }
+          
           console.info('🔊 Speech synthesis initiated successfully');
         } catch (speakError) {
           console.error('🔊 Failed to start speech synthesis:', speakError);
@@ -639,13 +661,15 @@ export function FleetFlowAppVideo({
               paused: window.speechSynthesis.paused,
             },
             utteranceState: {
-              text: utterance.text ? utterance.text.substring(0, 50) + '...' : 'no text',
+              text: utterance.text
+                ? utterance.text.substring(0, 50) + '...'
+                : 'no text',
               rate: utterance.rate,
               pitch: utterance.pitch,
               volume: utterance.volume,
               lang: utterance.lang,
               voice: utterance.voice ? utterance.voice.name : 'none',
-            }
+            },
           });
 
           // Try a very basic test utterance first
@@ -720,10 +744,7 @@ export function FleetFlowAppVideo({
       const initialVoices = window.speechSynthesis.getVoices();
       if (initialVoices.length > 0) {
         setVoicesLoaded(true);
-        console.info(
-          '🎙️ Voices immediately available:',
-          initialVoices.length
-        );
+        console.info('🎙️ Voices immediately available:', initialVoices.length);
       }
 
       const loadVoices = () => {
@@ -978,10 +999,68 @@ export function FleetFlowAppVideo({
             onClick={async () => {
               // Clear any existing error message first
               setTtsErrorMessage(null);
-              checkAvailableVoices();
-              await fallbackToSpeechSynthesis(
-                'This is a test of the browser voice synthesis. Can you hear this? If not, check browser settings and try Chrome or Firefox.'
-              );
+              
+              // Simple direct test without complex fallback logic
+              if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                console.info('🔊 Direct TTS test starting...');
+                
+                // Cancel any existing speech
+                window.speechSynthesis.cancel();
+                
+                const testUtterance = new SpeechSynthesisUtterance('Testing browser voice synthesis. Can you hear this?');
+                testUtterance.volume = 0.8;
+                testUtterance.rate = 0.9;
+                testUtterance.pitch = 1.0;
+                testUtterance.lang = 'en-US';
+
+                testUtterance.onstart = () => {
+                  console.info('🔊 Direct test speech started');
+                  setTtsErrorMessage('✅ Direct test speech started successfully!');
+                };
+
+                testUtterance.onend = () => {
+                  console.info('🔊 Direct test speech ended');
+                  setTtsErrorMessage('✅ Direct test speech completed successfully!');
+                };
+
+                testUtterance.onerror = (error) => {
+                  console.error('🔊 Direct test speech error:', error);
+                  setTtsErrorMessage(`❌ Direct test failed: ${error.error || 'Unknown error'}\n\nThis helps identify if the issue is with the complex fallback logic or basic browser TTS.`);
+                };
+
+                // Try to set a voice if available
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                  const englishVoice = voices.find(voice => voice.lang.includes('en')) || voices[0];
+                  testUtterance.voice = englishVoice;
+                  console.info('🔊 Direct test using voice:', englishVoice.name);
+                }
+
+                console.info('🔊 Direct test - Available voices:', voices.length);
+                
+                // Track if speech has started
+                let speechStarted = false;
+                
+                // Set a timeout to detect if speech never starts
+                const timeoutId = setTimeout(() => {
+                  if (!speechStarted) {
+                    console.warn('🔊 Direct test timeout - speech may not have started');
+                    setTtsErrorMessage('⚠️ Speech test timeout - the browser may be blocking audio or TTS is not working.\n\nTry:\n• Clicking somewhere on the page first (user interaction required)\n• Checking browser audio settings\n• Using Chrome or Firefox');
+                  }
+                }, 3000);
+                
+                // Update onstart to track speech starting
+                testUtterance.onstart = (event) => {
+                  speechStarted = true;
+                  clearTimeout(timeoutId);
+                  console.info('🔊 Direct test speech started');
+                  setTtsErrorMessage('✅ Direct test speech started successfully!');
+                };
+                
+                window.speechSynthesis.speak(testUtterance);
+              } else {
+                setTtsErrorMessage('❌ Speech synthesis not supported in this browser');
+              }
             }}
             style={{
               background: 'rgba(255,255,255,0.2)',
