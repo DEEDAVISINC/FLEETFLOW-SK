@@ -187,8 +187,377 @@ export default function LaunchPadPage() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div style={{ paddingTop: '80px' }}>
+      {/* Coming Soon Overlay */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 5000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+        }}
+      >
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            borderRadius: '24px',
+            padding: '60px',
+            maxWidth: '600px',
+            width: '90%',
+            textAlign: 'center',
+            border: '2px solid rgba(59, 130, 246, 0.3)',
+            boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+            position: 'relative',
+          }}
+        >
+          {/* Animated Rocket */}
+          <div
+            style={{
+              fontSize: '6rem',
+              marginBottom: '30px',
+              animation: 'rocketLaunch 2s ease-in-out infinite',
+            }}
+          >
+            🚀
+          </div>
+
+          {/* Coming Soon Title */}
+          <h1
+            style={{
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+              fontWeight: '900',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              marginBottom: '20px',
+              lineHeight: '1.1',
+            }}
+          >
+            Coming Soon!
+          </h1>
+
+          {/* Subtitle */}
+          <h2
+            style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: 'white',
+              marginBottom: '20px',
+            }}
+          >
+            FleetFlow LaunchPad℠
+          </h2>
+
+          {/* Description */}
+          <p
+            style={{
+              fontSize: '1.2rem',
+              color: 'rgba(255, 255, 255, 0.9)',
+              marginBottom: '30px',
+              lineHeight: '1.6',
+              maxWidth: '500px',
+              margin: '0 auto 30px',
+            }}
+          >
+            We're building something amazing! Our comprehensive transportation business launch platform is currently in development while we establish key partnerships and integrate essential APIs.
+          </p>
+
+          {/* Features Preview */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '30px',
+              marginBottom: '30px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <h3
+              style={{
+                color: '#3b82f6',
+                marginBottom: '20px',
+                fontSize: '1.4rem',
+                fontWeight: '700',
+              }}
+            >
+              🚀 What's Coming:
+            </h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '20px',
+                textAlign: 'left',
+              }}
+            >
+              <div>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🤝 Broker Launch Program
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  Complete MC authority setup, bonding, and certification
+                </p>
+              </div>
+              <div>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🚛 Owner Operator Program
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  DOT registration, insurance coordination, and training
+                </p>
+              </div>
+              <div>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🎓 FleetFlow University℠
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  Professional certification and mentorship programs
+                </p>
+              </div>
+              <div>
+                <h4
+                  style={{
+                    color: 'white',
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                  }}
+                >
+                  🏢 Business Formation
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  LLC setup, tax ID, legal guidance, and compliance
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Status Update */}
+          <div
+            style={{
+              background: 'rgba(245, 158, 11, 0.1)',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '30px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                marginBottom: '10px',
+              }}
+            >
+              <span style={{ fontSize: '1.5rem' }}>⚡</span>
+              <h4
+                style={{
+                  color: '#f59e0b',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  margin: 0,
+                }}
+              >
+                Development in Progress
+              </h4>
+            </div>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                fontSize: '0.95rem',
+                margin: 0,
+                lineHeight: '1.5',
+              }}
+            >
+              We're actively building partnerships with licensing authorities, insurance providers, and training institutions to deliver the most comprehensive launch platform in the transportation industry.
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '15px',
+              alignItems: 'center',
+            }}
+          >
+            <button
+              onClick={() => setShowDemoForm(true)}
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '1.1rem',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
+                transition: 'all 0.3s ease',
+                minWidth: '200px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 12px 35px rgba(59, 130, 246, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.3)';
+              }}
+            >
+              📋 Get Notified When Live
+            </button>
+
+            <Link
+              href='/'
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                textDecoration: 'none',
+                fontSize: '0.95rem',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'white';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+                e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              ← Back to FleetFlow
+            </Link>
+          </div>
+
+          {/* Progress Indicator */}
+          <div
+            style={{
+              marginTop: '30px',
+              padding: '20px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '15px',
+              }}
+            >
+              <span
+                style={{
+                  color: 'white',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                }}
+              >
+                Development Progress
+              </span>
+              <span
+                style={{
+                  color: '#10b981',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                }}
+              >
+                65% Complete
+              </span>
+            </div>
+            <div
+              style={{
+                width: '100%',
+                height: '8px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '4px',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: '65%',
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                  borderRadius: '4px',
+                  transition: 'width 0.3s ease',
+                }}
+              />
+            </div>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '0.8rem',
+                marginTop: '10px',
+                marginBottom: 0,
+              }}
+            >
+              API integrations and partnerships in final development stages
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content (Hidden behind overlay) */}
+      <div style={{ paddingTop: '80px', opacity: '0.1', pointerEvents: 'none' }}>
         {/* Hero Section */}
         <div
           style={{
