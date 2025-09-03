@@ -573,14 +573,25 @@ export function FleetFlowAppVideo({
           );
         }
 
-        // Fallback to any good American English voice
+        // Enhanced fallback voice selection - be more flexible
         if (!chosenVoice) {
-          chosenVoice =
-            voiceList.find(
-              (voice) =>
-                voice.lang.includes('en-US') &&
-                (voice.name.includes('Alex') || voice.name.includes('Samantha'))
-            ) || voiceList.find((voice) => voice.lang.startsWith('en-US'));
+          console.info('🔊 Looking for fallback voice options...');
+
+          // First try to find any English voice
+          const englishVoices = voiceList.filter(voice =>
+            voice.lang && voice.lang.includes('en')
+          );
+
+          if (englishVoices.length > 0) {
+            chosenVoice = englishVoices[0]; // Take first available English voice
+            console.info(`🔊 Found English voice: ${chosenVoice.name} (${chosenVoice.lang})`);
+          } else {
+            // Last resort: use any available voice
+            if (voiceList.length > 0) {
+              chosenVoice = voiceList[0];
+              console.info(`🔊 Using first available voice: ${chosenVoice.name} (${chosenVoice.lang})`);
+            }
+          }
         }
 
         if (chosenVoice) {
@@ -599,25 +610,67 @@ export function FleetFlowAppVideo({
           );
         }
 
+        // Final safety check before speaking
+        if (!chosenVoice) {
+          console.warn('🔊 No voice selected, attempting to speak without voice specification');
+        }
+
         // Try to speak with enhanced error handling
         try {
           console.info('🔊 Attempting to speak...');
+          console.info('🔊 Utterance details:', {
+            text: utterance.text.substring(0, 50) + '...',
+            rate: utterance.rate,
+            pitch: utterance.pitch,
+            volume: utterance.volume,
+            lang: utterance.lang,
+            voice: chosenVoice ? `${chosenVoice.name} (${chosenVoice.lang})` : 'default'
+          });
+
           window.speechSynthesis.speak(utterance);
           console.info('🔊 Speech synthesis initiated successfully');
         } catch (speakError) {
           console.error('🔊 Failed to start speech synthesis:', speakError);
+          console.error('🔊 Speak error details:', {
+            error: speakError,
+            speechSynthesisState: {
+              speaking: window.speechSynthesis.speaking,
+              pending: window.speechSynthesis.pending,
+              paused: window.speechSynthesis.paused,
+            },
+            utteranceState: {
+              text: utterance.text ? utterance.text.substring(0, 50) + '...' : 'no text',
+              rate: utterance.rate,
+              pitch: utterance.pitch,
+              volume: utterance.volume,
+              lang: utterance.lang,
+              voice: utterance.voice ? utterance.voice.name : 'none',
+            }
+          });
 
-          // Last resort: try without any voice selection
+          // Try a very basic test utterance first
           try {
-            console.info('🔊 Attempting fallback without voice selection...');
-            const fallbackUtterance = new SpeechSynthesisUtterance(text);
-            window.speechSynthesis.speak(fallbackUtterance);
-            console.info('🔊 Fallback speech synthesis initiated');
-          } catch (fallbackError) {
-            console.error(
-              '🔊 All speech synthesis attempts failed:',
-              fallbackError
-            );
+            console.info('🔊 Testing with minimal utterance...');
+            const testUtterance = new SpeechSynthesisUtterance('test');
+            testUtterance.volume = 0.1; // Very quiet test
+            window.speechSynthesis.speak(testUtterance);
+
+            // If that works, try the original text without voice specification
+            setTimeout(() => {
+              try {
+                console.info('🔊 Attempting original text without voice...');
+                const simpleUtterance = new SpeechSynthesisUtterance(text);
+                simpleUtterance.rate = 0.8;
+                simpleUtterance.volume = 0.7;
+                window.speechSynthesis.speak(simpleUtterance);
+                console.info('🔊 Simple fallback speech synthesis initiated');
+              } catch (simpleError) {
+                console.error('🔊 Simple fallback also failed:', simpleError);
+                throw simpleError;
+              }
+            }, 100);
+          } catch (testError) {
+            console.error('🔊 Even basic test failed:', testError);
 
             // Show final fallback message in UI
             setTtsErrorMessage(
@@ -658,9 +711,21 @@ export function FleetFlowAppVideo({
     }
   }, [currentSlide, isPlaying, appScreenshots, currentAudio]);
 
-  // Load voices on mount
+  // Load voices on mount and initialize TTS
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      console.info('🎙️ Initializing TTS system...');
+
+      // Check if speech synthesis is immediately available
+      const initialVoices = window.speechSynthesis.getVoices();
+      if (initialVoices.length > 0) {
+        setVoicesLoaded(true);
+        console.info(
+          '🎙️ Voices immediately available:',
+          initialVoices.length
+        );
+      }
+
       const loadVoices = () => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
@@ -671,6 +736,11 @@ export function FleetFlowAppVideo({
           );
         }
       };
+
+      // Listen for voices to be loaded
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
 
       // Load voices immediately if available
       loadVoices();
@@ -858,11 +928,11 @@ export function FleetFlowAppVideo({
               whiteSpace: 'pre-line',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}
+            >
               <span style={{ fontSize: '14px', marginTop: '1px' }}>⚠️</span>
-              <div style={{ flex: 1 }}>
-                {ttsErrorMessage}
-              </div>
+              <div style={{ flex: 1 }}>{ttsErrorMessage}</div>
               <button
                 onClick={() => setTtsErrorMessage(null)}
                 style={{
@@ -875,7 +945,7 @@ export function FleetFlowAppVideo({
                   marginLeft: '8px',
                   opacity: 0.7,
                 }}
-                title="Dismiss error message"
+                title='Dismiss error message'
               >
                 ×
               </button>
