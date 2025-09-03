@@ -26,8 +26,6 @@ export default function LaunchPadPage() {
 
   // Add CSS animations
   React.useEffect(() => {
-    console.log('🚀 LaunchPad page loaded - initializing styles and overlay');
-
     const style = document.createElement('style');
     style.textContent = `
       @keyframes rocketLaunch {
@@ -191,27 +189,24 @@ export default function LaunchPadPage() {
       </div>
 
       {/* Coming Soon Overlay */}
-      {(() => {
-        console.log('🎯 Rendering Coming Soon Overlay');
-        return (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.85)',
-              backdropFilter: 'blur(8px)',
-              zIndex: 9999,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px',
-              minHeight: '100vh',
-              width: '100vw',
-            }}
-          >
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.85)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          minHeight: '100vh',
+          width: '100vw',
+        }}
+      >
             <div
               style={{
                 background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
@@ -570,8 +565,7 @@ export default function LaunchPadPage() {
             </p>
             </div>
           </div>
-        );
-      })()}
+      </div>
 
       {/* Main Content (Hidden behind overlay) */}
       <div
