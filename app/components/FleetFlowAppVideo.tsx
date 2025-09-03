@@ -365,7 +365,10 @@ export function FleetFlowAppVideo({
             // Wait a moment for cancellation
             await new Promise((resolve) => setTimeout(resolve, 100));
           } catch (cancelError) {
-            console.warn('🔊 Cancel error during pre-flight check:', cancelError);
+            console.warn(
+              '🔊 Cancel error during pre-flight check:',
+              cancelError
+            );
           }
         }
 
@@ -543,7 +546,10 @@ export function FleetFlowAppVideo({
             try {
               window.speechSynthesis.cancel(); // Cancel immediately
             } catch (cancelError) {
-              console.warn('🔊 Cancel error after dummy utterance:', cancelError);
+              console.warn(
+                '🔊 Cancel error after dummy utterance:',
+                cancelError
+              );
             }
 
             // Wait a bit for voices to load
@@ -647,20 +653,28 @@ export function FleetFlowAppVideo({
               : 'default',
           });
 
-                    // Clear any existing speech before starting with error handling
+          // Clear any existing speech before starting with error handling
           try {
-            if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+            if (
+              window.speechSynthesis.speaking ||
+              window.speechSynthesis.pending
+            ) {
               console.info('🔊 Canceling existing speech...');
               window.speechSynthesis.cancel();
- 
+
               // Wait a moment for cancellation to complete
               setTimeout(() => {
                 console.info('🔊 Starting speech after cancellation...');
                 try {
                   window.speechSynthesis.speak(utterance);
                 } catch (speakAfterCancelError) {
-                  console.error('🔊 Error speaking after cancel:', speakAfterCancelError);
-                  setTtsErrorMessage('⚠️ Speech synthesis error after cancellation. Try refreshing the page.');
+                  console.error(
+                    '🔊 Error speaking after cancel:',
+                    speakAfterCancelError
+                  );
+                  setTtsErrorMessage(
+                    '⚠️ Speech synthesis error after cancellation. Try refreshing the page.'
+                  );
                 }
               }, 150); // Slightly longer wait
             } else {
@@ -675,7 +689,9 @@ export function FleetFlowAppVideo({
               window.speechSynthesis.speak(utterance);
             } catch (directSpeakError) {
               console.error('🔊 Direct speak also failed:', directSpeakError);
-              setTtsErrorMessage('❌ Speech synthesis system error. Try refreshing the page or using a different browser.');
+              setTtsErrorMessage(
+                '❌ Speech synthesis system error. Try refreshing the page or using a different browser.'
+              );
             }
           }
 
@@ -806,12 +822,18 @@ export function FleetFlowAppVideo({
         // Cleanup: remove event listener and safely cancel any ongoing speech
         window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
         try {
-          if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+          if (
+            window.speechSynthesis.speaking ||
+            window.speechSynthesis.pending
+          ) {
             console.info('🎙️ Cleanup: Canceling speech on component unmount');
             window.speechSynthesis.cancel();
           }
         } catch (cleanupError) {
-          console.warn('🎙️ Cleanup: Error canceling speech (safe to ignore):', cleanupError);
+          console.warn(
+            '🎙️ Cleanup: Error canceling speech (safe to ignore):',
+            cleanupError
+          );
         }
       };
     }
@@ -1059,12 +1081,20 @@ export function FleetFlowAppVideo({
 
                 // Cancel any existing speech with error handling
                 try {
-                  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-                    console.info('🔊 Direct test: Canceling existing speech...');
+                  if (
+                    window.speechSynthesis.speaking ||
+                    window.speechSynthesis.pending
+                  ) {
+                    console.info(
+                      '🔊 Direct test: Canceling existing speech...'
+                    );
                     window.speechSynthesis.cancel();
                   }
                 } catch (cancelError) {
-                  console.warn('🔊 Direct test: Cancel error (continuing anyway):', cancelError);
+                  console.warn(
+                    '🔊 Direct test: Cancel error (continuing anyway):',
+                    cancelError
+                  );
                 }
 
                 const testUtterance = new SpeechSynthesisUtterance(

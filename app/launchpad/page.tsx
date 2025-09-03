@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
-import Logo from '../components/Logo';
 
 interface DemoBookingForm {
   name: string;
@@ -98,7 +97,6 @@ export default function LaunchPadPage() {
         overflow: 'hidden',
       }}
     >
-
       {/* Background Effects */}
       <div
         style={{
@@ -149,7 +147,9 @@ export default function LaunchPadPage() {
           }}
         >
           <Link href='/' style={{ textDecoration: 'none' }}>
-            <Logo />
+            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>
+              🚛 FleetFlow
+            </div>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <Link
@@ -207,11 +207,11 @@ export default function LaunchPadPage() {
           width: '100vw',
         }}
       >
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-                borderRadius: '24px',
-                padding: '60px',
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            borderRadius: '24px',
+            padding: '60px',
             maxWidth: '600px',
             width: '90%',
             textAlign: 'center',
@@ -563,8 +563,8 @@ export default function LaunchPadPage() {
             >
               API integrations and partnerships in final development stages
             </p>
-            </div>
           </div>
+        </div>
       </div>
 
       {/* Main Content (Hidden behind overlay) */}
