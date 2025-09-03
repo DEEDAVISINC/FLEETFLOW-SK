@@ -127,6 +127,26 @@ export default function FreightFlowQuotingEngine() {
   const [isCalculatingLanes, setIsCalculatingLanes] = useState(false);
   const [showLaneResults, setShowLaneResults] = useState(false);
 
+  // Enhanced Lane Analysis State
+  const [laneAnalysis, setLaneAnalysis] = useState({
+    marketRate: 0,
+    carrierCapacity: 0,
+    seasonalDemand: 'normal',
+    competitiveIndex: 0,
+    fuelSurcharge: 0,
+    insurancePremium: 0,
+    equipmentUtilization: 0,
+  });
+
+  // Advanced Lane Intelligence
+  const [laneIntelligence, setLaneIntelligence] = useState({
+    capacityAlerts: [],
+    marketTrends: [],
+    carrierPerformance: [],
+    seasonalFactors: [],
+    competitivePricing: [],
+  });
+
   // LTL State
   const [ltlData, setLtlData] = useState({
     weight: '',
@@ -145,6 +165,73 @@ export default function FreightFlowQuotingEngine() {
     origin: '',
     destination: '',
   });
+
+  // Comprehensive Equipment Types for Professional Freight Quoting
+  const EQUIPMENT_TYPES = {
+    // Dry Vans
+    'dry-van-48': "48' Dry Van",
+    'dry-van-53': "53' Dry Van",
+    'dry-van-28': "28' Straight Truck",
+    'dry-van-24': "24' Box Truck",
+    'dry-van-16': "16' Box Truck",
+
+    // Temperature Controlled
+    'reefer-48': "48' Reefer",
+    'reefer-53': "53' Reefer",
+    'reefer-multi-temp': 'Multi-Temperature Reefer',
+    'reefer-cryogenic': 'Cryogenic Reefer',
+
+    // Flatbeds
+    'flatbed-48': "48' Flatbed",
+    'flatbed-53': "53' Flatbed",
+    'flatbed-45': "45' Flatbed",
+    'flatbed-40': "40' Flatbed",
+    'flatbed-35': "35' Flatbed",
+
+    // Specialized Flatbeds
+    'step-deck': 'Step Deck',
+    'double-drop': 'Double Drop',
+    'stretch-deck': 'Stretch Deck',
+    'removable-gooseneck': 'Removable Gooseneck (RGN)',
+    conestoga: 'Conestoga',
+
+    // Heavy Haul
+    'lowboy-40': "40' Lowboy",
+    'lowboy-50': "50' Lowboy",
+    'lowboy-60': "60' Lowboy",
+    'extendable-lowboy': 'Extendable Lowboy',
+
+    // Tankers
+    'chemical-tanker': 'Chemical Tanker',
+    'dry-bulk-tanker': 'Dry Bulk Tanker',
+    'food-grade-tanker': 'Food Grade Tanker',
+    'asphalt-tanker': 'Asphalt Tanker',
+    'fuel-tanker': 'Fuel Tanker',
+
+    // Specialized
+    'hot-shot': 'Hot Shot',
+    'car-hauler': 'Car Hauler',
+    'curtain-side': 'Curtain Side',
+    'dump-truck': 'Dump Truck',
+    'logging-truck': 'Logging Truck',
+    'livestock-trailer': 'Livestock Trailer',
+    'auto-transport': 'Auto Transport',
+    'motorcycle-transport': 'Motorcycle Transport',
+    'boat-transport': 'Boat Transport',
+
+    // Oversize/Special Permits
+    'oversize-flatbed': 'Oversize Flatbed',
+    'wide-load': 'Wide Load Trailer',
+    'heavy-haul-combo': 'Heavy Haul Combo',
+
+    // Services
+    expedited: '🚨 Expedited/Emergency',
+    warehousing: '🏢 Warehousing Services',
+    'cross-dock': '🏢 Cross-Docking',
+    intermodal: '🚢 Intermodal',
+    drayage: '🚢 Drayage',
+    'last-mile': '📦 Last Mile Delivery',
+  };
 
   // Specialized State
   const [specializedData, setSpecializedData] = useState({
@@ -900,8 +987,73 @@ export default function FreightFlowQuotingEngine() {
 
     const miles = parseInt(ftlData.miles);
 
-    // Equipment type multipliers
+    // Comprehensive Equipment Type Multipliers for Professional Pricing
     const equipmentMultipliers: { [key: string]: number } = {
+      // Dry Vans (baseline pricing)
+      "53' Dry Van": 1.0,
+      "48' Dry Van": 0.95,
+      "28' Straight Truck": 0.85,
+      "24' Box Truck": 0.75,
+      "16' Box Truck": 0.65,
+
+      // Temperature Controlled (premium for refrigeration)
+      "53' Reefer": 1.35,
+      "48' Reefer": 1.3,
+      'Multi-Temperature Reefer': 1.45,
+      'Cryogenic Reefer': 1.6,
+
+      // Flatbeds (higher for specialized handling)
+      "53' Flatbed": 1.2,
+      "48' Flatbed": 1.15,
+      "45' Flatbed": 1.1,
+      "40' Flatbed": 1.05,
+      "35' Flatbed": 1.0,
+
+      // Specialized Flatbeds (highest for complex equipment)
+      'Step Deck': 1.45,
+      'Double Drop': 1.5,
+      'Stretch Deck': 1.55,
+      'Removable Gooseneck (RGN)': 1.6,
+      Conestoga: 1.4,
+
+      // Heavy Haul (premium for specialized transport)
+      "60' Lowboy": 2.0,
+      "50' Lowboy": 1.85,
+      "40' Lowboy": 1.7,
+      'Extendable Lowboy': 2.2,
+
+      // Tankers (premium for hazardous/specialized cargo)
+      'Chemical Tanker': 1.8,
+      'Dry Bulk Tanker': 1.6,
+      'Food Grade Tanker': 1.7,
+      'Asphalt Tanker': 1.65,
+      'Fuel Tanker': 1.75,
+
+      // Specialized Equipment (varies by complexity)
+      'Hot Shot': 1.25,
+      'Car Hauler': 1.3,
+      'Curtain Side': 1.1,
+      'Dump Truck': 1.15,
+      'Logging Truck': 1.2,
+      'Livestock Trailer': 1.35,
+      'Auto Transport': 1.25,
+      'Motorcycle Transport': 1.4,
+      'Boat Transport': 1.5,
+
+      // Oversize/Special Permits (highest premiums)
+      'Oversize Flatbed': 2.5,
+      'Wide Load Trailer': 2.75,
+      'Heavy Haul Combo': 3.0,
+
+      // Services (additional service fees)
+      '🚨 Expedited/Emergency': 2.5,
+      '🏢 Warehousing Services': 1.5,
+      '🏢 Cross-Docking': 1.3,
+      '🚢 Intermodal': 1.4,
+      '🚢 Drayage': 1.25,
+      '📦 Last Mile Delivery': 1.2,
+
+      // Legacy support (backward compatibility)
       'Dry Van': 1.0,
       Reefer: 1.25,
       Flatbed: 1.15,
@@ -1227,7 +1379,12 @@ export default function FreightFlowQuotingEngine() {
       }}
     >
       {/* Back Button */}
-      <div style={{ padding: '16px 24px 0' }}>
+      <div
+        style={{
+          padding: '20px 24px 0',
+          marginTop: '20px',
+        }}
+      >
         <Link href='/'>
           <button
             style={{
@@ -1264,7 +1421,7 @@ export default function FreightFlowQuotingEngine() {
         style={{
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: '0 24px 32px',
+          padding: '32px 24px 32px',
         }}
       >
         {/* Header */}
@@ -1991,17 +2148,92 @@ export default function FreightFlowQuotingEngine() {
                       }}
                     >
                       <option value=''>Select Equipment...</option>
-                      <option value='dry-van'>Dry Van</option>
-                      <option value='reefer'>Reefer</option>
-                      <option value='flatbed'>Flatbed</option>
-                      <option value='step-deck'>Step Deck</option>
-                      <option value='expedited'>
-                        🚨 Expedited (Emergency)
-                      </option>
-                      <option value='warehousing'>
-                        🏢 Warehousing Services
-                      </option>
-                      <option value='cross-dock'>🏢 Cross-Docking</option>
+                      <optgroup label='Dry Vans'>
+                        <option value='dry-van-53'>53' Dry Van</option>
+                        <option value='dry-van-48'>48' Dry Van</option>
+                        <option value='dry-van-28'>28' Straight Truck</option>
+                        <option value='dry-van-24'>24' Box Truck</option>
+                        <option value='dry-van-16'>16' Box Truck</option>
+                      </optgroup>
+                      <optgroup label='Temperature Controlled'>
+                        <option value='reefer-53'>53' Reefer</option>
+                        <option value='reefer-48'>48' Reefer</option>
+                        <option value='reefer-multi-temp'>
+                          Multi-Temperature Reefer
+                        </option>
+                        <option value='reefer-cryogenic'>
+                          Cryogenic Reefer
+                        </option>
+                      </optgroup>
+                      <optgroup label='Flatbeds'>
+                        <option value='flatbed-53'>53' Flatbed</option>
+                        <option value='flatbed-48'>48' Flatbed</option>
+                        <option value='flatbed-45'>45' Flatbed</option>
+                        <option value='flatbed-40'>40' Flatbed</option>
+                        <option value='flatbed-35'>35' Flatbed</option>
+                      </optgroup>
+                      <optgroup label='Specialized Flatbeds'>
+                        <option value='step-deck'>Step Deck</option>
+                        <option value='double-drop'>Double Drop</option>
+                        <option value='stretch-deck'>Stretch Deck</option>
+                        <option value='removable-gooseneck'>
+                          Removable Gooseneck (RGN)
+                        </option>
+                        <option value='conestoga'>Conestoga</option>
+                      </optgroup>
+                      <optgroup label='Heavy Haul'>
+                        <option value='lowboy-60'>60' Lowboy</option>
+                        <option value='lowboy-50'>50' Lowboy</option>
+                        <option value='lowboy-40'>40' Lowboy</option>
+                        <option value='extendable-lowboy'>
+                          Extendable Lowboy
+                        </option>
+                      </optgroup>
+                      <optgroup label='Tankers'>
+                        <option value='chemical-tanker'>Chemical Tanker</option>
+                        <option value='dry-bulk-tanker'>Dry Bulk Tanker</option>
+                        <option value='food-grade-tanker'>
+                          Food Grade Tanker
+                        </option>
+                        <option value='asphalt-tanker'>Asphalt Tanker</option>
+                        <option value='fuel-tanker'>Fuel Tanker</option>
+                      </optgroup>
+                      <optgroup label='Specialized Equipment'>
+                        <option value='hot-shot'>Hot Shot</option>
+                        <option value='car-hauler'>Car Hauler</option>
+                        <option value='curtain-side'>Curtain Side</option>
+                        <option value='dump-truck'>Dump Truck</option>
+                        <option value='logging-truck'>Logging Truck</option>
+                        <option value='livestock-trailer'>
+                          Livestock Trailer
+                        </option>
+                        <option value='auto-transport'>Auto Transport</option>
+                        <option value='motorcycle-transport'>
+                          Motorcycle Transport
+                        </option>
+                        <option value='boat-transport'>Boat Transport</option>
+                      </optgroup>
+                      <optgroup label='Oversize/Special Permits'>
+                        <option value='oversize-flatbed'>
+                          Oversize Flatbed
+                        </option>
+                        <option value='wide-load'>Wide Load Trailer</option>
+                        <option value='heavy-haul-combo'>
+                          Heavy Haul Combo
+                        </option>
+                      </optgroup>
+                      <optgroup label='Services'>
+                        <option value='expedited'>
+                          🚨 Expedited/Emergency
+                        </option>
+                        <option value='warehousing'>
+                          🏢 Warehousing Services
+                        </option>
+                        <option value='cross-dock'>🏢 Cross-Docking</option>
+                        <option value='intermodal'>🚢 Intermodal</option>
+                        <option value='drayage'>🚢 Drayage</option>
+                        <option value='last-mile'>📦 Last Mile Delivery</option>
+                      </optgroup>
                     </select>
                   </div>
                 </div>
@@ -3101,14 +3333,44 @@ export default function FreightFlowQuotingEngine() {
                     }}
                   >
                     {[
-                      'Dry Van',
-                      'Reefer',
-                      'Flatbed',
+                      // Dry Vans
+                      "53' Dry Van",
+                      "48' Dry Van",
+                      "28' Straight Truck",
+                      "24' Box Truck",
+                      // Temperature Controlled
+                      "53' Reefer",
+                      "48' Reefer",
+                      'Multi-Temperature Reefer',
+                      // Flatbeds
+                      "53' Flatbed",
+                      "48' Flatbed",
+                      "45' Flatbed",
+                      // Specialized Flatbeds
                       'Step Deck',
-                      'Lowboy',
-                      'Tanker',
-                      'Auto Carrier',
+                      'Double Drop',
+                      'Stretch Deck',
+                      'Removable Gooseneck (RGN)',
                       'Conestoga',
+                      // Heavy Haul
+                      "60' Lowboy",
+                      "50' Lowboy",
+                      "40' Lowboy",
+                      'Extendable Lowboy',
+                      // Tankers
+                      'Chemical Tanker',
+                      'Dry Bulk Tanker',
+                      'Food Grade Tanker',
+                      'Asphalt Tanker',
+                      'Fuel Tanker',
+                      // Specialized
+                      'Hot Shot',
+                      'Car Hauler',
+                      'Curtain Side',
+                      'Auto Transport',
+                      // Oversize
+                      'Oversize Flatbed',
+                      'Wide Load Trailer',
                     ].map((type) => (
                       <option
                         key={type}
@@ -6136,10 +6398,18 @@ export default function FreightFlowQuotingEngine() {
                         }}
                         id='lane-equipment-input'
                       >
-                        <option value='Dry Van'>Dry Van</option>
-                        <option value='Reefer'>Reefer</option>
-                        <option value='Flatbed'>Flatbed</option>
-                        <option value='Step Deck'>Step Deck</option>
+                        <option value='dry-van-53'>53' Dry Van</option>
+                        <option value='dry-van-48'>48' Dry Van</option>
+                        <option value='reefer-53'>53' Reefer</option>
+                        <option value='reefer-48'>48' Reefer</option>
+                        <option value='flatbed-53'>53' Flatbed</option>
+                        <option value='flatbed-48'>48' Flatbed</option>
+                        <option value='step-deck'>Step Deck</option>
+                        <option value='double-drop'>Double Drop</option>
+                        <option value='lowboy-50'>50' Lowboy</option>
+                        <option value='chemical-tanker'>Chemical Tanker</option>
+                        <option value='hot-shot'>Hot Shot</option>
+                        <option value='expedited'>🚨 Expedited</option>
                       </select>
                     </div>
                     <button
@@ -6284,8 +6554,46 @@ export default function FreightFlowQuotingEngine() {
                                   const weightMultiplier =
                                     weight > 40000 ? 1.1 : 1.0;
 
-                                  // Equipment multiplier
+                                  // Comprehensive Equipment Multipliers for Lane Pricing
                                   const equipmentMultipliers = {
+                                    // Dry Vans
+                                    'dry-van-53': 1.0,
+                                    'dry-van-48': 0.95,
+                                    'dry-van-28': 0.85,
+                                    'dry-van-24': 0.75,
+
+                                    // Temperature Controlled
+                                    'reefer-53': 1.35,
+                                    'reefer-48': 1.3,
+                                    'reefer-multi-temp': 1.45,
+
+                                    // Flatbeds
+                                    'flatbed-53': 1.2,
+                                    'flatbed-48': 1.15,
+                                    'flatbed-45': 1.1,
+
+                                    // Specialized Flatbeds
+                                    'step-deck': 1.45,
+                                    'double-drop': 1.5,
+                                    'stretch-deck': 1.55,
+                                    conestoga: 1.4,
+
+                                    // Heavy Haul
+                                    'lowboy-50': 1.85,
+                                    'lowboy-40': 1.7,
+
+                                    // Tankers
+                                    'chemical-tanker': 1.8,
+                                    'dry-bulk-tanker': 1.6,
+                                    'food-grade-tanker': 1.7,
+                                    'fuel-tanker': 1.75,
+
+                                    // Specialized
+                                    'hot-shot': 1.25,
+                                    'car-hauler': 1.3,
+                                    expedited: 2.5,
+
+                                    // Legacy support
                                     'Dry Van': 1.0,
                                     Reefer: 1.25,
                                     Flatbed: 1.15,

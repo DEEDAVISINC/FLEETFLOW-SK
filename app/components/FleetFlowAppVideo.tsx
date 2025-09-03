@@ -22,6 +22,22 @@ export function FleetFlowAppVideo({
   const [quotaExceeded, setQuotaExceeded] = useState(false);
   const [playCount, setPlayCount] = useState(0);
   const MAX_PLAYS_PER_SESSION = 3; // Limit to 3 full playthroughs per session
+  const [isBrowserSpeaking, setIsBrowserSpeaking] = useState(false);
+
+  // Function to check and log available voices
+  const checkAvailableVoices = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const voices = window.speechSynthesis.getVoices();
+      console.info(
+        '🎙️ Available Browser Voices:',
+        voices.map(
+          (v) => `${v.name} (${v.lang}) - ${v.default ? 'DEFAULT' : 'ALT'}`
+        )
+      );
+      return voices.length;
+    }
+    return 0;
+  };
 
   // App Screenshots Data with Narration
   const appScreenshots = [
@@ -264,6 +280,14 @@ export function FleetFlowAppVideo({
   const fallbackToSpeechSynthesis = (text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
+        // Check if speech synthesis is available and has voices
+        if (!window.speechSynthesis) {
+          console.error('🔊 Browser TTS not supported');
+          alert(
+            'Speech synthesis is not supported in this browser. Please try Chrome or Firefox.'
+          );
+          return;
+        }
         // Stop any current speech
         window.speechSynthesis.cancel();
 
@@ -273,8 +297,46 @@ export function FleetFlowAppVideo({
         utterance.volume = 0.9;
         utterance.lang = 'en-US';
 
+        // Add event listeners for debugging
+        utterance.onstart = () => {
+          console.info(
+            '🔊 Browser TTS started:',
+            text.substring(0, 50) + '...'
+          );
+          setIsUsingElevenLabs(false);
+          setIsBrowserSpeaking(true);
+        };
+        utterance.onend = () => {
+          console.info('🔊 Browser TTS ended');
+          setIsBrowserSpeaking(false);
+        };
+        utterance.onerror = (error) => {
+          console.error('🔊 Browser TTS error details:', {
+            error: error,
+            errorType: error?.error,
+            message: error?.message,
+            speechSynthesisSupported: !!window.speechSynthesis,
+            voicesAvailable: window.speechSynthesis.getVoices().length,
+            selectedVoice: selectedVoice,
+            textLength: text.length,
+          });
+          setIsBrowserSpeaking(false);
+
+          // Show user-friendly error message
+          alert(
+            'Browser voice synthesis failed. This may be due to:\n• Browser compatibility\n• Voice permissions\n• No voices installed\n\nTry Chrome or Firefox, or enable voice permissions in browser settings.'
+          );
+        };
+
         // Get available voices and select based on user preference
         const voices = window.speechSynthesis.getVoices();
+
+        // If no voices are loaded yet, wait for them
+        if (voices.length === 0) {
+          console.warn('🔊 No voices loaded yet, using default');
+          // Still try to speak with default voice
+        }
+
         let chosenVoice = null;
 
         if (selectedVoice.includes('female')) {
@@ -315,9 +377,21 @@ export function FleetFlowAppVideo({
           console.info(
             `🔊 Using enhanced browser voice: ${chosenVoice.name} for ${selectedVoice}`
           );
+        } else {
+          console.info(
+            `🔊 Using default browser voice for ${selectedVoice} (no specific voice found)`
+          );
         }
 
-        window.speechSynthesis.speak(utterance);
+        // Try to speak regardless - default voice will be used if no specific voice found
+        try {
+          window.speechSynthesis.speak(utterance);
+        } catch (speakError) {
+          console.error('🔊 Failed to start speech synthesis:', speakError);
+          alert(
+            'Failed to start speech synthesis. Please check your browser settings.'
+          );
+        }
       } catch (error) {
         console.warn('Speech synthesis error:', error);
       }
@@ -506,6 +580,52 @@ export function FleetFlowAppVideo({
               : currentSlide >= appScreenshots.length - 1
                 ? '🔄 Replay'
                 : '▶️ Play'}
+          </button>
+
+          {/* Voice Test Button */}
+          <button
+            onClick={() => {
+              checkAvailableVoices();
+              fallbackToSpeechSynthesis(
+                'This is a test of the browser voice synthesis. Can you hear this? If not, check browser settings and try Chrome or Firefox.'
+              );
+            }}
+            style={{
+              background: 'rgba(255,255,255,0.2)',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '11px',
+              marginRight: '8px',
+            }}
+            title='Test browser TTS'
+          >
+            🗣️ Test Voice
+          </button>
+
+          {/* Voice Info Button */}
+          <button
+            onClick={() => {
+              const voiceCount = checkAvailableVoices();
+              alert(
+                `Browser Voices Available: ${voiceCount}\n\nCheck console for details.\n\nIf no voices or voice fails:\n• Try Chrome/Firefox\n• Enable voice permissions\n• Check audio settings`
+              );
+            }}
+            style={{
+              background: 'rgba(255,255,255,0.2)',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '4px 8px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '11px',
+              marginRight: '8px',
+            }}
+            title='Check voice availability'
+          >
+            🎙️ Info
           </button>
 
           {/* Voice Selector */}
@@ -708,7 +828,7 @@ export function FleetFlowAppVideo({
         </div>
 
         {/* Audio Indicator */}
-        {isPlaying && (
+        {(isPlaying || isBrowserSpeaking) && (
           <div
             style={{
               position: 'absolute',
@@ -716,7 +836,9 @@ export function FleetFlowAppVideo({
               right: '20px',
               background: isUsingElevenLabs
                 ? 'rgba(59,130,246,0.9)'
-                : 'rgba(245,158,11,0.9)',
+                : isBrowserSpeaking
+                  ? 'rgba(34,197,94,0.9)'
+                  : 'rgba(245,158,11,0.9)',
               color: 'white',
               padding: '6px 12px',
               borderRadius: '20px',
@@ -727,7 +849,9 @@ export function FleetFlowAppVideo({
           >
             {isUsingElevenLabs
               ? '🎙️ ElevenLabs AI Voice'
-              : '🔊 Audio Narration'}
+              : isBrowserSpeaking
+                ? '🗣️ Browser TTS Speaking'
+                : '🔊 Audio Narration'}
           </div>
         )}
       </div>

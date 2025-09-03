@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Synthesis Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-section {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .result {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🎙️ Voice Synthesis Test</h1>
+
+    <div class="test-section">
+      <h2>Browser Compatibility Check</h2>
+      <button onclick="checkCompatibility()">Check Browser Support</button>
+      <div id="compatibility-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Available Voices</h2>
+      <button onclick="listVoices()">List Available Voices</button>
+      <div id="voices-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Test Speech Synthesis</h2>
+      <button onclick="testSpeech()">Test Basic Speech</button>
+      <button onclick="testFleetFlowSpeech()">Test FleetFlow Narration</button>
+      <div id="speech-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>Debug Info</h2>
+      <div id="debug-result" class="result"></div>
+    </div>
+
+    <script>
+      function checkCompatibility() {
+        const result = document.getElementById('compatibility-result');
+        const speechSupported = 'speechSynthesis' in window;
+        const speechSynthesisAvailable = window.speechSynthesis !== undefined;
+
+        result.innerHTML = `
+                <strong>Speech Synthesis Support:</strong> ${speechSupported ? '✅ Yes' : '❌ No'}<br>
+                <strong>SpeechSynthesis Object:</strong> ${speechSynthesisAvailable ? '✅ Available' : '❌ Not Available'}<br>
+                <strong>Browser:</strong> ${navigator.userAgent.split(' ').pop()}
+            `;
+
+        if (speechSupported) {
+          result.innerHTML += `<br><strong>Current Speaking:</strong> ${speechSynthesis.speaking}`;
+          result.innerHTML += `<br><strong>Current Pending:</strong> ${speechSynthesis.pending}`;
+        }
+      }
+
+      function listVoices() {
+        const result = document.getElementById('voices-result');
+
+        if (!('speechSynthesis' in window)) {
+          result.innerHTML = '❌ Speech synthesis not supported';
+          return;
+        }
+
+        // Get voices (may be empty initially)
+        let voices = speechSynthesis.getVoices();
+
+        if (voices.length === 0) {
+          // Try again after a delay (voices may load asynchronously)
+          setTimeout(() => {
+            voices = speechSynthesis.getVoices();
+            displayVoices(voices);
+          }, 100);
+        } else {
+          displayVoices(voices);
+        }
+
+        function displayVoices(voices) {
+          if (voices.length === 0) {
+            result.innerHTML =
+              '⚠️ No voices available. This may indicate a browser issue.';
+            return;
+          }
+
+          result.innerHTML = `<strong>Found ${voices.length} voices:</strong><br>`;
+          voices.forEach((voice, index) => {
+            const isDefault = voice.default ? ' (DEFAULT)' : '';
+            result.innerHTML += `${index + 1}. ${voice.name} (${voice.lang})${isDefault}<br>`;
+          });
+        }
+      }
+
+      function testSpeech() {
+        const result = document.getElementById('speech-result');
+
+        if (!('speechSynthesis' in window)) {
+          result.innerHTML = '❌ Speech synthesis not supported';
+          return;
+        }
+
+        try {
+          // Stop any current speech
+          speechSynthesis.cancel();
+
+          const utterance = new SpeechSynthesisUtterance(
+            'Hello! This is a test of browser speech synthesis. Can you hear this clearly?'
+          );
+          utterance.rate = 0.8;
+          utterance.pitch = 1.0;
+          utterance.volume = 1.0;
+
+          utterance.onstart = () => {
+            result.innerHTML = '🔊 Speaking...';
+          };
+
+          utterance.onend = () => {
+            result.innerHTML = '✅ Speech completed successfully!';
+          };
+
+          utterance.onerror = (error) => {
+            result.innerHTML = `❌ Speech error: ${JSON.stringify(error)}`;
+          };
+
+          speechSynthesis.speak(utterance);
+          result.innerHTML = '🎵 Starting speech...';
+        } catch (error) {
+          result.innerHTML = `❌ Failed to start speech: ${error.message}`;
+        }
+      }
+
+      function testFleetFlowSpeech() {
+        const result = document.getElementById('speech-result');
+
+        if (!('speechSynthesis' in window)) {
+          result.innerHTML = '❌ Speech synthesis not supported';
+          return;
+        }
+
+        try {
+          // Stop any current speech
+          speechSynthesis.cancel();
+
+          const utterance = new SpeechSynthesisUtterance(
+            'Welcome to FleetFlow - the complete transportation management platform. Our command center gives you instant visibility across your entire operation.'
+          );
+          utterance.rate = 0.75;
+          utterance.pitch = 0.9;
+          utterance.volume = 0.9;
+          utterance.lang = 'en-US';
+
+          utterance.onstart = () => {
+            result.innerHTML = '🔊 FleetFlow narration speaking...';
+          };
+
+          utterance.onend = () => {
+            result.innerHTML = '✅ FleetFlow narration completed!';
+          };
+
+          utterance.onerror = (error) => {
+            result.innerHTML = `❌ FleetFlow speech error: ${JSON.stringify(error)}`;
+          };
+
+          speechSynthesis.speak(utterance);
+          result.innerHTML = '🚛 Starting FleetFlow narration...';
+        } catch (error) {
+          result.innerHTML = `❌ Failed to start FleetFlow speech: ${error.message}`;
+        }
+      }
+
+      // Auto-check compatibility on load
+      window.addEventListener('load', () => {
+        const debugResult = document.getElementById('debug-result');
+        debugResult.innerHTML = `
+                <strong>Page Load Debug:</strong><br>
+                Window loaded: ✅<br>
+                Speech synthesis check: ${'speechSynthesis' in window ? '✅' : '❌'}<br>
+                User Agent: ${navigator.userAgent}<br>
+                Language: ${navigator.language}
+            `;
+
+        // Listen for voices changed event
+        if ('speechSynthesis' in window) {
+          speechSynthesis.addEventListener('voiceschanged', () => {
+            debugResult.innerHTML += '<br>🎙️ Voices loaded/changed event fired';
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
