@@ -365,17 +365,17 @@ export function FleetFlowAppVideo({
         }
 
         // Check available voices
-        let voices = window.speechSynthesis.getVoices();
-        console.info(`🔊 Available voices: ${voices.length}`);
+        let availableVoices = window.speechSynthesis.getVoices();
+        console.info(`🔊 Available voices: ${availableVoices.length}`);
 
         // If no voices loaded yet, wait for them (especially important on some browsers)
-        if (voices.length === 0) {
+        if (availableVoices.length === 0) {
           console.warn('🔊 No voices loaded, waiting...');
           // Some browsers load voices asynchronously
           await new Promise((resolve) => {
             const checkVoices = () => {
-              voices = window.speechSynthesis.getVoices();
-              if (voices.length > 0) {
+              availableVoices = window.speechSynthesis.getVoices();
+              if (availableVoices.length > 0) {
                 resolve(void 0);
               } else {
                 setTimeout(checkVoices, 100);
@@ -383,12 +383,12 @@ export function FleetFlowAppVideo({
             };
             setTimeout(checkVoices, 100);
           });
-          voices = window.speechSynthesis.getVoices();
-          console.info(`🔊 Voices loaded: ${voices.length}`);
+          availableVoices = window.speechSynthesis.getVoices();
+          console.info(`🔊 Voices loaded: ${availableVoices.length}`);
         }
 
         // Final check - if still no voices, warn user
-        if (voices.length === 0) {
+        if (availableVoices.length === 0) {
           console.error('🔊 No voices available after waiting');
           alert(
             'No voice data available. Your browser may need to download voice packs. Try refreshing the page or check browser settings.'
@@ -502,10 +502,10 @@ export function FleetFlowAppVideo({
         };
 
         // Get available voices and select based on user preference
-        const voices = window.speechSynthesis.getVoices();
+        const voiceList = window.speechSynthesis.getVoices();
 
         // If no voices are loaded yet, wait for them
-        if (voices.length === 0) {
+        if (voiceList.length === 0) {
           console.warn('🔊 No voices loaded yet, using default');
           // Still try to speak with default voice
         }
@@ -514,7 +514,7 @@ export function FleetFlowAppVideo({
 
         if (selectedVoice.includes('female')) {
           // Look for American female voices
-          chosenVoice = voices.find(
+          chosenVoice = voiceList.find(
             (voice) =>
               voice.lang.includes('en-US') &&
               (voice.name.toLowerCase().includes('samantha') ||
@@ -525,7 +525,7 @@ export function FleetFlowAppVideo({
           );
         } else if (selectedVoice.includes('male')) {
           // Look for American male voices
-          chosenVoice = voices.find(
+          chosenVoice = voiceList.find(
             (voice) =>
               voice.lang.includes('en-US') &&
               (voice.name.toLowerCase().includes('alex') ||
@@ -538,11 +538,11 @@ export function FleetFlowAppVideo({
         // Fallback to any good American English voice
         if (!chosenVoice) {
           chosenVoice =
-            voices.find(
+            voiceList.find(
               (voice) =>
                 voice.lang.includes('en-US') &&
                 (voice.name.includes('Alex') || voice.name.includes('Samantha'))
-            ) || voices.find((voice) => voice.lang.startsWith('en-US'));
+            ) || voiceList.find((voice) => voice.lang.startsWith('en-US'));
         }
 
         if (chosenVoice) {
