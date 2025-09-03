@@ -276,6 +276,56 @@ export function FleetFlowAppVideo({
     }
   };
 
+  // TTS Diagnostics function for troubleshooting
+  const diagnoseTTS = () => {
+    console.info('🔊 === TTS DIAGNOSTICS ===');
+
+    const diagnostics = {
+      browserSupport: !!window.speechSynthesis,
+      speaking: window.speechSynthesis?.speaking || false,
+      pending: window.speechSynthesis?.pending || false,
+      paused: window.speechSynthesis?.paused || false,
+      voicesCount: window.speechSynthesis?.getVoices().length || 0,
+      voices: window.speechSynthesis?.getVoices().map(v => ({
+        name: v.name,
+        lang: v.lang,
+        localService: v.localService,
+        default: v.default
+      })) || [],
+      browser: {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        onLine: navigator.onLine,
+      }
+    };
+
+    console.table(diagnostics);
+    console.info('🔊 Voices Details:', diagnostics.voices);
+
+    // Test basic functionality
+    if (window.speechSynthesis) {
+      try {
+        const testUtterance = new SpeechSynthesisUtterance('Test speech synthesis');
+        testUtterance.volume = 0.1; // Quiet test
+        testUtterance.onstart = () => console.info('🔊 Test speech started successfully');
+        testUtterance.onend = () => console.info('🔊 Test speech ended successfully');
+        testUtterance.onerror = (e) => console.error('🔊 Test speech failed:', e);
+
+        window.speechSynthesis.speak(testUtterance);
+      } catch (error) {
+        console.error('🔊 Test speech threw error:', error);
+      }
+    }
+
+    return diagnostics;
+  };
+
+  // Expose diagnostics function globally for console access
+  if (typeof window !== 'undefined') {
+    (window as any).diagnoseTTS = diagnoseTTS;
+  }
+
   // Enhanced browser speech synthesis with voice selection
   const fallbackToSpeechSynthesis = (text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -288,6 +338,56 @@ export function FleetFlowAppVideo({
           );
           return;
         }
+        // Pre-flight checks before attempting TTS
+        console.info('🔊 Starting browser TTS diagnostics...');
+
+        // Check browser support
+        if (!window.speechSynthesis) {
+          console.error('🔊 Speech synthesis not supported');
+          alert('Speech synthesis is not supported in this browser. Try using Chrome, Firefox, or Safari.');
+          return;
+        }
+
+        // Check if browser is already speaking
+        if (window.speechSynthesis.speaking) {
+          console.warn('🔊 Browser is already speaking, canceling...');
+          window.speechSynthesis.cancel();
+          // Wait a moment for cancellation
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+
+        // Check available voices
+        let voices = window.speechSynthesis.getVoices();
+        console.info(`🔊 Available voices: ${voices.length}`);
+
+        // If no voices loaded yet, wait for them (especially important on some browsers)
+        if (voices.length === 0) {
+          console.warn('🔊 No voices loaded, waiting...');
+          // Some browsers load voices asynchronously
+          await new Promise(resolve => {
+            const checkVoices = () => {
+              voices = window.speechSynthesis.getVoices();
+              if (voices.length > 0) {
+                resolve(void 0);
+              } else {
+                setTimeout(checkVoices, 100);
+              }
+            };
+            setTimeout(checkVoices, 100);
+          });
+          voices = window.speechSynthesis.getVoices();
+          console.info(`🔊 Voices loaded: ${voices.length}`);
+        }
+
+        // Final check - if still no voices, warn user
+        if (voices.length === 0) {
+          console.error('🔊 No voices available after waiting');
+          alert('No voice data available. Your browser may need to download voice packs. Try refreshing the page or check browser settings.');
+          return;
+        }
+
+        console.info('🔊 Pre-flight checks passed, proceeding with TTS...');
+
         // Stop any current speech
         window.speechSynthesis.cancel();
 
@@ -311,21 +411,78 @@ export function FleetFlowAppVideo({
           setIsBrowserSpeaking(false);
         };
         utterance.onerror = (error) => {
-          console.error('🔊 Browser TTS error details:', {
+          // Enhanced error diagnostics
+          const errorDetails = {
             error: error,
-            errorType: error?.error,
-            message: error?.message,
+            errorType: error?.error || 'unknown',
+            message: error?.message || 'No message provided',
             speechSynthesisSupported: !!window.speechSynthesis,
             voicesAvailable: window.speechSynthesis.getVoices().length,
             selectedVoice: selectedVoice,
             textLength: text.length,
-          });
+            browserInfo: {
+              userAgent: navigator.userAgent,
+              language: navigator.language,
+              platform: navigator.platform,
+            },
+            speechSynthesisState: {
+              speaking: window.speechSynthesis.speaking,
+              pending: window.speechSynthesis.pending,
+              paused: window.speechSynthesis.paused,
+            },
+          };
+
+          console.error('🔊 Browser TTS error details:', errorDetails);
           setIsBrowserSpeaking(false);
 
-          // Show user-friendly error message
-          alert(
-            'Browser voice synthesis failed. This may be due to:\n• Browser compatibility\n• Voice permissions\n• No voices installed\n\nTry Chrome or Firefox, or enable voice permissions in browser settings.'
-          );
+          // Check for specific error types and provide targeted solutions
+          let errorMessage = 'Browser voice synthesis failed. ';
+          let troubleshootingSteps = '';
+
+          // Check if speech synthesis is supported
+          if (!window.speechSynthesis) {
+            errorMessage += 'Speech synthesis is not supported in this browser.';
+            troubleshootingSteps = 'Try using Chrome, Firefox, or Safari.';
+          }
+          // Check if voices are available
+          else if (window.speechSynthesis.getVoices().length === 0) {
+            errorMessage += 'No voices are available.';
+            troubleshootingSteps = 'Your browser may need to download voice data. Try refreshing the page or enabling voice downloads in browser settings.';
+          }
+          // Check for permission issues
+          else if (error?.error === 'not-allowed') {
+            errorMessage += 'Voice permissions were denied.';
+            troubleshootingSteps = 'Enable microphone and speech synthesis permissions in your browser settings.';
+          }
+          // Check for network issues
+          else if (error?.error === 'network') {
+            errorMessage += 'Network error occurred.';
+            troubleshootingSteps = 'Check your internet connection and try again.';
+          }
+          // Generic fallback
+          else {
+            errorMessage += 'This may be due to browser compatibility or permissions.';
+            troubleshootingSteps = 'Try:\n• Using Chrome or Firefox\n• Enabling voice permissions\n• Refreshing the page\n• Checking if voice downloads are enabled';
+          }
+
+          // Show user-friendly error message with specific guidance
+          alert(`${errorMessage}\n\nTroubleshooting:\n${troubleshootingSteps}`);
+
+          // Log additional diagnostic information
+          console.warn('🔊 TTS Diagnostics:', {
+            voices: window.speechSynthesis.getVoices().map(v => ({
+              name: v.name,
+              lang: v.lang,
+              localService: v.localService,
+              default: v.default
+            })),
+            utterance: {
+              rate: utterance.rate,
+              pitch: utterance.pitch,
+              volume: utterance.volume,
+              lang: utterance.lang,
+            }
+          });
         };
 
         // Get available voices and select based on user preference
@@ -603,6 +760,29 @@ export function FleetFlowAppVideo({
             title='Test browser TTS'
           >
             🗣️ Test Voice
+          </button>
+
+          {/* TTS Diagnostics Button */}
+          <button
+            onClick={() => {
+              const diagnostics = diagnoseTTS();
+              alert(
+                `TTS Diagnostics Complete!\n\nBrowser Support: ${diagnostics.browserSupport ? '✅' : '❌'}\nVoices Available: ${diagnostics.voicesCount}\nSpeaking: ${diagnostics.speaking ? '✅' : '❌'}\n\nCheck browser console for detailed information.\n\nTest speech played at low volume.`
+              );
+            }}
+            style={{
+              background: 'rgba(255,165,0,0.3)',
+              color: 'white',
+              border: '1px solid rgba(255,165,0,0.5)',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '11px',
+              marginRight: '8px',
+            }}
+            title='Run TTS diagnostics'
+          >
+            🔧 Diagnose
           </button>
 
           {/* Voice Info Button */}
