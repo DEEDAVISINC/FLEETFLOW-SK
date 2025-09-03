@@ -218,7 +218,7 @@ export function FleetFlowAppVideo({
       console.info(
         '🛡️ ElevenLabs usage limit reached for this session. Using browser TTS to control costs.'
       );
-      fallbackToSpeechSynthesis(text);
+      await fallbackToSpeechSynthesis(text);
       return;
     }
 
@@ -257,11 +257,11 @@ export function FleetFlowAppVideo({
             setIsUsingElevenLabs(false);
             setCurrentAudio(null);
           };
-          audio.play().catch((error) => {
+          audio.play().catch(async (error) => {
             console.warn('ElevenLabs audio playback failed:', error);
             setIsUsingElevenLabs(false);
             setCurrentAudio(null);
-            fallbackToSpeechSynthesis(text);
+            await fallbackToSpeechSynthesis(text);
           });
           setCurrentAudio(audio);
           return;
@@ -269,10 +269,10 @@ export function FleetFlowAppVideo({
       }
 
       // Fallback to browser speech synthesis
-      fallbackToSpeechSynthesis(text);
+      await fallbackToSpeechSynthesis(text);
     } catch (error) {
       console.warn('ElevenLabs API error:', error);
-      fallbackToSpeechSynthesis(text);
+      await fallbackToSpeechSynthesis(text);
     }
   };
 
@@ -286,18 +286,19 @@ export function FleetFlowAppVideo({
       pending: window.speechSynthesis?.pending || false,
       paused: window.speechSynthesis?.paused || false,
       voicesCount: window.speechSynthesis?.getVoices().length || 0,
-      voices: window.speechSynthesis?.getVoices().map(v => ({
-        name: v.name,
-        lang: v.lang,
-        localService: v.localService,
-        default: v.default
-      })) || [],
+      voices:
+        window.speechSynthesis?.getVoices().map((v) => ({
+          name: v.name,
+          lang: v.lang,
+          localService: v.localService,
+          default: v.default,
+        })) || [],
       browser: {
         userAgent: navigator.userAgent,
         language: navigator.language,
         platform: navigator.platform,
         onLine: navigator.onLine,
-      }
+      },
     };
 
     console.table(diagnostics);
@@ -306,11 +307,16 @@ export function FleetFlowAppVideo({
     // Test basic functionality
     if (window.speechSynthesis) {
       try {
-        const testUtterance = new SpeechSynthesisUtterance('Test speech synthesis');
+        const testUtterance = new SpeechSynthesisUtterance(
+          'Test speech synthesis'
+        );
         testUtterance.volume = 0.1; // Quiet test
-        testUtterance.onstart = () => console.info('🔊 Test speech started successfully');
-        testUtterance.onend = () => console.info('🔊 Test speech ended successfully');
-        testUtterance.onerror = (e) => console.error('🔊 Test speech failed:', e);
+        testUtterance.onstart = () =>
+          console.info('🔊 Test speech started successfully');
+        testUtterance.onend = () =>
+          console.info('🔊 Test speech ended successfully');
+        testUtterance.onerror = (e) =>
+          console.error('🔊 Test speech failed:', e);
 
         window.speechSynthesis.speak(testUtterance);
       } catch (error) {
@@ -327,7 +333,7 @@ export function FleetFlowAppVideo({
   }
 
   // Enhanced browser speech synthesis with voice selection
-  const fallbackToSpeechSynthesis = (text: string) => {
+  const fallbackToSpeechSynthesis = async (text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
         // Check if speech synthesis is available and has voices
@@ -344,7 +350,9 @@ export function FleetFlowAppVideo({
         // Check browser support
         if (!window.speechSynthesis) {
           console.error('🔊 Speech synthesis not supported');
-          alert('Speech synthesis is not supported in this browser. Try using Chrome, Firefox, or Safari.');
+          alert(
+            'Speech synthesis is not supported in this browser. Try using Chrome, Firefox, or Safari.'
+          );
           return;
         }
 
@@ -353,7 +361,7 @@ export function FleetFlowAppVideo({
           console.warn('🔊 Browser is already speaking, canceling...');
           window.speechSynthesis.cancel();
           // Wait a moment for cancellation
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
         }
 
         // Check available voices
@@ -364,7 +372,7 @@ export function FleetFlowAppVideo({
         if (voices.length === 0) {
           console.warn('🔊 No voices loaded, waiting...');
           // Some browsers load voices asynchronously
-          await new Promise(resolve => {
+          await new Promise((resolve) => {
             const checkVoices = () => {
               voices = window.speechSynthesis.getVoices();
               if (voices.length > 0) {
@@ -382,7 +390,9 @@ export function FleetFlowAppVideo({
         // Final check - if still no voices, warn user
         if (voices.length === 0) {
           console.error('🔊 No voices available after waiting');
-          alert('No voice data available. Your browser may need to download voice packs. Try refreshing the page or check browser settings.');
+          alert(
+            'No voice data available. Your browser may need to download voice packs. Try refreshing the page or check browser settings.'
+          );
           return;
         }
 
@@ -441,28 +451,34 @@ export function FleetFlowAppVideo({
 
           // Check if speech synthesis is supported
           if (!window.speechSynthesis) {
-            errorMessage += 'Speech synthesis is not supported in this browser.';
+            errorMessage +=
+              'Speech synthesis is not supported in this browser.';
             troubleshootingSteps = 'Try using Chrome, Firefox, or Safari.';
           }
           // Check if voices are available
           else if (window.speechSynthesis.getVoices().length === 0) {
             errorMessage += 'No voices are available.';
-            troubleshootingSteps = 'Your browser may need to download voice data. Try refreshing the page or enabling voice downloads in browser settings.';
+            troubleshootingSteps =
+              'Your browser may need to download voice data. Try refreshing the page or enabling voice downloads in browser settings.';
           }
           // Check for permission issues
           else if (error?.error === 'not-allowed') {
             errorMessage += 'Voice permissions were denied.';
-            troubleshootingSteps = 'Enable microphone and speech synthesis permissions in your browser settings.';
+            troubleshootingSteps =
+              'Enable microphone and speech synthesis permissions in your browser settings.';
           }
           // Check for network issues
           else if (error?.error === 'network') {
             errorMessage += 'Network error occurred.';
-            troubleshootingSteps = 'Check your internet connection and try again.';
+            troubleshootingSteps =
+              'Check your internet connection and try again.';
           }
           // Generic fallback
           else {
-            errorMessage += 'This may be due to browser compatibility or permissions.';
-            troubleshootingSteps = 'Try:\n• Using Chrome or Firefox\n• Enabling voice permissions\n• Refreshing the page\n• Checking if voice downloads are enabled';
+            errorMessage +=
+              'This may be due to browser compatibility or permissions.';
+            troubleshootingSteps =
+              'Try:\n• Using Chrome or Firefox\n• Enabling voice permissions\n• Refreshing the page\n• Checking if voice downloads are enabled';
           }
 
           // Show user-friendly error message with specific guidance
@@ -470,18 +486,18 @@ export function FleetFlowAppVideo({
 
           // Log additional diagnostic information
           console.warn('🔊 TTS Diagnostics:', {
-            voices: window.speechSynthesis.getVoices().map(v => ({
+            voices: window.speechSynthesis.getVoices().map((v) => ({
               name: v.name,
               lang: v.lang,
               localService: v.localService,
-              default: v.default
+              default: v.default,
             })),
             utterance: {
               rate: utterance.rate,
               pitch: utterance.pitch,
               volume: utterance.volume,
               lang: utterance.lang,
-            }
+            },
           });
         };
 
@@ -741,9 +757,9 @@ export function FleetFlowAppVideo({
 
           {/* Voice Test Button */}
           <button
-            onClick={() => {
+            onClick={async () => {
               checkAvailableVoices();
-              fallbackToSpeechSynthesis(
+              await fallbackToSpeechSynthesis(
                 'This is a test of the browser voice synthesis. Can you hear this? If not, check browser settings and try Chrome or Firefox.'
               );
             }}
