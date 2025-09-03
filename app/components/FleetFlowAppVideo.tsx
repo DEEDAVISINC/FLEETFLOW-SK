@@ -360,9 +360,13 @@ export function FleetFlowAppVideo({
         // Check if browser is already speaking
         if (window.speechSynthesis.speaking) {
           console.warn('🔊 Browser is already speaking, canceling...');
-          window.speechSynthesis.cancel();
-          // Wait a moment for cancellation
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          try {
+            window.speechSynthesis.cancel();
+            // Wait a moment for cancellation
+            await new Promise((resolve) => setTimeout(resolve, 100));
+          } catch (cancelError) {
+            console.warn('🔊 Cancel error during pre-flight check:', cancelError);
+          }
         }
 
         // Check available voices
@@ -400,7 +404,11 @@ export function FleetFlowAppVideo({
         console.info('🔊 Pre-flight checks passed, proceeding with TTS...');
 
         // Stop any current speech
-        window.speechSynthesis.cancel();
+        try {
+          window.speechSynthesis.cancel();
+        } catch (cancelError) {
+          console.warn('🔊 Cancel error before TTS setup:', cancelError);
+        }
 
         const utterance = new SpeechSynthesisUtterance(text);
 
@@ -532,7 +540,11 @@ export function FleetFlowAppVideo({
             // Create a dummy utterance to trigger voice loading
             const dummyUtterance = new SpeechSynthesisUtterance('');
             window.speechSynthesis.speak(dummyUtterance);
-            window.speechSynthesis.cancel(); // Cancel immediately
+            try {
+              window.speechSynthesis.cancel(); // Cancel immediately
+            } catch (cancelError) {
+              console.warn('🔊 Cancel error after dummy utterance:', cancelError);
+            }
 
             // Wait a bit for voices to load
             await new Promise((resolve) => setTimeout(resolve, 500));
@@ -635,21 +647,38 @@ export function FleetFlowAppVideo({
               : 'default',
           });
 
-          // Clear any existing speech before starting
-          if (window.speechSynthesis.speaking) {
-            console.info('🔊 Canceling existing speech...');
-            window.speechSynthesis.cancel();
-            
-            // Wait a moment for cancellation to complete
-            setTimeout(() => {
-              console.info('🔊 Starting speech after cancellation...');
+                    // Clear any existing speech before starting with error handling
+          try {
+            if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+              console.info('🔊 Canceling existing speech...');
+              window.speechSynthesis.cancel();
+ 
+              // Wait a moment for cancellation to complete
+              setTimeout(() => {
+                console.info('🔊 Starting speech after cancellation...');
+                try {
+                  window.speechSynthesis.speak(utterance);
+                } catch (speakAfterCancelError) {
+                  console.error('🔊 Error speaking after cancel:', speakAfterCancelError);
+                  setTtsErrorMessage('⚠️ Speech synthesis error after cancellation. Try refreshing the page.');
+                }
+              }, 150); // Slightly longer wait
+            } else {
+              console.info('🔊 Starting speech immediately...');
               window.speechSynthesis.speak(utterance);
-            }, 100);
-          } else {
-            console.info('🔊 Starting speech immediately...');
-            window.speechSynthesis.speak(utterance);
+            }
+          } catch (cancelError) {
+            console.error('🔊 Error during speech cancellation:', cancelError);
+            // Try to speak anyway without cancellation
+            try {
+              console.info('🔊 Attempting speech without cancellation...');
+              window.speechSynthesis.speak(utterance);
+            } catch (directSpeakError) {
+              console.error('🔊 Direct speak also failed:', directSpeakError);
+              setTtsErrorMessage('❌ Speech synthesis system error. Try refreshing the page or using a different browser.');
+            }
           }
-          
+
           console.info('🔊 Speech synthesis initiated successfully');
         } catch (speakError) {
           console.error('🔊 Failed to start speech synthesis:', speakError);
@@ -723,7 +752,11 @@ export function FleetFlowAppVideo({
         setCurrentAudio(null);
       }
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+        try {
+          window.speechSynthesis.cancel();
+        } catch (cancelError) {
+          console.warn('🔊 Cancel error in cleanup:', cancelError);
+        }
       }
       setIsUsingElevenLabs(false);
 
@@ -770,7 +803,16 @@ export function FleetFlowAppVideo({
       window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
 
       return () => {
+        // Cleanup: remove event listener and safely cancel any ongoing speech
         window.speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+        try {
+          if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+            console.info('🎙️ Cleanup: Canceling speech on component unmount');
+            window.speechSynthesis.cancel();
+          }
+        } catch (cleanupError) {
+          console.warn('🎙️ Cleanup: Error canceling speech (safe to ignore):', cleanupError);
+        }
       };
     }
   }, []);
@@ -782,7 +824,11 @@ export function FleetFlowAppVideo({
         currentAudio.pause();
       }
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+        try {
+          window.speechSynthesis.cancel();
+        } catch (cancelError) {
+          console.warn('🔊 Cancel error in cleanup:', cancelError);
+        }
       }
     };
   }, [currentAudio]);
@@ -798,7 +844,11 @@ export function FleetFlowAppVideo({
         setCurrentAudio(null);
       }
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+        try {
+          window.speechSynthesis.cancel();
+        } catch (cancelError) {
+          console.warn('🔊 Cancel error in cleanup:', cancelError);
+        }
       }
       setIsUsingElevenLabs(false);
       setIsPlaying(false);
@@ -999,15 +1049,27 @@ export function FleetFlowAppVideo({
             onClick={async () => {
               // Clear any existing error message first
               setTtsErrorMessage(null);
-              
+
               // Simple direct test without complex fallback logic
-              if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+              if (
+                typeof window !== 'undefined' &&
+                'speechSynthesis' in window
+              ) {
                 console.info('🔊 Direct TTS test starting...');
-                
-                // Cancel any existing speech
-                window.speechSynthesis.cancel();
-                
-                const testUtterance = new SpeechSynthesisUtterance('Testing browser voice synthesis. Can you hear this?');
+
+                // Cancel any existing speech with error handling
+                try {
+                  if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+                    console.info('🔊 Direct test: Canceling existing speech...');
+                    window.speechSynthesis.cancel();
+                  }
+                } catch (cancelError) {
+                  console.warn('🔊 Direct test: Cancel error (continuing anyway):', cancelError);
+                }
+
+                const testUtterance = new SpeechSynthesisUtterance(
+                  'Testing browser voice synthesis. Can you hear this?'
+                );
                 testUtterance.volume = 0.8;
                 testUtterance.rate = 0.9;
                 testUtterance.pitch = 1.0;
@@ -1015,51 +1077,73 @@ export function FleetFlowAppVideo({
 
                 testUtterance.onstart = () => {
                   console.info('🔊 Direct test speech started');
-                  setTtsErrorMessage('✅ Direct test speech started successfully!');
+                  setTtsErrorMessage(
+                    '✅ Direct test speech started successfully!'
+                  );
                 };
 
                 testUtterance.onend = () => {
                   console.info('🔊 Direct test speech ended');
-                  setTtsErrorMessage('✅ Direct test speech completed successfully!');
+                  setTtsErrorMessage(
+                    '✅ Direct test speech completed successfully!'
+                  );
                 };
 
                 testUtterance.onerror = (error) => {
                   console.error('🔊 Direct test speech error:', error);
-                  setTtsErrorMessage(`❌ Direct test failed: ${error.error || 'Unknown error'}\n\nThis helps identify if the issue is with the complex fallback logic or basic browser TTS.`);
+                  setTtsErrorMessage(
+                    `❌ Direct test failed: ${error.error || 'Unknown error'}\n\nThis helps identify if the issue is with the complex fallback logic or basic browser TTS.`
+                  );
                 };
 
                 // Try to set a voice if available
                 const voices = window.speechSynthesis.getVoices();
                 if (voices.length > 0) {
-                  const englishVoice = voices.find(voice => voice.lang.includes('en')) || voices[0];
+                  const englishVoice =
+                    voices.find((voice) => voice.lang.includes('en')) ||
+                    voices[0];
                   testUtterance.voice = englishVoice;
-                  console.info('🔊 Direct test using voice:', englishVoice.name);
+                  console.info(
+                    '🔊 Direct test using voice:',
+                    englishVoice.name
+                  );
                 }
 
-                console.info('🔊 Direct test - Available voices:', voices.length);
-                
+                console.info(
+                  '🔊 Direct test - Available voices:',
+                  voices.length
+                );
+
                 // Track if speech has started
                 let speechStarted = false;
-                
+
                 // Set a timeout to detect if speech never starts
                 const timeoutId = setTimeout(() => {
                   if (!speechStarted) {
-                    console.warn('🔊 Direct test timeout - speech may not have started');
-                    setTtsErrorMessage('⚠️ Speech test timeout - the browser may be blocking audio or TTS is not working.\n\nTry:\n• Clicking somewhere on the page first (user interaction required)\n• Checking browser audio settings\n• Using Chrome or Firefox');
+                    console.warn(
+                      '🔊 Direct test timeout - speech may not have started'
+                    );
+                    setTtsErrorMessage(
+                      '⚠️ Speech test timeout - the browser may be blocking audio or TTS is not working.\n\nTry:\n• Clicking somewhere on the page first (user interaction required)\n• Checking browser audio settings\n• Using Chrome or Firefox'
+                    );
                   }
                 }, 3000);
-                
+
                 // Update onstart to track speech starting
                 testUtterance.onstart = (event) => {
                   speechStarted = true;
                   clearTimeout(timeoutId);
                   console.info('🔊 Direct test speech started');
-                  setTtsErrorMessage('✅ Direct test speech started successfully!');
+                  setTtsErrorMessage(
+                    '✅ Direct test speech started successfully!'
+                  );
                 };
-                
+
                 window.speechSynthesis.speak(testUtterance);
               } else {
-                setTtsErrorMessage('❌ Speech synthesis not supported in this browser');
+                setTtsErrorMessage(
+                  '❌ Speech synthesis not supported in this browser'
+                );
               }
             }}
             style={{
