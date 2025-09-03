@@ -402,12 +402,19 @@ export function FleetFlowAppVideo({
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.75; // Even slower for more natural delivery
-        utterance.pitch = 0.9; // Slightly lower pitch for professional sound
-        utterance.volume = 0.9;
-        utterance.lang = 'en-US';
 
-        // Add event listeners for debugging
+        // Configure utterance with multiple fallback options
+        try {
+          utterance.rate = 0.75; // Even slower for more natural delivery
+          utterance.pitch = 0.9; // Slightly lower pitch for professional sound
+          utterance.volume = 0.9;
+          utterance.lang = 'en-US';
+        } catch (configError) {
+          console.warn('🔊 Some utterance properties not supported, using defaults');
+          // Continue with defaults if some properties aren't supported
+        }
+
+        // Add event listeners for debugging and user feedback
         utterance.onstart = () => {
           console.info(
             '🔊 Browser TTS started:',
@@ -419,6 +426,12 @@ export function FleetFlowAppVideo({
         utterance.onend = () => {
           console.info('🔊 Browser TTS ended');
           setIsBrowserSpeaking(false);
+        };
+        utterance.onpause = () => {
+          console.info('🔊 Browser TTS paused');
+        };
+        utterance.onresume = () => {
+          console.info('🔊 Browser TTS resumed');
         };
         utterance.onerror = (error) => {
           // Enhanced error diagnostics
@@ -502,12 +515,31 @@ export function FleetFlowAppVideo({
         };
 
         // Get available voices and select based on user preference
-        const voiceList = window.speechSynthesis.getVoices();
+        let voiceList = window.speechSynthesis.getVoices();
 
-        // If no voices are loaded yet, wait for them
+        // If no voices are loaded yet, wait for them with better error handling
         if (voiceList.length === 0) {
-          console.warn('🔊 No voices loaded yet, using default');
-          // Still try to speak with default voice
+          console.warn('🔊 No voices loaded yet, attempting to load...');
+
+          // Try to trigger voice loading on some browsers
+          try {
+            // Create a dummy utterance to trigger voice loading
+            const dummyUtterance = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(dummyUtterance);
+            window.speechSynthesis.cancel(); // Cancel immediately
+
+            // Wait a bit for voices to load
+            await new Promise(resolve => setTimeout(resolve, 500));
+            voiceList = window.speechSynthesis.getVoices();
+
+            if (voiceList.length === 0) {
+              console.error('🔊 Still no voices after loading attempt');
+              throw new Error('No voices available');
+            }
+          } catch (loadError) {
+            console.error('🔊 Voice loading failed:', loadError);
+            // Continue without voice selection - let browser use default
+          }
         }
 
         let chosenVoice = null;
@@ -546,24 +578,39 @@ export function FleetFlowAppVideo({
         }
 
         if (chosenVoice) {
-          utterance.voice = chosenVoice;
-          console.info(
-            `🔊 Using enhanced browser voice: ${chosenVoice.name} for ${selectedVoice}`
-          );
+          try {
+            utterance.voice = chosenVoice;
+            console.info(
+              `🔊 Using enhanced browser voice: ${chosenVoice.name} for ${selectedVoice}`
+            );
+          } catch (voiceError) {
+            console.warn('🔊 Voice assignment failed, using browser default');
+            chosenVoice = null; // Reset to use default
+          }
         } else {
           console.info(
             `🔊 Using default browser voice for ${selectedVoice} (no specific voice found)`
           );
         }
 
-        // Try to speak regardless - default voice will be used if no specific voice found
+        // Try to speak with enhanced error handling
         try {
+          console.info('🔊 Attempting to speak...');
           window.speechSynthesis.speak(utterance);
+          console.info('🔊 Speech synthesis initiated successfully');
         } catch (speakError) {
           console.error('🔊 Failed to start speech synthesis:', speakError);
-          alert(
-            'Failed to start speech synthesis. Please check your browser settings.'
-          );
+
+          // Last resort: try without any voice selection
+          try {
+            console.info('🔊 Attempting fallback without voice selection...');
+            const fallbackUtterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(fallbackUtterance);
+            console.info('🔊 Fallback speech synthesis initiated');
+          } catch (fallbackError) {
+            console.error('🔊 All speech synthesis attempts failed:', fallbackError);
+            throw new Error('All speech synthesis attempts failed');
+          }
         }
       } catch (error) {
         console.warn('Speech synthesis error:', error);
