@@ -23,6 +23,7 @@ export function FleetFlowAppVideo({
   const [playCount, setPlayCount] = useState(0);
   const MAX_PLAYS_PER_SESSION = 3; // Limit to 3 full playthroughs per session
   const [isBrowserSpeaking, setIsBrowserSpeaking] = useState(false);
+  const [ttsErrorMessage, setTtsErrorMessage] = useState<string | null>(null);
 
   // Function to check and log available voices
   const checkAvailableVoices = () => {
@@ -499,7 +500,8 @@ export function FleetFlowAppVideo({
           // Show user-friendly error message with specific guidance
           const enhancedMessage = `${errorMessage}\n\nTroubleshooting:\n${troubleshootingSteps}\n\n💡 Tip: Click the 🔧 Diagnose button for detailed system information.`;
 
-          alert(enhancedMessage);
+          // Display error in UI instead of blocking alert
+          setTtsErrorMessage(enhancedMessage);
 
           // Log additional diagnostic information
           console.warn('🔊 TTS Diagnostics:', {
@@ -617,8 +619,8 @@ export function FleetFlowAppVideo({
               fallbackError
             );
 
-            // Show final fallback message
-            alert(
+            // Show final fallback message in UI
+            setTtsErrorMessage(
               '🎵 Voice narration is currently unavailable due to technical issues.\n\nThis is normal when using browser TTS fallback.\n\n• Try using Chrome or Firefox for better voice support\n• Check browser audio permissions\n• The video will continue to play without narration\n\nFor professional voice narration, ElevenLabs API integration is recommended.'
             );
 
@@ -796,7 +798,14 @@ export function FleetFlowAppVideo({
           ></div>
         </div>
         {/* TTS Status Indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            marginBottom: '10px',
+          }}
+        >
           <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)' }}>
             🎵 TTS Status:
           </div>
@@ -806,7 +815,9 @@ export function FleetFlowAppVideo({
               borderRadius: '12px',
               fontSize: '11px',
               fontWeight: '600',
-              background: isUsingElevenLabs ? 'rgba(59, 130, 246, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+              background: isUsingElevenLabs
+                ? 'rgba(59, 130, 246, 0.3)'
+                : 'rgba(16, 185, 129, 0.3)',
               color: isUsingElevenLabs ? '#3b82f6' : '#10b981',
               border: `1px solid ${isUsingElevenLabs ? 'rgba(59, 130, 246, 0.5)' : 'rgba(16, 185, 129, 0.5)'}`,
             }}
@@ -831,6 +842,47 @@ export function FleetFlowAppVideo({
           )}
         </div>
 
+        {/* TTS Error Message Display */}
+        {ttsErrorMessage && (
+          <div
+            style={{
+              marginTop: '10px',
+              padding: '12px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '8px',
+              color: '#ef4444',
+              fontSize: '12px',
+              lineHeight: '1.4',
+              maxWidth: '400px',
+              whiteSpace: 'pre-line',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+              <span style={{ fontSize: '14px', marginTop: '1px' }}>⚠️</span>
+              <div style={{ flex: 1 }}>
+                {ttsErrorMessage}
+              </div>
+              <button
+                onClick={() => setTtsErrorMessage(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ef4444',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  padding: '0',
+                  marginLeft: '8px',
+                  opacity: 0.7,
+                }}
+                title="Dismiss error message"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <button
             onClick={handlePlayPause}
@@ -854,6 +906,8 @@ export function FleetFlowAppVideo({
           {/* Voice Test Button */}
           <button
             onClick={async () => {
+              // Clear any existing error message first
+              setTtsErrorMessage(null);
               checkAvailableVoices();
               await fallbackToSpeechSynthesis(
                 'This is a test of the browser voice synthesis. Can you hear this? If not, check browser settings and try Chrome or Firefox.'
@@ -900,8 +954,12 @@ export function FleetFlowAppVideo({
           {/* Quick TTS Diagnostic Button */}
           <button
             onClick={() => {
+              // Clear any existing error message first
+              setTtsErrorMessage(null);
+
               const browserSupport = !!window.speechSynthesis;
-              const voiceCount = window.speechSynthesis?.getVoices().length || 0;
+              const voiceCount =
+                window.speechSynthesis?.getVoices().length || 0;
               const isSpeaking = window.speechSynthesis?.speaking || false;
 
               let status = '✅ Working';
@@ -919,7 +977,7 @@ export function FleetFlowAppVideo({
 
               const message = `🎵 TTS Quick Diagnostic\n\nStatus: ${status}\nVoices: ${voiceCount}\nBrowser Support: ${browserSupport ? 'Yes' : 'No'}\nCurrently Speaking: ${isSpeaking ? 'Yes' : 'No'}\n\n${
                 issues.length > 0
-                  ? `Issues Found:\n${issues.map(issue => `• ${issue}`).join('\n')}\n\nTroubleshooting:\n• Try Chrome or Firefox\n• Enable voice permissions\n• Refresh the page\n• Check browser audio settings`
+                  ? `Issues Found:\n${issues.map((issue) => `• ${issue}`).join('\n')}\n\nTroubleshooting:\n• Try Chrome or Firefox\n• Enable voice permissions\n• Refresh the page\n• Check browser audio settings`
                   : 'No issues detected. If TTS fails, check browser console for detailed diagnostics.'
               }`;
 
