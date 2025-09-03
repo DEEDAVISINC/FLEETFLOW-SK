@@ -26,6 +26,8 @@ export default function LaunchPadPage() {
 
   // Add CSS animations
   React.useEffect(() => {
+    console.log('🚀 LaunchPad page loaded - initializing styles and overlay');
+
     const style = document.createElement('style');
     style.textContent = `
       @keyframes rocketLaunch {
@@ -98,6 +100,7 @@ export default function LaunchPadPage() {
         overflow: 'hidden',
       }}
     >
+
       {/* Background Effects */}
       <div
         style={{
@@ -188,27 +191,32 @@ export default function LaunchPadPage() {
       </div>
 
       {/* Coming Soon Overlay */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.85)',
-          backdropFilter: 'blur(8px)',
-          zIndex: 5000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px',
-        }}
-      >
-        <div
-          style={{
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-            borderRadius: '24px',
-            padding: '60px',
+      {(() => {
+        console.log('🎯 Rendering Coming Soon Overlay');
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.85)',
+              backdropFilter: 'blur(8px)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px',
+              minHeight: '100vh',
+              width: '100vw',
+            }}
+          >
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+                borderRadius: '24px',
+                padding: '60px',
             maxWidth: '600px',
             width: '90%',
             textAlign: 'center',
@@ -233,7 +241,8 @@ export default function LaunchPadPage() {
             style={{
               fontSize: 'clamp(2.5rem, 5vw, 4rem)',
               fontWeight: '900',
-              background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)',
+              background:
+                'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               marginBottom: '20px',
@@ -266,7 +275,9 @@ export default function LaunchPadPage() {
               margin: '0 auto 30px',
             }}
           >
-            We're building something amazing! Our comprehensive transportation business launch platform is currently in development while we establish key partnerships and integrate essential APIs.
+            We're building something amazing! Our comprehensive transportation
+            business launch platform is currently in development while we
+            establish key partnerships and integrate essential APIs.
           </p>
 
           {/* Features Preview */}
@@ -423,7 +434,9 @@ export default function LaunchPadPage() {
                 lineHeight: '1.5',
               }}
             >
-              We're actively building partnerships with licensing authorities, insurance providers, and training institutions to deliver the most comprehensive launch platform in the transportation industry.
+              We're actively building partnerships with licensing authorities,
+              insurance providers, and training institutions to deliver the most
+              comprehensive launch platform in the transportation industry.
             </p>
           </div>
 
@@ -453,11 +466,13 @@ export default function LaunchPadPage() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 12px 35px rgba(59, 130, 246, 0.4)';
+                e.currentTarget.style.boxShadow =
+                  '0 12px 35px rgba(59, 130, 246, 0.4)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.3)';
+                e.currentTarget.style.boxShadow =
+                  '0 8px 25px rgba(59, 130, 246, 0.3)';
               }}
             >
               📋 Get Notified When Live
@@ -536,7 +551,8 @@ export default function LaunchPadPage() {
                 style={{
                   width: '65%',
                   height: '100%',
-                  background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
+                  background:
+                    'linear-gradient(90deg, #3b82f6 0%, #10b981 100%)',
                   borderRadius: '4px',
                   transition: 'width 0.3s ease',
                 }}
@@ -552,12 +568,15 @@ export default function LaunchPadPage() {
             >
               API integrations and partnerships in final development stages
             </p>
+            </div>
           </div>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* Main Content (Hidden behind overlay) */}
-      <div style={{ paddingTop: '80px', opacity: '0.1', pointerEvents: 'none' }}>
+      <div
+        style={{ paddingTop: '80px', opacity: '0.1', pointerEvents: 'none' }}
+      >
         {/* Hero Section */}
         <div
           style={{
