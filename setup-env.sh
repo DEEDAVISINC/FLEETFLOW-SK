@@ -51,3 +51,4 @@ echo "2. Test email connection: curl -X POST http://localhost:3001/api/ai-commun
 echo "3. Activate Alexis Best: curl -X POST http://localhost:3001/api/ai-communication/setup -H 'Content-Type: application/json' -d '{\"action\": \"setup_alexis\"}'"
 echo ""
 echo "📋 Optional: Add Twilio and Anthropic API keys to enable full functionality"
+

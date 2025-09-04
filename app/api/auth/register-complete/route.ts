@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { SubscriptionManagementService } from '../../services/SubscriptionManagementService';
+import UserIdentifierService from '../../services/user-identifier-service';
 
 // Complete user registration schema
 const CompleteRegistrationSchema = z.object({
@@ -44,38 +46,8 @@ const CompleteRegistrationSchema = z.object({
   bio: z.string().optional(),
 });
 
-// Generate FleetFlow user ID
-function generateUserId(
-  firstName: string,
-  lastName: string,
-  departmentCode: string
-): string {
-  const firstInitial = firstName.charAt(0).toUpperCase();
-  const lastInitial = lastName.charAt(0).toUpperCase();
-  const today = new Date();
-  const hireDateCode = today.toISOString().split('T')[0].replace(/-/g, '');
-
-  // For demo purposes, use a simple sequence number
-  const sequenceNumber = Math.floor(Math.random() * 999) + 1;
-
-  return `${firstInitial}${lastInitial}-${departmentCode}-${hireDateCode}-${sequenceNumber}`;
-}
-
-// Generate department code from department name
-function getDepartmentCode(department: string): string {
-  const codeMap: Record<string, string> = {
-    Dispatch: 'DC',
-    Brokerage: 'BB',
-    'Driver Management': 'DM',
-    'Executive Management': 'MGR',
-    'Safety & Compliance': 'SC',
-    Operations: 'OPS',
-    'Customer Service': 'CS',
-    'Sales & Marketing': 'SM',
-    Other: 'OTH',
-  };
-  return codeMap[department] || 'USR';
-}
+// Get centralized user identifier service
+const userIdentifierService = UserIdentifierService.getInstance();
 
 // Generate system access based on role
 function generateSystemAccess(position: string, department: string) {
@@ -167,13 +139,20 @@ export async function POST(request: NextRequest) {
     // Hash the password
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    // Generate user profile data
-    const departmentCode = getDepartmentCode(data.department);
-    const userId = generateUserId(
-      data.firstName,
-      data.lastName,
-      departmentCode
+    // Generate user profile data using centralized service
+    const departmentCode = userIdentifierService.getDepartmentCode(
+      data.department
     );
+
+    const userId = userIdentifierService.generateUserId({
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      department: data.department,
+      departmentCode,
+      hiredDate: new Date().toISOString().split('T')[0],
+    });
+
     const systemAccess = generateSystemAccess(data.position, data.department);
 
     // Create complete user profile
@@ -257,6 +236,41 @@ export async function POST(request: NextRequest) {
         },
       ],
     };
+
+    // Create subscription in the SubscriptionManagementService
+    try {
+      const subscription =
+        await SubscriptionManagementService.createSubscription(
+          userProfile.id,
+          userProfile.email,
+          userProfile.name,
+          data.selectedPlan,
+          data.paymentMethodId
+        );
+
+      console.info('✅ Created subscription:', {
+        subscriptionId: subscription.id,
+        userId: userProfile.id,
+        plan: data.selectedPlan,
+        status: subscription.status,
+        trialEnd: subscription.trialEnd?.toISOString(),
+      });
+
+      // Update user profile with subscription details
+      userProfile.subscription = {
+        planId: data.selectedPlan,
+        status: subscription.status,
+        trialStartDate: subscription.currentPeriodStart.toISOString(),
+        trialEndDate: subscription.trialEnd?.toISOString() || null,
+        paymentMethodId: data.paymentMethodId,
+        marketingConsent: data.agreeToMarketing || false,
+        subscriptionId: subscription.id,
+      };
+    } catch (subscriptionError) {
+      console.error('Failed to create subscription:', subscriptionError);
+      // Continue with registration but log the error
+      // In production, this should probably fail the registration
+    }
 
     // In a real application, save to database
     console.info('Creating user profile:', {

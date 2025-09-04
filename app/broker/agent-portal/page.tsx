@@ -129,29 +129,30 @@ export default function AgentPortal() {
         const agentData = await brokerAgentIntegrationService.getCurrentAgent();
         setCurrentAgent(agentData);
 
-        const mockSession: UserSession = {
-          sessionId: 'mock-session-001',
-          userId: agentData?.id || 'agent-001',
-          firstName: agentData?.name.split(' ')[0] || 'Agent',
-          lastName: agentData?.name.split(' ')[1] || 'User',
-          email: agentData?.email || 'agent@fleetflow.com',
+        // Session will be set by authentication system
+        const session: UserSession = {
+          sessionId: '',
+          userId: agentData?.id || '',
+          firstName: agentData?.name.split(' ')[0] || '',
+          lastName: agentData?.name.split(' ')[1] || '',
+          email: agentData?.email || '',
           role: 'BB',
           permissions: {
-            canCreateLoads: true,
-            canModifyRates: true,
+            canCreateLoads: false,
+            canModifyRates: false,
             canAccessFinancials: false,
             canViewAllCompanyLoads: false,
             canManageCarriers: false,
-            canGenerateReports: true,
-            maxContractValue: 50000,
-            requiresApprovalOver: 25000,
-            territories: ['General'],
-            loadTypes: ['Dry Van', 'Refrigerated', 'Flatbed'],
+            canGenerateReports: false,
+            maxContractValue: 0,
+            requiresApprovalOver: 0,
+            territories: [],
+            loadTypes: [],
           },
-          loginTime: new Date().toISOString(),
-          lastActivity: new Date().toISOString(),
+          loginTime: '',
+          lastActivity: '',
         };
-        setSession(mockSession);
+        setSession(session);
 
         const serviceLoads = brokerAgentIntegrationService.getAllAgentLoads();
         const convertedLoads: AgentLoad[] = serviceLoads.map((load) => ({
@@ -169,29 +170,9 @@ export default function AgentPortal() {
         }));
         setAgentLoads(convertedLoads);
 
-        const mockTasks: AgentTask[] = [
-          {
-            id: '1',
-            title: 'Follow up with ABC Trucking',
-            type: 'follow_up',
-            priority: 'high',
-            dueDate: '2025-01-19',
-            loadId: 'LB-001',
-            description: 'Confirm pickup time and driver details',
-            completed: false,
-          },
-          {
-            id: '2',
-            title: 'Rate confirmation for LB-002',
-            type: 'rate_confirmation',
-            priority: 'medium',
-            dueDate: '2025-01-20',
-            loadId: 'LB-002',
-            description: 'Verify final rate with customer',
-            completed: false,
-          },
-        ];
-        setPendingTasks(mockTasks);
+        // Tasks will be loaded from task management service
+        const tasks: AgentTask[] = [];
+        setPendingTasks(tasks);
       } catch (error) {
         console.error('Error loading agent data:', error);
       } finally {
@@ -315,7 +296,7 @@ export default function AgentPortal() {
     const quote = {
       id: `WARE-${Date.now()}`,
       type: 'Warehousing',
-      quoteNumber: `WH-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+      quoteNumber: '',
       storageType: warehousingData.storageType,
       palletCount: palletCount,
       duration: duration,
@@ -368,7 +349,7 @@ export default function AgentPortal() {
     const quote = {
       id: `MULTI-${Date.now()}`,
       type: 'Multi-Service',
-      quoteNumber: `MS-${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+      quoteNumber: '',
       primaryService: multiServiceData.primaryService,
       complexity: multiServiceData.complexity,
       services: multiServiceData.services,
@@ -2580,8 +2561,7 @@ export default function AgentPortal() {
 
                                   const quotePromises = lanes.map(
                                     async (lane) => {
-                                      const distance =
-                                        Math.floor(Math.random() * 1000) + 100;
+                                      const distance = 500;
                                       const quoteRequest = {
                                         id: `quote-${lane.id}`,
                                         type: 'LTL' as
@@ -2929,7 +2909,7 @@ export default function AgentPortal() {
                                     color: '#3b82f6',
                                   }}
                                 >
-                                                                      --
+                                  --
                                 </div>
                               </div>
                               <div
@@ -2956,7 +2936,7 @@ export default function AgentPortal() {
                                     color: '#f59e0b',
                                   }}
                                 >
-                                                                      --
+                                  --
                                 </div>
                               </div>
                               <div
@@ -2983,7 +2963,7 @@ export default function AgentPortal() {
                                     color: '#10b981',
                                   }}
                                 >
-                                                                      --
+                                  --
                                 </div>
                               </div>
                             </div>

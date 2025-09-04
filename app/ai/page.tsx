@@ -536,7 +536,7 @@ export default function AIHubPage() {
                     margin: '0 0 8px 0',
                   }}
                 >
-                  $2.4M
+                  [Real Data Pending]
                 </div>
                 <div
                   style={{
@@ -847,7 +847,7 @@ export default function AIHubPage() {
                       },
                       {
                         label: 'Pipeline Value',
-                        value: '$15-25B',
+                        value: '[Real Pipeline Data]',
                         color: '#f59e0b',
                         icon: '💰',
                         status: 'TARGET',
@@ -1130,7 +1130,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              Microsoft - Satya Nadella
+                              Technology Company
                             </div>
                             <div
                               style={{
@@ -1139,7 +1139,7 @@ export default function AIHubPage() {
                                 marginTop: '4px',
                               }}
                             >
-                              Azure Integration Discussion
+                              Cloud Integration Discussion
                             </div>
                             <div
                               style={{
@@ -1166,7 +1166,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              Salesforce - Marc Benioff
+                              Enterprise Software Company
                             </div>
                             <div
                               style={{
@@ -1175,7 +1175,7 @@ export default function AIHubPage() {
                                 marginTop: '4px',
                               }}
                             >
-                              Transportation Cloud Strategy
+                              Logistics Platform Strategy
                             </div>
                             <div
                               style={{
@@ -1231,7 +1231,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              Oracle - Strategic Buyer Sandbox
+                              Enterprise Client - Strategic Evaluation
                             </div>
                             <div
                               style={{
@@ -1249,7 +1249,7 @@ export default function AIHubPage() {
                                 marginTop: '4px',
                               }}
                             >
-                              $2.6B - Executive Review
+                              [Real Deal Size] - Executive Review
                             </div>
                           </div>
                           <div
@@ -1267,7 +1267,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              SAP - Technical Evaluation
+                              Enterprise Software - Technical Evaluation
                             </div>
                             <div
                               style={{
@@ -1276,7 +1276,7 @@ export default function AIHubPage() {
                                 marginTop: '4px',
                               }}
                             >
-                              Supply Chain AI Integration
+                              Enterprise AI Integration
                             </div>
                             <div
                               style={{
@@ -1285,7 +1285,7 @@ export default function AIHubPage() {
                                 marginTop: '4px',
                               }}
                             >
-                              $1.95B - Technical Deep Dive
+                              [Real Deal Size] - Technical Deep Dive
                             </div>
                           </div>
                         </div>
@@ -1361,7 +1361,7 @@ export default function AIHubPage() {
                       },
                       {
                         label: 'Total Revenue Potential',
-                        value: '$2.8B',
+                        value: '[Real Revenue Data]',
                         color: '#8b5cf6',
                         icon: '💎',
                         status: 'ESTIMATED',
@@ -1686,7 +1686,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              Tesla Inc. - Automotive
+                              Automotive Manufacturer
                             </div>
                             <div
                               style={{
@@ -1695,7 +1695,7 @@ export default function AIHubPage() {
                                 marginTop: '4px',
                               }}
                             >
-                              Electric Vehicle Manufacturing
+                              Automotive Manufacturing
                             </div>
                             <div
                               style={{
@@ -1722,7 +1722,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              P&G - Consumer Goods
+                              Consumer Products Company
                             </div>
                             <div
                               style={{
@@ -1787,7 +1787,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              Beyond Meat - Food Tech
+                              Food Technology Company
                             </div>
                             <div
                               style={{
@@ -1823,7 +1823,7 @@ export default function AIHubPage() {
                                 fontSize: '14px',
                               }}
                             >
-                              Wayfair - E-commerce
+                              E-commerce Client
                             </div>
                             <div
                               style={{
@@ -1920,7 +1920,7 @@ export default function AIHubPage() {
                           },
                           {
                             label: 'Pipeline Value',
-                            value: '$4.2M',
+                            value: '[Real Pipeline Data]',
                             color: '#8b5cf6',
                             icon: '💰',
                             status: 'POTENTIAL',
@@ -2212,7 +2212,7 @@ export default function AIHubPage() {
                                     fontSize: '14px',
                                   }}
                                 >
-                                  ABC Logistics - $250K Deal
+                                  Logistics Provider - [Real Deal Size]
                                 </div>
                                 <div
                                   style={{
@@ -2248,7 +2248,7 @@ export default function AIHubPage() {
                                     fontSize: '14px',
                                   }}
                                 >
-                                  XYZ Manufacturing - $180K Deal
+                                  Manufacturing Client - [Real Deal Size]
                                 </div>
                                 <div
                                   style={{
@@ -2313,7 +2313,7 @@ export default function AIHubPage() {
                                     fontSize: '14px',
                                   }}
                                 >
-                                  Global Freight Co. - $320K Deal
+                                  Freight Carrier - [Real Deal Size]
                                 </div>
                                 <div
                                   style={{
@@ -2349,7 +2349,7 @@ export default function AIHubPage() {
                                     fontSize: '14px',
                                   }}
                                 >
-                                  Regional Dispatch Inc. - $95K Deal
+                                  Dispatch Service - [Real Deal Size]
                                 </div>
                                 <div
                                   style={{

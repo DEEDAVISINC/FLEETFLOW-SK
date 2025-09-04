@@ -72,7 +72,7 @@ function QuotingPortal() {
 
       // Generate quotes for each lane
       const quotePromises = lanes.map(async (lane) => {
-        const distance = Math.floor(Math.random() * 1000) + 100; // Mock distance
+        const distance = 500; // Distance for quote calculation
 
         const quoteRequest = {
           id: `quote-${lane.id}`,
@@ -753,7 +753,7 @@ function QuotingPortal() {
                             color: '#10b981',
                           }}
                         >
-                          ${(Math.random() * 5000 + 1000).toFixed(0)}
+                          --
                         </div>
                         <div
                           style={{
@@ -798,7 +798,7 @@ function QuotingPortal() {
                             color: '#3b82f6',
                           }}
                         >
-                          ${(Math.random() * 3000 + 500).toFixed(0)}
+                          --
                         </div>
                       </div>
                       <div
@@ -825,7 +825,7 @@ function QuotingPortal() {
                             color: '#f59e0b',
                           }}
                         >
-                          ${(Math.random() * 500 + 100).toFixed(0)}
+                          --
                         </div>
                       </div>
                       <div
@@ -852,7 +852,7 @@ function QuotingPortal() {
                             color: '#10b981',
                           }}
                         >
-                          {Math.floor(Math.random() * 40 + 60)}%
+                          --
                         </div>
                       </div>
                     </div>
@@ -3537,7 +3537,7 @@ export default function BrokerDashboard() {
                             color: '#3b82f6',
                           }}
                         >
-                                                      --
+                          --
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
@@ -3602,7 +3602,7 @@ export default function BrokerDashboard() {
                         color: '#f59e0b',
                       }}
                     >
-                                              --
+                      --
                     </div>
                     <div
                       style={{
@@ -3638,7 +3638,7 @@ export default function BrokerDashboard() {
                         color: '#8b5cf6',
                       }}
                     >
-                                              --
+                      --
                     </div>
                     <div
                       style={{
@@ -3704,11 +3704,9 @@ export default function BrokerDashboard() {
                       marginBottom: '4px',
                     }}
                   >
-                                          --
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#10b981' }}>
                     --
                   </div>
+                  <div style={{ fontSize: '12px', color: '#10b981' }}>--</div>
                 </div>
 
                 <div
@@ -3738,9 +3736,7 @@ export default function BrokerDashboard() {
                   >
                     --
                   </div>
-                  <div style={{ fontSize: '12px', color: '#ef4444' }}>
-                    --
-                  </div>
+                  <div style={{ fontSize: '12px', color: '#ef4444' }}>--</div>
                 </div>
 
                 <div
@@ -3770,9 +3766,7 @@ export default function BrokerDashboard() {
                   >
                     --
                   </div>
-                  <div style={{ fontSize: '12px', color: '#3b82f6' }}>
-                    --
-                  </div>
+                  <div style={{ fontSize: '12px', color: '#3b82f6' }}>--</div>
                 </div>
 
                 <div
@@ -3802,9 +3796,7 @@ export default function BrokerDashboard() {
                   >
                     --
                   </div>
-                  <div style={{ fontSize: '12px', color: '#f59e0b' }}>
-                    --
-                  </div>
+                  <div style={{ fontSize: '12px', color: '#f59e0b' }}>--</div>
                 </div>
               </div>
             </div>

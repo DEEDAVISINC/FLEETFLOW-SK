@@ -312,6 +312,16 @@ export default function FleetFlowPlansPage() {
   const [pricingModel, setPricingModel] = useState<
     'individual' | 'organization'
   >('individual');
+  const [subscriptionMessage, setSubscriptionMessage] = useState<string>('');
+
+  // Check for message parameter in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    if (message) {
+      setSubscriptionMessage(message);
+    }
+  }, []);
 
   return (
     <div
@@ -373,6 +383,26 @@ export default function FleetFlowPlansPage() {
             Organization plans save up to 76% for multi-user teams!
           </span>
         </p>
+
+        {/* Subscription Message */}
+        {subscriptionMessage && (
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+              border: '1px solid #f59e0b',
+              borderRadius: '12px',
+              padding: '16px 24px',
+              marginBottom: '20px',
+              textAlign: 'center',
+              color: '#92400e',
+              fontSize: '1rem',
+              fontWeight: '600',
+              boxShadow: '0 4px 15px rgba(245, 158, 11, 0.2)',
+            }}
+          >
+            ⚠️ {subscriptionMessage}
+          </div>
+        )}
 
         {/* Billing Toggle */}
         <div

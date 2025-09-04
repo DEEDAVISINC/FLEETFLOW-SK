@@ -118,3 +118,4 @@ If you encounter any issues:
 4. Test email connection using the API endpoint
 
 **Alexis Best is ready to manage your freight communications!** 🚛📧
+

@@ -190,78 +190,14 @@ export default function DriverUtilizationDashboard() {
         'Turner',
       ];
 
-      // Generate 120 drivers for realistic fleet size
-      const mockDrivers: string[] = [];
-      for (let i = 0; i < 120; i++) {
-        const firstName =
-          firstNames[Math.floor(Math.random() * firstNames.length)];
-        const lastName =
-          lastNames[Math.floor(Math.random() * lastNames.length)];
-        mockDrivers.push(`${firstName} ${lastName}`);
-      }
-
-      return mockDrivers.map((name, index) => {
-        const hoursToday = Math.random() * 12 + 2;
-        const hoursWeek = Math.random() * 60 + 20;
-        const weightUtil = Math.random() * 100;
-        const volumeUtil = Math.random() * 100;
-
-        return {
-          driverId: `driver-${index + 1}`,
-          driverName: name,
-          currentStatus: [
-            'driving',
-            'loading',
-            'unloading',
-            'available',
-            'resting',
-          ][Math.floor(Math.random() * 5)] as any,
-          utilizationScore: Math.round((weightUtil + volumeUtil) / 2),
-          hoursWorkedToday: hoursToday,
-          hoursWorkedThisWeek: hoursWeek,
-          remainingHours: {
-            daily: Math.max(0, 14 - hoursToday),
-            weekly: Math.max(0, 70 - hoursWeek),
-          },
-          truckCapacity: {
-            weight: Math.round(weightUtil),
-            volume: Math.round(volumeUtil),
-            pallets: Math.floor(Math.random() * 26),
-            revenue: Math.round(Math.random() * 5000 + 1000),
-          },
-          currentLoads: Math.floor(Math.random() * 4) + 1,
-          nextDelivery:
-            Math.random() > 0.3
-              ? {
-                  location: [
-                    'Atlanta, GA',
-                    'Dallas, TX',
-                    'Chicago, IL',
-                    'Phoenix, AZ',
-                  ][Math.floor(Math.random() * 4)],
-                  estimatedTime: new Date(
-                    Date.now() + Math.random() * 8 * 60 * 60 * 1000
-                  ).toISOString(),
-                  hoursRemaining: Math.random() * 8,
-                }
-              : undefined,
-          opportunities: {
-            available: Math.floor(Math.random() * 10) + 1,
-            recommended: Math.floor(Math.random() * 3) + 1,
-            potentialRevenue: Math.round(Math.random() * 3000 + 500),
-          },
-          performance: {
-            revenueToday: Math.round(Math.random() * 2000 + 500),
-            revenueThisWeek: Math.round(Math.random() * 8000 + 2000),
-            milesThisWeek: Math.round(Math.random() * 2000 + 500),
-            onTimePercentage: Math.round(Math.random() * 20 + 80),
-          },
-        };
-      });
+      // Driver data will be loaded from fleet management system
+      const drivers: any[] = [];
+      return drivers;
     };
 
     const updateData = () => {
-      const driverData = generateMockData();
+      // Driver data will be loaded from real fleet management service
+      const driverData: any[] = [];
       setAllDrivers(driverData);
 
       // Calculate fleet summary

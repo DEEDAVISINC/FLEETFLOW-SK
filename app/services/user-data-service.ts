@@ -68,6 +68,17 @@ export interface UserProfile {
     };
   };
 
+  // Subscription Information
+  subscription?: {
+    planId: string;
+    status: 'trial' | 'active' | 'cancelled' | 'past_due';
+    trialStartDate: string;
+    trialEndDate: string | null;
+    paymentMethodId: string;
+    marketingConsent: boolean;
+    subscriptionId?: string;
+  };
+
   // Activity Log
   recentActivity?: Array<{
     date: string;

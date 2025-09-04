@@ -440,7 +440,7 @@ export default function AICompanyDashboard() {
       department: 'sales',
       status: 'busy',
       currentTask:
-        'FreightFlow RFx: Negotiating $45K Amazon RFP contract + bidding on 8 government freight opportunities',
+        'FreightFlow RFx: Negotiating $45K manufacturing RFP contract + bidding on 8 government freight opportunities',
       tasksCompleted: 67,
       revenue: 15600,
       efficiency: 97.8,
@@ -453,7 +453,7 @@ export default function AICompanyDashboard() {
       role: 'Enterprise Sales Lead',
       department: 'sales',
       status: 'active',
-      currentTask: 'Developing Fortune 500 client acquisition strategy for Q2',
+      currentTask: 'Developing enterprise client acquisition strategy for Q2',
       tasksCompleted: 45,
       revenue: 12300,
       efficiency: 96.5,
@@ -706,12 +706,12 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'loadbook-004',
-      name: 'Uber Freight Bot',
+      name: 'Digital Load Board AI',
       role: 'Digital Marketplace Specialist',
       department: 'loadbooking',
       status: 'busy',
       currentTask:
-        'Processing Uber Freight opportunities - 3.37/mile average, 89% recommendation score',
+        'Processing digital load board opportunities - 3.37/mile average, 89% recommendation score',
       tasksCompleted: 34,
       revenue: 8900,
       efficiency: 91.3,
@@ -720,12 +720,12 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'loadbook-005',
-      name: 'Convoy Intelligence',
+      name: 'Carrier Network AI',
       role: 'Partnership Load Specialist',
       department: 'loadbooking',
       status: 'active',
       currentTask:
-        'Monitoring Convoy partnership loads - focusing on West Coast routes',
+        'Monitoring carrier partnership loads - focusing on regional routes',
       tasksCompleted: 28,
       revenue: 6700,
       efficiency: 87.9,
@@ -953,7 +953,7 @@ export default function AICompanyDashboard() {
       department: 'customer_service',
       status: 'active',
       currentTask:
-        'Processed 15 billing inquiries today - Resolved $230 invoice discrepancy for Metro Manufacturing',
+        'Processed 15 billing inquiries today - Resolved $230 invoice discrepancy for manufacturing client',
       tasksCompleted: 78,
       revenue: 23400,
       efficiency: 95.8,
@@ -1031,7 +1031,7 @@ export default function AICompanyDashboard() {
   const aiTasks: AITask[] = [
     {
       id: 'task-001',
-      title: 'Process 15 new freight quotes for Fortune 500 clients',
+      title: 'Process 15 new freight quotes for enterprise clients',
       priority: 'critical',
       assignedTo: 'sales-001',
       status: 'in_progress',
@@ -1040,7 +1040,7 @@ export default function AICompanyDashboard() {
     },
     {
       id: 'task-002',
-      title: 'Coordinate multi-state delivery for Walmart contract',
+      title: 'Coordinate multi-state delivery for retail distribution contract',
       priority: 'critical',
       assignedTo: 'logistics-001',
       status: 'in_progress',
@@ -1063,7 +1063,7 @@ export default function AICompanyDashboard() {
       id: 'alert-001',
       type: 'success',
       message:
-        'DEPOINTE AI Freight Broker secured $45K contract with Amazon Logistics - FREIGHT 1ST DIRECT handling dispatch',
+        'DEPOINTE AI Freight Broker secured $45K contract with manufacturing client - FREIGHT 1ST DIRECT handling dispatch',
       timestamp: '2 min ago',
       department: 'sales',
     },
@@ -4201,7 +4201,7 @@ export default function AICompanyDashboard() {
                 </h3>
                 {[
                   {
-                    task: '🎯 DEPOINTE SECURED: $45K Amazon contract → FREIGHT 1ST DIRECT dispatch ($4,500 fee) → Carrier #MC-789456 → FleetFlow BOL/tracking → $5,500 net profit',
+                    task: '🎯 DEPOINTE SECURED: $45K manufacturing contract → FREIGHT 1ST DIRECT dispatch ($4,500 fee) → Carrier #MC-789456 → FleetFlow BOL/tracking → $5,500 net profit',
                     time: '15 min ago',
                     status: 'completed',
                     revenue: 45000,
@@ -4209,7 +4209,7 @@ export default function AICompanyDashboard() {
                       'Contract → Carrier → Documents → Tracking → Notification',
                   },
                   {
-                    task: '📋 FLEETFLOW RFx: Walmart $32K RFQ → AI analyzed proposal → FreightFlow RFx submission → Contract won → FREIGHT 1ST DIRECT dispatch coordination',
+                    task: '📋 FLEETFLOW RFx: Retail distribution $32K RFQ → AI analyzed proposal → FreightFlow RFx submission → Contract won → FREIGHT 1ST DIRECT dispatch coordination',
                     time: '1 hour ago',
                     status: 'completed',
                     revenue: 32000,
@@ -4217,14 +4217,14 @@ export default function AICompanyDashboard() {
                       'Negotiation → Verification → Planning → Assignment → Communication',
                   },
                   {
-                    task: '⚡ FULL AUTOMATION: Tesla $28K shipment → DOT compliance checked → Documents signed → GPS tracking live → Invoice queued',
+                    task: '⚡ FULL AUTOMATION: Electronics manufacturing $28K shipment → DOT compliance checked → Documents signed → GPS tracking live → Invoice queued',
                     time: '2 hours ago',
                     status: 'completed',
                     revenue: 28000,
                     workflow: 'Compliance → Documentation → Tracking → Billing',
                   },
                   {
-                    task: '🔄 END-TO-END: Home Depot $19K delivery → Rate locked → Carrier matched → Load board updated → Customer notified → Revenue booked',
+                    task: '🔄 END-TO-END: Construction materials $19K delivery → Rate locked → Carrier matched → Load board updated → Customer notified → Revenue booked',
                     time: '3 hours ago',
                     status: 'completed',
                     revenue: 19000,
@@ -4754,7 +4754,7 @@ export default function AICompanyDashboard() {
                     {
                       time: '14:23:45',
                       action:
-                        '🎯 Contract secured with FedEx - $67K intermodal shipment',
+                        '🎯 Contract secured with logistics partner - $67K intermodal shipment',
                       status: 'success',
                     },
                     {
@@ -5082,25 +5082,25 @@ export default function AICompanyDashboard() {
                     </div>
                     {[
                       {
-                        client: 'FedEx',
+                        client: 'Express Logistics',
                         amount: 67000,
                         margin: 18,
                         time: '2:23 PM',
                       },
                       {
-                        client: 'UPS',
+                        client: 'Retail Distribution',
                         amount: 52000,
                         margin: 22,
                         time: '1:45 PM',
                       },
                       {
-                        client: 'DHL',
+                        client: 'Global Shipping',
                         amount: 38000,
                         margin: 15,
                         time: '11:30 AM',
                       },
                       {
-                        client: 'Amazon',
+                        client: 'Manufacturing Corp',
                         amount: 45000,
                         margin: 20,
                         time: '9:15 AM',
@@ -5620,9 +5620,9 @@ export default function AICompanyDashboard() {
                 >
                   {selectedStaffMember.department === 'sales'
                     ? [
-                        'FreightFlow RFx: Follow up on Amazon $85K RFP - pending final approval',
+                        'FreightFlow RFx: Follow up on manufacturing $85K RFP - pending final approval',
                         'FreightFlow RFx: Submit bids for 8 government freight opportunities ($250K total potential)',
-                        'FreightFlow RFx: Prepare Walmart distribution RFQ response - multi-state network expansion',
+                        'FreightFlow RFx: Prepare retail distribution RFQ response - multi-state network expansion',
                         'FreightFlow RFx: Analyze pharmaceutical RFP requirements for cold-chain bidding',
                         'Research and contact 15 new shippers identified through RFx market intelligence',
                         'Train AI models on successful RFx bidding strategies and win patterns',
@@ -5668,12 +5668,12 @@ export default function AICompanyDashboard() {
                                 'Build freight brokerage network for shippers, carriers, and load opportunities',
                               ]
                             : [
-                                'Target shippers needing freight services - Fortune 500 logistics managers',
+                                'Target shippers needing freight services - enterprise logistics managers',
                                 'Create carrier success stories and freight opportunity testimonials',
                                 'Develop freight brokerage content calendar for shipper/carrier education',
                                 'A/B test email campaigns for shipper acquisition and carrier recruitment',
                                 'Design freight brokerage ROI infographics for shipper decision makers',
-                                'Optimize Google Ads for ""freight broker services"" and ""load matching""',
+                                'Optimize digital advertising for ""freight broker services"" and ""load matching""',
                                 'Schedule social media posts highlighting successful freight transactions',
                                 'Analyze freight brokerage competitor strategies and market positioning',
                                 'Monitor freight industry trends and load board optimization opportunities',
@@ -5682,14 +5682,14 @@ export default function AICompanyDashboard() {
                         : selectedStaffMember.department === 'legal'
                           ? [
                               'Review carrier agreement templates for compliance updates',
-                              'Draft contract amendments for Fortune 500 partnerships',
+                              'Draft contract amendments for enterprise partnerships',
                               'Analyze new DOT regulations impact on operations',
                             ]
                           : selectedStaffMember.department ===
                               'customer_service'
                             ? [
                                 '🎯 Superior to SalesAI.com - Process 15 new support tickets with AI automation',
-                                'Resolve billing dispute for Metro Manufacturing ($230 discrepancy)',
+                                'Resolve billing dispute for manufacturing client ($230 discrepancy)',
                                 'Update knowledge base articles - improve self-service success rate to 90%+',
                                 'Manage 12 active chatbot interactions with 4.7/5.0 satisfaction target',
                                 'Coordinate emergency response for I-95 breakdown incident',

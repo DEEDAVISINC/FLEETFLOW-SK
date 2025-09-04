@@ -243,9 +243,9 @@ export class TwoFactorAuthService {
       template: {
         subject,
         html: htmlContent,
-        text: `FleetFlow Security Code: ${code}\n\nYour verification code is: ${code}\n\nThis code expires in 10 minutes.\n\n- FleetFlow Security Team`
+        text: `FleetFlow Security Code: ${code}\n\nYour verification code is: ${code}\n\nThis code expires in 10 minutes.\n\n- FleetFlow Security Team`,
       },
-      category: '2fa_verification'
+      category: '2fa_verification',
     });
   }
 

@@ -317,7 +317,6 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
           }}
         >
-
           {/* Method Selection */}
           {availableMethods.length > 1 && (
             <div
@@ -340,8 +339,14 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
                     padding: '12px 16px',
                     borderRadius: '8px',
                     border: 'none',
-                    background: method === methodOption ? 'rgba(59, 130, 246, 0.2)' : 'transparent',
-                    color: method === methodOption ? '#3b82f6' : 'rgba(255, 255, 255, 0.8)',
+                    background:
+                      method === methodOption
+                        ? 'rgba(59, 130, 246, 0.2)'
+                        : 'transparent',
+                    color:
+                      method === methodOption
+                        ? '#3b82f6'
+                        : 'rgba(255, 255, 255, 0.8)',
                     fontSize: '14px',
                     fontWeight: '600',
                     cursor: loading ? 'not-allowed' : 'pointer',
@@ -367,7 +372,9 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
                 fontSize: '14px',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
                 <span style={{ fontSize: '16px' }}>✅</span>
                 <span>{success}</span>
               </div>
@@ -387,7 +394,9 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
                 fontSize: '14px',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
                 <span style={{ fontSize: '16px' }}>⚠️</span>
                 <span>{error}</span>
               </div>
@@ -444,14 +453,22 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
           {/* Timer */}
           <div style={{ marginBottom: '24px', textAlign: 'center' }}>
             {timeLeft > 0 ? (
-              <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+              <p
+                style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}
+              >
                 Code expires in{' '}
                 <span style={{ color: '#f59e0b', fontWeight: '600' }}>
                   {formatTime(timeLeft)}
                 </span>
               </p>
             ) : (
-              <p style={{ color: '#ef4444', fontSize: '14px', fontWeight: '600' }}>
+              <p
+                style={{
+                  color: '#ef4444',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
                 ⏰ Code expired
               </p>
             )}
@@ -463,11 +480,17 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
               onClick={handleResendCode}
               disabled={loading || resendCooldown > 0 || timeLeft === 0}
               style={{
-                color: resendCooldown > 0 || timeLeft === 0 ? 'rgba(255, 255, 255, 0.4)' : '#3b82f6',
+                color:
+                  resendCooldown > 0 || timeLeft === 0
+                    ? 'rgba(255, 255, 255, 0.4)'
+                    : '#3b82f6',
                 textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: '600',
-                cursor: resendCooldown > 0 || timeLeft === 0 || loading ? 'not-allowed' : 'pointer',
+                cursor:
+                  resendCooldown > 0 || timeLeft === 0 || loading
+                    ? 'not-allowed'
+                    : 'pointer',
                 background: 'none',
                 border: 'none',
                 transition: 'color 0.2s ease',
@@ -493,7 +516,13 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
 
           {/* Loading State */}
           {loading && (
-            <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+            <div
+              style={{
+                marginBottom: '20px',
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
               <div
                 style={{
                   width: '24px',
@@ -539,7 +568,8 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
 
         <style jsx>{`
           @keyframes pulse {
-            0%, 100% {
+            0%,
+            100% {
               opacity: 0.8;
             }
             50% {
@@ -547,8 +577,12 @@ export const TwoFactorVerification: React.FC<TwoFactorVerificationProps> = ({
             }
           }
           @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
           }
         `}</style>
       </div>

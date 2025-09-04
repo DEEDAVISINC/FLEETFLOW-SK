@@ -261,14 +261,14 @@ export default function StickyNote({
 
     const interval = setInterval(() => {
       // Simulate receiving new notifications
-      const shouldAddNotification = Math.random() < 0.1; // 10% chance every 30 seconds
+      // Notification generation will be handled by real notification service
+      const shouldAddNotification = false; // Disabled mock notifications
       if (shouldAddNotification && notes.length < 20) {
         const templates =
           notificationTemplates[
             section as keyof typeof notificationTemplates
           ] || notificationTemplates.fleet;
-        const randomTemplate =
-          templates[Math.floor(Math.random() * templates.length)];
+        const randomTemplate = templates[0]; // Use first template instead of random
 
         const systemNotification: StickyNote = {
           id: Date.now().toString(),
@@ -279,7 +279,7 @@ export default function StickyNote({
           createdBy: 'FleetFlow System',
           createdAt: new Date().toISOString(),
           isShared: true,
-          priority: Math.random() > 0.7 ? 'urgent' : 'medium',
+          priority: 'medium',
           isNotification: true,
           isRead: false,
           category: 'notification',

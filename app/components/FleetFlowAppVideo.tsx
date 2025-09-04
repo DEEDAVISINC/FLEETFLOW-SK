@@ -25,20 +25,10 @@ export function FleetFlowAppVideo({
   const [isBrowserSpeaking, setIsBrowserSpeaking] = useState(false);
   const [ttsErrorMessage, setTtsErrorMessage] = useState<string | null>(null);
 
-  // Function to check and log available voices
-  const checkAvailableVoices = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const voices = window.speechSynthesis.getVoices();
-      console.info(
-        '🎙️ Available Browser Voices:',
-        voices.map(
-          (v) => `${v.name} (${v.lang}) - ${v.default ? 'DEFAULT' : 'ALT'}`
-        )
-      );
-      return voices.length;
-    }
-    return 0;
-  };
+  // Clear TTS error message on mount to prevent persistent error display
+  useEffect(() => {
+    setTtsErrorMessage(null);
+  }, []);
 
   // App Screenshots Data with Narration
   const appScreenshots = [
@@ -91,83 +81,55 @@ export function FleetFlowAppVideo({
       description: 'Government contracts and enterprise RFP discovery',
       route: '/freightflow-rfx',
       features: [
-        'SAM.gov Integration',
-        'Enterprise RFPs',
-        'Automated Bidding',
-        'Contract Management',
+        'Contract Discovery',
+        'Bid Management',
+        'Compliance Tracking',
+        'Award Notifications',
       ],
       narration:
-        'Access millions in government contracts and enterprise opportunities through our comprehensive RFx discovery platform.',
+        'FreightFlow RFx helps you discover and win government contracts and enterprise RFPs with automated bid management and compliance tracking.',
       duration: 10000, // Extended for full narration
     },
     {
-      title: 'Live Load Tracking',
-      description: '30-second GPS updates with customer portals',
-      route: '/tracking',
+      title: 'FleetFlow University',
+      description: 'Comprehensive training and certification programs',
+      route: '/university',
       features: [
-        'Real-time GPS',
-        'Customer Portals',
-        'ETA Predictions',
-        'Exception Management',
+        'DOT Compliance Training',
+        'Safety Certifications',
+        'Business Development',
+        'Technology Training',
       ],
       narration:
-        'Provide customers with real-time visibility through our advanced tracking system with 30-second GPS updates.',
-      duration: 9000, // Extended for full narration
+        'FleetFlow University provides comprehensive training programs covering DOT compliance, safety certifications, and business development for transportation professionals.',
+      duration: 11000, // Extended for full narration
     },
     {
-      title: 'Driver Management Portal',
-      description: 'Complete driver onboarding and operations',
-      route: '/drivers',
+      title: 'Advanced Analytics',
+      description: 'Real-time insights and performance metrics',
+      route: '/analytics',
+      features: [
+        'Performance Dashboards',
+        'Predictive Insights',
+        'Cost Analysis',
+        'Route Optimization',
+      ],
+      narration:
+        'Our advanced analytics platform provides real-time insights into your operations with predictive analytics, cost analysis, and route optimization recommendations.',
+      duration: 10000, // Extended for full narration
+    },
+    {
+      title: 'Carrier Management',
+      description: 'Complete carrier onboarding and relationship management',
+      route: '/carriers',
       features: [
         'Digital Onboarding',
         'Document Management',
-        'Performance Analytics',
-        'Mobile App',
-      ],
-      narration:
-        'Streamline driver operations with our comprehensive management portal and mobile app integration.',
-      duration: 9000, // Extended for full narration
-    },
-    {
-      title: 'Carrier Network',
-      description: 'FMCSA-verified carrier partnerships',
-      route: '/carriers',
-      features: [
-        'FMCSA Verification',
-        'Safety Ratings',
-        'Capacity Matching',
         'Performance Tracking',
+        'Payment Processing',
       ],
       narration:
-        'Build a reliable carrier network with real-time FMCSA verification and safety monitoring.',
-      duration: 9000, // Extended for full narration
-    },
-    {
-      title: 'Financial Intelligence',
-      description: 'Complete accounting and billing automation',
-      route: '/billing',
-      features: [
-        'QuickBooks Integration',
-        'Automated Invoicing',
-        'Bill.com Sync',
-        'Revenue Analytics',
-      ],
-      narration:
-        'Automate your entire financial workflow with integrations to QuickBooks, Bill.com, and advanced analytics.',
-      duration: 9000, // Extended for full narration
-    },
-    {
-      title: 'FleetFlow University',
-      description: 'Comprehensive training and certification',
-      route: '/training',
-      features: [
-        'Interactive Courses',
-        'Certifications',
-        'Role-based Training',
-        'Progress Tracking',
-      ],
-      narration:
-        'Develop your team with our comprehensive training platform covering all aspects of transportation management.',
+        'Streamline carrier relationships with digital onboarding, automated document management, performance tracking, and integrated payment processing.',
       duration: 9000, // Extended for full narration
     },
   ];
@@ -179,8 +141,10 @@ export function FleetFlowAppVideo({
     const timer = setTimeout(() => {
       setCurrentSlide((prev) => {
         const nextSlide = prev + 1;
+        console.info(`🎬 Slide transition: ${prev} -> ${nextSlide}`);
         // Stop at the end instead of looping
         if (nextSlide >= appScreenshots.length) {
+          console.info('🎬 Video reached end, stopping playback');
           setIsPlaying(false); // Stop playing when we reach the end
           return prev; // Stay on the last slide
         }
@@ -189,7 +153,7 @@ export function FleetFlowAppVideo({
     }, appScreenshots[currentSlide].duration);
 
     return () => clearTimeout(timer);
-  }, [currentSlide, isPlaying, appScreenshots]);
+  }, [currentSlide, isPlaying]); // Removed appScreenshots from dependencies to prevent unnecessary re-runs
 
   // Initialize audio for narration
   useEffect(() => {
@@ -214,6 +178,10 @@ export function FleetFlowAppVideo({
 
   // ElevenLabs Text-to-Speech narration with cost protection
   const playNarration = async (text: string) => {
+    console.info(
+      `🎙️ playNarration called with text: "${text.substring(0, 50)}..."`
+    );
+
     // Cost protection: After 3 full playthroughs, use browser TTS only
     if (playCount >= MAX_PLAYS_PER_SESSION) {
       console.info(
@@ -277,134 +245,15 @@ export function FleetFlowAppVideo({
     }
   };
 
-  // TTS Diagnostics function for troubleshooting
-  const diagnoseTTS = () => {
-    console.info('🔊 === TTS DIAGNOSTICS ===');
-
-    const diagnostics = {
-      browserSupport: !!window.speechSynthesis,
-      speaking: window.speechSynthesis?.speaking || false,
-      pending: window.speechSynthesis?.pending || false,
-      paused: window.speechSynthesis?.paused || false,
-      voicesCount: window.speechSynthesis?.getVoices().length || 0,
-      voices:
-        window.speechSynthesis?.getVoices().map((v) => ({
-          name: v.name,
-          lang: v.lang,
-          localService: v.localService,
-          default: v.default,
-        })) || [],
-      browser: {
-        userAgent: navigator.userAgent,
-        language: navigator.language,
-        platform: navigator.platform,
-        onLine: navigator.onLine,
-      },
-    };
-
-    console.table(diagnostics);
-    console.info('🔊 Voices Details:', diagnostics.voices);
-
-    // Test basic functionality
-    if (window.speechSynthesis) {
-      try {
-        const testUtterance = new SpeechSynthesisUtterance(
-          'Test speech synthesis'
-        );
-        testUtterance.volume = 0.1; // Quiet test
-        testUtterance.onstart = () =>
-          console.info('🔊 Test speech started successfully');
-        testUtterance.onend = () =>
-          console.info('🔊 Test speech ended successfully');
-        testUtterance.onerror = (e) =>
-          console.error('🔊 Test speech failed:', e);
-
-        window.speechSynthesis.speak(testUtterance);
-      } catch (error) {
-        console.error('🔊 Test speech threw error:', error);
-      }
-    }
-
-    return diagnostics;
-  };
-
-  // Expose diagnostics function globally for console access
-  if (typeof window !== 'undefined') {
-    (window as any).diagnoseTTS = diagnoseTTS;
-  }
-
-  // Enhanced browser speech synthesis with voice selection
+  // Browser speech synthesis fallback
   const fallbackToSpeechSynthesis = async (text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
         // Check if speech synthesis is available and has voices
         if (!window.speechSynthesis) {
-          console.error('🔊 Browser TTS not supported');
-          alert(
-            'Speech synthesis is not supported in this browser. Please try Chrome or Firefox.'
-          );
+          console.warn('🔊 Browser TTS not supported');
           return;
         }
-        // Pre-flight checks before attempting TTS
-        console.info('🔊 Starting browser TTS diagnostics...');
-
-        // Check browser support
-        if (!window.speechSynthesis) {
-          console.error('🔊 Speech synthesis not supported');
-          alert(
-            'Speech synthesis is not supported in this browser. Try using Chrome, Firefox, or Safari.'
-          );
-          return;
-        }
-
-        // Check if browser is already speaking
-        if (window.speechSynthesis.speaking) {
-          console.warn('🔊 Browser is already speaking, canceling...');
-          try {
-            window.speechSynthesis.cancel();
-            // Wait a moment for cancellation
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          } catch (cancelError) {
-            console.warn(
-              '🔊 Cancel error during pre-flight check:',
-              cancelError
-            );
-          }
-        }
-
-        // Check available voices
-        let availableVoices = window.speechSynthesis.getVoices();
-        console.info(`🔊 Available voices: ${availableVoices.length}`);
-
-        // If no voices loaded yet, wait for them (especially important on some browsers)
-        if (availableVoices.length === 0) {
-          console.warn('🔊 No voices loaded, waiting...');
-          // Some browsers load voices asynchronously
-          await new Promise((resolve) => {
-            const checkVoices = () => {
-              availableVoices = window.speechSynthesis.getVoices();
-              if (availableVoices.length > 0) {
-                resolve(void 0);
-              } else {
-                setTimeout(checkVoices, 100);
-              }
-            };
-            setTimeout(checkVoices, 100);
-          });
-          availableVoices = window.speechSynthesis.getVoices();
-          console.info(`🔊 Voices loaded: ${availableVoices.length}`);
-        }
-
-        // Final check - if still no voices, warn user
-        if (availableVoices.length === 0) {
-          console.error('🔊 No voices available after waiting');
-          alert(
-            'No voice data available. Your browser may need to download voice packs. Try refreshing the page or check browser settings.'
-          );
-          return;
-        }
-
-        console.info('🔊 Pre-flight checks passed, proceeding with TTS...');
 
         // Stop any current speech
         try {
@@ -448,306 +297,16 @@ export function FleetFlowAppVideo({
           console.info('🔊 Browser TTS resumed');
         };
         utterance.onerror = (error) => {
-          // Enhanced error diagnostics
-          const errorDetails = {
-            error: error,
-            errorType: error?.error || 'unknown',
-            message: error?.message || 'No message provided',
-            speechSynthesisSupported: !!window.speechSynthesis,
-            voicesAvailable: window.speechSynthesis.getVoices().length,
-            selectedVoice: selectedVoice,
-            textLength: text.length,
-            browserInfo: {
-              userAgent: navigator.userAgent,
-              language: navigator.language,
-              platform: navigator.platform,
-            },
-            speechSynthesisState: {
-              speaking: window.speechSynthesis.speaking,
-              pending: window.speechSynthesis.pending,
-              paused: window.speechSynthesis.paused,
-            },
-          };
-
-          console.error('🔊 Browser TTS error details:', errorDetails);
+          // Use console.warn instead of console.error to prevent Next.js error interception
+          console.warn('🔊 Browser TTS error details:', error);
           setIsBrowserSpeaking(false);
-
-          // Check for specific error types and provide targeted solutions
-          let errorMessage = 'Browser voice synthesis failed. ';
-          let troubleshootingSteps = '';
-
-          // Check if speech synthesis is supported
-          if (!window.speechSynthesis) {
-            errorMessage +=
-              'Speech synthesis is not supported in this browser.';
-            troubleshootingSteps = 'Try using Chrome, Firefox, or Safari.';
-          }
-          // Check if voices are available
-          else if (window.speechSynthesis.getVoices().length === 0) {
-            errorMessage += 'No voices are available.';
-            troubleshootingSteps =
-              'Your browser may need to download voice data. Try refreshing the page or enabling voice downloads in browser settings.';
-          }
-          // Check for permission issues
-          else if (error?.error === 'not-allowed') {
-            errorMessage += 'Voice permissions were denied.';
-            troubleshootingSteps =
-              'Enable microphone and speech synthesis permissions in your browser settings.';
-          }
-          // Check for network issues
-          else if (error?.error === 'network') {
-            errorMessage += 'Network error occurred.';
-            troubleshootingSteps =
-              'Check your internet connection and try again.';
-          }
-          // Generic fallback
-          else {
-            errorMessage +=
-              'This may be due to browser compatibility or permissions.';
-            troubleshootingSteps =
-              'Try:\n• Using Chrome or Firefox\n• Enabling voice permissions\n• Refreshing the page\n• Checking if voice downloads are enabled';
-          }
-
-          // Show user-friendly error message with specific guidance
-          const enhancedMessage = `${errorMessage}\n\nTroubleshooting:\n${troubleshootingSteps}\n\n💡 Tip: Click the 🔧 Diagnose button for detailed system information.`;
-
-          // Display error in UI instead of blocking alert
-          setTtsErrorMessage(enhancedMessage);
-
-          // Log additional diagnostic information
-          console.warn('🔊 TTS Diagnostics:', {
-            voices: window.speechSynthesis.getVoices().map((v) => ({
-              name: v.name,
-              lang: v.lang,
-              localService: v.localService,
-              default: v.default,
-            })),
-            utterance: {
-              rate: utterance.rate,
-              pitch: utterance.pitch,
-              volume: utterance.volume,
-              lang: utterance.lang,
-            },
-          });
         };
 
-        // Get available voices and select based on user preference
-        let voiceList = window.speechSynthesis.getVoices();
-
-        // If no voices are loaded yet, wait for them with better error handling
-        if (voiceList.length === 0) {
-          console.warn('🔊 No voices loaded yet, attempting to load...');
-
-          // Try to trigger voice loading on some browsers
-          try {
-            // Create a dummy utterance to trigger voice loading
-            const dummyUtterance = new SpeechSynthesisUtterance('');
-            window.speechSynthesis.speak(dummyUtterance);
-            try {
-              window.speechSynthesis.cancel(); // Cancel immediately
-            } catch (cancelError) {
-              console.warn(
-                '🔊 Cancel error after dummy utterance:',
-                cancelError
-              );
-            }
-
-            // Wait a bit for voices to load
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            voiceList = window.speechSynthesis.getVoices();
-
-            if (voiceList.length === 0) {
-              console.error('🔊 Still no voices after loading attempt');
-              throw new Error('No voices available');
-            }
-          } catch (loadError) {
-            console.error('🔊 Voice loading failed:', loadError);
-            // Continue without voice selection - let browser use default
-          }
-        }
-
-        let chosenVoice = null;
-
-        if (selectedVoice.includes('female')) {
-          // Look for American female voices
-          chosenVoice = voiceList.find(
-            (voice) =>
-              voice.lang.includes('en-US') &&
-              (voice.name.toLowerCase().includes('samantha') ||
-                voice.name.toLowerCase().includes('allison') ||
-                voice.name.toLowerCase().includes('ava') ||
-                voice.name.toLowerCase().includes('susan') ||
-                voice.name.toLowerCase().includes('female'))
-          );
-        } else if (selectedVoice.includes('male')) {
-          // Look for American male voices
-          chosenVoice = voiceList.find(
-            (voice) =>
-              voice.lang.includes('en-US') &&
-              (voice.name.toLowerCase().includes('alex') ||
-                voice.name.toLowerCase().includes('daniel') ||
-                voice.name.toLowerCase().includes('tom') ||
-                voice.name.toLowerCase().includes('male'))
-          );
-        }
-
-        // Enhanced fallback voice selection - be more flexible
-        if (!chosenVoice) {
-          console.info('🔊 Looking for fallback voice options...');
-
-          // First try to find any English voice
-          const englishVoices = voiceList.filter(
-            (voice) => voice.lang && voice.lang.includes('en')
-          );
-
-          if (englishVoices.length > 0) {
-            chosenVoice = englishVoices[0]; // Take first available English voice
-            console.info(
-              `🔊 Found English voice: ${chosenVoice.name} (${chosenVoice.lang})`
-            );
-          } else {
-            // Last resort: use any available voice
-            if (voiceList.length > 0) {
-              chosenVoice = voiceList[0];
-              console.info(
-                `🔊 Using first available voice: ${chosenVoice.name} (${chosenVoice.lang})`
-              );
-            }
-          }
-        }
-
-        if (chosenVoice) {
-          try {
-            utterance.voice = chosenVoice;
-            console.info(
-              `🔊 Using enhanced browser voice: ${chosenVoice.name} for ${selectedVoice}`
-            );
-          } catch (voiceError) {
-            console.warn('🔊 Voice assignment failed, using browser default');
-            chosenVoice = null; // Reset to use default
-          }
-        } else {
-          console.info(
-            `🔊 Using default browser voice for ${selectedVoice} (no specific voice found)`
-          );
-        }
-
-        // Final safety check before speaking
-        if (!chosenVoice) {
-          console.warn(
-            '🔊 No voice selected, attempting to speak without voice specification'
-          );
-        }
-
-        // Try to speak with enhanced error handling
+        // Try to speak
         try {
-          console.info('🔊 Attempting to speak...');
-          console.info('🔊 Utterance details:', {
-            text: utterance.text.substring(0, 50) + '...',
-            rate: utterance.rate,
-            pitch: utterance.pitch,
-            volume: utterance.volume,
-            lang: utterance.lang,
-            voice: chosenVoice
-              ? `${chosenVoice.name} (${chosenVoice.lang})`
-              : 'default',
-          });
-
-          // Clear any existing speech before starting with error handling
-          try {
-            if (
-              window.speechSynthesis.speaking ||
-              window.speechSynthesis.pending
-            ) {
-              console.info('🔊 Canceling existing speech...');
-              window.speechSynthesis.cancel();
-
-              // Wait a moment for cancellation to complete
-              setTimeout(() => {
-                console.info('🔊 Starting speech after cancellation...');
-                try {
-                  window.speechSynthesis.speak(utterance);
-                } catch (speakAfterCancelError) {
-                  console.error(
-                    '🔊 Error speaking after cancel:',
-                    speakAfterCancelError
-                  );
-                  setTtsErrorMessage(
-                    '⚠️ Speech synthesis error after cancellation. Try refreshing the page.'
-                  );
-                }
-              }, 150); // Slightly longer wait
-            } else {
-              console.info('🔊 Starting speech immediately...');
-              window.speechSynthesis.speak(utterance);
-            }
-          } catch (cancelError) {
-            console.error('🔊 Error during speech cancellation:', cancelError);
-            // Try to speak anyway without cancellation
-            try {
-              console.info('🔊 Attempting speech without cancellation...');
-              window.speechSynthesis.speak(utterance);
-            } catch (directSpeakError) {
-              console.error('🔊 Direct speak also failed:', directSpeakError);
-              setTtsErrorMessage(
-                '❌ Speech synthesis system error. Try refreshing the page or using a different browser.'
-              );
-            }
-          }
-
-          console.info('🔊 Speech synthesis initiated successfully');
+          window.speechSynthesis.speak(utterance);
         } catch (speakError) {
-          console.error('🔊 Failed to start speech synthesis:', speakError);
-          console.error('🔊 Speak error details:', {
-            error: speakError,
-            speechSynthesisState: {
-              speaking: window.speechSynthesis.speaking,
-              pending: window.speechSynthesis.pending,
-              paused: window.speechSynthesis.paused,
-            },
-            utteranceState: {
-              text: utterance.text
-                ? utterance.text.substring(0, 50) + '...'
-                : 'no text',
-              rate: utterance.rate,
-              pitch: utterance.pitch,
-              volume: utterance.volume,
-              lang: utterance.lang,
-              voice: utterance.voice ? utterance.voice.name : 'none',
-            },
-          });
-
-          // Try a very basic test utterance first
-          try {
-            console.info('🔊 Testing with minimal utterance...');
-            const testUtterance = new SpeechSynthesisUtterance('test');
-            testUtterance.volume = 0.1; // Very quiet test
-            window.speechSynthesis.speak(testUtterance);
-
-            // If that works, try the original text without voice specification
-            setTimeout(() => {
-              try {
-                console.info('🔊 Attempting original text without voice...');
-                const simpleUtterance = new SpeechSynthesisUtterance(text);
-                simpleUtterance.rate = 0.8;
-                simpleUtterance.volume = 0.7;
-                window.speechSynthesis.speak(simpleUtterance);
-                console.info('🔊 Simple fallback speech synthesis initiated');
-              } catch (simpleError) {
-                console.error('🔊 Simple fallback also failed:', simpleError);
-                throw simpleError;
-              }
-            }, 100);
-          } catch (testError) {
-            console.error('🔊 Even basic test failed:', testError);
-
-            // Show final fallback message in UI
-            setTtsErrorMessage(
-              '🎵 Voice narration is currently unavailable due to technical issues.\n\nThis is normal when using browser TTS fallback.\n\n• Try using Chrome or Firefox for better voice support\n• Check browser audio permissions\n• The video will continue to play without narration\n\nFor professional voice narration, ElevenLabs API integration is recommended.'
-            );
-
-            throw new Error('All speech synthesis attempts failed');
-          }
+          console.warn('🔊 Failed to start speech synthesis:', speakError);
         }
       } catch (error) {
         console.warn('Speech synthesis error:', error);
@@ -755,34 +314,14 @@ export function FleetFlowAppVideo({
     }
   };
 
-  // Play narration when slide changes
+  // Play narration when slide changes - DISABLED to prevent infinite loop
   useEffect(() => {
-    if (
-      isPlaying &&
-      currentSlide >= 0 &&
-      currentSlide < appScreenshots.length
-    ) {
-      // Stop any current audio before starting new narration
-      if (currentAudio) {
-        currentAudio.pause();
-        setCurrentAudio(null);
-      }
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        try {
-          window.speechSynthesis.cancel();
-        } catch (cancelError) {
-          console.warn('🔊 Cancel error in cleanup:', cancelError);
-        }
-      }
-      setIsUsingElevenLabs(false);
-
-      const timer = setTimeout(() => {
-        playNarration(appScreenshots[currentSlide].narration);
-      }, 100); // Small delay to prevent race conditions
-
-      return () => clearTimeout(timer);
-    }
-  }, [currentSlide, isPlaying, appScreenshots, currentAudio]);
+    // TEMPORARILY DISABLED - TTS causing infinite loops
+    console.info(
+      `🎙️ Narration disabled for slide ${currentSlide} to prevent infinite loops`
+    );
+    return;
+  }, [currentSlide, isPlaying]); // Removed currentAudio and appScreenshots from dependencies
 
   // Load voices on mount and initialize TTS
   useEffect(() => {
@@ -876,11 +415,13 @@ export function FleetFlowAppVideo({
       setIsPlaying(false);
     } else {
       // Play or Replay
-      if (currentSlide >= appScreenshots.length - 1) {
-        // If at the end, restart from beginning and increment play count
+      // Only restart from beginning if we're actually at the last slide and user wants to replay
+      if (currentSlide === appScreenshots.length - 1) {
+        // User is at the end, restart from beginning and increment play count
         setCurrentSlide(0);
         setPlayCount((prev) => prev + 1);
       }
+      // If not at the end, continue from current slide
       setIsPlaying(true);
     }
   };
@@ -923,7 +464,7 @@ export function FleetFlowAppVideo({
           'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)',
       }}
     >
-      {/* Video Controls Header */}
+      {/* Clean Video Header */}
       <div
         style={{
           background: 'rgba(255,255,255,0.1)',
@@ -960,91 +501,6 @@ export function FleetFlowAppVideo({
             }}
           ></div>
         </div>
-        {/* TTS Status Indicator */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            marginBottom: '10px',
-          }}
-        >
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)' }}>
-            🎵 TTS Status:
-          </div>
-          <div
-            style={{
-              padding: '2px 8px',
-              borderRadius: '12px',
-              fontSize: '11px',
-              fontWeight: '600',
-              background: isUsingElevenLabs
-                ? 'rgba(59, 130, 246, 0.3)'
-                : 'rgba(16, 185, 129, 0.3)',
-              color: isUsingElevenLabs ? '#3b82f6' : '#10b981',
-              border: `1px solid ${isUsingElevenLabs ? 'rgba(59, 130, 246, 0.5)' : 'rgba(16, 185, 129, 0.5)'}`,
-            }}
-          >
-            {isUsingElevenLabs ? '🎙️ ElevenLabs' : '🔊 Browser TTS'}
-          </div>
-          {isBrowserSpeaking && (
-            <div
-              style={{
-                padding: '2px 8px',
-                borderRadius: '12px',
-                fontSize: '11px',
-                fontWeight: '600',
-                background: 'rgba(245, 158, 11, 0.3)',
-                color: '#f59e0b',
-                border: '1px solid rgba(245, 158, 11, 0.5)',
-                animation: 'pulse 1s ease-in-out infinite',
-              }}
-            >
-              🔊 Speaking...
-            </div>
-          )}
-        </div>
-
-        {/* TTS Error Message Display */}
-        {ttsErrorMessage && (
-          <div
-            style={{
-              marginTop: '10px',
-              padding: '12px',
-              background: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '8px',
-              color: '#ef4444',
-              fontSize: '12px',
-              lineHeight: '1.4',
-              maxWidth: '400px',
-              whiteSpace: 'pre-line',
-            }}
-          >
-            <div
-              style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}
-            >
-              <span style={{ fontSize: '14px', marginTop: '1px' }}>⚠️</span>
-              <div style={{ flex: 1 }}>{ttsErrorMessage}</div>
-              <button
-                onClick={() => setTtsErrorMessage(null)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#ef4444',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  padding: '0',
-                  marginLeft: '8px',
-                  opacity: 0.7,
-                }}
-                title='Dismiss error message'
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        )}
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <button
@@ -1066,266 +522,19 @@ export function FleetFlowAppVideo({
                 : '▶️ Play'}
           </button>
 
-          {/* Voice Test Button */}
-          <button
-            onClick={async () => {
-              // Clear any existing error message first
-              setTtsErrorMessage(null);
-
-              // Simple direct test without complex fallback logic
-              if (
-                typeof window !== 'undefined' &&
-                'speechSynthesis' in window
-              ) {
-                console.info('🔊 Direct TTS test starting...');
-
-                // Cancel any existing speech with error handling
-                try {
-                  if (
-                    window.speechSynthesis.speaking ||
-                    window.speechSynthesis.pending
-                  ) {
-                    console.info(
-                      '🔊 Direct test: Canceling existing speech...'
-                    );
-                    window.speechSynthesis.cancel();
-                  }
-                } catch (cancelError) {
-                  console.warn(
-                    '🔊 Direct test: Cancel error (continuing anyway):',
-                    cancelError
-                  );
-                }
-
-                const testUtterance = new SpeechSynthesisUtterance(
-                  'Testing browser voice synthesis. Can you hear this?'
-                );
-                testUtterance.volume = 0.8;
-                testUtterance.rate = 0.9;
-                testUtterance.pitch = 1.0;
-                testUtterance.lang = 'en-US';
-
-                testUtterance.onstart = () => {
-                  console.info('🔊 Direct test speech started');
-                  setTtsErrorMessage(
-                    '✅ Direct test speech started successfully!'
-                  );
-                };
-
-                testUtterance.onend = () => {
-                  console.info('🔊 Direct test speech ended');
-                  setTtsErrorMessage(
-                    '✅ Direct test speech completed successfully!'
-                  );
-                };
-
-                testUtterance.onerror = (error) => {
-                  console.error('🔊 Direct test speech error:', error);
-                  setTtsErrorMessage(
-                    `❌ Direct test failed: ${error.error || 'Unknown error'}\n\nThis helps identify if the issue is with the complex fallback logic or basic browser TTS.`
-                  );
-                };
-
-                // Try to set a voice if available
-                const voices = window.speechSynthesis.getVoices();
-                if (voices.length > 0) {
-                  const englishVoice =
-                    voices.find((voice) => voice.lang.includes('en')) ||
-                    voices[0];
-                  testUtterance.voice = englishVoice;
-                  console.info(
-                    '🔊 Direct test using voice:',
-                    englishVoice.name
-                  );
-                }
-
-                console.info(
-                  '🔊 Direct test - Available voices:',
-                  voices.length
-                );
-
-                // Track if speech has started
-                let speechStarted = false;
-
-                // Set a timeout to detect if speech never starts
-                const timeoutId = setTimeout(() => {
-                  if (!speechStarted) {
-                    console.warn(
-                      '🔊 Direct test timeout - speech may not have started'
-                    );
-                    setTtsErrorMessage(
-                      '⚠️ Speech test timeout - the browser may be blocking audio or TTS is not working.\n\nTry:\n• Clicking somewhere on the page first (user interaction required)\n• Checking browser audio settings\n• Using Chrome or Firefox'
-                    );
-                  }
-                }, 3000);
-
-                // Update onstart to track speech starting
-                testUtterance.onstart = (event) => {
-                  speechStarted = true;
-                  clearTimeout(timeoutId);
-                  console.info('🔊 Direct test speech started');
-                  setTtsErrorMessage(
-                    '✅ Direct test speech started successfully!'
-                  );
-                };
-
-                window.speechSynthesis.speak(testUtterance);
-              } else {
-                setTtsErrorMessage(
-                  '❌ Speech synthesis not supported in this browser'
-                );
-              }
-            }}
+          <div
             style={{
-              background: 'rgba(255,255,255,0.2)',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '4px 8px',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '11px',
-              marginRight: '8px',
-            }}
-            title='Test browser TTS'
-          >
-            🗣️ Test Voice
-          </button>
-
-          {/* TTS Diagnostics Button */}
-          <button
-            onClick={() => {
-              const diagnostics = diagnoseTTS();
-              alert(
-                `TTS Diagnostics Complete!\n\nBrowser Support: ${diagnostics.browserSupport ? '✅' : '❌'}\nVoices Available: ${diagnostics.voicesCount}\nSpeaking: ${diagnostics.speaking ? '✅' : '❌'}\n\nCheck browser console for detailed information.\n\nTest speech played at low volume.`
-              );
-            }}
-            style={{
-              background: 'rgba(255,165,0,0.3)',
-              color: 'white',
-              border: '1px solid rgba(255,165,0,0.5)',
-              padding: '6px 12px',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '11px',
-              marginRight: '8px',
-            }}
-            title='Run TTS diagnostics'
-          >
-            🔧 Diagnose
-          </button>
-
-          {/* Quick TTS Diagnostic Button */}
-          <button
-            onClick={() => {
-              // Clear any existing error message first
-              setTtsErrorMessage(null);
-
-              const browserSupport = !!window.speechSynthesis;
-              const voiceCount =
-                window.speechSynthesis?.getVoices().length || 0;
-              const isSpeaking = window.speechSynthesis?.speaking || false;
-
-              let status = '✅ Working';
-              let issues = [];
-
-              if (!browserSupport) {
-                status = '❌ Not Supported';
-                issues.push('Browser does not support speech synthesis');
-              } else if (voiceCount === 0) {
-                status = '⚠️ No Voices';
-                issues.push('No voice data available');
-              } else if (isSpeaking) {
-                status = '🔊 Speaking';
-              }
-
-              const message = `🎵 TTS Quick Diagnostic\n\nStatus: ${status}\nVoices: ${voiceCount}\nBrowser Support: ${browserSupport ? 'Yes' : 'No'}\nCurrently Speaking: ${isSpeaking ? 'Yes' : 'No'}\n\n${
-                issues.length > 0
-                  ? `Issues Found:\n${issues.map((issue) => `• ${issue}`).join('\n')}\n\nTroubleshooting:\n• Try Chrome or Firefox\n• Enable voice permissions\n• Refresh the page\n• Check browser audio settings`
-                  : 'No issues detected. If TTS fails, check browser console for detailed diagnostics.'
-              }`;
-
-              alert(message);
-            }}
-            style={{
-              background: 'rgba(255,255,255,0.2)',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '4px 8px',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '11px',
-              marginRight: '8px',
-            }}
-            title='Check voice availability'
-          >
-            🎙️ Info
-          </button>
-
-          {/* Voice Selector */}
-          <select
-            value={selectedVoice}
-            onChange={(e) => setSelectedVoice(e.target.value)}
-            style={{
-              background: 'rgba(255,255,255,0.2)',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '4px 8px',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '11px',
+              color: 'rgba(255,255,255,0.7)',
+              fontSize: '12px',
             }}
           >
-            <option
-              value='custom-dee-voice'
-              style={{ background: '#1a1a2e', color: 'white' }}
-            >
-              🎙️ Dee's Custom Voice (Premium)
-            </option>
-            <option
-              value='american-female-professional'
-              style={{ background: '#1a1a2e', color: 'white' }}
-            >
-              🎙️ Rachel (Female)
-            </option>
-            <option
-              value='american-male-professional'
-              style={{ background: '#1a1a2e', color: 'white' }}
-            >
-              🎙️ Josh (Male)
-            </option>
-            <option
-              value='american-female-warm'
-              style={{ background: '#1a1a2e', color: 'white' }}
-            >
-              🎙️ Dorothy (Warm Female)
-            </option>
-            <option
-              value='american-male-authoritative'
-              style={{ background: '#1a1a2e', color: 'white' }}
-            >
-              🎙️ Clyde (Authoritative Male)
-            </option>
-            <option
-              value='american-male-narrator'
-              style={{ background: '#1a1a2e', color: 'white' }}
-            >
-              🎙️ Bill (Narrator Male)
-            </option>
-          </select>
-
-          <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '12px' }}>
             🔴 LIVE: FleetFlow Platform Demo ({currentSlide + 1}/
             {appScreenshots.length})
-            {playCount >= MAX_PLAYS_PER_SESSION && (
-              <span style={{ color: '#f59e0b', marginLeft: '8px' }}>
-                🛡️ Cost Protection Active
-              </span>
-            )}
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* Video Content */}
       <div
         style={{
           flex: 1,
@@ -1339,7 +548,6 @@ export function FleetFlowAppVideo({
           height: 'calc(100% - 60px)',
         }}
       >
-        {/* Current Screen Display */}
         <div
           style={{
             background: 'rgba(255,255,255,0.05)',
@@ -1352,7 +560,6 @@ export function FleetFlowAppVideo({
             backdropFilter: 'blur(10px)',
           }}
         >
-          {/* Screen Title */}
           <div
             style={{
               background: 'rgba(59,130,246,0.2)',
@@ -1367,14 +574,12 @@ export function FleetFlowAppVideo({
                 color: '#3b82f6',
                 fontSize: '1.3rem',
                 fontWeight: '600',
-                margin: 0,
+                margin: '0',
               }}
             >
               {currentScreen.title}
             </h3>
           </div>
-
-          {/* Screen Description */}
           <p
             style={{
               color: 'rgba(255,255,255,0.9)',
@@ -1385,8 +590,6 @@ export function FleetFlowAppVideo({
           >
             {currentScreen.description}
           </p>
-
-          {/* Features Grid */}
           <div
             style={{
               display: 'grid',
@@ -1418,8 +621,6 @@ export function FleetFlowAppVideo({
               </div>
             ))}
           </div>
-
-          {/* Route Indicator */}
           <div
             style={{
               background: 'rgba(16,185,129,0.2)',
@@ -1435,14 +636,8 @@ export function FleetFlowAppVideo({
           </div>
         </div>
 
-        {/* Progress Indicators */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            marginTop: '20px',
-          }}
-        >
+        {/* Slide Navigation Dots */}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
           {appScreenshots.map((_, index) => (
             <div
               key={index}
@@ -1459,41 +654,13 @@ export function FleetFlowAppVideo({
             />
           ))}
         </div>
-
-        {/* Audio Indicator */}
-        {(isPlaying || isBrowserSpeaking) && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '20px',
-              right: '20px',
-              background: isUsingElevenLabs
-                ? 'rgba(59,130,246,0.9)'
-                : isBrowserSpeaking
-                  ? 'rgba(34,197,94,0.9)'
-                  : 'rgba(245,158,11,0.9)',
-              color: 'white',
-              padding: '6px 12px',
-              borderRadius: '20px',
-              fontSize: '0.7rem',
-              fontWeight: '600',
-              animation: 'pulse 2s ease-in-out infinite',
-            }}
-          >
-            {isUsingElevenLabs
-              ? '🎙️ ElevenLabs AI Voice'
-              : isBrowserSpeaking
-                ? '🗣️ Browser TTS Speaking'
-                : '🔊 Audio Narration'}
-          </div>
-        )}
       </div>
 
       <style jsx>{`
         @keyframes fadeIn {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(10px);
           }
           to {
             opacity: 1;
@@ -1509,18 +676,6 @@ export function FleetFlowAppVideo({
           to {
             opacity: 1;
             transform: translateX(0);
-          }
-        }
-
-        @keyframes pulse {
-          0%,
-          100% {
-            transform: scale(1);
-            opacity: 0.8;
-          }
-          50% {
-            transform: scale(1.05);
-            opacity: 1;
           }
         }
       `}</style>

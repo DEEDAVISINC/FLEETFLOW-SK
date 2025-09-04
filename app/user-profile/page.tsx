@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ExecutiveComplianceCenter from '../components/ExecutiveComplianceCenter';
@@ -15,7 +16,8 @@ import {
 import UserProfileWorkflowService, {
   UserProfileWorkflowData,
 } from '../services/UserProfileWorkflowService';
-import { UserProfile } from '../services/user-data-service';
+import UserDataService, { UserProfile } from '../services/user-data-service';
+import UserIdentifierService from '../services/user-identifier-service';
 
 // Default empty user profile structure
 const getDefaultUserProfile = () => ({
@@ -256,6 +258,9 @@ export default function UserProfile() {
   const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true);
 
   const [currentUser, setCurrentUser] = useState(getDefaultUserProfile());
+  const { data: session, status } = useSession();
+  const userDataService = UserDataService.getInstance();
+  const userIdentifierService = UserIdentifierService.getInstance();
 
   // Handle client-side mounting
   useEffect(() => {
@@ -263,15 +268,67 @@ export default function UserProfile() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || status === 'loading') return;
 
-    // Load real user data from authentication/storage
-    // For now, use default empty state until proper user system is implemented
+    // Load real user data from NextAuth session and UserDataService
     const loadUserProfile = async () => {
       try {
-        // In a real implementation, this would fetch from API or auth system
-        // For now, keeping empty default state to remove mock data
-        setCurrentUser(getDefaultUserProfile());
+        if (session?.user) {
+          // Try to get user from UserDataService first
+          let userProfile = userDataService.getCurrentUser();
+
+          // If no current user in service, try to find by email or create from session
+          if (!userProfile || userProfile.id === '') {
+            // Use the FleetFlow user ID from NextAuth session or generate from email
+            const userId =
+              (session.user as any).fleetflowUserId ||
+              userIdentifierService.getUserId(session.user.email || '');
+
+            // Try to login with the mapped user ID
+            userProfile = userDataService.loginUser(userId);
+
+            // If still no user profile, create a basic one from session
+            if (!userProfile || userProfile.id === '') {
+              userProfile = {
+                ...getDefaultUserProfile(),
+                id: userId,
+                name: session.user.name || 'User',
+                firstName: session.user.name?.split(' ')[0] || 'User',
+                lastName:
+                  session.user.name?.split(' ').slice(1).join(' ') || '',
+                email: session.user.email || '',
+                department: 'General',
+                departmentCode: 'GEN',
+                position: 'User',
+                role: 'User',
+                hiredDate: new Date().toISOString().split('T')[0],
+                location: 'Remote',
+                status: 'active',
+                lastLogin: new Date().toISOString(),
+                lastActive: new Date().toISOString(),
+                createdDate: new Date().toISOString().split('T')[0],
+              };
+            }
+          }
+
+          if (userProfile) {
+            console.info('🔐 User profile loaded:', {
+              id: userProfile.id,
+              name: userProfile.name,
+              email: userProfile.email,
+              sessionEmail: session.user.email,
+            });
+
+            setCurrentUser(userProfile as any);
+          } else {
+            console.error('❌ Failed to load user profile');
+            setCurrentUser(getDefaultUserProfile());
+          }
+        } else {
+          // No session - user not logged in
+          console.info('🚪 No active session - user not logged in');
+          setCurrentUser(getDefaultUserProfile());
+        }
       } catch (error) {
         console.error('Error loading user profile:', error);
         setCurrentUser(getDefaultUserProfile());
@@ -279,7 +336,7 @@ export default function UserProfile() {
     };
 
     loadUserProfile();
-  }, [mounted]);
+  }, [mounted, session, status, userDataService]);
   const workflowService = UserProfileWorkflowService.getInstance();
   const extensionService = FleetFlowExtensionService.getInstance();
 

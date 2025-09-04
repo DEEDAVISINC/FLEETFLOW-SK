@@ -535,16 +535,14 @@ export default function AIHubCRMDashboard() {
           }}
         >
           <p style={{ marginBottom: '8px' }}>
-            • Focus on closing Urban Retail Solutions ($750K) - 90% win
-            probability
+            • Focus on closing retail client ($750K) - 90% win probability
           </p>
           <p style={{ marginBottom: '8px' }}>
-            • Schedule follow-up with Midwest Manufacturing - proposal expires
+            • Schedule follow-up with manufacturing client - proposal expires
             Dec 31st
           </p>
           <p style={{ marginBottom: '8px' }}>
-            • Prioritize Pacific Coast Imports demo - decision timeline is 30
-            days
+            • Prioritize import company demo - decision timeline is 30 days
           </p>
           <p>
             • Total pipeline value: ${(totalPipeline / 1000000).toFixed(1)}M

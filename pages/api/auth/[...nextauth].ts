@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
+import UserIdentifierService from '../../../app/services/user-identifier-service';
 
 export const authOptions = {
   providers: [
@@ -113,6 +114,19 @@ export const authOptions = {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.role = user.role;
+        // Map email to FleetFlow user ID for UserDataService integration
+        const userIdMap: Record<string, string> = {
+          'admin@fleetflow.com': 'FM-MGR-20230115-1', // Frank Miller
+          'dispatch@fleetflow.com': 'SJ-DC-20240114-1', // Sarah Johnson
+          'driver@fleetflow.com': 'demo_driver_001',
+          'broker@fleetflow.com': 'demo_broker_001',
+          'vendor@abcmanufacturing.com': 'demo_vendor_001',
+          'vendor@retaildist.com': 'demo_vendor_002',
+          'vendor@techsolutions.com': 'demo_vendor_003',
+        };
+        // Use centralized UserIdentifierService for consistent user ID mapping
+        const userIdentifierService = UserIdentifierService.getInstance();
+        token.fleetflowUserId = userIdentifierService.getUserId(user.email);
       }
       return token;
     },
@@ -120,6 +134,7 @@ export const authOptions = {
       if (token) {
         session.user.id = token.sub;
         session.user.role = token.role;
+        session.user.fleetflowUserId = token.fleetflowUserId;
       }
       return session;
     },
