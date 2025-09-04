@@ -2232,24 +2232,31 @@ export default function AgentPortal() {
                       <div
                         style={{
                           display: 'grid',
-                          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(200px, 1fr))',
                           gap: '16px',
                           fontSize: '14px',
                           color: 'rgba(255, 255, 255, 0.8)',
                         }}
                       >
                         <div>
-                          <strong style={{ color: 'white' }}>1. Add Lanes</strong>
+                          <strong style={{ color: 'white' }}>
+                            1. Add Lanes
+                          </strong>
                           <br />
                           Enter origin-destination pairs for each shipping lane
                         </div>
                         <div>
-                          <strong style={{ color: 'white' }}>2. Review & Edit</strong>
+                          <strong style={{ color: 'white' }}>
+                            2. Review & Edit
+                          </strong>
                           <br />
                           Modify weights, equipment, and priorities as needed
                         </div>
                         <div>
-                          <strong style={{ color: 'white' }}>3. Get Quotes</strong>
+                          <strong style={{ color: 'white' }}>
+                            3. Get Quotes
+                          </strong>
                           <br />
                           Generate bulk pricing with spreadsheet-style results
                         </div>
@@ -2264,9 +2271,9 @@ export default function AgentPortal() {
                         marginBottom: '0',
                       }}
                     >
-                      Perfect for shippers with multiple locations needing quotes for
-                      various lanes. Get comprehensive pricing across all your shipping
-                      routes.
+                      Perfect for shippers with multiple locations needing
+                      quotes for various lanes. Get comprehensive pricing across
+                      all your shipping routes.
                     </p>
                   </div>
 
@@ -2343,9 +2350,10 @@ export default function AgentPortal() {
                               lineHeight: '1.5',
                             }}
                           >
-                            <strong style={{ color: 'white' }}>💡 Tip:</strong> Add
-                            one lane at a time, then review your list before
-                            generating quotes. You can edit or remove lanes as needed.
+                            <strong style={{ color: 'white' }}>💡 Tip:</strong>{' '}
+                            Add one lane at a time, then review your list before
+                            generating quotes. You can edit or remove lanes as
+                            needed.
                           </div>
                         </div>
 
@@ -2471,12 +2479,23 @@ export default function AgentPortal() {
                           </div>
                           <button
                             onClick={() => {
-                              const originInput = document.getElementById('lane-origin-input') as HTMLInputElement;
-                              const destinationInput = document.getElementById('lane-destination-input') as HTMLInputElement;
-                              const weightInput = document.getElementById('lane-weight-input') as HTMLInputElement;
-                              const equipmentSelect = document.getElementById('lane-equipment-select') as HTMLSelectElement;
+                              const originInput = document.getElementById(
+                                'lane-origin-input'
+                              ) as HTMLInputElement;
+                              const destinationInput = document.getElementById(
+                                'lane-destination-input'
+                              ) as HTMLInputElement;
+                              const weightInput = document.getElementById(
+                                'lane-weight-input'
+                              ) as HTMLInputElement;
+                              const equipmentSelect = document.getElementById(
+                                'lane-equipment-select'
+                              ) as HTMLSelectElement;
 
-                              if (!originInput?.value || !destinationInput?.value) {
+                              if (
+                                !originInput?.value ||
+                                !destinationInput?.value
+                              ) {
                                 alert('Please enter origin and destination');
                                 return;
                               }
@@ -2490,7 +2509,7 @@ export default function AgentPortal() {
                                 priority: lanes.length + 1,
                               };
 
-                              setLanes(prev => [...prev, newLane]);
+                              setLanes((prev) => [...prev, newLane]);
 
                               // Clear inputs
                               originInput.value = '';
@@ -2499,7 +2518,8 @@ export default function AgentPortal() {
                             }}
                             style={{
                               padding: '12px 16px',
-                              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              background:
+                                'linear-gradient(135deg, #3b82f6, #1d4ed8)',
                               color: 'white',
                               border: 'none',
                               borderRadius: '8px',
@@ -2552,43 +2572,76 @@ export default function AgentPortal() {
                                 setShowLaneResults(true);
 
                                 try {
-                                  const { FreightQuotingEngine } = await import('../../../services/FreightQuotingEngine');
-                                  const quotingEngine = new FreightQuotingEngine();
+                                  const { FreightQuotingEngine } = await import(
+                                    '../../../services/FreightQuotingEngine'
+                                  );
+                                  const quotingEngine =
+                                    new FreightQuotingEngine();
 
-                                  const quotePromises = lanes.map(async (lane) => {
-                                    const distance = Math.floor(Math.random() * 1000) + 100;
-                                    const quoteRequest = {
-                                      id: `quote-${lane.id}`,
-                                      type: 'LTL' as 'LTL' | 'FTL' | 'Specialized',
-                                      origin: lane.origin,
-                                      destination: lane.destination,
-                                      weight: lane.weight || 1000,
-                                      freightClass: 55,
-                                      equipmentType: lane.equipment,
-                                      serviceType: 'standard',
-                                      distance,
-                                      pickupDate: new Date().toISOString(),
-                                      deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-                                      urgency: 'standard' as 'standard' | 'expedited' | 'emergency',
-                                      customerTier: 'gold' as 'bronze' | 'silver' | 'gold' | 'platinum',
-                                      specialRequirements: [],
-                                      hazmat: false,
-                                      temperature: 'ambient' as 'ambient' | 'refrigerated' | 'frozen',
-                                    };
+                                  const quotePromises = lanes.map(
+                                    async (lane) => {
+                                      const distance =
+                                        Math.floor(Math.random() * 1000) + 100;
+                                      const quoteRequest = {
+                                        id: `quote-${lane.id}`,
+                                        type: 'LTL' as
+                                          | 'LTL'
+                                          | 'FTL'
+                                          | 'Specialized',
+                                        origin: lane.origin,
+                                        destination: lane.destination,
+                                        weight: lane.weight || 1000,
+                                        freightClass: 55,
+                                        equipmentType: lane.equipment,
+                                        serviceType: 'standard',
+                                        distance,
+                                        pickupDate: new Date().toISOString(),
+                                        deliveryDate: new Date(
+                                          Date.now() + 3 * 24 * 60 * 60 * 1000
+                                        ).toISOString(),
+                                        urgency: 'standard' as
+                                          | 'standard'
+                                          | 'expedited'
+                                          | 'emergency',
+                                        customerTier: 'gold' as
+                                          | 'bronze'
+                                          | 'silver'
+                                          | 'gold'
+                                          | 'platinum',
+                                        specialRequirements: [],
+                                        hazmat: false,
+                                        temperature: 'ambient' as
+                                          | 'ambient'
+                                          | 'refrigerated'
+                                          | 'frozen',
+                                      };
 
-                                    return await quotingEngine.generateQuote(quoteRequest);
-                                  });
+                                      return await quotingEngine.generateQuote(
+                                        quoteRequest
+                                      );
+                                    }
+                                  );
 
-                                  const results = await Promise.all(quotePromises);
-                                  console.info('🛣️ Bulk lane quotes generated:', results);
+                                  const results =
+                                    await Promise.all(quotePromises);
+                                  console.info(
+                                    '🛣️ Bulk lane quotes generated:',
+                                    results
+                                  );
                                 } catch (error) {
-                                  console.error('❌ Error generating bulk quotes:', error);
-                                  alert('Error generating quotes. Please try again.');
+                                  console.error(
+                                    '❌ Error generating bulk quotes:',
+                                    error
+                                  );
+                                  alert(
+                                    'Error generating quotes. Please try again.'
+                                  );
                                 }
                               }}
                               style={{
                                 padding: '12px 24px',
-                                background: 'linear-gradient(135deg, #10b981, #059669)',
+                                background:
+                                  'linear-gradient(135deg, #10b981, #059669)',
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '8px',
@@ -2619,28 +2672,53 @@ export default function AgentPortal() {
                                   border: '1px solid rgba(255, 255, 255, 0.1)',
                                 }}
                               >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '16px',
+                                  }}
+                                >
                                   <div
                                     style={{
                                       background: 'rgba(59, 130, 246, 0.2)',
                                       padding: '8px',
                                       borderRadius: '8px',
-                                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                                      border:
+                                        '1px solid rgba(59, 130, 246, 0.3)',
                                     }}
                                   >
-                                    <span style={{ fontSize: '16px' }}>#{lane.priority}</span>
+                                    <span style={{ fontSize: '16px' }}>
+                                      #{lane.priority}
+                                    </span>
                                   </div>
                                   <div>
-                                    <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                                    <div
+                                      style={{
+                                        fontSize: '18px',
+                                        fontWeight: '600',
+                                        color: 'white',
+                                      }}
+                                    >
                                       {lane.origin} → {lane.destination}
                                     </div>
-                                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                                      {lane.weight.toLocaleString()} lbs • {lane.equipment}
+                                    <div
+                                      style={{
+                                        fontSize: '12px',
+                                        color: 'rgba(255, 255, 255, 0.6)',
+                                      }}
+                                    >
+                                      {lane.weight.toLocaleString()} lbs •{' '}
+                                      {lane.equipment}
                                     </div>
                                   </div>
                                 </div>
                                 <button
-                                  onClick={() => setLanes(prev => prev.filter(l => l.id !== lane.id))}
+                                  onClick={() =>
+                                    setLanes((prev) =>
+                                      prev.filter((l) => l.id !== lane.id)
+                                    )
+                                  }
                                   style={{
                                     padding: '8px',
                                     background: 'rgba(239, 68, 68, 0.2)',
@@ -2723,8 +2801,14 @@ export default function AgentPortal() {
                         >
                           ✅ Bulk Quotes Generated Successfully
                         </h5>
-                        <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '0' }}>
-                          Your lane quotes are ready. Review the results below and send them to your customers.
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            margin: '0',
+                          }}
+                        >
+                          Your lane quotes are ready. Review the results below
+                          and send them to your customers.
                         </p>
                       </div>
 
@@ -2747,7 +2831,13 @@ export default function AgentPortal() {
                                 marginBottom: '16px',
                               }}
                             >
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '12px',
+                                }}
+                              >
                                 <div
                                   style={{
                                     background: 'rgba(59, 130, 246, 0.2)',
@@ -2756,24 +2846,52 @@ export default function AgentPortal() {
                                     border: '1px solid rgba(59, 130, 246, 0.3)',
                                   }}
                                 >
-                                  <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                                  <span
+                                    style={{
+                                      color: '#3b82f6',
+                                      fontWeight: '600',
+                                    }}
+                                  >
                                     Lane #{lane.priority}
                                   </span>
                                 </div>
                                 <div>
-                                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                                  <div
+                                    style={{
+                                      fontSize: '18px',
+                                      fontWeight: '600',
+                                      color: 'white',
+                                    }}
+                                  >
                                     {lane.origin} → {lane.destination}
                                   </div>
-                                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                                    {lane.weight.toLocaleString()} lbs • {lane.equipment}
+                                  <div
+                                    style={{
+                                      fontSize: '12px',
+                                      color: 'rgba(255, 255, 255, 0.6)',
+                                    }}
+                                  >
+                                    {lane.weight.toLocaleString()} lbs •{' '}
+                                    {lane.equipment}
                                   </div>
                                 </div>
                               </div>
                               <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
-                                  ${(Math.random() * 5000 + 1000).toFixed(0)}
+                                <div
+                                  style={{
+                                    fontSize: '24px',
+                                    fontWeight: '700',
+                                    color: '#10b981',
+                                  }}
+                                >
+                                  --
                                 </div>
-                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                                <div
+                                  style={{
+                                    fontSize: '12px',
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                  }}
+                                >
                                   AI Recommended
                                 </div>
                               </div>
@@ -2795,11 +2913,23 @@ export default function AgentPortal() {
                                   border: '1px solid rgba(59, 130, 246, 0.2)',
                                 }}
                               >
-                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                                <div
+                                  style={{
+                                    fontSize: '12px',
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
                                   Base Rate
                                 </div>
-                                <div style={{ fontSize: '16px', fontWeight: '600', color: '#3b82f6' }}>
-                                  ${(Math.random() * 3000 + 500).toFixed(0)}
+                                <div
+                                  style={{
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                    color: '#3b82f6',
+                                  }}
+                                >
+                                                                      --
                                 </div>
                               </div>
                               <div
@@ -2810,11 +2940,23 @@ export default function AgentPortal() {
                                   border: '1px solid rgba(245, 158, 11, 0.2)',
                                 }}
                               >
-                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                                <div
+                                  style={{
+                                    fontSize: '12px',
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
                                   Fuel Surcharge
                                 </div>
-                                <div style={{ fontSize: '16px', fontWeight: '600', color: '#f59e0b' }}>
-                                  ${(Math.random() * 500 + 100).toFixed(0)}
+                                <div
+                                  style={{
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                    color: '#f59e0b',
+                                  }}
+                                >
+                                                                      --
                                 </div>
                               </div>
                               <div
@@ -2825,11 +2967,23 @@ export default function AgentPortal() {
                                   border: '1px solid rgba(16, 185, 129, 0.2)',
                                 }}
                               >
-                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                                <div
+                                  style={{
+                                    fontSize: '12px',
+                                    color: 'rgba(255, 255, 255, 0.6)',
+                                    marginBottom: '4px',
+                                  }}
+                                >
                                   Win Probability
                                 </div>
-                                <div style={{ fontSize: '16px', fontWeight: '600', color: '#10b981' }}>
-                                  {Math.floor(Math.random() * 40 + 60)}%
+                                <div
+                                  style={{
+                                    fontSize: '16px',
+                                    fontWeight: '600',
+                                    color: '#10b981',
+                                  }}
+                                >
+                                                                      --
                                 </div>
                               </div>
                             </div>
@@ -2839,7 +2993,8 @@ export default function AgentPortal() {
                                 style={{
                                   flex: 1,
                                   padding: '10px 16px',
-                                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                                  background:
+                                    'linear-gradient(135deg, #10b981, #059669)',
                                   color: 'white',
                                   border: 'none',
                                   borderRadius: '8px',
