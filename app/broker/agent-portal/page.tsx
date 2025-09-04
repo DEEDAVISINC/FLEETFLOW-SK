@@ -387,7 +387,7 @@ export default function AgentPortal() {
   const agentKPIs = [
     {
       title: 'Active Customers',
-      value: 24,
+      value: '--',
       unit: '',
       change: '+3',
       trend: 'up',
@@ -409,7 +409,7 @@ export default function AgentPortal() {
     },
     {
       title: 'Monthly Revenue',
-      value: 147.5,
+      value: '--',
       unit: 'K',
       change: '+18.2%',
       trend: 'up',
@@ -420,7 +420,7 @@ export default function AgentPortal() {
     },
     {
       title: 'Customer Satisfaction',
-      value: 96.8,
+      value: '--',
       unit: '%',
       change: '+2.1%',
       trend: 'up',
@@ -431,7 +431,7 @@ export default function AgentPortal() {
     },
     {
       title: 'Quote Success Rate',
-      value: 73.4,
+      value: '--',
       unit: '%',
       change: '+5.2%',
       trend: 'up',
