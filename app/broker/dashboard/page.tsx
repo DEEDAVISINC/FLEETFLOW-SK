@@ -1087,7 +1087,15 @@ function QuotingPortal() {
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.6 }}>📊</div>
+                <div
+                  style={{
+                    fontSize: '48px',
+                    marginBottom: '16px',
+                    opacity: 0.6,
+                  }}
+                >
+                  📊
+                </div>
                 <div
                   style={{
                     fontSize: '18px',
@@ -1397,7 +1405,11 @@ function QuotingPortal() {
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.6 }}>📋</div>
+              <div
+                style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.6 }}
+              >
+                📋
+              </div>
               <div
                 style={{
                   fontSize: '18px',
@@ -1415,8 +1427,11 @@ function QuotingPortal() {
                   lineHeight: '1.5',
                 }}
               >
-                Your quote history will appear here once you start generating quotes.<br />
-                Use the LTL, FTL, or Lane Quoting tabs to create your first quote.
+                Your quote history will appear here once you start generating
+                quotes.
+                <br />
+                Use the LTL, FTL, or Lane Quoting tabs to create your first
+                quote.
               </div>
             </div>
           </div>
@@ -2185,112 +2200,1170 @@ export default function BrokerDashboard() {
         {selectedTab === 'quotes-workflow' && <QuotingPortal />}
 
         {selectedTab === 'loads-bids' && (
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div
-              style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
-            >
-              📦
+          <div style={{ color: 'white' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  margin: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                📦 Loads & Bidding Management
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.6',
+                  marginTop: '8px',
+                }}
+              >
+                Track active loads, manage bids, and optimize your bidding strategy
+              </p>
             </div>
-            <h2
+
+            <div
               style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '8px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px',
               }}
             >
-              Loads & Bidding Management
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-              Track active loads and manage bidding strategies
-            </p>
+              {/* Active Loads */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Active Loads
+                </h3>
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Chicago → Los Angeles
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>
+                          45,000 lbs • Refrigerated • Due: Tomorrow
+                        </div>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#10b981' }}>
+                          Your Bid: $2,850
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                          Status
+                        </div>
+                        <div
+                          style={{
+                            background: 'rgba(59, 130, 246, 0.2)',
+                            color: '#3b82f6',
+                            padding: '4px 8px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Winning
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bidding Opportunities */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  New Opportunities
+                </h3>
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Dallas → Miami
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>
+                          25,000 lbs • Dry Van • Due: 2 days
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
+                          Current low: $1,450
+                        </div>
+                      </div>
+                      <button
+                        style={{
+                          background: 'linear-gradient(135deg, #10b981, #059669)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          padding: '8px 16px',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Bid Now
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bidding Strategy */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Bidding Strategy
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Win Rate
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
+                    78%
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Last 30 days
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Avg Margin
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>
+                    12.5%
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Target: 15%
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Active Bids
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
+                    23
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    8 winning
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {selectedTab === 'ai-intelligence' && (
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div
-              style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
-            >
-              🤖
+          <div style={{ color: 'white' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  margin: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                🤖 AI-Powered Intelligence
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.6',
+                  marginTop: '8px',
+                }}
+              >
+                Advanced predictive analytics, smart recommendations, and market insights powered by AI
+              </p>
             </div>
-            <h2
+
+            <div
               style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '8px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px',
               }}
             >
-              AI-Powered Intelligence
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-              Advanced analytics and predictive insights
-            </p>
+              {/* AI Recommendations */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Smart Recommendations
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                      <div style={{ fontSize: '24px' }}>🎯</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Bid Opportunity Alert
+                        </div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', marginBottom: '8px' }}>
+                          Chicago → Denver route showing 23% profit margin potential
+                        </div>
+                        <button
+                          style={{
+                            background: 'linear-gradient(135deg, #10b981, #059669)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                      <div style={{ fontSize: '24px' }}>📈</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Price Optimization
+                        </div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', marginBottom: '8px' }}>
+                          Increase bid prices by 5% on refrigerated loads for better margins
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          AI predicts 15% higher win rate
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Predictive Analytics */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Predictive Insights
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Tomorrow's Volume
+                    </div>
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
+                      +18%
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Above average activity expected
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(236, 72, 153, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(236, 72, 153, 0.2)',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Fuel Price Impact
+                    </div>
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#ec4899' }}>
+                      +$0.12/gal
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Expected price increase next week
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Performance Metrics */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                AI Performance
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(139, 92, 246, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Recommendation Accuracy
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>
+                    92%
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Last 30 days
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Revenue Impact
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
+                    +$12.4K
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    From AI recommendations
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Processing Time
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
+                    0.3s
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Average response time
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {selectedTab === 'market-intelligence' && (
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div
-              style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
-            >
-              📈
+          <div style={{ color: 'white' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  margin: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                📈 Market Intelligence
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.6',
+                  marginTop: '8px',
+                }}
+              >
+                Real-time market trends, pricing data, and competitive analysis for informed decision making
+              </p>
             </div>
-            <h2
+
+            <div
               style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '8px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px',
               }}
             >
-              Market Intelligence
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-              Real-time market trends and competitive analysis
-            </p>
+              {/* Market Trends */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Market Trends
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Midwest Region
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Spot rates increased 8.5%
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '20px', color: '#10b981' }}>📈</div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(239, 68, 68, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Northeast Corridor
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Capacity shortage expected
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '20px', color: '#ef4444' }}>⚠️</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pricing Analysis */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Competitive Pricing
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Chicago → New York
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                          $2,450
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Your rate
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '14px', color: '#10b981' }}>
+                          +12% vs market
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Market: $2,180
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Los Angeles → Seattle
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                          $1,890
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Your rate
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '14px', color: '#ef4444' }}>
+                          -8% vs market
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Market: $2,050
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Market Dashboard */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Market Dashboard
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(139, 92, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(139, 92, 246, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    National Spot Rate
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>
+                    +4.2%
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Week over week
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Capacity Utilization
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
+                    87%
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Industry average
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Fuel Price Index
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
+                    $3.89
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Per gallon
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Seasonal Factor
+                  </div>
+                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>
+                    High
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    Peak season pricing
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {selectedTab === 'analytics' && (
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div
-              style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
-            >
-              📊
+          <div style={{ color: 'white' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  margin: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                📊 Advanced Analytics
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.6',
+                  marginTop: '8px',
+                }}
+              >
+                Comprehensive performance metrics, trends, and actionable insights for your brokerage operations
+              </p>
             </div>
-            <h2
+
+            <div
               style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '8px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px',
               }}
             >
-              Advanced Analytics
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-              Comprehensive performance metrics and insights
-            </p>
+              {/* Performance Overview */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Performance Overview
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '4px' }}>
+                          Monthly Revenue
+                        </div>
+                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#10b981' }}>
+                          $147.2K
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '12px', color: '#10b981' }}>↗️ +23%</div>
+                        <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)' }}>vs last month</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '4px' }}>
+                          Load Volume
+                        </div>
+                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#3b82f6' }}>
+                          324
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '12px', color: '#10b981' }}>↗️ +18%</div>
+                        <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)' }}>loads completed</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Metrics */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Key Metrics
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Average Margin
+                    </div>
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>
+                      14.7%
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Target: 15%
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(139, 92, 246, 0.2)',
+                    }}
+                  >
+                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      On-Time Delivery
+                    </div>
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>
+                      96.2%
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      Industry avg: 92%
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Analytics Dashboard */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Trends & Insights
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Top Performing Route
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                    Chicago → LA
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#10b981' }}>
+                    28% above average margin
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Customer Concentration
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                    High Risk
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#ef4444' }}>
+                    65% from top 3 customers
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Seasonal Pattern
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                    Peak Season
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#3b82f6' }}>
+                    Q4 typically 35% higher volume
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                  }}
+                >
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    Operational Efficiency
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                    Good
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#f59e0b' }}>
+                    12% improvement potential
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {selectedTab === 'tasks' && (
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div
-              style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
-            >
-              📋
+          <div style={{ color: 'white' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  margin: '0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                📋 Task Management
+              </h2>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.6',
+                  marginTop: '8px',
+                }}
+              >
+                Organize, prioritize, and track all your brokerage tasks and deadlines
+              </p>
             </div>
-            <h2
+
+            <div
               style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '8px',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                gap: '24px',
               }}
             >
-              Task Management
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-              Organize and track your brokerage tasks
-            </p>
+              {/* Urgent Tasks */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '16px' }}>
+                  🔥 Urgent Tasks
+                </h3>
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(239, 68, 68, 0.2)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                      <div style={{ fontSize: '20px' }}>🚨</div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                          Follow up with ABC Corp
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                          Quote expires in 2 hours
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Today's Tasks */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '16px' }}>
+                  Today's Tasks
+                </h3>
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <input type='checkbox' style={{ transform: 'scale(1.2)' }} />
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                        Review carrier applications
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        5 pending applications
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
