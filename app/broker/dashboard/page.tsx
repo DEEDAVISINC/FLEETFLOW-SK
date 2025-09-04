@@ -97,7 +97,7 @@ export default function BrokerDashboard() {
               marginBottom: '8px',
             }}
           >
-            👤 Broker Agent Portal
+            🏢 Brokerage Dashboard
           </h1>
           <p
             style={{
