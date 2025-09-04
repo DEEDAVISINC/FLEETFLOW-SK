@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { TwoFactorVerification } from '../../components/TwoFactorVerification';
 import { twoFactorAuthService } from '../../services/TwoFactorAuthService';
+import UserIdentifierService from '../../services/user-identifier-service';
 
 type AuthStep = 'credentials' | 'two-factor';
 
@@ -21,14 +22,12 @@ export default function SignIn() {
   } | null>(null);
   const router = useRouter();
 
-  // Step 1: Validate credentials and initiate 2FA
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
     try {
-      // First verify credentials with NextAuth but don't complete login yet
       const result = await signIn('credentials', {
         email: credentials.email,
         password: credentials.password,
@@ -41,49 +40,58 @@ export default function SignIn() {
         return;
       }
 
-      // Credentials are valid - check available 2FA methods
       const availableMethods = twoFactorAuthService.getAvailableMethods(
         credentials.email
       );
 
       if (availableMethods.length === 0) {
-        setError('2FA not configured for this account. Contact administrator.');
-        setIsLoading(false);
+        router.push('/');
         return;
       }
 
-      // Store pending user info for 2FA step
       const userInfo = getUserInfo(credentials.email);
       setPendingUser(userInfo);
-
-      // Move to 2FA step
       setAuthStep('two-factor');
     } catch (error) {
-      setError('An error occurred during sign in');
+      setError('Authentication failed');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Step 2: Handle successful 2FA verification
   const handleTwoFactorVerified = async () => {
     if (!pendingUser) return;
 
     try {
-      // Complete the NextAuth signin process
-      const result = await signIn('credentials', {
-        email: credentials.email,
-        password: credentials.password,
-        redirect: false,
-      });
+      const userId = getUserId(pendingUser.email);
+      const subscriptionResponse = await fetch(
+        '/api/auth/verify-subscription',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            email: pendingUser.email,
+          }),
+        }
+      );
 
-      if (result?.error) {
-        setError('Authentication error after 2FA');
+      const subscriptionResult = await subscriptionResponse.json();
+
+      if (!subscriptionResponse.ok) {
+        if (subscriptionResult.requiresPayment) {
+          router.push(
+            '/plans?message=' + encodeURIComponent(subscriptionResult.message)
+          );
+          return;
+        }
+        setError(
+          subscriptionResult.error || 'Subscription verification failed'
+        );
         setAuthStep('credentials');
         return;
       }
 
-      // Success - redirect to dashboard
       router.push('/');
     } catch (error) {
       setError('Failed to complete authentication');
@@ -91,14 +99,12 @@ export default function SignIn() {
     }
   };
 
-  // Handle 2FA cancellation - go back to credentials step
   const handleTwoFactorCancel = () => {
     setAuthStep('credentials');
     setPendingUser(null);
     setError('');
   };
 
-  // Get user info for demo accounts
   const getUserInfo = (email: string) => {
     const userMap = {
       'admin@fleetflow.com': { email, name: 'FleetFlow Admin', role: 'admin' },
@@ -109,7 +115,6 @@ export default function SignIn() {
       },
       'driver@fleetflow.com': { email, name: 'John Smith', role: 'driver' },
       'broker@fleetflow.com': { email, name: 'Sarah Wilson', role: 'broker' },
-      // VENDOR ACCOUNTS - Unified into main FleetFlow system
       'vendor@abcmanufacturing.com': {
         email,
         name: 'ABC Manufacturing Corp',
@@ -126,6 +131,7 @@ export default function SignIn() {
         role: 'vendor',
       },
     };
+
     return (
       userMap[email as keyof typeof userMap] || {
         email,
@@ -135,7 +141,11 @@ export default function SignIn() {
     );
   };
 
-  // Render 2FA verification if on that step
+  const getUserId = (email: string): string => {
+    const userIdentifierService = UserIdentifierService.getInstance();
+    return userIdentifierService.getUserId(email);
+  };
+
   if (authStep === 'two-factor' && pendingUser) {
     return (
       <TwoFactorVerification
@@ -146,150 +156,417 @@ export default function SignIn() {
     );
   }
 
-  // Default: Render credentials form
   return (
-    <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4'>
-      <div className='w-full max-w-md'>
-        <div className='rounded-2xl border border-gray-100 bg-white p-8 shadow-xl'>
-          {/* Logo */}
-          <div className='mb-8 text-center'>
-            <div className='mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg'>
-              <span className='text-2xl font-bold text-white'>FF</span>
-            </div>
-            <h1 className='text-2xl font-bold text-gray-900'>FleetFlow</h1>
-            <p className='mt-2 text-gray-600'>Sign in to your account</p>
-          </div>
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+        padding: '60px 16px 16px 16px',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Animated Background Elements */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `
+          radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)
+        `,
+          animation: 'pulse 4s ease-in-out infinite alternate',
+        }}
+      />
 
-          {/* Demo Credentials */}
-          <div className='mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4'>
-            <h3 className='mb-2 font-semibold text-blue-900'>
-              🔐 Demo Accounts (2FA Required):
-            </h3>
-            <div className='space-y-1 text-sm text-blue-800'>
-              <p>
-                <strong>Admin:</strong> admin@fleetflow.com / admin123
-              </p>
-              <p>
-                <strong>Dispatcher:</strong> dispatch@fleetflow.com /
-                dispatch123
-              </p>
-              <p>
-                <strong>Driver:</strong> driver@fleetflow.com / driver123
-              </p>
-              <p>
-                <strong>Broker:</strong> broker@fleetflow.com / broker123
-              </p>
-              <hr className='my-2 border-blue-300' />
-              <p className='mb-1 text-xs font-medium text-blue-700'>
-                VENDOR ACCOUNTS:
-              </p>
-              <p>
-                <strong>ABC Manufacturing:</strong> vendor@abcmanufacturing.com
-                / temp123
-              </p>
-              <p>
-                <strong>Retail Distribution:</strong> vendor@retaildist.com /
-                temp456
-              </p>
-              <p>
-                <strong>Tech Solutions:</strong> vendor@techsolutions.com /
-                temp789
-              </p>
-            </div>
-            <div className='mt-2 text-xs text-blue-600'>
-              📧 Verification codes will be sent via email (SMS available for
-              some accounts)
-            </div>
-          </div>
-
-          {error && (
-            <div className='mb-4 rounded-lg border border-red-200 bg-red-50 p-3'>
-              <p className='flex items-center text-sm text-red-800'>
-                <span className='mr-2'>❌</span>
-                {error}
-              </p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className='space-y-4'>
-            <div>
-              <label
-                htmlFor='email'
-                className='mb-2 block text-sm font-medium text-gray-700'
-              >
-                Email
-              </label>
-              <input
-                id='email'
-                type='email'
-                value={credentials.email}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, email: e.target.value })
-                }
-                className='w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                placeholder='Enter your email'
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor='password'
-                className='mb-2 block text-sm font-medium text-gray-700'
-              >
-                Password
-              </label>
-              <input
-                id='password'
-                type='password'
-                value={credentials.password}
-                onChange={(e) =>
-                  setCredentials({ ...credentials, password: e.target.value })
-                }
-                className='w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500'
-                placeholder='Enter your password'
-                required
-              />
-            </div>
-
-            <button
-              type='submit'
-              disabled={isLoading}
-              className='flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 font-semibold text-white transition-all duration-200 hover:from-blue-700 hover:to-indigo-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 10,
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background:
+                'linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6, #ef4444, #f59e0b)',
+            }}
+          />
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '24px',
+            }}
+          >
+            <div
+              style={{
+                padding: '16px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '12px',
+              }}
             >
-              {isLoading ? (
-                <>
-                  <div className='mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-white'></div>
-                  Verifying...
-                </>
-              ) : (
-                <>🔐 Continue to 2FA</>
-              )}
-            </button>
-          </form>
-
-          {/* Security Notice */}
-          <div className='mt-6 rounded-lg border border-amber-200 bg-amber-50 p-3'>
-            <p className='text-center text-xs text-amber-800'>
-              🛡️ <strong>Enhanced Security:</strong> All FleetFlow accounts
-              require two-step verification
-            </p>
-          </div>
-
-          {/* Sign Up Link */}
-          <div className='mt-4 text-center'>
-            <p className='text-sm text-gray-600'>
-              Don't have an account?{' '}
-              <Link
-                href='/auth/signup'
-                className='font-semibold text-blue-600 hover:text-blue-700'
+              <span style={{ fontSize: '32px' }}>🔐</span>
+            </div>
+            <div>
+              <h1
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '800',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                  background: 'linear-gradient(135deg, #ffffff, #e2e8f0)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textAlign: 'center',
+                }}
               >
-                Start your free trial
-              </Link>
-            </p>
+                🔐 FLEETFLOW™ AUTHENTICATION PORTAL
+              </h1>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  margin: '0',
+                  fontWeight: '500',
+                  textAlign: 'center',
+                }}
+              >
+                Secure Access to Your Transportation Management Command Center
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Authentication Form */}
+        <div
+          style={{
+            maxWidth: '600px',
+            margin: '0 auto',
+          }}
+        >
+          {/* Sign-in Form */}
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.8)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '16px',
+              padding: '32px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderLeft: '4px solid #3b82f6',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+              marginBottom: '32px',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                color: 'white',
+                margin: '0 0 24px 0',
+                textAlign: 'center',
+              }}
+            >
+              Sign In to Your Account
+            </h2>
+
+            <form className='space-y-6' onSubmit={handleSubmit}>
+              <input type='hidden' name='remember' defaultValue='true' />
+
+              {/* Email Input */}
+              <div>
+                <label
+                  htmlFor='email-address'
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Email Address
+                </label>
+                <input
+                  id='email-address'
+                  name='email'
+                  type='email'
+                  autoComplete='email'
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '16px',
+                    outline: 'none',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#3b82f6';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  placeholder='Enter your email'
+                  value={credentials.email}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, email: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label
+                  htmlFor='password'
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Password
+                </label>
+                <input
+                  id='password'
+                  name='password'
+                  type='password'
+                  autoComplete='current-password'
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '16px',
+                    outline: 'none',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#3b82f6';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)';
+                  }}
+                  placeholder='Enter your password'
+                  value={credentials.password}
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Remember me & Forgot Password */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <input
+                    id='remember-me'
+                    name='remember-me'
+                    type='checkbox'
+                    style={{
+                      marginRight: '8px',
+                      width: '16px',
+                      height: '16px',
+                      accentColor: '#3b82f6',
+                    }}
+                  />
+                  <label
+                    htmlFor='remember-me'
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Remember me
+                  </label>
+                </div>
+
+                <Link
+                  href='/auth/forgot-password'
+                  style={{
+                    fontSize: '14px',
+                    color: '#3b82f6',
+                    textDecoration: 'none',
+                    fontWeight: '500',
+                  }}
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    color: '#fca5a5',
+                    fontSize: '14px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <span style={{ fontSize: '16px' }}>⚠️</span>
+                    <span>{error}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Sign In Button */}
+              <button
+                type='submit'
+                disabled={isLoading}
+                style={{
+                  width: '100%',
+                  padding: '12px 24px',
+                  background: isLoading
+                    ? 'rgba(59, 130, 246, 0.5)'
+                    : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isLoading) {
+                    e.target.style.transform = 'translateY(-1px)';
+                    e.target.style.boxShadow =
+                      '0 6px 20px rgba(59, 130, 246, 0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isLoading) {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow =
+                      '0 4px 16px rgba(59, 130, 246, 0.3)';
+                  }
+                }}
+              >
+                {isLoading ? (
+                  <>
+                    <div
+                      style={{
+                        width: '16px',
+                        height: '16px',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        borderTop: '2px solid white',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
+                      }}
+                    />
+                    Signing in...
+                  </>
+                ) : (
+                  '🔐 Sign In'
+                )}
+              </button>
+
+              {/* Sign Up Link */}
+              <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Don't have an account?{' '}
+                  <Link
+                    href='/auth/signup'
+                    style={{
+                      color: '#10b981',
+                      textDecoration: 'none',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Create one here
+                  </Link>
+                </p>
+              </div>
+            </form>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%,
+          100% {
+            opacity: 0.8;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 }
