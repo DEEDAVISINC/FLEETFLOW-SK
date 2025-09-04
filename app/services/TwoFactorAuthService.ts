@@ -1,6 +1,6 @@
 'use client';
 
-import { sendgridService } from './sendgrid-service';
+import { sendGridService } from './sendgrid-service';
 
 // Types for 2FA
 export interface TwoFactorCode {
@@ -109,7 +109,9 @@ export class TwoFactorAuthService {
    * Generate secure 6-digit verification code
    */
   private generateCode(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    console.info(`🔢 Generated 6-digit verification code: ${code}`);
+    return code;
   }
 
   /**
@@ -196,6 +198,10 @@ export class TwoFactorAuthService {
     contact: UserContact,
     code: string
   ): Promise<void> {
+    // 🚨 DEVELOPMENT MODE: Log verification code for testing
+    console.info(`🔐 FLEETFLOW 2FA CODE for ${contact.email}: ${code}`);
+    console.info(`📧 Code expires in 10 minutes. Use this for testing!`);
+
     const subject = '🔐 FleetFlow - Your Verification Code';
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -232,19 +238,21 @@ export class TwoFactorAuthService {
       </div>
     `;
 
-    await sendgridService.sendEmail(contact.email, subject, htmlContent);
+    await sendGridService.sendEmail(contact.email, subject, htmlContent);
   }
 
   /**
    * Send verification code via SMS (using existing Twilio service)
    */
   private async sendSMSCode(contact: UserContact, code: string): Promise<void> {
+    // 🚨 DEVELOPMENT MODE: Log SMS verification code for testing
+    console.info(`📱 FLEETFLOW SMS 2FA CODE for ${contact.email}: ${code}`);
+    console.info(`📞 Code expires in 10 minutes. Use this for testing!`);
+
     // Note: This would use your existing Twilio service
     // For now, we'll log it (in production, integrate with TwilioService)
     const message = `FleetFlow Security Code: ${code}\n\nDo not share this code. Expires in 10 minutes.\n\n- FleetFlow Security Team`;
 
-    console.info(`📱 SMS Code for ${contact.name} (${contact.phone}): ${code}`);
-    console.info(`📱 SMS Message: ${message}`);
 
     // TODO: Integrate with existing TwilioService:
     // await twilioService.sendSMS(contact.phone, message);
