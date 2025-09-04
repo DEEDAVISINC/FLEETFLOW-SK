@@ -162,7 +162,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       isLandingPage: pathname === '/',
       isUniversity: pathname?.includes('/university'),
       isInstructor: pathname?.includes('/training/instructor'),
-      willShowNotificationBell: user?.id && pathname !== '/' && !pathname?.includes('/auth/'),
+      willShowNotificationBell:
+        user?.id &&
+        pathname !== '/' &&
+        !pathname?.includes('/auth/') &&
+        !pathname?.includes('/launchpad'),
     });
   }
 
@@ -244,12 +248,13 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 </>
               )}
 
-              {/* Notification Bell - Only for logged-in users, not on landing/marketing/auth pages */}
+              {/* Notification Bell - Only for logged-in users, not on landing/marketing/auth/launchpad pages */}
               {isHydrated &&
                 user?.id &&
                 pathname !== '/' &&
                 pathname !== '/carrier-landing' &&
-                !pathname?.includes('/auth/') && (
+                !pathname?.includes('/auth/') &&
+                !pathname?.includes('/launchpad') && (
                   <NotificationBell userId={user.id} position='bottom-right' />
                 )}
 
