@@ -900,35 +900,762 @@ function QuotingPortal() {
         </div>
       )}
 
-      {/* Other Tabs - Placeholder for now */}
-      {activeTab !== 'LaneQuoting' && (
+      {/* LTL Quotes Tab */}
+      {activeTab === 'LTL' && (
         <div
           style={{
-            background: 'rgba(0, 0, 0, 0.25)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(20px)',
             borderRadius: '16px',
-            padding: '40px',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            textAlign: 'center',
+            padding: '32px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           }}
         >
-          <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}>
-            🚧
+          <div style={{ marginBottom: '32px' }}>
+            <h2
+              style={{
+                fontSize: '28px',
+                fontWeight: '700',
+                color: 'white',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              📦 LTL Freight Quotes
+            </h2>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                lineHeight: '1.6',
+                marginTop: '8px',
+              }}
+            >
+              Generate quotes for less-than-truckload shipments with multiple stops and consolidation options.
+            </p>
           </div>
-          <h3
+
+          <div
             style={{
-              fontSize: '24px',
-              fontWeight: '600',
-              color: 'white',
-              marginBottom: '8px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
             }}
           >
-            {activeTab} Coming Soon
-          </h3>
-          <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-            This feature is under development. Please use the Lane Quoting tab
-            for now.
-          </p>
+            {/* Quick Quote Form */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Quick LTL Quote
+              </h3>
+              <div style={{ display: 'grid', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <input
+                    type='text'
+                    placeholder='Origin City, State'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                  <input
+                    type='text'
+                    placeholder='Destination City, State'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                  <input
+                    type='number'
+                    placeholder='Weight (lbs)'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                  <input
+                    type='text'
+                    placeholder='Class'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                  <input
+                    type='number'
+                    placeholder='Cubic Ft'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                </div>
+                <button
+                  style={{
+                    padding: '12px 24px',
+                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Get LTL Quote
+                </button>
+              </div>
+            </div>
+
+            {/* LTL Quote Results */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Quote Results
+              </h3>
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.15)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚚</div>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981', marginBottom: '8px' }}>
+                  $1,247
+                </div>
+                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  2-3 day transit • Standard service
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FTL Quotes Tab */}
+      {activeTab === 'FTL' && (
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '32px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <div style={{ marginBottom: '32px' }}>
+            <h2
+              style={{
+                fontSize: '28px',
+                fontWeight: '700',
+                color: 'white',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              🚚 FTL Freight Quotes
+            </h2>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                lineHeight: '1.6',
+                marginTop: '8px',
+              }}
+            >
+              Full truckload shipping quotes with dedicated equipment and direct service options.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            {/* FTL Quote Form */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                FTL Quote Request
+              </h3>
+              <div style={{ display: 'grid', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <input
+                    type='text'
+                    placeholder='Origin City, State'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                  <input
+                    type='text'
+                    placeholder='Destination City, State'
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <select
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <option value=''>Select Equipment</option>
+                    <option value='dryvan'>Dry Van (53')</option>
+                    <option value='reefer'>Refrigerated</option>
+                    <option value='flatbed'>Flatbed</option>
+                    <option value='stepdeck'>Step Deck</option>
+                  </select>
+                  <select
+                    style={{
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  >
+                    <option value=''>Service Level</option>
+                    <option value='standard'>Standard</option>
+                    <option value='expedited'>Expedited</option>
+                    <option value='guaranteed'>Guaranteed</option>
+                  </select>
+                </div>
+                <button
+                  style={{
+                    padding: '12px 24px',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Get FTL Quote
+                </button>
+              </div>
+            </div>
+
+            {/* Equipment Options */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Equipment Options
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {[
+                  { name: 'Dry Van (53\')', icon: '📦', capacity: 'Up to 45,000 lbs' },
+                  { name: 'Refrigerated', icon: '❄️', capacity: 'Temperature controlled' },
+                  { name: 'Flatbed', icon: '🔲', capacity: 'Heavy/overwidth loads' },
+                  { name: 'Step Deck', icon: '🏗️', capacity: 'Tall/heavy equipment' },
+                ].map((equipment) => (
+                  <div
+                    key={equipment.name}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '12px',
+                      background: 'rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                    }}
+                  >
+                    <div style={{ fontSize: '24px' }}>{equipment.icon}</div>
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
+                        {equipment.name}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        {equipment.capacity}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quote History Tab */}
+      {activeTab === 'History' && (
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '32px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <div style={{ marginBottom: '32px' }}>
+            <h2
+              style={{
+                fontSize: '28px',
+                fontWeight: '700',
+                color: 'white',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              📋 Quote History
+            </h2>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                lineHeight: '1.6',
+                marginTop: '8px',
+              }}
+            >
+              Review and manage your previous freight quotes and customer requests.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {/* Mock Quote History Items */}
+            {[
+              {
+                id: 'Q-001',
+                type: 'LTL',
+                origin: 'Chicago, IL',
+                destination: 'Detroit, MI',
+                amount: '$1,247',
+                status: 'Sent',
+                date: '2024-01-15',
+              },
+              {
+                id: 'Q-002',
+                type: 'FTL',
+                origin: 'Los Angeles, CA',
+                destination: 'Phoenix, AZ',
+                amount: '$2,850',
+                status: 'Accepted',
+                date: '2024-01-14',
+              },
+              {
+                id: 'Q-003',
+                type: 'Lane',
+                origin: 'Dallas, TX',
+                destination: 'Atlanta, GA',
+                amount: '$3,200',
+                status: 'Pending',
+                date: '2024-01-13',
+              },
+            ].map((quote) => (
+              <div
+                key={quote.id}
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.2)',
+                      padding: '8px 12px',
+                      borderRadius: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                    }}
+                  >
+                    <span style={{ color: '#3b82f6', fontWeight: '600', fontSize: '12px' }}>
+                      {quote.type}
+                    </span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
+                      {quote.origin} → {quote.destination}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      {quote.date} • Quote #{quote.id}
+                    </div>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '18px', fontWeight: '700', color: '#10b981' }}>
+                    {quote.amount}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color:
+                        quote.status === 'Accepted'
+                          ? '#10b981'
+                          : quote.status === 'Sent'
+                          ? '#3b82f6'
+                          : '#f59e0b',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {quote.status}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Price Rules Tab */}
+      {activeTab === 'Rules' && (
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '32px',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <div style={{ marginBottom: '32px' }}>
+            <h2
+              style={{
+                fontSize: '28px',
+                fontWeight: '700',
+                color: 'white',
+                margin: '0',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              ⚙️ Price Rules & Settings
+            </h2>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                lineHeight: '1.6',
+                marginTop: '8px',
+              }}
+            >
+              Configure pricing rules, margins, and automated quoting parameters.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            {/* Margin Settings */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Margin Settings
+              </h3>
+              <div style={{ display: 'grid', gap: '16px' }}>
+                <div>
+                  <label
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Base Margin (%)
+                  </label>
+                  <input
+                    type='number'
+                    defaultValue='15'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Fuel Surcharge (%)
+                  </label>
+                  <input
+                    type='number'
+                    defaultValue='8.5'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      marginBottom: '8px',
+                      display: 'block',
+                    }}
+                  >
+                    Minimum Quote
+                  </label>
+                  <input
+                    type='number'
+                    defaultValue='500'
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '14px',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Service Level Pricing */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Service Level Pricing
+              </h3>
+              <div style={{ display: 'grid', gap: '12px' }}>
+                {[
+                  { level: 'Standard', multiplier: '1.0x', time: '3-5 days' },
+                  { level: 'Expedited', multiplier: '1.25x', time: '1-2 days' },
+                  { level: 'Guaranteed', multiplier: '1.5x', time: 'Next day' },
+                ].map((service) => (
+                  <div
+                    key={service.level}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px',
+                      background: 'rgba(0, 0, 0, 0.1)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
+                        {service.level}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        {service.time}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '16px', fontWeight: '600', color: '#10b981' }}>
+                      {service.multiplier}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Save Settings */}
+            <div
+              style={{
+                gridColumn: '1 / -1',
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                textAlign: 'center',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '16px',
+                }}
+              >
+                Save Configuration
+              </h3>
+              <p
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '16px',
+                  marginBottom: '24px',
+                }}
+              >
+                Your pricing rules will be applied to all new quotes automatically.
+              </p>
+              <button
+                style={{
+                  padding: '12px 32px',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                }}
+              >
+                Save Price Rules
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
