@@ -536,7 +536,7 @@ export default function AgentPortal() {
                 border: '1px solid rgba(59, 130, 246, 0.3)',
               }}
             >
-              🆔 {currentAgent?.id || 'AG-001'}
+              🆔 {currentAgent?.id || '--'}
             </span>
             <span
               style={{

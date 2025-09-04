@@ -1900,139 +1900,21 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
   return permissions;
 };
 
-// Mock users with custom permission examples
-export const MOCK_USERS: User[] = [
-  {
-    id: 'admin-001',
-    name: 'System Admin',
-    email: 'admin@fleetflow.com',
-    role: 'admin',
-    departmentCode: 'MGR',
-    subscriptionStatus: 'active',
-    subscriptionTier: 'enterprise',
-    subscriptionPlanIds: ['enterprise'],
-    subscriptionExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-  },
-  {
-    id: 'mgr-001',
-    name: 'Fleet Manager',
-    email: 'manager@fleetflow.com',
-    role: 'manager',
-    departmentCode: 'MGR',
-    subscriptionStatus: 'active',
-    subscriptionTier: 'professional',
-    subscriptionPlanIds: ['professional_brokerage'],
-    subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-  },
-
-  // Dispatchers (DC Department)
-  {
-    id: 'disp-001',
-    name: 'Sarah Johnson',
-    email: 'sarah@fleetflow.com',
-    role: 'dispatcher',
-    departmentCode: 'DC',
-    assignedBrokers: ['broker-001', 'broker-002'],
-    subscriptionStatus: 'trial',
-    subscriptionTier: 'professional',
-    subscriptionPlanIds: ['professional_dispatcher'],
-    trialEndsAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
-  },
-  {
-    id: 'disp-002',
-    name: 'Mike Chen',
-    email: 'mike@fleetflow.com',
-    role: 'dispatcher',
-    departmentCode: 'DC',
-    assignedBrokers: ['broker-003'],
-  },
-
-  // Brokers (BB Department)
-  {
-    id: 'broker-001',
-    name: 'John Smith',
-    email: 'john.smith@globalfreight.com',
-    role: 'broker',
-    departmentCode: 'BB',
-    brokerId: 'broker-001',
-    dispatcherId: 'disp-001',
-    companyName: 'Global Freight Solutions',
-    subscriptionStatus: 'active',
-    subscriptionTier: 'university',
-    subscriptionPlanIds: ['university'],
-    subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-  },
-  {
-    id: 'broker-002',
-    name: 'Maria Garcia',
-    email: 'maria.garcia@swift.com',
-    role: 'broker',
-    departmentCode: 'BB',
-    brokerId: 'broker-002',
-    dispatcherId: 'disp-001',
-    companyName: 'Swift Freight',
-  },
-  {
-    id: 'broker-003',
-    name: 'David Wilson',
-    email: 'david.wilson@express.com',
-    role: 'broker',
-    departmentCode: 'BB',
-    brokerId: 'broker-003',
-    dispatcherId: 'disp-002',
-    companyName: 'Express Cargo',
-  },
-
-  // Drivers (DM Department)
-  {
-    id: 'driver-001',
-    name: 'Robert Johnson',
-    email: 'robert.j@fleetflow.com',
-    role: 'driver',
-    departmentCode: 'DM',
-  },
-  {
-    id: 'driver-002',
-    name: 'Michelle Davis',
-    email: 'michelle.d@fleetflow.com',
-    role: 'driver',
-    departmentCode: 'DM',
-  },
-
-  // Instructors
-  {
-    id: 'instructor-001',
-    name: 'Dr. Patricia Wilson',
-    email: 'p.wilson@fleetflow.com',
-    role: 'instructor',
-    departmentCode: 'MGR',
-  },
-
-  // Example: Custom permissions for a dispatcher with limited access
-  {
-    id: 'disp-003',
-    name: 'Limited Dispatcher',
-    email: 'limited@fleetflow.com',
-    role: 'dispatcher',
-    departmentCode: 'DC',
-    customPermissions: {
-      driverManagement: {
-        canViewDriverFinancials: false, // Override: No financial access
-        canManageDriverOnboarding: false, // Override: No onboarding access
-      },
-    },
-  },
-];
+// User data will be loaded from user management system (no mock data)
+export const MOCK_USERS: User[] = [];
 
 // Main function to get current user with section permissions
 export const getCurrentUser = (): {
   user: User;
   permissions: PageSectionPermissions;
 } => {
-  // Change this ID to test different users and permission levels:
-  const currentUserId = 'broker-001'; // Try: 'admin-001', 'disp-001', 'driver-001', 'disp-003' (Management user for testing My Portal)
-
-  const user = MOCK_USERS.find((u) => u.id === currentUserId) || MOCK_USERS[0];
+  // User will be loaded from authentication system (no mock data)
+  const user: User = {
+    id: '',
+    name: '',
+    email: '',
+    role: 'user',
+  };
   const permissions = getSectionPermissions(user);
 
   return { user, permissions };
@@ -2245,20 +2127,8 @@ export const getBrokersWithoutDispatcher = (): User[] => {
 };
 
 export const getBrokersByDispatcher = (dispatcherId: string): User[] => {
-  // Mock data showing brokers assigned to specific dispatchers
-  const mockAssignments: { [key: string]: User[] } = {
-    'DSP-001': [
-      {
-        id: 'BRK-003',
-        name: 'John Martinez',
-        role: 'broker',
-        email: 'john.martinez@fleetflow.com',
-        specialization: 'Heavy Equipment',
-      },
-    ],
-  };
-
-  return mockAssignments[dispatcherId] || [];
+  // Broker assignments will be loaded from user management system
+  return [];
 };
 
 export const assignDispatcherToBroker = (

@@ -9,13 +9,13 @@ export interface User {
   brokerId?: string; // Optional broker ID for broker users
 }
 
-// Mock current user for demo
+// Get current user from authentication system (no mock data)
 export function getCurrentUser(): { user: User; permissions: any } {
   const user: User = {
-    id: 'DU-ADM-2024001', // FleetFlow user identifier format: {UserInitials}-{DepartmentCode}-{HireDateCode}
-    role: 'admin' as const,
-    name: 'Demo User',
-    email: 'demo@fleetflow.com',
+    id: '', // Will be set by authentication
+    role: 'user' as const,
+    name: '',
+    email: '',
   };
 
   const permissions = {
@@ -46,11 +46,6 @@ export function checkPermission(permission: string): boolean {
 
 // Get available dispatchers for load assignment
 export function getAvailableDispatchers() {
-  // Mock dispatcher list for demo
-  return [
-    { id: '1', name: 'John Smith', email: 'john@fleetflow.com' },
-    { id: '2', name: 'Sarah Johnson', email: 'sarah@fleetflow.com' },
-    { id: '3', name: 'Mike Davis', email: 'mike@fleetflow.com' },
-    { id: '4', name: 'Lisa Wilson', email: 'lisa@fleetflow.com' },
-  ];
+  // Dispatcher data will be loaded from user management system
+  return [];
 }

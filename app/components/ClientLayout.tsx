@@ -16,7 +16,6 @@ import Providers from './Providers';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 // ✅ ADD: Platform AI initialization
 import { initializeFleetFlowAI } from '../config/ai-config';
-// ✅ ADD: Test notification generator for development
 
 interface ClientLayoutProps {
   children: React.ReactNode;
