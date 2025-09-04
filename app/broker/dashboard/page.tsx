@@ -1,20 +1,60 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BrokerPerformanceMetrics } from '../../services/BrokerAnalyticsService';
 
 export default function BrokerDashboard() {
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState('quotes-workflow');
+  const [isLoading, setIsLoading] = useState(true);
+  const [brokerMetrics, setBrokerMetrics] = useState<BrokerPerformanceMetrics | null>(null);
 
-  // KPI structure without mock data
-  const agentKPIs = [
+  // Load real broker performance metrics
+  useEffect(() => {
+    const loadBrokerMetrics = async () => {
+      try {
+        setIsLoading(true);
+
+        // Import the pre-created broker analytics service instance
+        const { brokerAnalyticsService } = await import('../../services/BrokerAnalyticsService');
+
+        // Get real performance metrics
+        const metrics = brokerAnalyticsService.getBrokerPerformanceMetrics();
+        setBrokerMetrics(metrics);
+
+        console.info('🏢 Broker Dashboard: Loaded real performance metrics:', metrics);
+      } catch (error) {
+        console.error('🏢 Broker Dashboard: Failed to load metrics:', error);
+        // Fallback to empty metrics if service fails
+        setBrokerMetrics({
+          totalLoads: 0,
+          activeLoads: 0,
+          completedLoads: 0,
+          totalRevenue: 0,
+          avgMargin: 0,
+          winRate: 0,
+          customerCount: 0,
+          avgLoadValue: 0,
+          monthlyGrowth: 0,
+          topCustomers: [],
+        } as BrokerPerformanceMetrics);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBrokerMetrics();
+  }, []);
+
+  // Build KPIs from real data
+  const agentKPIs = brokerMetrics ? [
     {
       title: 'Active Customers',
-      value: 0,
+      value: brokerMetrics.customerCount,
       unit: '',
-      change: '--',
-      trend: 'neutral',
+      change: brokerMetrics.customerCount > 0 ? '+1' : '--',
+      trend: brokerMetrics.customerCount > 0 ? 'up' : 'neutral',
       description: 'Currently active customer accounts',
       color: '#10b981',
       background: 'rgba(16, 185, 129, 0.5)',
@@ -22,10 +62,10 @@ export default function BrokerDashboard() {
     },
     {
       title: 'Active Loads',
-      value: 0,
+      value: brokerMetrics.activeLoads,
       unit: '',
-      change: '--',
-      trend: 'neutral',
+      change: brokerMetrics.activeLoads > 0 ? `+${brokerMetrics.activeLoads}` : '--',
+      trend: brokerMetrics.activeLoads > 0 ? 'up' : 'neutral',
       description: 'Loads currently in progress',
       color: '#3b82f6',
       background: 'rgba(59, 130, 246, 0.5)',
@@ -33,22 +73,68 @@ export default function BrokerDashboard() {
     },
     {
       title: 'Monthly Revenue',
-      value: 0,
+      value: Math.round(brokerMetrics.totalRevenue / 1000), // Convert to K
       unit: 'K',
-      change: '--',
-      trend: 'neutral',
+      change: brokerMetrics.totalRevenue > 0 ? `$${Math.round(brokerMetrics.totalRevenue / 1000)}K` : '--',
+      trend: brokerMetrics.totalRevenue > 0 ? 'up' : 'neutral',
       description: 'Revenue generated this month',
       color: '#8b5cf6',
       background: 'rgba(139, 92, 246, 0.5)',
       border: 'rgba(139, 92, 246, 0.3)',
     },
     {
-      title: 'Customer Satisfaction',
-      value: 0,
+      title: 'Win Rate',
+      value: Math.round(brokerMetrics.winRate),
+      unit: '%',
+      change: brokerMetrics.winRate > 0 ? `${Math.round(brokerMetrics.winRate)}%` : '--',
+      trend: brokerMetrics.winRate > 50 ? 'up' : brokerMetrics.winRate > 0 ? 'neutral' : 'neutral',
+      description: 'Load bidding win rate',
+      color: '#f59e0b',
+      background: 'rgba(245, 158, 11, 0.5)',
+      border: 'rgba(245, 158, 11, 0.3)',
+    },
+  ] : [
+    // Loading state
+    {
+      title: 'Active Customers',
+      value: '--',
+      unit: '',
+      change: '--',
+      trend: 'neutral',
+      description: 'Loading customer data...',
+      color: '#10b981',
+      background: 'rgba(16, 185, 129, 0.5)',
+      border: 'rgba(16, 185, 129, 0.3)',
+    },
+    {
+      title: 'Active Loads',
+      value: '--',
+      unit: '',
+      change: '--',
+      trend: 'neutral',
+      description: 'Loading load data...',
+      color: '#3b82f6',
+      background: 'rgba(59, 130, 246, 0.5)',
+      border: 'rgba(59, 130, 246, 0.3)',
+    },
+    {
+      title: 'Monthly Revenue',
+      value: '--',
+      unit: 'K',
+      change: '--',
+      trend: 'neutral',
+      description: 'Loading revenue data...',
+      color: '#8b5cf6',
+      background: 'rgba(139, 92, 246, 0.5)',
+      border: 'rgba(139, 92, 246, 0.3)',
+    },
+    {
+      title: 'Win Rate',
+      value: '--',
       unit: '%',
       change: '--',
       trend: 'neutral',
-      description: 'Average customer satisfaction score',
+      description: 'Loading performance data...',
       color: '#f59e0b',
       background: 'rgba(245, 158, 11, 0.5)',
       border: 'rgba(245, 158, 11, 0.3)',
