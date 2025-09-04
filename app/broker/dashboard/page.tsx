@@ -2222,7 +2222,8 @@ export default function BrokerDashboard() {
                   marginTop: '8px',
                 }}
               >
-                Track active loads, manage bids, and optimize your bidding strategy
+                Track active loads, manage bids, and optimize your bidding
+                strategy
               </p>
             </div>
 
@@ -2262,20 +2263,51 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(255, 255, 255, 0.08)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'start',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                          Chicago → Los Angeles
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>
-                          45,000 lbs • Refrigerated • Due: Tomorrow
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#10b981' }}>
-                          Your Bid: $2,850
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: '#10b981',
+                          }}
+                        >
+                          Your Bid: --
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Status
                         </div>
                         <div
@@ -2324,21 +2356,46 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(255, 255, 255, 0.08)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'start',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                          Dallas → Miami
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '8px' }}>
-                          25,000 lbs • Dry Van • Due: 2 days
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.7)' }}>
-                          Current low: $1,450
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                          }}
+                        >
+                          Current low: --
                         </div>
                       </div>
                       <button
                         style={{
-                          background: 'linear-gradient(135deg, #10b981, #059669)',
+                          background:
+                            'linear-gradient(135deg, #10b981, #059669)',
                           color: 'white',
                           border: 'none',
                           borderRadius: '6px',
@@ -2390,13 +2447,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(59, 130, 246, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Win Rate
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
-                    78%
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Last 30 days
                   </div>
                 </div>
@@ -2408,13 +2482,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(245, 158, 11, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Avg Margin
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>
-                    12.5%
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Target: 15%
                   </div>
                 </div>
@@ -2426,13 +2517,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(16, 185, 129, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Active Bids
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
-                    23
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     8 winning
                   </div>
                 </div>
@@ -2464,7 +2572,8 @@ export default function BrokerDashboard() {
                   marginTop: '8px',
                 }}
               >
-                Advanced predictive analytics, smart recommendations, and market insights powered by AI
+                Advanced predictive analytics, smart recommendations, and market
+                insights powered by AI
               </p>
             </div>
 
@@ -2504,18 +2613,38 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(16, 185, 129, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'start',
+                        gap: '12px',
+                      }}
+                    >
                       <div style={{ fontSize: '24px' }}>🎯</div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Bid Opportunity Alert
                         </div>
-                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', marginBottom: '8px' }}>
-                          Chicago → Denver route showing 23% profit margin potential
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          --
                         </div>
                         <button
                           style={{
-                            background: 'linear-gradient(135deg, #10b981, #059669)',
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
                             color: 'white',
                             border: 'none',
                             borderRadius: '6px',
@@ -2539,17 +2668,41 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(245, 158, 11, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'start',
+                        gap: '12px',
+                      }}
+                    >
                       <div style={{ fontSize: '24px' }}>📈</div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Price Optimization
                         </div>
-                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', marginBottom: '8px' }}>
-                          Increase bid prices by 5% on refrigerated loads for better margins
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            marginBottom: '8px',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                          AI predicts 15% higher win rate
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          --
                         </div>
                       </div>
                     </div>
@@ -2585,13 +2738,30 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(59, 130, 246, 0.2)',
                     }}
                   >
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
                       Tomorrow's Volume
                     </div>
-                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
-                      +18%
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#3b82f6',
+                      }}
+                    >
+                      --
                     </div>
-                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
                       Above average activity expected
                     </div>
                   </div>
@@ -2604,13 +2774,30 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(236, 72, 153, 0.2)',
                     }}
                   >
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
                       Fuel Price Impact
                     </div>
-                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#ec4899' }}>
-                      +$0.12/gal
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#ec4899',
+                      }}
+                    >
+                      --
                     </div>
-                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
                       Expected price increase next week
                     </div>
                   </div>
@@ -2652,13 +2839,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(139, 92, 246, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Recommendation Accuracy
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>
-                    92%
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#8b5cf6',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Last 30 days
                   </div>
                 </div>
@@ -2671,13 +2875,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(16, 185, 129, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Revenue Impact
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
-                    +$12.4K
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     From AI recommendations
                   </div>
                 </div>
@@ -2690,13 +2911,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(59, 130, 246, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Processing Time
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
-                    0.3s
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Average response time
                   </div>
                 </div>
@@ -2728,7 +2966,8 @@ export default function BrokerDashboard() {
                   marginTop: '8px',
                 }}
               >
-                Real-time market trends, pricing data, and competitive analysis for informed decision making
+                Real-time market trends, pricing data, and competitive analysis
+                for informed decision making
               </p>
             </div>
 
@@ -2768,16 +3007,36 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(16, 185, 129, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Midwest Region
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Spot rates increased 8.5%
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          --
                         </div>
                       </div>
-                      <div style={{ fontSize: '20px', color: '#10b981' }}>📈</div>
+                      <div style={{ fontSize: '20px', color: '#10b981' }}>
+                        📈
+                      </div>
                     </div>
                   </div>
 
@@ -2789,16 +3048,36 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(239, 68, 68, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Northeast Corridor
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Capacity shortage expected
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          --
                         </div>
                       </div>
-                      <div style={{ fontSize: '20px', color: '#ef4444' }}>⚠️</div>
+                      <div style={{ fontSize: '20px', color: '#ef4444' }}>
+                        ⚠️
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2832,24 +3111,52 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(59, 130, 246, 0.2)',
                     }}
                   >
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
                       Chicago → New York
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
-                          $2,450
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
                           Your rate
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '14px', color: '#10b981' }}>
-                          +12% vs market
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Market: $2,180
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          Market: --
                         </div>
                       </div>
                     </div>
@@ -2863,24 +3170,52 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(245, 158, 11, 0.2)',
                     }}
                   >
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
                       Los Angeles → Seattle
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
-                          $1,890
+                        <div
+                          style={{
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
                           Your rate
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '14px', color: '#ef4444' }}>
-                          -8% vs market
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Market: $2,050
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          Market: --
                         </div>
                       </div>
                     </div>
@@ -2923,13 +3258,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(139, 92, 246, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     National Spot Rate
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>
-                    +4.2%
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#8b5cf6',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Week over week
                   </div>
                 </div>
@@ -2942,13 +3294,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(16, 185, 129, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Capacity Utilization
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
-                    87%
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Industry average
                   </div>
                 </div>
@@ -2961,13 +3330,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(59, 130, 246, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Fuel Price Index
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#3b82f6' }}>
-                    $3.89
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Per gallon
                   </div>
                 </div>
@@ -2980,13 +3366,30 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(245, 158, 11, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Seasonal Factor
                   </div>
-                  <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>
-                    High
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    --
                   </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                    }}
+                  >
                     Peak season pricing
                   </div>
                 </div>
@@ -3018,7 +3421,8 @@ export default function BrokerDashboard() {
                   marginTop: '8px',
                 }}
               >
-                Comprehensive performance metrics, trends, and actionable insights for your brokerage operations
+                Comprehensive performance metrics, trends, and actionable
+                insights for your brokerage operations
               </p>
             </div>
 
@@ -3058,18 +3462,45 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(16, 185, 129, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Monthly Revenue
                         </div>
-                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#10b981' }}>
-                          $147.2K
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: '700',
+                            color: '#10b981',
+                          }}
+                        >
+                          --
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', color: '#10b981' }}>↗️ +23%</div>
-                        <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)' }}>vs last month</div>
+                        <div style={{ fontSize: '12px', color: '#10b981' }}>
+                          --
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '10px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          vs last month
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3082,18 +3513,45 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(59, 130, 246, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
                       <div>
-                        <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Load Volume
                         </div>
-                        <div style={{ fontSize: '20px', fontWeight: '700', color: '#3b82f6' }}>
-                          324
+                        <div
+                          style={{
+                            fontSize: '20px',
+                            fontWeight: '700',
+                            color: '#3b82f6',
+                          }}
+                        >
+                                                      --
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', color: '#10b981' }}>↗️ +18%</div>
-                        <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.6)' }}>loads completed</div>
+                        <div style={{ fontSize: '12px', color: '#10b981' }}>
+                          --
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '10px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          loads completed
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3128,13 +3586,30 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(245, 158, 11, 0.2)',
                     }}
                   >
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
                       Average Margin
                     </div>
-                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b' }}>
-                      14.7%
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#f59e0b',
+                      }}
+                    >
+                                              --
                     </div>
-                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
                       Target: 15%
                     </div>
                   </div>
@@ -3147,13 +3622,30 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(139, 92, 246, 0.2)',
                     }}
                   >
-                    <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
                       On-Time Delivery
                     </div>
-                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#8b5cf6' }}>
-                      96.2%
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#8b5cf6',
+                      }}
+                    >
+                                              --
                     </div>
-                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
                       Industry avg: 92%
                     </div>
                   </div>
@@ -3195,14 +3687,27 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(16, 185, 129, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Top Performing Route
                   </div>
-                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                    Chicago → LA
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
+                                          --
                   </div>
                   <div style={{ fontSize: '12px', color: '#10b981' }}>
-                    28% above average margin
+                    --
                   </div>
                 </div>
 
@@ -3214,14 +3719,27 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(239, 68, 68, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Customer Concentration
                   </div>
-                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                    High Risk
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    --
                   </div>
                   <div style={{ fontSize: '12px', color: '#ef4444' }}>
-                    65% from top 3 customers
+                    --
                   </div>
                 </div>
 
@@ -3233,14 +3751,27 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(59, 130, 246, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Seasonal Pattern
                   </div>
-                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                    Peak Season
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    --
                   </div>
                   <div style={{ fontSize: '12px', color: '#3b82f6' }}>
-                    Q4 typically 35% higher volume
+                    --
                   </div>
                 </div>
 
@@ -3252,14 +3783,27 @@ export default function BrokerDashboard() {
                     border: '1px solid rgba(245, 158, 11, 0.2)',
                   }}
                 >
-                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     Operational Efficiency
                   </div>
-                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                    Good
+                  <div
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    --
                   </div>
                   <div style={{ fontSize: '12px', color: '#f59e0b' }}>
-                    12% improvement potential
+                    --
                   </div>
                 </div>
               </div>
@@ -3290,7 +3834,8 @@ export default function BrokerDashboard() {
                   marginTop: '8px',
                 }}
               >
-                Organize, prioritize, and track all your brokerage tasks and deadlines
+                Organize, prioritize, and track all your brokerage tasks and
+                deadlines
               </p>
             </div>
 
@@ -3310,7 +3855,14 @@ export default function BrokerDashboard() {
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '16px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   🔥 Urgent Tasks
                 </h3>
                 <div style={{ display: 'grid', gap: '12px' }}>
@@ -3322,14 +3874,32 @@ export default function BrokerDashboard() {
                       border: '1px solid rgba(239, 68, 68, 0.2)',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'start',
+                        gap: '12px',
+                      }}
+                    >
                       <div style={{ fontSize: '20px' }}>🚨</div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                          Follow up with ABC Corp
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'white',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          --
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                          Quote expires in 2 hours
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          --
                         </div>
                       </div>
                     </div>
@@ -3346,18 +3916,46 @@ export default function BrokerDashboard() {
                   border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
-                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '16px' }}>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
                   Today's Tasks
                 </h3>
                 <div style={{ display: 'grid', gap: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <input type='checkbox' style={{ transform: 'scale(1.2)' }} />
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                    }}
+                  >
+                    <input
+                      type='checkbox'
+                      style={{ transform: 'scale(1.2)' }}
+                    />
                     <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
-                        Review carrier applications
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: 'white',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        --
                       </div>
-                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                        5 pending applications
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
+                        --
                       </div>
                     </div>
                   </div>
