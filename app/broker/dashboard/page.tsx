@@ -14,10 +14,18 @@ function QuotingPortal() {
 
   // Add lane function
   const addLane = () => {
-    const originInput = document.getElementById('lane-origin-input') as HTMLInputElement;
-    const destinationInput = document.getElementById('lane-destination-input') as HTMLInputElement;
-    const weightInput = document.getElementById('lane-weight-input') as HTMLInputElement;
-    const equipmentSelect = document.getElementById('lane-equipment-select') as HTMLSelectElement;
+    const originInput = document.getElementById(
+      'lane-origin-input'
+    ) as HTMLInputElement;
+    const destinationInput = document.getElementById(
+      'lane-destination-input'
+    ) as HTMLInputElement;
+    const weightInput = document.getElementById(
+      'lane-weight-input'
+    ) as HTMLInputElement;
+    const equipmentSelect = document.getElementById(
+      'lane-equipment-select'
+    ) as HTMLSelectElement;
 
     if (!originInput?.value || !destinationInput?.value) {
       alert('Please enter origin and destination');
@@ -30,10 +38,10 @@ function QuotingPortal() {
       destination: destinationInput.value,
       weight: parseFloat(weightInput?.value || '0'),
       equipment: equipmentSelect?.value || 'Dry Van',
-      priority: lanes.length + 1
+      priority: lanes.length + 1,
     };
 
-    setLanes(prev => [...prev, newLane]);
+    setLanes((prev) => [...prev, newLane]);
 
     // Clear inputs
     originInput.value = '';
@@ -43,7 +51,7 @@ function QuotingPortal() {
 
   // Remove lane function
   const removeLane = (laneId: string) => {
-    setLanes(prev => prev.filter(lane => lane.id !== laneId));
+    setLanes((prev) => prev.filter((lane) => lane.id !== laneId));
   };
 
   // Generate quotes for all lanes
@@ -57,7 +65,9 @@ function QuotingPortal() {
 
     try {
       // Import the FreightQuotingEngine dynamically
-      const { FreightQuotingEngine } = await import('../../services/FreightQuotingEngine');
+      const { FreightQuotingEngine } = await import(
+        '../../services/FreightQuotingEngine'
+      );
       const quotingEngine = new FreightQuotingEngine();
 
       // Generate quotes for each lane
@@ -75,12 +85,14 @@ function QuotingPortal() {
           serviceType: 'standard',
           distance,
           pickupDate: new Date().toISOString(),
-          deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          deliveryDate: new Date(
+            Date.now() + 3 * 24 * 60 * 60 * 1000
+          ).toISOString(),
           urgency: 'standard' as 'standard' | 'expedited' | 'emergency',
           customerTier: 'gold' as 'bronze' | 'silver' | 'gold' | 'platinum',
           specialRequirements: [],
           hazmat: false,
-          temperature: 'ambient' as 'ambient' | 'refrigerated' | 'frozen'
+          temperature: 'ambient' as 'ambient' | 'refrigerated' | 'frozen',
         };
 
         return await quotingEngine.generateQuote(quoteRequest);
@@ -102,11 +114,23 @@ function QuotingPortal() {
       <div style={{ marginBottom: '32px' }}>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {[
-            { id: 'LaneQuoting', label: '🛣️ Lane Quoting', active: activeTab === 'LaneQuoting' },
+            {
+              id: 'LaneQuoting',
+              label: '🛣️ Lane Quoting',
+              active: activeTab === 'LaneQuoting',
+            },
             { id: 'LTL', label: '📦 LTL Quotes', active: activeTab === 'LTL' },
             { id: 'FTL', label: '🚚 FTL Quotes', active: activeTab === 'FTL' },
-            { id: 'History', label: '📋 Quote History', active: activeTab === 'History' },
-            { id: 'Rules', label: '⚙️ Price Rules', active: activeTab === 'Rules' },
+            {
+              id: 'History',
+              label: '📋 Quote History',
+              active: activeTab === 'History',
+            },
+            {
+              id: 'Rules',
+              label: '⚙️ Price Rules',
+              active: activeTab === 'Rules',
+            },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -114,8 +138,12 @@ function QuotingPortal() {
               style={{
                 padding: '12px 20px',
                 borderRadius: '8px',
-                border: tab.active ? '2px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.2)',
-                background: tab.active ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border: tab.active
+                  ? '2px solid #3b82f6'
+                  : '1px solid rgba(255, 255, 255, 0.2)',
+                background: tab.active
+                  ? 'rgba(59, 130, 246, 0.2)'
+                  : 'rgba(255, 255, 255, 0.1)',
                 color: tab.active ? '#3b82f6' : 'rgba(255, 255, 255, 0.8)',
                 cursor: 'pointer',
                 fontSize: '14px',
@@ -133,12 +161,12 @@ function QuotingPortal() {
       {activeTab === 'LaneQuoting' && (
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
+            background: 'rgba(0, 0, 0, 0.4)',
             backdropFilter: 'blur(20px)',
             borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             padding: '32px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           }}
         >
           {/* Enhanced Lane Quoting Header with Progress */}
@@ -186,10 +214,10 @@ function QuotingPortal() {
 
             <div
               style={{
-                background: 'rgba(59, 130, 246, 0.1)',
+                background: 'rgba(59, 130, 246, 0.05)',
                 padding: '20px',
                 borderRadius: '12px',
-                border: '1px solid rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.1)',
                 marginBottom: '24px',
               }}
             >
@@ -242,8 +270,8 @@ function QuotingPortal() {
               }}
             >
               Perfect for shippers with multiple locations needing quotes for
-              various lanes. Get comprehensive pricing across all your
-              shipping routes.
+              various lanes. Get comprehensive pricing across all your shipping
+              routes.
             </p>
           </div>
 
@@ -259,10 +287,10 @@ function QuotingPortal() {
               {/* Enhanced Bulk Lane Entry */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(0, 0, 0, 0.2)',
                   borderRadius: '12px',
                   padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
               >
                 <div
@@ -306,11 +334,11 @@ function QuotingPortal() {
                 {/* Instructions */}
                 <div
                   style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
+                    background: 'rgba(59, 130, 246, 0.05)',
                     padding: '16px',
                     borderRadius: '8px',
                     marginBottom: '20px',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    border: '1px solid rgba(59, 130, 246, 0.1)',
                   }}
                 >
                   <div
@@ -320,9 +348,9 @@ function QuotingPortal() {
                       lineHeight: '1.5',
                     }}
                   >
-                    <strong style={{ color: 'white' }}>💡 Tip:</strong> Add
-                    one lane at a time, then review your list before
-                    generating quotes. You can edit or remove lanes as needed.
+                    <strong style={{ color: 'white' }}>💡 Tip:</strong> Add one
+                    lane at a time, then review your list before generating
+                    quotes. You can edit or remove lanes as needed.
                   </div>
                 </div>
 
@@ -469,10 +497,10 @@ function QuotingPortal() {
               {lanes.length > 0 && (
                 <div
                   style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
+                    background: 'rgba(0, 0, 0, 0.2)',
                     borderRadius: '12px',
                     padding: '24px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                   }}
                 >
                   <div
@@ -523,12 +551,18 @@ function QuotingPortal() {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           padding: '16px',
-                          background: 'rgba(255, 255, 255, 0.05)',
+                          background: 'rgba(0, 0, 0, 0.1)',
                           borderRadius: '8px',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.08)',
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                          }}
+                        >
                           <div
                             style={{
                               background: 'rgba(59, 130, 246, 0.2)',
@@ -537,14 +571,28 @@ function QuotingPortal() {
                               border: '1px solid rgba(59, 130, 246, 0.3)',
                             }}
                           >
-                            <span style={{ fontSize: '16px' }}>#{lane.priority}</span>
+                            <span style={{ fontSize: '16px' }}>
+                              #{lane.priority}
+                            </span>
                           </div>
                           <div>
-                            <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                            <div
+                              style={{
+                                fontSize: '18px',
+                                fontWeight: '600',
+                                color: 'white',
+                              }}
+                            >
                               {lane.origin} → {lane.destination}
                             </div>
-                            <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                              {lane.weight.toLocaleString()} lbs • {lane.equipment}
+                            <div
+                              style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.6)',
+                              }}
+                            >
+                              {lane.weight.toLocaleString()} lbs •{' '}
+                              {lane.equipment}
                             </div>
                           </div>
                         </div>
@@ -572,10 +620,10 @@ function QuotingPortal() {
             /* Lane Results Interface */
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.1)',
+                background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '12px',
                 padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <div
@@ -614,10 +662,10 @@ function QuotingPortal() {
 
               <div
                 style={{
-                  background: 'rgba(16, 185, 129, 0.1)',
+                  background: 'rgba(16, 185, 129, 0.05)',
                   padding: '20px',
                   borderRadius: '12px',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  border: '1px solid rgba(16, 185, 129, 0.15)',
                   marginBottom: '24px',
                 }}
               >
@@ -633,7 +681,8 @@ function QuotingPortal() {
                   ✅ Bulk Quotes Generated Successfully
                 </h4>
                 <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '0' }}>
-                  Your lane quotes are ready. Review the results below and send them to your customers.
+                  Your lane quotes are ready. Review the results below and send
+                  them to your customers.
                 </p>
               </div>
 
@@ -642,10 +691,10 @@ function QuotingPortal() {
                   <div
                     key={lane.id}
                     style={{
-                      background: 'rgba(255, 255, 255, 0.05)',
+                      background: 'rgba(0, 0, 0, 0.15)',
                       borderRadius: '12px',
                       padding: '20px',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
                     }}
                   >
                     <div
@@ -656,7 +705,13 @@ function QuotingPortal() {
                         marginBottom: '16px',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
                         <div
                           style={{
                             background: 'rgba(59, 130, 246, 0.2)',
@@ -670,19 +725,42 @@ function QuotingPortal() {
                           </span>
                         </div>
                         <div>
-                          <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
                             {lane.origin} → {lane.destination}
                           </div>
-                          <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                            {lane.weight.toLocaleString()} lbs • {lane.equipment}
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            {lane.weight.toLocaleString()} lbs •{' '}
+                            {lane.equipment}
                           </div>
                         </div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
+                        <div
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: '700',
+                            color: '#10b981',
+                          }}
+                        >
                           ${(Math.random() * 5000 + 1000).toFixed(0)}
                         </div>
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
                           AI Recommended
                         </div>
                       </div>
@@ -698,46 +776,82 @@ function QuotingPortal() {
                     >
                       <div
                         style={{
-                          background: 'rgba(59, 130, 246, 0.1)',
+                          background: 'rgba(59, 130, 246, 0.05)',
                           padding: '12px',
                           borderRadius: '8px',
-                          border: '1px solid rgba(59, 130, 246, 0.2)',
+                          border: '1px solid rgba(59, 130, 246, 0.1)',
                         }}
                       >
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Base Rate
                         </div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#3b82f6' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: '#3b82f6',
+                          }}
+                        >
                           ${(Math.random() * 3000 + 500).toFixed(0)}
                         </div>
                       </div>
                       <div
                         style={{
-                          background: 'rgba(245, 158, 11, 0.1)',
+                          background: 'rgba(245, 158, 11, 0.05)',
                           padding: '12px',
                           borderRadius: '8px',
-                          border: '1px solid rgba(245, 158, 11, 0.2)',
+                          border: '1px solid rgba(245, 158, 11, 0.1)',
                         }}
                       >
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Fuel Surcharge
                         </div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#f59e0b' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: '#f59e0b',
+                          }}
+                        >
                           ${(Math.random() * 500 + 100).toFixed(0)}
                         </div>
                       </div>
                       <div
                         style={{
-                          background: 'rgba(16, 185, 129, 0.1)',
+                          background: 'rgba(16, 185, 129, 0.05)',
                           padding: '12px',
                           borderRadius: '8px',
-                          border: '1px solid rgba(16, 185, 129, 0.2)',
+                          border: '1px solid rgba(16, 185, 129, 0.1)',
                         }}
                       >
-                        <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '4px',
+                          }}
+                        >
                           Win Probability
                         </div>
-                        <div style={{ fontSize: '16px', fontWeight: '600', color: '#10b981' }}>
+                        <div
+                          style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: '#10b981',
+                          }}
+                        >
                           {Math.floor(Math.random() * 40 + 60)}%
                         </div>
                       </div>
@@ -748,7 +862,8 @@ function QuotingPortal() {
                         style={{
                           flex: 1,
                           padding: '10px 16px',
-                          background: 'linear-gradient(135deg, #10b981, #059669)',
+                          background:
+                            'linear-gradient(135deg, #10b981, #059669)',
                           color: 'white',
                           border: 'none',
                           borderRadius: '8px',
@@ -764,9 +879,9 @@ function QuotingPortal() {
                         style={{
                           flex: 1,
                           padding: '10px 16px',
-                          background: 'rgba(255, 255, 255, 0.1)',
+                          background: 'rgba(0, 0, 0, 0.2)',
                           color: 'white',
-                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
                           borderRadius: '8px',
                           fontSize: '14px',
                           fontWeight: '600',
@@ -789,29 +904,36 @@ function QuotingPortal() {
       {activeTab !== 'LaneQuoting' && (
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.1)',
+            background: 'rgba(0, 0, 0, 0.25)',
             backdropFilter: 'blur(10px)',
             borderRadius: '16px',
             padding: '40px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
             textAlign: 'center',
           }}
         >
           <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}>
             🚧
           </div>
-          <h3 style={{ fontSize: '24px', fontWeight: '600', color: 'white', marginBottom: '8px' }}>
+          <h3
+            style={{
+              fontSize: '24px',
+              fontWeight: '600',
+              color: 'white',
+              marginBottom: '8px',
+            }}
+          >
             {activeTab} Coming Soon
           </h3>
           <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-            This feature is under development. Please use the Lane Quoting tab for now.
+            This feature is under development. Please use the Lane Quoting tab
+            for now.
           </p>
         </div>
       )}
     </div>
   );
 }
-
 
 export default function BrokerDashboard() {
   const router = useRouter();
