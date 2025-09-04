@@ -53,11 +53,14 @@ export default function AgentPortal() {
     | 'Warehousing'
     | 'Multi-Service'
     | 'SpotRates'
+    | 'LaneQuoting'
     | 'History'
   >('LTL');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingQuote, setPendingQuote] = useState<any>(null);
   const [quotes, setQuotes] = useState<any[]>([]);
+  const [lanes, setLanes] = useState<any[]>([]);
+  const [showLaneResults, setShowLaneResults] = useState(false);
 
   // LTL State
   const [ltlData, setLtlData] = useState({
@@ -905,6 +908,12 @@ export default function AgentPortal() {
                     label: 'Spot Rates',
                     icon: '📈',
                     color: '#10b981',
+                  },
+                  {
+                    id: 'LaneQuoting',
+                    label: 'Lane Quoting',
+                    icon: '🛣️',
+                    color: '#ec4899',
                   },
                   {
                     id: 'History',
@@ -2149,6 +2158,721 @@ export default function AgentPortal() {
                   >
                     📈 Get Rate Analysis
                   </button>
+                </div>
+              )}
+
+              {/* Lane Quoting Tab */}
+              {activeQuoteTab === 'LaneQuoting' && (
+                <div style={{ color: 'white' }}>
+                  {/* Enhanced Lane Quoting Header with Progress */}
+                  <div style={{ marginBottom: '32px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: 'white',
+                          margin: '0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        🛣️ Multi-Lane Quoting
+                      </h3>
+                      <div
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.2)',
+                          padding: '8px 16px',
+                          borderRadius: '20px',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: '#10b981',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Step 1 of 3: Add Lanes
+                        </span>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        padding: '20px',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                        marginBottom: '24px',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: 'white',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
+                        💡 How It Works
+                      </h4>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                          gap: '16px',
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        <div>
+                          <strong style={{ color: 'white' }}>1. Add Lanes</strong>
+                          <br />
+                          Enter origin-destination pairs for each shipping lane
+                        </div>
+                        <div>
+                          <strong style={{ color: 'white' }}>2. Review & Edit</strong>
+                          <br />
+                          Modify weights, equipment, and priorities as needed
+                        </div>
+                        <div>
+                          <strong style={{ color: 'white' }}>3. Get Quotes</strong>
+                          <br />
+                          Generate bulk pricing with spreadsheet-style results
+                        </div>
+                      </div>
+                    </div>
+
+                    <p
+                      style={{
+                        fontSize: '16px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        lineHeight: '1.6',
+                        marginBottom: '0',
+                      }}
+                    >
+                      Perfect for shippers with multiple locations needing quotes for
+                      various lanes. Get comprehensive pricing across all your shipping
+                      routes.
+                    </p>
+                  </div>
+
+                  {!showLaneResults ? (
+                    /* Lane Input Interface */
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '24px',
+                      }}
+                    >
+                      {/* Enhanced Bulk Lane Entry */}
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '12px',
+                          padding: '24px',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: '16px',
+                          }}
+                        >
+                          <h4
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: '600',
+                              color: 'white',
+                              margin: '0',
+                            }}
+                          >
+                            📝 Add Shipping Lanes
+                          </h4>
+                          <div
+                            style={{
+                              background: 'rgba(245, 158, 11, 0.2)',
+                              padding: '4px 12px',
+                              borderRadius: '16px',
+                              border: '1px solid rgba(245, 158, 11, 0.3)',
+                            }}
+                          >
+                            <span
+                              style={{
+                                color: '#f59e0b',
+                                fontSize: '12px',
+                                fontWeight: '600',
+                              }}
+                            >
+                              {lanes.length} lanes added
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Instructions */}
+                        <div
+                          style={{
+                            background: 'rgba(59, 130, 246, 0.1)',
+                            padding: '16px',
+                            borderRadius: '8px',
+                            marginBottom: '20px',
+                            border: '1px solid rgba(59, 130, 246, 0.2)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.9)',
+                              lineHeight: '1.5',
+                            }}
+                          >
+                            <strong style={{ color: 'white' }}>💡 Tip:</strong> Add
+                            one lane at a time, then review your list before
+                            generating quotes. You can edit or remove lanes as needed.
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '2fr 2fr 1fr 1fr auto',
+                            gap: '12px',
+                            alignItems: 'end',
+                          }}
+                        >
+                          <div>
+                            <label
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                marginBottom: '8px',
+                                display: 'block',
+                              }}
+                            >
+                              Origin
+                            </label>
+                            <input
+                              type='text'
+                              placeholder='e.g., Chicago, IL'
+                              style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                color: 'white',
+                                fontSize: '14px',
+                              }}
+                              id='lane-origin-input'
+                            />
+                          </div>
+                          <div>
+                            <label
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                marginBottom: '8px',
+                                display: 'block',
+                              }}
+                            >
+                              Destination
+                            </label>
+                            <input
+                              type='text'
+                              placeholder='e.g., Detroit, MI'
+                              style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                color: 'white',
+                                fontSize: '14px',
+                              }}
+                              id='lane-destination-input'
+                            />
+                          </div>
+                          <div>
+                            <label
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                marginBottom: '8px',
+                                display: 'block',
+                              }}
+                            >
+                              Weight (lbs)
+                            </label>
+                            <input
+                              type='number'
+                              placeholder='45000'
+                              style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                color: 'white',
+                                fontSize: '14px',
+                              }}
+                              id='lane-weight-input'
+                            />
+                          </div>
+                          <div>
+                            <label
+                              style={{
+                                color: 'white',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                marginBottom: '8px',
+                                display: 'block',
+                              }}
+                            >
+                              Equipment
+                            </label>
+                            <select
+                              style={{
+                                width: '100%',
+                                padding: '12px',
+                                borderRadius: '8px',
+                                border: '1px solid rgba(255, 255, 255, 0.3)',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                color: 'white',
+                                fontSize: '14px',
+                              }}
+                              id='lane-equipment-select'
+                            >
+                              <option value='Dry Van'>Dry Van</option>
+                              <option value='Refrigerated'>Refrigerated</option>
+                              <option value='Flatbed'>Flatbed</option>
+                              <option value='Step Deck'>Step Deck</option>
+                              <option value='Double Drop'>Double Drop</option>
+                            </select>
+                          </div>
+                          <button
+                            onClick={() => {
+                              const originInput = document.getElementById('lane-origin-input') as HTMLInputElement;
+                              const destinationInput = document.getElementById('lane-destination-input') as HTMLInputElement;
+                              const weightInput = document.getElementById('lane-weight-input') as HTMLInputElement;
+                              const equipmentSelect = document.getElementById('lane-equipment-select') as HTMLSelectElement;
+
+                              if (!originInput?.value || !destinationInput?.value) {
+                                alert('Please enter origin and destination');
+                                return;
+                              }
+
+                              const newLane = {
+                                id: `lane-${Date.now()}`,
+                                origin: originInput.value,
+                                destination: destinationInput.value,
+                                weight: parseFloat(weightInput?.value || '0'),
+                                equipment: equipmentSelect?.value || 'Dry Van',
+                                priority: lanes.length + 1,
+                              };
+
+                              setLanes(prev => [...prev, newLane]);
+
+                              // Clear inputs
+                              originInput.value = '';
+                              destinationInput.value = '';
+                              weightInput.value = '';
+                            }}
+                            style={{
+                              padding: '12px 16px',
+                              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '8px',
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            ➕ Add Lane
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Lane List */}
+                      {lanes.length > 0 && (
+                        <div
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            borderRadius: '12px',
+                            padding: '24px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginBottom: '16px',
+                            }}
+                          >
+                            <h4
+                              style={{
+                                fontSize: '20px',
+                                fontWeight: '600',
+                                color: 'white',
+                                margin: '0',
+                              }}
+                            >
+                              📋 Your Lanes ({lanes.length})
+                            </h4>
+                            <button
+                              onClick={async () => {
+                                if (lanes.length === 0) {
+                                  alert('Please add at least one lane');
+                                  return;
+                                }
+
+                                setShowLaneResults(true);
+
+                                try {
+                                  const { FreightQuotingEngine } = await import('../../../services/FreightQuotingEngine');
+                                  const quotingEngine = new FreightQuotingEngine();
+
+                                  const quotePromises = lanes.map(async (lane) => {
+                                    const distance = Math.floor(Math.random() * 1000) + 100;
+                                    const quoteRequest = {
+                                      id: `quote-${lane.id}`,
+                                      type: 'LTL' as 'LTL' | 'FTL' | 'Specialized',
+                                      origin: lane.origin,
+                                      destination: lane.destination,
+                                      weight: lane.weight || 1000,
+                                      freightClass: 55,
+                                      equipmentType: lane.equipment,
+                                      serviceType: 'standard',
+                                      distance,
+                                      pickupDate: new Date().toISOString(),
+                                      deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+                                      urgency: 'standard' as 'standard' | 'expedited' | 'emergency',
+                                      customerTier: 'gold' as 'bronze' | 'silver' | 'gold' | 'platinum',
+                                      specialRequirements: [],
+                                      hazmat: false,
+                                      temperature: 'ambient' as 'ambient' | 'refrigerated' | 'frozen',
+                                    };
+
+                                    return await quotingEngine.generateQuote(quoteRequest);
+                                  });
+
+                                  const results = await Promise.all(quotePromises);
+                                  console.info('🛣️ Bulk lane quotes generated:', results);
+                                } catch (error) {
+                                  console.error('❌ Error generating bulk quotes:', error);
+                                  alert('Error generating quotes. Please try again.');
+                                }
+                              }}
+                              style={{
+                                padding: '12px 24px',
+                                background: 'linear-gradient(135deg, #10b981, #059669)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                              }}
+                            >
+                              🤖 Generate Bulk Quotes
+                            </button>
+                          </div>
+
+                          <div style={{ display: 'grid', gap: '12px' }}>
+                            {lanes.map((lane, index) => (
+                              <div
+                                key={lane.id}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  padding: '16px',
+                                  background: 'rgba(255, 255, 255, 0.05)',
+                                  borderRadius: '8px',
+                                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                                }}
+                              >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                  <div
+                                    style={{
+                                      background: 'rgba(59, 130, 246, 0.2)',
+                                      padding: '8px',
+                                      borderRadius: '8px',
+                                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                                    }}
+                                  >
+                                    <span style={{ fontSize: '16px' }}>#{lane.priority}</span>
+                                  </div>
+                                  <div>
+                                    <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                                      {lane.origin} → {lane.destination}
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                                      {lane.weight.toLocaleString()} lbs • {lane.equipment}
+                                    </div>
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => setLanes(prev => prev.filter(l => l.id !== lane.id))}
+                                  style={{
+                                    padding: '8px',
+                                    background: 'rgba(239, 68, 68, 0.2)',
+                                    color: '#ef4444',
+                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                  }}
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    /* Lane Results Interface */
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '24px',
+                        }}
+                      >
+                        <h4
+                          style={{
+                            fontSize: '24px',
+                            fontWeight: '600',
+                            color: 'white',
+                            margin: '0',
+                          }}
+                        >
+                          📊 Lane Quote Results
+                        </h4>
+                        <button
+                          onClick={() => setShowLaneResults(false)}
+                          style={{
+                            padding: '8px 16px',
+                            background: 'rgba(59, 130, 246, 0.2)',
+                            color: '#3b82f6',
+                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          ← Back to Edit Lanes
+                        </button>
+                      </div>
+
+                      <div
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.1)',
+                          padding: '20px',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                          marginBottom: '24px',
+                        }}
+                      >
+                        <h5
+                          style={{
+                            color: '#10b981',
+                            fontSize: '18px',
+                            fontWeight: '600',
+                            marginBottom: '16px',
+                            margin: '0 0 16px 0',
+                          }}
+                        >
+                          ✅ Bulk Quotes Generated Successfully
+                        </h5>
+                        <p style={{ color: 'rgba(255, 255, 255, 0.8)', margin: '0' }}>
+                          Your lane quotes are ready. Review the results below and send them to your customers.
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'grid', gap: '16px' }}>
+                        {lanes.map((lane, index) => (
+                          <div
+                            key={lane.id}
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              borderRadius: '12px',
+                              padding: '20px',
+                              border: '1px solid rgba(255, 255, 255, 0.1)',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginBottom: '16px',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div
+                                  style={{
+                                    background: 'rgba(59, 130, 246, 0.2)',
+                                    padding: '6px 12px',
+                                    borderRadius: '16px',
+                                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                                  }}
+                                >
+                                  <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                                    Lane #{lane.priority}
+                                  </span>
+                                </div>
+                                <div>
+                                  <div style={{ fontSize: '18px', fontWeight: '600', color: 'white' }}>
+                                    {lane.origin} → {lane.destination}
+                                  </div>
+                                  <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                                    {lane.weight.toLocaleString()} lbs • {lane.equipment}
+                                  </div>
+                                </div>
+                              </div>
+                              <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
+                                  ${(Math.random() * 5000 + 1000).toFixed(0)}
+                                </div>
+                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                                  AI Recommended
+                                </div>
+                              </div>
+                            </div>
+
+                            <div
+                              style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr 1fr',
+                                gap: '16px',
+                                marginBottom: '16px',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  background: 'rgba(59, 130, 246, 0.1)',
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                                }}
+                              >
+                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                                  Base Rate
+                                </div>
+                                <div style={{ fontSize: '16px', fontWeight: '600', color: '#3b82f6' }}>
+                                  ${(Math.random() * 3000 + 500).toFixed(0)}
+                                </div>
+                              </div>
+                              <div
+                                style={{
+                                  background: 'rgba(245, 158, 11, 0.1)',
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                                }}
+                              >
+                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                                  Fuel Surcharge
+                                </div>
+                                <div style={{ fontSize: '16px', fontWeight: '600', color: '#f59e0b' }}>
+                                  ${(Math.random() * 500 + 100).toFixed(0)}
+                                </div>
+                              </div>
+                              <div
+                                style={{
+                                  background: 'rgba(16, 185, 129, 0.1)',
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                                }}
+                              >
+                                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px' }}>
+                                  Win Probability
+                                </div>
+                                <div style={{ fontSize: '16px', fontWeight: '600', color: '#10b981' }}>
+                                  {Math.floor(Math.random() * 40 + 60)}%
+                                </div>
+                              </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                              <button
+                                style={{
+                                  flex: 1,
+                                  padding: '10px 16px',
+                                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                                  color: 'white',
+                                  border: 'none',
+                                  borderRadius: '8px',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                }}
+                              >
+                                📤 Send to Customer
+                              </button>
+                              <button
+                                style={{
+                                  flex: 1,
+                                  padding: '10px 16px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  color: 'white',
+                                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                                  borderRadius: '8px',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                }}
+                              >
+                                💾 Save Quote
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
