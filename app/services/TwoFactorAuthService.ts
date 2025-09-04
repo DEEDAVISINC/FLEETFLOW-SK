@@ -238,7 +238,15 @@ export class TwoFactorAuthService {
       </div>
     `;
 
-    await sendGridService.sendEmail(contact.email, subject, htmlContent);
+    await sendGridService.sendEmail({
+      to: { email: contact.email, name: contact.name },
+      template: {
+        subject,
+        html: htmlContent,
+        text: `FleetFlow Security Code: ${code}\n\nYour verification code is: ${code}\n\nThis code expires in 10 minutes.\n\n- FleetFlow Security Team`
+      },
+      category: '2fa_verification'
+    });
   }
 
   /**
@@ -252,7 +260,6 @@ export class TwoFactorAuthService {
     // Note: This would use your existing Twilio service
     // For now, we'll log it (in production, integrate with TwilioService)
     const message = `FleetFlow Security Code: ${code}\n\nDo not share this code. Expires in 10 minutes.\n\n- FleetFlow Security Team`;
-
 
     // TODO: Integrate with existing TwilioService:
     // await twilioService.sendSMS(contact.phone, message);
