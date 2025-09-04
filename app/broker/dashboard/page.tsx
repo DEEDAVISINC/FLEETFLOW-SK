@@ -934,7 +934,8 @@ function QuotingPortal() {
                 marginTop: '8px',
               }}
             >
-              Generate quotes for less-than-truckload shipments with multiple stops and consolidation options.
+              Generate quotes for less-than-truckload shipments with multiple
+              stops and consolidation options.
             </p>
           </div>
 
@@ -965,7 +966,13 @@ function QuotingPortal() {
                 Quick LTL Quote
               </h3>
               <div style={{ display: 'grid', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '12px',
+                  }}
+                >
                   <input
                     type='text'
                     placeholder='Origin City, State'
@@ -991,7 +998,13 @@ function QuotingPortal() {
                     }}
                   />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr',
+                    gap: '12px',
+                  }}
+                >
                   <input
                     type='number'
                     placeholder='Weight (lbs)'
@@ -1069,17 +1082,29 @@ function QuotingPortal() {
                 style={{
                   background: 'rgba(0, 0, 0, 0.15)',
                   borderRadius: '12px',
-                  padding: '20px',
+                  padding: '40px',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚚</div>
-                <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981', marginBottom: '8px' }}>
-                  $1,247
+                <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.6 }}>📊</div>
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Enter details above to get a quote
                 </div>
-                <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                  2-3 day transit • Standard service
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                  }}
+                >
+                  Quote will appear here after calculation
                 </div>
               </div>
             </div>
@@ -1121,7 +1146,8 @@ function QuotingPortal() {
                 marginTop: '8px',
               }}
             >
-              Full truckload shipping quotes with dedicated equipment and direct service options.
+              Full truckload shipping quotes with dedicated equipment and direct
+              service options.
             </p>
           </div>
 
@@ -1152,7 +1178,13 @@ function QuotingPortal() {
                 FTL Quote Request
               </h3>
               <div style={{ display: 'grid', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '12px',
+                  }}
+                >
                   <input
                     type='text'
                     placeholder='Origin City, State'
@@ -1178,7 +1210,13 @@ function QuotingPortal() {
                     }}
                   />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '12px',
+                  }}
+                >
                   <select
                     style={{
                       padding: '12px',
@@ -1249,10 +1287,26 @@ function QuotingPortal() {
               </h3>
               <div style={{ display: 'grid', gap: '12px' }}>
                 {[
-                  { name: 'Dry Van (53\')', icon: '📦', capacity: 'Up to 45,000 lbs' },
-                  { name: 'Refrigerated', icon: '❄️', capacity: 'Temperature controlled' },
-                  { name: 'Flatbed', icon: '🔲', capacity: 'Heavy/overwidth loads' },
-                  { name: 'Step Deck', icon: '🏗️', capacity: 'Tall/heavy equipment' },
+                  {
+                    name: "Dry Van (53')",
+                    icon: '📦',
+                    capacity: 'Up to 45,000 lbs',
+                  },
+                  {
+                    name: 'Refrigerated',
+                    icon: '❄️',
+                    capacity: 'Temperature controlled',
+                  },
+                  {
+                    name: 'Flatbed',
+                    icon: '🔲',
+                    capacity: 'Heavy/overwidth loads',
+                  },
+                  {
+                    name: 'Step Deck',
+                    icon: '🏗️',
+                    capacity: 'Tall/heavy equipment',
+                  },
                 ].map((equipment) => (
                   <div
                     key={equipment.name}
@@ -1268,10 +1322,21 @@ function QuotingPortal() {
                   >
                     <div style={{ fontSize: '24px' }}>{equipment.icon}</div>
                     <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {equipment.name}
                       </div>
-                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
                         {equipment.capacity}
                       </div>
                     </div>
@@ -1317,96 +1382,43 @@ function QuotingPortal() {
                 marginTop: '8px',
               }}
             >
-              Review and manage your previous freight quotes and customer requests.
+              Review and manage your previous freight quotes and customer
+              requests.
             </p>
           </div>
 
           <div style={{ display: 'grid', gap: '16px' }}>
-            {/* Mock Quote History Items */}
-            {[
-              {
-                id: 'Q-001',
-                type: 'LTL',
-                origin: 'Chicago, IL',
-                destination: 'Detroit, MI',
-                amount: '$1,247',
-                status: 'Sent',
-                date: '2024-01-15',
-              },
-              {
-                id: 'Q-002',
-                type: 'FTL',
-                origin: 'Los Angeles, CA',
-                destination: 'Phoenix, AZ',
-                amount: '$2,850',
-                status: 'Accepted',
-                date: '2024-01-14',
-              },
-              {
-                id: 'Q-003',
-                type: 'Lane',
-                origin: 'Dallas, TX',
-                destination: 'Atlanta, GA',
-                amount: '$3,200',
-                status: 'Pending',
-                date: '2024-01-13',
-              },
-            ].map((quote) => (
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '12px',
+                padding: '60px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.6 }}>📋</div>
               <div
-                key={quote.id}
                 style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  marginBottom: '8px',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      padding: '8px 12px',
-                      borderRadius: '16px',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                    }}
-                  >
-                    <span style={{ color: '#3b82f6', fontWeight: '600', fontSize: '12px' }}>
-                      {quote.type}
-                    </span>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
-                      {quote.origin} → {quote.destination}
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
-                      {quote.date} • Quote #{quote.id}
-                    </div>
-                  </div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '18px', fontWeight: '700', color: '#10b981' }}>
-                    {quote.amount}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color:
-                        quote.status === 'Accepted'
-                          ? '#10b981'
-                          : quote.status === 'Sent'
-                          ? '#3b82f6'
-                          : '#f59e0b',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {quote.status}
-                  </div>
-                </div>
+                No Quote History Yet
               </div>
-            ))}
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  lineHeight: '1.5',
+                }}
+              >
+                Your quote history will appear here once you start generating quotes.<br />
+                Use the LTL, FTL, or Lane Quoting tabs to create your first quote.
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1445,7 +1457,8 @@ function QuotingPortal() {
                 marginTop: '8px',
               }}
             >
-              Configure pricing rules, margins, and automated quoting parameters.
+              Configure pricing rules, margins, and automated quoting
+              parameters.
             </p>
           </div>
 
@@ -1490,7 +1503,7 @@ function QuotingPortal() {
                   </label>
                   <input
                     type='number'
-                    defaultValue='15'
+                    placeholder='e.g., 15'
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -1516,7 +1529,7 @@ function QuotingPortal() {
                   </label>
                   <input
                     type='number'
-                    defaultValue='8.5'
+                    placeholder='e.g., 8.5'
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -1542,7 +1555,7 @@ function QuotingPortal() {
                   </label>
                   <input
                     type='number'
-                    defaultValue='500'
+                    placeholder='e.g., 500'
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -1595,14 +1608,31 @@ function QuotingPortal() {
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: '16px', fontWeight: '600', color: 'white' }}>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {service.level}
                       </div>
-                      <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
                         {service.time}
                       </div>
                     </div>
-                    <div style={{ fontSize: '16px', fontWeight: '600', color: '#10b981' }}>
+                    <div
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        color: '#10b981',
+                      }}
+                    >
                       {service.multiplier}
                     </div>
                   </div>
@@ -1638,7 +1668,8 @@ function QuotingPortal() {
                   marginBottom: '24px',
                 }}
               >
-                Your pricing rules will be applied to all new quotes automatically.
+                Your pricing rules will be applied to all new quotes
+                automatically.
               </p>
               <button
                 style={{
