@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
 import DesperateProspectsBatchDeployment, {
@@ -281,7 +281,7 @@ const depointeStaff = [
   },
   {
     id: 'miles-007',
-    name: 'Miles Rhodes',
+    name: 'Miles',
     role: 'Dispatch Coordination Specialist',
     department: 'Freight Operations',
     avatar: '📍',
@@ -664,7 +664,7 @@ const depointeStaff = [
   },
   {
     id: 'alexis-executive-023',
-    name: 'Alexis Best',
+    name: 'Alexis',
     role: 'AI Executive Assistant',
     department: 'Operations',
     avatar: '👔',
@@ -722,37 +722,17 @@ export default function DEPOINTEDashboard() {
   >([]);
   const [selectedView, setSelectedView] = useState('overview');
   const [selectedMainView, setSelectedMainView] = useState<
-    'overview' | 'crm' | 'analytics' | 'campaigns' | 'scheduler'
+    | 'overview'
+    | 'crm'
+    | 'leads'
+    | 'salesflow'
+    | 'analytics'
+    | 'campaigns'
+    | 'scheduler'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
   const [liveActivities, setLiveActivities] = useState<any[]>([]);
-
-  // Function to add email response activities to live feed
-  const addEmailActivity = useCallback(
-    (
-      type: 'email_response' | 'email_received',
-      subject: string,
-      recipient: string,
-      priority: 'low' | 'normal' | 'high' | 'urgent' = 'normal'
-    ) => {
-      const activity = {
-        id: `activity-${Date.now()}-${Math.random()}`,
-        type,
-        title:
-          type === 'email_response' ? `Email Response Sent` : `Email Received`,
-        description: `"${subject}" ${type === 'email_response' ? '→' : '←'} ${recipient}`,
-        timestamp: new Date(),
-        priority,
-        icon: type === 'email_response' ? '📧' : '📬',
-        staffMember: 'Alexis Best',
-        department: 'OPERATIONS',
-      };
-
-      setLiveActivities((prev) => [activity, ...prev.slice(0, 49)]); // Keep last 50 activities
-    },
-    []
-  );
   const [staffData, setStaffData] = useState(depointeStaff);
   const [expandedHealthcareCampaign, setExpandedHealthcareCampaign] =
     useState(false);
@@ -782,40 +762,6 @@ export default function DEPOINTEDashboard() {
       isStaffDirectoryCollapsed
     );
   }, [isStaffDirectoryCollapsed]);
-
-  // Fetch email activities from API periodically
-  useEffect(() => {
-    const fetchEmailActivities = async () => {
-      try {
-        const response = await fetch('/api/dashboard/add-email-activity');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.activities.length > 0) {
-            // Update live activities with email activities from API
-            setLiveActivities((prev) => {
-              // Merge API activities with existing activities, avoiding duplicates
-              const merged = [...data.activities];
-              prev.forEach((existing) => {
-                if (!merged.find((api) => api.id === existing.id)) {
-                  merged.push(existing);
-                }
-              });
-              return merged.slice(0, 50); // Keep last 50
-            });
-          }
-        }
-      } catch (error) {
-        // Silently handle fetch errors to avoid console spam
-        console.log('Note: Could not fetch email activities:', error);
-      }
-    };
-
-    // Fetch immediately and then every 30 seconds
-    fetchEmailActivities();
-    const interval = setInterval(fetchEmailActivities, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   // Load saved healthcare tasks and activity feed on page load
   useEffect(() => {
@@ -1712,6 +1658,7 @@ export default function DEPOINTEDashboard() {
         {[
           { key: 'overview', label: '📊 Dashboard Overview', icon: '📊' },
           { key: 'crm', label: '📞 CRM & Leads', icon: '📞' },
+          { key: 'leads', label: '🎯 Lead Generation', icon: '🎯' },
           { key: 'analytics', label: '📈 Analytics', icon: '📈' },
           { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
           { key: 'scheduler', label: '📅 AI Staff Scheduler', icon: '📅' },
@@ -2155,7 +2102,7 @@ export default function DEPOINTEDashboard() {
                               marginBottom: '4px',
                             }}
                           >
-                            Miles Rhodes - Dispatch Coordination
+                            Miles - Dispatch Coordination
                           </div>
                           <div
                             style={{
@@ -2693,7 +2640,7 @@ export default function DEPOINTEDashboard() {
                                 marginBottom: '4px',
                               }}
                             >
-                              Alexis Best - AI Executive Assistant
+                              Alexis - AI Executive Assistant
                             </div>
                             <div
                               style={{
@@ -3792,15 +3739,7 @@ export default function DEPOINTEDashboard() {
                             marginBottom: '4px',
                           }}
                         >
-                          {activity.icon && (
-                            <span style={{ marginRight: '8px' }}>
-                              {activity.icon}
-                            </span>
-                          )}
-                          {activity.staffMember ||
-                            activity.staffName ||
-                            'DEPOINTE AI'}
-                          : {activity.title || activity.action}
+                          {activity.staffName}: {activity.action}
                         </div>
                         <div
                           style={{
@@ -3808,7 +3747,7 @@ export default function DEPOINTEDashboard() {
                             fontSize: '0.8rem',
                           }}
                         >
-                          {activity.description || activity.details}
+                          {activity.details}
                         </div>
                       </div>
                       <div
@@ -3817,9 +3756,7 @@ export default function DEPOINTEDashboard() {
                           fontSize: '0.7rem',
                         }}
                       >
-                        {activity.timestamp
-                          ? new Date(activity.timestamp).toLocaleTimeString()
-                          : 'Just now'}
+                        {new Date(activity.timestamp).toLocaleTimeString()}
                       </div>
                     </div>
                   ))}
@@ -6203,6 +6140,884 @@ export default function DEPOINTEDashboard() {
                 </p>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* LEAD GENERATION VIEW */}
+      {selectedMainView === 'leads' && (
+        <div>
+          <div
+            style={{
+              marginBottom: '30px',
+              textAlign: 'center',
+            }}
+          >
+            <h2
+              style={{
+                color: 'white',
+                marginBottom: '10px',
+                fontSize: '2.2rem',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+              }}
+            >
+              🎯 DEPOINTE AI Lead Generation Hub
+            </h2>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                fontSize: '1.1rem',
+                maxWidth: '600px',
+                margin: '0 auto',
+              }}
+            >
+              Advanced lead generation from TruckingPlanet, ThomasNet, and
+              combined sources with AI-powered scoring and freight potential
+              analysis
+            </p>
+          </div>
+
+          {/* Lead Generation Dashboard Content */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+              marginBottom: '30px',
+            }}
+          >
+            {/* Lead Sources */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                📊 Lead Sources
+              </h4>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#3b82f6',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    🚛 TruckingPlanet
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Carrier and shipper leads from trucking network
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#10b981',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    🏭 ThomasNet
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    B2B manufacturing and industrial leads
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(168, 85, 247, 0.1)',
+                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#a855f7',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    🔄 Combined Sources
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Cross-platform lead matching and validation
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: '#ef4444',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    🏛️ FMCSA Database
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Reverse shipper lookup and carrier verification
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lead Statistics */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                📈 Lead Performance
+              </h4>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                }}
+              >
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      color: '#22c55e',
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 8px #22c55e40',
+                    }}
+                  >
+                    0
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    New Leads Today
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      color: '#3b82f6',
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 8px #3b82f640',
+                    }}
+                  >
+                    0
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Qualified Leads
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      color: '#f59e0b',
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 8px #f59e0b40',
+                    }}
+                  >
+                    0%
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Conversion Rate
+                  </div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div
+                    style={{
+                      color: '#a855f7',
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      textShadow: '0 2px 8px #a855f740',
+                    }}
+                  >
+                    $0K
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Est. Revenue
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* AI Lead Scoring */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                🤖 AI Lead Scoring
+              </h4>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: '#22c55e',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        High Priority Leads
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        90-100% match score
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: '#22c55e',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: '#f59e0b',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        Medium Priority Leads
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        70-89% match score
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: '#f59e0b',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: '#ef4444',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        Low Priority Leads
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        Under 70% match score
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: '#ef4444',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Freight Potential Analysis */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                🚛 Freight Potential Analysis
+              </h4>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(168, 85, 247, 0.1)',
+                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: '#a855f7',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        High-Value Corridors
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        Premium shipping routes
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: '#a855f7',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      $5K-15K
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: '#3b82f6',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        Standard Routes
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        Regular freight opportunities
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: '#3b82f6',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      $1K-5K
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: '#10b981',
+                          fontWeight: '600',
+                          marginBottom: '2px',
+                        }}
+                      >
+                        Specialized Freight
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        Oversized, hazmat, refrigerated
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: '#10b981',
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      $2K-8K
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '16px',
+              marginTop: '30px',
+            }}
+          >
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                color: 'white',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow =
+                  '0 6px 16px rgba(34, 197, 94, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 12px rgba(34, 197, 94, 0.3)';
+              }}
+            >
+              🚀 Start Lead Generation
+            </button>
+            <button
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                color: 'white',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              📊 View Lead Analytics
+            </button>
+          </div>
+
+          {/* FMCSA Reverse Shipper & Carrier Lookup */}
+          <div
+            style={{
+              background: 'rgba(15, 23, 42, 0.8)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              borderRadius: '12px',
+              padding: '20px',
+              marginTop: '20px',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <h4
+              style={{
+                color: 'white',
+                fontSize: '1.1rem',
+                fontWeight: '700',
+                marginBottom: '16px',
+                textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+              }}
+            >
+              🏛️ FMCSA Reverse Shipper & Carrier Lookup
+            </h4>
+
+            {/* FMCSA Lookup Tools */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '16px',
+                marginBottom: '20px',
+              }}
+            >
+              {/* Reverse Shipper Lookup */}
+              <div
+                style={{
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 16px rgba(34, 197, 94, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                onClick={() => {
+                  const shipperName = prompt(
+                    'Enter shipper/company name for reverse lookup:'
+                  );
+                  if (shipperName) {
+                    alert(
+                      `🔍 Searching FMCSA database for carriers that transport for "${shipperName}"...\n\nThis will identify potential shippers based on carrier relationships.`
+                    );
+                  }
+                }}
+              >
+                <div
+                  style={{
+                    color: '#22c55e',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  🔄 Reverse Shipper Lookup
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.8rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  Find carriers that transport for specific shippers. Identify
+                  potential customers through carrier relationships.
+                </div>
+              </div>
+
+              {/* Carrier Lookup */}
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: '8px',
+                  padding: '16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 16px rgba(59, 130, 246, 0.2)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+                onClick={() => {
+                  const dotNumber = prompt('Enter DOT Number or Carrier Name:');
+                  if (dotNumber) {
+                    alert(
+                      `🔍 Looking up carrier: ${dotNumber}\n\nRetrieving safety ratings, insurance info, and operational data from FMCSA database.`
+                    );
+                  }
+                }}
+              >
+                <div
+                  style={{
+                    color: '#3b82f6',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  🚛 Carrier Lookup
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.8rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  Get detailed carrier information including safety ratings,
+                  insurance, and compliance data.
+                </div>
+              </div>
+            </div>
+
+            {/* Recent FMCSA Lookups */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '8px',
+                padding: '12px',
+              }}
+            >
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  marginBottom: '8px',
+                }}
+              >
+                📋 Recent FMCSA Lookups
+              </div>
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontSize: '0.7rem',
+                }}
+              >
+                • ABC Manufacturing - 15 carriers found
+                <br />
+                • XYZ Distribution - Carrier DOT# 1234567
+                <br />• DEF Logistics - Safety rating: Satisfactory
+              </div>
+            </div>
           </div>
         </div>
       )}

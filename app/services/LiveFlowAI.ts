@@ -155,7 +155,9 @@ export class LiveFlowAI {
   };
 
   private constructor() {
-    console.info('🤖 LIVEFLOW.AI initialized with freight industry knowledge');
+    console.info(
+      '🤖 LIVEFLOW.AI initialized with freight industry knowledge'
+    );
   }
 
   public static getInstance(): LiveFlowAI {
