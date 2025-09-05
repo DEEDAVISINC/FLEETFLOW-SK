@@ -4,7 +4,7 @@
  * Native FleetFlow implementation of SalesAI-like capabilities
  */
 
-import { LiveCallContext } from './LiveCallAIAssistant';
+import { LiveCallContext } from './LiveFlowAI';
 
 export interface CallAnalyticsData {
   callId: string;

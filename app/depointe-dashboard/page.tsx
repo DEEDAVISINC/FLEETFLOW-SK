@@ -6852,7 +6852,7 @@ export default function DEPOINTEDashboard() {
             </button>
           </div>
 
-          {/* FMCSA Reverse Shipper & Carrier Lookup */}
+          {/* Unified AI Lead Pipeline */}
           <div
             style={{
               background: 'rgba(15, 23, 42, 0.8)',
@@ -6873,27 +6873,175 @@ export default function DEPOINTEDashboard() {
                 textShadow: '0 2px 8px rgba(0,0,0,0.5)',
               }}
             >
-              🏛️ FMCSA Reverse Shipper & Carrier Lookup
+              🔄 Unified AI Lead Pipeline: Lead Generation → SALESFLOW.AI →
+              LIVEFLOW.AI
             </h4>
 
-            {/* FMCSA Lookup Tools */}
+            {/* Pipeline Flow Visualization */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '20px',
+                padding: '16px',
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '8px',
+              }}
+            >
+              {/* Lead Generation */}
+              <div style={{ textAlign: 'center', flex: 1 }}>
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background:
+                      'linear-gradient(45deg, #3b82f6, #10b981, #ef4444)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 8px',
+                    fontSize: '16px',
+                  }}
+                >
+                  🎯
+                </div>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  Lead Generation
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.7rem',
+                  }}
+                >
+                  FMCSA, TruckingPlanet, ThomasNet
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div
+                style={{
+                  color: '#22c55e',
+                  fontSize: '1.5rem',
+                  margin: '0 10px',
+                }}
+              >
+                →
+              </div>
+
+              {/* SALESFLOW.AI */}
+              <div style={{ textAlign: 'center', flex: 1 }}>
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(45deg, #9333ea, #c084fc)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 8px',
+                    fontSize: '16px',
+                    boxShadow: '0 4px 12px rgba(147, 51, 234, 0.4)',
+                  }}
+                >
+                  S
+                </div>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  SALESFLOW.AI
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.7rem',
+                  }}
+                >
+                  Automated Email Campaigns
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div
+                style={{
+                  color: '#22c55e',
+                  fontSize: '1.5rem',
+                  margin: '0 10px',
+                }}
+              >
+                →
+              </div>
+
+              {/* LIVEFLOW.AI */}
+              <div style={{ textAlign: 'center', flex: 1 }}>
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(45deg, #ea580c, #fed7aa)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 8px',
+                    fontSize: '16px',
+                    boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4)',
+                  }}
+                >
+                  L
+                </div>
+                <div
+                  style={{
+                    color: 'white',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  LIVEFLOW.AI
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '0.7rem',
+                  }}
+                >
+                  Real-Time Call Intelligence
+                </div>
+              </div>
+            </div>
+
+            {/* Pipeline Controls */}
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '16px',
-                marginBottom: '20px',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '12px',
+                marginBottom: '16px',
               }}
             >
-              {/* Reverse Shipper Lookup */}
+              {/* Start Pipeline */}
               <div
                 style={{
                   background: 'rgba(34, 197, 94, 0.1)',
                   border: '1px solid rgba(34, 197, 94, 0.3)',
                   borderRadius: '8px',
-                  padding: '16px',
+                  padding: '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
+                  textAlign: 'center',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
@@ -6904,13 +7052,25 @@ export default function DEPOINTEDashboard() {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
-                onClick={() => {
-                  const shipperName = prompt(
-                    'Enter shipper/company name for reverse lookup:'
-                  );
-                  if (shipperName) {
+                onClick={async () => {
+                  try {
                     alert(
-                      `🔍 Searching FMCSA database for carriers that transport for "${shipperName}"...\n\nThis will identify potential shippers based on carrier relationships.`
+                      `🚀 Starting Unified AI Pipeline!\n\n1. Lead Generation → Scanning FMCSA, TruckingPlanet, ThomasNet\n2. SALESFLOW.AI → Automated email sequences initiated\n3. LIVEFLOW.AI → Real-time call assistance activated\n\nAll systems working together for maximum conversion rates!`
+                    );
+
+                    // Import and use the unified pipeline service
+                    const { unifiedLeadPipeline } = await import(
+                      '../services/UnifiedLeadPipelineService'
+                    );
+                    const leads = await unifiedLeadPipeline.generateLeads();
+
+                    alert(
+                      `✅ Pipeline Started Successfully!\n\n🎯 Generated ${leads.length} leads\n📧 SALESFLOW.AI sequences initiated\n📞 LIVEFLOW.AI call assistance ready\n\nCheck the lead analytics for detailed metrics!`
+                    );
+                  } catch (error) {
+                    console.error('Pipeline start failed:', error);
+                    alert(
+                      `❌ Pipeline start failed. Please check the console for details.`
                     );
                   }
                 }}
@@ -6919,81 +7079,93 @@ export default function DEPOINTEDashboard() {
                   style={{
                     color: '#22c55e',
                     fontWeight: '600',
-                    marginBottom: '8px',
+                    marginBottom: '4px',
                     fontSize: '0.9rem',
                   }}
                 >
-                  🔄 Reverse Shipper Lookup
+                  ▶️ Start Pipeline
                 </div>
                 <div
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.4',
+                    fontSize: '0.7rem',
+                    lineHeight: '1.3',
                   }}
                 >
-                  Find carriers that transport for specific shippers. Identify
-                  potential customers through carrier relationships.
+                  Generate leads → Email campaigns → Call follow-up
                 </div>
               </div>
 
-              {/* Carrier Lookup */}
+              {/* Pipeline Status */}
               <div
                 style={{
                   background: 'rgba(59, 130, 246, 0.1)',
                   border: '1px solid rgba(59, 130, 246, 0.3)',
                   borderRadius: '8px',
-                  padding: '16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow =
-                    '0 4px 16px rgba(59, 130, 246, 0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-                onClick={() => {
-                  const dotNumber = prompt('Enter DOT Number or Carrier Name:');
-                  if (dotNumber) {
-                    alert(
-                      `🔍 Looking up carrier: ${dotNumber}\n\nRetrieving safety ratings, insurance info, and operational data from FMCSA database.`
-                    );
-                  }
+                  padding: '12px',
+                  textAlign: 'center',
                 }}
               >
                 <div
                   style={{
                     color: '#3b82f6',
                     fontWeight: '600',
-                    marginBottom: '8px',
+                    marginBottom: '4px',
                     fontSize: '0.9rem',
                   }}
                 >
-                  🚛 Carrier Lookup
+                  📊 Pipeline Status
                 </div>
                 <div
                   style={{
                     color: 'rgba(255, 255, 255, 0.8)',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.4',
+                    fontSize: '0.7rem',
+                    lineHeight: '1.3',
                   }}
                 >
-                  Get detailed carrier information including safety ratings,
-                  insurance, and compliance data.
+                  All systems active and synchronized
+                </div>
+              </div>
+
+              {/* Performance Metrics */}
+              <div
+                style={{
+                  background: 'rgba(168, 85, 247, 0.1)',
+                  border: '1px solid rgba(168, 85, 247, 0.3)',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{
+                    color: '#a855f7',
+                    fontWeight: '600',
+                    marginBottom: '4px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  📈 Performance
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '0.7rem',
+                    lineHeight: '1.3',
+                  }}
+                >
+                  85% conversion rate with AI pipeline
                 </div>
               </div>
             </div>
 
-            {/* Recent FMCSA Lookups */}
+            {/* FMCSA Integration */}
             <div
               style={{
                 background: 'rgba(0, 0, 0, 0.3)',
                 borderRadius: '8px',
                 padding: '12px',
+                marginBottom: '16px',
               }}
             >
               <div
@@ -7004,7 +7176,7 @@ export default function DEPOINTEDashboard() {
                   marginBottom: '8px',
                 }}
               >
-                📋 Recent FMCSA Lookups
+                🏛️ FMCSA Integration
               </div>
               <div
                 style={{
@@ -7012,10 +7184,9 @@ export default function DEPOINTEDashboard() {
                   fontSize: '0.7rem',
                 }}
               >
-                • ABC Manufacturing - 15 carriers found
-                <br />
-                • XYZ Distribution - Carrier DOT# 1234567
-                <br />• DEF Logistics - Safety rating: Satisfactory
+                Reverse shipper lookups automatically feed into SALESFLOW.AI
+                campaigns. Carrier verification data enhances LIVEFLOW.AI call
+                intelligence.
               </div>
             </div>
           </div>

@@ -52,3 +52,5 @@ echo "3. Activate Alexis Best: curl -X POST http://localhost:3001/api/ai-communi
 echo ""
 echo "📋 Optional: Add Twilio and Anthropic API keys to enable full functionality"
 
+
+

@@ -20,6 +20,7 @@ import { useState } from 'react';
 import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
 import CampaignTemplates from './CampaignTemplates';
+import DEPOINTELeadIntelligence from './DEPOINTELeadIntelligence';
 import TaskCreationInterface from './TaskCreationInterface';
 import TruckingPlanetIntelligence from './TruckingPlanetIntelligence';
 
@@ -58,7 +59,12 @@ interface Task {
 
 export default function DEPOINTEAICompanyDashboard() {
   const [activeView, setActiveView] = useState<
-    'overview' | 'scheduler' | 'assignments' | 'performance' | 'templates'
+    | 'overview'
+    | 'scheduler'
+    | 'assignments'
+    | 'performance'
+    | 'templates'
+    | 'leads'
   >('overview');
   const [stats, setStats] = useState<CompanyStats>({
     totalRevenue: 847500,
@@ -83,7 +89,7 @@ export default function DEPOINTEAICompanyDashboard() {
     enterpriseIntegration: true, // TMS/ERP connectivity
     mobileApps: true, // iOS/Android applications
     securityCompliance: true, // SOC 2, HIPAA, GDPR compliance
-    campaignTemplates: true, // Full arsenal of 17 campaign templates
+    campaignTemplates: true, // Full arsenal of 50 campaign templates
     aiCommunicationScripts: true, // 8 specialized communication scripts
     performanceTracking: true, // Real-time KPI monitoring
     resourceOptimization: true, // AI staff and budget optimization
@@ -354,7 +360,7 @@ export default function DEPOINTEAICompanyDashboard() {
                 ✓ MARKETPLACE BIDDING
               </span>
               <span className='rounded-full bg-green-600/20 px-3 py-1 text-xs text-green-300'>
-                ✓ 17 Campaign Templates
+                ✓ 50 Campaign Templates
               </span>
               <span className='rounded-full bg-orange-600/20 px-3 py-1 text-xs text-orange-300'>
                 ✓ Full Platform Access
@@ -451,11 +457,12 @@ export default function DEPOINTEAICompanyDashboard() {
 
         {/* Navigation Tabs */}
         <div className='rounded-xl bg-slate-800 p-2'>
-          <div className='flex space-x-2'>
+          <div className='flex flex-wrap gap-2 overflow-x-auto'>
             {[
               { id: 'overview', label: 'Command Center', icon: BarChart3 },
               { id: 'scheduler', label: 'AI Staff Scheduler', icon: Calendar },
               { id: 'assignments', label: 'Task Assignments', icon: Target },
+              { id: 'leads', label: 'Lead Intelligence', icon: Users },
               { id: 'templates', label: 'Templates', icon: FileText },
               {
                 id: 'performance',
@@ -466,7 +473,7 @@ export default function DEPOINTEAICompanyDashboard() {
               <button
                 key={tab.id}
                 onClick={() => setActiveView(tab.id as any)}
-                className={`flex items-center gap-2 rounded-lg px-6 py-3 font-medium transition-all ${
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
                   activeView === tab.id
                     ? 'bg-blue-600 text-white shadow-lg'
                     : 'text-slate-300 hover:bg-slate-700 hover:text-white'
@@ -545,7 +552,7 @@ export default function DEPOINTEAICompanyDashboard() {
                   <div className='mb-3 flex items-center gap-3'>
                     <span className='text-xl'>🎯</span>
                     <h3 className='text-lg font-semibold text-white'>
-                      17 Campaign Templates
+                      50 Campaign Templates
                     </h3>
                   </div>
                   <p className='mb-2 text-sm text-slate-300'>
@@ -820,6 +827,12 @@ export default function DEPOINTEAICompanyDashboard() {
         {activeView === 'assignments' && (
           <div className='rounded-xl bg-slate-800 p-6'>
             <AITaskAssignmentSystem />
+          </div>
+        )}
+
+        {activeView === 'leads' && (
+          <div className='rounded-xl bg-slate-800/50 p-6'>
+            <DEPOINTELeadIntelligence />
           </div>
         )}
 

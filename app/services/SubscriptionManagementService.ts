@@ -395,7 +395,7 @@ export class SubscriptionManagementService {
     },
     {
       id: 'phone-professional',
-      name: 'FleetFlow Phone Professional', 
+      name: 'FleetFlow Phone Professional',
       price: 89,
       description: 'Advanced phone system with CRM integration and analytics',
       features: [
@@ -416,7 +416,7 @@ export class SubscriptionManagementService {
       price: 199,
       description: 'Complete enterprise phone solution with advanced features',
       features: [
-        'Everything in Professional', 
+        'Everything in Professional',
         'Unlimited users',
         'Multi-tenant management',
         'Advanced call analytics',
@@ -435,7 +435,7 @@ export class SubscriptionManagementService {
       description: 'Usage-based calling charges (per minute)',
       features: [
         'Outbound calls: $0.02/min',
-        'Inbound calls: $0.015/min', 
+        'Inbound calls: $0.015/min',
         'SMS messages: $0.05/message',
         'International calls: Variable rates',
         'No minimum usage',
@@ -547,7 +547,8 @@ export class SubscriptionManagementService {
    * Get user's active subscription
    */
   static getUserSubscription(userId: string): UserSubscription | null {
-    for (const subscription of this.subscriptions.values()) {
+    const subscriptions = Array.from(this.subscriptions.values());
+    for (const subscription of subscriptions) {
       if (subscription.userId === userId && subscription.status === 'active') {
         return subscription;
       }
@@ -974,8 +975,8 @@ export class SubscriptionManagementService {
    * Track phone usage for user
    */
   static trackPhoneUsage(
-    userId: string, 
-    minutes: number, 
+    userId: string,
+    minutes: number,
     smsCount: number = 0
   ): { success: boolean; overage?: number; cost?: number } {
     const usage = this.usage.get(userId);
@@ -1000,10 +1001,16 @@ export class SubscriptionManagementService {
 
     // Check for unlimited plans (-1 means unlimited)
     if (usage.monthlyLimits.phoneMinutes !== -1) {
-      overageMinutes = Math.max(0, usage.phoneMinutes - usage.monthlyLimits.phoneMinutes);
+      overageMinutes = Math.max(
+        0,
+        usage.phoneMinutes - usage.monthlyLimits.phoneMinutes
+      );
     }
     if (usage.monthlyLimits.smsMessages !== -1) {
-      overageSMS = Math.max(0, usage.smsMessages - usage.monthlyLimits.smsMessages);
+      overageSMS = Math.max(
+        0,
+        usage.smsMessages - usage.monthlyLimits.smsMessages
+      );
     }
 
     // Calculate overage costs
@@ -1016,7 +1023,9 @@ export class SubscriptionManagementService {
 
     this.usage.set(userId, usage);
 
-    console.info(`📞 Phone usage tracked for user ${userId}: ${minutes} minutes, ${smsCount} SMS`);
+    console.info(
+      `📞 Phone usage tracked for user ${userId}: ${minutes} minutes, ${smsCount} SMS`
+    );
     if (overageCost > 0) {
       console.info(`💰 Overage charges: $${overageCost.toFixed(2)}`);
     }
@@ -1024,7 +1033,7 @@ export class SubscriptionManagementService {
     return {
       success: true,
       overage: overageMinutes + overageSMS,
-      cost: overageCost
+      cost: overageCost,
     };
   }
 
@@ -1043,23 +1052,27 @@ export class SubscriptionManagementService {
     const usage = this.usage.get(userId);
     if (!usage) return null;
 
-    const remainingMinutes = usage.monthlyLimits.phoneMinutes === -1 
-      ? -1 // Unlimited
-      : Math.max(0, usage.monthlyLimits.phoneMinutes - usage.phoneMinutes);
-    
-    const remainingSMS = usage.monthlyLimits.smsMessages === -1 
-      ? -1 // Unlimited
-      : Math.max(0, usage.monthlyLimits.smsMessages - usage.smsMessages);
+    const remainingMinutes =
+      usage.monthlyLimits.phoneMinutes === -1
+        ? -1 // Unlimited
+        : Math.max(0, usage.monthlyLimits.phoneMinutes - usage.phoneMinutes);
+
+    const remainingSMS =
+      usage.monthlyLimits.smsMessages === -1
+        ? -1 // Unlimited
+        : Math.max(0, usage.monthlyLimits.smsMessages - usage.smsMessages);
 
     // Calculate overage charges
-    const overageMinutes = usage.monthlyLimits.phoneMinutes === -1 
-      ? 0 
-      : Math.max(0, usage.phoneMinutes - usage.monthlyLimits.phoneMinutes);
-    const overageSMS = usage.monthlyLimits.smsMessages === -1 
-      ? 0 
-      : Math.max(0, usage.smsMessages - usage.monthlyLimits.smsMessages);
-    
-    const overageCharges = (overageMinutes * 0.02) + (overageSMS * 0.05);
+    const overageMinutes =
+      usage.monthlyLimits.phoneMinutes === -1
+        ? 0
+        : Math.max(0, usage.phoneMinutes - usage.monthlyLimits.phoneMinutes);
+    const overageSMS =
+      usage.monthlyLimits.smsMessages === -1
+        ? 0
+        : Math.max(0, usage.smsMessages - usage.monthlyLimits.smsMessages);
+
+    const overageCharges = overageMinutes * 0.02 + overageSMS * 0.05;
 
     return {
       minutesUsed: usage.phoneMinutes,
@@ -1068,7 +1081,7 @@ export class SubscriptionManagementService {
       smsLimit: usage.monthlyLimits.smsMessages,
       overageCharges: Math.round(overageCharges * 100) / 100,
       remainingMinutes,
-      remainingSMS
+      remainingSMS,
     };
   }
 
@@ -1092,7 +1105,10 @@ export class SubscriptionManagementService {
   /**
    * Check if user can make a phone call (within limits)
    */
-  static canMakePhoneCall(userId: string): { allowed: boolean; reason?: string } {
+  static canMakePhoneCall(userId: string): {
+    allowed: boolean;
+    reason?: string;
+  } {
     const usage = this.usage.get(userId);
     if (!usage) {
       return { allowed: false, reason: 'No usage tracking found' };
@@ -1109,9 +1125,9 @@ export class SubscriptionManagementService {
     }
 
     // Allow overage calls (will be charged)
-    return { 
-      allowed: true, 
-      reason: `Overage charges apply ($0.02/min). Used ${usage.phoneMinutes}/${usage.monthlyLimits.phoneMinutes} minutes.`
+    return {
+      allowed: true,
+      reason: `Overage charges apply ($0.02/min). Used ${usage.phoneMinutes}/${usage.monthlyLimits.phoneMinutes} minutes.`,
     };
   }
 

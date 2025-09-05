@@ -1,7 +1,7 @@
 import { FleetFlowAI } from './ai';
 import { sendGridService } from './sendgrid-service';
 
-// SalesApe AI-style Email Automation for FleetFlow Sales
+// SALESFLOW AI - Email Automation for FleetFlow Sales
 export class SalesEmailAutomationService {
   private ai: FleetFlowAI;
   private isEnabled: boolean = true;
@@ -10,7 +10,49 @@ export class SalesEmailAutomationService {
     this.ai = new FleetFlowAI();
   }
 
-  // 🎯 LEAD ENGAGEMENT AUTOMATION (SalesApe AI Style)
+  // 🎯 START EMAIL SEQUENCE (SALESFLOW AI)
+  async startSequence(sequenceData: {
+    leadId: string;
+    email: string;
+    companyName: string;
+    source: string;
+    leadScore: number;
+  }): Promise<void> {
+    try {
+      console.info(
+        `📧 SALESFLOW.AI: Starting sequence for ${sequenceData.companyName}`
+      );
+
+      // Create a sales lead object
+      const lead: SalesLead = {
+        id: sequenceData.leadId,
+        company: sequenceData.companyName,
+        email: sequenceData.email,
+        contactName: '',
+        industry: 'General',
+        fleetSize: 'Unknown',
+        location: 'Unknown',
+        transportationNeeds: ['General Freight'],
+        source: sequenceData.source,
+        leadScore: sequenceData.leadScore,
+      };
+
+      // Start the engagement sequence
+      await this.engageNewLead(lead);
+
+      console.info(
+        `✅ SALESFLOW.AI: Sequence started for ${sequenceData.companyName}`
+      );
+    } catch (error) {
+      console.error(
+        `❌ SALESFLOW.AI: Failed to start sequence for ${sequenceData.companyName}:`,
+        error
+      );
+      throw error;
+    }
+  }
+
+  // 🎯 LEAD ENGAGEMENT AUTOMATION (SALESFLOW AI)
   async engageNewLead(lead: SalesLead): Promise<EmailResult> {
     try {
       // AI-powered lead qualification and email generation
@@ -467,23 +509,3 @@ interface EmailContact {
 // Export instances for use across the application
 export const salesEmailAutomation = new SalesEmailAutomationService();
 export const dispatchEmailAutomation = new DispatchEmailAutomationService();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

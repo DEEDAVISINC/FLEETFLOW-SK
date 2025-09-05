@@ -155,9 +155,7 @@ export class LiveFlowAI {
   };
 
   private constructor() {
-    console.info(
-      '🤖 LIVEFLOW.AI initialized with freight industry knowledge'
-    );
+    console.info('🤖 LIVEFLOW.AI initialized with freight industry knowledge');
   }
 
   public static getInstance(): LiveFlowAI {
@@ -552,6 +550,55 @@ export class LiveFlowAI {
       objections: { raised: [], handled: [], pending: [] },
       opportunities: { identified: [], potential_value: 0, urgency: 'low' },
     };
+  }
+
+  /**
+   * Process call data from unified pipeline
+   */
+  public async processCallData(leadId: string, callData: any): Promise<void> {
+    try {
+      console.info(`📞 LIVEFLOW.AI: Processing call data for lead ${leadId}`);
+
+      // Start call assistance if not already active
+      if (!this.activeCalls.has(leadId)) {
+        const callContext: LiveCallContext = {
+          callId: leadId,
+          contactId: callData.contactId || leadId,
+          contactName: callData.contactName || 'Unknown',
+          contactCompany: callData.companyName || 'Unknown Company',
+          callDirection: callData.direction || 'outbound',
+          duration: callData.duration || 0,
+          transcript: callData.transcript || [],
+          agentId: 'depointe_ai',
+          agentName: 'DEPOINTE AI Assistant',
+        };
+
+        this.startCallAssistance(callContext);
+      }
+
+      // Process transcription data if available
+      if (callData.transcript && callData.transcript.length > 0) {
+        const lastTranscript =
+          callData.transcript[callData.transcript.length - 1];
+        const transcriptionData: LiveTranscriptionData = {
+          speaker: lastTranscript.speaker || 'customer',
+          text: lastTranscript.text || '',
+          timestamp: lastTranscript.timestamp || new Date().toISOString(),
+          sentiment: lastTranscript.sentiment || 'neutral',
+          keywords: lastTranscript.keywords || [],
+        };
+
+        this.processLiveTranscription(leadId, transcriptionData);
+      }
+
+      console.info(`✅ LIVEFLOW.AI: Call data processed for lead ${leadId}`);
+    } catch (error) {
+      console.error(
+        `❌ LIVEFLOW.AI: Failed to process call data for lead ${leadId}:`,
+        error
+      );
+      throw error;
+    }
   }
 }
 

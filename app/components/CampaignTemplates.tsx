@@ -3,14 +3,11 @@
 import {
   Activity,
   ArrowUpDown,
-  Calendar,
   CheckCircle,
-  Clock,
   DollarSign,
   Filter,
   Grid,
   List,
-  MessageSquare,
   Play,
   Search,
   Star,
@@ -4996,29 +4993,32 @@ export default function CampaignTemplates() {
             inset: 0,
             zIndex: 50,
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             justifyContent: 'center',
             background: 'rgba(0, 0, 0, 0.8)',
-            padding: '16px',
+            padding: '12px',
+            paddingTop: '20px',
           }}
         >
           <div
             style={{
-              maxHeight: '90vh',
+              maxHeight: 'calc(100vh - 40px)',
               width: '100%',
-              maxWidth: '1024px',
+              maxWidth: '600px',
               overflowY: 'auto',
-              borderRadius: '12px',
+              borderRadius: '8px',
               background: 'rgba(15, 23, 42, 0.95)',
               border: '1px solid rgba(148, 163, 184, 0.2)',
               backdropFilter: 'blur(10px)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              marginTop: '0',
             }}
           >
-            <div style={{ padding: '24px' }}>
+            <div style={{ padding: '12px' }}>
               {/* Modal Header */}
               <div
                 style={{
-                  marginBottom: '24px',
+                  marginBottom: '12px',
                   display: 'flex',
                   alignItems: 'flex-start',
                   justifyContent: 'space-between',
@@ -5096,25 +5096,97 @@ export default function CampaignTemplates() {
               </div>
 
               {/* Campaign Overview */}
-              <div className='mb-6 grid grid-cols-1 gap-6 md:grid-cols-3'>
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='mb-2 flex items-center space-x-2'>
-                    <Clock className='h-5 w-5 text-gray-600' />
-                    <span className='font-medium text-gray-900'>Duration</span>
+              <div
+                style={{
+                  marginBottom: '12px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '10px',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      marginBottom: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span style={{ fontSize: '1rem' }}>⏱️</span>
+                    <span
+                      style={{
+                        fontWeight: '600',
+                        color: 'white',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      Duration
+                    </span>
                   </div>
-                  <p className='text-gray-600'>{selectedTemplate.duration}</p>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      margin: '0',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    {selectedTemplate.duration}
+                  </p>
                 </div>
 
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='mb-2 flex items-center space-x-2'>
-                    <Users className='h-5 w-5 text-gray-600' />
-                    <span className='font-medium text-gray-900'>AI Staff</span>
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '10px',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      marginBottom: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span style={{ fontSize: '1rem' }}>👥</span>
+                    <span
+                      style={{
+                        fontWeight: '600',
+                        color: 'white',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      AI Staff
+                    </span>
                   </div>
-                  <div className='flex flex-wrap gap-1'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '4px',
+                    }}
+                  >
                     {selectedTemplate.aiStaff.map((staff, index) => (
                       <span
                         key={index}
-                        className='rounded bg-blue-100 px-2 py-1 text-sm text-blue-700'
+                        style={{
+                          borderRadius: '4px',
+                          background: 'rgba(59, 130, 246, 0.2)',
+                          padding: '4px 8px',
+                          fontSize: '0.8rem',
+                          color: '#3b82f6',
+                          fontWeight: '500',
+                        }}
                       >
                         {staff}
                       </span>
@@ -5122,14 +5194,41 @@ export default function CampaignTemplates() {
                   </div>
                 </div>
 
-                <div className='rounded-lg bg-gray-50 p-4'>
-                  <div className='mb-2 flex items-center space-x-2'>
-                    <DollarSign className='h-5 w-5 text-gray-600' />
-                    <span className='font-medium text-gray-900'>
+                <div
+                  style={{
+                    borderRadius: '6px',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '10px',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                  }}
+                >
+                  <div
+                    style={{
+                      marginBottom: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <span style={{ fontSize: '1rem' }}>💰</span>
+                    <span
+                      style={{
+                        fontWeight: '600',
+                        color: 'white',
+                        fontSize: '0.85rem',
+                      }}
+                    >
                       Expected Revenue
                     </span>
                   </div>
-                  <p className='text-2xl font-bold text-green-600'>
+                  <p
+                    style={{
+                      fontSize: '1.2rem',
+                      fontWeight: '700',
+                      color: '#22c55e',
+                      margin: '0',
+                    }}
+                  >
                     $
                     {(selectedTemplate.expectedResults.revenue / 1000).toFixed(
                       0
@@ -5140,53 +5239,153 @@ export default function CampaignTemplates() {
               </div>
 
               {/* Campaign Steps */}
-              <div className='mb-6'>
-                <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              <div style={{ marginBottom: '12px' }}>
+                <h3
+                  style={{
+                    marginBottom: '8px',
+                    fontSize: '1.1rem',
+                    fontWeight: '700',
+                    color: 'white',
+                  }}
+                >
                   Campaign Steps
                 </h3>
-                <div className='space-y-4'>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '8px',
+                  }}
+                >
                   {selectedTemplate.steps.map((step, index) => (
                     <div
                       key={step.id}
-                      className='flex items-start space-x-4 rounded-lg bg-gray-50 p-4'
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '10px',
+                        borderRadius: '6px',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        padding: '10px',
+                        border: '1px solid rgba(148, 163, 184, 0.2)',
+                      }}
                     >
-                      <div className='flex-shrink-0'>
-                        <div className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-medium text-white'>
+                      <div style={{ flexShrink: 0 }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            height: '32px',
+                            width: '32px',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '50%',
+                            background: '#2563eb',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                            color: 'white',
+                          }}
+                        >
                           {index + 1}
                         </div>
                       </div>
-                      <div className='flex-1'>
-                        <div className='mb-1 flex items-center space-x-2'>
-                          <h4 className='font-medium text-gray-900'>
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            marginBottom: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                          }}
+                        >
+                          <h4
+                            style={{
+                              fontWeight: '600',
+                              color: 'white',
+                              margin: '0',
+                              fontSize: '0.95rem',
+                            }}
+                          >
                             {step.name}
                           </h4>
                           <span
-                            className={`rounded px-2 py-1 text-xs ${
-                              step.automationLevel === 'full'
-                                ? 'bg-green-100 text-green-800'
-                                : step.automationLevel === 'semi'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-red-100 text-red-800'
-                            }`}
+                            style={{
+                              borderRadius: '4px',
+                              padding: '2px 8px',
+                              fontSize: '0.7rem',
+                              fontWeight: '600',
+                              textTransform: 'capitalize',
+                              background:
+                                step.automationLevel === 'full'
+                                  ? 'rgba(34, 197, 94, 0.2)'
+                                  : step.automationLevel === 'semi'
+                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    : 'rgba(239, 68, 68, 0.2)',
+                              color:
+                                step.automationLevel === 'full'
+                                  ? '#22c55e'
+                                  : step.automationLevel === 'semi'
+                                    ? '#d97706'
+                                    : '#dc2626',
+                            }}
                           >
                             {step.automationLevel}
                           </span>
                         </div>
-                        <p className='mb-2 text-sm text-gray-600'>
-                          {step.description}
+                        <p
+                          style={{
+                            marginBottom: '6px',
+                            fontSize: '0.8rem',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            margin: '0',
+                            lineHeight: '1.3',
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {step.description.length > 80
+                            ? step.description.substring(0, 80) + '...'
+                            : step.description}
                         </p>
-                        <div className='flex items-center space-x-4 text-xs text-gray-500'>
-                          <span className='flex items-center space-x-1'>
-                            <Calendar className='h-3 w-3' />
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '16px',
+                            fontSize: '0.75rem',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span style={{ fontSize: '0.8rem' }}>📅</span>
                             <span>{step.timing}</span>
                           </span>
-                          <span className='flex items-center space-x-1'>
-                            <MessageSquare className='h-3 w-3' />
+                          <span
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <span style={{ fontSize: '0.8rem' }}>💬</span>
                             <span>{step.channel}</span>
                           </span>
                           {step.aiStaff && (
-                            <span className='flex items-center space-x-1'>
-                              <Users className='h-3 w-3' />
+                            <span
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <span style={{ fontSize: '0.8rem' }}>👤</span>
                               <span>{step.aiStaff}</span>
                             </span>
                           )}
@@ -5198,28 +5397,90 @@ export default function CampaignTemplates() {
               </div>
 
               {/* Success Metrics */}
-              <div className='mb-6'>
-                <h3 className='mb-4 text-lg font-semibold text-gray-900'>
+              <div style={{ marginBottom: '12px' }}>
+                <h3
+                  style={{
+                    marginBottom: '8px',
+                    fontSize: '1.1rem',
+                    fontWeight: '700',
+                    color: 'white',
+                  }}
+                >
                   Success Metrics
                 </h3>
-                <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-                  {selectedTemplate.successMetrics.map((metric, index) => (
-                    <div
-                      key={index}
-                      className='flex items-center space-x-2 rounded-lg bg-green-50 p-3'
-                    >
-                      <CheckCircle className='h-5 w-5 text-green-600' />
-                      <span className='text-sm text-gray-900'>{metric}</span>
-                    </div>
-                  ))}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '8px',
+                  }}
+                >
+                  {selectedTemplate.successMetrics
+                    .slice(0, 3)
+                    .map((metric, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          borderRadius: '6px',
+                          background: 'rgba(34, 197, 94, 0.1)',
+                          padding: '8px',
+                          border: '1px solid rgba(34, 197, 94, 0.3)',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.9rem', color: '#22c55e' }}>
+                          ✅
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '0.8rem',
+                            color: 'white',
+                            fontWeight: '500',
+                          }}
+                        >
+                          {metric}
+                        </span>
+                      </div>
+                    ))}
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className='flex justify-end space-x-3 border-t border-gray-200 pt-6'>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '12px',
+                  borderTop: '1px solid rgba(148, 163, 184, 0.2)',
+                  paddingTop: '12px',
+                  marginTop: '12px',
+                }}
+              >
                 <button
                   onClick={() => setSelectedTemplate(null)}
-                  className='px-4 py-2 text-gray-600 transition-colors hover:text-gray-800'
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(148, 163, 184, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.15)';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.color = 'rgba(255, 255, 255, 0.7)';
+                  }}
                 >
                   Close
                 </button>
@@ -5228,10 +5489,28 @@ export default function CampaignTemplates() {
                     launchCampaign(selectedTemplate);
                     setSelectedTemplate(null);
                   }}
-                  className='flex items-center space-x-2 rounded-lg bg-blue-600 px-6 py-2 text-white transition-colors hover:bg-blue-700'
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    background: '#2563eb',
+                    color: 'white',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#1d4ed8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#2563eb';
+                  }}
                 >
-                  <Play className='h-4 w-4' />
-                  <span>Launch Campaign</span>
+                  ▶️ Launch Campaign
                 </button>
               </div>
             </div>

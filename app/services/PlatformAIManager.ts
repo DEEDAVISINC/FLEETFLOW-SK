@@ -213,7 +213,7 @@ export class PlatformAIManager {
       AICallAnalysisService: 'sales_call',
       AIFreightNegotiatorService: 'negotiation',
       BrokerAIIntelligenceService: 'lead_qualification',
-      LiveCallAIAssistant: 'customer_support',
+      LiveFlowAI: 'customer_support',
       SalesEmailAutomationService: 'email_analysis',
       AIMarketingIntegrationService: 'lead_qualification',
     };
@@ -432,4 +432,3 @@ export const replaceAIService = (
     content,
     context
   );
-

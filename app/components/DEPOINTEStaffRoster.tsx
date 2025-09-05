@@ -8,6 +8,16 @@
 
 'use client';
 
+export interface LearningMaterial {
+  id: string;
+  title: string;
+  description: string;
+  type: 'strategy' | 'skill' | 'process' | 'knowledge';
+  proficiency: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  content: string;
+  lastUpdated: string;
+}
+
 export interface DEPOINTEStaffMember {
   id: string;
   firstName: string;
@@ -22,6 +32,7 @@ export interface DEPOINTEStaffMember {
   specializations: string[];
   contactMethods: ('phone' | 'email' | 'linkedin' | 'chat')[];
   emailSignature: string;
+  learningMaterials?: LearningMaterial[]; // Learning materials embedded directly in staff profiles
 }
 
 // 🎭 COMPLETE DEPOINTE AI STAFF ROSTER
