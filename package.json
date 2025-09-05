@@ -84,8 +84,8 @@
     "glpk.js": "^4.0.2",
     "html2canvas": "^1.4.1",
     "imapflow": "^1.0.195",
-    "jspdf": "^3.0.1",
-    "jspdf-html2canvas": "^1.1.0",
+    "jspdf": "^3.0.2",
+    "jspdf-html2canvas": "^1.5.2",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.541.0",
     "ml-matrix": "^6.12.1",
@@ -132,5 +132,11 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4.1.10",
     "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "dompurify": ">=3.2.4",
+    "jspdf-html2canvas": {
+      "jspdf": ">=3.0.2"
+    }
   }
 }
