@@ -31,7 +31,13 @@ Our **100% complete** multi-tenant SaaS solution serves carriers, brokers, and 3
 
 ### **Updated Subscription Architecture (2025)**
 
-#### **Main Subscription Tiers:**
+#### **Go With The Flow Marketplace Tiers:**
+
+1. **Free-Flow** - $0/month (Basic marketplace access, 5 loads/month)
+2. **Pro-Flow** - $249/month (Professional marketplace features, 25 loads/month)
+3. **Flow on the Go** - $699/month (Enterprise marketplace features, 100 loads/month)
+
+#### **FleetFlow TMS Subscription Tiers:**
 
 1. **FleetFlow University℠** - $49/month (Training & Certification)
 2. **Professional Dispatcher** - $79/month (Basic dispatch operations)

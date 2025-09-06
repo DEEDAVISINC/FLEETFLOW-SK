@@ -430,6 +430,7 @@ with embedded learning + Enhanced LaunchPad℠ + Premium Services Platform)
 
 **🤖 AI Flow Ecosystem & DEPOINTE AI Workforce Platform: $20-35B**
 
+- Go With The Flow marketplace with Free-Flow ($0), Pro-Flow ($249), Flow on the Go ($699)
 - Industry-first complete AI ecosystem with modular add-ons ($59-249/month)
 - DEPOINTE AI Company Dashboard with 18 AI staff representatives featuring embedded learning
   ($4,999/month)

@@ -115,12 +115,13 @@ optimization.
 
 #### **Customer Journey Value Creation**
 
-**🏢 Natural Progression Marketing (Core TMS → AI Add-Ons):**
+**🏢 Natural Progression Marketing (Marketplace → TMS → AI Add-Ons):**
 
-- **Stage 1 - TMS Adoption**: Customer begins with core subscription ($49-$2,698/month)
-- **Stage 2 - AI Introduction**: Marketing introduces AI add-on value (+$59-$249/month)
-- **Stage 3 - AI Expansion**: Customer progresses through AI tiers based on success
-- **Stage 4 - AI Workforce**: Enterprise customers consider AI Company Dashboard ($4,999/month)
+- **Stage 1 - Marketplace Entry**: Free-Flow ($0/month) or Pro-Flow ($249/month) marketplace access
+- **Stage 2 - TMS Adoption**: Upgrade to Professional Brokerage ($289/month) or Enterprise ($699/month)
+- **Stage 3 - AI Introduction**: Marketing introduces AI add-on value (+$59-$249/month)
+- **Stage 4 - AI Expansion**: Customer progresses through AI tiers based on success
+- **Stage 5 - AI Workforce**: Enterprise customers consider AI Company Dashboard ($4,999/month)
 
 **Marketing Value Creation by Stage:**
 

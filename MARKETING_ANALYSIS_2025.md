@@ -889,11 +889,11 @@ Consumer-grade mobile experience for professionals **Market Size**: $15B annual 
 
 **Tiered Offering Structure:**
 
+- **Free-Flow**: $0/month - Basic marketplace access (5 loads/month)
+- **Pro-Flow**: $249/month - Professional marketplace features (25 loads/month)
+- **Flow on the Go**: $699/month - Enterprise marketplace features (100 loads/month)
 - **FleetFlow University℠**: $49/month - Training and certification
-- **Dispatcher Pro**: $99/month - Basic dispatch and tracking
-- **Broker Elite**: $149/month - Complete brokerage operations
-- **AI Flow Professional**: $199/month - Advanced AI and automation
-- **Enterprise Professional**: $299/month - Complete enterprise platform
+- **Professional Brokerage**: $289/month - Complete brokerage operations
 
 **Product Line Extensions:**
 
