@@ -3,6 +3,7 @@
 import { SessionProvider } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { OrganizationProvider } from '../contexts/OrganizationContext';
+import LanguageProvider from '../providers/LanguageProvider';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -11,7 +12,9 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <OrganizationProvider>{children}</OrganizationProvider>
+      <OrganizationProvider>
+        <LanguageProvider>{children}</LanguageProvider>
+      </OrganizationProvider>
     </SessionProvider>
   );
 }

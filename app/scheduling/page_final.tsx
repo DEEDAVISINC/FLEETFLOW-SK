@@ -12,13 +12,8 @@ import {
     Users
 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { schedulingService } from './service';
 import {
-    DriverAvailability,
-    Schedule,
-    ScheduleFilter,
-    VehicleAvailability
+    Schedule
 } from './types';
 
 type ViewMode = 'list' | 'weekly' | 'calendar';
@@ -333,7 +328,7 @@ export default function SchedulingDashboard() {
                   setFilter({});
                   setSearchTerm('');
                 }}
-                className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 text-sm""
+                className="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 text-sm"
               >
                 Clear All Filters
               </button>

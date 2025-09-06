@@ -1,14 +1,18 @@
 'use client';
 
+import InternalAdaptiveLearning from '../components/InternalAdaptiveLearning';
+
 import { useEffect, useState } from 'react';
 import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
 import DesperateProspectsBatchDeployment, {
   DesperateProspectsTask,
 } from '../components/DesperateProspectsBatchDeployment';
+import FreightBrainDashboard from '../components/FreightBrainDashboard';
 import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
+import PowerUpsDashboard from '../components/PowerUpsDashboard';
 import ShipperBatchDeployment, {
   ShipperTask,
 } from '../components/ShipperBatchDeployment';
@@ -729,6 +733,8 @@ export default function DEPOINTEDashboard() {
     | 'analytics'
     | 'campaigns'
     | 'scheduler'
+    | 'powerups'
+    | 'brain'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
@@ -1535,6 +1541,8 @@ export default function DEPOINTEDashboard() {
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, ""Segue UI"", Roboto, sans-serif',
       }}
     >
+      {/* Internal Adaptive Learning - No UI, just automatic learning */}
+      <InternalAdaptiveLearning />
       {/* Header */}
       <div style={{ marginBottom: '30px' }}>
         <div
@@ -1662,6 +1670,8 @@ export default function DEPOINTEDashboard() {
           { key: 'analytics', label: '📈 Analytics', icon: '📈' },
           { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
           { key: 'scheduler', label: '📅 AI Staff Scheduler', icon: '📅' },
+          { key: 'powerups', label: '⚡ Power-Ups', icon: '⚡' },
+          { key: 'brain', label: '🧠 Freight Brain AI', icon: '🧠' },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -7256,7 +7266,6 @@ export default function DEPOINTEDashboard() {
         </div>
       )}
 
-      {/* SCHEDULER VIEW - AI STAFF SCHEDULER */}
       {selectedMainView === 'scheduler' && (
         <div
           style={{
@@ -7308,6 +7317,40 @@ export default function DEPOINTEDashboard() {
           >
             <AIStaffScheduler />
           </div>
+        </div>
+      )}
+
+      {/* Power-Ups Dashboard */}
+      {selectedMainView === 'powerups' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <PowerUpsDashboard selectedStaff={selectedStaffMember} />
+        </div>
+      )}
+
+      {/* Freight Brain AI Dashboard */}
+      {selectedMainView === 'brain' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <FreightBrainDashboard selectedStaff={selectedStaffMember} />
         </div>
       )}
 

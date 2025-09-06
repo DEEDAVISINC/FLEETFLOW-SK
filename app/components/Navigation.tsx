@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
+import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
 import OrganizationSwitcher from './OrganizationSwitcher';
 
@@ -1303,6 +1304,11 @@ export default function ProfessionalNavigation() {
               <OrganizationSwitcher />
             </div>
           )}
+
+          {/* Language Switcher */}
+          <div style={{ marginLeft: '10px' }}>
+            <LanguageSwitcher />
+          </div>
 
           {/* User Profile Dropdown */}
           <div style={{ position: 'relative', marginLeft: '10px' }}>

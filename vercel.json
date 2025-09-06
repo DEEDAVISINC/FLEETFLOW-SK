@@ -26,7 +26,7 @@
       "permanent": false
     },
     {
-      "source": "https://www.fleetflowapp.com/(.*)",
+      "source": "/(.*)",
       "destination": "https://fleetflowapp.com/$1",
       "permanent": true,
       "has": [
