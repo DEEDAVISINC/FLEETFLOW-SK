@@ -62,7 +62,7 @@ export class EnhancedTwilioService {
   private client: any;
   private isConfigured: boolean = false;
   private fromNumber: string = '';
-  
+
   // Rate limiting (Twilio has different limits based on account type)
   private rateLimit: RateLimitInfo = {
     sentThisMinute: 0,
@@ -71,12 +71,12 @@ export class EnhancedTwilioService {
     minuteStartTime: Date.now(),
     hourStartTime: Date.now(),
     dayStartTime: Date.now(),
-    isThrottled: false
+    isThrottled: false,
   };
 
   // Message delivery tracking
   private deliveryTracking: Map<string, DeliveryStatus> = new Map();
-  
+
   // Cost monitoring
   private costMetrics: CostMetrics = {
     totalMessagesSent: 0,
@@ -84,7 +84,7 @@ export class EnhancedTwilioService {
     costThisMonth: 0,
     costThisDay: 0,
     averageCostPerMessage: 0,
-    lastReset: new Date()
+    lastReset: new Date(),
   };
 
   // Performance metrics
@@ -95,14 +95,14 @@ export class EnhancedTwilioService {
     retriedMessages: 0,
     avgResponseTime: 0,
     lastMessageTime: 0,
-    lastErrorTime: 0
+    lastErrorTime: 0,
   };
 
   // Rate limits (conservative defaults - adjust based on Twilio account)
   private readonly LIMITS = {
-    PER_MINUTE: 100,  // 100 messages per minute
-    PER_HOUR: 3000,   // 3000 messages per hour  
-    PER_DAY: 50000    // 50000 messages per day
+    PER_MINUTE: 100, // 100 messages per minute
+    PER_HOUR: 3000, // 3000 messages per hour
+    PER_DAY: 50000, // 50000 messages per day
   };
 
   constructor() {
@@ -120,13 +120,19 @@ export class EnhancedTwilioService {
       this.fromNumber = process.env.TWILIO_PHONE_NUMBER || '';
 
       if (!accountSid || !authToken || !this.fromNumber) {
-        console.warn('⚠️ Twilio credentials not configured - SMS service disabled');
+        console.warn(
+          '⚠️ Twilio credentials not configured - SMS service disabled'
+        );
         return;
       }
 
-      if (accountSid === 'your_twilio_account_sid_here' || 
-          authToken === 'your_twilio_auth_token_here') {
-        console.warn('⚠️ Twilio credentials not updated from template - SMS service disabled');
+      if (
+        accountSid === 'your_twilio_account_sid_here' ||
+        authToken === 'your_twilio_auth_token_here'
+      ) {
+        console.warn(
+          '⚠️ Twilio credentials not updated from template - SMS service disabled'
+        );
         return;
       }
 
@@ -134,7 +140,7 @@ export class EnhancedTwilioService {
       const twilio = require('twilio');
       this.client = twilio(accountSid, authToken);
       this.isConfigured = true;
-      
+
       console.info('✅ Twilio SMS service initialized successfully');
     } catch (error) {
       console.error('❌ Failed to initialize Twilio:', error);
@@ -145,7 +151,10 @@ export class EnhancedTwilioService {
   /**
    * Send SMS with enhanced features
    */
-  async sendSMSWithRetry(smsMessage: SMSMessage, maxRetries = 3): Promise<SMSResult> {
+  async sendSMSWithRetry(
+    smsMessage: SMSMessage,
+    maxRetries = 3
+  ): Promise<SMSResult> {
     const startTime = Date.now();
 
     try {
@@ -153,7 +162,7 @@ export class EnhancedTwilioService {
       if (!this.isConfigured) {
         return {
           success: false,
-          error: 'Twilio service not configured'
+          error: 'Twilio service not configured',
         };
       }
 
@@ -161,7 +170,7 @@ export class EnhancedTwilioService {
       if (this.isRateLimited()) {
         return {
           success: false,
-          error: 'Rate limit exceeded - message throttled'
+          error: 'Rate limit exceeded - message throttled',
         };
       }
 
@@ -169,7 +178,7 @@ export class EnhancedTwilioService {
       if (!this.isValidPhoneNumber(smsMessage.to)) {
         return {
           success: false,
-          error: 'Invalid phone number format'
+          error: 'Invalid phone number format',
         };
       }
 
@@ -182,7 +191,7 @@ export class EnhancedTwilioService {
           this.incrementRateLimit();
 
           const result = await this.sendSingleMessage(smsMessage);
-          
+
           // Update metrics for successful message
           this.updateMetrics(true, Date.now() - startTime);
           this.updateCostMetrics(result.cost || 0);
@@ -194,18 +203,20 @@ export class EnhancedTwilioService {
 
           return {
             ...result,
-            retries: attempt - 1
+            retries: attempt - 1,
           };
-
         } catch (error) {
-          lastError = error instanceof Error ? error : new Error('Unknown error');
-          
+          lastError =
+            error instanceof Error ? error : new Error('Unknown error');
+
           if (attempt < maxRetries) {
             // Exponential backoff
             const delay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-            console.info(`⚠️ Twilio SMS attempt ${attempt} failed, retrying in ${delay}ms...`);
-            await new Promise(resolve => setTimeout(resolve, delay));
-            
+            console.info(
+              `⚠️ Twilio SMS attempt ${attempt} failed, retrying in ${delay}ms...`
+            );
+            await new Promise((resolve) => setTimeout(resolve, delay));
+
             this.metrics.retriedMessages++;
           }
         }
@@ -213,18 +224,17 @@ export class EnhancedTwilioService {
 
       // All retries failed
       this.updateMetrics(false, Date.now() - startTime, lastError);
-      
+
       return {
         success: false,
         error: lastError?.message || 'All retry attempts failed',
-        retries: maxRetries
+        retries: maxRetries,
       };
-
     } catch (error) {
       this.updateMetrics(false, Date.now() - startTime, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -236,7 +246,7 @@ export class EnhancedTwilioService {
     const messageOptions: any = {
       body: smsMessage.message,
       from: this.fromNumber,
-      to: smsMessage.to
+      to: smsMessage.to,
     };
 
     // Add delivery status callback for tracking
@@ -256,7 +266,7 @@ export class EnhancedTwilioService {
       success: true,
       messageId: result.sid,
       status: result.status,
-      cost: parseFloat(result.price || '0.01')
+      cost: parseFloat(result.price || '0.01'),
     };
   }
 
@@ -264,12 +274,12 @@ export class EnhancedTwilioService {
    * Batch send messages with concurrency control
    */
   async sendBatchSMS(
-    messages: SMSMessage[], 
+    messages: SMSMessage[],
     concurrency = 5
   ): Promise<{ results: SMSResult[]; summary: any }> {
     const results: SMSResult[] = [];
     const batches: SMSMessage[][] = [];
-    
+
     // Split into batches
     for (let i = 0; i < messages.length; i += concurrency) {
       batches.push(messages.slice(i, i + concurrency));
@@ -282,13 +292,13 @@ export class EnhancedTwilioService {
     // Process batches sequentially to respect rate limits
     for (const batch of batches) {
       const batchResults = await Promise.all(
-        batch.map(message => this.sendSMSWithRetry(message))
+        batch.map((message) => this.sendSMSWithRetry(message))
       );
 
       results.push(...batchResults);
 
       // Update counters
-      batchResults.forEach(result => {
+      batchResults.forEach((result) => {
         if (result.success) {
           successCount++;
           totalCost += result.cost || 0;
@@ -299,7 +309,7 @@ export class EnhancedTwilioService {
 
       // Small delay between batches to respect rate limits
       if (batches.length > 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
@@ -310,8 +320,8 @@ export class EnhancedTwilioService {
         successful: successCount,
         failed: failureCount,
         totalCost,
-        averageCost: totalCost / Math.max(successCount, 1)
-      }
+        averageCost: totalCost / Math.max(successCount, 1),
+      },
     };
   }
 
@@ -328,7 +338,7 @@ export class EnhancedTwilioService {
       this.trackDeliveryStatus(messageId, status, {
         errorCode,
         errorMessage,
-        deliveredAt: status === 'delivered' ? new Date() : undefined
+        deliveredAt: status === 'delivered' ? new Date() : undefined,
       });
     }
   }
@@ -340,26 +350,26 @@ export class EnhancedTwilioService {
     const now = Date.now();
 
     // Reset minute counter
-    if ((now - this.rateLimit.minuteStartTime) >= 60000) {
+    if (now - this.rateLimit.minuteStartTime >= 60000) {
       this.rateLimit.sentThisMinute = 0;
       this.rateLimit.minuteStartTime = now;
     }
 
     // Reset hour counter
-    if ((now - this.rateLimit.hourStartTime) >= 3600000) {
+    if (now - this.rateLimit.hourStartTime >= 3600000) {
       this.rateLimit.sentThisHour = 0;
       this.rateLimit.hourStartTime = now;
     }
 
     // Reset day counter
-    if ((now - this.rateLimit.dayStartTime) >= 86400000) {
+    if (now - this.rateLimit.dayStartTime >= 86400000) {
       this.rateLimit.sentThisDay = 0;
       this.rateLimit.dayStartTime = now;
       this.resetDailyCostMetrics();
     }
 
     // Update throttled status
-    this.rateLimit.isThrottled = 
+    this.rateLimit.isThrottled =
       this.rateLimit.sentThisMinute >= this.LIMITS.PER_MINUTE ||
       this.rateLimit.sentThisHour >= this.LIMITS.PER_HOUR ||
       this.rateLimit.sentThisDay >= this.LIMITS.PER_DAY;
@@ -381,19 +391,19 @@ export class EnhancedTwilioService {
    * Delivery tracking methods
    */
   private trackDeliveryStatus(
-    messageId: string, 
-    status: string, 
+    messageId: string,
+    status: string,
     additional?: Partial<DeliveryStatus>
   ): void {
     const existing = this.deliveryTracking.get(messageId) || {
       messageId,
-      status: 'queued'
+      status: 'queued',
     };
 
     this.deliveryTracking.set(messageId, {
       ...existing,
       status: status as DeliveryStatus['status'],
-      ...additional
+      ...additional,
     });
 
     // Clean up old tracking data (keep last 1000 messages)
@@ -413,7 +423,7 @@ export class EnhancedTwilioService {
     this.costMetrics.totalMessagesSent++;
     this.costMetrics.totalCost += messageCost;
     this.costMetrics.costThisDay += messageCost;
-    
+
     // Update monthly cost (simple approximation)
     const now = new Date();
     if (now.getMonth() !== this.costMetrics.lastReset.getMonth()) {
@@ -422,8 +432,8 @@ export class EnhancedTwilioService {
     } else {
       this.costMetrics.costThisMonth += messageCost;
     }
-    
-    this.costMetrics.averageCostPerMessage = 
+
+    this.costMetrics.averageCostPerMessage =
       this.costMetrics.totalCost / this.costMetrics.totalMessagesSent;
   }
 
@@ -434,9 +444,13 @@ export class EnhancedTwilioService {
   /**
    * Metrics tracking methods
    */
-  private updateMetrics(success: boolean, responseTime: number, error?: any): void {
+  private updateMetrics(
+    success: boolean,
+    responseTime: number,
+    error?: any
+  ): void {
     this.metrics.totalRequests++;
-    
+
     if (success) {
       this.metrics.successfulMessages++;
       this.metrics.lastMessageTime = Date.now();
@@ -445,9 +459,11 @@ export class EnhancedTwilioService {
       this.metrics.lastErrorTime = Date.now();
       this.metrics.lastError = error?.message || 'Unknown error';
     }
-    
+
     // Update average response time
-    const totalTime = this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) + responseTime;
+    const totalTime =
+      this.metrics.avgResponseTime * (this.metrics.totalRequests - 1) +
+      responseTime;
     this.metrics.avgResponseTime = totalTime / this.metrics.totalRequests;
   }
 
@@ -465,37 +481,79 @@ export class EnhancedTwilioService {
    */
   getSystemStatus() {
     this.resetRateLimitsIfNeeded();
-    
+
     return {
-      status: this.isConfigured ? 
-        (this.rateLimit.isThrottled ? 'RATE_LIMITED' : 'HEALTHY') : 
-        'NOT_CONFIGURED',
+      status: this.isConfigured
+        ? this.rateLimit.isThrottled
+          ? 'RATE_LIMITED'
+          : 'HEALTHY'
+        : 'NOT_CONFIGURED',
       configured: this.isConfigured,
-      fromNumber: this.fromNumber ? `${this.fromNumber.substring(0, 6)}***` : null,
+      fromNumber: this.fromNumber
+        ? `${this.fromNumber.substring(0, 6)}***`
+        : null,
       metrics: this.metrics,
       rateLimitStatus: {
         ...this.rateLimit,
         limits: this.LIMITS,
-        remainingThisMinute: Math.max(0, this.LIMITS.PER_MINUTE - this.rateLimit.sentThisMinute),
-        remainingThisHour: Math.max(0, this.LIMITS.PER_HOUR - this.rateLimit.sentThisHour),
-        remainingThisDay: Math.max(0, this.LIMITS.PER_DAY - this.rateLimit.sentThisDay)
+        remainingThisMinute: Math.max(
+          0,
+          this.LIMITS.PER_MINUTE - this.rateLimit.sentThisMinute
+        ),
+        remainingThisHour: Math.max(
+          0,
+          this.LIMITS.PER_HOUR - this.rateLimit.sentThisHour
+        ),
+        remainingThisDay: Math.max(
+          0,
+          this.LIMITS.PER_DAY - this.rateLimit.sentThisDay
+        ),
       },
       costMetrics: this.costMetrics,
       deliveryStats: {
         totalTracked: this.deliveryTracking.size,
-        delivered: Array.from(this.deliveryTracking.values()).filter(d => d.status === 'delivered').length,
-        failed: Array.from(this.deliveryTracking.values()).filter(d => d.status === 'failed').length
-      }
+        delivered: Array.from(this.deliveryTracking.values()).filter(
+          (d) => d.status === 'delivered'
+        ).length,
+        failed: Array.from(this.deliveryTracking.values()).filter(
+          (d) => d.status === 'failed'
+        ).length,
+      },
+      // Enhanced messaging capabilities comparison
+      enhancedFeatures: {
+        supportsRichMedia: false, // Current Twilio SMS limitation
+        supportsBlueBubble: false, // True iMessage blue bubbles require Apple integration
+        supportsGroupChat: false,
+        a2pRegistrationRequired: true,
+        transparentPricing: false,
+        // Clarification for user
+        blueBubbleNote:
+          'True blue bubbles only available via iMessage services like SendBlue',
+        freeAlternatives: {
+          appleMessages: 'Free but not programmatic - manual only',
+          twilioFreeTier: 'Free tier available for testing',
+          rcsFree:
+            "RCS is free but limited iOS support - Google's rich messaging standard",
+          openSource: 'Self-hosted options available but complex setup',
+        },
+        blueBubblePricing: {
+          sendBlue: '$49-299/month (based on phone lines)',
+          textMagic: '$25-200/month (based on volume)',
+          ezTexting: '$29-500/month (based on features)',
+          slickText: '$39-299/month (based on subscribers)',
+          averageMonthly: '$50-300/month for small-medium business',
+        },
+      },
     };
   }
 
   /**
    * Health check method
    */
-  async healthCheck(): Promise<{healthy: boolean, details: any}> {
+  async healthCheck(): Promise<{ healthy: boolean; details: any }> {
     try {
       const status = this.getSystemStatus();
-      
+
       // Test connection if configured
       let connectionTest = false;
       if (this.isConfigured) {
@@ -507,21 +565,24 @@ export class EnhancedTwilioService {
           console.warn('⚠️ Twilio connection test failed:', error);
         }
       }
-      
+
       return {
-        healthy: this.isConfigured && connectionTest && status.status !== 'RATE_LIMITED',
+        healthy:
+          this.isConfigured &&
+          connectionTest &&
+          status.status !== 'RATE_LIMITED',
         details: {
           ...status,
-          connectionTest
-        }
+          connectionTest,
+        },
       };
     } catch (error) {
       return {
         healthy: false,
         details: {
           error: error instanceof Error ? error.message : 'Unknown error',
-          status: 'UNHEALTHY'
-        }
+          status: 'UNHEALTHY',
+        },
       };
     }
   }
@@ -541,7 +602,7 @@ export class EnhancedTwilioService {
       ...this.costMetrics,
       projectedMonthlyCost: this.costMetrics.costThisDay * 30,
       projectedYearlyCost: this.costMetrics.costThisDay * 365,
-      recommendations: this.generateCostRecommendations()
+      recommendations: this.generateCostRecommendations(),
     };
   }
 
@@ -550,23 +611,28 @@ export class EnhancedTwilioService {
    */
   private generateCostRecommendations(): string[] {
     const recommendations: string[] = [];
-    
+
     if (this.costMetrics.averageCostPerMessage > 0.02) {
-      recommendations.push('Consider switching to a higher volume plan for better rates');
+      recommendations.push(
+        'Consider switching to a higher volume plan for better rates'
+      );
     }
-    
+
     if (this.rateLimit.sentThisDay > this.LIMITS.PER_DAY * 0.8) {
-      recommendations.push('Approaching daily rate limit - consider upgrading Twilio plan');
+      recommendations.push(
+        'Approaching daily rate limit - consider upgrading Twilio plan'
+      );
     }
-    
+
     if (this.metrics.failedMessages > this.metrics.successfulMessages * 0.1) {
-      recommendations.push('High failure rate - review phone number validation');
+      recommendations.push(
+        'High failure rate - review phone number validation'
+      );
     }
-    
+
     return recommendations;
   }
 }
 
 // Export singleton instance
 export const enhancedTwilioService = new EnhancedTwilioService();
-

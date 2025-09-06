@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { getCurrentUser } from '../config/access';
+import OrganizationDataService from '../services/MultiTenantDataService';
 
 interface Course {
   id: string;
@@ -38,60 +40,135 @@ export default function UniversityPage() {
     | 'certifications'
     | 'ai-training'
     | 'occupational-training'
-  >('hub');
+    | 'admin'
+  >('hub'); // Start with hub tab while loading user data
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeAIModule, setActiveAIModule] =
     useState<string>('ai-fundamentals');
   const [activeOccupationalModule, setActiveOccupationalModule] =
     useState<string>('');
-  const [aiProgress, setAIProgress] = useState<{ [key: string]: boolean }>({
-    'ai-fundamentals': false,
-    'ai-flow-system': false,
-    'dispatcher-ai': false,
-    'broker-ai': false,
-    'system-ai': false,
-    'performance-analytics': false,
-    troubleshooting: false,
-  });
+
+  // Multi-tenant state
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [tenantId, setTenantId] = useState<string>('');
+  const [userRole, setUserRole] = useState<string>('');
+  const [tenantCourses, setTenantCourses] = useState<Course[]>([]);
+  const [tenantProgress, setTenantProgress] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [aiProgress, setAIProgress] = useState<{ [key: string]: boolean }>({});
 
   const [occupationalProgress, setOccupationalProgress] = useState<{
     [key: string]: boolean;
-  }>({
-    'carrier-onboarding-center': false,
-    'dispatch-central': false,
-    'broker-operations': false,
-    'maintenance-management': false,
-    'accounting-system': false,
-    'safety-compliance': false,
-    'live-tracking': false,
-    'university-portal': false,
-    'freightflow-rfx': false,
-    'ai-dispatcher': false,
-    'document-management': false,
-  });
+  }>({});
 
   React.useEffect(() => {
-    window.scrollTo(0, 0);
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
+    const initializeTenantData = async () => {
+      try {
+        setIsLoading(true);
 
-    // Check URL parameters to set active tab
-    const urlParams = new URLSearchParams(window.location.search);
-    const tab = urlParams.get('tab');
-    if (
-      tab &&
-      [
-        'hub',
-        'courses',
-        'ai-training',
-        'certifications',
-        'occupational-training',
-      ].includes(tab)
-    ) {
-      setActiveTab(tab as any);
-    }
+        // Get current user and tenant information
+        const { user } = getCurrentUser();
+        setCurrentUser(user);
+        setTenantId(user?.organizationId || '');
+        setUserRole(user?.role || '');
+
+        // Load tenant-specific courses
+        const courses = await loadTenantCourses(user?.organizationId);
+        setTenantCourses(courses);
+
+        // Load tenant-specific progress
+        const progress = await loadTenantProgress(
+          user?.organizationId,
+          user?.id
+        );
+        setTenantProgress(progress);
+
+        // Scroll to top
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+
+        // Check URL parameters to set active tab
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (
+          tab &&
+          [
+            'hub',
+            'courses',
+            'ai-training',
+            'certifications',
+            'occupational-training',
+          ].includes(tab)
+        ) {
+          setActiveTab(tab as any);
+        }
+      } catch (error) {
+        console.error('Error initializing tenant data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeTenantData();
   }, []);
+
+  // Multi-tenant helper functions
+  const loadTenantCourses = async (
+    organizationId: string
+  ): Promise<Course[]> => {
+    try {
+      // Get tenant-specific courses from OrganizationDataService
+      const tenantCourses =
+        await OrganizationDataService.getOrganizationCourses(organizationId);
+
+      // If no tenant-specific courses, return default courses
+      if (!tenantCourses || tenantCourses.length === 0) {
+        return integratedCourses; // Use the existing default courses
+      }
+
+      return tenantCourses;
+    } catch (error) {
+      console.error('Error loading tenant courses:', error);
+      return integratedCourses; // Fallback to default courses
+    }
+  };
+
+  const loadTenantProgress = async (
+    organizationId: string,
+    userId: string
+  ): Promise<{ [key: string]: boolean }> => {
+    try {
+      // Get tenant-specific progress from OrganizationDataService
+      const progress = await OrganizationDataService.getUserTrainingProgress(
+        organizationId,
+        userId
+      );
+      return progress || {};
+    } catch (error) {
+      console.error('Error loading tenant progress:', error);
+      return {};
+    }
+  };
+
+  const saveTenantProgress = async (
+    organizationId: string,
+    userId: string,
+    progress: { [key: string]: boolean }
+  ) => {
+    try {
+      await OrganizationDataService.saveUserTrainingProgress(
+        organizationId,
+        userId,
+        progress
+      );
+    } catch (error) {
+      console.error('Error saving tenant progress:', error);
+    }
+  };
 
   const occupationalTrainingModules = [
     {
@@ -348,560 +425,567 @@ export default function UniversityPage() {
     },
   ];
 
-  // ROLE-BASED COMPREHENSIVE COURSES (Featured)
-  const integratedCourses: Course[] = [
-    {
-      id: 'dispatcher-operations-mastery',
-      title: 'Dispatcher Operations Mastery',
-      description:
-        'Complete dispatcher training including load matching strategies, carrier coordination, route optimization, real-time tracking, emergency procedures, and performance management.',
-      duration: '180 minutes',
-      difficulty: 'Advanced',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 856,
-      rating: 4.8,
-      thumbnail: '📋',
-    },
-    {
-      id: 'broker-business-mastery',
-      title: 'Broker Business Mastery',
-      description:
-        'Comprehensive broker training covering rate negotiations, customer acquisition, market analysis, sales pipeline management, and professional communication for revenue optimization.',
-      duration: '180 minutes',
-      difficulty: 'Advanced',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 1534,
-      rating: 4.7,
-      thumbnail: '💼',
-    },
-    {
-      id: 'fleet-operations-excellence',
-      title: 'Fleet Operations Excellence',
-      description:
-        'Strategic fleet management including fleet capacity management, utilization optimization, cross-department coordination, performance metrics, and resource allocation.',
-      duration: '150 minutes',
-      difficulty: 'Advanced',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 1247,
-      rating: 4.9,
-      thumbnail: '🚛',
-    },
-    {
-      id: 'compliance-safety-excellence',
-      title: 'Compliance & Safety Excellence',
-      description:
-        'Complete regulatory excellence covering FMCSA 2025 compliance, safety management systems, risk assessment, audit preparation, and comprehensive safety program implementation.',
-      duration: '120 minutes',
-      difficulty: 'Advanced',
-      category: 'Compliance',
-      certification: true,
-      enrolledCount: 1012,
-      rating: 4.9,
-      thumbnail: '⚖️',
-    },
-  ];
+  // ROLE-BASED COMPREHENSIVE COURSES (Featured) - Loaded dynamically
+  const integratedCourses: Course[] =
+    tenantCourses.length > 0
+      ? tenantCourses
+      : [
+          {
+            id: 'dispatcher-operations-mastery',
+            title: 'Dispatcher Operations Mastery',
+            description:
+              'Complete dispatcher training including load matching strategies, carrier coordination, route optimization, real-time tracking, emergency procedures, and performance management.',
+            duration: '180 minutes',
+            difficulty: 'Advanced',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 856,
+            rating: 4.8,
+            thumbnail: '📋',
+          },
+          {
+            id: 'broker-business-mastery',
+            title: 'Broker Business Mastery',
+            description:
+              'Comprehensive broker training covering rate negotiations, customer acquisition, market analysis, sales pipeline management, and professional communication for revenue optimization.',
+            duration: '180 minutes',
+            difficulty: 'Advanced',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 1534,
+            rating: 4.7,
+            thumbnail: '💼',
+          },
+          {
+            id: 'fleet-operations-excellence',
+            title: 'Fleet Operations Excellence',
+            description:
+              'Strategic fleet management including fleet capacity management, utilization optimization, cross-department coordination, performance metrics, and resource allocation.',
+            duration: '150 minutes',
+            difficulty: 'Advanced',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 1247,
+            rating: 4.9,
+            thumbnail: '🚛',
+          },
+          {
+            id: 'compliance-safety-excellence',
+            title: 'Compliance & Safety Excellence',
+            description:
+              'Complete regulatory excellence covering FMCSA 2025 compliance, safety management systems, risk assessment, audit preparation, and comprehensive safety program implementation.',
+            duration: '120 minutes',
+            difficulty: 'Advanced',
+            category: 'Compliance',
+            certification: true,
+            enrolledCount: 1012,
+            rating: 4.9,
+            thumbnail: '⚖️',
+          },
+        ];
 
-  const courses: Course[] = [
-    {
-      id: 'carrier-onboard-workflow',
-      title: 'Carrier Onboard Workflow',
-      description:
-        'Master the automated 24-hour carrier onboarding process with document verification.',
-      duration: '45 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 847,
-      rating: 4.8,
-      thumbnail: '🚚',
-    },
-    {
-      id: 'workflow-ecosystem',
-      title: 'Workflow Ecosystem',
-      description:
-        'Complete workflow management system integration and optimization.',
-      duration: '60 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 623,
-      rating: 4.9,
-      thumbnail: '⚙️',
-    },
-    {
-      id: 'customer-service',
-      title: 'Customer Service Excellence',
-      description:
-        'Professional customer service standards and communication protocols.',
-      duration: '40 min',
-      difficulty: 'Beginner',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 592,
-      rating: 4.7,
-      thumbnail: '📞',
-    },
-    {
-      id: 'freight-broker-agent',
-      title: 'Freight Broker Agent',
-      description:
-        'Essential knowledge for freight broker agents including regulations and best practices.',
-      duration: '90 min',
-      difficulty: 'Beginner',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 294,
-      rating: 4.5,
-      thumbnail: '🏢',
-    },
-    {
-      id: 'fmcsa-compliance-2025',
-      title: 'FMCSA Compliance 2025',
-      description:
-        'Current FMCSA regulations, safety requirements, and compliance standards.',
-      duration: '55 min',
-      difficulty: 'Advanced',
-      category: 'Compliance',
-      certification: true,
-      enrolledCount: 478,
-      rating: 4.9,
-      thumbnail: '⚖️',
-    },
-    {
-      id: 'dispatch-optimization',
-      title: 'Dispatch Optimization',
-      description:
-        'Advanced load matching, route optimization, and carrier performance management.',
-      duration: '50 min',
-      difficulty: 'Advanced',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 456,
-      rating: 4.7,
-      thumbnail: '📊',
-    },
-    {
-      id: 'dot-compliance-training',
-      title: 'DOT Compliance Training',
-      description:
-        'Department of Transportation regulations and compliance requirements.',
-      duration: '65 min',
-      difficulty: 'Intermediate',
-      category: 'Compliance',
-      certification: true,
-      enrolledCount: 389,
-      rating: 4.8,
-      thumbnail: '🛡️',
-    },
-    {
-      id: 'eld-technology-training',
-      title: 'ELD Technology & Integration',
-      description:
-        'Electronic Logging Devices, integration requirements, and compliance monitoring.',
-      duration: '30 min',
-      difficulty: 'Beginner',
-      category: 'Technology',
-      certification: false,
-      enrolledCount: 1024,
-      rating: 4.6,
-      thumbnail: '📱',
-    },
-    {
-      id: 'safety-management-systems',
-      title: 'Safety Management Systems',
-      description:
-        'Comprehensive safety programs for transportation operations.',
-      duration: '45 min',
-      difficulty: 'Intermediate',
-      category: 'Safety',
-      certification: true,
-      enrolledCount: 367,
-      rating: 4.8,
-      thumbnail: '🦺',
-    },
-    {
-      id: 'route-optimization',
-      title: 'Route Optimization & Planning',
-      description:
-        'Advanced route planning, fuel efficiency, and delivery optimization.',
-      duration: '40 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 512,
-      rating: 4.6,
-      thumbnail: '🗺️',
-    },
-    {
-      id: 'load-matching',
-      title: 'Load Matching Strategies',
-      description:
-        'Effective load matching techniques and carrier selection criteria.',
-      duration: '35 min',
-      difficulty: 'Beginner',
-      category: 'Operations',
-      certification: false,
-      enrolledCount: 678,
-      rating: 4.5,
-      thumbnail: '🎯',
-    },
-    {
-      id: 'financial-management',
-      title: 'Transportation Finance',
-      description:
-        'Financial management, invoicing, and payment processing systems.',
-      duration: '50 min',
-      difficulty: 'Intermediate',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 298,
-      rating: 4.7,
-      thumbnail: '💰',
-    },
-    {
-      id: 'ai-fundamentals',
-      title: 'AI Fundamentals for Transportation',
-      description:
-        'Introduction to artificial intelligence in transportation management and fleet operations.',
-      duration: '45 min',
-      difficulty: 'Beginner',
-      category: 'Technology',
-      certification: true,
-      enrolledCount: 1247,
-      rating: 4.9,
-      thumbnail: '🤖',
-    },
-    {
-      id: 'ai-flow-system-training',
-      title: 'AI Flow System Mastery',
-      description:
-        "Complete guide to using FleetFlow's AI workflow system for dispatchers, brokers, and administrators.",
-      duration: '60 min',
-      difficulty: 'Intermediate',
-      category: 'Technology',
-      certification: true,
-      enrolledCount: 892,
-      rating: 4.8,
-      thumbnail: '🔄',
-    },
-    {
-      id: 'dispatcher-ai-workflow',
-      title: 'Dispatcher AI Workflow Training',
-      description:
-        'Master AI-powered load matching, route optimization, and capacity forecasting for dispatchers.',
-      duration: '55 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 634,
-      rating: 4.7,
-      thumbnail: '🚛',
-    },
-    {
-      id: 'broker-ai-workflow',
-      title: 'Broker AI Workflow Training',
-      description:
-        'AI-powered lead scoring, pricing optimization, and customer relationship management for brokers.',
-      duration: '50 min',
-      difficulty: 'Intermediate',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 567,
-      rating: 4.8,
-      thumbnail: '🏢',
-    },
-    {
-      id: 'system-ai-workflow',
-      title: 'System AI Administration',
-      description:
-        'Predictive maintenance, compliance monitoring, and performance analytics for system administrators.',
-      duration: '65 min',
-      difficulty: 'Advanced',
-      category: 'Technology',
-      certification: true,
-      enrolledCount: 423,
-      rating: 4.9,
-      thumbnail: '⚙️',
-    },
-    {
-      id: 'ai-performance-analytics',
-      title: 'AI Performance Analytics',
-      description:
-        'Understanding AI metrics, interpreting performance data, and optimizing system effectiveness.',
-      duration: '40 min',
-      difficulty: 'Intermediate',
-      category: 'Technology',
-      certification: true,
-      enrolledCount: 745,
-      rating: 4.6,
-      thumbnail: '📊',
-    },
-    {
-      id: 'ai-system-configuration',
-      title: 'AI System Configuration',
-      description:
-        'Configure and customize AI workflows, set preferences, and optimize system performance.',
-      duration: '50 min',
-      difficulty: 'Advanced',
-      category: 'Technology',
-      certification: true,
-      enrolledCount: 389,
-      rating: 4.7,
-      thumbnail: '🔧',
-    },
-    {
-      id: 'ai-troubleshooting',
-      title: 'AI System Troubleshooting',
-      description:
-        'Identify and resolve common AI system issues, optimize performance, and maintain system health.',
-      duration: '35 min',
-      difficulty: 'Advanced',
-      category: 'Technology',
-      certification: false,
-      enrolledCount: 312,
-      rating: 4.5,
-      thumbnail: '🔍',
-    },
-    // New Dispatcher Training Resources
-    {
-      id: 'dispatch-scheduling-fundamentals',
-      title: 'Dispatch Scheduling Fundamentals',
-      description:
-        "Master shift management, driver scheduling, and workload distribution using FleetFlow's existing tools.",
-      duration: '45 min',
-      difficulty: 'Beginner',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '📅',
-    },
-    {
-      id: 'fleet-capacity-planning-free',
-      title: 'Fleet Capacity Planning (Free Course)',
-      description:
-        "FREE: Learn to optimize fleet utilization and forecast capacity needs using FleetFlow's analytics.",
-      duration: '35 min',
-      difficulty: 'Beginner',
-      category: 'Operations',
-      certification: false,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '📊',
-    },
-    {
-      id: 'workflow-automation-training',
-      title: 'Workflow Automation Training',
-      description:
-        "Maximize FleetFlow's automated workflows for load assignment, tracking, and communication.",
-      duration: '50 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '⚙️',
-    },
-    {
-      id: 'load-assignment-strategy',
-      title: 'Load Assignment Strategy',
-      description:
-        "Advanced techniques for efficient load-to-driver matching using FleetFlow's assignment system.",
-      duration: '40 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🎯',
-    },
-    {
-      id: 'maximizing-fleetflow-features',
-      title: 'Maximizing FleetFlow Features',
-      description:
-        'Comprehensive guide to using all FleetFlow dispatch features for maximum efficiency.',
-      duration: '55 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🚀',
-    },
-    {
-      id: 'dispatcher-communication-excellence',
-      title: 'Dispatcher Communication Excellence',
-      description:
-        "Professional communication protocols for dispatchers using FleetFlow's communication tools.",
-      duration: '30 min',
-      difficulty: 'Beginner',
-      category: 'Operations',
-      certification: false,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '📞',
-    },
-    {
-      id: 'fleet-utilization-optimization',
-      title: 'Fleet Utilization Optimization',
-      description:
-        'Strategies to maximize fleet efficiency and reduce deadhead miles using FleetFlow analytics.',
-      duration: '45 min',
-      difficulty: 'Advanced',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '⚡',
-    },
-    {
-      id: 'emergency-response-protocols',
-      title: 'Emergency Response Protocols',
-      description:
-        'Crisis management and emergency response procedures for dispatchers.',
-      duration: '40 min',
-      difficulty: 'Intermediate',
-      category: 'Safety',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🚨',
-    },
-    {
-      id: 'dispatch-central-mastery',
-      title: 'Dispatch Central Mastery',
-      description:
-        "Complete guide to FleetFlow's Dispatch Central dashboard and all its features.",
-      duration: '60 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🏢',
-    },
-    {
-      id: 'live-tracking-integration',
-      title: 'Live Tracking Integration',
-      description:
-        'Master the live load tracking system integration with dispatch operations.',
-      duration: '35 min',
-      difficulty: 'Beginner',
-      category: 'Technology',
-      certification: false,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🗺️',
-    },
-    {
-      id: 'performance-metrics-analysis',
-      title: 'Performance Metrics Analysis',
-      description:
-        'Understanding and acting on dispatcher performance metrics and KPIs.',
-      duration: '40 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '📈',
-    },
-    {
-      id: 'dispatcher-efficiency-free',
-      title: 'Dispatcher Efficiency Tips (Free Course)',
-      description:
-        'FREE: Quick tips and tricks to improve daily dispatcher productivity and efficiency.',
-      duration: '25 min',
-      difficulty: 'Beginner',
-      category: 'Operations',
-      certification: false,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '💡',
-    },
-    // Driver Management Training Modules
-    {
-      id: 'driver-retention-excellence',
-      title: 'Driver Retention Excellence Training',
-      description:
-        'Comprehensive strategies and best practices for retaining quality drivers and reducing turnover.',
-      duration: '50 min',
-      difficulty: 'Intermediate',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🤝',
-    },
-    {
-      id: 'performance-management-fundamentals',
-      title: 'Performance Management Fundamentals',
-      description:
-        'Essential skills for tracking, measuring, and improving driver performance through data-driven approaches.',
-      duration: '45 min',
-      difficulty: 'Intermediate',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '📊',
-    },
-    {
-      id: 'communication-protocol-mastery',
-      title: 'Communication Protocol Mastery',
-      description:
-        'Master professional communication protocols between dispatchers, drivers, and fleet management.',
-      duration: '40 min',
-      difficulty: 'Beginner',
-      category: 'Operations',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '📢',
-    },
-    {
-      id: 'incentive-program-management',
-      title: 'Incentive Program Management',
-      description:
-        'Design and implement effective driver incentive programs and bonus management systems.',
-      duration: '55 min',
-      difficulty: 'Advanced',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '🎯',
-    },
-    {
-      id: 'driver-relations-excellence-free',
-      title: 'Driver Relations Excellence (Free Course)',
-      description:
-        'FREE: Building positive relationships with drivers to improve retention and job satisfaction.',
-      duration: '30 min',
-      difficulty: 'Beginner',
-      category: 'Business',
-      certification: false,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '👥',
-    },
-    {
-      id: 'hr-fleet-management',
-      title: 'HR Best Practices for Fleet Management',
-      description:
-        'Human resources management specifically tailored for transportation and fleet operations.',
-      duration: '60 min',
-      difficulty: 'Advanced',
-      category: 'Business',
-      certification: true,
-      enrolledCount: 0,
-      rating: 5.0,
-      thumbnail: '👔',
-    },
-  ];
+  // INDIVIDUAL SPECIALIZED COURSES - Dynamic loading with fallback
+  const courses: Course[] =
+    tenantCourses.length > 0
+      ? tenantCourses
+      : [
+          {
+            id: 'carrier-onboard-workflow',
+            title: 'Carrier Onboard Workflow',
+            description:
+              'Master the automated 24-hour carrier onboarding process with document verification.',
+            duration: '45 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 847,
+            rating: 4.8,
+            thumbnail: '🚚',
+          },
+          {
+            id: 'workflow-ecosystem',
+            title: 'Workflow Ecosystem',
+            description:
+              'Complete workflow management system integration and optimization.',
+            duration: '60 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 623,
+            rating: 4.9,
+            thumbnail: '⚙️',
+          },
+          {
+            id: 'customer-service',
+            title: 'Customer Service Excellence',
+            description:
+              'Professional customer service standards and communication protocols.',
+            duration: '40 min',
+            difficulty: 'Beginner',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 592,
+            rating: 4.7,
+            thumbnail: '📞',
+          },
+          {
+            id: 'freight-broker-agent',
+            title: 'Freight Broker Agent',
+            description:
+              'Essential knowledge for freight broker agents including regulations and best practices.',
+            duration: '90 min',
+            difficulty: 'Beginner',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 294,
+            rating: 4.5,
+            thumbnail: '🏢',
+          },
+          {
+            id: 'fmcsa-compliance-2025',
+            title: 'FMCSA Compliance 2025',
+            description:
+              'Current FMCSA regulations, safety requirements, and compliance standards.',
+            duration: '55 min',
+            difficulty: 'Advanced',
+            category: 'Compliance',
+            certification: true,
+            enrolledCount: 478,
+            rating: 4.9,
+            thumbnail: '⚖️',
+          },
+          {
+            id: 'dispatch-optimization',
+            title: 'Dispatch Optimization',
+            description:
+              'Advanced load matching, route optimization, and carrier performance management.',
+            duration: '50 min',
+            difficulty: 'Advanced',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 456,
+            rating: 4.7,
+            thumbnail: '📊',
+          },
+          {
+            id: 'dot-compliance-training',
+            title: 'DOT Compliance Training',
+            description:
+              'Department of Transportation regulations and compliance requirements.',
+            duration: '65 min',
+            difficulty: 'Intermediate',
+            category: 'Compliance',
+            certification: true,
+            enrolledCount: 389,
+            rating: 4.8,
+            thumbnail: '🛡️',
+          },
+          {
+            id: 'eld-technology-training',
+            title: 'ELD Technology & Integration',
+            description:
+              'Electronic Logging Devices, integration requirements, and compliance monitoring.',
+            duration: '30 min',
+            difficulty: 'Beginner',
+            category: 'Technology',
+            certification: false,
+            enrolledCount: 1024,
+            rating: 4.6,
+            thumbnail: '📱',
+          },
+          {
+            id: 'safety-management-systems',
+            title: 'Safety Management Systems',
+            description:
+              'Comprehensive safety programs for transportation operations.',
+            duration: '45 min',
+            difficulty: 'Intermediate',
+            category: 'Safety',
+            certification: true,
+            enrolledCount: 367,
+            rating: 4.8,
+            thumbnail: '🦺',
+          },
+          {
+            id: 'route-optimization',
+            title: 'Route Optimization & Planning',
+            description:
+              'Advanced route planning, fuel efficiency, and delivery optimization.',
+            duration: '40 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 512,
+            rating: 4.6,
+            thumbnail: '🗺️',
+          },
+          {
+            id: 'load-matching',
+            title: 'Load Matching Strategies',
+            description:
+              'Effective load matching techniques and carrier selection criteria.',
+            duration: '35 min',
+            difficulty: 'Beginner',
+            category: 'Operations',
+            certification: false,
+            enrolledCount: 678,
+            rating: 4.5,
+            thumbnail: '🎯',
+          },
+          {
+            id: 'financial-management',
+            title: 'Transportation Finance',
+            description:
+              'Financial management, invoicing, and payment processing systems.',
+            duration: '50 min',
+            difficulty: 'Intermediate',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 298,
+            rating: 4.7,
+            thumbnail: '💰',
+          },
+          {
+            id: 'ai-fundamentals',
+            title: 'AI Fundamentals for Transportation',
+            description:
+              'Introduction to artificial intelligence in transportation management and fleet operations.',
+            duration: '45 min',
+            difficulty: 'Beginner',
+            category: 'Technology',
+            certification: true,
+            enrolledCount: 1247,
+            rating: 4.9,
+            thumbnail: '🤖',
+          },
+          {
+            id: 'ai-flow-system-training',
+            title: 'AI Flow System Mastery',
+            description:
+              "Complete guide to using FleetFlow's AI workflow system for dispatchers, brokers, and administrators.",
+            duration: '60 min',
+            difficulty: 'Intermediate',
+            category: 'Technology',
+            certification: true,
+            enrolledCount: 892,
+            rating: 4.8,
+            thumbnail: '🔄',
+          },
+          {
+            id: 'dispatcher-ai-workflow',
+            title: 'Dispatcher AI Workflow Training',
+            description:
+              'Master AI-powered load matching, route optimization, and capacity forecasting for dispatchers.',
+            duration: '55 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 634,
+            rating: 4.7,
+            thumbnail: '🚛',
+          },
+          {
+            id: 'broker-ai-workflow',
+            title: 'Broker AI Workflow Training',
+            description:
+              'AI-powered lead scoring, pricing optimization, and customer relationship management for brokers.',
+            duration: '50 min',
+            difficulty: 'Intermediate',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 567,
+            rating: 4.8,
+            thumbnail: '🏢',
+          },
+          {
+            id: 'system-ai-workflow',
+            title: 'System AI Administration',
+            description:
+              'Predictive maintenance, compliance monitoring, and performance analytics for system administrators.',
+            duration: '65 min',
+            difficulty: 'Advanced',
+            category: 'Technology',
+            certification: true,
+            enrolledCount: 423,
+            rating: 4.9,
+            thumbnail: '⚙️',
+          },
+          {
+            id: 'ai-performance-analytics',
+            title: 'AI Performance Analytics',
+            description:
+              'Understanding AI metrics, interpreting performance data, and optimizing system effectiveness.',
+            duration: '40 min',
+            difficulty: 'Intermediate',
+            category: 'Technology',
+            certification: true,
+            enrolledCount: 745,
+            rating: 4.6,
+            thumbnail: '📊',
+          },
+          {
+            id: 'ai-system-configuration',
+            title: 'AI System Configuration',
+            description:
+              'Configure and customize AI workflows, set preferences, and optimize system performance.',
+            duration: '50 min',
+            difficulty: 'Advanced',
+            category: 'Technology',
+            certification: true,
+            enrolledCount: 389,
+            rating: 4.7,
+            thumbnail: '🔧',
+          },
+          {
+            id: 'ai-troubleshooting',
+            title: 'AI System Troubleshooting',
+            description:
+              'Identify and resolve common AI system issues, optimize performance, and maintain system health.',
+            duration: '35 min',
+            difficulty: 'Advanced',
+            category: 'Technology',
+            certification: false,
+            enrolledCount: 312,
+            rating: 4.5,
+            thumbnail: '🔍',
+          },
+          // New Dispatcher Training Resources
+          {
+            id: 'dispatch-scheduling-fundamentals',
+            title: 'Dispatch Scheduling Fundamentals',
+            description:
+              "Master shift management, driver scheduling, and workload distribution using FleetFlow's existing tools.",
+            duration: '45 min',
+            difficulty: 'Beginner',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '📅',
+          },
+          {
+            id: 'fleet-capacity-planning-free',
+            title: 'Fleet Capacity Planning (Free Course)',
+            description:
+              "FREE: Learn to optimize fleet utilization and forecast capacity needs using FleetFlow's analytics.",
+            duration: '35 min',
+            difficulty: 'Beginner',
+            category: 'Operations',
+            certification: false,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '📊',
+          },
+          {
+            id: 'workflow-automation-training',
+            title: 'Workflow Automation Training',
+            description:
+              "Maximize FleetFlow's automated workflows for load assignment, tracking, and communication.",
+            duration: '50 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '⚙️',
+          },
+          {
+            id: 'load-assignment-strategy',
+            title: 'Load Assignment Strategy',
+            description:
+              "Advanced techniques for efficient load-to-driver matching using FleetFlow's assignment system.",
+            duration: '40 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🎯',
+          },
+          {
+            id: 'maximizing-fleetflow-features',
+            title: 'Maximizing FleetFlow Features',
+            description:
+              'Comprehensive guide to using all FleetFlow dispatch features for maximum efficiency.',
+            duration: '55 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🚀',
+          },
+          {
+            id: 'dispatcher-communication-excellence',
+            title: 'Dispatcher Communication Excellence',
+            description:
+              "Professional communication protocols for dispatchers using FleetFlow's communication tools.",
+            duration: '30 min',
+            difficulty: 'Beginner',
+            category: 'Operations',
+            certification: false,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '📞',
+          },
+          {
+            id: 'fleet-utilization-optimization',
+            title: 'Fleet Utilization Optimization',
+            description:
+              'Strategies to maximize fleet efficiency and reduce deadhead miles using FleetFlow analytics.',
+            duration: '45 min',
+            difficulty: 'Advanced',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '⚡',
+          },
+          {
+            id: 'emergency-response-protocols',
+            title: 'Emergency Response Protocols',
+            description:
+              'Crisis management and emergency response procedures for dispatchers.',
+            duration: '40 min',
+            difficulty: 'Intermediate',
+            category: 'Safety',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🚨',
+          },
+          {
+            id: 'dispatch-central-mastery',
+            title: 'Dispatch Central Mastery',
+            description:
+              "Complete guide to FleetFlow's Dispatch Central dashboard and all its features.",
+            duration: '60 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🏢',
+          },
+          {
+            id: 'live-tracking-integration',
+            title: 'Live Tracking Integration',
+            description:
+              'Master the live load tracking system integration with dispatch operations.',
+            duration: '35 min',
+            difficulty: 'Beginner',
+            category: 'Technology',
+            certification: false,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🗺️',
+          },
+          {
+            id: 'performance-metrics-analysis',
+            title: 'Performance Metrics Analysis',
+            description:
+              'Understanding and acting on dispatcher performance metrics and KPIs.',
+            duration: '40 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '📈',
+          },
+          {
+            id: 'dispatcher-efficiency-free',
+            title: 'Dispatcher Efficiency Tips (Free Course)',
+            description:
+              'FREE: Quick tips and tricks to improve daily dispatcher productivity and efficiency.',
+            duration: '25 min',
+            difficulty: 'Beginner',
+            category: 'Operations',
+            certification: false,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '💡',
+          },
+          // Driver Management Training Modules
+          {
+            id: 'driver-retention-excellence',
+            title: 'Driver Retention Excellence Training',
+            description:
+              'Comprehensive strategies and best practices for retaining quality drivers and reducing turnover.',
+            duration: '50 min',
+            difficulty: 'Intermediate',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🤝',
+          },
+          {
+            id: 'performance-management-fundamentals',
+            title: 'Performance Management Fundamentals',
+            description:
+              'Essential skills for tracking, measuring, and improving driver performance through data-driven approaches.',
+            duration: '45 min',
+            difficulty: 'Intermediate',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '📊',
+          },
+          {
+            id: 'communication-protocol-mastery',
+            title: 'Communication Protocol Mastery',
+            description:
+              'Master professional communication protocols between dispatchers, drivers, and fleet management.',
+            duration: '40 min',
+            difficulty: 'Beginner',
+            category: 'Operations',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '📢',
+          },
+          {
+            id: 'incentive-program-management',
+            title: 'Incentive Program Management',
+            description:
+              'Design and implement effective driver incentive programs and bonus management systems.',
+            duration: '55 min',
+            difficulty: 'Advanced',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '🎯',
+          },
+          {
+            id: 'driver-relations-excellence-free',
+            title: 'Driver Relations Excellence (Free Course)',
+            description:
+              'FREE: Building positive relationships with drivers to improve retention and job satisfaction.',
+            duration: '30 min',
+            difficulty: 'Beginner',
+            category: 'Business',
+            certification: false,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '👥',
+          },
+          {
+            id: 'hr-fleet-management',
+            title: 'HR Best Practices for Fleet Management',
+            description:
+              'Human resources management specifically tailored for transportation and fleet operations.',
+            duration: '60 min',
+            difficulty: 'Advanced',
+            category: 'Business',
+            certification: true,
+            enrolledCount: 0,
+            rating: 5.0,
+            thumbnail: '👔',
+          },
+        ];
 
   const aiTrainingModules: AITrainingModule[] = [
     {
@@ -1386,49 +1470,111 @@ export default function UniversityPage() {
 
         {/* Navigation Tabs */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '32px' }}>
-          {[
-            { id: 'hub', label: 'Hub', icon: '🎓' },
-            { id: 'courses', label: 'Courses', icon: '📚' },
-            { id: 'ai-training', label: 'AI Training', icon: '🤖' },
-            { id: 'certifications', label: 'Certifications', icon: '🏆' },
-            {
-              id: 'occupational-training',
-              label: 'Occupational Training',
-              icon: '👔',
-            },
-          ].map((tab) => (
+          <button
+            onClick={() => setActiveTab('hub')}
+            style={{
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              background:
+                activeTab === 'hub'
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.15)',
+              color: activeTab === 'hub' ? '#1e40af' : 'white',
+            }}
+          >
+            🎓 Hub
+          </button>
+          <button
+            onClick={() => setActiveTab('courses')}
+            style={{
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              background:
+                activeTab === 'courses'
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.15)',
+              color: activeTab === 'courses' ? '#1e40af' : 'white',
+            }}
+          >
+            📚 Courses
+          </button>
+          <button
+            onClick={() => setActiveTab('ai-training')}
+            style={{
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              background:
+                activeTab === 'ai-training'
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.15)',
+              color: activeTab === 'ai-training' ? '#1e40af' : 'white',
+            }}
+          >
+            🤖 AI Training
+          </button>
+          <button
+            onClick={() => setActiveTab('certifications')}
+            style={{
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              background:
+                activeTab === 'certifications'
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.15)',
+              color: activeTab === 'certifications' ? '#1e40af' : 'white',
+            }}
+          >
+            🏆 Certifications
+          </button>
+          <button
+            onClick={() => setActiveTab('occupational-training')}
+            style={{
+              padding: '16px 24px',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              background:
+                activeTab === 'occupational-training'
+                  ? 'rgba(255, 255, 255, 0.9)'
+                  : 'rgba(255, 255, 255, 0.15)',
+              color:
+                activeTab === 'occupational-training' ? '#1e40af' : 'white',
+            }}
+          >
+            👔 Occupational Training
+          </button>
+          {userRole === 'admin' && (
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab('admin')}
               style={{
                 padding: '16px 24px',
                 borderRadius: '12px',
                 fontSize: '14px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
                 background:
-                  activeTab === tab.id
+                  activeTab === 'admin'
                     ? 'rgba(255, 255, 255, 0.9)'
                     : 'rgba(255, 255, 255, 0.15)',
-                color: activeTab === tab.id ? '#1e40af' : 'white',
-                backdropFilter: 'blur(10px)',
-                border:
-                  activeTab === tab.id
-                    ? '1px solid rgba(255, 255, 255, 0.4)'
-                    : '1px solid rgba(255, 255, 255, 0.2)',
-                transform:
-                  activeTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
-                boxShadow:
-                  activeTab === tab.id
-                    ? '0 8px 25px rgba(0, 0, 0, 0.2)'
-                    : 'none',
+                color: activeTab === 'admin' ? '#1e40af' : 'white',
               }}
             >
-              <span style={{ marginRight: '8px' }}>{tab.icon}</span>
-              {tab.label}
+              ⚙️ Admin
             </button>
-          ))}
+          )}
         </div>
 
         {activeTab === 'hub' && (
@@ -3557,6 +3703,322 @@ export default function UniversityPage() {
             >
               Browse Courses
             </button>
+          </div>
+        )}
+
+        {/* Admin Tab - Only visible to admins */}
+        {activeTab === 'admin' && userRole === 'admin' && (
+          <div
+            style={{
+              padding: '32px',
+              background: 'rgba(0, 0, 0, 0.3)',
+              borderRadius: '16px',
+              marginTop: '32px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                marginBottom: '32px',
+              }}
+            >
+              <div style={{ fontSize: '2rem' }}>⚙️</div>
+              <div>
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '1.8rem',
+                    fontWeight: 'bold',
+                    margin: 0,
+                  }}
+                >
+                  Training Administration
+                </h2>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    margin: '4px 0 0 0',
+                  }}
+                >
+                  Manage organization training courses and user progress
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gap: '24px' }}>
+              {/* Organization Courses Management */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.3rem',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📚 Organization Courses
+                </h3>
+                <div
+                  style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}
+                >
+                  <button
+                    onClick={() => {
+                      // Add new course functionality
+                      alert(
+                        'Add new course functionality would be implemented here'
+                      );
+                    }}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    ➕ Add Course
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Import courses functionality
+                      alert(
+                        'Import courses functionality would be implemented here'
+                      );
+                    }}
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    📥 Import from Template
+                  </button>
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  Current courses: {tenantCourses.length} organization-specific
+                  courses
+                  {tenantCourses.length === 0 &&
+                    ' (using default FleetFlow courses)'}
+                </div>
+              </div>
+
+              {/* User Progress Management */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.3rem',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📊 User Progress Tracking
+                </h3>
+                <div style={{ display: 'grid', gap: '12px' }}>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <strong>Organization:</strong> {tenantId || 'Not set'}
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <strong>Current User:</strong>{' '}
+                    {currentUser?.name || 'Unknown'}
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <strong>Progress Entries:</strong>{' '}
+                    {Object.keys(tenantProgress).length} tracked modules
+                  </div>
+                </div>
+              </div>
+
+              {/* Training Analytics */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.3rem',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📈 Training Analytics
+                </h3>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '1.2rem',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {
+                          Object.keys(tenantProgress).filter(
+                            (key) => tenantProgress[key]
+                          ).length
+                        }
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.9rem',
+                        }}
+                      >
+                        Completed Modules
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        padding: '12px',
+                        borderRadius: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '1.2rem',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {Object.keys(tenantProgress).length}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.9rem',
+                        }}
+                      >
+                        Total Modules
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      padding: '16px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '1rem',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Completion Rate
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          flex: 1,
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          height: '8px',
+                          borderRadius: '4px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: `${
+                              Object.keys(tenantProgress).length > 0
+                                ? (Object.keys(tenantProgress).filter(
+                                    (key) => tenantProgress[key]
+                                  ).length /
+                                    Object.keys(tenantProgress).length) *
+                                  100
+                                : 0
+                            }%`,
+                            height: '100%',
+                            background:
+                              'linear-gradient(90deg, #10b981, #059669)',
+                            borderRadius: '4px',
+                          }}
+                        />
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '0.9rem',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        {Object.keys(tenantProgress).length > 0
+                          ? Math.round(
+                              (Object.keys(tenantProgress).filter(
+                                (key) => tenantProgress[key]
+                              ).length /
+                                Object.keys(tenantProgress).length) *
+                                100
+                            )
+                          : 0}
+                        %
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <strong>Organization:</strong> {tenantId || 'Not set'}
+                  </div>
+                  <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    <strong>System Status:</strong>{' '}
+                    <span style={{ color: '#10b981' }}>
+                      Multi-tenant training active
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

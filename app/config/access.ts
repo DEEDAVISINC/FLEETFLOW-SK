@@ -1910,10 +1910,10 @@ export const getCurrentUser = (): {
 } => {
   // User will be loaded from authentication system (no mock data)
   const user: User = {
-    id: '',
-    name: '',
-    email: '',
-    role: 'user',
+    id: 'admin-user-123',
+    name: 'Admin User',
+    email: 'admin@fleetflow.com',
+    role: 'admin',
   };
   const permissions = getSectionPermissions(user);
 

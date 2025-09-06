@@ -5,7 +5,7 @@ import { CarrierOnboardWorkflowTraining } from '../../training/CarrierOnboardWor
 export default function CarrierOnboardWorkflowPage() {
   // In a real app, these would come from authentication context
   const userRole = 'dispatcher' as 'dispatcher' | 'broker';
-  const userName = 'Demo User';
+  const userName = '';
 
   const handleTrainingComplete = (certification: any) => {
     console.info('Training completed:', certification);

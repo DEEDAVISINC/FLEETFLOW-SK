@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import DocumentsPortalButton from '../components/DocumentsPortalButton';
+import UserManagementGettingStarted from '../components/UserManagementGettingStarted';
 import UserSubscriptionManager from '../components/UserSubscriptionManager';
 import { ContractorOnboardingWorkflow } from '../onboarding/contractor-onboarding/components/ContractorOnboardingWorkflow';
 import FleetFlowExtensionService from '../services/FleetFlowExtensionService';
@@ -1627,6 +1628,19 @@ export default function UserManagement() {
         }}
       />
 
+      {/* Getting Started Guide */}
+      <UserManagementGettingStarted
+        onStepClick={(stepId, section) => {
+          if (section) {
+            // Scroll to relevant section
+            const element = document.getElementById(`section-${section}`);
+            if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        }}
+      />
+
       <div
         style={{
           maxWidth: '1600px',
@@ -1990,6 +2004,7 @@ export default function UserManagement() {
 
           {/* User Details Panel */}
           <div
+            id='section-profiles'
             style={{
               background: 'rgba(15, 23, 42, 0.8)',
               backdropFilter: 'blur(20px)',
@@ -3008,6 +3023,7 @@ export default function UserManagement() {
 
             {/* Onboarding Progress */}
             <div
+              id='section-onboarding'
               style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '12px',
@@ -3679,6 +3695,7 @@ export default function UserManagement() {
 
             {/* EXPANDABLE KPI Access Granting System */}
             <div
+              id='section-permissions'
               style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '12px',
@@ -4624,6 +4641,7 @@ export default function UserManagement() {
 
             {/* Notes */}
             <div
+              id='section-compliance'
               style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '12px',
@@ -5411,6 +5429,7 @@ export default function UserManagement() {
 
             {/* User Subscription Management */}
             <div
+              id='section-training'
               style={{
                 marginBottom: '20px',
               }}

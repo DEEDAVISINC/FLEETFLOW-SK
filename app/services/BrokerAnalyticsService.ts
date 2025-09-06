@@ -45,9 +45,9 @@ export interface BrokerMarginTracking {
 
 class BrokerAnalyticsService {
   // Get comprehensive broker performance metrics
-  getBrokerPerformanceMetrics(): BrokerPerformanceMetrics {
+  async getBrokerPerformanceMetrics(): Promise<BrokerPerformanceMetrics> {
     const currentUser = getCurrentUser();
-    const tenantLoads = getLoadsForTenant();
+    const tenantLoads = await getLoadsForTenant();
 
     // Filter loads for current broker
     const brokerLoads = tenantLoads.filter(

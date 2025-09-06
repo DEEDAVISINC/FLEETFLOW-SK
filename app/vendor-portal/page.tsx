@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
+import VendorPortalGettingStarted from '../components/VendorPortalGettingStarted';
 import { vendorDocumentService } from '../services/vendorDocumentService';
 
 interface VendorSession {
@@ -75,6 +76,33 @@ interface PaymentRecord {
   date: string;
   method: string;
   reference: string;
+}
+
+// Receiver Update Monitoring Interfaces
+interface ReceiverUpdate {
+  id: string;
+  loadId: string;
+  receiverName: string;
+  receiverEmail: string;
+  updateType: 'acknowledgment' | 'confirmation' | 'feedback' | 'exception';
+  status: 'pending' | 'received' | 'overdue' | 'acknowledged';
+  submittedAt?: string;
+  dueDate: string;
+  allowanceHours: number;
+  notes?: string;
+  attachmentUrls?: string[];
+}
+
+interface ReceiverAllowanceSettings {
+  defaultAllowanceHours: number;
+  notificationThresholdHours: number;
+  autoEscalationHours: number;
+  reminderFrequencyHours: number;
+  enableAutoNotifications: boolean;
+  enableEscalationEmails: boolean;
+  customAllowances: {
+    [commodityType: string]: number;
+  };
 }
 
 // Phase 1 - Multi-User Access Control
@@ -504,8 +532,26 @@ export default function VendorPortalPage() {
     | 'financials'
     | 'analytics'
     | 'integrations'
+    | 'receiver-monitoring'
     | 'settings'
   >('dashboard');
+
+  // Receiver Update Monitoring state
+  const [receiverUpdates, setReceiverUpdates] = useState<ReceiverUpdate[]>([]);
+  const [allowanceSettings, setAllowanceSettings] =
+    useState<ReceiverAllowanceSettings>({
+      defaultAllowanceHours: 24,
+      notificationThresholdHours: 12,
+      autoEscalationHours: 48,
+      reminderFrequencyHours: 6,
+      enableAutoNotifications: true,
+      enableEscalationEmails: true,
+      customAllowances: {
+        temperature_sensitive: 12,
+        hazardous: 8,
+        oversized: 36,
+      },
+    });
 
   // Live tracking state
   const [liveTrackingData, setLiveTrackingData] = useState<LiveTrackingData[]>(
@@ -1567,6 +1613,21 @@ export default function VendorPortalPage() {
         </div>
       </div>
 
+      {/* Getting Started Guide */}
+      <VendorPortalGettingStarted
+        onStepClick={(stepId, tab) => {
+          if (tab) {
+            setActiveTab(tab as any);
+            setTimeout(() => {
+              const element = document.getElementById(`tab-${tab}`);
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 100);
+          }
+        }}
+      />
+
       {/* Enhanced Navigation Tabs */}
       <div
         style={{
@@ -1621,6 +1682,14 @@ export default function VendorPortalPage() {
             desc: 'ERP & WMS',
             color: '#f97316',
             hoverColor: 'rgba(249, 115, 22, 0.3)',
+          },
+          {
+            id: 'receiver-monitoring',
+            label: '📬 Receiver Updates',
+            icon: '📬',
+            desc: 'Monitor Updates',
+            color: '#EC4899',
+            hoverColor: 'rgba(236, 72, 153, 0.3)',
           },
           {
             id: 'settings',
@@ -1705,7 +1774,7 @@ export default function VendorPortalPage() {
 
       {/* Enhanced Dashboard Tab */}
       {activeTab === 'dashboard' && dashboardSummary && (
-        <div>
+        <div id='tab-dashboard'>
           {/* Enhanced KPI Cards */}
           <div
             style={{
@@ -2273,12 +2342,227 @@ export default function VendorPortalPage() {
               </div>
             )}
           </div>
+
+          {/* Receiver Update Monitoring */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '16px',
+              padding: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              marginTop: '24px',
+            }}
+          >
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '1.3rem',
+                fontWeight: '600',
+                marginBottom: '20px',
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              📬 Receiver Update Monitoring
+              <span
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  color: '#fca5a5',
+                  padding: '2px 8px',
+                  borderRadius: '12px',
+                  fontSize: '0.7rem',
+                  fontWeight: '600',
+                }}
+              >
+                {receiverUpdates.filter((u) => u.status === 'overdue').length}{' '}
+                Overdue
+              </span>
+            </h2>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: '12px',
+              }}
+            >
+              {receiverUpdates.length === 0 ? (
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    textAlign: 'center',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <div style={{ fontSize: '2rem', marginBottom: '12px' }}>
+                    📬
+                  </div>
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    No Receiver Updates Yet
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.9rem',
+                    }}
+                  >
+                    Receiver update monitoring will appear here once deliveries
+                    are made
+                  </div>
+                </div>
+              ) : (
+                receiverUpdates.slice(0, 3).map((update) => (
+                  <div
+                    key={update.id}
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      borderRadius: '12px',
+                      padding: '16px',
+                      border: `1px solid ${
+                        update.status === 'overdue'
+                          ? 'rgba(239, 68, 68, 0.5)'
+                          : update.status === 'pending'
+                            ? 'rgba(245, 158, 11, 0.5)'
+                            : 'rgba(16, 185, 129, 0.5)'
+                      }`,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontWeight: '600',
+                          fontSize: '1rem',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {update.receiverName}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '0.9rem',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Load {update.loadId} • {update.updateType}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        Due: {new Date(update.dueDate).toLocaleDateString()}
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: 'right' }}>
+                      <div
+                        style={{
+                          background: `${
+                            update.status === 'overdue'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : update.status === 'pending'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : 'rgba(16, 185, 129, 0.2)'
+                          }`,
+                          color:
+                            update.status === 'overdue'
+                              ? '#fca5a5'
+                              : update.status === 'pending'
+                                ? '#fcd34d'
+                                : '#6ee7b7',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          marginBottom: '4px',
+                          display: 'inline-block',
+                        }}
+                      >
+                        {update.status.toUpperCase()}
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          fontSize: '0.7rem',
+                        }}
+                      >
+                        {update.allowanceHours}h allowance
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div
+              style={{
+                marginTop: '16px',
+                paddingTop: '16px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '0.9rem',
+                }}
+              >
+                {receiverUpdates.filter((u) => u.status === 'pending').length}{' '}
+                pending •{' '}
+                {receiverUpdates.filter((u) => u.status === 'received').length}{' '}
+                received •{' '}
+                {receiverUpdates.filter((u) => u.status === 'overdue').length}{' '}
+                overdue
+              </div>
+              <button
+                style={{
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  color: '#60a5fa',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(59, 130, 246, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(59, 130, 246, 0.2)';
+                }}
+              >
+                View All Updates →
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Loads Tab with Live Tracking */}
       {activeTab === 'operations' && (
-        <div>
+        <div id='tab-operations'>
           {/* Operations Header */}
           <div
             style={{
@@ -4538,7 +4822,7 @@ export default function VendorPortalPage() {
 
       {/* Financials Tab */}
       {activeTab === 'financials' && financialData && (
-        <div>
+        <div id='tab-financials'>
           <div
             style={{
               background:
@@ -4982,9 +5266,397 @@ export default function VendorPortalPage() {
         </div>
       )}
 
+      {/* Receiver Update Monitoring Tab */}
+      {activeTab === 'receiver-monitoring' && (
+        <div id='tab-receiver-monitoring'>
+          <div
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(219, 39, 119, 0.15))',
+              backdropFilter: 'blur(10px)',
+              borderRadius: '20px',
+              padding: '24px',
+              marginBottom: '24px',
+              border: '2px solid rgba(236, 72, 153, 0.3)',
+              boxShadow: '0 8px 32px rgba(236, 72, 153, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Header Accent Line */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: 'linear-gradient(90deg, #ec4899, #db2777, #ec4899)',
+                borderRadius: '20px 20px 0 0',
+              }}
+            />
+
+            {/* Header Content */}
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '24px',
+                }}
+              >
+                <h2
+                  style={{
+                    color: 'white',
+                    fontSize: '2rem',
+                    fontWeight: '700',
+                    margin: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  📬 Receiver Update Monitoring
+                </h2>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      color: '#fca5a5',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {
+                      receiverUpdates.filter((u) => u.status === 'overdue')
+                        .length
+                    }{' '}
+                    Overdue
+                  </div>
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.2)',
+                      color: '#fcd34d',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {
+                      receiverUpdates.filter((u) => u.status === 'pending')
+                        .length
+                    }{' '}
+                    Pending
+                  </div>
+                </div>
+              </div>
+
+              {/* Allowance Settings */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginBottom: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.2rem',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  ⏰ Allowance Settings
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        display: 'block',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Default Allowance Hours
+                    </label>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {allowanceSettings.defaultAllowanceHours} hours
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        display: 'block',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Notification Threshold
+                    </label>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {allowanceSettings.notificationThresholdHours} hours
+                      before due
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        display: 'block',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Escalation Time
+                    </label>
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderRadius: '8px',
+                        padding: '8px 12px',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      {allowanceSettings.autoEscalationHours} hours after due
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Receiver Updates List */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '1.2rem',
+                    fontWeight: '600',
+                    marginBottom: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  📋 Receiver Updates
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gap: '12px',
+                  }}
+                >
+                  {receiverUpdates.length === 0 ? (
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        borderRadius: '12px',
+                        padding: '40px',
+                        textAlign: 'center',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                      }}
+                    >
+                      <div style={{ fontSize: '3rem', marginBottom: '16px' }}>
+                        📬
+                      </div>
+                      <div
+                        style={{
+                          color: 'white',
+                          fontSize: '1.2rem',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        No Receiver Updates Yet
+                      </div>
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '1rem',
+                          lineHeight: '1.5',
+                        }}
+                      >
+                        Receiver update monitoring will appear here once
+                        deliveries are made and receivers begin submitting their
+                        updates.
+                      </div>
+                    </div>
+                  ) : (
+                    receiverUpdates.map((update) => (
+                      <div
+                        key={update.id}
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.3)',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          border: `1px solid ${
+                            update.status === 'overdue'
+                              ? 'rgba(239, 68, 68, 0.5)'
+                              : update.status === 'pending'
+                                ? 'rgba(245, 158, 11, 0.5)'
+                                : 'rgba(16, 185, 129, 0.5)'
+                          }`,
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              fontSize: '1rem',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            {update.receiverName}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              fontSize: '0.9rem',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Load {update.loadId} • {update.updateType}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '0.8rem',
+                            }}
+                          >
+                            Due: {new Date(update.dueDate).toLocaleDateString()}
+                          </div>
+                          {update.notes && (
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: '0.8rem',
+                                marginTop: '4px',
+                                fontStyle: 'italic',
+                              }}
+                            >
+                              "{update.notes}"
+                            </div>
+                          )}
+                        </div>
+
+                        <div style={{ textAlign: 'right', minWidth: '120px' }}>
+                          <div
+                            style={{
+                              background: `${
+                                update.status === 'overdue'
+                                  ? 'rgba(239, 68, 68, 0.2)'
+                                  : update.status === 'pending'
+                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    : 'rgba(16, 185, 129, 0.2)'
+                              }`,
+                              color:
+                                update.status === 'overdue'
+                                  ? '#fca5a5'
+                                  : update.status === 'pending'
+                                    ? '#fcd34d'
+                                    : '#6ee7b7',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                              marginBottom: '4px',
+                              display: 'inline-block',
+                            }}
+                          >
+                            {update.status.toUpperCase()}
+                          </div>
+                          <div
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '0.7rem',
+                            }}
+                          >
+                            {update.allowanceHours}h allowance
+                          </div>
+                          {update.submittedAt && (
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.5)',
+                                fontSize: '0.7rem',
+                                marginTop: '2px',
+                              }}
+                            >
+                              Submitted:{' '}
+                              {new Date(
+                                update.submittedAt
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Users Section - Now part of Settings */}
       {activeTab === 'settings' && (
-        <div>
+        <div id='tab-settings'>
           <div
             style={{
               background:
@@ -5445,7 +6117,7 @@ export default function VendorPortalPage() {
 
       {/* Analytics Tab */}
       {activeTab === 'analytics' && analyticsData && (
-        <div>
+        <div id='tab-analytics'>
           <div
             style={{
               background:
@@ -5827,7 +6499,7 @@ export default function VendorPortalPage() {
 
       {/* Integrations Tab */}
       {activeTab === 'integrations' && (
-        <div>
+        <div id='tab-integrations'>
           <div
             style={{
               background:

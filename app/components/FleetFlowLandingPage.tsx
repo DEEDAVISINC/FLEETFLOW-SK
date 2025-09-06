@@ -532,6 +532,332 @@ export default function FleetFlowLandingPage() {
                 </p>
               </div>
 
+              {/* GO WITH THE FLOW Marketplace Subscription Section */}
+              <div
+                style={{
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  borderRadius: '16px',
+                  padding: '40px',
+                  marginBottom: '40px',
+                  border: '1px solid rgba(244, 168, 50, 0.3)',
+                }}
+              >
+                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                  <h2
+                    style={{
+                      fontSize: '2.2rem',
+                      color: '#f4a832',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    🌊 GO WITH THE FLOW Marketplace
+                  </h2>
+                  <p
+                    style={{
+                      fontSize: '1.2rem',
+                      color: 'rgba(255,255,255,0.9)',
+                      lineHeight: '1.6',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    Start FREE, Scale with Premium Features
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '1rem',
+                      color: 'rgba(255,255,255,0.7)',
+                      lineHeight: '1.5',
+                    }}
+                  >
+                    Carriers get FREE access • Shippers pay for premium
+                    marketplace features
+                  </p>
+                </div>
+
+                {/* Subscription Tiers Grid */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: '20px',
+                    marginBottom: '30px',
+                  }}
+                >
+                  {/* Free Tier */}
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '12px',
+                      padding: '25px',
+                      border: '2px solid rgba(59, 130, 246, 0.3)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                      🎁
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '1.3rem',
+                        color: '#3b82f6',
+                        marginBottom: '10px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      FREE-FLOW
+                    </h3>
+                    <div
+                      style={{
+                        fontSize: '2rem',
+                        fontWeight: 'bold',
+                        color: '#3b82f6',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      $0/month
+                    </div>
+                    <ul
+                      style={{
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.5',
+                        listStyle: 'none',
+                        padding: 0,
+                        margin: 0,
+                        textAlign: 'left',
+                      }}
+                    >
+                      <li style={{ marginBottom: '8px' }}>✅ 5 loads/month</li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Basic load posting
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Standard carrier access
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>✅ Email support</li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ❌ Premium dispatch services
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ❌ Priority carrier matching
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ❌ Load value cap: $750/load
+                      </li>
+                    </ul>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginTop: '15px',
+                        width: '100%',
+                      }}
+                    >
+                      Start FREE Trial
+                    </button>
+                  </div>
+
+                  {/* Professional Tier */}
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '12px',
+                      padding: '25px',
+                      border: '2px solid rgba(16, 185, 129, 0.3)',
+                      textAlign: 'center',
+                      transform: 'scale(1.05)',
+                    }}
+                  >
+                    <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                      🚀
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '1.3rem',
+                        color: '#10b981',
+                        marginBottom: '10px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      PRO-FLOW
+                    </h3>
+                    <div
+                      style={{
+                        fontSize: '2rem',
+                        fontWeight: 'bold',
+                        color: '#10b981',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      $249/month
+                    </div>
+                    <ul
+                      style={{
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.5',
+                        listStyle: 'none',
+                        padding: 0,
+                        margin: 0,
+                        textAlign: 'left',
+                      }}
+                    >
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ 25 loads/month included
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Priority load promotion
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Premium carrier access
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>✅ Phone support</li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Basic dispatch ($50/load)
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Advanced analytics
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ No load value limits
+                      </li>
+                    </ul>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #10b981, #059669)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginTop: '15px',
+                        width: '100%',
+                      }}
+                    >
+                      Start Professional
+                    </button>
+                  </div>
+
+                  {/* Enterprise Tier */}
+                  <div
+                    style={{
+                      background: 'rgba(244, 168, 50, 0.1)',
+                      borderRadius: '12px',
+                      padding: '25px',
+                      border: '2px solid rgba(244, 168, 50, 0.3)',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                      🏢
+                    </div>
+                    <h3
+                      style={{
+                        fontSize: '1.3rem',
+                        color: '#f4a832',
+                        marginBottom: '10px',
+                        fontWeight: '700',
+                      }}
+                    >
+                      FLOW ON THE GO
+                    </h3>
+                    <div
+                      style={{
+                        fontSize: '2rem',
+                        fontWeight: 'bold',
+                        color: '#f4a832',
+                        marginBottom: '15px',
+                      }}
+                    >
+                      $699/month
+                    </div>
+                    <ul
+                      style={{
+                        color: 'white',
+                        fontSize: '0.9rem',
+                        lineHeight: '1.5',
+                        listStyle: 'none',
+                        padding: 0,
+                        margin: 0,
+                        textAlign: 'left',
+                      }}
+                    >
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ 100 loads/month included
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ VIP load promotion
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Elite carrier network
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Dedicated account manager
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ Advanced dispatch ($100/load)
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ API integration
+                      </li>
+                      <li style={{ marginBottom: '8px' }}>
+                        ✅ White-glove service
+                      </li>
+                    </ul>
+                    <button
+                      style={{
+                        background: 'linear-gradient(135deg, #f4a832, #d97706)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '12px 24px',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginTop: '15px',
+                        width: '100%',
+                      }}
+                    >
+                      Start Enterprise
+                    </button>
+                  </div>
+                </div>
+
+                {/* Verification Notice */}
+                <div
+                  style={{
+                    marginTop: '20px',
+                    padding: '15px',
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <p
+                    style={{
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.4',
+                      margin: 0,
+                      textAlign: 'center',
+                    }}
+                  >
+                    🔒 <strong>Business Verification Required:</strong> All
+                    accounts require verified business credentials, insurance,
+                    and compliance documentation for marketplace access.
+                  </p>
+                </div>
+              </div>
+
               <div
                 style={{
                   display: 'flex',

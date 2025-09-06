@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import BrokerOperationsGettingStarted from '../components/BrokerOperationsGettingStarted';
 import { BrokerQuoteInterface } from '../components/BrokerQuoteInterface';
 import { FreightClassCalculator } from '../components/FreightClassCalculator';
 import RFxResponseDashboard from '../components/RFxResponseDashboard';
@@ -321,6 +322,25 @@ const BrokerOperationsPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Getting Started Workflow */}
+        <BrokerOperationsGettingStarted
+          onStepClick={(stepId, tab) => {
+            if (tab) {
+              setActiveTab(tab as any);
+              // Scroll to the relevant section
+              setTimeout(() => {
+                const element = document.getElementById(`tab-${tab}`);
+                if (element) {
+                  element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  });
+                }
+              }, 100);
+            }
+          }}
+        />
+
         {/* Navigation Tabs */}
         <div
           style={{
@@ -372,6 +392,7 @@ const BrokerOperationsPage: React.FC = () => {
         {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div
+            id='tab-overview'
             style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
           >
             {/* Key Metrics */}
@@ -720,6 +741,7 @@ const BrokerOperationsPage: React.FC = () => {
         {/* RFx Response Center Tab */}
         {activeTab === 'rfx' && (
           <div
+            id='tab-rfx'
             style={{
               background: 'rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(10px)',
@@ -759,6 +781,7 @@ const BrokerOperationsPage: React.FC = () => {
         {/* Shipper Management Tab */}
         {activeTab === 'shippers' && (
           <div
+            id='tab-shippers'
             style={{
               background: 'rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(10px)',
@@ -794,7 +817,7 @@ const BrokerOperationsPage: React.FC = () => {
 
         {/* Quick Quotes Tab - ENHANCED INTEGRATION */}
         {activeTab === 'quotes' && (
-          <div className='rounded-xl bg-white p-6 shadow-sm'>
+          <div id='tab-quotes' className='rounded-xl bg-white p-6 shadow-sm'>
             <div className='mb-6 flex items-center justify-between'>
               <div>
                 <h3 className='mb-2 flex items-center text-lg font-semibold text-gray-900'>
@@ -982,6 +1005,7 @@ const BrokerOperationsPage: React.FC = () => {
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
           <div
+            id='tab-analytics'
             style={{
               background: 'rgba(255, 255, 255, 0.15)',
               backdropFilter: 'blur(10px)',
@@ -1018,6 +1042,7 @@ const BrokerOperationsPage: React.FC = () => {
         {/* Loadboard Tab */}
         {activeTab === 'loadboard' && (
           <div
+            id='tab-loadboard'
             style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
           >
             {/* Loadboard Header */}

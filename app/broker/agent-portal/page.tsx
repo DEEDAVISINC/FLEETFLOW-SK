@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import BrokerAgentPortalGettingStarted from '../../components/BrokerAgentPortalGettingStarted';
 import { brokerAgentIntegrationService } from '../../services/BrokerAgentIntegrationService';
 import { UserSession } from '../../services/BrokerageHierarchyService';
 
@@ -594,6 +595,21 @@ export default function AgentPortal() {
         </div>
       </div>
 
+      {/* Getting Started Guide */}
+      <BrokerAgentPortalGettingStarted
+        onStepClick={(stepId, tab) => {
+          if (tab) {
+            setActiveTab(tab);
+            setTimeout(() => {
+              const element = document.getElementById(`tab-${tab}`);
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }, 100);
+          }
+        }}
+      />
+
       {/* KPI Dashboard */}
       <div
         style={{
@@ -829,7 +845,7 @@ export default function AgentPortal() {
       >
         <div style={{ color: 'white' }}>
           {activeTab === 'quotes-workflow' && (
-            <div>
+            <div id='tab-quotes-workflow'>
               <h2
                 style={{
                   fontSize: '1.5rem',
@@ -2554,7 +2570,7 @@ export default function AgentPortal() {
 
                                 try {
                                   const { FreightQuotingEngine } = await import(
-                                    '../../../services/FreightQuotingEngine'
+                                    '../../services/FreightQuotingEngine'
                                   );
                                   const quotingEngine =
                                     new FreightQuotingEngine();
@@ -3702,7 +3718,7 @@ export default function AgentPortal() {
           )}
 
           {activeTab === 'loads-bids' && (
-            <div>
+            <div id='tab-loads-bids'>
               <p>Manage active loads and bidding opportunities.</p>
               <div
                 style={{
@@ -3790,7 +3806,7 @@ export default function AgentPortal() {
           )}
 
           {activeTab === 'enhanced-crm' && (
-            <div>
+            <div id='tab-enhanced-crm'>
               <h2
                 style={{
                   fontSize: '1.5rem',
@@ -4260,7 +4276,7 @@ export default function AgentPortal() {
           )}
 
           {activeTab === 'performance' && (
-            <div>
+            <div id='tab-performance'>
               <h2
                 style={{
                   fontSize: '1.5rem',
@@ -4352,7 +4368,7 @@ export default function AgentPortal() {
           )}
 
           {activeTab === 'ai-intelligence' && (
-            <div>
+            <div id='tab-ai-intelligence'>
               <h2
                 style={{
                   fontSize: '1.5rem',
@@ -4775,7 +4791,7 @@ export default function AgentPortal() {
           )}
 
           {activeTab === 'carrier-network' && (
-            <div>
+            <div id='tab-carrier-network'>
               <h2
                 style={{
                   fontSize: '1.5rem',
@@ -4943,7 +4959,7 @@ export default function AgentPortal() {
           )}
 
           {activeTab === 'market-intelligence' && (
-            <div>
+            <div id='tab-market-intelligence'>
               <h2
                 style={{
                   fontSize: '1.5rem',

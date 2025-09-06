@@ -611,3 +611,109 @@ export const getRestrictedFeatures = (planIds: string[]): string[] => {
 
   return Array.from(restrictions);
 };
+
+// ========================================
+// GO WITH THE FLOW MARKETPLACE SUBSCRIPTION PLANS
+// ========================================
+
+export const SUBSCRIPTION_PLANS = {
+  free: {
+    id: 'free',
+    name: 'Free-Flow',
+    price: 0,
+    icon: '🎁',
+    limits: {
+      loadsPerMonth: 5,
+      loadValueCap: 750,
+      dispatchServices: false,
+      supportLevel: 'email',
+      apiAccess: false,
+    },
+    accessiblePages: [
+      '/', // Landing page
+      '/go-with-the-flow', // Main marketplace page
+      '/carriers', // Carrier network
+      '/carrier-network', // Alternative carrier page
+      '/auth/*', // Login/registration
+      '/user-profile', // User profile
+      '/user-management', // Basic user management
+    ],
+    features: [
+      '5 loads/month included',
+      'Basic load posting',
+      'Standard carrier access',
+      'Email support',
+      'Load value cap: $750/load',
+    ],
+  },
+
+  professional: {
+    id: 'professional',
+    name: 'Pro-Flow',
+    price: 249, // Updated from $299 to $249
+    icon: '🚀',
+    limits: {
+      loadsPerMonth: 25,
+      loadValueCap: null, // No cap
+      dispatchServices: true,
+      dispatchRate: 50,
+      supportLevel: 'phone',
+      apiAccess: false,
+    },
+    accessiblePages: [
+      '/', // Landing page
+      '/go-with-the-flow', // Main marketplace page
+      '/carriers', // Carrier network
+      '/carrier-network', // Alternative carrier page
+      '/auth/*', // Login/registration
+      '/user-profile', // User profile
+      '/user-management', // User management
+      '/dashboard', // Basic dashboard
+    ],
+    features: [
+      '25 loads/month included',
+      'Priority load promotion',
+      'Premium carrier access',
+      'Phone support',
+      'Basic dispatch ($50/load included)',
+      'Advanced analytics',
+      'No load value limits',
+    ],
+  },
+
+  enterprise: {
+    id: 'enterprise',
+    name: 'Flow on the Go',
+    price: 699, // Updated from $799 to $699
+    icon: '🏢',
+    limits: {
+      loadsPerMonth: 100,
+      loadValueCap: null, // No cap
+      dispatchServices: true,
+      dispatchRate: 100,
+      supportLevel: 'dedicated',
+      apiAccess: true,
+    },
+    accessiblePages: [
+      '/', // Landing page
+      '/go-with-the-flow', // Main marketplace page
+      '/carriers', // Carrier network
+      '/carrier-network', // Alternative carrier page
+      '/auth/*', // Login/registration
+      '/user-profile', // User profile
+      '/user-management', // User management
+      '/dashboard', // Dashboard
+      '/analytics', // Analytics (limited)
+    ],
+    features: [
+      '100 loads/month included',
+      'VIP load promotion',
+      'Elite carrier network',
+      'Dedicated account manager',
+      'Advanced dispatch ($100/load included)',
+      'API integration',
+      'White-glove service',
+      'Unlimited load values',
+    ],
+  },
+};

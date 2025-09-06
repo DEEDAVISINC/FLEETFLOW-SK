@@ -65,6 +65,12 @@ export default function RootLayout({
             `,
           }}
         />
+
+        {/* Square Payment SDK */}
+        <Script
+          src='https://js.squareup.com/v2/paymentform'
+          strategy='beforeInteractive'
+        />
       </head>
       <body className={inter.className}>
         <ClientLayout>{children}</ClientLayout>

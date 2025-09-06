@@ -5,9 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
-import EnhancedFlowterModal from './EnhancedFlowterModal';
 import FleetFlowFooter from './FleetFlowFooter';
-import FlowterButton from './FlowterButton';
+import UnifiedFlowterAI from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
 import ProfessionalNavigation from './Navigation';
 import NotificationBell from './NotificationBell';
@@ -22,9 +21,9 @@ interface ClientLayoutProps {
 }
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
-  const [flowterOpen, setFlowterOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(false); // Default to false for SSR
+  const [hasNewSuggestions, setHasNewSuggestions] = useState(false);
   const pathname = usePathname();
 
   // Get user data for permissions and functionality - but don't use until hydrated
@@ -94,14 +93,6 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
     generateSampleData();
   }, [user?.id, isHydrated]); // Run when user is available and hydrated
-
-  const handleFlowterOpen = () => {
-    setFlowterOpen(true);
-  };
-
-  const handleFlowterClose = () => {
-    setFlowterOpen(false);
-  };
 
   // Show Flowter on landing page for subscription questions, and on other pages except university
   const shouldShowFlowter = isHydrated
@@ -229,11 +220,15 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 <FleetFlowFooter variant='transparent' />
               </main>
 
-              {/* Flowter AI Button - appears on all pages except university */}
+              {/* Unified Flowter AI - appears on all pages except university */}
               {isHydrated && shouldShowFlowter && (
                 <>
-                  {console.info('🎯 Rendering Flowter AI Button')}
-                  <FlowterButton onOpen={handleFlowterOpen} />
+                  {console.info('🎯 Rendering Unified Flowter AI')}
+                  <UnifiedFlowterAI
+                    hasNewSuggestions={hasNewSuggestions}
+                    userTier={user.subscriptionTier}
+                    userRole={user.role}
+                  />
                 </>
               )}
 
@@ -256,12 +251,6 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 !pathname?.includes('/launchpad') && (
                   <NotificationBell userId={user.id} position='bottom-right' />
                 )}
-
-              {/* Enhanced Flowter AI Modal - Available on landing page for subscription questions */}
-              <EnhancedFlowterModal
-                isOpen={flowterOpen}
-                onClose={handleFlowterClose}
-              />
             </LoadProvider>
           </ShipperProvider>
         </SimpleErrorBoundary>

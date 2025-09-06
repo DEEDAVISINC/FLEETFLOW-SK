@@ -32,7 +32,7 @@ export interface VoiceCall {
 }
 
 export interface SocialMediaPost {
-  platform: 'facebook' | 'linkedin' | 'twitter';
+  platform: 'facebook' | 'linkedin' | 'instagram' | 'manual';
   content: string;
   mediaUrls?: string[];
   targetAudience?: any;
@@ -348,8 +348,11 @@ export class CommunicationService {
         case 'linkedin':
           result = await this.postToLinkedIn(post);
           break;
-        case 'twitter':
-          result = await this.postToTwitter(post);
+        case 'instagram':
+          result = await this.postToInstagram(post);
+          break;
+        case 'manual':
+          result = await this.handleManualPost(post);
           break;
         default:
           throw new Error(`Unsupported platform: ${post.platform}`);
@@ -491,31 +494,89 @@ export class CommunicationService {
     return { id: result.id };
   }
 
-  private async postToTwitter(post: SocialMediaPost): Promise<{ id: string }> {
-    // Twitter API integration (using v2 API)
-    const bearerToken = process.env.TWITTER_BEARER_TOKEN;
+  private async postToInstagram(
+    post: SocialMediaPost
+  ): Promise<{ id: string }> {
+    // Instagram Graph API integration
+    const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+    const accountId = process.env.INSTAGRAM_ACCOUNT_ID;
 
-    if (!bearerToken) {
-      throw new Error('Twitter API not configured');
+    if (!accessToken || !accountId) {
+      throw new Error(
+        'Instagram API not configured - Please set INSTAGRAM_ACCESS_TOKEN and INSTAGRAM_ACCOUNT_ID'
+      );
     }
 
-    const response = await fetch('https://api.twitter.com/2/tweets', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${bearerToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text: post.content,
-      }),
-    });
+    // First, create a media object
+    const mediaResponse = await fetch(
+      `https://graph.instagram.com/${accountId}/media`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image_url:
+            post.mediaUrls?.[0] ||
+            'https://via.placeholder.com/1080x1080/22c55e/ffffff?text=FleetFlow', // Default image if no media
+          caption: post.content,
+          access_token: accessToken,
+        }),
+      }
+    );
 
-    if (!response.ok) {
-      throw new Error(`Twitter API error: ${response.statusText}`);
+    if (!mediaResponse.ok) {
+      const errorData = await mediaResponse.text();
+      throw new Error(
+        `Instagram media creation failed: ${mediaResponse.status} - ${errorData}`
+      );
     }
 
-    const result = await response.json();
-    return { id: result.data.id };
+    const mediaData = await mediaResponse.json();
+    const mediaId = mediaData.id;
+
+    // Then, publish the media
+    const publishResponse = await fetch(
+      `https://graph.instagram.com/${accountId}/media_publish`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          creation_id: mediaId,
+          access_token: accessToken,
+        }),
+      }
+    );
+
+    if (!publishResponse.ok) {
+      const errorData = await publishResponse.text();
+      throw new Error(
+        `Instagram publish failed: ${publishResponse.status} - ${errorData}`
+      );
+    }
+
+    const publishData = await publishResponse.json();
+    return { id: publishData.id };
+  }
+
+  private async handleManualPost(
+    post: SocialMediaPost
+  ): Promise<{ id: string }> {
+    // Manual posting - just log the content for manual execution
+    console.log('📝 Manual Post Content Generated:');
+    console.log('Platform:', 'Choose platform manually');
+    console.log('Content:', post.content);
+    if (post.mediaUrls?.length) {
+      console.log('Media URLs:', post.mediaUrls);
+    }
+    console.log('Target Audience:', post.targetAudience);
+
+    // Generate a unique ID for tracking
+    const manualId = `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    return { id: manualId };
   }
 
   private async checkRateLimit(tenantId: string, type: string): Promise<void> {

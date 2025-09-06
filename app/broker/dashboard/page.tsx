@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import BrokerDashboardGettingStarted from '../../components/BrokerDashboardGettingStarted';
 import { BrokerPerformanceMetrics } from '../../services/BrokerAnalyticsService';
 
 // Full Quoting Portal Component - Embedded directly in broker dashboard
@@ -1727,7 +1728,8 @@ export default function BrokerDashboard() {
         );
 
         // Get real performance metrics
-        const metrics = brokerAnalyticsService.getBrokerPerformanceMetrics();
+        const metrics =
+          await brokerAnalyticsService.getBrokerPerformanceMetrics();
         setBrokerMetrics(metrics);
 
         console.info(
@@ -2184,6 +2186,25 @@ export default function BrokerDashboard() {
         ))}
       </div>
 
+      {/* Getting Started Workflow */}
+      <BrokerDashboardGettingStarted
+        onStepClick={(stepId, tab) => {
+          if (tab) {
+            setSelectedTab(tab);
+            // Scroll to the relevant section
+            setTimeout(() => {
+              const element = document.getElementById(`tab-${tab}`);
+              if (element) {
+                element.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start',
+                });
+              }
+            }, 100);
+          }
+        }}
+      />
+
       {/* Content Area */}
       <div
         style={{
@@ -2197,10 +2218,14 @@ export default function BrokerDashboard() {
         }}
       >
         {/* Tab Content */}
-        {selectedTab === 'quotes-workflow' && <QuotingPortal />}
+        {selectedTab === 'quotes-workflow' && (
+          <div id='tab-quotes-workflow'>
+            <QuotingPortal />
+          </div>
+        )}
 
         {selectedTab === 'loads-bids' && (
-          <div style={{ color: 'white' }}>
+          <div id='tab-loads-bids' style={{ color: 'white' }}>
             <div style={{ marginBottom: '32px' }}>
               <h2
                 style={{
@@ -2550,7 +2575,7 @@ export default function BrokerDashboard() {
         )}
 
         {selectedTab === 'ai-intelligence' && (
-          <div style={{ color: 'white' }}>
+          <div id='tab-ai-intelligence' style={{ color: 'white' }}>
             <div style={{ marginBottom: '32px' }}>
               <h2
                 style={{
@@ -2944,7 +2969,7 @@ export default function BrokerDashboard() {
         )}
 
         {selectedTab === 'market-intelligence' && (
-          <div style={{ color: 'white' }}>
+          <div id='tab-market-intelligence' style={{ color: 'white' }}>
             <div style={{ marginBottom: '32px' }}>
               <h2
                 style={{
@@ -3399,7 +3424,7 @@ export default function BrokerDashboard() {
         )}
 
         {selectedTab === 'analytics' && (
-          <div style={{ color: 'white' }}>
+          <div id='tab-analytics' style={{ color: 'white' }}>
             <div style={{ marginBottom: '32px' }}>
               <h2
                 style={{
@@ -3804,7 +3829,7 @@ export default function BrokerDashboard() {
         )}
 
         {selectedTab === 'tasks' && (
-          <div style={{ color: 'white' }}>
+          <div id='tab-tasks' style={{ color: 'white' }}>
             <div style={{ marginBottom: '32px' }}>
               <h2
                 style={{

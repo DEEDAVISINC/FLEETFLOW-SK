@@ -80,8 +80,8 @@ export default function CampaignTemplates() {
 
   // ORGANIZATION & FILTERING STATE
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [sortBy, setSortBy] = useState<string>('revenue');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState<string>('difficulty');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // 🚀 SALESFLOW AI BACKGROUND AUTOMATION
@@ -115,6 +115,12 @@ export default function CampaignTemplates() {
     'desperate_shippers_blitz',
     'new_businesses_freight_blitz',
     'high_value_prospect_acceleration', // RECOMMENDED ADDITION
+    'global_trade_lane_development', // 🌍 HIGH-REVENUE INTERNATIONAL CAMPAIGN
+    'import_export_accelerator_program', // 📦 EXPORT ACCELERATION PROGRAM
+    'critical_care_courier_network', // 🏥 LIFE-CRITICAL HEALTHCARE LOGISTICS
+    'medical_equipment_logistics', // 🩺 HIGH-VALUE MEDICAL EQUIPMENT
+    'disaster_recovery_logistics', // 🚨 CRITICAL DISASTER RESPONSE
+    'supply_chain_continuity_planning', // 🛡️ BUSINESS CONTINUITY PLANNING
   ];
 
   // Comprehensive Campaign Templates
@@ -1133,7 +1139,7 @@ export default function CampaignTemplates() {
         totalRevenue: 500000, // 30-day campaign total
       },
       duration: '30 days',
-      difficulty: 'high', // Specialized equipment requirements
+      difficulty: 'hard', // Specialized equipment requirements
       aiStaff: ['Roland', 'Miles', 'Kameelah'], // Kameelah for DOT compliance
       channels: [
         'Construction Trade Shows',
@@ -1328,7 +1334,7 @@ export default function CampaignTemplates() {
         totalRevenue: 600000, // 30-day campaign total
       },
       duration: '30 days',
-      difficulty: 'high', // Specialized trailers and equipment knowledge required
+      difficulty: 'hard', // Specialized trailers and equipment knowledge required
       aiStaff: ['Roland', 'Miles', 'Logan'],
       channels: [
         'Construction Equipment Dealers',
@@ -1595,7 +1601,7 @@ export default function CampaignTemplates() {
         totalRevenue: 270000, // 45-day campaign total
       },
       duration: '45 days',
-      difficulty: 'high',
+      difficulty: 'hard',
       aiStaff: ['Cliff', 'Desiree', 'Miles'],
       channels: ['Email', 'Phone', 'LinkedIn', 'Industry Events'],
       icon: '🛒',
@@ -2707,7 +2713,7 @@ export default function CampaignTemplates() {
         totalRevenue: 276000,
       },
       duration: '30 days',
-      difficulty: 'high',
+      difficulty: 'hard',
       aiStaff: ['Desiree', 'Kameelah', 'Roland'],
       channels: ['Email', 'Phone', 'Regulatory Networks'],
       icon: '🚛',
@@ -2767,7 +2773,7 @@ export default function CampaignTemplates() {
         totalRevenue: 234000,
       },
       duration: '30 days',
-      difficulty: 'high',
+      difficulty: 'hard',
       aiStaff: ['Desiree', 'Roland'],
       channels: ['Email', 'Phone', 'Equipment Directories'],
       icon: '🚛',
@@ -2827,7 +2833,7 @@ export default function CampaignTemplates() {
         totalRevenue: 192000,
       },
       duration: '30 days',
-      difficulty: 'high',
+      difficulty: 'hard',
       aiStaff: ['Desiree', 'Kameelah'],
       channels: ['Email', 'Phone', 'Regulatory Compliance Networks'],
       icon: '🚛',
@@ -3750,6 +3756,592 @@ export default function CampaignTemplates() {
         '24/7 disaster relief coordination protocols established',
         'FEMA Transportation Programs relationship fully established',
         'Ready for immediate FEMA disaster relief transportation deployment',
+      ],
+    },
+
+    // 🌍 INTERNATIONAL & CROSS-BORDER CAMPAIGNS
+    {
+      id: 'global_trade_lane_development',
+      name: 'Global Trade Lane Development',
+      description:
+        'Specialized international freight corridors with customs clearance, multi-modal transport coordination, currency hedging, and international payment processing - Transform international shipping complexity into streamlined efficiency',
+      category: 'lead_generation',
+      targetAudience:
+        'International shippers, manufacturers, and wholesalers seeking reliable international freight solutions - Companies with cross-border supply chains needing specialized logistics expertise',
+      expectedResults: {
+        leads: 85, // Conservative: Based on international trade data
+        conversions: 26, // Realistic: 30% conversion for international prospects
+        dailyRevenue: 8000, // $240,000 ÷ 30 days
+        monthlyRevenue: 240000, // Realistic: $8,000/month based on international freight rates
+        totalRevenue: 240000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Complex due to international regulations and multi-modal coordination
+      aiStaff: ['Regina', 'Kameelah', 'Logan', 'Roland'], // Regina for FMCSA/international compliance, Kameelah for regulatory expertise
+      channels: ['Email', 'Phone', 'LinkedIn', 'Trade Shows'],
+      icon: '🌍',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'trade_lane_market_analysis',
+          name: 'Trade Lane Market Analysis',
+          description:
+            'Analyze trade flows between key markets (US-China, US-EU, US-Mexico) to identify high-volume corridors and capacity gaps',
+          timing: 'Day 1-2',
+          channel: 'Data Analysis',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+        {
+          id: 'carrier_network_development',
+          name: 'Carrier Network Development',
+          description:
+            'Establish partnerships with international carriers, customs brokers, and freight forwarders for comprehensive service coverage',
+          timing: 'Day 3-7',
+          channel: 'Partnership Outreach',
+          aiStaff: 'Roland',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'customs_clearance_setup',
+          name: 'Customs Clearance Infrastructure',
+          description:
+            'Set up automated customs clearance systems, documentation templates, and regulatory compliance protocols',
+          timing: 'Day 8-12',
+          channel: 'System Integration',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'currency_hedging_program',
+          name: 'Currency Hedging Program',
+          description:
+            'Implement automated currency hedging solutions and international payment processing for risk mitigation',
+          timing: 'Day 13-17',
+          channel: 'Financial Services',
+          aiStaff: 'Regina',
+          automationLevel: 'full',
+        },
+        {
+          id: 'multi_modal_coordination',
+          name: 'Multi-Modal Coordination Setup',
+          description:
+            'Establish protocols for seamless sea-air-ground transport coordination and real-time tracking integration',
+          timing: 'Day 18-22',
+          channel: 'Operations',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'market_launch_campaign',
+          name: 'International Market Launch',
+          description:
+            'Target international shippers with comprehensive trade lane solutions featuring end-to-end service guarantees',
+          timing: 'Day 23-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Roland & Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '100+ international shipper leads identified',
+        '30+ trade lane partnerships established',
+        '25+ successful customs clearance implementations',
+        '20+ multi-modal coordination setups completed',
+        '85% on-time international delivery performance',
+        '30% cost reduction vs. traditional international shipping',
+        '$300K+ international revenue pipeline created',
+        '95% regulatory compliance rate maintained',
+      ],
+    },
+
+    {
+      id: 'import_export_accelerator_program',
+      name: 'Import/Export Accelerator Program',
+      description:
+        'End-to-end international trade support with documentation preparation, compliance management, insurance coordination, and market entry consulting - Fast-track international business expansion',
+      category: 'conversion',
+      targetAudience:
+        'New exporters, international market entrants, and companies expanding cross-border operations - Businesses needing comprehensive international trade support',
+      expectedResults: {
+        leads: 65, // Conservative: Based on export assistance program data
+        conversions: 20, // Realistic: 30% conversion for export assistance
+        dailyRevenue: 7000, // $210,000 ÷ 30 days
+        monthlyRevenue: 210000, // Realistic: $7,000/month based on export consulting fees
+        totalRevenue: 210000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium', // Moderate complexity with regulatory components
+      aiStaff: ['Regina', 'Kameelah', 'Gary', 'Lea D.'], // Regina for international compliance, Kameelah for documentation
+      channels: ['Email', 'Phone', 'Webinars', 'Consultations'],
+      icon: '📦',
+      color: 'bg-purple-600',
+      steps: [
+        {
+          id: 'export_readiness_assessment',
+          name: 'Export Readiness Assessment',
+          description:
+            "Comprehensive evaluation of companies' international trade readiness, including product compliance and market analysis",
+          timing: 'Day 1-5',
+          channel: 'Consultation',
+          aiStaff: 'Gary',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'documentation_automation',
+          name: 'Documentation Automation Setup',
+          description:
+            'Implement automated systems for customs documentation, certificates of origin, and export compliance paperwork',
+          timing: 'Day 6-10',
+          channel: 'System Integration',
+          aiStaff: 'Kameelah',
+          automationLevel: 'full',
+        },
+        {
+          id: 'insurance_coordination',
+          name: 'International Insurance Coordination',
+          description:
+            'Establish cargo insurance partnerships and automated coverage for international shipments',
+          timing: 'Day 11-15',
+          channel: 'Partnership Development',
+          aiStaff: 'Regina',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'market_entry_strategy',
+          name: 'Market Entry Strategy Development',
+          description:
+            'Create customized market entry plans including distribution channels, pricing strategies, and regulatory requirements',
+          timing: 'Day 16-20',
+          channel: 'Strategic Consulting',
+          aiStaff: 'Lea D.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'implementation_support',
+          name: 'Implementation Support Program',
+          description:
+            'Provide hands-on support for first international shipments including troubleshooting and compliance monitoring',
+          timing: 'Day 21-25',
+          channel: 'Ongoing Support',
+          aiStaff: 'Gary & Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'scaling_acceleration',
+          name: 'Scaling Acceleration Program',
+          description:
+            'Guide successful exporters to scale operations with additional market entries and expanded trade lane development',
+          timing: 'Day 26-30',
+          channel: 'Growth Consulting',
+          aiStaff: 'Regina & Lea D.',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '80+ export readiness assessments completed',
+        '60+ companies with automated documentation systems',
+        '45+ international insurance programs implemented',
+        '35+ customized market entry strategies delivered',
+        '25+ successful first international shipments',
+        '90% client satisfaction with program support',
+        '$250K+ export revenue pipeline created',
+        '40% faster time-to-export for program participants',
+      ],
+    },
+
+    // 🏥 HEALTHCARE & MEDICAL FREIGHT CAMPAIGNS
+    {
+      id: 'critical_care_courier_network',
+      name: 'Critical Care Courier Network',
+      description:
+        'Specialized network for medical supplies, pharmaceuticals, and organs with temperature-controlled transport, real-time GPS tracking, emergency response protocols, and FDA/CDC compliance - Life-critical logistics excellence',
+      category: 'lead_generation',
+      targetAudience:
+        'Hospitals, pharmaceutical companies, organ procurement organizations, and medical suppliers requiring specialized temperature-controlled and time-critical transport services',
+      expectedResults: {
+        leads: 95, // Conservative: Based on healthcare logistics demand
+        conversions: 29, // Realistic: 30% conversion for specialized healthcare services
+        dailyRevenue: 8000, // $240,000 ÷ 30 days
+        monthlyRevenue: 240000, // Realistic: $8,000/month based on premium healthcare rates
+        totalRevenue: 240000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Complex due to regulatory requirements and specialized equipment
+      aiStaff: ['Kameelah', 'Regina', 'Shanell', 'Logan'], // Kameelah for compliance, Regina for regulations, Shanell for customer service, Logan for logistics
+      channels: ['Email', 'Phone', 'LinkedIn', 'Medical Networks'],
+      icon: '🏥',
+      color: 'bg-red-600',
+      steps: [
+        {
+          id: 'healthcare_network_mapping',
+          name: 'Healthcare Network Intelligence',
+          description:
+            'Map hospitals, pharmaceutical companies, and medical suppliers using healthcare industry databases and partnerships',
+          timing: 'Day 1-3',
+          channel: 'Data Analysis',
+          aiStaff: 'Kameelah',
+          automationLevel: 'full',
+        },
+        {
+          id: 'compliance_certification_setup',
+          name: 'Regulatory Compliance Infrastructure',
+          description:
+            'Establish FDA, CDC, and state regulatory compliance frameworks, certifications, and documentation systems',
+          timing: 'Day 4-7',
+          channel: 'System Integration',
+          aiStaff: 'Regina',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'specialized_equipment_network',
+          name: 'Temperature-Controlled Equipment Network',
+          description:
+            'Build network of certified carriers with specialized vehicles for various temperature requirements (2-8C, -20C, -80C)',
+          timing: 'Day 8-12',
+          channel: 'Partnership Development',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'emergency_response_protocols',
+          name: 'Emergency Response Protocols',
+          description:
+            'Develop and implement emergency response protocols for life-critical shipments with 24/7 monitoring and rapid deployment',
+          timing: 'Day 13-17',
+          channel: 'Operations',
+          aiStaff: 'Shanell',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'gps_tracking_integration',
+          name: 'Real-Time GPS Tracking System',
+          description:
+            'Implement advanced GPS tracking with temperature monitoring, route optimization, and real-time alerts for critical shipments',
+          timing: 'Day 18-22',
+          channel: 'Technology Integration',
+          aiStaff: 'Kameelah',
+          automationLevel: 'full',
+        },
+        {
+          id: 'market_launch_healthcare',
+          name: 'Healthcare Market Launch',
+          description:
+            'Target hospitals and pharmaceutical companies with comprehensive critical care logistics solutions featuring guaranteed delivery and regulatory compliance',
+          timing: 'Day 23-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Shanell & Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '100+ healthcare facilities and pharmaceutical companies identified',
+        '30+ specialized carrier partnerships established',
+        '25+ regulatory certifications and compliance frameworks implemented',
+        '20+ emergency response protocols developed and tested',
+        '95% on-time delivery for critical shipments',
+        '100% temperature compliance for sensitive medical cargo',
+        '$300K+ healthcare logistics revenue pipeline created',
+        'Zero regulatory compliance incidents',
+      ],
+    },
+
+    {
+      id: 'medical_equipment_logistics',
+      name: 'Medical Equipment Logistics',
+      description:
+        'Specialized handling for MRI machines, surgical equipment with white-glove service, installation coordination, technical support, and partnerships with hospitals and medical device manufacturers - High-value equipment logistics',
+      category: 'conversion',
+      targetAudience:
+        'Medical device manufacturers, hospitals, surgical centers, and healthcare facilities requiring specialized transport and installation of high-value medical equipment',
+      expectedResults: {
+        leads: 75, // Conservative: Based on medical equipment market
+        conversions: 23, // Realistic: 30% conversion for high-value equipment services
+        dailyRevenue: 7000, // $210,000 ÷ 30 days
+        monthlyRevenue: 210000, // Realistic: $7,000/month based on premium equipment rates
+        totalRevenue: 210000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium', // Moderate complexity with specialized handling requirements
+      aiStaff: ['Logan', 'Shanell', 'Kameelah', 'Regina'], // Logan for specialized transport, Shanell for white-glove service, Kameelah for compliance, Regina for insurance
+      channels: ['Email', 'Phone', 'LinkedIn', 'Medical Device Networks'],
+      icon: '🩺',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'equipment_manufacturer_mapping',
+          name: 'Medical Equipment Manufacturer Network',
+          description:
+            'Map medical device manufacturers, distributors, and healthcare facilities requiring specialized equipment transport',
+          timing: 'Day 1-4',
+          channel: 'Data Analysis',
+          aiStaff: 'Logan',
+          automationLevel: 'full',
+        },
+        {
+          id: 'white_glove_service_setup',
+          name: 'White-Glove Service Framework',
+          description:
+            'Develop comprehensive white-glove service protocols for handling, transport, and delivery of high-value medical equipment',
+          timing: 'Day 5-8',
+          channel: 'Service Development',
+          aiStaff: 'Shanell',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'specialized_transport_network',
+          name: 'Specialized Transport Network',
+          description:
+            'Build network of carriers certified for medical equipment transport with proper insurance and specialized vehicles',
+          timing: 'Day 9-12',
+          channel: 'Partnership Development',
+          aiStaff: 'Regina',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'installation_coordination',
+          name: 'Installation Coordination System',
+          description:
+            'Develop protocols for coordinating equipment installation with manufacturer technicians and healthcare facility staff',
+          timing: 'Day 13-16',
+          channel: 'Operations',
+          aiStaff: 'Kameelah',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'technical_support_integration',
+          name: 'Technical Support Integration',
+          description:
+            'Establish partnerships with manufacturer technical support teams and coordinate pre-installation site surveys',
+          timing: 'Day 17-20',
+          channel: 'Partnership Management',
+          aiStaff: 'Shanell',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'equipment_logistics_launch',
+          name: 'Medical Equipment Logistics Launch',
+          description:
+            'Target medical device manufacturers and healthcare facilities with comprehensive equipment logistics solutions including transport, installation, and ongoing support',
+          timing: 'Day 21-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Logan & Kameelah',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '85+ medical equipment manufacturers and healthcare facilities identified',
+        '25+ specialized carrier partnerships for equipment transport',
+        '20+ white-glove service protocols implemented',
+        '15+ installation coordination systems developed',
+        '30+ technical support partnerships established',
+        '95% on-time delivery for medical equipment',
+        '100% damage-free delivery record',
+        '$250K+ medical equipment logistics revenue pipeline created',
+        '90% customer satisfaction with service quality',
+      ],
+    },
+
+    // 🚨 EMERGENCY & CRISIS RESPONSE CAMPAIGNS
+    {
+      id: 'disaster_recovery_logistics',
+      name: 'Disaster Recovery Logistics',
+      description:
+        'Rapid response teams for natural disasters with emergency supply chain coordination, government and NGO partnerships, and specialized transportation for FEMA-compliant temporary housing from approved manufacturers - Critical infrastructure logistics excellence',
+      category: 'lead_generation',
+      targetAudience:
+        'Government agencies (FEMA, state/local emergency management), NGOs, disaster relief organizations, and businesses requiring emergency logistics support during natural disasters and crisis situations',
+      expectedResults: {
+        leads: 95, // Increased: FEMA temporary housing demand
+        conversions: 29, // Realistic: 30% conversion for emergency services
+        dailyRevenue: 12000, // $360,000 ÷ 30 days - Higher due to FEMA contracts
+        monthlyRevenue: 360000, // Realistic: $12,000/month with FEMA temporary housing
+        totalRevenue: 360000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'hard', // Complex due to emergency protocols and specialized equipment
+      aiStaff: ['Alexis', 'Logan', 'Carrie R.', 'Kameelah'], // Alexis for emergency management, Logan for logistics, Carrie R. for carrier partnerships, Kameelah for compliance
+      channels: ['Phone', 'Email', 'Government Networks', 'Emergency Contacts'],
+      icon: '🚨',
+      color: 'bg-orange-600',
+      steps: [
+        {
+          id: 'emergency_response_network',
+          name: 'Emergency Response Network Mapping',
+          description:
+            'Map government agencies, NGOs, and emergency response organizations using FEMA and disaster relief databases',
+          timing: 'Day 1-3',
+          channel: 'Data Analysis',
+          aiStaff: 'Alexis',
+          automationLevel: 'full',
+        },
+        {
+          id: 'government_partnerships',
+          name: 'Government & NGO Partnerships',
+          description:
+            'Establish partnerships with FEMA, Red Cross, state emergency management agencies, and major relief organizations',
+          timing: 'Day 4-7',
+          channel: 'Partnership Development',
+          aiStaff: 'Carrie R.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'fema_housing_logistics_partnerships',
+          name: 'FEMA Housing Logistics Partnerships',
+          description:
+            'Establish partnerships with FEMA-approved housing manufacturers (Champion Homes, etc.) for coordinated logistics and transportation of temporary housing units to disaster zones',
+          timing: 'Day 8-10',
+          channel: 'Partnership Development',
+          aiStaff: 'Carrie R.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'specialized_transport_equipment',
+          name: 'Specialized Transport Equipment',
+          description:
+            'Acquire and certify specialized vehicles and equipment for disaster zone operations and housing unit transportation (4x4 trucks, flatbed trailers, generators, communications)',
+          timing: 'Day 11-15',
+          channel: 'Equipment Procurement',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'emergency_response_protocols',
+          name: 'Emergency Response Protocols',
+          description:
+            'Develop comprehensive emergency response protocols, communication systems, and rapid deployment procedures including FEMA housing deployment standards',
+          timing: 'Day 16-20',
+          channel: 'Operations',
+          aiStaff: 'Alexis',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'supply_chain_coordination',
+          name: 'Supply Chain Coordination System',
+          description:
+            'Implement real-time supply chain coordination platform for emergency logistics with priority routing, tracking, and FEMA housing inventory management',
+          timing: 'Day 21-25',
+          channel: 'Technology Integration',
+          aiStaff: 'Kameelah',
+          automationLevel: 'full',
+        },
+        {
+          id: 'disaster_response_launch',
+          name: 'Disaster Response Launch',
+          description:
+            'Target government agencies and NGOs with comprehensive disaster recovery logistics solutions featuring rapid deployment, specialized transport equipment, and coordinated FEMA housing delivery',
+          timing: 'Day 26-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Alexis & Logan',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '100+ government agencies and NGOs identified (including FEMA)',
+        '30+ strategic partnerships established with emergency management agencies',
+        '15+ FEMA housing manufacturer partnerships (Champion Homes, etc.)',
+        '25+ specialized transport vehicles and equipment procured',
+        '20+ emergency response protocols implemented with FEMA compliance',
+        '99% on-time emergency supply and housing unit delivery',
+        '100% regulatory compliance in disaster zones including FEMA standards',
+        '$360K+ emergency logistics revenue pipeline created',
+        'Zero safety incidents in disaster operations',
+        '95% FEMA contract win rate for qualified disaster responses',
+      ],
+    },
+
+    {
+      id: 'supply_chain_continuity_planning',
+      name: 'Supply Chain Continuity Planning',
+      description:
+        'Business continuity consulting with emergency logistics planning, backup carrier network development, and crisis simulation training - Proactive risk mitigation and resilience',
+      category: 'conversion',
+      targetAudience:
+        'Large corporations, critical infrastructure providers, and businesses requiring comprehensive business continuity and emergency logistics planning',
+      expectedResults: {
+        leads: 65, // Conservative: Based on business continuity demand
+        conversions: 20, // Realistic: 30% conversion for consulting services
+        dailyRevenue: 7000, // $210,000 ÷ 30 days
+        monthlyRevenue: 210000, // Realistic: $7,000/month based on consulting fees
+        totalRevenue: 210000, // 30-day campaign total
+      },
+      duration: '30 days',
+      difficulty: 'medium', // Moderate complexity with consulting and planning focus
+      aiStaff: ['Alexis', 'Logan', 'Carrie R.', 'C. Allen Durr'], // Alexis for continuity planning, Logan for logistics, Carrie R. for carrier networks, C. Allen Durr for operations
+      channels: ['Email', 'Phone', 'Webinars', 'Consultations'],
+      icon: '🛡️',
+      color: 'bg-yellow-600',
+      steps: [
+        {
+          id: 'business_continuity_assessment',
+          name: 'Business Continuity Assessment',
+          description:
+            'Conduct comprehensive risk assessments and business impact analyses for client supply chains and operations',
+          timing: 'Day 1-5',
+          channel: 'Consultation',
+          aiStaff: 'Alexis',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'emergency_logistics_planning',
+          name: 'Emergency Logistics Planning',
+          description:
+            'Develop detailed emergency logistics plans including alternative routing, backup suppliers, and crisis communication protocols',
+          timing: 'Day 6-10',
+          channel: 'Strategic Planning',
+          aiStaff: 'Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'backup_carrier_network',
+          name: 'Backup Carrier Network Development',
+          description:
+            'Build comprehensive backup carrier networks with pre-negotiated rates and guaranteed capacity during crises',
+          timing: 'Day 11-15',
+          channel: 'Partnership Development',
+          aiStaff: 'Carrie R.',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'crisis_simulation_training',
+          name: 'Crisis Simulation Training',
+          description:
+            'Develop and conduct crisis simulation exercises to test continuity plans and train client teams on emergency procedures',
+          timing: 'Day 16-20',
+          channel: 'Training Development',
+          aiStaff: 'C. Allen Durr',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'continuity_monitoring_system',
+          name: 'Continuity Monitoring System',
+          description:
+            'Implement automated monitoring and alerting systems for supply chain disruptions and risk indicators',
+          timing: 'Day 21-25',
+          channel: 'Technology Integration',
+          aiStaff: 'Alexis',
+          automationLevel: 'full',
+        },
+        {
+          id: 'continuity_planning_launch',
+          name: 'Continuity Planning Launch',
+          description:
+            'Target corporations with comprehensive supply chain continuity solutions including consulting, planning, and ongoing monitoring services',
+          timing: 'Day 26-30',
+          channel: 'Multi-Channel',
+          aiStaff: 'Alexis & Carrie R.',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '75+ corporate clients assessed for continuity planning',
+        '50+ comprehensive emergency logistics plans developed',
+        '30+ backup carrier networks established',
+        '25+ crisis simulation training programs delivered',
+        '20+ automated monitoring systems implemented',
+        '95% client satisfaction with continuity planning',
+        '$250K+ consulting revenue pipeline created',
+        '85% improvement in client supply chain resilience',
       ],
     },
   ];

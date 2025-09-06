@@ -21,12 +21,20 @@ interface Course {
 interface FleetFlowUniversityProps {
   userRole: 'dispatcher' | 'broker' | 'admin' | 'carrier' | 'driver';
   userName: string;
+  tenantId?: string;
+  tenantCourses?: Course[];
+  tenantProgress?: { [key: string]: boolean };
+  onProgressUpdate?: (progress: { [key: string]: boolean }) => void;
   isEnrolled?: boolean;
 }
 
 export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
   userRole,
   userName,
+  tenantId,
+  tenantCourses,
+  tenantProgress,
+  onProgressUpdate,
   isEnrolled = false,
 }) => {
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
@@ -37,7 +45,7 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [showIndividualCourses, setShowIndividualCourses] = useState(false);
 
-  // INTEGRATED ROLE-BASED COURSES (Main Section)
+  // INTEGRATED ROLE-BASED COURSES (Main Section) - Default courses
   const integratedCourses: Course[] = [
     {
       id: 'go-with-the-flow-occupational',
@@ -170,6 +178,9 @@ export const FleetFlowUniversity: React.FC<FleetFlowUniversityProps> = ({
       thumbnail: '⚖️',
     },
   ];
+
+  // Use tenant-specific courses or fallback to defaults
+  const coursesToUse = tenantCourses || integratedCourses;
 
   // INDIVIDUAL SPECIALIZED COURSES (Locked Section)
   const courses: Course[] = [

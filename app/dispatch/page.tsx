@@ -7,6 +7,7 @@ import CompletedLoadsInvoiceTracker from '../components/CompletedLoadsInvoiceTra
 import DispatchTaskPrioritizationPanel from '../components/DispatchTaskPrioritizationPanel';
 import DocumentsPortalButton from '../components/DocumentsPortalButton';
 
+import DispatchGettingStarted from '../components/DispatchGettingStarted';
 import UnifiedLiveTrackingWorkflow from '../components/UnifiedLiveTrackingWorkflow';
 import UnifiedNotificationBell from '../components/UnifiedNotificationBell';
 import { getCurrentUser } from '../config/access';
@@ -875,155 +876,159 @@ export default function DispatchCentral() {
   };
 
   useEffect(() => {
-    setIsClient(true);
-    const { user: currentUser } = getCurrentUser();
-    setUser(currentUser);
+    const initializeData = async () => {
+      setIsClient(true);
+      const { user: currentUser } = getCurrentUser();
+      setUser(currentUser);
 
-    // Initialize Go with the Flow automation service
-    if (automationService) {
-      setAutomatedActivities(automationService.getActivities());
-      setSystemStatus(automationService.getSystemStatus());
-
-      // Set up real-time activity updates (in real app, this would be WebSocket)
-      const activityInterval = setInterval(() => {
+      // Initialize Go with the Flow automation service
+      if (automationService) {
         setAutomatedActivities(automationService.getActivities());
         setSystemStatus(automationService.getSystemStatus());
-      }, 2000);
 
-      // Initialize real-time Go with the Flow data
-      const updateGoWithFlowData = () => {
-        setGoWithFlowData({
-          loads: goWithTheFlowService.getAllLoads(),
-          drivers: goWithTheFlowService.getAllDrivers(),
-          activityFeed: goWithTheFlowService.getActivityFeed(),
-          wonMarketplaceLoads: goWithTheFlowService.getWonMarketplaceLoads(),
-          marketplaceRevenue: goWithTheFlowService.getMarketplaceRevenue(),
-          loadStats: goWithTheFlowService.getLoadStats(),
-          marketplaceMetrics: goWithTheFlowService.getMarketplaceMetrics(),
-          driverResponseRate: goWithTheFlowService.getDriverResponseRate(),
-        });
-      };
+        // Set up real-time activity updates (in real app, this would be WebSocket)
+        const activityInterval = setInterval(() => {
+          setAutomatedActivities(automationService.getActivities());
+          setSystemStatus(automationService.getSystemStatus());
+        }, 2000);
 
-      // Initial load
-      updateGoWithFlowData();
+        // Initialize real-time Go with the Flow data
+        const updateGoWithFlowData = () => {
+          setGoWithFlowData({
+            loads: goWithTheFlowService.getAllLoads(),
+            drivers: goWithTheFlowService.getAllDrivers(),
+            activityFeed: goWithTheFlowService.getActivityFeed(),
+            wonMarketplaceLoads: goWithTheFlowService.getWonMarketplaceLoads(),
+            marketplaceRevenue: goWithTheFlowService.getMarketplaceRevenue(),
+            loadStats: goWithTheFlowService.getLoadStats(),
+            marketplaceMetrics: goWithTheFlowService.getMarketplaceMetrics(),
+            driverResponseRate: goWithTheFlowService.getDriverResponseRate(),
+          });
+        };
 
-      // Real-time updates every 3 seconds
-      const goWithFlowInterval = setInterval(updateGoWithFlowData, 3000);
+        // Initial load
+        updateGoWithFlowData();
 
-      return () => {
-        clearInterval(activityInterval);
-        clearInterval(goWithFlowInterval);
-      };
-    }
+        // Real-time updates every 3 seconds
+        const goWithFlowInterval = setInterval(updateGoWithFlowData, 3000);
 
-    if (currentUser) {
-      // Get loads for this tenant/dispatcher using multi-tenant filtering
-      const tenantLoads = getLoadsForTenant();
+        return () => {
+          clearInterval(activityInterval);
+          clearInterval(goWithFlowInterval);
+        };
+      }
 
-      // Get agent loads from brokerage system (flows through hierarchy)
-      const agentLoads = brokerAgentIntegrationService.getLoadsForDispatch();
+      if (currentUser) {
+        // Get loads for this tenant/dispatcher using multi-tenant filtering
+        const tenantLoads = await getLoadsForTenant();
 
-      // Convert agent loads to standard Load format and combine
-      const convertedAgentLoads: Load[] = agentLoads.map((agentLoad) => ({
-        id: agentLoad.id,
-        brokerId: agentLoad.brokerageId,
-        brokerName: `${agentLoad.agentName} (Agent)`,
-        shipperName: agentLoad.shipperName,
-        origin: agentLoad.origin,
-        destination: agentLoad.destination,
-        rate: agentLoad.rate,
-        distance: '0 mi', // Will be calculated
-        weight: agentLoad.weight,
-        equipment: agentLoad.equipment,
-        status: agentLoad.status as any,
-        pickupDate: agentLoad.pickupDate,
-        deliveryDate: agentLoad.deliveryDate,
-        createdAt: agentLoad.createdAt,
-        updatedAt: agentLoad.createdAt, // Use createdAt as default updatedAt
-        loadBoardNumber: agentLoad.loadNumber,
-        // Additional fields for agent load tracking
-        agentId: agentLoad.agentId,
-        agentName: agentLoad.agentName,
-        marginPercent: agentLoad.marginPercent,
-      }));
+        // Get agent loads from brokerage system (flows through hierarchy)
+        const agentLoads = brokerAgentIntegrationService.getLoadsForDispatch();
 
-      // Combine tenant loads with agent loads
-      const allLoads = [...tenantLoads, ...convertedAgentLoads];
-      setLoads(allLoads);
-
-      // Get tenant-specific load statistics (now includes agent loads)
-      const tenantStats = getTenantLoadStats();
-      // Add agent load counts to stats
-      const agentLoadStats = {
-        total: tenantStats.total + agentLoads.length,
-        available:
-          tenantStats.available +
-          agentLoads.filter((l) => l.status === 'Available').length,
-        assigned:
-          tenantStats.assigned +
-          agentLoads.filter((l) => l.status === 'Assigned').length,
-        inTransit:
-          tenantStats.inTransit +
-          agentLoads.filter((l) => l.status === 'In Transit').length,
-        delivered:
-          tenantStats.delivered +
-          agentLoads.filter((l) => l.status === 'Delivered').length,
-        // Include all required stats properties
-        broadcasted: tenantStats.broadcasted || 0,
-        driverSelected: tenantStats.driverSelected || 0,
-        orderSent: tenantStats.orderSent || 0,
-        unassigned: tenantStats.unassigned || 0,
-      };
-      setStats(agentLoadStats);
-
-      // Load invoices
-      const allInvoices = getAllInvoices();
-      setInvoices(allInvoices);
-
-      const stats = getInvoiceStats();
-      setInvoiceStats(stats);
-
-      console.info(
-        `🔄 Dispatch Central: Loaded ${tenantLoads.length} tenant loads + ${agentLoads.length} agent loads = ${allLoads.length} total loads`
-      );
-
-      // Populate completed loads for invoice tracking
-      const completedLoadsData = allLoads
-        .filter((load) => load.status === 'Delivered')
-        .map((load) => ({
-          id: load.id,
-          loadBoardNumber: load.loadBoardNumber || '100000',
-          route: `${load.origin} → ${load.destination}`,
-          completedDate: new Date().toISOString(),
-          grossRevenue: load.rate || 0,
-          dispatcherFee: Math.round((load.rate || 0) * 0.1), // 10% fee
-          netCarrierPayment: Math.round((load.rate || 0) * 0.9),
-          carrierName: load.brokerName || 'Unknown Carrier',
-
-          // Invoice Information
-          invoiceNumber: `INV-${load.id}-${Date.now().toString().slice(-6)}`,
-          invoiceStatus: Math.random() > 0.5 ? 'sent' : 'auto_generated',
-          invoiceCreatedAt: new Date().toISOString(),
-          paymentDueDate: new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-
-          // Document References
-          rateConfirmationNumber: `RC-${load.id}-${Date.now().toString().slice(-6)}`,
-          bolNumber: `BOL-${load.id}-${Date.now().toString().slice(-6)}`,
-          documentsVerified: Math.random() > 0.3,
-
-          // Payment Tracking
-          paymentMethod: undefined,
-          paymentReference: undefined,
-          daysOverdue:
-            Math.random() > 0.8
-              ? Math.floor(Math.random() * 10) + 1
-              : undefined,
+        // Convert agent loads to standard Load format and combine
+        const convertedAgentLoads: Load[] = agentLoads.map((agentLoad) => ({
+          id: agentLoad.id,
+          brokerId: agentLoad.brokerageId,
+          brokerName: `${agentLoad.agentName} (Agent)`,
+          shipperName: agentLoad.shipperName,
+          origin: agentLoad.origin,
+          destination: agentLoad.destination,
+          rate: agentLoad.rate,
+          distance: '0 mi', // Will be calculated
+          weight: agentLoad.weight,
+          equipment: agentLoad.equipment,
+          status: agentLoad.status as any,
+          pickupDate: agentLoad.pickupDate,
+          deliveryDate: agentLoad.deliveryDate,
+          createdAt: agentLoad.createdAt,
+          updatedAt: agentLoad.createdAt, // Use createdAt as default updatedAt
+          loadBoardNumber: agentLoad.loadNumber,
+          // Additional fields for agent load tracking
+          agentId: agentLoad.agentId,
+          agentName: agentLoad.agentName,
+          marginPercent: agentLoad.marginPercent,
         }));
 
-      setCompletedLoads(completedLoadsData);
-    }
+        // Combine tenant loads with agent loads
+        const allLoads = [...tenantLoads, ...convertedAgentLoads];
+        setLoads(allLoads);
+
+        // Get tenant-specific load statistics (now includes agent loads)
+        const tenantStats = await getTenantLoadStats();
+        // Add agent load counts to stats
+        const agentLoadStats = {
+          total: tenantStats.total + agentLoads.length,
+          available:
+            tenantStats.available +
+            agentLoads.filter((l) => l.status === 'Available').length,
+          assigned:
+            tenantStats.assigned +
+            agentLoads.filter((l) => l.status === 'Assigned').length,
+          inTransit:
+            tenantStats.inTransit +
+            agentLoads.filter((l) => l.status === 'In Transit').length,
+          delivered:
+            tenantStats.delivered +
+            agentLoads.filter((l) => l.status === 'Delivered').length,
+          // Include all required stats properties
+          broadcasted: tenantStats.broadcasted || 0,
+          driverSelected: tenantStats.driverSelected || 0,
+          orderSent: tenantStats.orderSent || 0,
+          unassigned: tenantStats.unassigned || 0,
+        };
+        setStats(agentLoadStats);
+
+        // Load invoices
+        const allInvoices = getAllInvoices();
+        setInvoices(allInvoices);
+
+        const stats = getInvoiceStats();
+        setInvoiceStats(stats);
+
+        console.info(
+          `🔄 Dispatch Central: Loaded ${tenantLoads.length} tenant loads + ${agentLoads.length} agent loads = ${allLoads.length} total loads`
+        );
+
+        // Populate completed loads for invoice tracking
+        const completedLoadsData = allLoads
+          .filter((load) => load.status === 'Delivered')
+          .map((load) => ({
+            id: load.id,
+            loadBoardNumber: load.loadBoardNumber || '100000',
+            route: `${load.origin} → ${load.destination}`,
+            completedDate: new Date().toISOString(),
+            grossRevenue: load.rate || 0,
+            dispatcherFee: Math.round((load.rate || 0) * 0.1), // 10% fee
+            netCarrierPayment: Math.round((load.rate || 0) * 0.9),
+            carrierName: load.brokerName || 'Unknown Carrier',
+
+            // Invoice Information
+            invoiceNumber: `INV-${load.id}-${Date.now().toString().slice(-6)}`,
+            invoiceStatus: Math.random() > 0.5 ? 'sent' : 'auto_generated',
+            invoiceCreatedAt: new Date().toISOString(),
+            paymentDueDate: new Date(
+              Date.now() + 7 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+
+            // Document References
+            rateConfirmationNumber: `RC-${load.id}-${Date.now().toString().slice(-6)}`,
+            bolNumber: `BOL-${load.id}-${Date.now().toString().slice(-6)}`,
+            documentsVerified: Math.random() > 0.3,
+
+            // Payment Tracking
+            paymentMethod: undefined,
+            paymentReference: undefined,
+            daysOverdue:
+              Math.random() > 0.8
+                ? Math.floor(Math.random() * 10) + 1
+                : undefined,
+          }));
+
+        setCompletedLoads(completedLoadsData);
+      }
+    };
+
+    initializeData();
   }, []);
 
   const handleMarkAsRead = (notificationId: string) => {
@@ -1544,6 +1549,26 @@ export default function DispatchCentral() {
         >
           🛡️ Integrated with FACIS™ Security Intelligence & Risk Assessment
         </p>
+
+        {/* Getting Started Workflow */}
+        <DispatchGettingStarted
+          onStepClick={(stepId, tab) => {
+            if (tab) {
+              setSelectedTab(tab);
+              // Scroll to the relevant section
+              setTimeout(() => {
+                const element = document.getElementById(`tab-${tab}`);
+                if (element) {
+                  element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  });
+                }
+              }, 100);
+            }
+          }}
+        />
+
         {/* Quick Stats */}
         <div
           style={{
@@ -1715,7 +1740,7 @@ export default function DispatchCentral() {
 
           {/* Tab Content */}
           {selectedTab === 'dashboard' && (
-            <div>
+            <div id='tab-dashboard'>
               <h2
                 style={{
                   color: 'white',
@@ -3778,7 +3803,7 @@ export default function DispatchCentral() {
           )}
 
           {selectedTab === 'loads' && (
-            <div>
+            <div id='tab-loads'>
               <div
                 style={{
                   display: 'flex',
@@ -3829,7 +3854,7 @@ export default function DispatchCentral() {
           )}
 
           {selectedTab === 'tracking' && (
-            <div>
+            <div id='tab-tracking'>
               <div
                 style={{
                   display: 'flex',
@@ -3878,7 +3903,7 @@ export default function DispatchCentral() {
           )}
 
           {selectedTab === 'compliance' && (
-            <div>
+            <div id='tab-compliance'>
               <h2
                 style={{
                   color: 'white',

@@ -85,105 +85,83 @@ ${strategy.aiApplication.map((app) => `- ${app}`).join('\n')}
 const predefinedLearningMaterials: Record<string, LearningMaterial[]> = {
   will: [
     {
-      id: 'will-freight-discovery',
-      title: 'Freight & Logistics Discovery Questions Framework',
+      id: 'will-one-meeting-close',
+      title: 'Freight One-Meeting Close System',
       description:
-        'Transportation-focused discovery system for uncovering shipping pain points and closing freight deals',
-      type: 'process',
+        'Complete freight brokerage sales methodology for closing high-ticket contracts in single interactions',
+      type: 'strategy',
       proficiency: 'expert',
       content: `
-# Freight & Logistics Discovery Questions Framework
+# Freight One-Meeting Close System - Will (Sales)
 
-This comprehensive discovery system helps uncover transportation pain points and close freight brokerage deals through strategic questioning tailored to logistics challenges.
+## WILL'S TRAINING OVERVIEW
+**Role**: Primary sales closer for DEPOINTE freight brokerage
+**Focus**: Converting prospects to signed contracts in single interactions
+**Target**: 50% close rate on first contact, $75K+ average monthly contract value
 
-## Freight & Transportation Pain Questions
-*Uncovering shipping and logistics challenges*
+## WILL'S CORE COMPETENCIES
 
-### Core Transportation Pain Discovery
-1. "What shipping challenges are you facing that could derail your operations six months from now?"
-2. "Why would delayed or failed shipments be catastrophic for your business?"
-3. "Help me understand the most frustrating challenges you face with your current freight operations?"
-4. "How satisfied are you with your current carrier network and shipping reliability?"
-5. "How highly does freight cost control rank on your operational priorities?"
-6. "Is freight reliability your biggest concern, or are there other logistics issues more pressing?"
+### 1. Prospect Qualification & Pre-Framing
+**Scripts for Will:**
+- "Hi [Prospect], this is Will from DEPOINTE. We'll discuss your freight capacity needs, review carrier options, and secure your preferred partnerships today."
+- "Most shippers make confident decisions during our first call to lock in capacity before shortages hit."
 
-### Shipping Pain Clarification
-7. "If you could solve any transportation challenge instantly, what would have the biggest impact?"
-8. "I know you probably get calls from brokers daily. What made this conversation worth your time?"
-9. "Help me understand exactly what's happening with your freight that's causing problems?"
-10. "Can you give me a specific example of a recent shipping issue that cost you?"
-11. "How long have you been dealing with unreliable carriers? How often do shipments get delayed?"
-12. "What freight solutions have you tried? How did those work out for your operations?"
+**Will's Qualification Questions:**
+- "What's your current monthly shipment volume?"
+- "What's your biggest challenge with carrier availability?"
+- "How much are capacity issues costing you monthly?"
 
-## Transportation Impact Questions
-*Quantifying the cost of freight problems*
+### 2. Trust Building Through Expertise
+**Will's Authority Statements:**
+- "DEPOINTE has secured capacity for 500+ shippers this quarter"
+- "Our carrier network includes 200+ trusted partners with 99.8% on-time performance"
+- "We handle all FMCSA compliance and insurance requirements"
 
-### Business Impact Discovery
-13. "Walk me through how shipping delays are affecting your customer relationships and bottom line?"
-14. "What's the ripple effect when a critical shipment gets delayed or damaged?"
-15. "How are freight issues impacting your ability to serve customers and grow the business?"
-16. "Who else gets affected when shipments fail - your customers, sales team, operations?"
-17. "What's the real cost of freight problems - including lost customers, expedited shipping, overtime?"
-18. "How is dealing with unreliable carriers affecting you personally as a decision maker?"
-19. "What's pushing you to find better freight solutions now versus continuing with current carriers?"
+### 3. Pain Discovery & Urgency Creation
+**Will's Pain Surfacing:**
+- "How often are you turning away business due to capacity constraints?"
+- "What's the impact of carrier shortages on your delivery promises?"
+- "How much time does your team spend chasing carriers?"
 
-### Specific Transportation Impact Probing
-20. "How are shipping delays affecting your customer satisfaction scores and retention?"
-21. "What are the downsides when carriers don't show up or deliveries are late?"
-22. "What effect does freight uncertainty have on your production planning?"
-23. "How often do shipping problems cause you to lose customers or orders?"
-24. "What does poor carrier performance result in for your operations team?"
-25. "How often do freight issues lead to emergency expedited shipments?"
+### 4. Solution Presentation & Closing
+**Will's Service Tier Presentation:**
+- **Basic Brokerage**: Standard carrier matching, basic tracking ($2,500/month)
+- **Premium Logistics**: Dedicated dispatch, priority capacity ($5,000/month)
+- **Elite Service**: Full supply chain management, guaranteed capacity ($8,500/month)
 
-## Freight Solution Questions
-*Understanding transportation needs and positioning your brokerage*
+**Will's Close Scripts:**
+- "Based on your volume and pain points, the Premium tier gives you dedicated capacity. Shall we activate this today?"
+- "If we secure these carrier commitments now, you'll have guaranteed capacity for Q1. Ready to move forward?"
 
-### Transportation Solution Discovery
-26. "How critical is solving your freight challenges compared to other operational priorities?"
-27. "What kind of carrier network and freight solutions do you think would solve these shipping issues?"
-28. "Have you considered working with a freight broker who has vetted carriers and real-time tracking? How would that help?"
-29. "What advantages do you see from having reliable carriers, competitive rates, and full visibility?"
-30. "How would consistent on-time deliveries and proactive communication benefit your operations?"
+## WILL'S FREIGHT OBJECTION PLAYBOOK
 
-### Transportation Value Quantification
-31. "What would reliable freight service with 98% on-time delivery be worth to your business?"
-32. "What transportation improvement would have the biggest impact on your bottom line?"
-33. "Why is solving your freight challenges personally important to you as a leader?"
+**Objection: "Need to shop rates"**
+Will's Response: "I understand comparing options. However, our guaranteed capacity means you won't face the 30% rate increases we've seen in spot market. Let's lock in these rates today."
 
-## Freight Decision & Closing Questions
-*Securing transportation partnerships*
+**Objection: "Not ready to commit"**
+Will's Response: "What's holding you back specifically? The rates, capacity guarantees, or partnership terms? Most shippers move forward when they see the alternative is continued shortages."
 
-### Transportation Decision Process
-34. "What's changed with your shipping needs since we last spoke?"
-35. "Walk me through how your company typically evaluates and selects new freight partners?"
-36. "Who needs to be involved in approving a new freight broker - operations, procurement, finance? What does each person care about most?"
-37. "How do you typically structure freight partnerships - contract rates, spot market, or hybrid?"
+**Objection: "Need team approval"**
+Will's Response: "Logistics decisions typically involve stakeholders. Would you prefer a 15-minute team call now, or shall I send the proposal for their review?"
 
-### Freight Partnership Closing
-38. "What needs to happen for us to start handling your freight by [specific date]?"
-39. "What could prevent us from becoming your primary freight partner?"
-40. "Is there any reason we shouldn't move forward with a trial shipment this week?"
+## WILL'S PERFORMANCE METRICS
+- **Monthly Target**: 25 new contracts signed
+- **Close Rate Goal**: 45% on first contact
+- **Average Contract Value**: $60,000/month minimum
+- **Call Efficiency**: 70% of calls under 12 minutes
 
-## Freight Sales Implementation Strategy
+## WILL'S DAILY TRAINING PROTOCOL
+1. **Morning Prep**: Review 3 successful closes from previous day
+2. **Role-Play**: Practice 2 objection scenarios
+3. **Call Tracking**: Log outcomes and improvement areas
+4. **Evening Review**: Analyze what worked, what didn't
 
-### Transportation Question Sequencing
-- Start with shipping pain points to establish freight needs
-- Progress to cost/impact questions to build urgency around reliable service
-- Move to solution fit to position your brokerage capabilities
-- End with decision process to secure freight partnership
+## WILL'S SUCCESS STORIES TO STUDY
+- **Manufacturing Client**: Converted from capacity crisis to $85K/month contract in single call
+- **Retail Chain**: Secured 50-truck commitment during peak season shortage
+- **Food Distributor**: Closed $120K annual contract by addressing compliance pain
 
-### Freight Conversation Flow
-- Use follow-up questions to understand specific shipping challenges
-- Ask for examples of recent freight failures and their costs
-- Connect shipping problems to customer satisfaction and revenue impact
-- Map decision criteria to your carrier network and service capabilities
-
-### Freight Brokerage Key Principles
-- Create urgency through shipping failure consequences
-- Quantify freight costs in total business impact terms
-- Map transportation decision process early
-- Position reliability and service as competitive advantages
-- Focus on partnership rather than transactional relationships
+**Will's training focuses on becoming DEPOINTE's elite freight sales closer, capable of securing high-value partnerships through masterful first-contact closing.**
       `,
       lastUpdated: '2025-01-15',
     },
@@ -1102,6 +1080,496 @@ This internal system provides DEPOINTE AI staff with superior lead generation ca
       lastUpdated: '2025-01-15',
     },
   ],
+  logan: [
+    {
+      id: 'logan-warehouse-operations',
+      title: 'Warehouse Operations Management',
+      description:
+        'Comprehensive guide to warehouse processes, safety, and efficiency optimization',
+      type: 'process',
+      proficiency: 'expert',
+      content: `
+# Warehouse Operations Management
+
+As a Logistics Coordination Specialist, understanding warehouse operations is crucial for optimizing supply chain efficiency and ensuring seamless coordination between warehouses, carriers, and customers.
+
+## Warehouse Layout & Infrastructure
+
+### Receiving Area
+- Designated space for incoming shipments
+- Dock levelers and loading ramps for efficient unloading
+- Inspection stations for quality control
+- Staging areas for temporary storage
+
+### Storage Area
+- Racking systems organized by product type and turnover rate
+- Aisle widths optimized for equipment movement
+- Climate-controlled zones for sensitive goods
+- Bulk storage areas for high-volume items
+
+### Picking & Packing Zone
+- Conveyor systems for order flow
+- Packing stations with necessary supplies
+- Quality control checkpoints
+- Shipping label application areas
+
+### Shipping & Dispatch Zone
+- Final quality checks before loading
+- Loading docks with proper signage
+- Documentation verification stations
+- Carrier coordination areas
+
+## Core Warehouse Processes
+
+### Receiving Goods
+1. **Pre-Arrival Preparation**
+   - Review advance shipping notices (ASN)
+   - Prepare receiving documentation
+   - Clear receiving area and staging space
+
+2. **Arrival & Inspection**
+   - Verify delivery against purchase orders
+   - Conduct damage assessment and documentation
+   - Check quantity and quality specifications
+
+3. **Processing & Documentation**
+   - Capture receiving data in WMS
+   - Apply barcode labels or RFID tags
+   - Update inventory records immediately
+
+### Inventory Management
+- **Real-time Tracking**: Continuous inventory updates via WMS
+- **Cycle Counting**: Regular inventory verification without full shutdowns
+- **ABC Analysis**: Categorize inventory by value and turnover rate
+- **FIFO/LIFO Management**: Proper rotation to minimize obsolescence
+
+### Order Processing
+1. **Order Validation**: Verify customer requirements and availability
+2. **Picking Optimization**: Use wave picking or zone picking strategies
+3. **Packing Standards**: Consistent packaging for damage prevention
+4. **Documentation**: Accurate shipping manifests and customs paperwork
+
+### Shipping & Distribution
+- **Carrier Selection**: Match shipment requirements with carrier capabilities
+- **Routing Optimization**: Minimize transit time and costs
+- **Tracking Integration**: Real-time visibility for customers
+- **Exception Handling**: Protocols for delays or issues
+
+## Warehouse Safety & Compliance
+
+### Safety Protocols
+- **PPE Requirements**: Safety glasses, gloves, steel-toe boots, high-visibility vests
+- **Equipment Training**: Certification for forklift, pallet jack, and conveyor operation
+- **Emergency Procedures**: Evacuation routes, first aid stations, fire suppression
+- **Hazard Communication**: Proper labeling of chemicals and dangerous goods
+
+### Compliance Standards
+- **OSHA Regulations**: Workplace safety and hazard prevention
+- **DOT Requirements**: Hazardous materials handling and transportation
+- **FMCSA Guidelines**: Hours of service and vehicle safety standards
+- **Industry Certifications**: ISO 9001, SQF, or facility-specific accreditations
+
+## Key Performance Metrics
+
+### Operational KPIs
+- **Order Accuracy**: Percentage of error-free orders shipped
+- **On-Time Shipping**: Orders shipped by promised date
+- **Inventory Accuracy**: Variance between system and physical counts
+- **Picking Productivity**: Lines picked per hour per associate
+
+### Efficiency Metrics
+- **Warehouse Utilization**: Space used vs. available
+- **Labor Productivity**: Revenue per labor hour
+- **Equipment Utilization**: Uptime and throughput of automated systems
+- **Cost per Order**: Total warehouse costs divided by orders processed
+
+## Technology Integration
+
+### Warehouse Management Systems (WMS)
+- Real-time inventory visibility
+- Automated replenishment alerts
+- Performance analytics and reporting
+- Integration with ERP and TMS systems
+
+### Automation Solutions
+- **Automated Storage & Retrieval Systems (AS/RS)**: High-density storage with robotic retrieval
+- **Conveyor Systems**: Efficient product movement between zones
+- **Sortation Systems**: Automated order consolidation
+- **Voice Picking**: Hands-free picking with voice-directed systems
+
+### Data Analytics
+- **Predictive Analytics**: Demand forecasting and inventory optimization
+- **Labor Management**: Optimal staffing based on workload patterns
+- **Performance Dashboards**: Real-time KPI monitoring
+- **Root Cause Analysis**: Issue identification and resolution
+
+## Continuous Improvement
+
+### Process Optimization
+- **Value Stream Mapping**: Identify bottlenecks and inefficiencies
+- **5S Methodology**: Sort, Set in Order, Shine, Standardize, Sustain
+- **Lean Principles**: Eliminate waste and optimize flow
+- **Six Sigma**: Statistical process control and quality improvement
+
+### Staff Development
+- **Cross-Training**: Multi-skilled workforce for flexibility
+- **Performance Feedback**: Regular coaching and skill development
+- **Technology Adoption**: Training on new systems and equipment
+- **Safety Culture**: Ongoing safety training and awareness
+
+This comprehensive warehouse operations knowledge enables you to better coordinate with warehouse partners, optimize logistics flows, and provide superior service to DEPOINTE's freight brokerage clients.
+      `,
+      lastUpdated: '2025-01-20',
+    },
+  ],
+  miles: [
+    {
+      id: 'miles-warehouse-dispatch-integration',
+      title: 'Warehouse-Dispatch Integration',
+      description:
+        'Optimizing dispatch coordination with warehouse operations for efficient freight movement',
+      type: 'process',
+      proficiency: 'advanced',
+      content: `
+# Warehouse-Dispatch Integration
+
+As a Transportation Coordinator, understanding warehouse operations is essential for optimizing dispatch coordination and ensuring seamless freight movement between warehouses and carriers.
+
+## Warehouse Operations Impact on Dispatch
+
+### Receiving Area Coordination
+- **Dock Scheduling**: Coordinate carrier arrival times with warehouse receiving schedules
+- **Appointment System**: Manage delivery windows to prevent congestion
+- **Pre-Arrival Communication**: Share load details with warehouse receiving teams
+- **Backup Planning**: Have contingency plans for delayed deliveries
+
+### Shipping Zone Integration
+- **Loading Dock Assignment**: Match carrier equipment with appropriate loading docks
+- **Priority Sequencing**: Coordinate high-priority shipments through warehouse processes
+- **Documentation Sync**: Ensure shipping manifests align with carrier requirements
+- **Quality Control**: Verify load condition before carrier departure
+
+## Dispatch Optimization Strategies
+
+### Warehouse Timing Coordination
+- **Peak Hour Management**: Schedule pickups during warehouse off-peak hours
+- **Cross-Dock Opportunities**: Identify opportunities for immediate load transfers
+- **Inventory Visibility**: Use warehouse data to optimize pickup timing
+- **Route Sequencing**: Plan routes considering warehouse operating hours
+
+### Carrier-Warehouse Communication
+- **Status Updates**: Real-time communication on load availability
+- **Issue Resolution**: Quick coordination for loading problems
+- **Capacity Planning**: Align carrier availability with warehouse throughput
+- **Performance Tracking**: Monitor on-time pickup and delivery metrics
+
+## Warehouse Process Understanding
+
+### Order Processing Workflow
+- **Picking Optimization**: Understand warehouse picking strategies for better planning
+- **Packing Standards**: Know packaging requirements for different freight types
+- **Quality Assurance**: Coordinate final inspections before carrier pickup
+- **Documentation**: Ensure all shipping paperwork is complete and accurate
+
+### Inventory Management Integration
+- **Stock Availability**: Check inventory levels before scheduling pickups
+- **Reorder Point Alerts**: Monitor inventory levels that may affect dispatch
+- **Seasonal Patterns**: Plan for peak warehouse activity periods
+- **Storage Location**: Understand how warehouse layout affects loading efficiency
+
+## Safety and Compliance Coordination
+
+### Warehouse Safety Protocols
+- **PPE Requirements**: Ensure carriers understand warehouse safety requirements
+- **Equipment Standards**: Match carrier equipment with warehouse capabilities
+- **Hazard Communication**: Share information about dangerous goods handling
+- **Emergency Procedures**: Know warehouse evacuation and emergency protocols
+
+### Regulatory Compliance
+- **Hours of Service**: Coordinate driver schedules with warehouse hours
+- **Documentation Requirements**: Ensure proper chain of custody documentation
+- **Weight Compliance**: Verify load weights meet carrier and warehouse limits
+- **Insurance Coordination**: Maintain proper coverage for warehouse operations
+
+## Technology Integration
+
+### TMS-WMS Connectivity
+- **Real-Time Updates**: Track load status through warehouse processes
+- **Automated Notifications**: Receive alerts for load availability
+- **Data Synchronization**: Maintain consistent information across systems
+- **Performance Analytics**: Track warehouse-dispatch efficiency metrics
+
+### Mobile Applications
+- **Driver Communication**: Enable direct communication with warehouse staff
+- **Load Tracking**: Real-time visibility of load progression
+- **Documentation Capture**: Digital signatures and proof of delivery
+- **Issue Reporting**: Immediate notification of problems or delays
+
+## Performance Optimization
+
+### Key Metrics to Monitor
+- **On-Time Pickup Rate**: Percentage of loads picked up on schedule
+- **Warehouse Wait Time**: Time carriers spend waiting at facilities
+- **Load Accuracy**: Percentage of loads picked up without issues
+- **Documentation Compliance**: Accuracy of shipping documentation
+
+### Continuous Improvement
+- **Process Feedback**: Regular communication with warehouse partners
+- **Route Optimization**: Consider warehouse locations in routing decisions
+- **Technology Adoption**: Implement new tools for better coordination
+- **Relationship Building**: Develop strong partnerships with warehouse operations
+
+This warehouse-dispatch integration knowledge enables you to optimize transportation coordination, reduce wait times, improve carrier satisfaction, and enhance overall supply chain efficiency for DEPOINTE's freight brokerage operations.
+      `,
+      lastUpdated: '2025-01-20',
+    },
+  ],
+  'carrie-r': [
+    {
+      id: 'carrie-warehouse-carrier-integration',
+      title: 'Warehouse-Carrier Performance Optimization',
+      description:
+        'Optimizing carrier performance through warehouse operations understanding',
+      type: 'process',
+      proficiency: 'advanced',
+      content: `
+# Warehouse-Carrier Performance Optimization
+
+As a Carrier Relations Manager, understanding warehouse operations is crucial for optimizing carrier performance, improving relationships, and ensuring smooth freight movement through warehouse facilities.
+
+## Warehouse Operations Impact on Carrier Performance
+
+### Receiving Area Efficiency
+- **Dock Scheduling**: Coordinate carrier delivery times with warehouse capacity
+- **Appointment Systems**: Manage delivery windows to optimize warehouse throughput
+- **Pre-Arrival Preparation**: Ensure carriers have proper documentation ready
+- **Load Optimization**: Match carrier equipment capabilities with warehouse requirements
+
+### Shipping Coordination
+- **Loading Dock Management**: Assign appropriate docks based on carrier equipment
+- **Priority Handling**: Coordinate high-value shipments through warehouse processes
+- **Quality Assurance**: Ensure proper load securing and documentation
+- **Departure Coordination**: Streamline final checks and carrier departure
+
+## Carrier Performance Optimization
+
+### On-Time Performance
+- **Pickup Reliability**: Coordinate with warehouses for consistent pickup times
+- **Delivery Accuracy**: Understand warehouse processes affecting delivery schedules
+- **Transit Time Optimization**: Plan routes considering warehouse operating hours
+- **Exception Management**: Quick resolution of warehouse-related delays
+
+### Quality and Safety
+- **Load Security**: Ensure proper cargo securement procedures
+- **Damage Prevention**: Understand warehouse handling requirements
+- **Documentation Compliance**: Maintain accurate chain of custody records
+- **Safety Protocols**: Adhere to warehouse-specific safety requirements
+
+## Warehouse Process Understanding
+
+### Inventory Management Integration
+- **Stock Availability**: Coordinate pickups based on inventory levels
+- **Order Fulfillment**: Understand warehouse picking and packing processes
+- **Cross-Docking**: Identify opportunities for efficient load transfers
+- **Storage Optimization**: Work with warehouses on optimal storage solutions
+
+### Technology Integration
+- **WMS-TMS Connectivity**: Real-time visibility into warehouse operations
+- **Automated Notifications**: Alerts for load availability and status changes
+- **Mobile Applications**: Direct communication with warehouse personnel
+- **Performance Tracking**: Monitor warehouse-carrier efficiency metrics
+
+## Carrier Relationship Management
+
+### Partnership Development
+- **Warehouse Relationships**: Build strong connections with warehouse operations
+- **Performance Feedback**: Regular communication on carrier performance
+- **Process Improvement**: Collaborative optimization of warehouse-carrier processes
+- **Issue Resolution**: Efficient handling of warehouse-related problems
+
+### Service Level Agreements
+- **Performance Standards**: Establish clear expectations for warehouse interactions
+- **KPI Monitoring**: Track on-time pickups, load accuracy, and documentation compliance
+- **Continuous Improvement**: Regular review and optimization of processes
+- **Communication Protocols**: Standardized communication between carriers and warehouses
+
+## Safety and Compliance Coordination
+
+### Warehouse Safety Requirements
+- **PPE Compliance**: Ensure carriers meet warehouse safety standards
+- **Equipment Standards**: Match carrier equipment with warehouse capabilities
+- **Hazard Communication**: Proper handling of dangerous goods
+- **Emergency Procedures**: Knowledge of warehouse emergency protocols
+
+### Regulatory Compliance
+- **Hours of Service**: Coordinate driver schedules with warehouse hours
+- **Weight Compliance**: Verify load weights meet regulatory requirements
+- **Documentation**: Maintain proper shipping and compliance records
+- **Insurance Coverage**: Ensure adequate coverage for warehouse operations
+
+## Performance Metrics and Optimization
+
+### Key Performance Indicators
+- **On-Time Pickup Rate**: Percentage of loads picked up on schedule
+- **Load Accuracy**: Percentage of loads picked up without issues
+- **Warehouse Wait Time**: Time carriers spend waiting at facilities
+- **Documentation Compliance**: Accuracy of shipping documentation
+
+### Continuous Improvement
+- **Process Feedback**: Regular review of warehouse-carrier interactions
+- **Technology Adoption**: Implement tools for better coordination
+- **Training Programs**: Educate carriers on warehouse procedures
+- **Relationship Building**: Develop strong warehouse partnerships
+
+## Carrier Development and Training
+
+### Warehouse-Specific Training
+- **Facility Orientation**: Training on specific warehouse procedures
+- **Equipment Requirements**: Understanding warehouse equipment standards
+- **Safety Protocols**: Warehouse-specific safety training
+- **Process Optimization**: Best practices for efficient warehouse interactions
+
+### Performance Coaching
+- **Feedback Systems**: Regular performance reviews and coaching
+- **Best Practice Sharing**: Share successful warehouse interaction strategies
+- **Technology Utilization**: Training on warehouse management systems
+- **Process Improvement**: Collaborative development of better procedures
+
+This warehouse-carrier integration knowledge enables you to optimize carrier performance, build stronger warehouse relationships, and ensure efficient freight movement through warehouse facilities for DEPOINTE's freight brokerage operations.
+      `,
+      lastUpdated: '2025-01-20',
+    },
+  ],
+  'c-allen-durr': [
+    {
+      id: 'allen-warehouse-operations-management',
+      title: 'Warehouse Operations in Overall Business Management',
+      description:
+        'Integrating warehouse operations into comprehensive operations management strategy',
+      type: 'strategy',
+      proficiency: 'expert',
+      content: `
+# Warehouse Operations in Overall Business Management
+
+As Operations Manager, understanding warehouse operations is essential for optimizing resource allocation, improving operational efficiency, and ensuring seamless integration across the entire supply chain for DEPOINTE's freight brokerage operations.
+
+## Strategic Warehouse Integration
+
+### Operations Planning and Resource Allocation
+- **Capacity Planning**: Align warehouse capacity with overall operational requirements
+- **Resource Optimization**: Coordinate warehouse staffing with peak demand periods
+- **Cost Management**: Balance warehouse costs with service level requirements
+- **Performance Integration**: Incorporate warehouse metrics into overall operations dashboards
+
+### Supply Chain Optimization
+- **End-to-End Visibility**: Track freight movement from origin to destination
+- **Bottleneck Identification**: Identify and resolve warehouse-related supply chain constraints
+- **Process Standardization**: Ensure consistent procedures across warehouse partners
+- **Continuous Improvement**: Implement lean principles across warehouse operations
+
+## Warehouse Performance Management
+
+### Key Performance Indicators
+- **Operational Efficiency**: Order processing time, picking accuracy, and throughput
+- **Cost Performance**: Cost per order, labor productivity, and equipment utilization
+- **Quality Metrics**: Order accuracy, damage rates, and customer satisfaction
+- **Service Levels**: On-time delivery, order fulfillment rates, and responsiveness
+
+### Performance Optimization Strategies
+- **Process Automation**: Implement technology solutions for improved efficiency
+- **Staff Training**: Develop skilled workforce for optimal performance
+- **Layout Optimization**: Design warehouse spaces for maximum productivity
+- **Technology Integration**: Connect warehouse systems with broader operations platforms
+
+## Financial Impact of Warehouse Operations
+
+### Cost Analysis and Control
+- **Direct Costs**: Labor, equipment, facilities, and maintenance expenses
+- **Indirect Costs**: Inventory carrying costs, obsolescence, and shrinkage
+- **Efficiency Metrics**: Cost per unit handled, cost per order processed
+- **ROI Analysis**: Evaluate investments in warehouse technology and improvements
+
+### Revenue Optimization
+- **Service Differentiation**: Use warehouse capabilities to offer premium services
+- **Capacity Utilization**: Maximize warehouse throughput for increased revenue
+- **Customer Satisfaction**: Improve service quality to enhance customer retention
+- **Market Expansion**: Leverage warehouse capabilities for new business opportunities
+
+## Technology and Systems Integration
+
+### Warehouse Management Systems
+- **Real-Time Visibility**: Track inventory and operations across all warehouse locations
+- **Automated Processes**: Implement robotics and automation for improved efficiency
+- **Data Analytics**: Use warehouse data for predictive analytics and optimization
+- **Integration Capabilities**: Connect with ERP, TMS, and other operational systems
+
+### Digital Transformation
+- **IoT Implementation**: Use sensors and devices for real-time monitoring
+- **AI and Machine Learning**: Implement predictive maintenance and optimization
+- **Mobile Applications**: Enable mobile workforce management and communication
+- **Cloud Solutions**: Provide scalable, accessible warehouse management platforms
+
+## Risk Management and Compliance
+
+### Operational Risk Mitigation
+- **Business Continuity**: Develop contingency plans for warehouse disruptions
+- **Quality Assurance**: Implement rigorous quality control processes
+- **Safety Management**: Ensure compliance with safety regulations and best practices
+- **Security Protocols**: Protect inventory and facilities from theft and damage
+
+### Regulatory Compliance
+- **Industry Standards**: Maintain compliance with ISO, GMP, and other certifications
+- **Safety Regulations**: Ensure adherence to OSHA, EPA, and DOT requirements
+- **Data Privacy**: Protect sensitive customer and operational data
+- **Environmental Compliance**: Implement sustainable warehouse practices
+
+## Strategic Planning and Growth
+
+### Long-Term Capacity Planning
+- **Demand Forecasting**: Predict future warehouse capacity requirements
+- **Facility Expansion**: Plan for warehouse growth and new location development
+- **Technology Roadmap**: Develop long-term technology investment strategies
+- **Partnership Development**: Build strategic relationships with warehouse providers
+
+### Innovation and Competitive Advantage
+- **Process Innovation**: Implement cutting-edge warehouse methodologies
+- **Service Innovation**: Develop new service offerings leveraging warehouse capabilities
+- **Technology Leadership**: Stay ahead of industry technology trends
+- **Market Differentiation**: Use superior warehouse operations as competitive advantage
+
+## Team Leadership and Development
+
+### Organizational Development
+- **Skills Assessment**: Evaluate team capabilities and identify training needs
+- **Talent Development**: Implement training programs for warehouse operations excellence
+- **Performance Management**: Establish clear performance expectations and metrics
+- **Succession Planning**: Develop leadership pipeline for warehouse operations
+
+### Change Management
+- **Process Implementation**: Lead adoption of new warehouse technologies and processes
+- **Cultural Transformation**: Foster culture of continuous improvement and innovation
+- **Stakeholder Engagement**: Build support for warehouse initiatives across organization
+- **Communication Strategy**: Keep teams informed about warehouse operation changes
+
+## Cross-Functional Collaboration
+
+### Internal Coordination
+- **Department Integration**: Ensure alignment between warehouse operations and other departments
+- **Information Sharing**: Facilitate communication of warehouse performance and requirements
+- **Joint Planning**: Coordinate warehouse activities with sales, marketing, and customer service
+- **Performance Alignment**: Ensure warehouse goals support overall business objectives
+
+### External Partnerships
+- **Supplier Relationships**: Develop strong partnerships with warehouse service providers
+- **Customer Collaboration**: Work with customers to optimize warehouse-related processes
+- **Industry Networks**: Participate in industry groups for best practice sharing
+- **Technology Vendors**: Collaborate with vendors for innovative warehouse solutions
+
+This comprehensive understanding of warehouse operations enables you to optimize resource allocation, improve operational efficiency, and drive strategic growth for DEPOINTE's freight brokerage operations through effective warehouse management integration.
+      `,
+      lastUpdated: '2025-01-20',
+    },
+  ],
   'ana-lyles': [
     {
       id: 'ana-data-driven',
@@ -1205,6 +1673,193 @@ This comprehensive framework transforms raw transportation and logistics data in
 10. Scale capabilities across organization
       `,
       lastUpdated: '2025-07-01',
+    },
+  ],
+  regina: [
+    {
+      id: 'regina-international-trade-compliance',
+      title: 'International Trade Compliance & Customs',
+      description:
+        'Comprehensive expertise in international trade regulations, customs clearance, and cross-border compliance',
+      type: 'knowledge',
+      proficiency: 'expert',
+      content: `
+# International Trade Compliance & Customs Expertise
+
+As FMCSA Regulations Specialist with international trade focus, I provide comprehensive expertise in global trade compliance, customs regulations, and cross-border operations.
+
+## Customs Clearance & Documentation
+
+### Automated HTS Classification
+- **Product Classification**: Automated Harmonized Tariff Schedule (HTS) classification using AI-powered product recognition
+- **Duty Calculation**: Real-time duty and tax calculations for 195+ countries
+- **Compliance Verification**: Automated compliance checks against restricted/prohibited items lists
+
+### Documentation Automation
+- **Commercial Invoices**: Auto-generation with product details, values, and compliance declarations
+- **Certificates of Origin**: Automated CO creation with digital signatures and blockchain verification
+- **Export Licenses**: Automated license application and renewal tracking
+- **Customs Entry Forms**: Pre-populated forms with real-time validation
+
+## International Trade Regulations
+
+### NAFTA/USMCA Compliance
+- **Rules of Origin**: Automated origin determination and certification
+- **Regional Value Content**: Real-time calculation of qualifying costs
+- **Tariff Preference Programs**: Automated qualification for duty-free entry
+- **Documentation Requirements**: Streamlined compliance documentation
+
+### Export Control Compliance
+- **ITAR/EAR Compliance**: Automated screening against restricted party lists
+- **Dual-Use Goods**: Classification and licensing for dual-use items
+- **Embargo Compliance**: Real-time screening against OFAC and other sanctions lists
+- **Technology Transfer**: Compliance monitoring for technical data exports
+
+## Currency & Financial Compliance
+
+### Currency Hedging Integration
+- **Forward Contracts**: Automated setup for currency risk mitigation
+- **Options Strategies**: Dynamic hedging strategies based on trade volumes
+- **Real-time Rates**: Live currency rate monitoring and alerts
+- **Risk Assessment**: Automated exposure analysis and hedging recommendations
+
+### International Payment Processing
+- **Multi-currency Support**: Processing in 150+ currencies
+- **Regulatory Compliance**: AML/KYC automated verification
+- **Cross-border Transfers**: Optimized routing for international payments
+- **Settlement Tracking**: Real-time payment status and confirmation
+
+## Risk Management & Insurance
+
+### Cargo Insurance Coordination
+- **Automated Coverage**: Instant quotes and policy generation
+- **Risk Assessment**: AI-powered cargo valuation and risk profiling
+- **Claims Processing**: Automated claims filing and settlement tracking
+- **Loss Prevention**: Proactive risk mitigation recommendations
+
+### Trade Credit Insurance
+- **Buyer Credit Analysis**: Automated creditworthiness assessment
+- **Policy Management**: Dynamic coverage based on trade volumes
+- **Claims Automation**: Streamlined claims process for non-payment
+- **Portfolio Optimization**: Risk-adjusted credit limit recommendations
+
+## Technology Integration
+
+### API Ecosystem
+- **Customs APIs**: Direct integration with CBP, EU Customs, and other agencies
+- **Shipping Line APIs**: Real-time booking and tracking integration
+- **Banking APIs**: Direct payment processing and foreign exchange
+- **Insurance APIs**: Instant coverage quotes and policy management
+
+### Blockchain Integration
+- **Document Verification**: Immutable record keeping for trade documents
+- **Supply Chain Tracking**: End-to-end visibility with blockchain traceability
+- **Smart Contracts**: Automated execution of trade finance agreements
+- **Digital Certificates**: Secure, verifiable trade documentation
+
+This international trade compliance expertise enables DEPOINTE AI to provide comprehensive cross-border solutions with full regulatory compliance and risk mitigation.
+      `,
+      lastUpdated: '2025-01-20',
+    },
+  ],
+  kameelah: [
+    {
+      id: 'kameelah-customs-documentation-automation',
+      title: 'Customs Documentation & Compliance Automation',
+      description:
+        'Automated customs documentation, compliance verification, and international trade paperwork processing',
+      type: 'process',
+      proficiency: 'expert',
+      content: `
+# Customs Documentation & Compliance Automation
+
+As DOT Compliance Specialist with international trade focus, I provide comprehensive expertise in automated customs documentation and compliance processing.
+
+## Automated Documentation Generation
+
+### Commercial Invoice Automation
+- **Smart Templates**: AI-powered templates that adapt to destination country requirements
+- **Product Classification**: Automatic HTS code assignment using machine learning
+- **Value Calculation**: Real-time landed cost calculations including duties and taxes
+- **Compliance Verification**: Automated checks against country-specific regulations
+
+### Certificate of Origin Processing
+- **Chain of Custody**: Automated tracking from manufacturer to final destination
+- **Digital Signatures**: Blockchain-verified signatures for authenticity
+- **Multi-language Support**: Auto-translation for international requirements
+- **Template Library**: 195+ country-specific CO templates
+
+### Export License Management
+- **Automated Applications**: AI-powered license application completion
+- **Compliance Monitoring**: Real-time tracking of license validity and conditions
+- **Renewal Alerts**: Proactive notifications for upcoming expirations
+- **Audit Trail**: Complete documentation history for compliance audits
+
+## Customs Clearance Integration
+
+### CBP ACE Integration
+- **Automated Filing**: Direct electronic filing with US Customs and Border Protection
+- **Status Tracking**: Real-time clearance status updates
+- **Document Upload**: Automated submission of supporting documentation
+- **Duty Payment**: Integrated payment processing for customs duties
+
+### International Customs APIs
+- **EU Customs Integration**: Direct connection with EU customs systems
+- **Asian Customs Networks**: Integration with major Asian customs agencies
+- **Latin American Systems**: Coverage for major Latin American markets
+- **Real-time Updates**: Live tracking of customs clearance progress
+
+## Compliance Automation
+
+### Restricted Items Screening
+- **Automated Screening**: AI-powered checks against embargoed destinations
+- **Dual-Use Classification**: Automatic EAR/ITAR compliance verification
+- **Sanctions Monitoring**: Real-time OFAC and other sanctions list screening
+- **Risk Assessment**: Automated risk scoring for shipments
+
+### Documentation Validation
+- **Format Verification**: Automated checks for required document formats
+- **Data Accuracy**: AI-powered validation of product descriptions and values
+- **Completeness Checks**: Automated verification of all required fields
+- **Error Correction**: Intelligent suggestions for documentation corrections
+
+## Multi-Modal Documentation Coordination
+
+### Sea Freight Documentation
+- **Bill of Lading**: Automated generation and verification
+- **Container Manifests**: Real-time container tracking and documentation
+- **Shipping Instructions**: AI-optimized instructions for carriers
+- **Arrival Notifications**: Automated notifications for customs preparation
+
+### Air Freight Documentation
+- **Air Waybills**: Automated AWB generation and processing
+- **Dangerous Goods**: Automated DGD completion and verification
+- **Customs Declaration**: Pre-populated declarations for air shipments
+- **Airport Authority Coordination**: Direct integration with major airports
+
+### Ground Transportation
+- **CMR Documents**: Automated CMR generation for European road transport
+- **Waybills**: Smart waybill generation with GPS integration
+- **Border Crossing**: Automated documentation for international borders
+- **Carrier Coordination**: Real-time communication with ground carriers
+
+## Technology Stack Integration
+
+### API Ecosystem
+- **Customs APIs**: Direct integration with 50+ customs agencies worldwide
+- **Shipping Line APIs**: Real-time booking and documentation updates
+- **Banking APIs**: Integrated duty payment and foreign exchange
+- **Insurance APIs**: Automated cargo insurance documentation
+
+### AI-Powered Automation
+- **Document Recognition**: OCR and AI-powered document processing
+- **Predictive Compliance**: Machine learning for compliance risk prediction
+- **Automated Classification**: AI-powered product and document classification
+- **Smart Templates**: Adaptive templates based on shipment characteristics
+
+This automated customs documentation expertise enables DEPOINTE AI to provide seamless international shipping with full compliance and minimal manual intervention.
+      `,
+      lastUpdated: '2025-01-20',
     },
   ],
 };

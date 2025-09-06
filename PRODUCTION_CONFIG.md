@@ -77,7 +77,8 @@ SMTP_PASS=your-sendgrid-api-key
 # Social Media APIs
 FACEBOOK_ACCESS_TOKEN=your-facebook-page-token
 LINKEDIN_ACCESS_TOKEN=your-linkedin-access-token
-TWITTER_BEARER_TOKEN=your-twitter-bearer-token
+INSTAGRAM_ACCESS_TOKEN=your-instagram-access-token
+INSTAGRAM_ACCOUNT_ID=your-instagram-account-id
 ```
 
 ### Billing & Payment

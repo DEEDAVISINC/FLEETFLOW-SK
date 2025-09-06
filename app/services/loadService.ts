@@ -662,13 +662,13 @@ export const getLoadsForUser = (): Load[] => {
 };
 
 // Enhanced multi-tenant load filtering
-export const getLoadsForTenant = (): Load[] => {
-  return MultiTenantDataService.filterLoadsForTenant(LOADS_DB);
+export const getLoadsForTenant = async (): Promise<Load[]> => {
+  return await MultiTenantDataService.filterLoadsForOrganization(LOADS_DB);
 };
 
 // Get tenant-specific statistics
-export const getTenantLoadStats = () => {
-  return MultiTenantDataService.getTenantStats(LOADS_DB);
+export const getTenantLoadStats = async () => {
+  return await MultiTenantDataService.getOrganizationStats(LOADS_DB);
 };
 
 // Get loads for carrier portal (shows available loads to carriers)
@@ -776,8 +776,10 @@ export const getDispatcherLoads = (dispatcherId?: string): Load[] => {
  * Get loads for current tenant (user-specific data isolation)
  * Supports individual dispatchers and dispatch companies
  */
-export const getTenantLoads = (): Load[] => {
-  return MultiTenantDataService.filterLoadsForTenant(LOADS_DB).map((load) => ({
+export const getTenantLoads = async (): Promise<Load[]> => {
+  const filteredLoads =
+    await MultiTenantDataService.filterLoadsForOrganization(LOADS_DB);
+  return filteredLoads.map((load) => ({
     ...load,
     loadBoardNumber: load.loadBoardNumber || generateLoadBoardNumber(load),
   }));
@@ -787,8 +789,10 @@ export const getTenantLoads = (): Load[] => {
  * Get global load board (shared marketplace - not filtered by tenant)
  * All users see the same available loads
  */
-export const getGlobalLoadBoard = (): Load[] => {
-  return MultiTenantDataService.getGlobalLoadBoard(LOADS_DB).map((load) => ({
+export const getGlobalLoadBoard = async (): Promise<Load[]> => {
+  const globalLoads =
+    await MultiTenantDataService.getOrganizationLoadBoard(LOADS_DB);
+  return globalLoads.map((load) => ({
     ...load,
     loadBoardNumber: load.loadBoardNumber || generateLoadBoardNumber(load),
   }));
@@ -797,15 +801,15 @@ export const getGlobalLoadBoard = (): Load[] => {
 /**
  * Get tenant-specific statistics
  */
-export const getTenantStats = () => {
-  return MultiTenantDataService.getTenantStats(LOADS_DB);
+export const getTenantStats = async () => {
+  return await MultiTenantDataService.getOrganizationStats(LOADS_DB);
 };
 
 /**
  * Check if current user has access to a specific load
  */
-export const hasLoadAccess = (load: Load): boolean => {
-  return MultiTenantDataService.hasAccessToLoad(load);
+export const hasLoadAccess = async (load: Load): Promise<boolean> => {
+  return await MultiTenantDataService.hasAccessToLoad(load);
 };
 
 // Function to add AI-generated expedited loads to the system

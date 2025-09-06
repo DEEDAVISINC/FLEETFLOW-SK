@@ -10,7 +10,7 @@ import { FMCSAReverseLeadService } from './fmcsa-reverse-lead-service';
 
 export interface UnifiedLead {
   id: string;
-  source: 'FMCSA' | 'TruckingPlanet' | 'ThomasNet' | 'Manual';
+  source: 'FMCSA' | 'TruckingPlanet' | 'ThomasNet' | 'Manual' | 'Carriers';
   companyName: string;
   contactInfo: {
     name?: string;
@@ -116,6 +116,11 @@ export class UnifiedLeadPipelineService {
       console.info('🏭 Scanning ThomasNet for industrial leads...');
       const thomasNetLeads = await this.generateThomasNetLeads();
       allLeads.push(...thomasNetLeads);
+
+      // Carrier Leads (additional TruckingPlanet carriers)
+      console.info('🚛 Scanning for additional carrier leads...');
+      const carrierLeads = await this.generateCarrierLeads();
+      allLeads.push(...carrierLeads);
 
       console.info(
         `🎯 Generated ${allLeads.length} total leads from all sources`
@@ -247,16 +252,130 @@ export class UnifiedLeadPipelineService {
    * Generate TruckingPlanet leads
    */
   private async generateTruckingPlanetLeads(): Promise<UnifiedLead[]> {
-    // Placeholder for TruckingPlanet integration
-    return [];
+    try {
+      // Use TruckingPlanet API to get carrier leads
+      const response = await fetch(
+        '/api/trucking-planet?action=carriers&minTrucks=10'
+      );
+      const data = await response.json();
+
+      if (data.success && data.data.carriers) {
+        return data.data.carriers.slice(0, 50).map((carrier: any) => ({
+          id: `tp_${carrier.id}`,
+          source: 'TruckingPlanet' as const,
+          companyName: carrier.companyName,
+          contactInfo: {
+            phone: carrier.contactInfo?.phone,
+            address:
+              `${carrier.location?.city || ''}, ${carrier.location?.state || ''}`.trim(),
+          },
+          leadScore: carrier.leadScore || 60,
+          salesStage: 'New' as const,
+          salesflowStatus: 'Not Started' as const,
+          liveflowInteractions: 0,
+          estimatedValue: carrier.estimatedValue || 15000,
+          createdAt: new Date(),
+          lastActivity: new Date(),
+          tags: [
+            'TruckingPlanet',
+            'Carrier',
+            carrier.equipmentType || 'Unknown',
+          ],
+        }));
+      }
+
+      return [];
+    } catch (error) {
+      console.error('❌ TruckingPlanet lead generation failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Generate additional carrier leads
+   */
+  private async generateCarrierLeads(): Promise<UnifiedLead[]> {
+    try {
+      // Use TruckingPlanet API to get additional carrier leads with different filters
+      const response = await fetch(
+        '/api/trucking-planet?action=carriers&minTrucks=25&states=CA,TX,FL,IL,NY'
+      );
+      const data = await response.json();
+
+      if (data.success && data.data.carriers) {
+        return data.data.carriers.slice(0, 30).map((carrier: any) => ({
+          id: `carrier_${carrier.id}`,
+          source: 'Carriers' as const,
+          companyName: carrier.companyName,
+          contactInfo: {
+            phone: carrier.contactInfo?.phone,
+            address:
+              `${carrier.location?.city || ''}, ${carrier.location?.state || ''}`.trim(),
+          },
+          leadScore: carrier.leadScore || 70,
+          salesStage: 'New' as const,
+          salesflowStatus: 'Not Started' as const,
+          liveflowInteractions: 0,
+          estimatedValue: carrier.estimatedValue || 25000,
+          createdAt: new Date(),
+          lastActivity: new Date(),
+          tags: [
+            'Carriers',
+            'TruckingPlanet',
+            carrier.equipmentType || 'Mixed Fleet',
+          ],
+        }));
+      }
+
+      return [];
+    } catch (error) {
+      console.error('❌ Carrier lead generation failed:', error);
+      return [];
+    }
   }
 
   /**
    * Generate ThomasNet leads
    */
   private async generateThomasNetLeads(): Promise<UnifiedLead[]> {
-    // Placeholder for ThomasNet integration
-    return [];
+    try {
+      // Use ThomasNet API to get manufacturer leads
+      const response = await fetch(
+        '/api/thomas-net?industry=manufacturing&limit=50'
+      );
+      const data = await response.json();
+
+      if (data.success && data.data.manufacturers) {
+        return data.data.manufacturers.map((manufacturer: any) => ({
+          id: `tn_${manufacturer.id}`,
+          source: 'ThomasNet' as const,
+          companyName: manufacturer.companyName,
+          contactInfo: {
+            email: manufacturer.contactInfo?.email,
+            phone: manufacturer.contactInfo?.phone,
+            address:
+              `${manufacturer.location?.city || ''}, ${manufacturer.location?.state || ''}`.trim(),
+          },
+          leadScore: manufacturer.leadScore || 65,
+          salesStage: 'New' as const,
+          salesflowStatus: 'Not Started' as const,
+          liveflowInteractions: 0,
+          estimatedValue: manufacturer.estimatedValue || 20000,
+          createdAt: new Date(),
+          lastActivity: new Date(),
+          tags: [
+            'ThomasNet',
+            'Manufacturer',
+            manufacturer.industry || 'Manufacturing',
+          ],
+        }));
+      }
+
+      return [];
+    } catch (error) {
+      console.error('❌ ThomasNet lead generation failed:', error);
+      return [];
+    }
   }
 
   /**

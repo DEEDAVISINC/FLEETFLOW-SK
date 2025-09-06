@@ -45,6 +45,9 @@ export interface FlowterAction {
   action?: string;
   description: string;
   icon: string;
+  severity?: 'info' | 'warning' | 'error';
+  requiredTier?: string;
+  requiredRoles?: string[];
 }
 
 export interface SelectionOption {

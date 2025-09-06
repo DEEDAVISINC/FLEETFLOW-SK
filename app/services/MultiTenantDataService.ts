@@ -450,6 +450,131 @@ export class OrganizationDataService {
       });
     }
   }
+
+  /**
+   * TRAINING MANAGEMENT METHODS
+   */
+
+  /**
+   * Get organization-specific training courses
+   */
+  static async getOrganizationCourses(organizationId: string): Promise<any[]> {
+    try {
+      const coursesKey = `org-${organizationId}-courses`;
+      const storedCourses = localStorage.getItem(coursesKey);
+
+      if (storedCourses) {
+        return JSON.parse(storedCourses);
+      }
+
+      // Return empty array if no organization-specific courses exist
+      return [];
+    } catch (error) {
+      console.error('Error getting organization courses:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Save organization-specific training courses
+   */
+  static async saveOrganizationCourses(
+    organizationId: string,
+    courses: any[]
+  ): Promise<void> {
+    try {
+      const coursesKey = `org-${organizationId}-courses`;
+      localStorage.setItem(coursesKey, JSON.stringify(courses));
+    } catch (error) {
+      console.error('Error saving organization courses:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user training progress for an organization
+   */
+  static async getUserTrainingProgress(
+    organizationId: string,
+    userId: string
+  ): Promise<{ [key: string]: boolean }> {
+    try {
+      const progressKey = `org-${organizationId}-user-${userId}-training-progress`;
+      const storedProgress = localStorage.getItem(progressKey);
+
+      if (storedProgress) {
+        return JSON.parse(storedProgress);
+      }
+
+      return {};
+    } catch (error) {
+      console.error('Error getting user training progress:', error);
+      return {};
+    }
+  }
+
+  /**
+   * Save user training progress for an organization
+   */
+  static async saveUserTrainingProgress(
+    organizationId: string,
+    userId: string,
+    progress: { [key: string]: boolean }
+  ): Promise<void> {
+    try {
+      const progressKey = `org-${organizationId}-user-${userId}-training-progress`;
+      localStorage.setItem(progressKey, JSON.stringify(progress));
+    } catch (error) {
+      console.error('Error saving user training progress:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get organization training analytics
+   */
+  static async getOrganizationTrainingAnalytics(
+    organizationId: string
+  ): Promise<any> {
+    try {
+      const analyticsKey = `org-${organizationId}-training-analytics`;
+      const storedAnalytics = localStorage.getItem(analyticsKey);
+
+      if (storedAnalytics) {
+        return JSON.parse(storedAnalytics);
+      }
+
+      // Return default analytics structure
+      return {
+        totalUsers: 0,
+        enrolledUsers: 0,
+        completedCourses: 0,
+        averageCompletionRate: 0,
+        courseCompletions: {},
+        lastUpdated: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Error getting organization training analytics:', error);
+      return {};
+    }
+  }
+
+  /**
+   * Update organization training analytics
+   */
+  static async updateOrganizationTrainingAnalytics(
+    organizationId: string,
+    analytics: any
+  ): Promise<void> {
+    try {
+      const analyticsKey = `org-${organizationId}-training-analytics`;
+      analytics.lastUpdated = new Date().toISOString();
+      localStorage.setItem(analyticsKey, JSON.stringify(analytics));
+    } catch (error) {
+      console.error('Error updating organization training analytics:', error);
+      throw error;
+    }
+  }
 }
 
 export default OrganizationDataService;
