@@ -167,7 +167,7 @@ export default function ShipperPortfolioPage() {
                       marginBottom: '10px',
                     }}
                   >
-                    847
+                    --
                   </div>
                   <p>Active Shippers</p>
                   <div
@@ -177,7 +177,7 @@ export default function ShipperPortfolioPage() {
                       opacity: 0.9,
                     }}
                   >
-                    +12% from last month
+                    Data loading...
                   </div>
                 </div>
 
@@ -200,7 +200,7 @@ export default function ShipperPortfolioPage() {
                       marginBottom: '10px',
                     }}
                   >
-                    $2.4M
+                    $--
                   </div>
                   <p>This Quarter</p>
                   <div
@@ -210,7 +210,7 @@ export default function ShipperPortfolioPage() {
                       opacity: 0.9,
                     }}
                   >
-                    +18% YoY Growth
+                    Data loading...
                   </div>
                 </div>
 
@@ -233,7 +233,7 @@ export default function ShipperPortfolioPage() {
                       marginBottom: '10px',
                     }}
                   >
-                    1,249
+                    --
                   </div>
                   <p>In Transit</p>
                   <div
@@ -243,7 +243,7 @@ export default function ShipperPortfolioPage() {
                       opacity: 0.9,
                     }}
                   >
-                    Across 34 States
+                    Data loading...
                   </div>
                 </div>
               </div>

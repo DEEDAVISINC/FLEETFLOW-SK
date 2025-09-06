@@ -241,7 +241,7 @@ export default function HomePage() {
       color: 'white',
     },
     {
-      href: '/broker',
+      href: '/broker/dashboard',
       bg: 'linear-gradient(135deg, #f97316, #ea580c)',
       emoji: '🏢',
       title: 'Broker',
@@ -262,7 +262,7 @@ export default function HomePage() {
       color: 'white',
     },
     {
-      href: '/accounting',
+      href: '/admin/accounting',
       bg: 'linear-gradient(135deg, #059669, #047857)',
       emoji: '💰',
       title: 'Finance',
@@ -308,6 +308,13 @@ export default function HomePage() {
       bg: 'linear-gradient(135deg, #ec4899, #db2777)',
       emoji: '🤖',
       title: 'AI Hub',
+      color: 'white',
+    },
+    {
+      href: '/vendors',
+      bg: 'linear-gradient(135deg, #7c3aed, #a855f7)',
+      emoji: '🏪',
+      title: 'Vendor Management',
       color: 'white',
     },
   ];
