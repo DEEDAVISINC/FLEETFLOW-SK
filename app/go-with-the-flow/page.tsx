@@ -1008,7 +1008,7 @@ export default function GoWithTheFlow() {
                           ❌ Priority carrier matching
                         </li>
                         <li style={{ marginBottom: '8px' }}>
-                          ❌ Load value cap: $750/load
+                          ❌ Load value cap: $1000/load
                         </li>
                       </ul>
                       <button
@@ -1062,7 +1062,7 @@ export default function GoWithTheFlow() {
                           marginBottom: '15px',
                         }}
                       >
-                        $249/month
+                        $499/month
                       </div>
                       <ul
                         style={{
@@ -1147,7 +1147,7 @@ export default function GoWithTheFlow() {
                           marginBottom: '15px',
                         }}
                       >
-                        $699/month
+                        $899/month
                       </div>
                       <ul
                         style={{

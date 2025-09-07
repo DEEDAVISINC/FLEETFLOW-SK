@@ -388,7 +388,7 @@ export default function AboutUsPage() {
                       fontWeight: '700',
                     }}
                   >
-                    📊 Agency Performance & Scale
+                    📊 Agency Performance & Scalability
                   </h3>
                   <div
                     style={{
@@ -3306,8 +3306,8 @@ export default function AboutUsPage() {
                       </h4>
                       <p style={{ fontSize: '13px', margin: 0, opacity: 0.9 }}>
                         <strong>
-                          Logan (Logistics), Miles Rhodes (Dispatch), Dee (Brokerage),
-                          Will (Sales), Hunter (Recruiting)
+                          Logan (Logistics), Miles Rhodes (Dispatch), Dee
+                          (Brokerage), Will (Sales), Hunter (Recruiting)
                         </strong>{' '}
                         - Complete freight operations with AI-powered
                         optimization and predictive analytics.
@@ -6133,7 +6133,7 @@ export default function AboutUsPage() {
                         Multi-Language & Currency
                       </h4>
                       <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>
-                        Platform available in 23 languages, supports 47
+                        Platform available in 10 languages, supports 47
                         currencies, and handles 125+ country-specific
                         regulations
                       </p>

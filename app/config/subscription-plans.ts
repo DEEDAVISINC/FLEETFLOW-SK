@@ -624,7 +624,7 @@ export const SUBSCRIPTION_PLANS = {
     icon: '🎁',
     limits: {
       loadsPerMonth: 5,
-      loadValueCap: 750,
+      loadValueCap: 1000,
       dispatchServices: false,
       supportLevel: 'email',
       apiAccess: false,
@@ -643,7 +643,7 @@ export const SUBSCRIPTION_PLANS = {
       'Basic load posting',
       'Standard carrier access',
       'Email support',
-      'Load value cap: $750/load',
+      'Load value cap: $1000/load',
     ],
   },
 

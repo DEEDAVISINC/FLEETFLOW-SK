@@ -80,6 +80,15 @@ export interface FreightTranslations {
     users: string;
     roles: string;
     permissions: string;
+
+    // Navigation specific terms
+    operations: string;
+    dispatch: string;
+    drivers: string;
+    fleet: string;
+    compliance: string;
+    resources: string;
+    admin: string;
   };
 }
 
@@ -139,6 +148,15 @@ export class MultiLanguageService {
       users: 'Users',
       roles: 'Roles',
       permissions: 'Permissions',
+
+      // Navigation specific terms
+      operations: 'Operations',
+      dispatch: 'Dispatch',
+      drivers: 'Drivers',
+      fleet: 'Fleet',
+      compliance: 'Compliance',
+      resources: 'Resources',
+      admin: 'Admin',
     },
     es: {
       // Spanish - Major freight corridors (Mexico, Southwest US)
