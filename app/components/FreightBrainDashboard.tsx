@@ -9,8 +9,8 @@
 import {
   AlertTriangle,
   BarChart3,
-  Brain,
   CheckCircle,
+  Database,
   DollarSign,
   Lightbulb,
   MapPin,
@@ -123,7 +123,7 @@ export default function FreightBrainDashboard({
   };
 
   const categories = [
-    { key: 'all', label: 'All Knowledge', icon: Brain },
+    { key: 'all', label: 'All Knowledge', icon: Database },
     { key: 'market_data', label: 'Market Data', icon: TrendingUp },
     { key: 'carrier_intel', label: 'Carrier Intel', icon: Truck },
     { key: 'customer_profiles', label: 'Customer Profiles', icon: Users },
@@ -137,18 +137,67 @@ export default function FreightBrainDashboard({
   ];
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white'>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'rgba(15, 23, 42, 0.8)',
+        padding: '20px',
+        borderRadius: '12px',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        margin: '20px',
+        color: 'white',
+      }}
+    >
       {/* Header */}
-      <div className='mb-8'>
-        <div className='mb-4 flex items-center gap-3'>
-          <div className='rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 p-3'>
-            <Brain className='h-8 w-8 text-white' />
+      <div
+        style={{
+          marginBottom: '30px',
+        }}
+      >
+        <div
+          style={{
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '15px',
+          }}
+        >
+          <div
+            style={{
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+              padding: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '32px',
+            }}
+          >
+            🧠
           </div>
           <div>
-            <h1 className='bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-3xl font-bold text-transparent'>
+            <h1
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: '28px',
+                fontWeight: 'bold',
+                margin: '0 0 8px 0',
+              }}
+            >
               Freight Brain AI
             </h1>
-            <p className='text-slate-400'>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                margin: 0,
+                fontSize: '16px',
+              }}
+            >
               {selectedStaff
                 ? `Personalized insights for ${selectedStaff}`
                 : 'Centralized Freight Intelligence System'}
@@ -158,59 +207,196 @@ export default function FreightBrainDashboard({
 
         {/* Stats Overview */}
         {stats && (
-          <div className='mb-6 grid grid-cols-1 gap-4 md:grid-cols-4'>
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-blue-500/20 p-2'>
-                  <Brain className='h-5 w-5 text-blue-400' />
+          <div
+            style={{
+              marginBottom: '24px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    padding: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '20px',
+                  }}
+                >
+                  🧠
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-blue-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.totalKnowledge}
                   </p>
-                  <p className='text-sm text-slate-400'>Knowledge Items</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Knowledge Items
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-green-500/20 p-2'>
-                  <BarChart3 className='h-5 w-5 text-green-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <BarChart3
+                    style={{ height: '20px', width: '20px', color: '#22c55e' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-green-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#22c55e',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.averageConfidence}%
                   </p>
-                  <p className='text-sm text-slate-400'>Avg Confidence</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Avg Confidence
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-purple-500/20 p-2'>
-                  <MapPin className='h-5 w-5 text-purple-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <MapPin
+                    style={{ height: '20px', width: '20px', color: '#8b5cf6' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-purple-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#8b5cf6',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.marketLanes}
                   </p>
-                  <p className='text-sm text-slate-400'>Market Lanes</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Market Lanes
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-orange-500/20 p-2'>
-                  <Truck className='h-5 w-5 text-orange-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <Truck
+                    style={{ height: '20px', width: '20px', color: '#f59e0b' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-orange-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#f59e0b',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.carrierProfiles}
                   </p>
-                  <p className='text-sm text-slate-400'>Carrier Profiles</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Carrier Profiles
+                  </p>
                 </div>
               </div>
             </div>
@@ -218,24 +404,75 @@ export default function FreightBrainDashboard({
         )}
       </div>
 
-      <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '24px',
+        }}
+      >
         {/* Left Column - Search & Knowledge */}
-        <div className='space-y-6 lg:col-span-2'>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+          }}
+        >
           {/* Search */}
-          <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-6'>
-            <div className='mb-4 flex items-center gap-3'>
-              <Search className='h-5 w-5 text-slate-400' />
+          <div
+            style={{
+              background: 'rgba(30, 41, 59, 0.5)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              borderRadius: '12px',
+              padding: '24px',
+            }}
+          >
+            <div
+              style={{
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <Search
+                style={{
+                  height: '20px',
+                  width: '20px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                }}
+              />
               <input
                 type='text'
                 placeholder='Search freight knowledge...'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className='flex-1 rounded-lg border border-slate-600 bg-slate-700/50 px-4 py-2 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none'
+                style={{
+                  flex: 1,
+                  borderRadius: '8px',
+                  border: '1px solid rgba(148, 163, 184, 0.3)',
+                  background: 'rgba(30, 41, 59, 0.3)',
+                  padding: '8px 16px',
+                  color: 'white',
+                  fontSize: '14px',
+                  outline: 'none',
+                }}
+                onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = 'rgba(148, 163, 184, 0.3)')
+                }
               />
             </div>
 
             {/* Category Filter */}
-            <div className='flex flex-wrap gap-2'>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+              }}
+            >
               {categories.map((category) => {
                 const Icon = category.icon;
                 const isSelected = selectedCategory === category.key;
@@ -244,13 +481,26 @@ export default function FreightBrainDashboard({
                   <button
                     key={category.key}
                     onClick={() => setSelectedCategory(category.key)}
-                    className={`flex items-center gap-2 rounded-lg px-3 py-1 text-sm transition-all ${
-                      isSelected
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50'
-                    }`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      fontSize: '14px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      background: isSelected
+                        ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                        : 'rgba(30, 41, 59, 0.5)',
+                      color: isSelected ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                      border: isSelected
+                        ? 'none'
+                        : '1px solid rgba(148, 163, 184, 0.2)',
+                    }}
                   >
-                    <Icon className='h-4 w-4' />
+                    <Icon style={{ height: '16px', width: '16px' }} />
                     {category.label}
                   </button>
                 );
@@ -259,7 +509,13 @@ export default function FreightBrainDashboard({
           </div>
 
           {/* Knowledge Results */}
-          <div className='space-y-4'>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
             {knowledgeResults.map((knowledge) => {
               const CategoryIcon = getCategoryIcon(knowledge.category);
 
@@ -267,44 +523,141 @@ export default function FreightBrainDashboard({
                 <div
                   key={knowledge.id}
                   onClick={() => setSelectedKnowledge(knowledge)}
-                  className='cursor-pointer rounded-xl border border-slate-700 bg-slate-800/50 p-4 transition-all hover:border-slate-600'
+                  style={{
+                    cursor: 'pointer',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(148, 163, 184, 0.2)',
+                    background: 'rgba(30, 41, 59, 0.5)',
+                    padding: '16px',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)')
+                  }
+                  onMouseLeave={(e) =>
+                    (e.target.style.borderColor = 'rgba(148, 163, 184, 0.2)')
+                  }
                 >
-                  <div className='mb-3 flex items-start justify-between'>
-                    <div className='flex items-center gap-3'>
+                  <div
+                    style={{
+                      marginBottom: '12px',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
                       <div
-                        className={`rounded-lg p-2 ${getCategoryColor(knowledge.category)}/20`}
+                        style={{
+                          borderRadius: '8px',
+                          padding: '8px',
+                          background:
+                            knowledge.category === 'market_data'
+                              ? 'rgba(34, 197, 94, 0.2)'
+                              : knowledge.category === 'carrier_intel'
+                                ? 'rgba(59, 130, 246, 0.2)'
+                                : knowledge.category === 'customer_profiles'
+                                  ? 'rgba(139, 92, 246, 0.2)'
+                                  : knowledge.category === 'lane_analytics'
+                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    : knowledge.category === 'compliance_rules'
+                                      ? 'rgba(239, 68, 68, 0.2)'
+                                      : 'rgba(107, 114, 128, 0.2)',
+                        }}
                       >
                         <CategoryIcon
-                          className='h-4 w-4'
                           style={{
+                            height: '16px',
+                            width: '16px',
                             color:
-                              getCategoryColor(knowledge.category)
-                                .replace('bg-', '')
-                                .replace('-500', '') + '400',
+                              knowledge.category === 'market_data'
+                                ? '#22c55e'
+                                : knowledge.category === 'carrier_intel'
+                                  ? '#3b82f6'
+                                  : knowledge.category === 'customer_profiles'
+                                    ? '#8b5cf6'
+                                    : knowledge.category === 'lane_analytics'
+                                      ? '#f59e0b'
+                                      : knowledge.category ===
+                                          'compliance_rules'
+                                        ? '#ef4444'
+                                        : '#6b7280',
                           }}
                         />
                       </div>
                       <div>
-                        <h3 className='font-semibold text-white'>
+                        <h3
+                          style={{
+                            fontWeight: '600',
+                            color: 'white',
+                            margin: '0 0 4px 0',
+                            fontSize: '16px',
+                          }}
+                        >
                           {knowledge.title}
                         </h3>
-                        <p className='text-sm text-slate-400 capitalize'>
+                        <p
+                          style={{
+                            fontSize: '14px',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: 0,
+                            textTransform: 'capitalize',
+                          }}
+                        >
                           {knowledge.category.replace('_', ' ')}
                         </p>
                       </div>
                     </div>
 
-                    <div className='flex items-center gap-2'>
-                      <div className='flex items-center gap-1'>
-                        <Star className='h-4 w-4 text-yellow-400' />
-                        <span className='text-sm text-yellow-400'>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                        }}
+                      >
+                        <Star
+                          style={{
+                            height: '16px',
+                            width: '16px',
+                            color: '#fbbf24',
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontSize: '14px',
+                            color: '#fbbf24',
+                          }}
+                        >
                           {knowledge.confidence}%
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className='flex items-center gap-4 text-sm text-slate-400'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      marginBottom: '8px',
+                    }}
+                  >
                     <span>Source: {knowledge.source}</span>
                     <span>•</span>
                     <span>
@@ -312,11 +665,23 @@ export default function FreightBrainDashboard({
                     </span>
                   </div>
 
-                  <div className='mt-2 flex flex-wrap gap-1'>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '4px',
+                    }}
+                  >
                     {knowledge.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className='rounded bg-slate-700/50 px-2 py-1 text-xs text-slate-300'
+                        style={{
+                          borderRadius: '4px',
+                          background: 'rgba(30, 41, 59, 0.5)',
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                        }}
                       >
                         #{tag}
                       </span>
@@ -329,42 +694,133 @@ export default function FreightBrainDashboard({
         </div>
 
         {/* Right Column - Recommendations & Market Intel */}
-        <div className='space-y-6'>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+          }}
+        >
           {/* AI Recommendations */}
           {recommendations && (
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-6'>
-              <div className='mb-4 flex items-center gap-3'>
-                <div className='rounded-lg bg-purple-500/20 p-2'>
-                  <Lightbulb className='h-5 w-5 text-purple-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <Lightbulb
+                    style={{ height: '20px', width: '20px', color: '#8b5cf6' }}
+                  />
                 </div>
-                <h3 className='font-semibold text-white'>AI Recommendations</h3>
+                <h3
+                  style={{
+                    fontWeight: '600',
+                    color: 'white',
+                    fontSize: '18px',
+                    margin: 0,
+                  }}
+                >
+                  AI Recommendations
+                </h3>
               </div>
 
-              <div className='space-y-3'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
                 {recommendations.recommendations.map(
                   (rec: any, index: number) => (
                     <div
                       key={index}
-                      className={`rounded-lg border p-3 ${
-                        rec.priority === 'high'
-                          ? 'border-red-500/30 bg-red-900/20'
-                          : 'border-blue-500/30 bg-blue-900/20'
-                      }`}
+                      style={{
+                        borderRadius: '8px',
+                        padding: '12px',
+                        border:
+                          rec.priority === 'high'
+                            ? '1px solid rgba(239, 68, 68, 0.3)'
+                            : '1px solid rgba(59, 130, 246, 0.3)',
+                        background:
+                          rec.priority === 'high'
+                            ? 'rgba(239, 68, 68, 0.1)'
+                            : 'rgba(59, 130, 246, 0.1)',
+                      }}
                     >
-                      <div className='mb-2 flex items-center gap-2'>
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                        }}
+                      >
                         {rec.priority === 'high' ? (
-                          <AlertTriangle className='h-4 w-4 text-red-400' />
+                          <AlertTriangle
+                            style={{
+                              height: '16px',
+                              width: '16px',
+                              color: '#ef4444',
+                            }}
+                          />
                         ) : (
-                          <CheckCircle className='h-4 w-4 text-blue-400' />
+                          <CheckCircle
+                            style={{
+                              height: '16px',
+                              width: '16px',
+                              color: '#3b82f6',
+                            }}
+                          />
                         )}
-                        <h4 className='text-sm font-semibold text-white'>
+                        <h4
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            color: 'white',
+                            margin: 0,
+                          }}
+                        >
                           {rec.title}
                         </h4>
                       </div>
-                      <p className='mb-2 text-sm text-slate-300'>
+                      <p
+                        style={{
+                          marginBottom: '8px',
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                          margin: '0 0 8px 0',
+                        }}
+                      >
                         {rec.content}
                       </p>
-                      <p className='text-xs text-slate-400'>{rec.action}</p>
+                      <p
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          margin: 0,
+                        }}
+                      >
+                        {rec.action}
+                      </p>
                     </div>
                   )
                 )}
@@ -374,43 +830,121 @@ export default function FreightBrainDashboard({
 
           {/* Market Intelligence */}
           {marketIntel && (
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-6'>
-              <div className='mb-4 flex items-center gap-3'>
-                <div className='rounded-lg bg-green-500/20 p-2'>
-                  <TrendingUp className='h-5 w-5 text-green-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <TrendingUp
+                    style={{ height: '20px', width: '20px', color: '#22c55e' }}
+                  />
                 </div>
-                <h3 className='font-semibold text-white'>
+                <h3
+                  style={{
+                    fontWeight: '600',
+                    color: 'white',
+                    fontSize: '18px',
+                    margin: 0,
+                  }}
+                >
                   Market Intelligence
                 </h3>
               </div>
 
-              <div className='space-y-4'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                }}
+              >
                 {Object.entries(marketIntel).map(
                   ([lane, intel]: [string, any]) => (
-                    <div key={lane} className='rounded-lg bg-slate-700/30 p-3'>
-                      <div className='mb-2 flex items-center justify-between'>
-                        <h4 className='font-semibold text-white'>{lane}</h4>
+                    <div
+                      key={lane}
+                      style={{
+                        borderRadius: '8px',
+                        background: 'rgba(30, 41, 59, 0.3)',
+                        padding: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          marginBottom: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <h4
+                          style={{
+                            fontWeight: '600',
+                            color: 'white',
+                            margin: 0,
+                            fontSize: '16px',
+                          }}
+                        >
+                          {lane}
+                        </h4>
                         <span
-                          className={`rounded px-2 py-1 text-xs ${
-                            intel.demandLevel === 'high'
-                              ? 'bg-red-500/20 text-red-400'
-                              : intel.demandLevel === 'medium'
-                                ? 'bg-yellow-500/20 text-yellow-400'
-                                : 'bg-green-500/20 text-green-400'
-                          }`}
+                          style={{
+                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            fontSize: '12px',
+                            background:
+                              intel.demandLevel === 'high'
+                                ? 'rgba(239, 68, 68, 0.2)'
+                                : intel.demandLevel === 'medium'
+                                  ? 'rgba(245, 158, 11, 0.2)'
+                                  : 'rgba(34, 197, 94, 0.2)',
+                            color:
+                              intel.demandLevel === 'high'
+                                ? '#ef4444'
+                                : intel.demandLevel === 'medium'
+                                  ? '#f59e0b'
+                                  : '#22c55e',
+                          }}
                         >
                           {intel.demandLevel} demand
                         </span>
                       </div>
 
-                      <div className='text-sm text-slate-300'>
-                        <p>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.8)',
+                        }}
+                      >
+                        <p style={{ margin: '0 0 4px 0' }}>
                           Avg Rate:{' '}
-                          <span className='font-semibold text-green-400'>
+                          <span
+                            style={{
+                              fontWeight: '600',
+                              color: '#22c55e',
+                            }}
+                          >
                             ${intel.averageRate}/mi
                           </span>
                         </p>
-                        <p>
+                        <p style={{ margin: 0 }}>
                           Top Competitor:{' '}
                           {intel.competitorActivity[0]?.competitor}
                         </p>
@@ -423,26 +957,79 @@ export default function FreightBrainDashboard({
           )}
 
           {/* Quick Stats */}
-          <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-6'>
-            <div className='mb-4 flex items-center gap-3'>
-              <div className='rounded-lg bg-blue-500/20 p-2'>
-                <BarChart3 className='h-5 w-5 text-blue-400' />
+          <div
+            style={{
+              background: 'rgba(30, 41, 59, 0.5)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              borderRadius: '12px',
+              padding: '24px',
+            }}
+          >
+            <div
+              style={{
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <div
+                style={{
+                  borderRadius: '8px',
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  padding: '8px',
+                }}
+              >
+                <BarChart3
+                  style={{ height: '20px', width: '20px', color: '#3b82f6' }}
+                />
               </div>
-              <h3 className='font-semibold text-white'>Knowledge Stats</h3>
+              <h3
+                style={{
+                  fontWeight: '600',
+                  color: 'white',
+                  fontSize: '18px',
+                  margin: 0,
+                }}
+              >
+                Knowledge Stats
+              </h3>
             </div>
 
             {stats && (
-              <div className='space-y-3'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
                 {Object.entries(stats.categoryCounts).map(
                   ([category, count]: [string, any]) => (
                     <div
                       key={category}
-                      className='flex items-center justify-between'
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
                     >
-                      <span className='text-sm text-slate-300 capitalize'>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          textTransform: 'capitalize',
+                        }}
+                      >
                         {category.replace('_', ' ')}
                       </span>
-                      <span className='text-sm font-semibold text-white'>
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: 'white',
+                        }}
+                      >
                         {count}
                       </span>
                     </div>
@@ -456,22 +1043,86 @@ export default function FreightBrainDashboard({
 
       {/* Knowledge Detail Modal */}
       {selectedKnowledge && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4'>
-          <div className='max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-slate-800 p-6'>
-            <div className='mb-4 flex items-center justify-between'>
-              <h2 className='text-xl font-bold text-white'>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 50,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0, 0, 0, 0.5)',
+            padding: '16px',
+          }}
+        >
+          <div
+            style={{
+              maxHeight: '80vh',
+              width: '100%',
+              maxWidth: '512px',
+              overflowY: 'auto',
+              borderRadius: '12px',
+              background: 'rgba(30, 41, 59, 0.95)',
+              border: '1px solid rgba(148, 163, 184, 0.2)',
+              padding: '24px',
+            }}
+          >
+            <div
+              style={{
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <h2
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: 0,
+                }}
+              >
                 {selectedKnowledge.title}
               </h2>
               <button
                 onClick={() => setSelectedKnowledge(null)}
-                className='rounded-lg p-2 transition-colors hover:bg-slate-700'
+                style={{
+                  borderRadius: '8px',
+                  padding: '8px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: 'white',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) =>
+                  (e.target.style.background = 'rgba(30, 41, 59, 0.5)')
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background = 'transparent')
+                }
               >
                 ✕
               </button>
             </div>
 
-            <div className='space-y-4'>
-              <div className='flex items-center gap-4 text-sm text-slate-400'>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                }}
+              >
                 <span>
                   Category: {selectedKnowledge.category.replace('_', ' ')}
                 </span>
@@ -481,17 +1132,43 @@ export default function FreightBrainDashboard({
                 <span>Source: {selectedKnowledge.source}</span>
               </div>
 
-              <div className='rounded-lg bg-slate-700/30 p-4'>
-                <pre className='text-sm whitespace-pre-wrap text-slate-300'>
+              <div
+                style={{
+                  borderRadius: '8px',
+                  background: 'rgba(30, 41, 59, 0.3)',
+                  padding: '16px',
+                }}
+              >
+                <pre
+                  style={{
+                    fontSize: '14px',
+                    whiteSpace: 'pre-wrap',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                    fontFamily: 'monospace',
+                  }}
+                >
                   {JSON.stringify(selectedKnowledge.content, null, 2)}
                 </pre>
               </div>
 
-              <div className='flex flex-wrap gap-2'>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                }}
+              >
                 {selectedKnowledge.tags.map((tag) => (
                   <span
                     key={tag}
-                    className='rounded bg-slate-700/50 px-2 py-1 text-xs text-slate-300'
+                    style={{
+                      borderRadius: '4px',
+                      background: 'rgba(30, 41, 59, 0.5)',
+                      padding: '4px 8px',
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
                   >
                     #{tag}
                   </span>

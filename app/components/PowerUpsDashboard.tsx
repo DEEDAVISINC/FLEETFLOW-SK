@@ -9,16 +9,17 @@
 import {
   AlertTriangle,
   BarChart3,
+  Bot,
   CheckCircle,
   Clock,
   Cog,
+  Grid,
   MessageSquare,
   Pause,
   Play,
   Shield,
   Target,
   TrendingUp,
-  Zap,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
@@ -113,9 +114,9 @@ export default function PowerUpsDashboard({
       compliance: Shield,
       analytics: BarChart3,
       communication: MessageSquare,
-      automation: Zap,
+      automation: Bot,
     };
-    return icons[category as keyof typeof icons] || Zap;
+    return icons[category as keyof typeof icons] || Bot;
   };
 
   const getCategoryColor = (category: string) => {
@@ -131,28 +132,77 @@ export default function PowerUpsDashboard({
   };
 
   const categories = [
-    { key: 'all', label: 'All Power-Ups', icon: Zap },
+    { key: 'all', label: 'All Power-Ups', icon: Grid },
     { key: 'lead_generation', label: 'Lead Generation', icon: Target },
     { key: 'operations', label: 'Operations', icon: Cog },
     { key: 'compliance', label: 'Compliance', icon: Shield },
     { key: 'analytics', label: 'Analytics', icon: BarChart3 },
     { key: 'communication', label: 'Communication', icon: MessageSquare },
-    { key: 'automation', label: 'Automation', icon: Zap },
+    { key: 'automation', label: 'Automation', icon: Bot },
   ];
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white'>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'rgba(15, 23, 42, 0.8)',
+        padding: '20px',
+        borderRadius: '12px',
+        border: '1px solid rgba(148, 163, 184, 0.2)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        margin: '20px',
+        color: 'white',
+      }}
+    >
       {/* Header */}
-      <div className='mb-8'>
-        <div className='mb-4 flex items-center gap-3'>
-          <div className='rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 p-3'>
-            <Zap className='h-8 w-8 text-white' />
+      <div
+        style={{
+          marginBottom: '30px',
+        }}
+      >
+        <div
+          style={{
+            marginBottom: '20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '15px',
+          }}
+        >
+          <div
+            style={{
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #9333ea, #3b82f6)',
+              padding: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '32px',
+            }}
+          >
+            ⚡
           </div>
           <div>
-            <h1 className='bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-3xl font-bold text-transparent'>
+            <h1
+              style={{
+                background: 'linear-gradient(135deg, #9333ea, #3b82f6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: '28px',
+                fontWeight: 'bold',
+                margin: '0 0 8px 0',
+              }}
+            >
               DEPOINTE Power-Ups
             </h1>
-            <p className='text-slate-400'>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                margin: 0,
+                fontSize: '16px',
+              }}
+            >
               {selectedStaff
                 ? `Power-Ups for ${selectedStaff}`
                 : 'Freight-Specific Micro-AI Tools'}
@@ -162,57 +212,194 @@ export default function PowerUpsDashboard({
 
         {/* Stats Overview */}
         {stats && (
-          <div className='mb-6 grid grid-cols-1 gap-4 md:grid-cols-4'>
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-green-500/20 p-2'>
-                  <CheckCircle className='h-5 w-5 text-green-400' />
+          <div
+            style={{
+              marginBottom: '24px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <CheckCircle
+                    style={{ height: '20px', width: '20px', color: '#22c55e' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-green-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#22c55e',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.powerUps.activePowerUps}
                   </p>
-                  <p className='text-sm text-slate-400'>Active Power-Ups</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Active Power-Ups
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-blue-500/20 p-2'>
-                  <TrendingUp className='h-5 w-5 text-blue-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <TrendingUp
+                    style={{ height: '20px', width: '20px', color: '#3b82f6' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-blue-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.powerUps.totalUsage.toLocaleString()}
                   </p>
-                  <p className='text-sm text-slate-400'>Total Executions</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Total Executions
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-purple-500/20 p-2'>
-                  <BarChart3 className='h-5 w-5 text-purple-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(139, 92, 246, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <BarChart3
+                    style={{ height: '20px', width: '20px', color: '#8b5cf6' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-purple-400'>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#8b5cf6',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
                     {stats.powerUps.averageSuccessRate}%
                   </p>
-                  <p className='text-sm text-slate-400'>Success Rate</p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Success Rate
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-4'>
-              <div className='flex items-center gap-3'>
-                <div className='rounded-lg bg-yellow-500/20 p-2'>
-                  <Clock className='h-5 w-5 text-yellow-400' />
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '16px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(245, 158, 11, 0.2)',
+                    padding: '8px',
+                  }}
+                >
+                  <Clock
+                    style={{ height: '20px', width: '20px', color: '#f59e0b' }}
+                  />
                 </div>
                 <div>
-                  <p className='text-2xl font-bold text-yellow-400'>2,400+</p>
-                  <p className='text-sm text-slate-400'>Hours Saved</p>
+                  <p
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: 'bold',
+                      color: '#f59e0b',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
+                    2,400+
+                  </p>
+                  <p
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: 0,
+                    }}
+                  >
+                    Hours Saved
+                  </p>
                 </div>
               </div>
             </div>
@@ -221,8 +408,18 @@ export default function PowerUpsDashboard({
       </div>
 
       {/* Category Filter */}
-      <div className='mb-6'>
-        <div className='flex flex-wrap gap-2'>
+      <div
+        style={{
+          marginBottom: '24px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px',
+          }}
+        >
           {categories.map((category) => {
             const Icon = category.icon;
             const isSelected = selectedCategory === category.key;
@@ -231,13 +428,26 @@ export default function PowerUpsDashboard({
               <button
                 key={category.key}
                 onClick={() => setSelectedCategory(category.key)}
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-all ${
-                  isSelected
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
-                }`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  background: isSelected
+                    ? 'linear-gradient(135deg, #9333ea, #3b82f6)'
+                    : 'rgba(30, 41, 59, 0.5)',
+                  color: isSelected ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                  border: isSelected
+                    ? 'none'
+                    : '1px solid rgba(148, 163, 184, 0.2)',
+                }}
               >
-                <Icon className='h-4 w-4' />
+                <Icon style={{ height: '16px', width: '16px' }} />
                 {category.label}
               </button>
             );
@@ -248,37 +458,91 @@ export default function PowerUpsDashboard({
       {/* Execution Result */}
       {executionResult && (
         <div
-          className={`mb-6 rounded-xl border p-4 ${
-            executionResult.success
-              ? 'border-green-500/30 bg-green-900/20 text-green-100'
-              : 'border-red-500/30 bg-red-900/20 text-red-100'
-          }`}
+          style={{
+            marginBottom: '24px',
+            borderRadius: '12px',
+            padding: '16px',
+            border: executionResult.success
+              ? '1px solid rgba(34, 197, 94, 0.3)'
+              : '1px solid rgba(239, 68, 68, 0.3)',
+            background: executionResult.success
+              ? 'rgba(34, 197, 94, 0.1)'
+              : 'rgba(239, 68, 68, 0.1)',
+            color: executionResult.success
+              ? 'rgba(34, 197, 94, 0.9)'
+              : 'rgba(239, 68, 68, 0.9)',
+          }}
         >
-          <div className='mb-2 flex items-center gap-3'>
+          <div
+            style={{
+              marginBottom: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+            }}
+          >
             {executionResult.success ? (
-              <CheckCircle className='h-5 w-5 text-green-400' />
+              <CheckCircle
+                style={{ height: '20px', width: '20px', color: '#22c55e' }}
+              />
             ) : (
-              <AlertTriangle className='h-5 w-5 text-red-400' />
+              <AlertTriangle
+                style={{ height: '20px', width: '20px', color: '#ef4444' }}
+              />
             )}
-            <h3 className='font-semibold'>
+            <h3
+              style={{
+                fontWeight: '600',
+                fontSize: '18px',
+                margin: 0,
+              }}
+            >
               {executionResult.success
                 ? 'Power-Up Executed Successfully!'
                 : 'Execution Failed'}
             </h3>
           </div>
 
-          <p className='mb-3'>{executionResult.message}</p>
+          <p
+            style={{
+              marginBottom: '12px',
+              fontSize: '14px',
+            }}
+          >
+            {executionResult.message}
+          </p>
 
           {executionResult.success && executionResult.data && (
-            <div className='mb-3 rounded-lg bg-slate-800/30 p-3'>
-              <pre className='text-sm whitespace-pre-wrap text-slate-300'>
+            <div
+              style={{
+                marginBottom: '12px',
+                borderRadius: '8px',
+                background: 'rgba(30, 41, 59, 0.3)',
+                padding: '12px',
+              }}
+            >
+              <pre
+                style={{
+                  fontSize: '14px',
+                  whiteSpace: 'pre-wrap',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: 0,
+                  fontFamily: 'monospace',
+                }}
+              >
                 {JSON.stringify(executionResult.data, null, 2)}
               </pre>
             </div>
           )}
 
           {executionResult.timesSaved && (
-            <p className='mb-2 text-sm text-slate-300'>
+            <p
+              style={{
+                marginBottom: '8px',
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.8)',
+              }}
+            >
               ⏱️ Time Saved: {Math.floor(executionResult.timesSaved / 60)} hours{' '}
               {executionResult.timesSaved % 60} minutes
             </p>
@@ -286,10 +550,30 @@ export default function PowerUpsDashboard({
 
           {executionResult.nextSteps && (
             <div>
-              <p className='mb-1 text-sm font-semibold'>Next Steps:</p>
-              <ul className='list-inside list-disc text-sm text-slate-300'>
+              <p
+                style={{
+                  marginBottom: '4px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: executionResult.success
+                    ? 'rgba(34, 197, 94, 0.9)'
+                    : 'rgba(239, 68, 68, 0.9)',
+                }}
+              >
+                Next Steps:
+              </p>
+              <ul
+                style={{
+                  listStyle: 'inside disc',
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: 0,
+                }}
+              >
                 {executionResult.nextSteps.map((step, index) => (
-                  <li key={index}>{step}</li>
+                  <li key={index} style={{ marginBottom: '4px' }}>
+                    {step}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -298,7 +582,13 @@ export default function PowerUpsDashboard({
       )}
 
       {/* Power-Ups Grid */}
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+          gap: '24px',
+        }}
+      >
         {filteredPowerUps.map((powerUp) => {
           const CategoryIcon = getCategoryIcon(powerUp.category);
           const isExecuting = executingPowerUp === powerUp.id;
@@ -306,19 +596,77 @@ export default function PowerUpsDashboard({
           return (
             <div
               key={powerUp.id}
-              className='rounded-xl border border-slate-700 bg-slate-800/50 p-6 transition-all hover:border-slate-600'
+              style={{
+                borderRadius: '12px',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                background: 'rgba(30, 41, 59, 0.5)',
+                padding: '24px',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) =>
+                (e.target.style.borderColor = 'rgba(139, 92, 246, 0.5)')
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.borderColor = 'rgba(148, 163, 184, 0.2)')
+              }
             >
               {/* Header */}
-              <div className='mb-4 flex items-start justify-between'>
-                <div className='flex items-center gap-3'>
+              <div
+                style={{
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
                   <div
-                    className={`rounded-lg p-2 ${getCategoryColor(powerUp.category)}/20`}
+                    style={{
+                      borderRadius: '8px',
+                      padding: '8px',
+                      background:
+                        powerUp.category === 'lead_generation'
+                          ? 'rgba(239, 68, 68, 0.2)'
+                          : powerUp.category === 'operations'
+                            ? 'rgba(34, 197, 94, 0.2)'
+                            : powerUp.category === 'compliance'
+                              ? 'rgba(59, 130, 246, 0.2)'
+                              : powerUp.category === 'analytics'
+                                ? 'rgba(139, 92, 246, 0.2)'
+                                : powerUp.category === 'communication'
+                                  ? 'rgba(245, 158, 11, 0.2)'
+                                  : powerUp.category === 'automation'
+                                    ? 'rgba(147, 51, 234, 0.2)'
+                                    : 'rgba(107, 114, 128, 0.2)',
+                    }}
                   >
-                    <span className='text-2xl'>{powerUp.icon}</span>
+                    <span style={{ fontSize: '24px' }}>{powerUp.icon}</span>
                   </div>
                   <div>
-                    <h3 className='font-semibold text-white'>{powerUp.name}</h3>
-                    <p className='text-sm text-slate-400 capitalize'>
+                    <h3
+                      style={{
+                        fontWeight: '600',
+                        color: 'white',
+                        fontSize: '18px',
+                        margin: '0 0 4px 0',
+                      }}
+                    >
+                      {powerUp.name}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        margin: 0,
+                        textTransform: 'capitalize',
+                      }}
+                    >
                       {powerUp.category.replace('_', ' ')}
                     </p>
                   </div>
@@ -326,63 +674,181 @@ export default function PowerUpsDashboard({
 
                 <button
                   onClick={() => togglePowerUp(powerUp.id)}
-                  className={`rounded-lg p-2 transition-all ${
-                    powerUp.isActive
-                      ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                      : 'bg-slate-600/20 text-slate-400 hover:bg-slate-600/30'
-                  }`}
+                  style={{
+                    borderRadius: '8px',
+                    padding: '8px',
+                    border: 'none',
+                    background: powerUp.isActive
+                      ? 'rgba(34, 197, 94, 0.2)'
+                      : 'rgba(71, 85, 105, 0.2)',
+                    color: powerUp.isActive
+                      ? '#22c55e'
+                      : 'rgba(255, 255, 255, 0.6)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = powerUp.isActive
+                      ? 'rgba(34, 197, 94, 0.3)'
+                      : 'rgba(71, 85, 105, 0.3)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = powerUp.isActive
+                      ? 'rgba(34, 197, 94, 0.2)'
+                      : 'rgba(71, 85, 105, 0.2)';
+                  }}
                 >
                   {powerUp.isActive ? (
-                    <Play className='h-4 w-4' />
+                    <Play style={{ height: '16px', width: '16px' }} />
                   ) : (
-                    <Pause className='h-4 w-4' />
+                    <Pause style={{ height: '16px', width: '16px' }} />
                   )}
                 </button>
               </div>
 
               {/* Description */}
-              <p className='mb-4 line-clamp-3 text-sm text-slate-300'>
+              <p
+                style={{
+                  marginBottom: '20px',
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.5',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
+              >
                 {powerUp.description}
               </p>
 
               {/* Stats */}
-              <div className='mb-4 grid grid-cols-2 gap-4'>
+              <div
+                style={{
+                  marginBottom: '20px',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '16px',
+                }}
+              >
                 <div>
-                  <p className='text-xs text-slate-400'>Usage Count</p>
-                  <p className='font-semibold text-white'>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
+                    Usage Count
+                  </p>
+                  <p
+                    style={{
+                      fontWeight: '600',
+                      color: 'white',
+                      fontSize: '16px',
+                      margin: 0,
+                    }}
+                  >
                     {powerUp.usageCount.toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <p className='text-xs text-slate-400'>Success Rate</p>
-                  <p className='font-semibold text-green-400'>
+                  <p
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      margin: '0 0 4px 0',
+                    }}
+                  >
+                    Success Rate
+                  </p>
+                  <p
+                    style={{
+                      fontWeight: '600',
+                      color: '#22c55e',
+                      fontSize: '16px',
+                      margin: 0,
+                    }}
+                  >
                     {powerUp.successRate}%
                   </p>
                 </div>
               </div>
 
               {/* Time Saved */}
-              <div className='mb-4'>
-                <p className='text-xs text-slate-400'>Time Saved</p>
-                <p className='font-semibold text-blue-400'>
+              <div
+                style={{
+                  marginBottom: '20px',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    margin: '0 0 4px 0',
+                  }}
+                >
+                  Time Saved
+                </p>
+                <p
+                  style={{
+                    fontWeight: '600',
+                    color: '#3b82f6',
+                    fontSize: '16px',
+                    margin: 0,
+                  }}
+                >
                   {powerUp.timesSaved}
                 </p>
               </div>
 
               {/* AI Staff */}
-              <div className='mb-4'>
-                <p className='mb-1 text-xs text-slate-400'>AI Staff</p>
-                <div className='flex flex-wrap gap-1'>
+              <div
+                style={{
+                  marginBottom: '20px',
+                }}
+              >
+                <p
+                  style={{
+                    marginBottom: '8px',
+                    fontSize: '12px',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    margin: 0,
+                  }}
+                >
+                  AI Staff
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '4px',
+                  }}
+                >
                   {powerUp.aiStaff.slice(0, 3).map((staff) => (
                     <span
                       key={staff}
-                      className='rounded bg-slate-700/50 px-2 py-1 text-xs text-slate-300'
+                      style={{
+                        borderRadius: '4px',
+                        background: 'rgba(30, 41, 59, 0.5)',
+                        padding: '4px 8px',
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
                     >
                       {staff}
                     </span>
                   ))}
                   {powerUp.aiStaff.length > 3 && (
-                    <span className='rounded bg-slate-700/50 px-2 py-1 text-xs text-slate-300'>
+                    <span
+                      style={{
+                        borderRadius: '4px',
+                        background: 'rgba(30, 41, 59, 0.5)',
+                        padding: '4px 8px',
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                      }}
+                    >
                       +{powerUp.aiStaff.length - 3}
                     </span>
                   )}
@@ -393,15 +859,58 @@ export default function PowerUpsDashboard({
               <button
                 onClick={() => executePowerUp(powerUp.id)}
                 disabled={!powerUp.isActive || isExecuting}
-                className={`w-full rounded-lg px-4 py-2 font-semibold transition-all ${
-                  powerUp.isActive && !isExecuting
-                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
-                    : 'cursor-not-allowed bg-slate-700/50 text-slate-400'
-                }`}
+                style={{
+                  width: '100%',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  border: 'none',
+                  cursor:
+                    powerUp.isActive && !isExecuting
+                      ? 'pointer'
+                      : 'not-allowed',
+                  background:
+                    powerUp.isActive && !isExecuting
+                      ? 'linear-gradient(135deg, #9333ea, #3b82f6)'
+                      : 'rgba(71, 85, 105, 0.5)',
+                  color:
+                    powerUp.isActive && !isExecuting
+                      ? 'white'
+                      : 'rgba(255, 255, 255, 0.6)',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  if (powerUp.isActive && !isExecuting) {
+                    e.target.style.background =
+                      'linear-gradient(135deg, #7c3aed, #2563eb)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (powerUp.isActive && !isExecuting) {
+                    e.target.style.background =
+                      'linear-gradient(135deg, #9333ea, #3b82f6)';
+                  }
+                }}
               >
                 {isExecuting ? (
-                  <div className='flex items-center justify-center gap-2'>
-                    <div className='h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white'></div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '16px',
+                        width: '16px',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        borderTop: '2px solid white',
+                      }}
+                    />
                     Executing...
                   </div>
                 ) : (
@@ -415,14 +924,51 @@ export default function PowerUpsDashboard({
 
       {/* Empty State */}
       {filteredPowerUps.length === 0 && (
-        <div className='py-12 text-center'>
-          <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-800/30 p-4'>
-            <Zap className='h-8 w-8 text-slate-400' />
+        <div
+          style={{
+            padding: '48px 0',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              margin: '0 auto 16px auto',
+              display: 'flex',
+              height: '64px',
+              width: '64px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              background: 'rgba(30, 41, 59, 0.3)',
+              padding: '16px',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '32px',
+                color: 'rgba(255, 255, 255, 0.6)',
+              }}
+            >
+              ⚡
+            </span>
           </div>
-          <h3 className='mb-2 text-xl font-semibold text-slate-300'>
+          <h3
+            style={{
+              marginBottom: '8px',
+              fontSize: '20px',
+              fontWeight: '600',
+              color: 'rgba(255, 255, 255, 0.8)',
+            }}
+          >
             No Power-Ups Found
           </h3>
-          <p className='text-slate-400'>
+          <p
+            style={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '16px',
+              margin: 0,
+            }}
+          >
             {selectedStaff
               ? `No Power-Ups available for ${selectedStaff} in the ${selectedCategory} category.`
               : `No Power-Ups found in the ${selectedCategory} category.`}
