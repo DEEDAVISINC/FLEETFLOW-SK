@@ -16,7 +16,7 @@ import {
 import UserProfileWorkflowService, {
   UserProfileWorkflowData,
 } from '../services/UserProfileWorkflowService';
-import UserDataService, { UserProfile } from '../services/user-data-service';
+import UserDataService, { UserProfile as UserProfileType } from '../services/user-data-service';
 import UserIdentifierService from '../services/user-identifier-service';
 
 // Default empty user profile structure
@@ -391,7 +391,7 @@ export default function UserProfile() {
 
       // Initialize empty workflow data - no mock data
       if (currentUser.departmentCode === 'DM') {
-        const emptyUserProfile: UserProfile = {
+        const emptyUserProfile: UserProfileType = {
           ...currentUser,
           firstName: currentUser.name?.split(' ')[0] || '',
           lastName: currentUser.name?.split(' ')[1] || '',
