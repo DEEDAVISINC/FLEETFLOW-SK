@@ -14,7 +14,7 @@ export default function SquareConnectionTest() {
   const [accounts, setAccounts] = useState<SquareAccount[]>([
     {
       name: 'FleetFlow Sandbox',
-      applicationId: 'sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw',
+      applicationId: 'sq0idp-5GklzNdvq_BqP1gSCYAudA',
       environment: 'sandbox',
       status: 'testing',
     },

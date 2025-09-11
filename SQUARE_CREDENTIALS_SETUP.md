@@ -18,8 +18,8 @@ You need to manually create a `.env.local` file in your project root with these 
 # =============================================================================
 
 # PRIMARY SQUARE ACCOUNT (FleetFlow App - Sandbox)
-SQUARE_APPLICATION_ID=sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw
-SQUARE_ACCESS_TOKEN=EAAAlxxcSOnzYX40Ebpqqzf2zPpajcV6PbYT6QOqsZ4a4iWCfpwEKv1pfLgNh5rv
+SQUARE_APPLICATION_ID=sq0idp-5GklzNdvq_BqP1gSCYAudA
+SQUARE_ACCESS_TOKEN=EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb
 SQUARE_ENVIRONMENT=sandbox
 
 # SECONDARY SQUARE ACCOUNT (Production Ready)
@@ -28,8 +28,8 @@ SQUARE_ACCESS_TOKEN_PROD=EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe
 SQUARE_ENVIRONMENT_PROD=production
 
 # CLIENT-SIDE SQUARE CONFIGURATION (For Payment Forms)
-NEXT_PUBLIC_SQUARE_APPLICATION_ID=sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw
-NEXT_PUBLIC_SQUARE_ACCESS_TOKEN=EAAAlxxcSOnzYX40Ebpqqzf2zPpajcV6PbYT6QOqsZ4a4iWCfpwEKv1pfLgNh5rv
+NEXT_PUBLIC_SQUARE_APPLICATION_ID=sq0idp-5GklzNdvq_BqP1gSCYAudA
+NEXT_PUBLIC_SQUARE_ACCESS_TOKEN=EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb
 
 # =============================================================================
 # OTHER REQUIRED VARIABLES
@@ -65,7 +65,7 @@ FMCSA_API_KEY=7de24c4a0eade12f34685829289e0446daf7880e
 
 ### **Account #1 (Sandbox)**
 
-- **Application ID**: `sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw`
+- **Application ID**: `sq0idp-5GklzNdvq_BqP1gSCYAudA`
 - **Status**: ✅ Active Sandbox
 - **Use For**: Development & Testing
 

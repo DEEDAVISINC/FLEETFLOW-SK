@@ -151,11 +151,11 @@ export class MultiTenantPaymentService {
             applicationId:
               process.env.NODE_ENV === 'production'
                 ? 'sq0idp-5GklzNdvq_BqP1gSCYAudA'
-                : 'sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw',
+                : 'sq0idp-5GklzNdvq_BqP1gSCYAudA',
             accessToken:
               process.env.NODE_ENV === 'production'
                 ? 'EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb'
-                : 'EAAAlxxcSOnzYX40Ebpqqzf2zPpajcV6PbYT6QOqsZ4a4iWCfpwEKv1pfLgNh5rv',
+                : 'EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb',
             locationId:
               process.env.NODE_ENV === 'production'
                 ? process.env.SQUARE_LOCATION_ID_DEPOINTE_PROD ||

@@ -47,7 +47,7 @@ function SquarePaymentForm({
           // Use FleetFlow's new Square credentials
           const applicationId =
             process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID ||
-            'sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw';
+            'sq0idp-5GklzNdvq_BqP1gSCYAudA';
           console.log(
             '🟨 Square Payment Form initializing with Application ID:',
             applicationId.substring(0, 20) + '...'
