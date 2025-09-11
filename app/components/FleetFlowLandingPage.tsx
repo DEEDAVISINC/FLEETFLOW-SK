@@ -1873,7 +1873,8 @@ export default function FleetFlowLandingPage() {
                   fontWeight: '600',
                 }}
               >
-                18 AI Staff Members Managing Your Entire Freight Brokerage - Coming Soon
+                18 AI Staff Members Managing Your Entire Freight Brokerage -
+                Coming Soon
               </p>
               <p
                 style={{
@@ -2053,7 +2054,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '800',
                   }}
                 >
-                  $4,999/month
+                  Starting at $4,999/month
                 </h3>
                 <p
                   style={{
