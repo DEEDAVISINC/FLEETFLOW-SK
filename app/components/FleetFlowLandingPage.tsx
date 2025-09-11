@@ -1862,7 +1862,7 @@ export default function FleetFlowLandingPage() {
                   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                 }}
               >
-                🤖 DEPOINTE AI™
+                🤖 AI Company Staff
               </h2>
               <p
                 style={{
@@ -2085,8 +2085,8 @@ export default function FleetFlowLandingPage() {
                   <li>✓ Performance analytics & reporting</li>
                   <li>✓ Integration with all FleetFlow systems</li>
                   <li>✓ Up to 25 human users included</li>
-                  <li style={{ color: '#ffd700', fontWeight: '600' }}>
-                    ✓ Exclusive to Dee Davis Inc/DEPOINTE operations
+                  <li style={{ color: '#ff8c00', fontWeight: '600' }}>
+                    🚀 Coming Soon
                   </li>
                 </ul>
               </div>
