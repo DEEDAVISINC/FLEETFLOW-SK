@@ -1,7 +1,9 @@
 # 🚛 FLEETFLOW INDEPENDENT CONTRACTOR AGREEMENT
+
 ## Dispatch & Broker Agent Services
 
 ### Agreement Details
+
 - **Date:** [Current Date]
 - **Contractor:** [Full Name]
 - **Position:** Independent Contractor - Dispatch & Broker Agent
@@ -12,12 +14,14 @@
 ## 1. PARTIES TO THIS AGREEMENT
 
 **FleetFlow Transportation LLC** ("Company")
+
 - Address: 755 W. Big Beaver Rd. STE 2020, Troy, Michigan 48084
 - Phone: (833) 386-3509
 - Email: contracts@fleetflowapp.com
 - MC Number: MC-123456
 
 **Contractor:** [First Name Last Name]
+
 - Email: [Email Address]
 - Phone: [Phone Number]
 - Address: [Full Address]
@@ -29,13 +33,17 @@
 The Contractor agrees to provide independent dispatch and broker agent services including:
 
 ### Core Services:
+
 - **Load Dispatching:** Coordinate and dispatch loads to qualified carriers
-- **Broker Operations:** Negotiate rates, manage shipper relationships, facilitate freight transactions
-- **Customer Service:** Provide professional communication with shippers, carriers, and internal teams
+- **Broker Operations:** Negotiate rates, manage shipper relationships, facilitate freight
+  transactions
+- **Customer Service:** Provide professional communication with shippers, carriers, and internal
+  teams
 - **Documentation:** Maintain accurate records of all transactions and communications
 - **Compliance:** Ensure all operations comply with DOT regulations and company policies
 
 ### Technology Utilization:
+
 - Use FleetFlow's proprietary systems and software
 - Complete required technology training and certifications
 - Report technical issues immediately to IT support
@@ -45,14 +53,16 @@ The Contractor agrees to provide independent dispatch and broker agent services 
 ## 3. COMPENSATION STRUCTURE
 
 ### Commission Rates:
-| Service Type | Commission Rate | Minimum Performance |
-|--------------|----------------|-------------------|
-| Dispatch Services | 15% of gross margin per load | 20 loads per month |
-| Broker Agent Services | 20% of gross margin per load | 15 loads per month |
-| Customer Acquisition | 25% of gross margin (first 6 months) | 2 new customers per quarter |
-| Performance Bonus | Additional 5% for exceeding targets | 150% of monthly minimum |
+
+| Service Type          | Commission Rate                      | Minimum Performance         |
+| --------------------- | ------------------------------------ | --------------------------- |
+| Dispatch Services     | 15% of gross margin per load         | 20 loads per month          |
+| Broker Agent Services | 20% of gross margin per load         | 15 loads per month          |
+| Customer Acquisition  | 25% of gross margin (first 6 months) | 2 new customers per quarter |
+| Performance Bonus     | Additional 5% for exceeding targets  | 150% of monthly minimum     |
 
 ### Payment Terms:
+
 - **Payment Schedule:** Bi-weekly, 15 days after load completion and payment collection
 - **Payment Method:** Electronic transfer to designated account
 - **Commission Statements:** Detailed monthly statements provided
@@ -64,12 +74,14 @@ The Contractor agrees to provide independent dispatch and broker agent services 
 The Contractor must maintain these performance standards:
 
 ### Communication Requirements:
+
 - **Response Time:** Within 2 hours during business hours
 - **Professional Communication:** With all carriers and customers
 - **Emergency Availability:** 24/7 for emergency situations
 - **Status Reports:** Weekly reports on active loads and carrier relationships
 
 ### Performance Metrics:
+
 - **On-time Pickup Rate:** Minimum 95%
 - **On-time Delivery Rate:** Minimum 95%
 - **Customer Satisfaction:** Minimum 4.5/5.0 rating
@@ -92,9 +104,11 @@ The Contractor is an **independent contractor** and NOT an employee. The Contrac
 ## 6. CONFIDENTIALITY AND NON-DISCLOSURE
 
 ### Critical Legal Requirement:
+
 This section is LEGALLY BINDING and essential for protecting business operations.
 
 ### Confidential Information Includes:
+
 - Customer information, contacts, and shipping patterns
 - Carrier networks, performance data, and contractual terms
 - Financial information, pricing strategies, and revenue data
@@ -103,6 +117,7 @@ This section is LEGALLY BINDING and essential for protecting business operations
 - Operational data, load patterns, and efficiency metrics
 
 ### Obligations:
+
 - Maintain strict confidentiality of all proprietary information
 - Use confidential information solely for authorized business purposes
 - Not disclose confidential information without prior written consent
@@ -126,12 +141,14 @@ During the term of this agreement and for 12 months thereafter, the Contractor a
 The Contractor must maintain:
 
 ### Required Insurance Coverage:
+
 - **Professional Liability:** Minimum $1,000,000 coverage
 - **General Liability:** Minimum $500,000 coverage
 - **Cyber Liability:** Minimum $250,000 coverage
 - **Errors and Omissions:** For all dispatch and broker activities
 
 ### Important Notes:
+
 - FleetFlow is not liable for any contractor damages, losses, or claims
 - Contractor is responsible for all business-related liabilities
 - Insurance must be maintained throughout the agreement term
@@ -185,9 +202,11 @@ Any disputes will be resolved through:
 ## SIGNATURES
 
 ### Contractor Signature:
-By signing below, I acknowledge that I have read, understood, and agree to all terms and conditions of this Independent Contractor Agreement.
 
-**Signature:** _______________________________ **Date:** _______________
+By signing below, I acknowledge that I have read, understood, and agree to all terms and conditions
+of this Independent Contractor Agreement.
+
+**Signature:** ******\*\*******\_\_\_******\*\******* **Date:** **\*\***\_\_\_**\*\***
 
 **Print Name:** [First Name Last Name]
 
@@ -197,11 +216,12 @@ By signing below, I acknowledge that I have read, understood, and agree to all t
 
 ### FleetFlow Transportation LLC:
 
-By signing below, FleetFlow Transportation LLC accepts this agreement and authorizes the Contractor to provide the specified services.
+By signing below, FleetFlow Transportation LLC accepts this agreement and authorizes the Contractor
+to provide the specified services.
 
-**Signature:** _______________________________ **Date:** _______________
+**Signature:** ******\*\*******\_\_\_******\*\******* **Date:** **\*\***\_\_\_**\*\***
 
-**Print Name:** _______________________________
+**Print Name:** ******\*\*******\_\_\_******\*\*******
 
 **Title:** Authorized Representative
 
@@ -210,6 +230,7 @@ By signing below, FleetFlow Transportation LLC accepts this agreement and author
 ## 📋 CONTRACTOR ONBOARDING CHECKLIST
 
 ### Required Documents:
+
 - [ ] Completed W-9 Tax Form
 - [ ] Proof of Professional Liability Insurance
 - [ ] Proof of General Liability Insurance
@@ -220,12 +241,14 @@ By signing below, FleetFlow Transportation LLC accepts this agreement and author
 - [ ] Signed NDA (Non-Disclosure Agreement)
 
 ### Training Requirements:
+
 - [ ] FleetFlow System Training
 - [ ] DOT/FMCSA Compliance Training
 - [ ] Customer Service Training
 - [ ] Technology and Software Training
 
 ### Equipment Requirements:
+
 - [ ] Reliable Computer/Tablet
 - [ ] High-Speed Internet Connection
 - [ ] Professional Phone System
@@ -235,13 +258,17 @@ By signing below, FleetFlow Transportation LLC accepts this agreement and author
 
 ## ⚖️ LEGAL NOTICE
 
-This document creates legal obligations. Both parties should review carefully and consult with legal counsel if necessary before signing. Violation of this agreement may result in serious legal and financial consequences.
+This document creates legal obligations. Both parties should review carefully and consult with legal
+counsel if necessary before signing. Violation of this agreement may result in serious legal and
+financial consequences.
 
 **Questions? Contact us:**
+
 - 📧 contracts@fleetflowapp.com
 - 📞 (833) 386-3509
 - 🌐 www.fleetflowapp.com
 
 ---
 
-*This agreement is designed to protect both parties while ensuring professional, compliant, and profitable business relationships in the transportation industry.*
+_This agreement is designed to protect both parties while ensuring professional, compliant, and
+profitable business relationships in the transportation industry._

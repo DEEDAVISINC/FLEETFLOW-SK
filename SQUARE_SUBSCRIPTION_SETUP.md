@@ -79,7 +79,7 @@ Monthly subscription. Trial periods handled by FleetFlow.
 
 ### 3. Solo Broker
 
-**Item Name**: Solo Broker **Price**: $289.00 **Type**: Service **Category**: FleetFlow Main Plans
+**Item Name**: Solo Broker **Price**: $199.00 **Type**: Service **Category**: FleetFlow Main Plans
 **SKU**: solo_broker
 
 **Description**:
@@ -192,7 +192,7 @@ Monthly subscription. Trial periods handled by FleetFlow.
 
 ### 8. Enterprise Professional
 
-**Item Name**: Enterprise Professional **Price**: $2,698.00 **Type**: Service **Category**:
+**Item Name**: Enterprise Professional **Price**: $3,999.00 **Type**: Service **Category**:
 FleetFlow Main Plans **SKU**: enterprise
 
 **Description**:
@@ -267,7 +267,7 @@ Monthly subscription. Trial periods handled by FleetFlow.
 
 ### 10. Team Brokerage Starter
 
-**Item Name**: Team Brokerage Starter **Price**: $199.00 **Type**: Service **Category**: FleetFlow
+**Item Name**: Team Brokerage Starter **Price**: $299.00 **Type**: Service **Category**: FleetFlow
 Team Plans **SKU**: team_brokerage_starter
 
 **Description**:
@@ -410,7 +410,7 @@ Monthly subscription for up to 5 people. Trial periods handled by FleetFlow.
 
 ### 12. Team Enterprise
 
-**Item Name**: Team Enterprise **Price**: $2,698.00 **Type**: Service **Category**: FleetFlow Team
+**Item Name**: Team Enterprise **Price**: $1,799.00 **Type**: Service **Category**: FleetFlow Team
 Plans **SKU**: team_enterprise
 
 **Description**:
@@ -674,7 +674,7 @@ Includes access to /broker-box page.
 
 ### 20. Training & Certification
 
-**Item Name**: Training & Certification **Price**: $49.00 **Type**: Service **Category**: FleetFlow
+**Item Name**: Training & Certification **Price**: $79.00 **Type**: Service **Category**: FleetFlow
 Add-On Modules **SKU**: training_certification
 
 **Description**:
@@ -1040,7 +1040,7 @@ Trial periods handled by FleetFlow.
 
 ### 31. Pro-Flow
 
-**Item Name**: Pro-Flow **Price**: $249.00 **Type**: Service **Category**: FleetFlow Marketplace
+**Item Name**: Pro-Flow **Price**: $349.00 **Type**: Service **Category**: FleetFlow Marketplace
 Plans **SKU**: professional
 
 **Description**:
@@ -1073,7 +1073,7 @@ Trial periods handled by FleetFlow.
 
 ### 32. Flow on the Go
 
-**Item Name**: Flow on the Go **Price**: $699.00 **Type**: Service **Category**: FleetFlow
+**Item Name**: Flow on the Go **Price**: $999.00 **Type**: Service **Category**: FleetFlow
 Marketplace Plans **SKU**: enterprise
 
 **Description**:
@@ -1083,7 +1083,7 @@ Flow on the Go - Enterprise Freight Marketplace Platform
 
 Complete enterprise marketplace solution for large carriers and high-volume shippers:
 
-• 100 loads per month included
+• 50 loads per month included
 • VIP load promotion and guaranteed visibility
 • Elite carrier network with premium partners
 • Dedicated account manager and white-glove service
@@ -1116,14 +1116,14 @@ Trial periods handled by FleetFlow.
 |                   | Solo Dispatcher          | $79          | Dispatch        | Load management, AI automation      |
 |                   | Solo Dispatcher Premium  | $199         | Dispatch        | Advanced ops, unlimited comms       |
 |                   | Solo Broker Premium      | $599         | Brokerage       | Complete platform, unlimited comms  |
-|                   | Solo Broker              | $289         | Brokerage       | Advanced ops, CRM integration       |
-|                   | Enterprise Professional  | $2,698       | Enterprise      | Full platform, unlimited AI         |
+|                   | Solo Broker              | $199         | Brokerage       | Advanced ops, CRM integration       |
+|                   | Enterprise Professional  | $3,999       | Enterprise      | Full platform, unlimited AI         |
 |                   | Base Platform            | $59          | Entry           | Core access, expandable             |
-| **Team Plans**    | Team Brokerage Starter   | $199/2ppl    | Team Brokerage  | 2 users, core tools +$49/seat       |
-|                   | Team Brokerage Pro       | $499/5ppl    | Team Brokerage  | 5 users, advanced +$39/seat         |
+| **Team Plans**    | Team Brokerage Starter   | $299/2ppl    | Team Brokerage  | 2 users, core tools +$49/seat       |
+|                   | Team Brokerage Pro       | $499/3ppl    | Team Brokerage  | 3 users, advanced +$39/seat         |
 |                   | Team Dispatch Starter    | $149/2ppl    | Team Dispatch   | 2 users, core tools +$39/seat       |
 |                   | Team Dispatch Pro        | $349/5ppl    | Team Dispatch   | 5 users, advanced +$29/seat         |
-|                   | Team Enterprise          | $2,698/10ppl | Team Enterprise | 10 users, full enterprise           |
+|                   | Team Enterprise          | $1,799/10ppl | Team Enterprise | 10 users, full enterprise           |
 | **Phone Add-Ons** | Phone Basic              | $39          | Small Teams     | Basic calling, 5 users              |
 |                   | Phone Professional       | $89          | Growing Teams   | CRM integration, 25 users           |
 |                   | Phone Enterprise         | $199         | Large Orgs      | Call center, unlimited users        |
@@ -1131,7 +1131,7 @@ Trial periods handled by FleetFlow.
 |                   | CRM Suite                | $79          | Sales           | Customer management                 |
 |                   | RFx Discovery            | $499         | Enterprise      | Government contracts                |
 |                   | Broker Operations        | $199         | Brokers         | Load posting, margins               |
-|                   | Training & Certification | $49          | Teams           | University access                   |
+|                   | Training & Certification | $79          | Teams           | University access                   |
 |                   | Advanced Analytics       | $89          | Analytics       | BI, reporting                       |
 |                   | Real-Time Tracking       | $69          | Operations      | GPS, notifications                  |
 |                   | API Access               | $149         | Developers      | REST API, webhooks                  |
@@ -1142,8 +1142,8 @@ Trial periods handled by FleetFlow.
 | **Enterprise**    | AI Company Dashboard     | $4,999       | AI Management   | 18 DEPOINTE AI staff                |
 |                   | Enterprise Custom        | $7,999       | Full Custom     | Everything + white-label            |
 | **Marketplace**   | Free-Flow                | $0           | Basic Access    | 5 loads/month, marketplace access   |
-|                   | Pro-Flow                 | $249         | Professional    | 25 loads/month, priority features   |
-|                   | Flow on the Go           | $699         | Enterprise      | 100 loads/month, full enterprise    |
+|                   | Pro-Flow                 | $349         | Professional    | 25 loads/month, priority features   |
+|                   | Flow on the Go           | $999         | Enterprise      | 50 loads/month, full enterprise     |
 
 **TOTAL: 28 Complete Subscription Plans & Add-Ons**
 

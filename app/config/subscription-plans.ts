@@ -47,7 +47,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '📞 Phone add-on available (+$39-$199)',
     ],
     accessiblePages: ['/university', '/training', '/compliance', '/dashboard'],
-    maxUsers: 50,
+    maxUsers: 1,
     maxDataStorage: 5,
     apiCallLimit: 10000,
   },
@@ -83,7 +83,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '/compliance',
     ],
     restrictedFeatures: ['analytics', 'financials'],
-    maxUsers: 10,
+    maxUsers: 1,
     maxDataStorage: 25,
     apiCallLimit: 50000,
   },
@@ -121,7 +121,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '/dashboard',
       '/analytics',
     ],
-    maxUsers: 5,
+    maxUsers: 1,
     maxDataStorage: 50,
     apiCallLimit: 100000,
   },
@@ -160,7 +160,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '/analytics',
       '/accounting',
     ],
-    maxUsers: 25,
+    maxUsers: 1,
     maxDataStorage: 500,
     apiCallLimit: 500000,
   },
@@ -169,7 +169,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
   PROFESSIONAL_BROKERAGE: {
     id: 'brokerage',
     name: 'Professional Brokerage',
-    price: 289,
+    price: 199,
     interval: 'month',
     category: 'TMS',
     permissionLevel: 'professional',
@@ -197,7 +197,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '/analytics',
       '/accounting',
     ],
-    maxUsers: 25,
+    maxUsers: 1,
     maxDataStorage: 100,
     apiCallLimit: 100000,
   },
@@ -206,7 +206,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
   ENTERPRISE_PROFESSIONAL: {
     id: 'enterprise',
     name: 'Enterprise Professional',
-    price: 2698,
+    price: 3999,
     interval: 'month',
     category: 'TMS',
     permissionLevel: 'enterprise',
@@ -230,6 +230,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '📱 Unlimited SMS messages',
       '📊 Enterprise call center features',
       '🏢 Multi-tenant phone management',
+      '💡 DEPOINTE AI available as add-on (+$4,999)',
     ],
     accessiblePages: [
       '/ai-flow',
@@ -241,7 +242,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '/rfx-center',
       '/settings',
     ],
-    maxUsers: 500,
+    maxUsers: 50,
     maxDataStorage: 1000,
     apiCallLimit: 1000000,
   },
@@ -269,6 +270,8 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'User management',
       'Document storage',
       'Basic reporting',
+      '1 user included',
+      'Additional users: $29/month each',
     ],
     accessiblePages: ['/dashboard'],
     restrictedFeatures: [
@@ -278,7 +281,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'dispatch-central',
       'ai-flow',
     ],
-    maxUsers: 5,
+    maxUsers: 1,
     maxDataStorage: 5,
     apiCallLimit: 10000,
   },
@@ -291,7 +294,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
   TEAM_BROKERAGE_STARTER: {
     id: 'team_brokerage_starter',
     name: 'Team Brokerage Starter',
-    price: 199,
+    price: 299,
     interval: 'month',
     category: 'TMS',
     permissionLevel: 'professional',
@@ -335,7 +338,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'Priority customer support',
       'Advanced compliance and documentation',
       'Multi-carrier relationship management',
-      'Up to 5 team members included',
+      'Up to 3 team members included',
       'Additional team seats: $39/month each',
       '📞 500 phone minutes included',
       '📱 200 SMS messages included',
@@ -348,7 +351,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       '/analytics',
       '/accounting',
     ],
-    maxUsers: 5,
+    maxUsers: 3,
     maxDataStorage: 100,
     apiCallLimit: 100000,
   },
@@ -422,7 +425,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
   TEAM_ENTERPRISE: {
     id: 'team_enterprise',
     name: 'Team Enterprise',
-    price: 2698,
+    price: 1799,
     interval: 'month',
     category: 'TMS',
     permissionLevel: 'enterprise',
@@ -443,8 +446,8 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'Advanced compliance automation',
       'Custom training and onboarding',
       'Full AI Flow Enterprise included',
-      'AI Company Dashboard included',
-      'DEPOINTE AI system included',
+      '💡 AI Company Dashboard available as add-on (+$4,999)',
+      '💡 DEPOINTE AI available as add-on (+$4,999)',
     ],
     accessiblePages: [
       '/depointe-dashboard',
@@ -688,11 +691,19 @@ export const ADDON_MODULES: Record<string, SubscriptionPlan> = {
   TRAINING_CERTIFICATION: {
     id: 'training_certification',
     name: 'Training & Certification',
-    price: 49,
+    price: 79,
     interval: 'month',
     category: 'Add-on',
     permissionLevel: 'basic',
-    features: ['FleetFlow University access', 'Progress tracking'],
+    features: [
+      'FleetFlow University access',
+      'Progress tracking & analytics',
+      'Official industry certifications',
+      'Advanced compliance modules',
+      'Custom training paths',
+      'Instructor-led sessions',
+      'Certification tracking & management',
+    ],
     accessiblePages: ['/university', '/training'],
     apiCallLimit: 5000,
   },
@@ -772,7 +783,7 @@ export const ENTERPRISE_SOLUTIONS: Record<string, SubscriptionPlan> = {
       '/dashboard',
       '/analytics',
     ],
-    maxUsers: 1000,
+    maxUsers: 25,
     maxDataStorage: 5000,
     apiCallLimit: 5000000,
   },
@@ -814,7 +825,7 @@ export const ENTERPRISE_SOLUTIONS: Record<string, SubscriptionPlan> = {
       '/rfx-center',
       '/settings',
     ], // All pages including DEPOINTE AI accessible
-    maxUsers: 10000,
+    maxUsers: 50,
     maxDataStorage: 10000,
     apiCallLimit: 10000000,
   },
@@ -1061,7 +1072,7 @@ export const SUBSCRIPTION_PLANS = {
   professional: {
     id: 'professional',
     name: 'Pro-Flow',
-    price: 249, // Updated from $299 to $249
+    price: 349, // Updated from $249 to $349
     icon: '🚀',
     squareItemId: '', // To be added when created in Square
     squareVariationId: '', // To be added when created in Square
@@ -1097,12 +1108,12 @@ export const SUBSCRIPTION_PLANS = {
   enterprise: {
     id: 'enterprise',
     name: 'Flow on the Go',
-    price: 699, // Updated from $799 to $699
+    price: 999, // Updated from $699 to $999
     icon: '🏢',
     squareItemId: '', // To be added when created in Square
     squareVariationId: '', // To be added when created in Square
     limits: {
-      loadsPerMonth: 100,
+      loadsPerMonth: 50,
       loadValueCap: null, // No cap
       dispatchServices: true,
       dispatchRate: 100,
@@ -1121,7 +1132,7 @@ export const SUBSCRIPTION_PLANS = {
       '/analytics', // Analytics (limited)
     ],
     features: [
-      '100 loads/month included',
+      '50 loads/month included',
       'VIP load promotion',
       'Elite carrier network',
       'Dedicated account manager',

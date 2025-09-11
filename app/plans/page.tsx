@@ -139,7 +139,7 @@ const INDIVIDUAL_PLANS: PricingTier[] = [
   {
     id: 'solo_broker',
     name: 'Solo Broker',
-    price: 289,
+    price: 199,
     period: '/month',
     description:
       'Advanced brokerage operations + comprehensive phone system included',
@@ -171,7 +171,7 @@ const TEAM_PLANS: PricingTier[] = [
   {
     id: 'team_brokerage_starter',
     name: 'Team Brokerage Starter',
-    price: 199,
+    price: 299,
     period: '/month (up to 2 people)',
     description:
       'Perfect for small brokerage operations with up to 2 team members',
@@ -270,7 +270,7 @@ const TEAM_PLANS: PricingTier[] = [
   {
     id: 'team_enterprise',
     name: 'Team Enterprise',
-    price: 2698,
+    price: 1799,
     period: '/month + seats',
     description:
       'Complete enterprise platform for large organizations (excludes DEPOINTE AI)',
@@ -296,7 +296,7 @@ const TEAM_PLANS: PricingTier[] = [
       '📱 Unlimited SMS messages',
       '📊 Enterprise call center features',
       '🏢 Multi-tenant phone management',
-      '⚠️ DEPOINTE AI sold separately',
+      '💡 DEPOINTE AI available as add-on (+$4,999)',
     ],
     cta: 'Go Enterprise',
     gradient: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 100%)',
