@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FleetFlow Rate Confirmation - Professional Document</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8fafc;
+      }
+      .document-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(
+          135deg,
+          #1e293b 0%,
+          #334155 50%,
+          #1e293b 100%
+        );
+        color: white;
+        padding: 40px 30px 30px;
+        border-radius: 8px 8px 0 0;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(
+          135deg,
+          #3b82f6 0%,
+          #10b981 50%,
+          #f59e0b 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+      .header p {
+        margin: 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+      .document-content {
+        padding: 30px;
+      }
+      .document-header {
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+      }
+      .document-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 10px;
+      }
+      .document-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .meta-item {
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+      .meta-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+      }
+      .meta-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+      }
+      .party-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+      .party-section {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+      .party-section h3 {
+        margin: 0 0 15px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .party-detail {
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+      .detail-label {
+        font-weight: 600;
+        color: #6b7280;
+        min-width: 80px;
+        display: inline-block;
+      }
+      .detail-value {
+        color: #374151;
+      }
+      .rate-breakdown {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 1px solid #0ea5e9;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 30px;
+      }
+      .rate-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .rate-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+      }
+      .rate-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0c4a6e;
+        margin: 0;
+      }
+      .rate-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .rate-item {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #bae6fd;
+      }
+      .rate-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 5px;
+      }
+      .rate-amount {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #0c4a6e;
+      }
+      .total-rate {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+        text-align: center;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 10px;
+      }
+      .total-rate .rate-amount {
+        font-size: 1.8rem;
+        color: white;
+      }
+      .terms-section {
+        background: #ecfdf5;
+        border: 1px solid #d1fae5;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .terms-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .terms-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+      }
+      .terms-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #166534;
+        margin: 0;
+      }
+      .terms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      .terms-item {
+        background: white;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #d1fae5;
+      }
+      .terms-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #166534;
+        margin-bottom: 3px;
+      }
+      .terms-value {
+        font-size: 1rem;
+        color: #166534;
+        font-weight: 500;
+      }
+      .commodity-section {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .commodity-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .commodity-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+      }
+      .commodity-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #92400e;
+        margin: 0;
+      }
+      .commodity-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+      }
+      .commodity-item {
+        background: white;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #fde68a;
+      }
+      .commodity-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #92400e;
+        margin-bottom: 3px;
+      }
+      .commodity-value {
+        font-size: 1rem;
+        color: #92400e;
+        font-weight: 500;
+      }
+      .schedule-section {
+        background: #f3e8ff;
+        border: 1px solid #e9d5ff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .schedule-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .schedule-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+      }
+      .schedule-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #6b21a8;
+        margin: 0;
+      }
+      .schedule-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .schedule-item {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #e9d5ff;
+      }
+      .schedule-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #6b21a8;
+        margin-bottom: 5px;
+      }
+      .schedule-value {
+        font-size: 1rem;
+        color: #6b21a8;
+        font-weight: 500;
+      }
+      .footer {
+        background: #f8fafc;
+        padding: 30px;
+        text-align: center;
+        border-radius: 0 0 8px 8px;
+        border-top: 1px solid #e2e8f0;
+      }
+      .footer p {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #64748b;
+      }
+      .contact-info {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 16px;
+      }
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #475569;
+      }
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+        .document-container {
+          box-shadow: none;
+          border: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="document-container">
+      <div class="header">
+        <h1>🚛 FleetFlow TMS</h1>
+        <p>Rate Confirmation Document</p>
+      </div>
+
+      <div class="document-content">
+        <div class="document-header">
+          <div class="document-title">RATE CONFIRMATION</div>
+          <div style="font-size: 0.9rem; color: #6b7280; margin-top: 5px">
+            Confirmation #: RC-FF-20250910-1720-1003
+          </div>
+        </div>
+
+        <div class="document-meta">
+          <div class="meta-item">
+            <div class="meta-label">Load ID</div>
+            <div class="meta-value">LD-FF-10032025-1720001</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Reference #</div>
+            <div class="meta-value">REF-FF-2025-0910</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Broker Order #</div>
+            <div class="meta-value">BO-FF-2025-0910</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Customer Order #</div>
+            <div class="meta-value">CO-ABC-2025-0910</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Issue Date</div>
+            <div class="meta-value">September 10, 2025</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Valid Until</div>
+            <div class="meta-value">September 17, 2025</div>
+          </div>
+        </div>
+
+        <div class="party-info">
+          <div class="party-section">
+            <h3>🚚 Shipper Information</h3>
+            <div class="party-detail">
+              <span class="detail-label">Company:</span>
+              <span class="detail-value">ABC Manufacturing Corp</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Address:</span>
+              <span class="detail-value"
+                >123 Industrial Blvd<br />Chicago, IL 60601</span
+              >
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Contact:</span>
+              <span class="detail-value">John Smith</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">(312) 555-0123</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">john.smith@abc-mfg.com</span>
+            </div>
+          </div>
+
+          <div class="party-section">
+            <h3>📦 Consignee Information</h3>
+            <div class="party-detail">
+              <span class="detail-label">Company:</span>
+              <span class="detail-value">XYZ Distribution Center</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Address:</span>
+              <span class="detail-value"
+                >456 Commerce Dr<br />Atlanta, GA 30301</span
+              >
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Contact:</span>
+              <span class="detail-value">Sarah Johnson</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">(404) 555-0456</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">sarah.johnson@xyz-dist.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="party-info">
+          <div class="party-section">
+            <h3>🚛 Carrier Information</h3>
+            <div class="party-detail">
+              <span class="detail-label">Company:</span>
+              <span class="detail-value">FleetFlow Transport LLC</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">MC Number:</span>
+              <span class="detail-value">MC-123456</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">DOT Number:</span>
+              <span class="detail-value">DOT-987654</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">SCAC Code:</span>
+              <span class="detail-value">FFTM</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">(555) 123-4567</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">dispatch@fleetflowapp.com</span>
+            </div>
+          </div>
+
+          <div class="party-section">
+            <h3>👤 Driver Information</h3>
+            <div class="party-detail">
+              <span class="detail-label">Name:</span>
+              <span class="detail-value">Mike Johnson</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">License:</span>
+              <span class="detail-value">DL-12345678 (IL)</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Phone:</span>
+              <span class="detail-value">(555) 987-6543</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Email:</span>
+              <span class="detail-value">mike.johnson@fleetflowapp.com</span>
+            </div>
+            <div class="party-detail">
+              <span class="detail-label">Equipment:</span>
+              <span class="detail-value">53' Dry Van</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="commodity-section">
+          <div class="commodity-header">
+            <span class="commodity-icon">📦</span>
+            <h3 class="commodity-title">Commodity Information</h3>
+          </div>
+          <div class="commodity-details">
+            <div class="commodity-item">
+              <div class="commodity-label">Description</div>
+              <div class="commodity-value">Industrial Machinery Parts</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">Weight</div>
+              <div class="commodity-value">2,450 lbs</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">Pieces</div>
+              <div class="commodity-value">12 pallets</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">Class</div>
+              <div class="commodity-value">85</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">NMFC Code</div>
+              <div class="commodity-value">12345-67</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">Declared Value</div>
+              <div class="commodity-value">$25,000.00</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">Hazmat</div>
+              <div class="commodity-value">No</div>
+            </div>
+            <div class="commodity-item">
+              <div class="commodity-label">Temperature Control</div>
+              <div class="commodity-value">Not Required</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="schedule-section">
+          <div class="schedule-header">
+            <span class="schedule-icon">📅</span>
+            <h3 class="schedule-title">Schedule Information</h3>
+          </div>
+          <div class="schedule-grid">
+            <div class="schedule-item">
+              <div class="schedule-label">Pickup Date</div>
+              <div class="schedule-value">September 11, 2025</div>
+              <div class="schedule-label" style="margin-top: 8px">
+                Pickup Time
+              </div>
+              <div class="schedule-value">8:00 AM - 5:00 PM</div>
+            </div>
+            <div class="schedule-item">
+              <div class="schedule-label">Delivery Date</div>
+              <div class="schedule-value">September 12, 2025</div>
+              <div class="schedule-label" style="margin-top: 8px">
+                Delivery Time
+              </div>
+              <div class="schedule-value">8:00 AM - 5:00 PM</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rate-breakdown">
+          <div class="rate-header">
+            <span class="rate-icon">💰</span>
+            <h3 class="rate-title">Rate Breakdown</h3>
+          </div>
+          <div class="rate-grid">
+            <div class="rate-item">
+              <div class="rate-label">Line Haul Rate</div>
+              <div class="rate-amount">$2,850.00</div>
+            </div>
+            <div class="rate-item">
+              <div class="rate-label">Fuel Surcharge</div>
+              <div class="rate-amount">$285.00</div>
+            </div>
+            <div class="rate-item">
+              <div class="rate-label">Accessorial Charges</div>
+              <div class="rate-amount">$150.00</div>
+            </div>
+            <div class="rate-item">
+              <div class="rate-label">Detention Rate</div>
+              <div class="rate-amount">$0.00</div>
+            </div>
+            <div class="rate-item">
+              <div class="rate-label">Layover Rate</div>
+              <div class="rate-amount">$0.00</div>
+            </div>
+            <div class="total-rate">
+              <div class="rate-label" style="color: white; margin-bottom: 5px">
+                TOTAL RATE
+              </div>
+              <div class="rate-amount">$3,285.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terms-section">
+          <div class="terms-header">
+            <span class="terms-icon">📋</span>
+            <h3 class="terms-title">Payment Terms & Conditions</h3>
+          </div>
+          <div class="terms-grid">
+            <div class="terms-item">
+              <div class="terms-label">Payment Terms</div>
+              <div class="terms-value">Net 30 Days</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Payment Method</div>
+              <div class="terms-value">ACH/EFT</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Factoring</div>
+              <div class="terms-value">Available</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Factoring Company</div>
+              <div class="terms-value">TFS Factoring</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Quick Pay Discount</div>
+              <div class="terms-value">2% within 10 days</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Insurance Required</div>
+              <div class="terms-value">$100,000 cargo</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Bonded</div>
+              <div class="terms-value">Yes</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Advance Amount</div>
+              <div class="terms-value">$500.00</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Team Driver Required</div>
+              <div class="terms-value">No</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Lumper Fee</div>
+              <div class="terms-value">$150.00 (if applicable)</div>
+            </div>
+            <div class="terms-item">
+              <div class="terms-label">Appointment Required</div>
+              <div class="terms-value">Yes</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="party-section" style="margin-top: 30px">
+          <h3>📋 Document Requirements</h3>
+          <div
+            style="
+              background: #f8fafc;
+              padding: 15px;
+              border-radius: 6px;
+              border: 1px solid #e2e8f0;
+              margin-top: 15px;
+            "
+          >
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+              "
+            >
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="color: #16a34a; font-weight: 600">✓</span>
+                <span style="font-size: 0.9rem">BOL Required</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="color: #16a34a; font-weight: 600">✓</span>
+                <span style="font-size: 0.9rem">POD Required</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span style="color: #16a34a; font-weight: 600">✓</span>
+                <span style="font-size: 0.9rem">Scale Tickets Required</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="party-section" style="margin-top: 30px">
+          <h3>📝 Special Instructions & Notes</h3>
+          <div
+            style="
+              background: #f8fafc;
+              padding: 15px;
+              border-radius: 6px;
+              border: 1px solid #e2e8f0;
+              margin-top: 15px;
+            "
+          >
+            <p style="margin: 0 0 15px 0; color: #374151; line-height: 1.6">
+              • Handle with care - fragile industrial components<br />
+              • Temperature sensitive - maintain between 60-80°F<br />
+              • Requires lift gate for unloading<br />
+              • Call receiver 2 hours prior to delivery<br />
+              • Proof of delivery signature required<br />
+              • All documentation must be provided within 24 hours of
+              delivery<br />
+              • Carrier must maintain ELD compliance throughout transit
+            </p>
+            <div
+              style="
+                border-top: 1px solid #e2e8f0;
+                padding-top: 15px;
+                margin-top: 15px;
+              "
+            >
+              <strong>Tracking Updates:</strong> Real-time GPS tracking via
+              FleetFlow app<br />
+              <strong>Emergency Contact:</strong> Dispatch: (555) 123-4567<br />
+              <strong>Emergency Phone:</strong> FleetFlow Operations: (555)
+              987-6543
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p><strong>FleetFlow Business Intelligence</strong></p>
+        <p>Your Complete Transportation Management Solution</p>
+
+        <div class="contact-info">
+          <div class="contact-item">📧 support@fleetflowapp.com</div>
+          <div class="contact-item">📞 (833) 386-3509</div>
+          <div class="contact-item">🌐 www.fleetflowapp.com</div>
+          <div
+            class="contact-item"
+            style="margin-top: 16px; font-weight: 600; color: #334155"
+          >
+            📍 755 W. Big Beaver Rd. STE 2020<br />
+            <span style="font-weight: normal; margin-left: 20px"
+              >Troy, Michigan 48084</span
+            >
+          </div>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 12px; color: #94a3b8">
+          This rate confirmation serves as official pricing documentation and
+          may be used for accounting and regulatory purposes.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
