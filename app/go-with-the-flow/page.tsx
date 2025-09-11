@@ -1062,7 +1062,7 @@ export default function GoWithTheFlow() {
                           marginBottom: '15px',
                         }}
                       >
-                        $499/month
+                        $349/month
                       </div>
                       <ul
                         style={{
@@ -1147,7 +1147,7 @@ export default function GoWithTheFlow() {
                           marginBottom: '15px',
                         }}
                       >
-                        $899/month
+                        $999/month
                       </div>
                       <ul
                         style={{
