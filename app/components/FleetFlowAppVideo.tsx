@@ -314,14 +314,15 @@ export function FleetFlowAppVideo({
     }
   };
 
-  // Play narration when slide changes - DISABLED to prevent infinite loop
+  // Play narration when slide changes
   useEffect(() => {
-    // TEMPORARILY DISABLED - TTS causing infinite loops
-    console.info(
-      `🎙️ Narration disabled for slide ${currentSlide} to prevent infinite loops`
-    );
-    return;
-  }, [currentSlide, isPlaying]); // Removed currentAudio and appScreenshots from dependencies
+    if (isPlaying && currentScreen?.narration) {
+      console.info(
+        `🎙️ Playing narration for slide ${currentSlide}: "${currentScreen.narration.substring(0, 50)}..."`
+      );
+      playNarration(currentScreen.narration);
+    }
+  }, [currentSlide, isPlaying]);
 
   // Load voices on mount and initialize TTS
   useEffect(() => {
