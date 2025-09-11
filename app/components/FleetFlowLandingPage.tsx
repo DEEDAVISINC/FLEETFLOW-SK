@@ -1857,14 +1857,12 @@ export default function FleetFlowLandingPage() {
                 style={{
                   fontSize: '2.8rem',
                   fontWeight: '900',
-                  background:
-                    'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#ffd700',
                   marginBottom: '20px',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                 }}
               >
-                🤖 DEPOINTE AI Company Dashboard
+                🤖 DEPOINTE AI™
               </h2>
               <p
                 style={{
@@ -1885,9 +1883,10 @@ export default function FleetFlowLandingPage() {
                   marginBottom: '30px',
                 }}
               >
-                Complete AI workforce with dedicated specialists for every aspect of your freight business
+                Complete AI workforce with dedicated specialists for every
+                aspect of your freight business
               </p>
-              
+
               <div
                 style={{
                   display: 'grid',
@@ -2063,7 +2062,8 @@ export default function FleetFlowLandingPage() {
                     marginBottom: '20px',
                   }}
                 >
-                  Complete AI workforce managing your freight brokerage operations 24/7
+                  Complete AI workforce managing your freight brokerage
+                  operations 24/7
                 </p>
                 <ul
                   style={{
@@ -2140,7 +2140,8 @@ export default function FleetFlowLandingPage() {
                       e.currentTarget.style.background = 'rgba(255,215,0,0.1)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                      e.currentTarget.style.background =
+                        'rgba(255,255,255,0.1)';
                     }}
                   >
                     💼 Add to Enterprise Plan
