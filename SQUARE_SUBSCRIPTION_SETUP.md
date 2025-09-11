@@ -965,7 +965,73 @@ Monthly subscription with dedicated implementation support.
 Trial periods handled by FleetFlow.
 ```
 
-### 29. Enterprise Custom Solutions
+### 29. Additional AI Department
+
+**Item Name**: Additional AI Department **Price**: $1,299.00 **Type**: Service **Category**: FleetFlow
+AI Plans **SKU**: additional_ai_department
+
+**Description**:
+
+```
+Additional AI Department - Custom AI Department Expansion
+
+Expand your AI Company Staff with specialized departments:
+
+• 1 Dedicated AI Staff Member included
+• Custom department specialization
+• Seamless integration with existing AI staff
+• Department-specific workflows & processes
+• Real-time coordination with base AI team
+• Custom training & onboarding
+• Performance monitoring & analytics
+• Scalable department operations
+
+Perfect for businesses needing specialized AI capabilities beyond the base 18 AI staff members.
+
+Includes access to:
+- 1 additional AI staff member
+- Custom department configuration
+- Integration with existing AI Company Dashboard
+- Department-specific analytics
+
+Monthly subscription. Requires AI Company Dashboard base subscription.
+Trial periods handled by FleetFlow.
+```
+
+### 30. Individual AI Specialist
+
+**Item Name**: Individual AI Specialist **Price**: $399.00 **Type**: Service **Category**: FleetFlow
+AI Plans **SKU**: individual_ai_specialist
+
+**Description**:
+
+```
+Individual AI Specialist - Custom AI Staff Member
+
+Add specialized AI staff members to your existing team:
+
+• 1 Custom AI Specialist
+• Role-specific training & capabilities
+• Integration with existing AI workflows
+• Specialized skill sets & knowledge base
+• Real-time collaboration with AI team
+• Custom personality & communication style
+• Performance tracking & optimization
+• Flexible role assignments
+
+Ideal for businesses needing specific AI expertise or additional capacity in particular areas.
+
+Includes access to:
+- 1 specialized AI staff member
+- Custom role configuration
+- Integration with AI Company Dashboard
+- Individual performance analytics
+
+Monthly subscription. Requires AI Company Dashboard base subscription.
+Trial periods handled by FleetFlow.
+```
+
+### 31. Enterprise Custom Solutions
 
 **Item Name**: Enterprise Custom Solutions **Price**: $7,999.00 **Type**: Service **Category**:
 FleetFlow Enterprise Solutions **SKU**: enterprise_custom
