@@ -177,8 +177,8 @@ export default function FleetFlowLandingPage() {
       {/* Main Content */}
       <div
         style={{
-          paddingTop: '80px',
-          padding: '80px 20px 40px',
+          paddingTop: '120px',
+          padding: '0 20px 40px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -188,7 +188,7 @@ export default function FleetFlowLandingPage() {
         }}
       >
         {/* Hero Section */}
-        <header style={{ marginBottom: '50px', maxWidth: '800px' }}>
+        <header style={{ marginBottom: '80px', maxWidth: '800px' }}>
           <h1
             style={{
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
