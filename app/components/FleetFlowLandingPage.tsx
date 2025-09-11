@@ -1838,6 +1838,319 @@ export default function FleetFlowLandingPage() {
           </div>
         </div>
 
+        {/* DEPOINTE AI Company Dashboard Section */}
+        <div style={{ marginTop: '60px', marginBottom: '60px' }}>
+          <div
+            style={{
+              background: 'rgba(139, 69, 19, 0.1)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '20px',
+              border: '2px solid rgba(255, 215, 0, 0.3)',
+              padding: '40px',
+              maxWidth: '1200px',
+              margin: '0 auto',
+              boxShadow: '0 8px 32px rgba(255, 215, 0, 0.2)',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2
+                style={{
+                  fontSize: '2.8rem',
+                  fontWeight: '900',
+                  background:
+                    'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '20px',
+                }}
+              >
+                🤖 DEPOINTE AI Company Dashboard
+              </h2>
+              <p
+                style={{
+                  fontSize: '1.4rem',
+                  color: 'rgba(255,255,255,0.9)',
+                  lineHeight: '1.6',
+                  marginBottom: '15px',
+                  fontWeight: '600',
+                }}
+              >
+                18 AI Staff Members Managing Your Entire Freight Brokerage
+              </p>
+              <p
+                style={{
+                  fontSize: '1.1rem',
+                  color: 'rgba(255,255,255,0.8)',
+                  lineHeight: '1.5',
+                  marginBottom: '30px',
+                }}
+              >
+                Complete AI workforce with dedicated specialists for every aspect of your freight business
+              </p>
+              
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '25px',
+                  marginBottom: '40px',
+                }}
+              >
+                {/* AI Staff Categories */}
+                <div
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    border: '1px solid rgba(255, 215, 0, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#ffd700',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    💼 Operations Team
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255,255,255,0.9)',
+                      fontSize: '0.95rem',
+                      listStyle: 'none',
+                      padding: 0,
+                      lineHeight: '1.8',
+                    }}
+                  >
+                    <li>• Logan (Logistics Coordinator)</li>
+                    <li>• Miles (Dispatch Manager)</li>
+                    <li>• Dee (Freight Brokerage)</li>
+                    <li>• Will (Sales Director)</li>
+                    <li>• Hunter (Recruiting)</li>
+                  </ul>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    border: '1px solid rgba(255, 215, 0, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#ffd700',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    🤝 Relationships Team
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255,255,255,0.9)',
+                      fontSize: '0.95rem',
+                      listStyle: 'none',
+                      padding: 0,
+                      lineHeight: '1.8',
+                    }}
+                  >
+                    <li>• Brook R. (Brokerage Operations)</li>
+                    <li>• Carrie R. (Carrier Relations)</li>
+                    <li>• Shanell (Customer Service)</li>
+                    <li>• Clarence (Claims & Insurance)</li>
+                  </ul>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    border: '1px solid rgba(255, 215, 0, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#ffd700',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    📊 Analytics & Compliance
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255,255,255,0.9)',
+                      fontSize: '0.95rem',
+                      listStyle: 'none',
+                      padding: 0,
+                      lineHeight: '1.8',
+                    }}
+                  >
+                    <li>• Ana Lytics (Data Analysis)</li>
+                    <li>• Kameelah (DOT Compliance)</li>
+                    <li>• Regina (FMCSA Regulations)</li>
+                    <li>• Resse A. Bell (Accounting)</li>
+                    <li>• Dell (IT Support)</li>
+                  </ul>
+                </div>
+
+                <div
+                  style={{
+                    background: 'rgba(255, 215, 0, 0.1)',
+                    borderRadius: '16px',
+                    padding: '25px',
+                    border: '1px solid rgba(255, 215, 0, 0.3)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#ffd700',
+                      marginBottom: '15px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    🎯 Business Development
+                  </h3>
+                  <ul
+                    style={{
+                      color: 'rgba(255,255,255,0.9)',
+                      fontSize: '0.95rem',
+                      listStyle: 'none',
+                      padding: 0,
+                      lineHeight: '1.8',
+                    }}
+                  >
+                    <li>• Gary (General Lead Generation)</li>
+                    <li>• Desiree (Desperate Prospects)</li>
+                    <li>• Cliff (Desperate Prospects)</li>
+                    <li>• Drew (Marketing)</li>
+                    <li>• C. Allen Durr (Scheduling)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 215, 0, 0.05)',
+                  borderRadius: '12px',
+                  padding: '30px',
+                  marginBottom: '30px',
+                  border: '1px solid rgba(255, 215, 0, 0.2)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '2rem',
+                    color: '#ffd700',
+                    marginBottom: '15px',
+                    fontWeight: '800',
+                  }}
+                >
+                  $4,999/month
+                </h3>
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.8)',
+                    fontSize: '1rem',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Complete AI workforce managing your freight brokerage operations 24/7
+                </p>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.95rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                    display: 'inline-block',
+                  }}
+                >
+                  <li>✓ 18 specialized AI staff members</li>
+                  <li>✓ 24/7 automated operations</li>
+                  <li>✓ Real-time task management</li>
+                  <li>✓ Automated lead generation</li>
+                  <li>✓ Compliance monitoring</li>
+                  <li>✓ Customer relationship management</li>
+                  <li>✓ Performance analytics & reporting</li>
+                  <li>✓ Integration with all FleetFlow systems</li>
+                  <li>✓ Up to 25 human users included</li>
+                  <li style={{ color: '#ffd700', fontWeight: '600' }}>
+                    ✓ Exclusive to Dee Davis Inc/DEPOINTE operations
+                  </li>
+                </ul>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>
+                <Link href='/ai-company-dashboard'>
+                  <button
+                    style={{
+                      background:
+                        'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
+                      color: '#1a1a1a',
+                      border: 'none',
+                      padding: '18px 45px',
+                      borderRadius: '12px',
+                      fontSize: '1.3rem',
+                      fontWeight: '800',
+                      cursor: 'pointer',
+                      boxShadow: '0 8px 25px rgba(255, 215, 0, 0.4)',
+                      transition: 'all 0.3s ease',
+                      marginRight: '15px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-3px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 12px 35px rgba(255, 215, 0, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0px)';
+                      e.currentTarget.style.boxShadow =
+                        '0 8px 25px rgba(255, 215, 0, 0.4)';
+                    }}
+                  >
+                    🤖 View DEPOINTE AI Dashboard
+                  </button>
+                </Link>
+                <Link href='/plans'>
+                  <button
+                    style={{
+                      background: 'rgba(255,255,255,0.1)',
+                      color: 'white',
+                      border: '1px solid rgba(255, 215, 0, 0.3)',
+                      padding: '18px 45px',
+                      borderRadius: '12px',
+                      fontSize: '1.2rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      backdropFilter: 'blur(10px)',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(255,215,0,0.1)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                    }}
+                  >
+                    💼 Add to Enterprise Plan
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* FleetFlow LaunchPad℠ Section */}
         <div style={{ marginTop: '60px', marginBottom: '60px' }}>
           <div
