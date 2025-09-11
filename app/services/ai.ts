@@ -12,14 +12,22 @@ export class FleetFlowAI {
     this.isEnabled = !!process.env.ANTHROPIC_API_KEY;
     this.claude = new ClaudeAIService();
 
-    // ✅ Register this service with Platform AI Manager
-    platformAIManager.registerService('FleetFlowAI', this);
-
-    if (this.isEnabled) {
-      console.info('🚀 AI Service enhanced with Platform AI - All fixes active');
-    } else {
+    // ✅ Register this service with Platform AI Manager (with error handling)
+    try {
+      platformAIManager.registerService('FleetFlowAI', this);
+      if (this.isEnabled) {
+        console.info(
+          '🚀 AI Service enhanced with Platform AI - All fixes active'
+        );
+      } else {
+        console.info(
+          '🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production'
+        );
+      }
+    } catch (error) {
+      console.error('⚠️ Failed to register with Platform AI Manager:', error);
       console.info(
-        '🤖 AI Service running in mock mode - set ANTHROPIC_API_KEY for production'
+        '🤖 AI Service running in standalone mode - set ANTHROPIC_API_KEY for production'
       );
     }
   }

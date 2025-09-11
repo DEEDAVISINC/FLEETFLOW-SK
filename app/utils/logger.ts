@@ -97,7 +97,8 @@ class Logger {
     if (this.isDevelopment) return;
 
     try {
-      await fetch('/api/logging', {
+      const url = this.getLoggingUrl();
+      await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,6 +110,23 @@ class Logger {
       console.error('Failed to log to server:', error);
       console.error('Original log entry:', entry);
     }
+  }
+
+  private getLoggingUrl(): string {
+    // Client-side: use relative URL
+    if (typeof window !== 'undefined') {
+      return '/api/logging';
+    }
+
+    // Server-side: construct full URL
+    const baseUrl =
+      process.env.BACKEND_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3001';
+
+    return `${baseUrl}/api/logging`;
   }
 
   private log(

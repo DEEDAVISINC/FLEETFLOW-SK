@@ -136,6 +136,24 @@ export class EnhancedTwilioService {
         return;
       }
 
+      // Validate Account SID format before initializing Twilio client
+      if (!accountSid.startsWith('AC') || accountSid.length !== 34) {
+        console.error(
+          `❌ Invalid Twilio Account SID format: "${accountSid}". Must start with 'AC' and be 34 characters long.`
+        );
+        this.isConfigured = false;
+        return;
+      }
+
+      // Validate Auth Token format
+      if (!authToken || authToken.length < 32) {
+        console.error(
+          '❌ Invalid Twilio Auth Token format. Must be at least 32 characters long.'
+        );
+        this.isConfigured = false;
+        return;
+      }
+
       // Import Twilio dynamically
       const twilio = require('twilio');
       this.client = twilio(accountSid, authToken);
