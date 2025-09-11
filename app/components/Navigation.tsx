@@ -1010,7 +1010,7 @@ export default function ProfessionalNavigation() {
                   }}
                 >
                   <Link
-                    href='/settings'
+                    href='/auth/signin'
                     onClick={handleDropdownClose}
                     style={{
                       display: 'block',
@@ -1021,7 +1021,7 @@ export default function ProfessionalNavigation() {
                       fontWeight: '500',
                     }}
                   >
-                    ⚙️ Settings
+                    🔐 Login
                   </Link>
                   <Link
                     href='/user-management'
