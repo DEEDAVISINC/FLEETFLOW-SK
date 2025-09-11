@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FleetFlow Receipt - September 10, 2025</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8fafc;
+      }
+      .receipt-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      /* Header styles moved inline to match about page */
+      .receipt-details {
+        padding: 24px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .receipt-number {
+        background: #f1f5f9;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-weight: 600;
+        color: #334155;
+      }
+      .transaction-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .info-section {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+      }
+      .info-section h3 {
+        margin: 0 0 12px 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .info-section p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #334155;
+      }
+      .payment-details {
+        background: #ecfdf5;
+        border: 1px solid #d1fae5;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .payment-details h3 {
+        margin: 0 0 16px 0;
+        color: #166534;
+        font-size: 16px;
+      }
+      .payment-amount {
+        font-size: 28px;
+        font-weight: 700;
+        color: #166534;
+        margin: 16px 0;
+      }
+      .status-approved {
+        background: #dcfce7;
+        color: #166534;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 16px;
+      }
+      .footer {
+        background: #f8fafc;
+        padding: 24px;
+        text-align: center;
+        border-radius: 0 0 8px 8px;
+        border-top: 1px solid #e2e8f0;
+      }
+      .footer p {
+        margin: 8px 0;
+        font-size: 14px;
+        color: #64748b;
+      }
+      .contact-info {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 16px;
+      }
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #475569;
+      }
+      @media print {
+        body {
+          background: white;
+          padding: 0;
+        }
+        .receipt-container {
+          box-shadow: none;
+          border: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="receipt-container">
+      <div
+        class="header"
+        style="
+          background: linear-gradient(
+            135deg,
+            #1e293b 0%,
+            #334155 50%,
+            #1e293b 100%
+          );
+          text-align: center;
+          padding: 40px 20px 30px;
+          border-radius: 8px 8px 0 0;
+        "
+      >
+        <h1
+          style="
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(
+              135deg,
+              #3b82f6 0%,
+              #10b981 50%,
+              #f59e0b 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+          "
+        >
+          🚛 FleetFlow TMS
+        </h1>
+        <p
+          style="
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto 16px;
+            line-height: 1.6;
+          "
+        >
+          Transportation Management System
+        </p>
+        <p
+          style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); margin: 0"
+        >
+          755 W. Big Beaver Rd. STE 2020 • Troy, Michigan 48084
+        </p>
+
+        <!-- Statistics Row -->
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+          "
+        >
+          <div style="text-align: center">
+            <div style="font-size: 1.3rem; font-weight: 800; color: #10b981">
+              $1.00
+            </div>
+            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7)">
+              Transaction Amount
+            </div>
+          </div>
+          <div style="text-align: center">
+            <div style="font-size: 1.3rem; font-weight: 800; color: #f59e0b">
+              APPROVED
+            </div>
+            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7)">
+              Payment Status
+            </div>
+          </div>
+          <div style="text-align: center">
+            <div style="font-size: 1.3rem; font-weight: 800; color: #8b5cf6">
+              FF-2025
+            </div>
+            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7)">
+              Receipt ID
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="receipt-details">
+        <div class="receipt-number">RECEIPT #: FF-20250910-1720-1003</div>
+
+        <div class="transaction-info">
+          <div class="info-section">
+            <h3>Transaction Date</h3>
+            <p><strong>September 10, 2025</strong></p>
+            <p>7:20 PM</p>
+          </div>
+          <div class="info-section">
+            <h3>Customer Information</h3>
+            <p>Name: [Customer Name]</p>
+            <p>Email: [customer@email.com]</p>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3>Service Details</h3>
+          <p><strong>Service:</strong> FleetFlow Subscription Payment</p>
+          <p>
+            <strong>Description:</strong> Monthly subscription payment for
+            FleetFlow TMS platform
+          </p>
+        </div>
+
+        <div class="payment-details">
+          <h3>Payment Information</h3>
+          <div class="payment-amount">$1.00</div>
+          <p><strong>Payment Method:</strong> American Express</p>
+          <p><strong>Card Number:</strong> •••• •••• •••• 1003</p>
+          <p><strong>Authorization Code:</strong> FF-APP-2025-09-10</p>
+          <p><strong>Transaction ID:</strong> TXN-FF-10032025-1720001</p>
+          <div class="status-approved">✅ PAYMENT APPROVED</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <p><strong>Thank you for choosing FleetFlow TMS!</strong></p>
+        <p>Your Complete Transportation Management Solution</p>
+
+        <div class="contact-info">
+          <div class="contact-item">📧 support@fleetflowapp.com</div>
+          <div class="contact-item">📞 (833) 386-3509</div>
+          <div class="contact-item">🌐 www.fleetflowapp.com</div>
+        </div>
+
+        <p style="margin-top: 20px; font-size: 12px; color: #94a3b8">
+          This receipt serves as confirmation of payment and may be used for
+          accounting and tax purposes.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
