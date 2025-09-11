@@ -177,8 +177,7 @@ export default function FleetFlowLandingPage() {
       {/* Main Content */}
       <div
         style={{
-          paddingTop: '80px',
-          padding: '80px 20px 40px',
+          padding: '100px 20px 40px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
