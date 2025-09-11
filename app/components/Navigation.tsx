@@ -35,6 +35,14 @@ export default function ProfessionalNavigation() {
     ? hiddenPaths.includes(pathname)
     : false;
 
+  // Debug logging for navigation visibility
+  console.log('🧭 Navigation visibility check:', {
+    pathname,
+    shouldHideNavigation,
+    hiddenPaths,
+    isHidden: shouldHideNavigation,
+  });
+
   // LaunchPad pages have blue backgrounds, so use solid white background
   const isLaunchPadPage = pathname ? pathname.startsWith('/launchpad') : false;
 
