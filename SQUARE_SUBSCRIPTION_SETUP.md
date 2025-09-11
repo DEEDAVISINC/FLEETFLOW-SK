@@ -11,8 +11,8 @@ that need to be created as Library Items in Square before creating subscription 
 
 ### 1. Training Only
 
-**Item Name**: Training Only **Price**: $49.00 **Type**: Service **Category**: FleetFlow Main Plans
-**SKU**: training
+**Item Name**: FleetFlow University™ (TRAINING ONLY) **Price**: $49.00 **Type**: Service **Category**: FleetFlow Main Plans
+**SKU**: training_only
 
 **Description**:
 
@@ -674,8 +674,7 @@ Includes access to /broker-box page.
 
 ### 20. Training & Certification
 
-**Item Name**: Training & Certification **Price**: $79.00 **Type**: Service **Category**: FleetFlow
-Add-On Modules **SKU**: training_certification
+**Item Name**: FleetFlow University™ (TRAINING & CERTIFICATION) **Price**: $79.00 **Type**: Service **Category**: FleetFlow Add-On Modules **SKU**: training_certification
 
 **Description**:
 
@@ -1131,7 +1130,7 @@ Trial periods handled by FleetFlow.
 |                   | CRM Suite                | $79          | Sales           | Customer management                 |
 |                   | RFx Discovery            | $499         | Enterprise      | Government contracts                |
 |                   | Broker Operations        | $199         | Brokers         | Load posting, margins               |
-|                   | Training & Certification | $79          | Teams           | University access                   |
+|                   | FleetFlow University™ (TRAINING & CERTIFICATION) | $79          | Add-On Modules  | University access + certifications |
 |                   | Advanced Analytics       | $89          | Analytics       | BI, reporting                       |
 |                   | Real-Time Tracking       | $69          | Operations      | GPS, notifications                  |
 |                   | API Access               | $149         | Developers      | REST API, webhooks                  |
