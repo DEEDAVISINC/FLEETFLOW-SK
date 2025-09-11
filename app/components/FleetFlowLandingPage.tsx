@@ -263,10 +263,7 @@ export default function FleetFlowLandingPage() {
         </header>
 
         {/* Autoplay App Screenshots Video */}
-        <section aria-labelledby='app-demo-heading'>
-          <h2 id='app-demo-heading' className='sr-only'>
-            FleetFlow App Demo
-          </h2>
+        <section>
           <FleetFlowAppVideo autoPlay={true} />
         </section>
 
@@ -2086,8 +2083,7 @@ export default function FleetFlowLandingPage() {
                   <li>✓ Performance analytics & reporting</li>
                   <li>✓ Integration with all FleetFlow systems</li>
                   <li>✓ Up to 25 human users included</li>
-                  <li>✓ Additional departments: $1,299/month (includes 1 AI staff)</li>
-                  <li>✓ Individual AI specialists: $399/month each</li>
+                  <li>✓ Additional AI staff available for custom needs</li>
                   <li style={{ color: '#ff8c00', fontWeight: '600' }}>
                     🚀 Coming Soon
                   </li>
