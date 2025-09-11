@@ -1862,7 +1862,7 @@ export default function FleetFlowLandingPage() {
                   textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                 }}
               >
-                🤖 AI Company Staff
+                🤖 AI Company Staff powered by DEPOINTE AI™
               </h2>
               <p
                 style={{
@@ -1873,7 +1873,7 @@ export default function FleetFlowLandingPage() {
                   fontWeight: '600',
                 }}
               >
-                18 AI Staff Members Managing Your Entire Freight Brokerage
+                18 AI Staff Members Managing Your Entire Freight Brokerage - Coming Soon
               </p>
               <p
                 style={{
