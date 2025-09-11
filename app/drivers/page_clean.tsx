@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 
 interface Driver {
@@ -132,7 +132,7 @@ export default function DriverManagement() {
 
   const loadData = () => {
     setDrivers(MOCK_DRIVERS);
-    
+
     const stats = {
       total: MOCK_DRIVERS.length,
       available: MOCK_DRIVERS.filter(d => d.status === 'Available').length,
@@ -141,12 +141,12 @@ export default function DriverManagement() {
       offDuty: MOCK_DRIVERS.filter(d => d.status === 'Off Duty').length,
       inactive: MOCK_DRIVERS.filter(d => d.status === 'Inactive').length
     };
-    
+
     setStats(stats);
   };
 
   const filteredDrivers = drivers.filter(driver => {
-    return !searchTerm || 
+    return !searchTerm ||
       driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       driver.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       driver.licenseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -237,59 +237,59 @@ export default function DriverManagement() {
         </div>
 
         {/* Driver Table */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-white/20"">
-          <div className="overflow-x-auto"">
-            <table className="w-full"">
-              <thead className="bg-gradient-to-r from-gray-50 to-gray-100"">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-white/20">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Driver ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Name & Contact</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">License</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Location</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Truck</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">ELD Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Miles & Rating</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"">Last Activity</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Driver ID</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Name & Contact</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">License</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Location</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Truck</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ELD Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Miles & Rating</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Last Activity</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200"">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {filteredDrivers.map((driver) => (
-                  <tr key={driver.id} className="hover:bg-blue-50 transition-colors duration-200"">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900"">
+                  <tr key={driver.id} className="hover:bg-blue-50 transition-colors duration-200">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
                       {driver.id}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"">
-                      <div className="font-semibold"">{driver.name}</div>
-                      <div className="text-xs text-gray-500"">{driver.email}</div>
-                      <div className="text-xs text-gray-500"">{driver.phone}</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="font-semibold">{driver.name}</div>
+                      <div className="text-xs text-gray-500">{driver.email}</div>
+                      <div className="text-xs text-gray-500">{driver.phone}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900"">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                       {driver.licenseNumber}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap"">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full shadow-sm ${getStatusColor(driver.status)}`}>
                         {driver.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"">
-                      <div className="font-semibold"">{driver.currentLocation || 'Unknown'}</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="font-semibold">{driver.currentLocation || 'Unknown'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"">
-                      <div className="font-semibold"">{driver.assignedTruck || 'Unassigned'}</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="font-semibold">{driver.assignedTruck || 'Unassigned'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap"">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full shadow-sm ${getEldStatusColor(driver.eldStatus)}`}>
                         {driver.eldStatus}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"">
-                      <div className="font-semibold"">{driver.totalMiles.toLocaleString()} mi</div>
-                      <div className="text-xs text-gray-500"">⭐ {driver.rating}/5.0</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="font-semibold">{driver.totalMiles.toLocaleString()} mi</div>
+                      <div className="text-xs text-gray-500">⭐ {driver.rating}/5.0</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"">
-                      <div className="font-semibold"">{new Date(driver.lastActivity).toLocaleDateString()}</div>
-                      <div className="text-xs text-gray-500"">{new Date(driver.lastActivity).toLocaleTimeString()}</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <div className="font-semibold">{new Date(driver.lastActivity).toLocaleDateString()}</div>
+                      <div className="text-xs text-gray-500">{new Date(driver.lastActivity).toLocaleTimeString()}</div>
                     </td>
                   </tr>
                 ))}
@@ -299,18 +299,18 @@ export default function DriverManagement() {
 
           {/* No drivers message */}
           {filteredDrivers.length === 0 && (
-            <div className="text-center py-12"">
-              <div className="text-4xl mb-4"">👥</div>
-              <div className="text-gray-600 text-xl mb-2 font-semibold"">
+            <div className="text-center py-12">
+              <div className="text-4xl mb-4">👥</div>
+              <div className="text-gray-600 text-xl mb-2 font-semibold">
                 {searchTerm ? 'No drivers found matching your search' : 'No drivers available'}
               </div>
-              <div className="text-gray-500"">
+              <div className="text-gray-500">
                 {searchTerm ? 'Try adjusting your search terms' : 'Add drivers to get started'}
               </div>
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold""
+                  className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold"
                 >
                   Clear Search
                 </button>

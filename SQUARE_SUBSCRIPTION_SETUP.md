@@ -11,8 +11,8 @@ that need to be created as Library Items in Square before creating subscription 
 
 ### 1. Training Only
 
-**Item Name**: FleetFlow University™ (TRAINING ONLY) **Price**: $49.00 **Type**: Service **Category**: FleetFlow Main Plans
-**SKU**: training_only
+**Item Name**: FleetFlow University™ (TRAINING ONLY) **Price**: $49.00 **Type**: Service
+**Category**: FleetFlow Main Plans **SKU**: training_only
 
 **Description**:
 
@@ -674,7 +674,8 @@ Includes access to /broker-box page.
 
 ### 20. Training & Certification
 
-**Item Name**: FleetFlow University™ (TRAINING & CERTIFICATION) **Price**: $79.00 **Type**: Service **Category**: FleetFlow Add-On Modules **SKU**: training_certification
+**Item Name**: FleetFlow University™ (TRAINING & CERTIFICATION) **Price**: $79.00 **Type**: Service
+**Category**: FleetFlow Add-On Modules **SKU**: training_certification
 
 **Description**:
 
@@ -1109,40 +1110,40 @@ Trial periods handled by FleetFlow.
 
 ## 📊 COMPLETE OVERVIEW TABLE
 
-| Category          | Plan                     | Price        | Target          | Key Features                        |
-| ----------------- | ------------------------ | ------------ | --------------- | ----------------------------------- |
-| **Main Plans**    | Training Only            | $49          | Training        | Complete curriculum, certifications |
-|                   | Solo Dispatcher          | $79          | Dispatch        | Load management, AI automation      |
-|                   | Solo Dispatcher Premium  | $199         | Dispatch        | Advanced ops, unlimited comms       |
-|                   | Solo Broker Premium      | $599         | Brokerage       | Complete platform, unlimited comms  |
-|                   | Solo Broker              | $199         | Brokerage       | Advanced ops, CRM integration       |
-|                   | Enterprise Professional  | $3,999       | Enterprise      | Full platform, unlimited AI         |
-|                   | Base Platform            | $59          | Entry           | Core access, expandable             |
-| **Team Plans**    | Team Brokerage Starter   | $299/2ppl    | Team Brokerage  | 2 users, core tools +$49/seat       |
-|                   | Team Brokerage Pro       | $499/3ppl    | Team Brokerage  | 3 users, advanced +$39/seat         |
-|                   | Team Dispatch Starter    | $149/2ppl    | Team Dispatch   | 2 users, core tools +$39/seat       |
-|                   | Team Dispatch Pro        | $349/5ppl    | Team Dispatch   | 5 users, advanced +$29/seat         |
-|                   | Team Enterprise          | $1,799/10ppl | Team Enterprise | 10 users, full enterprise           |
-| **Phone Add-Ons** | Phone Basic              | $39          | Small Teams     | Basic calling, 5 users              |
-|                   | Phone Professional       | $89          | Growing Teams   | CRM integration, 25 users           |
-|                   | Phone Enterprise         | $199         | Large Orgs      | Call center, unlimited users        |
-| **À La Carte**    | Dispatch Management      | $99          | Operations      | Load/driver coordination            |
-|                   | CRM Suite                | $79          | Sales           | Customer management                 |
-|                   | RFx Discovery            | $499         | Enterprise      | Government contracts                |
-|                   | Broker Operations        | $199         | Brokers         | Load posting, margins               |
-|                   | FleetFlow University™ (TRAINING & CERTIFICATION) | $79          | Add-On Modules  | University access + certifications |
-|                   | Advanced Analytics       | $89          | Analytics       | BI, reporting                       |
-|                   | Real-Time Tracking       | $69          | Operations      | GPS, notifications                  |
-|                   | API Access               | $149         | Developers      | REST API, webhooks                  |
-| **AI Add-Ons**    | AI Flow Starter          | $59          | Basic AI        | 10 workflows, 5K ops                |
-|                   | AI Flow Professional     | $129         | Advanced AI     | 100 workflows, 50K ops              |
-|                   | AI Flow Enterprise       | $249         | Enterprise AI   | Unlimited, custom models            |
-|                   | AI Flow Usage-Based      | $0.10/1K ops | Variable Usage  | Pay-per-use                         |
-| **Enterprise**    | AI Company Dashboard     | $4,999       | AI Management   | 18 DEPOINTE AI staff                |
-|                   | Enterprise Custom        | $7,999       | Full Custom     | Everything + white-label            |
-| **Marketplace**   | Free-Flow                | $0           | Basic Access    | 5 loads/month, marketplace access   |
-|                   | Pro-Flow                 | $349         | Professional    | 25 loads/month, priority features   |
-|                   | Flow on the Go           | $999         | Enterprise      | 50 loads/month, full enterprise     |
+| Category          | Plan                                              | Price        | Target          | Key Features                        |
+| ----------------- | ------------------------------------------------- | ------------ | --------------- | ----------------------------------- |
+| **Main Plans**    | Training Only                                     | $49          | Training        | Complete curriculum, certifications |
+|                   | Solo Dispatcher                                   | $79          | Dispatch        | Load management, AI automation      |
+|                   | Solo Dispatcher Premium                           | $199         | Dispatch        | Advanced ops, unlimited comms       |
+|                   | Solo Broker Premium                               | $599         | Brokerage       | Complete platform, unlimited comms  |
+|                   | Solo Broker                                       | $199         | Brokerage       | Advanced ops, CRM integration       |
+|                   | Enterprise Professional                           | $3,999       | Enterprise      | Full platform, unlimited AI         |
+|                   | Base Platform                                     | $59          | Entry           | Core access, expandable             |
+| **Team Plans**    | Team Brokerage Starter                            | $299/2ppl    | Team Brokerage  | 2 users, core tools +$49/seat       |
+|                   | Team Brokerage Pro                                | $499/3ppl    | Team Brokerage  | 3 users, advanced +$39/seat         |
+|                   | Team Dispatch Starter                             | $149/2ppl    | Team Dispatch   | 2 users, core tools +$39/seat       |
+|                   | Team Dispatch Pro                                 | $349/5ppl    | Team Dispatch   | 5 users, advanced +$29/seat         |
+|                   | Team Enterprise                                   | $1,799/10ppl | Team Enterprise | 10 users, full enterprise           |
+| **Phone Add-Ons** | Phone Basic                                       | $39          | Small Teams     | Basic calling, 5 users              |
+|                   | Phone Professional                                | $89          | Growing Teams   | CRM integration, 25 users           |
+|                   | Phone Enterprise                                  | $199         | Large Orgs      | Call center, unlimited users        |
+| **À La Carte**    | Dispatch Management                               | $99          | Operations      | Load/driver coordination            |
+|                   | CRM Suite                                         | $79          | Sales           | Customer management                 |
+|                   | RFx Discovery                                     | $499         | Enterprise      | Government contracts                |
+|                   | Broker Operations                                 | $199         | Brokers         | Load posting, margins               |
+|                   | FleetFlow University™ (TRAINING & CERTIFICATION) | $79          | Add-On Modules  | University access + certifications  |
+|                   | Advanced Analytics                                | $89          | Analytics       | BI, reporting                       |
+|                   | Real-Time Tracking                                | $69          | Operations      | GPS, notifications                  |
+|                   | API Access                                        | $149         | Developers      | REST API, webhooks                  |
+| **AI Add-Ons**    | AI Flow Starter                                   | $59          | Basic AI        | 10 workflows, 5K ops                |
+|                   | AI Flow Professional                              | $129         | Advanced AI     | 100 workflows, 50K ops              |
+|                   | AI Flow Enterprise                                | $249         | Enterprise AI   | Unlimited, custom models            |
+|                   | AI Flow Usage-Based                               | $0.10/1K ops | Variable Usage  | Pay-per-use                         |
+| **Enterprise**    | AI Company Dashboard                              | $4,999       | AI Management   | 18 DEPOINTE AI staff                |
+|                   | Enterprise Custom                                 | $7,999       | Full Custom     | Everything + white-label            |
+| **Marketplace**   | Free-Flow                                         | $0           | Basic Access    | 5 loads/month, marketplace access   |
+|                   | Pro-Flow                                          | $349         | Professional    | 25 loads/month, priority features   |
+|                   | Flow on the Go                                    | $999         | Enterprise      | 50 loads/month, full enterprise     |
 
 **TOTAL: 28 Complete Subscription Plans & Add-Ons**
 

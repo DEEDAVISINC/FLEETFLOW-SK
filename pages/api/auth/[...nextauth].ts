@@ -21,6 +21,9 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('🔐 NextAuth authorize called with:', {
+          email: credentials?.email,
+        });
         // For demo purposes - in production, verify against your Supabase database
         if (
           credentials?.email === 'admin@fleetflowapp.com' &&
@@ -112,6 +115,11 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
+      console.log('🔑 JWT callback:', {
+        hasUser: !!user,
+        email: user?.email,
+        role: user?.role,
+      });
       if (user) {
         token.role = user.role;
         // Map email to FleetFlow user ID for UserDataService integration
@@ -127,14 +135,27 @@ export const authOptions = {
         // Use centralized UserIdentifierService for consistent user ID mapping
         const userIdentifierService = UserIdentifierService.getInstance();
         token.fleetflowUserId = userIdentifierService.getUserId(user.email);
+        console.log('✅ JWT token created for:', {
+          email: user.email,
+          role: user.role,
+          fleetflowUserId: token.fleetflowUserId,
+        });
       }
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
+      console.log('📋 Session callback:', {
+        hasToken: !!token,
+        email: token?.email,
+      });
       if (token) {
         session.user.id = token.sub;
         session.user.role = token.role;
         session.user.fleetflowUserId = token.fleetflowUserId;
+        console.log('✅ Session created for:', {
+          email: session.user.email,
+          role: session.user.role,
+        });
       }
       return session;
     },

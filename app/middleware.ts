@@ -72,6 +72,15 @@ export async function middleware(request: NextRequest) {
     publicPages.includes(pathname) ||
     marketingPages.some((page) => pathname.startsWith(page));
 
+  // Log middleware decision for debugging
+  console.log(`🔍 Middleware check: ${pathname}`, {
+    hostname: request.nextUrl.hostname,
+    isLocalhost,
+    isPublicPage,
+    publicPages: publicPages.includes(pathname),
+    marketingPages: marketingPages.some((page) => pathname.startsWith(page)),
+  });
+
   if (isPublicPage) {
     return NextResponse.next();
   }
@@ -79,6 +88,14 @@ export async function middleware(request: NextRequest) {
   // ================================
   // AUTHENTICATION CHECK
   // ================================
+
+  // Check if NextAuth secret is configured
+  if (!process.env.NEXTAUTH_SECRET) {
+    console.error('❌ NEXTAUTH_SECRET is not configured!');
+    const signInUrl = new URL('/auth/signin', request.url);
+    signInUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(signInUrl);
+  }
 
   // Get the user's authentication token
   const token = await getToken({
