@@ -135,7 +135,7 @@ Advanced brokerage operations with comprehensive phone system included for profe
 
 ### **6. Team Brokerage Starter**
 
-**Square Item Name:** `Team Brokerage Starter` **Price:** `$199.00/month (up to 2 people)`
+**Square Item Name:** `Team Brokerage Starter` **Price:** `$299.00/month (up to 2 people)`
 **Description:**
 
 ```

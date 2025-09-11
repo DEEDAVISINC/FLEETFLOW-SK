@@ -230,7 +230,7 @@ Users:** 500 | **Data Storage:** 1TB | **API Calls:** 1,000,000/month
 
 ## 👥 **PLAN 7: Team Brokerage Starter**
 
-**Square Item Name:** `Team Brokerage Starter Subscription` **Price:** `$199.00/month` **Category:**
+**Square Item Name:** `Team Brokerage Starter Subscription` **Price:** `$299.00/month` **Category:**
 Team Freight Brokerage
 
 **Detailed Description:**

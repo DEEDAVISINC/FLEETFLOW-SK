@@ -1407,7 +1407,7 @@ export default function FleetFlowLandingPage() {
                     marginBottom: '15px',
                   }}
                 >
-                  $199
+                  $299
                   <span style={{ fontSize: '1rem', fontWeight: '500' }}>
                     /month
                   </span>
