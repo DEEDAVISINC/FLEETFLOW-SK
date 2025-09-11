@@ -975,7 +975,7 @@ Your FleetFlow dashboard provides access to all system features:
 *This user guide is automatically generated from FleetFlow's current production capabilities and is updated in real-time as new features are deployed. For the most current information, access the in-app help system or contact support.*
 
 **Last Updated**: ${currentDate} | **System Version**: ${currentVersion}
-**Support**: help@fleetflow.com | **Training**: university@fleetflow.com`
+**Support**: help@fleetflowapp.com | **Training**: university@fleetflowapp.com`
   }
 
   const loadDocument = async () => {
@@ -1272,9 +1272,9 @@ const aiLoadMatching = {
 
 #### **Contact Information**
 **AI Support Channels:**
-- **AI Technical Support**: ai-support@fleetflow.com
-- **Training Support**: ai-training@fleetflow.com
-- **Development Team**: ai-dev@fleetflow.com
+- **AI Technical Support**: ai-support@fleetflowapp.com
+- **Training Support**: ai-training@fleetflowapp.com
+- **Development Team**: ai-dev@fleetflowapp.com
 - **Emergency AI Issues**: 1-800-AI-SUPPORT
 
 ---
@@ -1284,7 +1284,7 @@ const aiLoadMatching = {
 **AI System Status**: ✅ All AI systems operational
 **Last Updated**: ${new Date().toLocaleDateString()}
 **AI Training**: Available through FleetFlow University
-**Support**: ai-support@fleetflow.com | **Development**: ai-dev@fleetflow.com`
+**Support**: ai-support@fleetflowapp.com | **Development**: ai-dev@fleetflowapp.com`
           break
         case 'quick-reference':
           documentContent = `# 📋 FleetFlow Quick Reference Cards
@@ -1558,15 +1558,15 @@ const aiLoadMatching = {
 
 **Support Channels (24/7 Available)**
 - **Live Chat**: Available in-app during business hours
-- **Email Support**: support@fleetflow.com (24-hour response)
+- **Email Support**: support@fleetflowapp.com (24-hour response)
 - **Phone Support**: 1-800-FLEETFLOW (urgent issues)
 - **Emergency Line**: 1-800-EMERGENCY (critical system issues)
 
 **Specialized Support Teams**
-- **Technical Support**: tech@fleetflow.com
-- **Training Support**: university@fleetflow.com
-- **Compliance Support**: compliance@fleetflow.com
-- **Financial Support**: finance@fleetflow.com
+- **Technical Support**: tech@fleetflowapp.com
+- **Training Support**: university@fleetflowapp.com
+- **Compliance Support**: compliance@fleetflowapp.com
+- **Financial Support**: finance@fleetflowapp.com
 
 ---
 
@@ -1869,7 +1869,7 @@ System_Logs (audit trails, monitoring)
 **System Status**: ✅ All systems operational
 **Last Updated**: ${new Date().toLocaleDateString()}
 **Monitoring**: 24/7 automated monitoring active
-**Support**: tech@fleetflow.com | **Infrastructure**: ops@fleetflow.com`
+**Support**: tech@fleetflowapp.com | **Infrastructure**: ops@fleetflowapp.com`
           break
         case 'compliance-guide':
           documentContent = `# ⚖️ DOT Compliance Guide
@@ -2177,7 +2177,7 @@ System_Logs (audit trails, monitoring)
 ### **📞 Training Support & Resources**
 
 #### **Support Channels**
-- **Training Helpdesk**: university@fleetflow.com for training-specific questions
+- **Training Helpdesk**: university@fleetflowapp.com for training-specific questions
 - **Live Chat Support**: Real-time assistance during training sessions
 - **Video Tutorials**: Comprehensive library of how-to videos and guides
 - **Knowledge Base**: Searchable FAQ and troubleshooting resources
@@ -2215,7 +2215,7 @@ System_Logs (audit trails, monitoring)
 **Training Status**: ✅ All courses operational and current
 **Last Updated**: ${new Date().toLocaleDateString()}
 **Course Enrollment**: Available 24/7 through FleetFlow University portal
-**Support**: university@fleetflow.com | **Certification**: certification@fleetflow.com`
+**Support**: university@fleetflowapp.com | **Certification**: certification@fleetflowapp.com`
           break
         default:
           documentContent = `# 📄 Document Not Found

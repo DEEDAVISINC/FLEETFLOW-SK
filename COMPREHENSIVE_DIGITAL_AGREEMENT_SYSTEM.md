@@ -166,4 +166,4 @@ The comprehensive digital agreement system is now fully implemented and producti
 
 ---
 
-*For questions about specific agreement terms or implementation details, contact the Operations Team at operations@fleetflow.com*
+*For questions about specific agreement terms or implementation details, contact the Operations Team at operations@fleetflowapp.com*

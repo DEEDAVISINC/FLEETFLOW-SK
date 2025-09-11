@@ -15,6 +15,9 @@ export interface SubscriptionPlan {
   maxDataStorage?: number; // in GB
   apiCallLimit?: number; // per month
   popular?: boolean;
+  // Square integration fields
+  squareItemId?: string; // Square catalog item ID
+  squareVariationId?: string; // Square item variation ID
 }
 
 // ========================================
@@ -30,6 +33,8 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'Training',
     permissionLevel: 'university',
+    squareItemId: 'HJ2V7KBJMWPRY65CXZQ3HIXH',
+    squareVariationId: 'NQRR4RL4ZNQOJZRWYTC3GWH3',
     features: [
       'Complete training curriculum',
       'BOL/MBL/HBL documentation',
@@ -55,6 +60,8 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'TMS',
     permissionLevel: 'professional',
+    squareItemId: 'KEUXM5DOLJOQOHT6HUNHOO4R',
+    squareVariationId: 'GBXTVWYFEVGSA5ZCHTAHGNW4',
     features: [
       'Complete dispatch management',
       'Driver assignment & tracking',
@@ -81,6 +88,83 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     apiCallLimit: 50000,
   },
 
+  // Solo Dispatcher Premium - Advanced dispatch operations
+  SOLO_DISPATCHER_PREMIUM: {
+    id: 'solo_dispatcher_premium',
+    name: 'Solo Dispatcher Premium',
+    price: 199,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'professional',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Advanced dispatch management system',
+      'Multi-fleet coordination capabilities',
+      'Advanced route optimization engine',
+      'Performance analytics & detailed reporting',
+      'API access & third-party integrations',
+      'Priority customer support',
+      'Custom workflow automation',
+      'Advanced driver management tools',
+      'Real-time fleet monitoring dashboard',
+      'Fleet performance optimization',
+      '📞 Unlimited phone minutes included',
+      '📱 Unlimited SMS messages included',
+      '📞 CRM phone integration included',
+      '📊 Advanced call monitoring included',
+    ],
+    accessiblePages: [
+      '/dispatch-central',
+      '/driver-management',
+      '/fleet-flow',
+      '/dashboard',
+      '/analytics',
+    ],
+    maxUsers: 5,
+    maxDataStorage: 50,
+    apiCallLimit: 100000,
+  },
+
+  // Solo Broker Premium - Advanced brokerage operations
+  SOLO_BROKER_PREMIUM: {
+    id: 'solo_broker_premium',
+    name: 'Solo Broker Premium',
+    price: 599,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'professional',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Complete platform access',
+      'FreightFlow RFx platform',
+      'Advanced brokerage operations',
+      'Load board management premium',
+      'Enhanced carrier relationships',
+      'Revenue analytics dashboard',
+      'Advanced analytics & reporting',
+      'API access & webhooks',
+      'Priority support',
+      'Custom integrations',
+      'Multi-customer management',
+      '📞 Unlimited phone minutes',
+      '📱 Unlimited SMS messages',
+      '📊 Advanced call monitoring',
+      '🤖 AI automation tools',
+    ],
+    accessiblePages: [
+      '/broker-box',
+      '/rfx-center',
+      '/dashboard',
+      '/analytics',
+      '/accounting',
+    ],
+    maxUsers: 25,
+    maxDataStorage: 500,
+    apiCallLimit: 500000,
+  },
+
   // Professional Brokerage - matches /plans (popular plan)
   PROFESSIONAL_BROKERAGE: {
     id: 'brokerage',
@@ -90,6 +174,8 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     category: 'TMS',
     permissionLevel: 'professional',
     popular: true,
+    squareItemId: '3BLAX6KFLHYWN4B2CWEBPJH6',
+    squareVariationId: '7AWS4LG44ST45AQFDNLAM774',
     features: [
       'Advanced brokerage operations',
       'Load board management',
@@ -124,6 +210,8 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'TMS',
     permissionLevel: 'enterprise',
+    squareItemId: 'ETKIBFXNQOLG7Q35THL6LCQY',
+    squareVariationId: 'VR4WJQARWTFS2DKYS5L2JGNZ',
     features: [
       'Complete platform access',
       'FreightFlow RFx platform',
@@ -194,6 +282,186 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     maxDataStorage: 5,
     apiCallLimit: 10000,
   },
+
+  // ========================================
+  // TEAM SUBSCRIPTION PLANS
+  // ========================================
+
+  // Team Brokerage Starter - Small team brokerage operations
+  TEAM_BROKERAGE_STARTER: {
+    id: 'team_brokerage_starter',
+    name: 'Team Brokerage Starter',
+    price: 199,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'professional',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Core brokerage tools and platform',
+      'Load management and posting capabilities',
+      'Basic carrier database management',
+      'Standard reporting and analytics',
+      'Team collaboration features',
+      'Document sharing and organization',
+      'Basic CRM integration for customer management',
+      'Up to 2 team members included',
+      'Additional team seats: $49/month each',
+      '📞 Phone add-on available (+$39-$199)',
+    ],
+    accessiblePages: ['/broker-box', '/dashboard', '/basic-analytics'],
+    maxUsers: 2,
+    maxDataStorage: 25,
+    apiCallLimit: 25000,
+  },
+
+  // Team Brokerage Pro - Professional team brokerage platform
+  TEAM_BROKERAGE_PRO: {
+    id: 'team_brokerage_pro',
+    name: 'Team Brokerage Pro',
+    price: 499,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'professional',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Advanced brokerage operations management',
+      'Unlimited load management and posting',
+      'Enhanced carrier relationship tools',
+      'Advanced analytics and performance reporting',
+      'Team performance tracking and KPIs',
+      'API access for custom integrations',
+      'Priority customer support',
+      'Advanced compliance and documentation',
+      'Multi-carrier relationship management',
+      'Up to 5 team members included',
+      'Additional team seats: $39/month each',
+      '📞 500 phone minutes included',
+      '📱 200 SMS messages included',
+      '📞 Professional phone features included',
+    ],
+    accessiblePages: [
+      '/broker-box',
+      '/rfx-center',
+      '/dashboard',
+      '/analytics',
+      '/accounting',
+    ],
+    maxUsers: 5,
+    maxDataStorage: 100,
+    apiCallLimit: 100000,
+  },
+
+  // Team Dispatch Starter - Essential team dispatch tools
+  TEAM_DISPATCH_STARTER: {
+    id: 'team_dispatch_starter',
+    name: 'Team Dispatch Starter',
+    price: 149,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'professional',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Core dispatch management platform',
+      'Driver assignment and tracking',
+      'Route optimization basics',
+      'Basic performance reporting',
+      'CRM integration for customer management',
+      'Team communication tools',
+      'Document and load sharing',
+      'Up to 2 team members included',
+      'Additional team seats: $39/month each',
+      '📞 Phone add-on available (+$39-$199)',
+    ],
+    accessiblePages: ['/dispatch-central', '/driver-management', '/dashboard'],
+    maxUsers: 2,
+    maxDataStorage: 15,
+    apiCallLimit: 15000,
+  },
+
+  // Team Dispatch Pro - Complete team dispatch platform
+  TEAM_DISPATCH_PRO: {
+    id: 'team_dispatch_pro',
+    name: 'Team Dispatch Pro',
+    price: 349,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'professional',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Advanced dispatch management system',
+      'Real-time driver tracking and monitoring',
+      'Advanced route optimization and planning',
+      'Performance analytics and detailed reporting',
+      'Mobile app access for field operations',
+      'API integrations for third-party tools',
+      'Team performance monitoring',
+      'Advanced fleet coordination',
+      'Up to 5 team members included',
+      'Additional team seats: $29/month each',
+      '📞 500 phone minutes included',
+      '📱 200 SMS messages included',
+      '📞 Professional phone integration included',
+    ],
+    accessiblePages: [
+      '/dispatch-central',
+      '/driver-management',
+      '/fleet-flow',
+      '/dashboard',
+      '/analytics',
+    ],
+    maxUsers: 5,
+    maxDataStorage: 75,
+    apiCallLimit: 75000,
+  },
+
+  // Team Enterprise - Complete enterprise platform for large teams
+  TEAM_ENTERPRISE: {
+    id: 'team_enterprise',
+    name: 'Team Enterprise',
+    price: 2698,
+    interval: 'month',
+    category: 'TMS',
+    permissionLevel: 'enterprise',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
+    features: [
+      'Everything in Enterprise Professional',
+      'Up to 10 team members included',
+      'Advanced team management and permissions',
+      'Custom team workflows and automation',
+      'Enterprise-grade security and compliance',
+      'Dedicated account management',
+      'Custom integrations and development',
+      'White-label branding options',
+      '24/7 priority support',
+      'On-premise deployment options',
+      'Multi-location team management',
+      'Advanced compliance automation',
+      'Custom training and onboarding',
+      'Full AI Flow Enterprise included',
+      'AI Company Dashboard included',
+      'DEPOINTE AI system included',
+    ],
+    accessiblePages: [
+      '/depointe-dashboard',
+      '/ai-company-dashboard',
+      '/ai-flow',
+      '/ai-hub',
+      '/dashboard',
+      '/analytics',
+      '/broker-box',
+      '/dispatch-central',
+      '/rfx-center',
+      '/settings',
+    ],
+    maxUsers: 10,
+    maxDataStorage: 5000,
+    apiCallLimit: 5000000,
+  },
 };
 
 // ========================================
@@ -208,6 +476,8 @@ export const PHONE_SYSTEM_ADDONS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'Phone',
     permissionLevel: 'basic',
+    squareItemId: 'WLN4OBXGFYYYAIH7C7G5XWRR',
+    squareVariationId: 'EV77NDVQKMIGDUY62NPNG6ZS',
     features: [
       'Company phone number',
       'Professional caller ID',
@@ -224,6 +494,8 @@ export const PHONE_SYSTEM_ADDONS: Record<string, SubscriptionPlan> = {
     name: 'FleetFlow Phone Professional',
     price: 89,
     interval: 'month',
+    squareItemId: '4LW7CXEOY2BLMO34GXD4YLKA',
+    squareVariationId: 'Y3EIQU7NKNJ5244YJR7QYHWC',
     category: 'Phone',
     permissionLevel: 'professional',
     popular: true,
@@ -248,6 +520,8 @@ export const PHONE_SYSTEM_ADDONS: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'Phone',
     permissionLevel: 'enterprise',
+    squareItemId: 'WAMJ53VAY4M7KVBWUJU4REKS',
+    squareVariationId: 'GIHCWE33EMKCB32R5VQWPJEG',
     features: [
       'Everything in Professional',
       'Unlimited users',
@@ -316,6 +590,8 @@ export const ADDON_MODULES: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'Add-on',
     permissionLevel: 'basic',
+    squareItemId: 'OJ4TWOO3XYKR4W2C6RNP4VAK',
+    squareVariationId: 'N6U27ER5XR3BTT5LXRK44QE7',
     features: [
       'Requires main FleetFlow subscription',
       'Basic AI automation (10 workflows/month)',
@@ -333,6 +609,8 @@ export const ADDON_MODULES: Record<string, SubscriptionPlan> = {
   AI_FLOW_PROFESSIONAL_ADDON: {
     id: 'ai_flow_professional_addon',
     name: 'AI Flow Professional Add-On',
+    squareItemId: 'HYNKASGC2OGL32YJBC2OZO7J',
+    squareVariationId: 'BJIBZUE6ADPQE3EIT7B75LR6',
     price: 129,
     interval: 'month',
     category: 'Add-on',
@@ -359,6 +637,8 @@ export const ADDON_MODULES: Record<string, SubscriptionPlan> = {
     interval: 'month',
     category: 'Add-on',
     permissionLevel: 'enterprise',
+    squareItemId: '2T5V7PSX6XKUONA6NIGNK6WF',
+    squareVariationId: 'EAHMIZQAAORPHGUQ35MLCIUH',
     features: [
       'Requires main FleetFlow subscription',
       'Unlimited AI workflows',
@@ -541,40 +821,109 @@ export const ENTERPRISE_SOLUTIONS: Record<string, SubscriptionPlan> = {
 };
 
 // ========================================
+// ANNUAL PLAN GENERATION HELPER
+// ========================================
+
+/**
+ * Generate annual version of a monthly plan with 2+ months savings
+ * Uses the EXACT same item names you already created in Square, just adds "(Annual)"
+ */
+const createAnnualPlan = (monthlyPlan: SubscriptionPlan): SubscriptionPlan => {
+  const annualPrice = Math.round(monthlyPlan.price * 10); // 2 months free (10x instead of 12x)
+  const savings = Math.round(monthlyPlan.price * 2); // 2 months savings
+
+  return {
+    ...monthlyPlan,
+    id: `${monthlyPlan.id}-annual`,
+    name: `${monthlyPlan.name} (Annual)`, // Matches existing Square item names
+    price: annualPrice,
+    interval: 'year',
+    squareItemId: '', // Will use same Square item, different variation
+    squareVariationId: '', // Annual variation of existing Square item
+    features: [
+      ...monthlyPlan.features,
+      `💰 Save $${savings}/year (2 months free)`,
+    ],
+  };
+};
+
+/**
+ * Generate all annual plans from monthly plans
+ */
+const generateAllAnnualPlans = (
+  monthlyPlans: Record<string, SubscriptionPlan>
+): Record<string, SubscriptionPlan> => {
+  const annualPlans: Record<string, SubscriptionPlan> = {};
+
+  Object.entries(monthlyPlans).forEach(([key, plan]) => {
+    if (plan.interval === 'month') {
+      const annualKey = `${key}_ANNUAL`;
+      annualPlans[annualKey] = createAnnualPlan(plan);
+    }
+  });
+
+  return annualPlans;
+};
+
+// ========================================
 // HELPER FUNCTIONS
 // ========================================
 
+// ========================================
+// COMPLETE PLAN COLLECTIONS (Monthly + Annual)
+// ========================================
+
+// Generate annual versions of all monthly plans
+const FLEETFLOW_ANNUAL_PLANS = generateAllAnnualPlans(FLEETFLOW_PRICING_PLANS);
+const ADDON_ANNUAL_PLANS = generateAllAnnualPlans(ADDON_MODULES);
+const PHONE_ANNUAL_PLANS = generateAllAnnualPlans(PHONE_SYSTEM_ADDONS);
+const ENTERPRISE_ANNUAL_PLANS = generateAllAnnualPlans(ENTERPRISE_SOLUTIONS);
+
+// Combined collections with both monthly and annual plans
+export const ALL_FLEETFLOW_PLANS = {
+  ...FLEETFLOW_PRICING_PLANS,
+  ...FLEETFLOW_ANNUAL_PLANS,
+};
+
+export const ALL_ADDON_MODULES = {
+  ...ADDON_MODULES,
+  ...ADDON_ANNUAL_PLANS,
+};
+
+export const ALL_PHONE_ADDONS = {
+  ...PHONE_SYSTEM_ADDONS,
+  ...PHONE_ANNUAL_PLANS,
+};
+
+export const ALL_ENTERPRISE_SOLUTIONS = {
+  ...ENTERPRISE_SOLUTIONS,
+  ...ENTERPRISE_ANNUAL_PLANS,
+};
+
+// Master collection of ALL plans (monthly + annual)
+export const ALL_SUBSCRIPTION_PLANS = {
+  ...ALL_FLEETFLOW_PLANS,
+  ...ALL_ADDON_MODULES,
+  ...ALL_PHONE_ADDONS,
+  ...ALL_ENTERPRISE_SOLUTIONS,
+};
+
 export const getPlanById = (planId: string): SubscriptionPlan | undefined => {
-  return (
-    FLEETFLOW_PRICING_PLANS[planId] ||
-    ADDON_MODULES[planId] ||
-    PHONE_SYSTEM_ADDONS[planId] ||
-    ENTERPRISE_SOLUTIONS[planId]
-  );
+  return ALL_SUBSCRIPTION_PLANS[planId];
 };
 
 export const getPlansByCategory = (
   category: 'TMS' | 'Training' | 'Add-on' | 'AI' | 'Phone'
 ): SubscriptionPlan[] => {
-  const allPlans = {
-    ...FLEETFLOW_PRICING_PLANS,
-    ...ADDON_MODULES,
-    ...PHONE_SYSTEM_ADDONS,
-    ...ENTERPRISE_SOLUTIONS,
-  };
-  return Object.values(allPlans).filter((plan) => plan.category === category);
+  return Object.values(ALL_SUBSCRIPTION_PLANS).filter(
+    (plan) => plan.category === category
+  );
 };
 
 export const getPlansByPermissionLevel = (
   level: 'basic' | 'professional' | 'enterprise' | 'university'
 ): SubscriptionPlan[] => {
-  const allPlans = {
-    ...FLEETFLOW_PRICING_PLANS,
-    ...ADDON_MODULES,
-    ...PHONE_SYSTEM_ADDONS,
-    ...ENTERPRISE_SOLUTIONS,
-  };
-  return Object.values(allPlans).filter(
+  return Object.values(ALL_SUBSCRIPTION_PLANS).filter(
     (plan) => plan.permissionLevel === level
   );
 };
@@ -612,6 +961,66 @@ export const getRestrictedFeatures = (planIds: string[]): string[] => {
   return Array.from(restrictions);
 };
 
+/**
+ * Get annual version of a monthly plan
+ */
+export const getAnnualVersion = (
+  monthlyPlanId: string
+): SubscriptionPlan | undefined => {
+  const annualPlanId = `${monthlyPlanId}-annual`;
+  return getPlanById(annualPlanId);
+};
+
+/**
+ * Get monthly version of an annual plan
+ */
+export const getMonthlyVersion = (
+  annualPlanId: string
+): SubscriptionPlan | undefined => {
+  const monthlyPlanId = annualPlanId.replace('-annual', '');
+  return getPlanById(monthlyPlanId);
+};
+
+/**
+ * Check if a plan has both monthly and annual versions
+ */
+export const hasBothVersions = (
+  planId: string
+): { hasMonthly: boolean; hasAnnual: boolean } => {
+  const isAnnual = planId.endsWith('-annual');
+  const monthlyId = isAnnual ? planId.replace('-annual', '') : planId;
+  const annualId = isAnnual ? planId : `${planId}-annual`;
+
+  return {
+    hasMonthly: !!getPlanById(monthlyId),
+    hasAnnual: !!getPlanById(annualId),
+  };
+};
+
+/**
+ * Get all plans with their billing options
+ */
+export const getPlansWithBillingOptions = (): Array<{
+  monthlyPlan: SubscriptionPlan;
+  annualPlan?: SubscriptionPlan;
+  savings?: number;
+}> => {
+  const monthlyPlans = Object.values(ALL_SUBSCRIPTION_PLANS).filter(
+    (plan) => plan.interval === 'month'
+  );
+
+  return monthlyPlans.map((monthlyPlan) => {
+    const annualPlan = getAnnualVersion(monthlyPlan.id);
+    const savings = annualPlan ? monthlyPlan.price * 12 - annualPlan.price : 0;
+
+    return {
+      monthlyPlan,
+      annualPlan,
+      savings: savings > 0 ? savings : undefined,
+    };
+  });
+};
+
 // ========================================
 // GO WITH THE FLOW MARKETPLACE SUBSCRIPTION PLANS
 // ========================================
@@ -622,6 +1031,8 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Free-Flow',
     price: 0,
     icon: '🎁',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
     limits: {
       loadsPerMonth: 5,
       loadValueCap: 1000,
@@ -652,6 +1063,8 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Pro-Flow',
     price: 249, // Updated from $299 to $249
     icon: '🚀',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
     limits: {
       loadsPerMonth: 25,
       loadValueCap: null, // No cap
@@ -686,6 +1099,8 @@ export const SUBSCRIPTION_PLANS = {
     name: 'Flow on the Go',
     price: 699, // Updated from $799 to $699
     icon: '🏢',
+    squareItemId: '', // To be added when created in Square
+    squareVariationId: '', // To be added when created in Square
     limits: {
       loadsPerMonth: 100,
       loadValueCap: null, // No cap
@@ -716,4 +1131,33 @@ export const SUBSCRIPTION_PLANS = {
       'Unlimited load values',
     ],
   },
+};
+
+/**
+ * Debug function to log all generated annual plans
+ */
+export const logAllAnnualPlans = (): void => {
+  console.log('🎯 ANNUAL PLAN GENERATION SUMMARY:');
+
+  const monthlyPlans = Object.values(ALL_SUBSCRIPTION_PLANS).filter(
+    (p) => p.interval === 'month'
+  );
+  const annualPlans = Object.values(ALL_SUBSCRIPTION_PLANS).filter(
+    (p) => p.interval === 'year'
+  );
+
+  console.log(`📊 Monthly Plans: ${monthlyPlans.length}`);
+  console.log(`📊 Annual Plans: ${annualPlans.length}`);
+  console.log(`📊 Total Plans: ${Object.keys(ALL_SUBSCRIPTION_PLANS).length}`);
+
+  console.log('\n💰 Annual Plan Examples:');
+  annualPlans.slice(0, 5).forEach((plan) => {
+    const monthlyVersion = getMonthlyVersion(plan.id);
+    const savings = monthlyVersion ? monthlyVersion.price * 12 - plan.price : 0;
+    console.log(`  • ${plan.name}: $${plan.price}/year (saves $${savings})`);
+  });
+
+  console.log(
+    `\n✅ All ${monthlyPlans.length} monthly plans now have annual versions!`
+  );
 };

@@ -9,7 +9,7 @@ const BrokerOperationsPage: React.FC = () => {
   const [user] = useState({
     name: 'Alex Rodriguez',
     role: 'Senior Broker',
-    email: 'alex.rodriguez@fleetflow.com',
+    email: 'alex.rodriguez@fleetflowapp.com',
   });
 
   // Production-ready broker overview data (cleared for production)

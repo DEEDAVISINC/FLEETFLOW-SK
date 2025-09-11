@@ -107,7 +107,7 @@ export const generateInvoiceEmailTemplate = (data: InvoiceEmailData): EmailTempl
             
             <p>For ACH or wire transfer details, please contact our billing department.</p>
             
-            <a href="mailto:billing@fleetflow.com" class="button">Contact Billing Department</a>
+            <a href="mailto:billing@fleetflowapp.com" class="button">Contact Billing Department</a>
             
             <h3>Service Summary</h3>
             <p>This invoice covers our comprehensive dispatch services including:</p>
@@ -129,8 +129,8 @@ export const generateInvoiceEmailTemplate = (data: InvoiceEmailData): EmailTempl
             <p><strong>FleetFlow Dispatch Services</strong><br>
             1234 Logistics Way, Suite 100<br>
             Atlanta, GA 30309<br>
-            Phone: (555) 123-4567 | Email: billing@fleetflow.com<br>
-            Website: www.fleetflow.com</p>
+            Phone: (555) 123-4567 | Email: billing@fleetflowapp.com<br>
+            Website: www.fleetflowapp.com</p>
             
             <p style="margin-top: 15px;">
                 <em>This email was sent automatically by our billing system. 
@@ -165,7 +165,7 @@ Payment is due within 30 days of the invoice date. We accept:
 - Check (mail to business address below)
 
 For payment details or questions, please contact:
-billing@fleetflow.com
+billing@fleetflowapp.com
 (555) 123-4567
 
 Thank you for your business!
@@ -173,7 +173,7 @@ Thank you for your business!
 FleetFlow Dispatch Services
 1234 Logistics Way, Suite 100
 Atlanta, GA 30309
-www.fleetflow.com
+www.fleetflowapp.com
 
 This is an automated message from our billing system.
   `;
@@ -234,7 +234,7 @@ export const generateOverdueNoticeTemplate = (data: InvoiceEmailData, daysPastDu
             
             <p><strong>Contact Information:</strong><br>
             Phone: (555) 123-4567<br>
-            Email: billing@fleetflow.com</p>
+            Email: billing@fleetflowapp.com</p>
             
             <p>We value our partnership and want to resolve this matter promptly.</p>
             
@@ -245,7 +245,7 @@ export const generateOverdueNoticeTemplate = (data: InvoiceEmailData, daysPastDu
         <div class="footer">
             <p><strong>FleetFlow Dispatch Services</strong><br>
             1234 Logistics Way, Suite 100, Atlanta, GA 30309<br>
-            Phone: (555) 123-4567 | Email: billing@fleetflow.com</p>
+            Phone: (555) 123-4567 | Email: billing@fleetflowapp.com</p>
         </div>
     </body>
     </html>
@@ -270,7 +270,7 @@ To maintain our business relationship and avoid service interruptions, please re
 
 Please contact our billing department within 48 hours:
 Phone: (555) 123-4567
-Email: billing@fleetflow.com
+Email: billing@fleetflowapp.com
 
 We value our partnership and want to resolve this matter promptly.
 

@@ -327,7 +327,7 @@ The customer will receive the invoice via email.`);
                   background:
                     provider === primaryProvider ? '#10b981' : '#6b7280',
                 }}
-              ></span>
+               />
               {availableProviders.find((p) => p.name === provider)?.displayName}
               {provider === primaryProvider && <span>(Primary)</span>}
             </div>

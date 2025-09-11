@@ -82,3 +82,5 @@ This automated sync ensures that:
 - Everything stays in sync automatically
 
 **Just run `npm run sync-square` whenever you need to update Square.**
+
+

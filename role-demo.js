@@ -14,26 +14,26 @@ function switchUserRole(userType) {
     dispatcher: {
       id: 'disp-001',
       name: 'Sarah Johnson',
-      email: 'sarah@fleetflow.com', 
+      email: 'sarah@fleetflowapp.com', 
       role: 'dispatcher',
       assignedBrokers: ['broker-001', 'broker-002']
     },
     driver: {
       id: 'driver-001',
       name: 'Mike Rodriguez',
-      email: 'mike.r@fleetflow.com',
+      email: 'mike.r@fleetflowapp.com',
       role: 'driver'
     },
     manager: {
       id: 'mgr-001',
       name: 'Fleet Manager',
-      email: 'manager@fleetflow.com',
+      email: 'manager@fleetflowapp.com',
       role: 'manager'
     },
     admin: {
       id: 'admin-001',
       name: 'System Admin',
-      email: 'admin@fleetflow.com',
+      email: 'admin@fleetflowapp.com',
       role: 'admin'
     }
   }

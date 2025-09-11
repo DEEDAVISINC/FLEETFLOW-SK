@@ -10,7 +10,7 @@ const PalletScanningSystem = dynamic(
     loading: () => (
       <div className='flex items-center justify-center p-8'>
         <div className='text-center'>
-          <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500'></div>
+          <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500' />
           <p className='text-gray-600'>Loading scanning system...</p>
         </div>
       </div>

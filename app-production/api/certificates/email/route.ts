@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const mailOptions = {
       from: {
         name: 'FleetFlow University',
-        address: process.env.FROM_EMAIL || 'university@fleetflow.com'
+        address: process.env.FROM_EMAIL || 'university@fleetflowapp.com'
       },
       to: recipientEmail,
       subject: `🎓 Certificate of Completion - ${moduleTitle}`,

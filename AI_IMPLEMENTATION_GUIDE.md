@@ -64,10 +64,10 @@ AI dependencies are already installed in your FleetFlow system:
    ```bash
    # Fleet management contacts for automated alerts
    FLEET_MANAGER_PHONE=+1234567890
-   FLEET_MANAGER_EMAIL=manager@fleetflow.com
+   FLEET_MANAGER_EMAIL=manager@fleetflowapp.com
    DISPATCH_PHONE=+1234567890
-   HR_EMAIL=hr@fleetflow.com
-   MANAGEMENT_EMAIL=management@fleetflow.com
+   HR_EMAIL=hr@fleetflowapp.com
+   MANAGEMENT_EMAIL=management@fleetflowapp.com
    EMERGENCY_CONTACT=+1234567890
    ```
 

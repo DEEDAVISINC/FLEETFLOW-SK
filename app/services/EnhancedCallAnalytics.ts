@@ -375,8 +375,8 @@ export class EnhancedCallAnalytics {
   ): DetailedCallAnalysis['conversation'] {
     let agentWords = 0;
     let customerWords = 0;
-    let agentInterrupted = 0;
-    let customerInterrupted = 0;
+    const agentInterrupted = 0;
+    const customerInterrupted = 0;
     let questionCount = 0;
     let customerQuestions = 0;
 

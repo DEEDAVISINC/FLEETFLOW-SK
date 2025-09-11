@@ -118,7 +118,7 @@ export const PortalSetup: React.FC<PortalSetupProps> = ({ onPortalSetup, onCompl
       users,
       portalFeatures: selectedFeatures,
       trainingCompleted,
-      portalUrl: portalEnabled ? `https://portal.fleetflow.com/carrier/${Date.now()}` : undefined
+      portalUrl: portalEnabled ? `https://portal.fleetflowapp.com/carrier/${Date.now()}` : undefined
     };
 
     onPortalSetup(portalData);
@@ -536,7 +536,7 @@ export const PortalSetup: React.FC<PortalSetupProps> = ({ onPortalSetup, onCompl
             padding: '12px',
             display: 'inline-block'
           }}>
-            <strong>Portal URL:</strong> https://portal.fleetflow.com/carrier/{Date.now()}
+            <strong>Portal URL:</strong> https://portal.fleetflowapp.com/carrier/{Date.now()}
           </div>
         </div>
       )}

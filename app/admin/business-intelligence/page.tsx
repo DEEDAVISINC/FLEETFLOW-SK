@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Load, getLoadsForUser } from '../../services/loadService';
 
 // ============= PHASE 1: ENHANCED KPI CARD COMPONENT =============
@@ -1231,6 +1231,157 @@ export default function BusinessIntelligencePage() {
     }, 250);
   };
 
+  const calculateAnalytics = useCallback(
+    (loads: Load[]): CompletedLoadAnalytics => {
+      const totalCompleted = loads.length;
+      const totalRevenue = loads.reduce((sum, load) => sum + load.rate, 0);
+
+      // Calculate average delivery time based on actual data
+      const avgDeliveryTime =
+        loads.length > 0
+          ? loads.reduce((sum, load) => {
+              if (load.createdAt && load.updatedAt) {
+                const created = new Date(load.createdAt);
+                const delivered = new Date(load.updatedAt);
+                const daysToDeliver =
+                  (delivered.getTime() - created.getTime()) /
+                  (1000 * 60 * 60 * 24);
+                return sum + daysToDeliver;
+              }
+              return sum + 2.1; // default for loads without dates
+            }, 0) / loads.length
+          : 0;
+
+      // Calculate on-time delivery rate based on actual performance
+      const onTimeLoads = loads.filter((load) => {
+        // Consider a load on-time if delivered within expected timeframe
+        if (load.deliveryDate && load.updatedAt) {
+          const expected = new Date(load.deliveryDate);
+          const actual = new Date(load.updatedAt);
+          return actual <= expected;
+        }
+        return true; // default to on-time if no dates available
+      }).length;
+      const onTimeDeliveryRate =
+        loads.length > 0 ? (onTimeLoads / loads.length) * 100 : 100;
+
+      // Calculate average rate per mile
+      const avgRatePerMile =
+        loads.reduce((sum, load) => {
+          const miles = parseFloat(load.distance?.replace(' mi', '') || '100');
+          return sum + load.rate / miles;
+        }, 0) / totalCompleted || 0;
+
+      // Group by dispatcher/driver for top performers
+      const driverPerformance = new Map();
+      loads.forEach((load) => {
+        const driverName = load.dispatcherName || 'Unknown Driver';
+        if (!driverPerformance.has(driverName)) {
+          driverPerformance.set(driverName, {
+            name: driverName,
+            completedLoads: 0,
+            totalRevenue: 0,
+            onTimeLoads: 0,
+            onTimeRate: 0,
+          });
+        }
+        const driver = driverPerformance.get(driverName);
+        driver.completedLoads++;
+        driver.totalRevenue += load.rate;
+
+        // Calculate if this load was on-time for the driver
+        if (load.deliveryDate && load.updatedAt) {
+          const expected = new Date(load.deliveryDate);
+          const actual = new Date(load.updatedAt);
+          if (actual <= expected) {
+            driver.onTimeLoads++;
+          }
+        } else {
+          // Default to on-time if no dates available
+          driver.onTimeLoads++;
+        }
+      });
+
+      // Calculate on-time rates for each driver
+      driverPerformance.forEach((driver) => {
+        driver.onTimeRate =
+          driver.completedLoads > 0
+            ? (driver.onTimeLoads / driver.completedLoads) * 100
+            : 100;
+      });
+
+      const topPerformingDrivers = Array.from(driverPerformance.values())
+        .sort((a, b) => b.totalRevenue - a.totalRevenue)
+        .slice(0, 5);
+
+      // Generate completion trends (last 30 days)
+      const completionTrends = generateCompletionTrends(loads);
+
+      // Customer analytics by broker
+      const customerMap = new Map();
+      loads.forEach((load) => {
+        if (!customerMap.has(load.brokerName)) {
+          customerMap.set(load.brokerName, {
+            brokerName: load.brokerName,
+            loadsCompleted: 0,
+            totalRevenue: 0,
+            avgRate: 0,
+          });
+        }
+        const customer = customerMap.get(load.brokerName);
+        customer.loadsCompleted++;
+        customer.totalRevenue += load.rate;
+      });
+
+      const customerAnalytics = Array.from(customerMap.values())
+        .map((customer) => ({
+          ...customer,
+          avgRate: customer.totalRevenue / customer.loadsCompleted,
+        }))
+        .sort((a, b) => b.totalRevenue - a.totalRevenue);
+
+      return {
+        totalCompleted,
+        totalRevenue,
+        avgDeliveryTime,
+        onTimeDeliveryRate,
+        avgRatePerMile,
+        topPerformingDrivers,
+        completionTrends,
+        customerAnalytics,
+        workflowCompliance: {
+          photoComplianceRate:
+            loads.length > 0
+              ? (loads.filter((load) => load.status === 'Delivered').length /
+                  loads.length) *
+                100
+              : 0, // Use delivered status as a proxy for photo compliance
+          signatureComplianceRate:
+            loads.length > 0
+              ? (loads.filter((load) => load.status === 'Delivered').length /
+                  loads.length) *
+                100
+              : 0, // Use delivered status as a proxy for signature compliance
+          avgWorkflowTime:
+            loads.length > 0
+              ? loads.reduce((sum, load) => {
+                  if (load.createdAt && load.updatedAt) {
+                    const created = new Date(load.createdAt);
+                    const completed = new Date(load.updatedAt);
+                    const hoursToComplete =
+                      (completed.getTime() - created.getTime()) /
+                      (1000 * 60 * 60);
+                    return sum + hoursToComplete;
+                  }
+                  return sum + 48; // default 48 hours for loads without dates
+                }, 0) / loads.length
+              : 0,
+        },
+      };
+    },
+    []
+  );
+
   const loadCompletedLoadsData = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -1382,87 +1533,6 @@ export default function BusinessIntelligencePage() {
     setCustomWidgets((widgets: any[]) =>
       widgets.filter((w: any) => w.id !== widgetId)
     );
-  };
-
-  const calculateAnalytics = (loads: Load[]): CompletedLoadAnalytics => {
-    const totalCompleted = loads.length;
-    const totalRevenue = loads.reduce((sum, load) => sum + load.rate, 0);
-
-    // Calculate average delivery time (mock data for now)
-    const avgDeliveryTime = 2.3; // days
-
-    // Calculate on-time delivery rate (mock data)
-    const onTimeDeliveryRate = 94.2; // percentage
-
-    // Calculate average rate per mile
-    const avgRatePerMile =
-      loads.reduce((sum, load) => {
-        const miles = parseFloat(load.distance?.replace(' mi', '') || '100');
-        return sum + load.rate / miles;
-      }, 0) / totalCompleted || 0;
-
-    // Group by dispatcher/driver for top performers
-    const driverPerformance = new Map();
-    loads.forEach((load) => {
-      const driverName = load.dispatcherName || 'Unknown Driver';
-      if (!driverPerformance.has(driverName)) {
-        driverPerformance.set(driverName, {
-          name: driverName,
-          completedLoads: 0,
-          totalRevenue: 0,
-          onTimeRate: 95, // mock data
-        });
-      }
-      const driver = driverPerformance.get(driverName);
-      driver.completedLoads++;
-      driver.totalRevenue += load.rate;
-    });
-
-    const topPerformingDrivers = Array.from(driverPerformance.values())
-      .sort((a, b) => b.totalRevenue - a.totalRevenue)
-      .slice(0, 5);
-
-    // Generate completion trends (last 30 days)
-    const completionTrends = generateCompletionTrends(loads);
-
-    // Customer analytics by broker
-    const customerMap = new Map();
-    loads.forEach((load) => {
-      if (!customerMap.has(load.brokerName)) {
-        customerMap.set(load.brokerName, {
-          brokerName: load.brokerName,
-          loadsCompleted: 0,
-          totalRevenue: 0,
-          avgRate: 0,
-        });
-      }
-      const customer = customerMap.get(load.brokerName);
-      customer.loadsCompleted++;
-      customer.totalRevenue += load.rate;
-    });
-
-    const customerAnalytics = Array.from(customerMap.values())
-      .map((customer) => ({
-        ...customer,
-        avgRate: customer.totalRevenue / customer.loadsCompleted,
-      }))
-      .sort((a, b) => b.totalRevenue - a.totalRevenue);
-
-    return {
-      totalCompleted,
-      totalRevenue,
-      avgDeliveryTime,
-      onTimeDeliveryRate,
-      avgRatePerMile,
-      topPerformingDrivers,
-      completionTrends,
-      customerAnalytics,
-      workflowCompliance: {
-        photoComplianceRate: 97.8,
-        signatureComplianceRate: 99.2,
-        avgWorkflowTime: 4.2, // hours
-      },
-    };
   };
 
   const generateCompletionTrends = (loads: Load[]) => {
@@ -2504,7 +2574,9 @@ export default function BusinessIntelligencePage() {
                   fontWeight: '700',
                 }}
               >
-                97.3%
+                {analytics
+                  ? `${Math.round(analytics.onTimeDeliveryRate)}%`
+                  : '0%'}
               </div>
               <div
                 style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '10px' }}
@@ -3037,7 +3109,15 @@ export default function BusinessIntelligencePage() {
                     fontWeight: '600',
                   }}
                 >
-                  94.2/100
+                  {analytics
+                    ? `${Math.round(
+                        (analytics.onTimeDeliveryRate +
+                          analytics.workflowCompliance.photoComplianceRate +
+                          analytics.workflowCompliance
+                            .signatureComplianceRate) /
+                          3
+                      )}/100`
+                    : '0/100'}
                 </span>
               </div>
             </div>

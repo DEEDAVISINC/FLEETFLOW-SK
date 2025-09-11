@@ -516,7 +516,7 @@ export class EmailWebhookHandler {
     const tenantMapping: { [key: string]: string } = {
       'loads@abclogistics.com': 'tenant-001',
       'dispatch@xyzfreight.com': 'tenant-002',
-      'fleetflow.com': 'default',
+      'fleetflowapp.com': 'default',
     };
 
     return tenantMapping[toDomain] || tenantMapping[email.toEmail] || 'default';

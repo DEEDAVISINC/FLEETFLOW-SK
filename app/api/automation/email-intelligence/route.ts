@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         const testEmail = {
           id: 'test-email-001',
           fromEmail: data.testEmail || 'test@carrier.com',
-          toEmail: 'loads@fleetflow.com',
+          toEmail: 'loads@fleetflowapp.com',
           subject: data.testSubject || 'Inquiry about Load FL-001',
           body:
             data.testBody ||

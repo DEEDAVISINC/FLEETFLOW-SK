@@ -52,7 +52,7 @@ export class TenantEmailTemplateService {
       subject: this.replaceVariables(template.subject, allVariables),
       htmlContent: this.replaceVariables(template.htmlContent, allVariables),
       textContent: this.replaceVariables(template.textContent, allVariables),
-      fromEmail: tenantInfo.fromEmail || 'noreply@fleetflow.com',
+      fromEmail: tenantInfo.fromEmail || 'noreply@fleetflowapp.com',
       fromName: tenantInfo.companyName || 'FleetFlow',
     };
   }
@@ -147,9 +147,9 @@ export class TenantEmailTemplateService {
     return (
       mockTenants[tenantId] || {
         companyName: 'FleetFlow',
-        fromEmail: 'noreply@fleetflow.com',
+        fromEmail: 'noreply@fleetflowapp.com',
         phone: '(555) 000-0000',
-        website: 'www.fleetflow.com',
+        website: 'www.fleetflowapp.com',
         address: '',
         logo: '',
       }

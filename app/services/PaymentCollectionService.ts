@@ -365,10 +365,16 @@ class PaymentCollectionService {
       throw new Error('Valid payment method required');
     }
 
-    // Calculate billing amount (annual gets 20% discount)
-    const baseAmount = subscription.price;
-    const amount =
-      billingCycle === 'annual' ? baseAmount * 12 * 0.8 : baseAmount;
+    // Use the subscription's configured price (annual plans already have discounted pricing)
+    // The billingCycle parameter should match the subscription tier's billing cycle
+    const amount = subscription.price;
+
+    // Validate billing cycle matches subscription tier
+    if (subscription.billingCycle !== billingCycle) {
+      console.warn(
+        `Billing cycle mismatch: tier=${subscription.billingCycle}, requested=${billingCycle}`
+      );
+    }
 
     const billing: SubscriptionBilling = {
       id: `sub_billing_${userId}_${Date.now()}`,
@@ -456,10 +462,12 @@ class PaymentCollectionService {
           attempt.squarePaymentId = squareResult.paymentId || '';
           success = squareResult.success;
         } else {
-          // Mock successful payment in development mode
-          attempt.squarePaymentId = `sq_pay_mock_${Date.now()}`;
+          // Square merchant account pending approval - use mock for now
+          attempt.squarePaymentId = `sq_pay_pending_${Date.now()}`;
           success = true;
-          console.info('🔧 Mock Square payment processed successfully');
+          console.info(
+            '⏳ Square merchant approval pending - using mock payment'
+          );
         }
       } else if (
         paymentMethod.type === 'ach' &&
@@ -494,7 +502,9 @@ class PaymentCollectionService {
           billing.dunningStatus = 'none';
         }
 
-        console.info(`✅ Payment successful: User ${userId}, Amount $${amount}`);
+        console.info(
+          `✅ Payment successful: User ${userId}, Amount $${amount}`
+        );
       } else {
         attempt.failureReason = 'Payment processing failed';
         await this.handleFailedPayment(userId, attempt);

@@ -388,7 +388,7 @@ export default function CarrierVerificationPanel({
 
               {fraudLoading && (
                 <div className='flex items-center justify-center py-8'>
-                  <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600'></div>
+                  <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600' />
                   <span className='ml-3 text-blue-600'>
                     Running comprehensive fraud detection...
                   </span>

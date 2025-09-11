@@ -36,7 +36,7 @@ export default function StickyNote({ section, entityId, entityName }: StickyNote
   const user = {
     id: 'guest',
     name: 'Guest User',
-    email: 'guest@fleetflow.com',
+    email: 'guest@fleetflowapp.com',
     role: 'Viewer' as const
   }  // ✅ Safe fallback user
 ```

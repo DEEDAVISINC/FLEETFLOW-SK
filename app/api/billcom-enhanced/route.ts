@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
         const testCustomer = {
           id: 'test-001',
           name: 'Test Customer',
-          email: 'test@fleetflow.com',
+          email: 'test@fleetflowapp.com',
           companyName: 'Test Company LLC',
           address: {
             street: '123 Test Street',

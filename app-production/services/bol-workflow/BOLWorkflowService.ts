@@ -124,7 +124,7 @@ export class BOLWorkflowService {
       recipientId: submission.brokerId,
       recipientType: 'broker',
       recipientName: submission.brokerName,
-      recipientEmail: `${submission.brokerId}@fleetflow.com`,
+      recipientEmail: `${submission.brokerId}@fleetflowapp.com`,
       recipientPhone: this.getBrokerPhone(submission.brokerId),
       message: this.generateBrokerReviewMessage(submission),
       sentAt: new Date().toISOString(),
@@ -447,7 +447,7 @@ export class BOLWorkflowService {
 
 ⚡ URGENT: Please review and approve BOL to generate vendor invoice.
 
-Login to FleetFlow Broker Portal to review: https://fleetflow.com/broker/dashboard
+Login to FleetFlow Broker Portal to review: https://fleetflowapp.com/broker/dashboard
 
 BOL ID: ${submission.id}`;
   }
@@ -495,7 +495,7 @@ Total Amount: $${invoice.amount.toLocaleString()}
 REMIT PAYMENT TO:
 FleetFlow Transportation Services
 Accounts Receivable Department
-Email: billing@fleetflow.com
+Email: billing@fleetflowapp.com
 Reference: ${submission.loadIdentifierId}
 
 For questions regarding this invoice, please contact our billing department or reference the load number ${submission.loadIdentifierId}.

@@ -134,7 +134,7 @@ create sequence if not exists notification_seq start 1;
 
 -- Insert sample data
 insert into public.drivers (id, name, email, phone, license_number, dispatcher_id, current_location, eld_status, hours_remaining) values 
-('DRV-001', 'John Smith', 'john.smith@fleetflow.com', '+15551234567', 'CDL-TX-123456', 'DSP-001', 'Dallas, TX', 'Connected', 8.5);
+('DRV-001', 'John Smith', 'john.smith@fleetflowapp.com', '+15551234567', 'CDL-TX-123456', 'DSP-001', 'Dallas, TX', 'Connected', 8.5);
 
 insert into public.loads (id, broker_name, dispatcher_id, assigned_driver_id, origin, destination, rate, distance, weight, equipment, status, pickup_date, delivery_date) values 
 ('LD-2025-001', 'ABC Logistics', 'DSP-001', 'DRV-001', 'Dallas, TX', 'Atlanta, GA', 2500.00, '925 miles', '45,000 lbs', 'Dry Van', 'Assigned', '2025-07-03 08:00:00+00', '2025-07-05 17:00:00+00'),

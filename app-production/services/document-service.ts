@@ -77,7 +77,7 @@ USDOT Number: [FleetFlow USDOT]
 MC Number: MC-123456
 Federal Tax ID: [Tax ID]
 Phone: (555) 123-4567
-Email: contracts@fleetflow.com
+Email: contracts@fleetflowapp.com
 Emergency Contact: Operations Manager - (555) 123-4567
 
 CARRIER:
@@ -436,7 +436,7 @@ DISPATCHER: FleetFlow Logistics LLC (Dispatch Services Division)
 MC Number: MC-123456
 Address: [Dispatcher Address]
 Phone: (555) 123-4567
-Email: dispatch@fleetflow.com
+Email: dispatch@fleetflowapp.com
 
 CARRIER: ${carrierData.legalName || '[Carrier Name]'}
 MC Number: ${carrierData.mcNumber || '[MC Number]'}
@@ -645,7 +645,7 @@ This electronic signature has the same legal effect as a handwritten signature.
    */
   public async storeAgreement(document: AgreementDocument): Promise<string> {
     // In production, this would upload to cloud storage
-    const storageUrl = `https://documents.fleetflow.com/agreements/${document.id}.pdf`;
+    const storageUrl = `https://documents.fleetflowapp.com/agreements/${document.id}.pdf`;
     console.log(`💾 Storing agreement: ${storageUrl}`);
     return storageUrl;
   }

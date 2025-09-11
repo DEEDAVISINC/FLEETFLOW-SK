@@ -331,7 +331,7 @@ export default function VerifyEmailPage() {
           <br />
           <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
             Check your spam folder or promotions tab. The email comes from
-            noreply@fleetflow.com
+            noreply@fleetflowapp.com
           </span>
         </div>
       </div>

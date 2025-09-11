@@ -340,7 +340,7 @@ const CarrierComplianceDashboard: React.FC<CarrierComplianceProps> = ({
               borderRadius: '50%',
               animation: 'spin 1s linear infinite',
             }}
-          ></div>
+           />
           <style jsx>{`
             @keyframes spin {
               0% {

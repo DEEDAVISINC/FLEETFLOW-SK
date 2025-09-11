@@ -20,7 +20,7 @@ const instructors: InstructorInfo[] = [
     specializations: ['dispatch', 'compliance', 'safety'],
     bio: 'Dr. Carter has over 15 years of experience in transportation logistics and fleet management. She specializes in dispatch operations, DOT compliance, and safety protocols.',
     assignedModules: ['dispatch', 'compliance', 'safety'],
-    email: 'e.carter@fleetflow.com'
+    email: 'e.carter@fleetflowapp.com'
   },
   {
     id: 'U006',
@@ -30,7 +30,7 @@ const instructors: InstructorInfo[] = [
     specializations: ['technology', 'sms-workflow', 'workflow'],
     bio: 'James is a technology expert with deep knowledge of fleet management systems and digital workflow optimization.',
     assignedModules: ['technology', 'sms-workflow', 'workflow'],
-    email: 'j.rodriguez@fleetflow.com'
+    email: 'j.rodriguez@fleetflowapp.com'
   },
   {
     id: 'U007',
@@ -40,7 +40,7 @@ const instructors: InstructorInfo[] = [
     specializations: ['broker', 'customer'],
     bio: 'Maria brings extensive experience in freight brokerage and customer relations to the training program.',
     assignedModules: ['broker', 'customer'],
-    email: 'm.santos@fleetflow.com'
+    email: 'm.santos@fleetflowapp.com'
   }
 ];
 

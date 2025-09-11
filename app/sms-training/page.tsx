@@ -1328,7 +1328,7 @@ Check your app for full details.`,
                     {[
                       {
                         dept: 'Technical Support',
-                        contact: 'tech-support@fleetflow.com',
+                        contact: 'tech-support@fleetflowapp.com',
                       },
                       {
                         dept: 'Twilio Account Issues',
@@ -1336,7 +1336,7 @@ Check your app for full details.`,
                       },
                       {
                         dept: 'System Administrator',
-                        contact: 'admin@fleetflow.com',
+                        contact: 'admin@fleetflowapp.com',
                       },
                       { dept: 'Emergency Hotline', contact: '(833) 386-3509' },
                     ].map((contact, index) => (

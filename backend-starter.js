@@ -47,14 +47,14 @@ const mockDrivers = [
   {
     id: 'DRV-001',
     name: 'John Smith',
-    email: 'john.smith@fleetflow.com',
+    email: 'john.smith@fleetflowapp.com',
     phone: '+1234567890',
     licenseNumber: 'CDL-TX-123456',
     assignedTruck: 'TRK-001',
     dispatcherId: 'DSP-001',
     dispatcherName: 'Sarah Johnson',
     dispatcherPhone: '+1987654321',
-    dispatcherEmail: 'sarah@fleetflow.com',
+    dispatcherEmail: 'sarah@fleetflowapp.com',
     currentLocation: 'Dallas, TX',
     eldStatus: 'Connected',
     hoursRemaining: 8.5
@@ -197,7 +197,7 @@ app.post('/api/loads/:loadId/confirm', authenticateToken, upload.array('photos')
 
     // In production, save photos to cloud storage and get URLs
     const photoUrls = photos.map((photo, index) => 
-      `https://storage.fleetflow.com/confirmations/${loadId}_${index}.jpg`
+      `https://storage.fleetflowapp.com/confirmations/${loadId}_${index}.jpg`
     );
 
     const confirmation = {
@@ -244,7 +244,7 @@ app.post('/api/deliveries/:loadId/complete', authenticateToken, upload.array('ph
 
     // In production, save photos to cloud storage
     const photoUrls = photos.map((photo, index) => 
-      `https://storage.fleetflow.com/deliveries/${loadId}_${index}.jpg`
+      `https://storage.fleetflowapp.com/deliveries/${loadId}_${index}.jpg`
     );
 
     const delivery = {
@@ -288,7 +288,7 @@ app.post('/api/files/upload', authenticateToken, upload.single('file'), (req, re
 
     // In production, upload to cloud storage (S3, etc.)
     const fileId = `FILE-${Date.now()}`;
-    const fileUrl = `https://storage.fleetflow.com/files/${fileId}`;
+    const fileUrl = `https://storage.fleetflowapp.com/files/${fileId}`;
 
     res.json({
       fileId,
@@ -367,7 +367,7 @@ app.get('/api/documents/:type/:loadId', authenticateToken, (req, res) => {
   const { type, loadId } = req.params;
   
   // In production, generate actual PDF documents
-  const documentUrl = `https://docs.fleetflow.com/${type}/${loadId}.pdf`;
+  const documentUrl = `https://docs.fleetflowapp.com/${type}/${loadId}.pdf`;
   
   res.json({
     documentId: `DOC-${Date.now()}`,

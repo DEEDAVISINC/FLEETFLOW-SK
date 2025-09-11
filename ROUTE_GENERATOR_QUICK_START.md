@@ -125,7 +125,7 @@
 - **Support Chat**: Available 24/7 for technical issues
 
 ### Feature Requests:
-- Email: features@fleetflow.com
+- Email: features@fleetflowapp.com
 - Include specific workflow you're trying to accomplish
 - Screenshots or examples help us understand your needs
 

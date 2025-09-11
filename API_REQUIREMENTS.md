@@ -397,7 +397,7 @@ https://www.sec.gov/edgar/sec-api-documentation **Cost**: Free **Key**: None req
 ```bash
 # Company Financial Search Example
 curl -X GET "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json" \
-  -H "User-Agent: FleetFlow contact@fleetflow.com"
+  -H "User-Agent: FleetFlow contact@fleetflowapp.com"
 ```
 
 ### 19. SBA Business Search API
@@ -503,7 +503,7 @@ curl -X GET "https://echo.epa.gov/echo/get_facilities" \
 
 ```bash
 # Risk Management APIs (All FREE)
-SEC_EDGAR_EMAIL=contact@fleetflow.com  # Required for SEC API
+SEC_EDGAR_EMAIL=contact@fleetflowapp.com  # Required for SEC API
 SBA_SEARCH_API=not_required_public_api
 DOL_VIOLATIONS_API=not_required_public_api
 OSHA_ENFORCEMENT_API=not_required_public_api

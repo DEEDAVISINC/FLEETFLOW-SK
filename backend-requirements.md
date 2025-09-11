@@ -29,7 +29,7 @@ Response:
       "id": "DSP-001",
       "name": "Sarah Johnson",
       "phone": "+1987654321",
-      "email": "sarah@fleetflow.com"
+      "email": "sarah@fleetflowapp.com"
     }
   }
 }
@@ -90,7 +90,7 @@ Content-Type: multipart/form-data
 Response:
 {
   "fileId": "FILE-123",
-  "url": "https://storage.fleetflow.com/files/FILE-123",
+  "url": "https://storage.fleetflowapp.com/files/FILE-123",
   "type": "confirmation_photo",
   "timestamp": "2025-07-02T14:30:00Z"
 }
@@ -165,7 +165,7 @@ GET /api/documents/{type}/{loadId}
 Response:
 {
   "documentId": "DOC-001",
-  "url": "https://docs.fleetflow.com/rate-confirmation/LD-2025-001.pdf",
+  "url": "https://docs.fleetflowapp.com/rate-confirmation/LD-2025-001.pdf",
   "type": "rate-confirmation",
   "generatedAt": "2025-07-02T14:30:00Z"
 }

@@ -159,7 +159,7 @@ export default function PhotoUploadComponent({
     }
 
     // Generate demo URL
-    const demoUrl = `https://demo.fleetflow.com/uploads/${category}/${Date.now()}.jpg`;
+    const demoUrl = `https://demo.fleetflowapp.com/uploads/${category}/${Date.now()}.jpg`;
     
     setFiles(prev => prev.map((f, i) => 
       i === fileIndex ? { 

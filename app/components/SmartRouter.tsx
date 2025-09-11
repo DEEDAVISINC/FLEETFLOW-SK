@@ -21,7 +21,7 @@ interface SmartRouterProps {
 const DefaultLoadingComponent: React.FC = () => (
   <div className='flex h-screen items-center justify-center bg-gradient-to-br from-slate-900 to-blue-900'>
     <div className='text-center'>
-      <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent'></div>
+      <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent' />
       <p className='text-white/80'>Loading FleetFlow...</p>
     </div>
   </div>

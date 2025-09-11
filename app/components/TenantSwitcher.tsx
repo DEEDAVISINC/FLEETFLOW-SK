@@ -69,7 +69,7 @@ export default function TenantSwitcher() {
             borderRadius: '50%',
             background: tenantInfo.status === 'active' ? '#10b981' : '#ef4444',
           }}
-        ></div>
+         />
         <div>
           <div style={{ fontWeight: '500' }}>{tenantInfo.name}</div>
           <div style={{ fontSize: '11px', opacity: 0.8 }}>
@@ -138,7 +138,7 @@ export default function TenantSwitcher() {
                     borderRadius: '50%',
                     background: tenant.id === tenantId ? '#3b82f6' : '#d1d5db',
                   }}
-                ></div>
+                 />
                 <div>
                   <div
                     style={{

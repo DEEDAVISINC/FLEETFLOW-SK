@@ -110,7 +110,7 @@ export default function SubscriptionDashboard({
   if (loading) {
     return (
       <div className='dashboard-loading'>
-        <div className='spinner'></div>
+        <div className='spinner' />
         <p>Loading your subscription...</p>
       </div>
     );
@@ -214,7 +214,7 @@ export default function SubscriptionDashboard({
               <div
                 className='progress-fill'
                 style={{ width: `${Math.min(usagePercentage, 100)}%` }}
-              ></div>
+               />
             </div>
             <div className='usage-footer'>
               {usagePercentage >= 80 && (
@@ -240,7 +240,7 @@ export default function SubscriptionDashboard({
                 <div
                   className='progress-fill'
                   style={{ width: `${Math.min(valuePercentage, 100)}%` }}
-                ></div>
+                 />
               </div>
               <div className='usage-footer'>
                 {valuePercentage >= 80 && (
@@ -268,7 +268,7 @@ export default function SubscriptionDashboard({
                 style={{
                   width: `${Math.min(((usage?.dispatchRequests || 0) / (usage?.loadsLimit || 1)) * 100, 100)}%`,
                 }}
-              ></div>
+               />
             </div>
           </div>
 

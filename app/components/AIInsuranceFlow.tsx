@@ -383,7 +383,7 @@ export default function AIInsuranceFlow() {
                         borderRadius: '50%',
                         background: activity.color,
                       }}
-                    ></div>
+                     />
                     <div style={{ flex: 1 }}>
                       <div
                         style={{
@@ -1090,7 +1090,7 @@ export default function AIInsuranceFlow() {
                       borderRadius: '50%',
                       background: automation.color,
                     }}
-                  ></div>
+                   />
                   <div style={{ flex: 1 }}>
                     <div
                       style={{

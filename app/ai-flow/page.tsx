@@ -1450,7 +1450,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-blue-600'
                           style={{ width: '65%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -1465,7 +1465,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-green-600'
                           style={{ width: '78%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -1480,7 +1480,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-purple-600'
                           style={{ width: '45%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -1497,7 +1497,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-orange-600'
                           style={{ width: '85%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
                   </div>
@@ -1686,7 +1686,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-red-600'
                           style={{ width: '72%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -1703,7 +1703,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-blue-600'
                           style={{ width: '68%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -1720,7 +1720,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-purple-600'
                           style={{ width: '55%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
 
@@ -1737,7 +1737,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-orange-600'
                           style={{ width: '88%' }}
-                        ></div>
+                         />
                       </div>
                     </div>
                   </div>
@@ -2643,19 +2643,19 @@ export default function AIFlowPage() {
                     </div>
                     <div className='space-y-2'>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 rounded-full bg-green-500'></div>
+                        <div className='h-2 w-2 rounded-full bg-green-500' />
                         <span className='text-sm'>
                           AI-Powered Lead Analysis
                         </span>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 rounded-full bg-blue-500'></div>
+                        <div className='h-2 w-2 rounded-full bg-blue-500' />
                         <span className='text-sm'>
                           Revenue Estimation Engine
                         </span>
                       </div>
                       <div className='flex items-center gap-2'>
-                        <div className='h-2 w-2 rounded-full bg-purple-500'></div>
+                        <div className='h-2 w-2 rounded-full bg-purple-500' />
                         <span className='text-sm'>
                           Industry-specific Targeting
                         </span>

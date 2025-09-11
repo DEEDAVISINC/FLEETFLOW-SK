@@ -287,74 +287,65 @@ function FreightFlowRFxContent() {
     }
   };
 
-  const rfxRequests = [
-    {
-      id: 'RFX001',
-      customer: 'Walmart Distribution',
-      origin: 'Los Angeles, CA',
-      destination: 'Phoenix, AZ',
-      weight: '42,000 lbs',
-      equipment: 'Dry Van',
-      bidDeadline: '2025-01-20 14:00',
-      status: 'Active',
-      currentBids: 8,
-      estimatedRate: '$2,800 - $3,200',
-      urgency: 'High',
-      specialRequirements: 'Temperature controlled, Liftgate required',
-      documentType: 'RFQ' as const,
-    },
-    {
-      id: 'RFX002',
-      customer: 'Home Depot Supply',
-      origin: 'Dallas, TX',
-      destination: 'Atlanta, GA',
-      weight: '38,500 lbs',
-      equipment: 'Flatbed',
-      bidDeadline: '2025-01-21 16:00',
-      status: 'Active',
-      currentBids: 12,
-      estimatedRate: '$3,000 - $3,500',
-      urgency: 'Medium',
-      specialRequirements: 'Oversized load, Escort required',
-      documentType: 'RFP' as const,
-    },
-    {
-      id: 'RFX003',
-      customer: 'Amazon Logistics',
-      origin: 'Chicago, IL',
-      destination: 'Denver, CO',
-      weight: '45,000 lbs',
-      equipment: 'Reefer',
-      bidDeadline: '2025-01-19 12:00',
-      status: 'Closed',
-      currentBids: 15,
-      estimatedRate: '$2,900 - $3,300',
-      urgency: 'Low',
-      specialRequirements: 'Frozen goods, -10°F required',
-      documentType: 'RFB' as const,
-    },
-  ];
+  const [rfxRequests, setRfxRequests] = useState<RFxRequest[]>([]);
+  const [loadingRfxRequests, setLoadingRfxRequests] = useState(true);
 
-  const myBids = [
-    {
-      rfxId: 'RFX001',
-      customer: 'Walmart Distribution',
-      myBid: '$2,950',
-      rank: 3,
-      totalBids: 8,
-      status: 'Submitted',
-      submittedAt: '2025-01-18 10:30',
-    },
-    {
-      rfxId: 'RFX002',
-      customer: 'Home Depot Supply',
-      myBid: '$3,150',
-      rank: 1,
-      totalBids: 12,
-      status: 'Leading',
-      submittedAt: '2025-01-18 14:15',
-    },
-  ];
+  // Fetch RFX requests from API or database
+  const fetchRfxRequests = async () => {
+    try {
+      setLoadingRfxRequests(true);
+      // Replace with actual API call
+      const response = await fetch('/api/rfx-requests');
+      if (response.ok) {
+        const data = await response.json();
+        setRfxRequests(data);
+      } else {
+        // Fallback to empty array if API fails
+        console.warn('Failed to fetch RFX requests, using empty state');
+        setRfxRequests([]);
+      }
+    } catch (error) {
+      console.error('Error fetching RFX requests:', error);
+      // Fallback to empty array on error
+      setRfxRequests([]);
+    } finally {
+      setLoadingRfxRequests(false);
+    }
+  };
+
+  // Load RFX requests on component mount
+  useEffect(() => {
+    fetchRfxRequests();
+  }, []);
+
+  const [myBids, setMyBids] = useState<any[]>([]);
+  const [loadingMyBids, setLoadingMyBids] = useState(true);
+
+  // Fetch user's bids from API or database
+  const fetchMyBids = async () => {
+    try {
+      setLoadingMyBids(true);
+      // Replace with actual API call
+      const response = await fetch('/api/my-bids');
+      if (response.ok) {
+        const data = await response.json();
+        setMyBids(data);
+      } else {
+        console.warn('Failed to fetch my bids, using empty state');
+        setMyBids([]);
+      }
+    } catch (error) {
+      console.error('Error fetching my bids:', error);
+      setMyBids([]);
+    } finally {
+      setLoadingMyBids(false);
+    }
+  };
+
+  // Load user's bids on component mount
+  useEffect(() => {
+    fetchMyBids();
+  }, []);
 
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -658,7 +649,7 @@ We welcome the opportunity to discuss how FleetFlow's transportation expertise c
 Best regards,
 
 FleetFlow Logistics - Strategic Partnerships Team
-Phone: (555) 123-4567 | Email: partnerships@fleetflow.com
+Phone: (555) 123-4567 | Email: partnerships@fleetflowapp.com
 24/7 Emergency Line: (555) 123-STAT
 
 ""Intelligent Logistics for Every Industry""
@@ -905,7 +896,7 @@ We understand the critical nature of government logistics and are committed to s
 Best regards,
 
 FleetFlow Government Logistics Team
-Phone: (555) 123-4567 | Email: government@fleetflow.com
+Phone: (555) 123-4567 | Email: government@fleetflowapp.com
 24/7 Government Emergency Line: (555) 123-GOVT
 
 GSA Contract Holder | SAM.gov ID: [Registration Number]
@@ -1261,7 +1252,7 @@ We are committed to exceeding your expectations and building a long-term partner
 Best regards,
 
 FleetFlow Enterprise Logistics Team
-Phone: (555) 123-4567 | Email: enterprise@fleetflow.com
+Phone: (555) 123-4567 | Email: enterprise@fleetflowapp.com
 24/7 Enterprise Support: (555) 123-CORP
 
 ""Your Success is Our Mission""
@@ -1851,7 +1842,9 @@ Specialized Logistics Division`,
 
       if (data.success && data.data.shippers) {
         setTruckingPlanetShippers(data.data.shippers);
-        console.info(`✅ Found ${data.data.totalFound} TruckingPlanet shippers`);
+        console.info(
+          `✅ Found ${data.data.totalFound} TruckingPlanet shippers`
+        );
       } else {
         // Fallback to mock data
         const mockShippers = [
@@ -1998,7 +1991,7 @@ We're ready to discuss how FleetFlow can optimize your transportation operations
 
 Best regards,
 FleetFlow TruckingPlanet Partnership Team
-Phone: (555) 123-4567 | Email: partnerships@fleetflow.com
+Phone: (555) 123-4567 | Email: partnerships@fleetflowapp.com
 TruckingPlanet Network Member ID: [Your Member ID]
 
 🤖 AI-GENERATED TRUCKING PLANET PROPOSAL
@@ -2053,15 +2046,29 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
           {[
             {
               label: 'Active RFx',
-              value: '24',
+              value: loadingRfxRequests ? '...' : rfxRequests.length.toString(),
               color: '#10b981',
               icon: '📋',
             },
-            { label: 'My Bids', value: '8', color: '#3b82f6', icon: '💰' },
-            { label: 'Win Rate', value: '67%', color: '#22c55e', icon: '🏆' },
+            {
+              label: 'My Bids',
+              value: loadingMyBids ? '...' : myBids.length.toString(),
+              color: '#3b82f6',
+              icon: '💰',
+            },
+            {
+              label: 'Win Rate',
+              value: loadingMyBids ? '...' : myBids.length > 0 ? '0%' : 'N/A',
+              color: '#22c55e',
+              icon: '🏆',
+            },
             {
               label: 'Avg Response',
-              value: '2.3h',
+              value: loadingMyBids
+                ? '...'
+                : myBids.length > 0
+                  ? 'N/A'
+                  : 'No data',
               color: '#f59e0b',
               icon: '⏰',
             },
@@ -2673,133 +2680,162 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               <div>Actions</div>
             </div>
 
-            {rfxRequests
-              .filter((rfx) => rfx.status === 'Active')
-              .map((rfx, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns:
-                      '70px 1.2fr 1fr 100px 80px 90px 80px 90px',
-                    gap: '8px',
-                    padding: '10px 12px',
-                    background:
-                      index % 2 === 0
-                        ? 'rgba(255, 255, 255, 0.05)'
-                        : 'rgba(255, 255, 255, 0.02)',
-                    borderRadius: '8px',
-                    marginBottom: '8px',
-                    fontSize: '11px',
-                    transition: 'all 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      'rgba(255, 255, 255, 0.08)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background =
-                      index % 2 === 0
-                        ? 'rgba(255, 255, 255, 0.05)'
-                        : 'rgba(255, 255, 255, 0.02)';
-                  }}
-                >
-                  <div style={{ fontWeight: '700', color: '#60a5fa' }}>
-                    {rfx.id}
-                    <div
-                      style={{
-                        fontSize: '8px',
-                        color: '#8b5cf6',
-                        marginTop: '2px',
-                      }}
-                    >
-                      {rfx.documentType}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: '600' }}>{rfx.origin}</div>
-                    <div style={{ fontSize: '10px', opacity: 0.7 }}>
-                      → {rfx.destination}
-                    </div>
-                  </div>
-                  <div style={{ fontSize: '11px' }}>{rfx.customer}</div>
-                  <div style={{ fontSize: '10px', color: '#f59e0b' }}>
-                    {rfx.bidDeadline}
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <span
-                      style={{
-                        background: 'rgba(59, 130, 246, 0.2)',
-                        color: '#3b82f6',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                      }}
-                    >
-                      {rfx.currentBids} bids
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '10px', color: '#22c55e' }}>
-                    {rfx.estimatedRate}
-                  </div>
-                  <div>
-                    <span
-                      style={{
-                        background:
-                          rfx.urgency === 'High'
-                            ? 'rgba(239, 68, 68, 0.2)'
-                            : rfx.urgency === 'Medium'
-                              ? 'rgba(245, 158, 11, 0.2)'
-                              : 'rgba(34, 197, 94, 0.2)',
-                        color:
-                          rfx.urgency === 'High'
-                            ? '#ef4444'
-                            : rfx.urgency === 'Medium'
-                              ? '#f59e0b'
-                              : '#22c55e',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {rfx.urgency}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <button
-                      style={{
-                        padding: '3px 6px',
-                        background: 'linear-gradient(135deg, #10b981, #059669)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Bid
-                    </button>
-                    <button
-                      onClick={() => setShowAIBidAssistant(true)}
-                      title='AI Cross-Industry Analysis - Extract logistics components from any RFx'
-                      style={{
-                        padding: '3px 6px',
-                        background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '8px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      AI
-                    </button>
-                  </div>
+            {loadingRfxRequests ? (
+              <div
+                style={{
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#94a3b8',
+                }}
+              >
+                <div style={{ marginBottom: '16px' }}>🔄</div>
+                <div>Loading RFX requests...</div>
+              </div>
+            ) : rfxRequests.length === 0 ? (
+              <div
+                style={{
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#94a3b8',
+                }}
+              >
+                <div style={{ marginBottom: '16px' }}>📋</div>
+                <div>No active RFX requests found</div>
+                <div style={{ fontSize: '10px', marginTop: '8px' }}>
+                  Check back later for new opportunities
                 </div>
-              ))}
+              </div>
+            ) : (
+              rfxRequests
+                .filter((rfx) => rfx.status === 'Active')
+                .map((rfx, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        '70px 1.2fr 1fr 100px 80px 90px 80px 90px',
+                      gap: '8px',
+                      padding: '10px 12px',
+                      background:
+                        index % 2 === 0
+                          ? 'rgba(255, 255, 255, 0.05)'
+                          : 'rgba(255, 255, 255, 0.02)',
+                      borderRadius: '8px',
+                      marginBottom: '8px',
+                      fontSize: '11px',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(255, 255, 255, 0.08)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        index % 2 === 0
+                          ? 'rgba(255, 255, 255, 0.05)'
+                          : 'rgba(255, 255, 255, 0.02)';
+                    }}
+                  >
+                    <div style={{ fontWeight: '700', color: '#60a5fa' }}>
+                      {rfx.id}
+                      <div
+                        style={{
+                          fontSize: '8px',
+                          color: '#8b5cf6',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {rfx.documentType}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: '600' }}>{rfx.origin}</div>
+                      <div style={{ fontSize: '10px', opacity: 0.7 }}>
+                        → {rfx.destination}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '11px' }}>{rfx.customer}</div>
+                    <div style={{ fontSize: '10px', color: '#f59e0b' }}>
+                      {rfx.bidDeadline}
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <span
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.2)',
+                          color: '#3b82f6',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                        }}
+                      >
+                        {rfx.currentBids} bids
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#22c55e' }}>
+                      {rfx.estimatedRate}
+                    </div>
+                    <div>
+                      <span
+                        style={{
+                          background:
+                            rfx.urgency === 'High'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : rfx.urgency === 'Medium'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : 'rgba(34, 197, 94, 0.2)',
+                          color:
+                            rfx.urgency === 'High'
+                              ? '#ef4444'
+                              : rfx.urgency === 'Medium'
+                                ? '#f59e0b'
+                                : '#22c55e',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        {rfx.urgency}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                      <button
+                        style={{
+                          padding: '3px 6px',
+                          background:
+                            'linear-gradient(135deg, #10b981, #059669)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Bid
+                      </button>
+                      <button
+                        onClick={() => setShowAIBidAssistant(true)}
+                        title='AI Cross-Industry Analysis - Extract logistics components from any RFx'
+                        style={{
+                          padding: '3px 6px',
+                          background:
+                            'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '8px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        AI
+                      </button>
+                    </div>
+                  </div>
+                ))
+            )}
           </div>
         )}
 
@@ -2829,97 +2865,124 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               <div>Actions</div>
             </div>
 
-            {myBids.map((bid, index) => (
+            {loadingMyBids ? (
               <div
-                key={index}
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '80px 1.2fr 90px 70px 90px 100px 90px',
-                  gap: '8px',
-                  padding: '10px 12px',
-                  background:
-                    index % 2 === 0
-                      ? 'rgba(255, 255, 255, 0.05)'
-                      : 'rgba(255, 255, 255, 0.02)',
-                  borderRadius: '8px',
-                  marginBottom: '8px',
-                  fontSize: '11px',
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#94a3b8',
                 }}
               >
-                <div style={{ fontWeight: '700', color: '#60a5fa' }}>
-                  {bid.rfxId}
-                </div>
-                <div style={{ fontSize: '11px' }}>{bid.customer}</div>
-                <div style={{ fontWeight: '700', color: '#22c55e' }}>
-                  {bid.myBid}
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <span
-                    style={{
-                      background:
-                        bid.rank === 1
-                          ? 'rgba(34, 197, 94, 0.2)'
-                          : 'rgba(245, 158, 11, 0.2)',
-                      color: bid.rank === 1 ? '#22c55e' : '#f59e0b',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    #{bid.rank}
-                  </span>
-                </div>
-                <div style={{ textAlign: 'center', fontSize: '10px' }}>
-                  {bid.totalBids} bids
-                </div>
-                <div>
-                  <span
-                    style={{
-                      background:
-                        bid.status === 'Leading'
-                          ? 'rgba(34, 197, 94, 0.2)'
-                          : 'rgba(59, 130, 246, 0.2)',
-                      color: bid.status === 'Leading' ? '#22c55e' : '#3b82f6',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {bid.status}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '3px' }}>
-                  <button
-                    style={{
-                      padding: '3px 6px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '8px',
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    style={{
-                      padding: '3px 6px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '8px',
-                    }}
-                  >
-                    View
-                  </button>
+                <div style={{ marginBottom: '16px' }}>🔄</div>
+                <div>Loading your bids...</div>
+              </div>
+            ) : myBids.length === 0 ? (
+              <div
+                style={{
+                  padding: '40px',
+                  textAlign: 'center',
+                  color: '#94a3b8',
+                }}
+              >
+                <div style={{ marginBottom: '16px' }}>📝</div>
+                <div>No bids submitted yet</div>
+                <div style={{ fontSize: '10px', marginTop: '8px' }}>
+                  Submit your first bid on an active RFX request
                 </div>
               </div>
-            ))}
+            ) : (
+              myBids.map((bid, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '80px 1.2fr 90px 70px 90px 100px 90px',
+                    gap: '8px',
+                    padding: '10px 12px',
+                    background:
+                      index % 2 === 0
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(255, 255, 255, 0.02)',
+                    borderRadius: '8px',
+                    marginBottom: '8px',
+                    fontSize: '11px',
+                  }}
+                >
+                  <div style={{ fontWeight: '700', color: '#60a5fa' }}>
+                    {bid.rfxId}
+                  </div>
+                  <div style={{ fontSize: '11px' }}>{bid.customer}</div>
+                  <div style={{ fontWeight: '700', color: '#22c55e' }}>
+                    {bid.myBid}
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <span
+                      style={{
+                        background:
+                          bid.rank === 1
+                            ? 'rgba(34, 197, 94, 0.2)'
+                            : 'rgba(245, 158, 11, 0.2)',
+                        color: bid.rank === 1 ? '#22c55e' : '#f59e0b',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      #{bid.rank}
+                    </span>
+                  </div>
+                  <div style={{ textAlign: 'center', fontSize: '10px' }}>
+                    {bid.totalBids} bids
+                  </div>
+                  <div>
+                    <span
+                      style={{
+                        background:
+                          bid.status === 'Leading'
+                            ? 'rgba(34, 197, 94, 0.2)'
+                            : 'rgba(59, 130, 246, 0.2)',
+                        color: bid.status === 'Leading' ? '#22c55e' : '#3b82f6',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {bid.status}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '3px' }}>
+                    <button
+                      style={{
+                        padding: '3px 6px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '8px',
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      style={{
+                        padding: '3px 6px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '8px',
+                      }}
+                    >
+                      View
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
@@ -3563,64 +3626,73 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               >
                 🚛 Automotive & Construction Opportunities
               </h4>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '12px',
-                }}
-              >
+              {/* Loading state for automotive opportunities */}
+              {loadingAutomotiveOps ? (
                 <div
                   style={{
-                    background: 'rgba(239, 68, 68, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#ef4444',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Ford Motor Company
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Parts Distribution - $3.2M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>🚛</div>
+                  <div>Loading automotive opportunities...</div>
                 </div>
+              ) : automotiveOpportunities.length === 0 ? (
                 <div
                   style={{
-                    background: 'rgba(239, 68, 68, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#ef4444',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Caterpillar Inc
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Heavy Equipment - $2.1M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>🚛</div>
+                  <div>No automotive opportunities found</div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  {automotiveOpportunities
+                    .slice(0, 4)
+                    .map((opportunity: any, index: number) => (
+                      <div
+                        key={opportunity.id || index}
+                        style={{
+                          background: 'rgba(239, 68, 68, 0.2)',
+                          padding: '12px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: '#ef4444',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {opportunity.company ||
+                            opportunity.title ||
+                            'Unknown Company'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {opportunity.title ||
+                            opportunity.description ||
+                            'No description available'}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
 
             {/* Pharmaceutical Section */}
@@ -3643,64 +3715,82 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               >
                 💊 Pharmaceutical Opportunities
               </h4>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '12px',
-                }}
-              >
+              {/* Loading state for pharmaceutical opportunities */}
+              {loadingRfxRequests ? (
                 <div
                   style={{
-                    background: 'rgba(6, 182, 212, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#06b6d4',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Pfizer Global
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Cold Chain Distribution - $2.4M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>💊</div>
+                  <div>Loading pharmaceutical opportunities...</div>
                 </div>
+              ) : rfxRequests.filter(
+                  (req) =>
+                    req.industry?.toLowerCase().includes('pharma') ||
+                    req.industry?.toLowerCase().includes('medical')
+                ).length === 0 ? (
                 <div
                   style={{
-                    background: 'rgba(6, 182, 212, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#06b6d4',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Johnson & Johnson
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Clinical Trials - $1.8M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>💊</div>
+                  <div>No pharmaceutical opportunities found</div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  {rfxRequests
+                    .filter(
+                      (req) =>
+                        req.industry?.toLowerCase().includes('pharma') ||
+                        req.industry?.toLowerCase().includes('medical')
+                    )
+                    .slice(0, 4)
+                    .map((opportunity: any, index: number) => (
+                      <div
+                        key={opportunity.id || index}
+                        style={{
+                          background: 'rgba(6, 182, 212, 0.2)',
+                          padding: '12px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: '#06b6d4',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {opportunity.company ||
+                            opportunity.title ||
+                            'Unknown Company'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {opportunity.title ||
+                            opportunity.description ||
+                            'No description available'}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
 
             {/* Warehousing & 3PL Section */}
@@ -3722,64 +3812,74 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               >
                 🏭 Warehousing & 3PL Opportunities
               </h4>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '12px',
-                }}
-              >
+              {/* Loading state for warehousing opportunities */}
+              {loadingWarehousingOps ? (
                 <div
                   style={{
-                    background: 'rgba(139, 92, 246, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#8b5cf6',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Amazon Fulfillment
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    E-commerce Warehousing - $25M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>🏭</div>
+                  <div>Loading warehousing opportunities...</div>
                 </div>
+              ) : warehousingOpportunities.length === 0 ? (
                 <div
                   style={{
-                    background: 'rgba(139, 92, 246, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#8b5cf6',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Walmart Distribution
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Retail Distribution - $30M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>🏭</div>
+                  <div>No warehousing opportunities found</div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  {warehousingOpportunities
+                    .slice(0, 4)
+                    .map((opportunity: any, index: number) => (
+                      <div
+                        key={opportunity.id || index}
+                        style={{
+                          background: 'rgba(139, 92, 246, 0.2)',
+                          padding: '12px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: '#8b5cf6',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {opportunity.company ||
+                            opportunity.agency ||
+                            opportunity.title ||
+                            'Unknown Company'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {opportunity.title ||
+                            opportunity.description ||
+                            'No description available'}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -3848,104 +3948,95 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               >
                 🎯 Priority Queue
               </h4>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                  gap: '12px',
-                }}
-              >
+              {/* Loading state for priority queue */}
+              {loadingTruckingPlanet ? (
                 <div
                   style={{
-                    background: 'rgba(245, 158, 11, 0.2)',
-                    padding: '16px',
-                    borderRadius: '8px',
-                    border: '2px solid #f59e0b',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#f59e0b',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    🚨 URGENT
-                  </div>
-                  <div
-                    style={{
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '13px',
-                    }}
-                  >
-                    Global Tech Corp
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Emergency Server Transport - $850K
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      fontSize: '11px',
-                      marginTop: '4px',
-                    }}
-                  >
-                    Deadline: 2 hours
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>⏳</div>
+                  <div>Loading priority opportunities...</div>
                 </div>
+              ) : truckingPlanetShippers.length === 0 ? (
                 <div
                   style={{
-                    background: 'rgba(245, 158, 11, 0.2)',
-                    padding: '16px',
-                    borderRadius: '8px',
-                    border: '1px solid #f59e0b',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#f59e0b',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    ⚡ HIGH
-                  </div>
-                  <div
-                    style={{
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '13px',
-                    }}
-                  >
-                    Manufacturing Plus
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Production Equipment - $1.2M
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      fontSize: '11px',
-                      marginTop: '4px',
-                    }}
-                  >
-                    Deadline: Tomorrow
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>📋</div>
+                  <div>No priority opportunities found</div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  {truckingPlanetShippers
+                    .slice(0, 4)
+                    .map((shipper: any, index: number) => (
+                      <div
+                        key={shipper.id || index}
+                        style={{
+                          background: 'rgba(245, 158, 11, 0.2)',
+                          padding: '16px',
+                          borderRadius: '8px',
+                          border: '1px solid #f59e0b',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: '#f59e0b',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          {index === 0
+                            ? '🚨 URGENT'
+                            : index === 1
+                              ? '⚡ HIGH'
+                              : '📋 PRIORITY'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '13px',
+                          }}
+                        >
+                          {shipper.companyName ||
+                            shipper.company ||
+                            'Unknown Company'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {shipper.address || 'Location not available'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '11px',
+                            marginTop: '4px',
+                          }}
+                        >
+                          Phone: {shipper.phone || 'Not provided'}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
 
             {/* TruckingPlanet Network Section */}
@@ -3967,64 +4058,69 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               >
                 🌐 TruckingPlanet Network
               </h4>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '12px',
-                }}
-              >
+              {/* Loading state for network partners */}
+              {loadingTruckingPlanet ? (
                 <div
                   style={{
-                    background: 'rgba(20, 184, 166, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#14b8a6',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Premium Shipper
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    High-Volume Routes - $2.8M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>🌐</div>
+                  <div>Loading network partners...</div>
                 </div>
+              ) : truckingPlanetShippers.length === 0 ? (
                 <div
                   style={{
-                    background: 'rgba(20, 184, 166, 0.2)',
-                    padding: '12px',
-                    borderRadius: '8px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: 'rgba(255, 255, 255, 0.6)',
                   }}
                 >
-                  <div
-                    style={{
-                      color: '#14b8a6',
-                      fontWeight: 'bold',
-                      fontSize: '14px',
-                    }}
-                  >
-                    Network Partner
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '12px',
-                    }}
-                  >
-                    Dedicated Lanes - $1.9M
-                  </div>
+                  <div style={{ marginBottom: '16px' }}>🌐</div>
+                  <div>No network partners found</div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '12px',
+                  }}
+                >
+                  {truckingPlanetShippers
+                    .slice(4, 8)
+                    .map((shipper: any, index: number) => (
+                      <div
+                        key={shipper.id || `network-${index}`}
+                        style={{
+                          background: 'rgba(20, 184, 166, 0.2)',
+                          padding: '12px',
+                          borderRadius: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: '#14b8a6',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                          }}
+                        >
+                          {index === 0 ? 'Premium Shipper' : 'Network Partner'}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '12px',
+                          }}
+                        >
+                          {shipper.address || 'Location not available'}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -4668,8 +4764,8 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               >
                 <div style={{ fontSize: '2rem', marginBottom: '15px' }}>🏢</div>
                 <div style={{ fontSize: '14px' }}>
-                  No enterprise RFPs found. Try searching for ""transportation"",
-                  ""logistics"", or ""supply chain"".
+                  No enterprise RFPs found. Try searching for
+                  ""transportation"", ""logistics"", or ""supply chain"".
                 </div>
               </div>
             )}
@@ -5179,7 +5275,8 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                   </div>
                   <div style={{ fontSize: '14px' }}>
                     No InstantMarkets opportunities found. Try searching for
-                    ""transportation"", ""logistics"", or ""government contracts"".
+                    ""transportation"", ""logistics"", or ""government
+                    contracts"".
                   </div>
                 </div>
               )}
@@ -5957,125 +6054,35 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                 <div>Action</div>
               </div>
 
-              {/* Sample Pharmaceutical RFx Opportunities */}
-              {[
-                {
-                  id: 'PHRFX-001',
-                  company: 'Pfizer Pharmaceuticals',
-                  service: 'Cold Chain Distribution Network',
-                  temperature: '2-8°C',
-                  compliance: 'FDA, GMP',
-                  deadline: '2024-02-15',
-                  urgency: 'high',
-                },
-                {
-                  id: 'PHRFX-002',
-                  company: 'Johnson & Johnson',
-                  service: 'Clinical Trial Sample Transport',
-                  temperature: '-20°C',
-                  compliance: 'FDA, GCP',
-                  deadline: '2024-02-20',
-                  urgency: 'medium',
-                },
-                {
-                  id: 'PHRFX-003',
-                  company: 'Moderna Therapeutics',
-                  service: 'Vaccine Distribution Services',
-                  temperature: '-70°C',
-                  compliance: 'FDA, CDC',
-                  deadline: '2024-02-12',
-                  urgency: 'critical',
-                },
-                {
-                  id: 'PHRFX-004',
-                  company: 'Merck & Co',
-                  service: 'Hospital Direct Delivery',
-                  temperature: '15-25°C',
-                  compliance: 'FDA, USP',
-                  deadline: '2024-02-25',
-                  urgency: 'medium',
-                },
-                {
-                  id: 'PHRFX-005',
-                  company: 'AbbVie Inc',
-                  service: 'Specialty Drug Logistics',
-                  temperature: '2-8°C',
-                  compliance: 'FDA, REMS',
-                  deadline: '2024-02-18',
-                  urgency: 'high',
-                },
-              ].map((opportunity, index) => (
+              {/* Pharmaceutical RFx Opportunities - Loading from API */}
+              {loadingRfxRequests ? (
                 <div
-                  key={opportunity.id}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: '80px 1fr 1fr 120px 100px 120px 80px',
-                    gap: '8px',
-                    padding: '12px',
-                    background:
-                      index % 2 === 0
-                        ? 'rgba(255, 255, 255, 0.05)'
-                        : 'rgba(255, 255, 255, 0.02)',
-                    borderRadius: '8px',
-                    marginBottom: '6px',
-                    alignItems: 'center',
-                    fontSize: '13px',
-                    color: 'white',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: '#94a3b8',
                   }}
                 >
-                  <div style={{ fontWeight: 'bold', color: '#06b6d4' }}>
-                    {opportunity.id}
-                  </div>
-                  <div>{opportunity.company}</div>
-                  <div>{opportunity.service}</div>
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.2)',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '11px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {opportunity.temperature}
-                  </div>
-                  <div
-                    style={{
-                      background: 'rgba(16, 185, 129, 0.2)',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '11px',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {opportunity.compliance}
-                  </div>
-                  <div>{opportunity.deadline}</div>
-                  <button
-                    style={{
-                      background:
-                        opportunity.urgency === 'critical'
-                          ? 'linear-gradient(135deg, #ef4444, #dc2626)'
-                          : opportunity.urgency === 'high'
-                            ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                            : 'linear-gradient(135deg, #06b6d4, #0891b2)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '6px 12px',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {opportunity.urgency === 'critical'
-                      ? '🚨 URGENT'
-                      : opportunity.urgency === 'high'
-                        ? '⚡ HIGH'
-                        : '📋 BID'}
-                  </button>
+                  <div style={{ marginBottom: '16px' }}>🔄</div>
+                  <div>Loading pharmaceutical RFx opportunities...</div>
                 </div>
-              ))}
+              ) : [].length === 0 ? (
+                <div
+                  style={{
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <div style={{ marginBottom: '16px' }}>💊</div>
+                  <div>No pharmaceutical RFx opportunities found</div>
+                  <div style={{ fontSize: '10px', marginTop: '8px' }}>
+                    Check back later for new pharmaceutical contracts
+                  </div>
+                </div>
+              ) : (
+                []
+              )}
             </div>
           </div>
         )}
@@ -6371,135 +6378,35 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                 <div>Status</div>
               </div>
 
-              {/* Sample Medical Courier RFx Opportunities */}
-              {[
-                {
-                  id: 'MCRFX-001',
-                  origin: 'Mayo Clinic',
-                  destination: 'Emergency Room Network',
-                  service: 'STAT Lab Results',
-                  urgency: 'Critical',
-                  compliance: 'HIPAA',
-                  value: '$850K',
-                  status: 'Open',
-                  urgencyLevel: 'critical',
-                },
-                {
-                  id: 'MCRFX-002',
-                  origin: 'Johns Hopkins',
-                  destination: 'Specialty Clinics',
-                  service: 'Medical Equipment',
-                  urgency: 'High',
-                  compliance: 'DOT, OSHA',
-                  value: '$640K',
-                  status: 'Bidding',
-                  urgencyLevel: 'high',
-                },
-                {
-                  id: 'MCRFX-003',
-                  origin: 'Research Lab',
-                  destination: 'Hospital Network',
-                  service: 'Clinical Trial Samples',
-                  urgency: 'Medium',
-                  compliance: 'FDA, GCP',
-                  value: '$1.2M',
-                  status: 'Review',
-                  urgencyLevel: 'medium',
-                },
-                {
-                  id: 'MCRFX-004',
-                  origin: 'Organ Bank',
-                  destination: 'Transplant Centers',
-                  service: 'Organ Transport',
-                  urgency: 'Critical',
-                  compliance: 'UNOS',
-                  value: '$2.1M',
-                  status: 'Emergency',
-                  urgencyLevel: 'critical',
-                },
-              ].map((rfx, index) => (
+              {/* Medical Courier RFx Opportunities - Loading from API */}
+              {loadingRfxRequests ? (
                 <div
-                  key={index}
                   style={{
-                    display: 'grid',
-                    gridTemplateColumns: '80px 1.2fr 1fr 100px 90px 90px 100px',
-                    gap: '8px',
-                    padding: '10px 12px',
-                    background:
-                      index % 2 === 0
-                        ? 'rgba(255, 255, 255, 0.05)'
-                        : 'rgba(255, 255, 255, 0.02)',
-                    borderRadius: '8px',
-                    marginBottom: '8px',
-                    fontSize: '11px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: '#94a3b8',
                   }}
                 >
-                  <div style={{ fontWeight: '700', color: '#fca5a5' }}>
-                    {rfx.id}
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: '600' }}>{rfx.origin}</div>
-                    <div style={{ fontSize: '10px', opacity: 0.7 }}>
-                      → {rfx.destination}
-                    </div>
-                  </div>
-                  <div style={{ fontSize: '11px' }}>{rfx.service}</div>
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color:
-                        rfx.urgencyLevel === 'critical'
-                          ? '#fca5a5'
-                          : rfx.urgencyLevel === 'high'
-                            ? '#fbbf24'
-                            : '#a3e635',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {rfx.urgency}
-                  </div>
-                  <div style={{ fontSize: '10px', color: '#93c5fd' }}>
-                    {rfx.compliance}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '10px',
-                      color: '#22c55e',
-                      fontWeight: '600',
-                    }}
-                  >
-                    {rfx.value}
-                  </div>
-                  <div>
-                    <span
-                      style={{
-                        background:
-                          rfx.status === 'Emergency'
-                            ? 'rgba(220, 38, 38, 0.2)'
-                            : rfx.status === 'Open'
-                              ? 'rgba(34, 197, 94, 0.2)'
-                              : rfx.status === 'Bidding'
-                                ? 'rgba(59, 130, 246, 0.2)'
-                                : 'rgba(245, 158, 11, 0.2)',
-                        color:
-                          rfx.status === 'Emergency'
-                            ? '#fca5a5'
-                            : rfx.status === 'Open'
-                              ? '#86efac'
-                              : rfx.status === 'Bidding'
-                                ? '#93c5fd'
-                                : '#fbbf24',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      {rfx.status}
-                    </span>
+                  <div style={{ marginBottom: '16px' }}>🚑</div>
+                  <div>Loading medical courier RFx opportunities...</div>
+                </div>
+              ) : [].length === 0 ? (
+                <div
+                  style={{
+                    padding: '40px',
+                    textAlign: 'center',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <div style={{ marginBottom: '16px' }}>🚑</div>
+                  <div>No medical courier RFx opportunities found</div>
+                  <div style={{ fontSize: '10px', marginTop: '8px' }}>
+                    Check back later for new medical courier contracts
                   </div>
                 </div>
-              ))}
+              ) : (
+                []
+              )}
             </div>
           </div>
         )}

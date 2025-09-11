@@ -2,6 +2,7 @@
 
 import InternalAdaptiveLearning from '../components/InternalAdaptiveLearning';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
@@ -735,6 +736,7 @@ export default function DEPOINTEDashboard() {
     | 'scheduler'
     | 'powerups'
     | 'brain'
+    | 'email-signatures'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
@@ -1541,6 +1543,101 @@ export default function DEPOINTEDashboard() {
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, ""Segue UI"", Roboto, sans-serif',
       }}
     >
+      {/* DEE'S FLEETFLOW QUICK ACCESS BAR */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          background: 'rgba(15, 23, 42, 0.95)',
+          padding: '8px 20px',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '20px',
+          backdropFilter: 'blur(10px)',
+        }}
+      >
+        <span style={{ fontSize: '12px', opacity: 0.7, fontWeight: 'bold' }}>
+          🚛 DEPOINTE AI → FLEETFLOW:
+        </span>
+        <Link
+          href='/dashboard'
+          style={{
+            color: '#60a5fa',
+            textDecoration: 'none',
+            fontSize: '12px',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            background: 'rgba(96, 165, 250, 0.15)',
+            border: '1px solid rgba(96, 165, 250, 0.3)',
+          }}
+        >
+          📊 Main Dashboard
+        </Link>
+        <Link
+          href='/loads'
+          style={{
+            color: '#34d399',
+            textDecoration: 'none',
+            fontSize: '12px',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            background: 'rgba(52, 211, 153, 0.15)',
+            border: '1px solid rgba(52, 211, 153, 0.3)',
+          }}
+        >
+          🚚 Load Board
+        </Link>
+        <Link
+          href='/drivers'
+          style={{
+            color: '#fbbf24',
+            textDecoration: 'none',
+            fontSize: '12px',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            background: 'rgba(251, 191, 36, 0.15)',
+            border: '1px solid rgba(251, 191, 36, 0.3)',
+          }}
+        >
+          👤 Drivers
+        </Link>
+        <Link
+          href='/analytics'
+          style={{
+            color: '#f472b6',
+            textDecoration: 'none',
+            fontSize: '12px',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            background: 'rgba(244, 114, 182, 0.15)',
+            border: '1px solid rgba(244, 114, 182, 0.3)',
+          }}
+        >
+          📈 Analytics
+        </Link>
+        <Link
+          href='/billing-invoices'
+          style={{
+            color: '#a78bfa',
+            textDecoration: 'none',
+            fontSize: '12px',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            background: 'rgba(167, 139, 250, 0.15)',
+            border: '1px solid rgba(167, 139, 250, 0.3)',
+          }}
+        >
+          💰 Billing
+        </Link>
+        <div style={{ marginLeft: 'auto', fontSize: '12px', opacity: 0.6 }}>
+          👑 DEE DAVIS OWNER ACCESS
+        </div>
+      </div>
+
       {/* Internal Adaptive Learning - No UI, just automatic learning */}
       <InternalAdaptiveLearning />
       {/* Header */}
@@ -1670,6 +1767,7 @@ export default function DEPOINTEDashboard() {
           { key: 'analytics', label: '📈 Analytics', icon: '📈' },
           { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
           { key: 'scheduler', label: '📅 AI Staff Scheduler', icon: '📅' },
+          { key: 'email-signatures', label: '📧 Email Signatures', icon: '📧' },
           { key: 'powerups', label: '⚡ Power-Ups', icon: '⚡' },
           { key: 'brain', label: '🧠 Freight Brain AI', icon: '🧠' },
         ].map((tab) => (
@@ -7316,6 +7414,306 @@ export default function DEPOINTEDashboard() {
             }}
           >
             <AIStaffScheduler />
+          </div>
+        </div>
+      )}
+
+      {/* Email Signatures Dashboard */}
+      {selectedMainView === 'email-signatures' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <div style={{ marginBottom: '20px' }}>
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: '600',
+                marginBottom: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+            >
+              📧 Email Signatures Management
+            </h2>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '20px',
+              }}
+            >
+              Professional email signature creation and management for FleetFlow
+              TMS communications
+            </p>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <h3
+              style={{
+                color: '#3b82f6',
+                marginBottom: '15px',
+                fontSize: '18px',
+              }}
+            >
+              Quick Access Links
+            </h3>
+            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+              <a
+                href='/email-signatures'
+                target='_blank'
+                rel='noopener noreferrer'
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                  color: 'white',
+                  textDecoration: 'none',
+                  padding: '12px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                  border: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 16px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(59, 130, 246, 0.3)';
+                }}
+              >
+                🎨 Open Signature Builder
+              </a>
+
+              <a
+                href='/email-signatures'
+                target='_blank'
+                rel='noopener noreferrer'
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  textDecoration: 'none',
+                  padding: '12px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                  border: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 16px rgba(16, 185, 129, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(16, 185, 129, 0.3)';
+                }}
+              >
+                📋 Manage Signatures
+              </a>
+
+              <a
+                href='/email-signatures'
+                target='_blank'
+                rel='noopener noreferrer'
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                  color: 'white',
+                  textDecoration: 'none',
+                  padding: '12px 20px',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+                  border: 'none',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 6px 16px rgba(245, 158, 11, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(245, 158, 11, 0.3)';
+                }}
+              >
+                📊 View Analytics
+              </a>
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <h3
+              style={{
+                color: '#8b5cf6',
+                marginBottom: '15px',
+                fontSize: '18px',
+              }}
+            >
+              📧 Features Available
+            </h3>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '15px',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(59, 130, 246, 0.1)',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(59, 130, 246, 0.2)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#3b82f6',
+                    margin: '0 0 10px 0',
+                    fontSize: '16px',
+                  }}
+                >
+                  🎨 Visual Designer
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                    fontSize: '14px',
+                  }}
+                >
+                  Drag-and-drop interface for creating professional email
+                  signatures
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#10b981',
+                    margin: '0 0 10px 0',
+                    fontSize: '16px',
+                  }}
+                >
+                  📱 Templates
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                    fontSize: '14px',
+                  }}
+                >
+                  Pre-designed templates for Executive, Operations, Sales &
+                  Marketing
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#f59e0b',
+                    margin: '0 0 10px 0',
+                    fontSize: '16px',
+                  }}
+                >
+                  🔗 Integration
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                    fontSize: '14px',
+                  }}
+                >
+                  Automatic injection into SendGrid emails and AI communications
+                </p>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#8b5cf6',
+                    margin: '0 0 10px 0',
+                    fontSize: '16px',
+                  }}
+                >
+                  📊 Analytics
+                </h4>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    margin: 0,
+                    fontSize: '14px',
+                  }}
+                >
+                  Track signature usage and performance metrics
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}

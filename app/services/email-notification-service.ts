@@ -79,7 +79,7 @@ class EmailNotificationService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          to: 'insurance@fleetflow.com', // Internal team email
+          to: 'insurance@fleetflowapp.com', // Internal team email
           subject: template.subject,
           html: template.html,
           text: template.text,
@@ -223,12 +223,12 @@ class EmailNotificationService {
             </ol>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="https://fleetflow.com/insurance-partnerships" class="button">View Quote Status</a>
-                <a href="https://fleetflow.com/contact" class="button" style="background: #6b7280;">Contact Support</a>
+                <a href="https://fleetflowapp.com/insurance-partnerships" class="button">View Quote Status</a>
+                <a href="https://fleetflowapp.com/contact" class="button" style="background: #6b7280;">Contact Support</a>
             </div>
 
             <p><strong>Need immediate assistance?</strong><br>
-            Call us at <a href="tel:+18333863509">(833) 386-3509</a> or email <a href="mailto:insurance@fleetflow.com">insurance@fleetflow.com</a></p>
+            Call us at <a href="tel:+18333863509">(833) 386-3509</a> or email <a href="mailto:insurance@fleetflowapp.com">insurance@fleetflowapp.com</a></p>
         </div>
 
         <div class="footer">
@@ -261,7 +261,7 @@ What happens next:
 4. Compare coverage and pricing to find the best fit
 5. Choose your preferred policy and start saving!
 
-Need help? Call (833) 386-3509 or email insurance@fleetflow.com
+Need help? Call (833) 386-3509 or email insurance@fleetflowapp.com
 
 Best regards,
 FleetFlow Insurance Team

@@ -269,10 +269,10 @@ Action**: Research Oracle Cloud Infrastructure alignment opportunities
 
 **Strategic Acquisition Team:**
 
-- **AI Acquisition Strategist**: acquisition@fleetflow.com
-- **Executive Team**: executives@fleetflow.com
-- **Strategic Advisory**: strategy@fleetflow.com
-- **Legal Counsel**: legal@fleetflow.com
+- **AI Acquisition Strategist**: acquisition@fleetflowapp.com
+- **Executive Team**: executives@fleetflowapp.com
+- **Strategic Advisory**: strategy@fleetflowapp.com
+- **Legal Counsel**: legal@fleetflowapp.com
 
 **Emergency Acquisition Hotline:** 1-800-ACQUIRE (24/7 for critical acquisition events)
 

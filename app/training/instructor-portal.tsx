@@ -96,7 +96,7 @@ export default function TrainingPage() {
     {
       id: 'FM-MGR-2023005',
       name: 'Francisco Martinez',
-      email: 'francisco.martinez@fleetflow.com',
+      email: 'francisco.martinez@fleetflowapp.com',
       department: 'Management',
       role: 'Fleet Manager',
       enrollmentDate: '2024-01-15',
@@ -111,7 +111,7 @@ export default function TrainingPage() {
     {
       id: 'SJ-DC-2024014',
       name: 'Sarah Johnson',
-      email: 'sarah.johnson@fleetflow.com',
+      email: 'sarah.johnson@fleetflowapp.com',
       department: 'Dispatch',
       role: 'Senior Dispatcher',
       enrollmentDate: '2024-02-01',
@@ -126,7 +126,7 @@ export default function TrainingPage() {
     {
       id: 'ED-BB-2024061',
       name: 'Emily Davis',
-      email: 'emily.davis@fleetflow.com',
+      email: 'emily.davis@fleetflowapp.com',
       department: 'Brokerage',
       role: 'Freight Broker',
       enrollmentDate: 'I2024-03-10',
@@ -141,7 +141,7 @@ export default function TrainingPage() {
     {
       id: 'MR-DM-2024022',
       name: 'Michael Rodriguez',
-      email: 'michael.rodriguez@fleetflow.com',
+      email: 'michael.rodriguez@fleetflowapp.com',
       department: 'Driver Management',
       role: 'Driver Coordinator',
       enrollmentDate: '2024-01-25',

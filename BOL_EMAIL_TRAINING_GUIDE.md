@@ -53,7 +53,7 @@ Learn how to customize professional invoice emails for vendors using the FleetFl
 - **Include**: Any vendor-specific billing requirements
 
 #### **Contact Information**
-- **Default**: billing@fleetflow.com
+- **Default**: billing@fleetflowapp.com
 - **Customize**: Specific billing contact if needed
 - **Maintain**: Professional contact information
 

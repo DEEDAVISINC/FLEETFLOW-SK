@@ -139,7 +139,7 @@ export default function CyberSecurityProtocolsWidget() {
         type: 'vulnerability',
         severity: 'medium',
         title: 'Outdated SSL Certificate',
-        description: 'SSL certificate for api.fleetflow.com expires in 7 days',
+        description: 'SSL certificate for api.fleetflowapp.com expires in 7 days',
         timestamp: '2024-01-15T08:15:00Z',
         status: 'active',
         affectedSystems: ['API Gateway', 'Mobile App'],

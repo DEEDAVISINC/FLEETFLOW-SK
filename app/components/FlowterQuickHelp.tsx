@@ -275,6 +275,57 @@ export default function FlowterQuickHelp({
       keywords: ['revenue', 'pipeline', 'money'],
       action: 'revenue_analytics_guide',
     },
+
+    // Subscription & Billing
+    {
+      category: 'Subscription',
+      title: 'My Current Plan',
+      description: 'View your current subscription details and status',
+      keywords: ['subscription', 'plan', 'current plan', 'what plan'],
+      action: 'current_subscription_info',
+    },
+    {
+      category: 'Subscription',
+      title: 'Compare Plans',
+      description: 'Compare features and pricing of different plans',
+      keywords: ['compare', 'plans', 'pricing', 'vs', 'versus'],
+      action: 'subscription_comparison',
+    },
+    {
+      category: 'Subscription',
+      title: 'Upgrade Plan',
+      description: 'Learn how to upgrade to a higher-tier plan',
+      keywords: ['upgrade', 'upgrade plan', 'change plan', 'higher tier'],
+      action: 'upgrade_subscription_guide',
+    },
+    {
+      category: 'Subscription',
+      title: 'Billing & Payments',
+      description: 'Manage payment methods, view invoices, and billing history',
+      keywords: ['billing', 'payment', 'invoice', 'receipt', 'pay'],
+      action: 'billing_payment_help',
+    },
+    {
+      category: 'Subscription',
+      title: 'Cancel Subscription',
+      description: 'Understand the cancellation process and alternatives',
+      keywords: ['cancel', 'stop subscription', 'end subscription'],
+      action: 'cancellation_process',
+    },
+    {
+      category: 'Subscription',
+      title: 'Phone System Add-on',
+      description: 'Learn about FleetFlow Phone system and pricing',
+      keywords: ['phone', 'phone system', 'calls', 'minutes', 'sms'],
+      action: 'phone_system_info',
+    },
+    {
+      category: 'Subscription',
+      title: 'Usage & Limits',
+      description: 'Check your usage against plan limits and overages',
+      keywords: ['usage', 'limits', 'overage', 'exceeded'],
+      action: 'usage_limits_guide',
+    },
   ];
 
   const categories = [...new Set(helpItems.map((item) => item.category))];
@@ -299,7 +350,32 @@ export default function FlowterQuickHelp({
   };
 
   const handleAction = (action: string) => {
-    onAction(action);
+    // Handle subscription-related actions by triggering appropriate queries
+    if (
+      action.startsWith('current_') ||
+      action.startsWith('subscription_') ||
+      action.startsWith('upgrade_') ||
+      action.startsWith('billing_') ||
+      action.startsWith('cancellation_') ||
+      action.startsWith('phone_system_') ||
+      action.startsWith('usage_')
+    ) {
+      // Map actions to subscription queries
+      const actionMap: { [key: string]: string } = {
+        current_subscription_info: 'What plan do I have?',
+        subscription_comparison: 'Compare subscription plans',
+        upgrade_subscription_guide: 'How do I upgrade my plan?',
+        billing_payment_help: 'Help with billing and payments',
+        cancellation_process: 'How do I cancel my subscription?',
+        phone_system_info: 'Tell me about the phone system',
+        usage_limits_guide: 'What are my usage limits?',
+      };
+
+      const query = actionMap[action] || action;
+      onAction(`subscription_query:${query}`);
+    } else {
+      onAction(action);
+    }
     onClose();
   };
 

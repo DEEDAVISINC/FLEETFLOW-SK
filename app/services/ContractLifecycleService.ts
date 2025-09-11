@@ -255,8 +255,8 @@ export class ContractLifecycleService {
           this.generateRenewalSteps(vendor, recommendation, urgencyLevel)
         ),
         stakeholders: [
-          'procurement@fleetflow.com',
-          'legal@fleetflow.com',
+          'procurement@fleetflowapp.com',
+          'legal@fleetflowapp.com',
           vendor.contactInfo.email,
         ],
         requiredApprovals: ['procurement_manager', 'legal_counsel'],
@@ -382,7 +382,7 @@ export class ContractLifecycleService {
           'Analyze current vendor performance and contract compliance',
         type: 'performance_analysis',
         status: 'pending',
-        assignedTo: ['system', 'procurement@fleetflow.com'],
+        assignedTo: ['system', 'procurement@fleetflowapp.com'],
         dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
         estimatedDuration: 8,
         dependencies: [],
@@ -398,7 +398,7 @@ export class ContractLifecycleService {
         description: 'Review AI-generated renewal recommendation and validate',
         type: 'stakeholder_approval',
         status: 'pending',
-        assignedTo: ['procurement@fleetflow.com'],
+        assignedTo: ['procurement@fleetflowapp.com'],
         dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
         estimatedDuration: 4,
         dependencies: ['performance_analysis'],
@@ -429,7 +429,7 @@ export class ContractLifecycleService {
           description: 'Prepare negotiation strategy and terms',
           type: 'document_generation',
           status: 'pending',
-          assignedTo: ['legal@fleetflow.com', 'procurement@fleetflow.com'],
+          assignedTo: ['legal@fleetflowapp.com', 'procurement@fleetflowapp.com'],
           dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
           estimatedDuration: 6,
           dependencies: ['renewal_recommendation_review'],
@@ -445,7 +445,7 @@ export class ContractLifecycleService {
           description: 'Conduct negotiations with vendor',
           type: 'vendor_negotiation',
           status: 'pending',
-          assignedTo: ['procurement@fleetflow.com'],
+          assignedTo: ['procurement@fleetflowapp.com'],
           dueDate: new Date(
             Date.now() + 14 * 24 * 60 * 60 * 1000
           ).toISOString(),
@@ -465,7 +465,7 @@ export class ContractLifecycleService {
         description: 'Legal review of contract terms',
         type: 'legal_review',
         status: 'pending',
-        assignedTo: ['legal@fleetflow.com'],
+        assignedTo: ['legal@fleetflowapp.com'],
         dueDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
         estimatedDuration: 8,
         dependencies: [],
@@ -478,7 +478,7 @@ export class ContractLifecycleService {
         description: 'Execute final contract with digital signatures',
         type: 'signature_collection',
         status: 'pending',
-        assignedTo: ['system', 'procurement@fleetflow.com'],
+        assignedTo: ['system', 'procurement@fleetflowapp.com'],
         dueDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000).toISOString(),
         estimatedDuration: 2,
         dependencies: ['legal_review'],
@@ -754,7 +754,7 @@ export class ContractLifecycleService {
       case 'initiated':
         notifications.push({
           type: 'email',
-          recipient: 'procurement@fleetflow.com',
+          recipient: 'procurement@fleetflowapp.com',
           subject: `Contract Renewal Workflow Initiated - ${vendor.name}`,
           content: `
             A new contract renewal workflow has been initiated for ${vendor.name}.
@@ -778,7 +778,7 @@ export class ContractLifecycleService {
       case 'completed':
         notifications.push({
           type: 'email',
-          recipient: 'procurement@fleetflow.com',
+          recipient: 'procurement@fleetflowapp.com',
           subject: `Contract Workflow Completed - ${vendor.name}`,
           content: `
             Contract workflow has been completed for ${vendor.name}.

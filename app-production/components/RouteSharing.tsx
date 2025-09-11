@@ -53,7 +53,7 @@ export default function RouteSharing({ route, onShare, onClose }: RouteSharingPr
     {
       id: 'driver_1',
       name: 'Mike Johnson',
-      email: 'mike.johnson@fleetflow.com',
+      email: 'mike.johnson@fleetflowapp.com',
       phone: '(555) 987-6543',
       role: 'driver',
       company: 'FleetFlow'
@@ -61,7 +61,7 @@ export default function RouteSharing({ route, onShare, onClose }: RouteSharingPr
     {
       id: 'dispatcher_1',
       name: 'Sarah Wilson',
-      email: 'sarah.wilson@fleetflow.com',
+      email: 'sarah.wilson@fleetflowapp.com',
       phone: '(555) 456-7890',
       role: 'dispatcher',
       company: 'FleetFlow'

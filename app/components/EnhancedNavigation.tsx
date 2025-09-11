@@ -20,7 +20,7 @@ export default function EnhancedNavigation() {
   const [currentUser] = useState({
     id: 'FM-MGR-2023005',
     name: 'Frank Miller',
-    email: 'frank.miller@fleetflow.com',
+    email: 'frank.miller@fleetflowapp.com',
     role: 'Fleet Manager',
     department: 'Management',
     permissions: ['all'],

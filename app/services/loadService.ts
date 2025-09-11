@@ -12,6 +12,12 @@ const mockDispatchers = [];
 
 const getAvailableDispatchers = () => mockDispatchers;
 
+// Export the loadService for use in components
+export const loadService = {
+  getAvailableDispatchers,
+  // Add other methods as needed
+};
+
 export interface ShipperInfo {
   id: string;
   companyName: string;

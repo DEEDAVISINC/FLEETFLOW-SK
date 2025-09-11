@@ -31,7 +31,7 @@ export default function SettingsPage() {
   const [currentUser] = useState<User>({
     id: 'U001',
     name: 'Fleet Manager',
-    email: 'manager@fleetflow.com',
+    email: 'manager@fleetflowapp.com',
     role: 'Admin',
     status: 'Active',
     lastLogin: 'Current session',
@@ -67,7 +67,7 @@ export default function SettingsPage() {
     {
       id: 'U001',
       name: 'Fleet Manager',
-      email: 'manager@fleetflow.com',
+      email: 'manager@fleetflowapp.com',
       role: 'Admin',
       status: 'Active',
       lastLogin: 'Current session',
@@ -77,7 +77,7 @@ export default function SettingsPage() {
     {
       id: 'U002',
       name: 'Sarah Johnson',
-      email: 'sarah.j@fleetflow.com',
+      email: 'sarah.j@fleetflowapp.com',
       role: 'Dispatcher',
       status: 'Active',
       lastLogin: '2024-12-18 14:30',
@@ -87,7 +87,7 @@ export default function SettingsPage() {
     {
       id: 'U003',
       name: 'John Smith',
-      email: 'j.smith@fleetflow.com',
+      email: 'j.smith@fleetflowapp.com',
       role: 'Driver',
       status: 'Active',
       lastLogin: '2024-12-18 09:15',
@@ -97,7 +97,7 @@ export default function SettingsPage() {
     {
       id: 'U004',
       name: 'Mike Wilson',
-      email: 'mike.wilson@fleetflow.com',
+      email: 'mike.wilson@fleetflowapp.com',
       role: 'Manager',
       status: 'Active',
       lastLogin: '2024-12-19 12:15',

@@ -184,7 +184,7 @@ export const AgreementSigning: React.FC<AgreementSigningProps> = ({ onAgreements
   const sendAgreementToCarrier = async (document: any, signerName: string) => {
     // Mock email - in production, get from carrier data
     const carrierEmail = 'carrier@example.com';
-    const requesterEmail = 'operations@fleetflow.com';
+    const requesterEmail = 'operations@fleetflowapp.com';
     
     const distributions = await documentService.distributeSignedAgreement(
       document, 

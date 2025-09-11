@@ -19,7 +19,7 @@ const mockDispatchers: DispatcherProfile[] = [
   {
     id: 'disp_001',
     name: 'Sarah Johnson',
-    email: 'sarah.johnson@fleetflow.com',
+    email: 'sarah.johnson@fleetflowapp.com',
     department: 'Operations',
     experience: '5 years',
     specialties: ['Long Haul', 'Hazmat', 'Expedited'],
@@ -28,7 +28,7 @@ const mockDispatchers: DispatcherProfile[] = [
   {
     id: 'disp_002', 
     name: 'Mike Chen',
-    email: 'mike.chen@fleetflow.com',
+    email: 'mike.chen@fleetflowapp.com',
     department: 'Regional',
     experience: '3 years',
     specialties: ['Local Delivery', 'LTL', 'Regional'],
@@ -37,7 +37,7 @@ const mockDispatchers: DispatcherProfile[] = [
   {
     id: 'disp_003',
     name: 'Jessica Martinez',
-    email: 'jessica.martinez@fleetflow.com', 
+    email: 'jessica.martinez@fleetflowapp.com', 
     department: 'Emergency',
     experience: '7 years',
     specialties: ['Emergency Response', 'Cross-Country', 'Heavy Haul'],

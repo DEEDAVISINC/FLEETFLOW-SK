@@ -16,10 +16,10 @@ async function testUserIdentifierIntegration() {
     // Test 1: Demo account mappings
     console.log('📋 Test 1: Demo Account Mappings');
     const demoEmails = [
-      'admin@fleetflow.com',
-      'dispatch@fleetflow.com',
-      'driver@fleetflow.com',
-      'broker@fleetflow.com',
+      'admin@fleetflowapp.com',
+      'dispatch@fleetflowapp.com',
+      'driver@fleetflowapp.com',
+      'broker@fleetflowapp.com',
       'vendor@abcmanufacturing.com',
     ];
 
@@ -36,19 +36,19 @@ async function testUserIdentifierIntegration() {
       {
         firstName: 'John',
         lastName: 'Doe',
-        email: 'john.doe@fleetflow.com',
+        email: 'john.doe@fleetflowapp.com',
         department: 'Dispatch',
       },
       {
         firstName: 'Jane',
         lastName: 'Smith',
-        email: 'jane.smith@fleetflow.com',
+        email: 'jane.smith@fleetflowapp.com',
         department: 'Brokerage',
       },
       {
         firstName: 'Bob',
         lastName: 'Johnson',
-        email: 'bob.johnson@fleetflow.com',
+        email: 'bob.johnson@fleetflowapp.com',
         department: 'Driver Management',
       },
     ];

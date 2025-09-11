@@ -35,7 +35,7 @@ export class SmartNegotiationService {
   ): NegotiationStrategy {
     let aiCanHandle = true;
     let confidenceScore = 100;
-    let escalationTriggers = [];
+    const escalationTriggers = [];
 
     // Rule-based assessment of AI capability
 

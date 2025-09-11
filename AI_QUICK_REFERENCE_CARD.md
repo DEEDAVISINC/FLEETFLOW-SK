@@ -146,7 +146,7 @@
 
 ### Technical Support
 - **Chat Support**: 24/7 in-app assistance
-- **Email**: support@fleetflow.com
+- **Email**: support@fleetflowapp.com
 - **Phone**: 1-800-FLEET-AI
 - **Emergency**: Critical system issues hotline
 

@@ -731,7 +731,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
 
       // Notify dispatch
       await this.sendEmailNotification(
-        'dispatch@fleetflow.com',
+        'dispatch@fleetflowapp.com',
         `Route Document Generated: ${route.routeName}`,
         this.generateRouteDocumentEmailHTML(route, document),
         'route_notification'
@@ -814,7 +814,7 @@ Midwest Distribution Co,Food & Beverage,Food Distribution,Packaged Foods;Beverag
 
   private async getDriverEmailById(driverId: string): Promise<string> {
     // Mock email - in real app, get from database
-    return `driver${driverId.slice(-3)}@fleetflow.com`;
+    return `driver${driverId.slice(-3)}@fleetflowapp.com`;
   }
 
   private async getDriverPhoneById(driverId: string): Promise<string> {

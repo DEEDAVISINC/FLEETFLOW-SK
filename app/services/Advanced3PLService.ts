@@ -444,7 +444,7 @@ class Advanced3PLService extends EventEmitter {
         name: 'Vendor Consolidation Complete',
         triggerEvent: 'consolidation_complete',
         recipients: {
-          internal: ['dispatch@fleetflow.com', 'operations@fleetflow.com'],
+          internal: ['dispatch@fleetflowapp.com', 'operations@fleetflowapp.com'],
           customer: true,
           vendor: false,
           carrier: true,
@@ -468,7 +468,7 @@ class Advanced3PLService extends EventEmitter {
         name: 'Big & Bulky Delivery Scheduled',
         triggerEvent: 'final_mile_scheduled',
         recipients: {
-          internal: ['bigbulky@fleetflow.com'],
+          internal: ['bigbulky@fleetflowapp.com'],
           customer: true,
           vendor: false,
           carrier: true,

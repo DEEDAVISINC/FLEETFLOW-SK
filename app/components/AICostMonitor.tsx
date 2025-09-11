@@ -121,12 +121,12 @@ export default function AICostMonitor() {
               className='h-3 w-3 rounded-full'
               style={{ backgroundColor: getStatusColor(stats.status.budget) }}
               title='Budget Status'
-            ></div>
+             />
             <div
               className='h-3 w-3 rounded-full'
               style={{ backgroundColor: getStatusColor(stats.status.calls) }}
               title='API Calls Status'
-            ></div>
+             />
             <div className='text-gray-400'>{isExpanded ? '▼' : '▶'}</div>
           </div>
         </div>
@@ -158,7 +158,7 @@ export default function AICostMonitor() {
                           ? '#f59e0b'
                           : '#22c55e',
                   }}
-                ></div>
+                 />
               </div>
               <p className='mt-1 text-xs text-gray-600'>
                 ${stats.remaining.budget.toFixed(2)} remaining today
@@ -187,7 +187,7 @@ export default function AICostMonitor() {
                           ? '#f59e0b'
                           : '#22c55e',
                   }}
-                ></div>
+                 />
               </div>
               <p className='mt-1 text-xs text-gray-600'>
                 {stats.remaining.calls} calls remaining today
@@ -288,7 +288,7 @@ export default function AICostMonitor() {
                   style={{
                     width: `${Math.min((stats.usage.tokens / stats.limits.tokens) * 100, 100)}%`,
                   }}
-                ></div>
+                 />
               </div>
             </div>
 

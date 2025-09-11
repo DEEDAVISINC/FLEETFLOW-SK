@@ -850,7 +850,7 @@ export default function DEPOINTELeadIntelligence() {
                             >
                               {emailQueue.some((l) => l.id === lead.id) ? (
                                 <>
-                                  <div className='mr-1 h-3 w-3 animate-spin rounded-full border border-white border-t-transparent'></div>
+                                  <div className='mr-1 h-3 w-3 animate-spin rounded-full border border-white border-t-transparent' />
                                   Sending...
                                 </>
                               ) : (

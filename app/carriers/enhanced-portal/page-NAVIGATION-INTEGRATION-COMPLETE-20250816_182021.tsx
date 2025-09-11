@@ -352,7 +352,7 @@ const InvitationLandingPage: React.FC<{
           }}
         >
           <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
-            Questions? Contact us at support@fleetflow.com
+            Questions? Contact us at support@fleetflowapp.com
           </p>
         </div>
       </div>

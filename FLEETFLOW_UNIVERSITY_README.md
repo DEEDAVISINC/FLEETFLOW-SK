@@ -231,19 +231,19 @@ app/
 ### **Technical Support**
 
 - **Help Desk:** (833) 386-3509
-- **Email:** support@fleetflow.com
+- **Email:** support@fleetflowapp.com
 - **Live Chat:** Available 24/7 in the platform
 
 ### **Training Support**
 
-- **Training Coordinator:** training@fleetflow.com
+- **Training Coordinator:** training@fleetflowapp.com
 - **Office Hours:** Monday-Friday, 8 AM - 6 PM EST
 - **Video Tutorials:** Available in the platform
 - **Documentation:** Comprehensive guides and quick references
 
 ### **Compliance Support**
 
-- **Compliance Officer:** compliance@fleetflow.com
+- **Compliance Officer:** compliance@fleetflowapp.com
 - **FMCSA Updates:** Regular notifications and training
 - **Legal Resources:** Professional guidance available
 
@@ -280,7 +280,7 @@ This training platform and all associated materials are proprietary to FleetFlow
 We welcome feedback and suggestions for improving FleetFlow University:
 
 1. **Feedback:** Submit course feedback through the platform
-2. **Suggestions:** Email training@fleetflow.com with ideas
+2. **Suggestions:** Email training@fleetflowapp.com with ideas
 3. **Bug Reports:** Use the support system for technical issues
 4. **Content Ideas:** Propose new courses or modules
 

@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // Use Twilio SendGrid (already configured in FleetFlow)
     const sendGridApiKey = process.env.SENDGRID_API_KEY;
     const fromEmail =
-      process.env.SENDGRID_FROM_EMAIL || 'insurance@fleetflow.com';
+      process.env.SENDGRID_FROM_EMAIL || 'insurance@fleetflowapp.com';
 
     if (!sendGridApiKey) {
       // Fallback to console logging for development
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
         open_tracking: { enable: true },
       },
       reply_to: {
-        email: 'insurance@fleetflow.com',
+        email: 'insurance@fleetflowapp.com',
         name: 'FleetFlow Insurance Support',
       },
     };

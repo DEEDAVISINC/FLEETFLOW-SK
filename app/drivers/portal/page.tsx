@@ -10,7 +10,7 @@ const DriversPortalMobile = dynamic(() => import('./page-mobile'), {
     <div className='flex h-screen items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500'>
       <div className='text-center'>
         <div className='mb-4 text-6xl'>🚛</div>
-        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent'></div>
+        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent' />
         <p className='font-semibold text-white'>Loading Driver Portal...</p>
       </div>
     </div>
@@ -23,7 +23,7 @@ const DriversPortalDesktop = dynamic(() => import('./page_new'), {
     <div className='flex h-screen items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-500'>
       <div className='text-center'>
         <div className='mb-4 text-6xl'>🚛</div>
-        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent'></div>
+        <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent' />
         <p className='font-semibold text-white'>Loading Driver Portal...</p>
       </div>
     </div>

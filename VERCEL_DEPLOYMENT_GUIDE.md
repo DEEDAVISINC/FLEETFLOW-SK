@@ -154,8 +154,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 1. **Add Domain** in Vercel Dashboard:
 
    ```
-   Primary: fleetflow.com
-   Redirect: www.fleetflow.com → fleetflow.com
+   Primary: fleetflowapp.com
+   Redirect: www.fleetflowapp.com → fleetflowapp.com
    ```
 
 2. **DNS Configuration** (at your domain registrar):

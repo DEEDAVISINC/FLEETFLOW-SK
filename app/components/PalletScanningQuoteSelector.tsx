@@ -172,7 +172,7 @@ export default function PalletScanningQuoteSelector({
 
       {loading ? (
         <div className='flex items-center justify-center py-8'>
-          <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500'></div>
+          <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500' />
           <span className='ml-2 text-gray-600'>
             Loading scanning services...
           </span>

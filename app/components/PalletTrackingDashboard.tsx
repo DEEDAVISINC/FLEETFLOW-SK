@@ -251,7 +251,7 @@ export default function PalletTrackingDashboard() {
     return (
       <div className='flex items-center justify-center p-8'>
         <div className='text-center'>
-          <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500'></div>
+          <div className='mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500' />
           <p className='text-gray-600'>Loading pallet tracking data...</p>
         </div>
       </div>
@@ -375,7 +375,7 @@ export default function PalletTrackingDashboard() {
                   <div className='text-right'>
                     <div
                       className={`inline-block h-3 w-3 rounded-full ${getStatusColor(pallet.status)} mb-2`}
-                    ></div>
+                     />
                     <div className='text-sm font-medium text-white'>
                       {getStatusText(pallet.status)}
                     </div>
@@ -424,7 +424,7 @@ export default function PalletTrackingDashboard() {
                     style={{
                       width: `${selectedLoadData.completionPercentage}%`,
                     }}
-                  ></div>
+                   />
                 </div>
 
                 <div className='text-center text-sm text-gray-300'>
@@ -463,7 +463,7 @@ export default function PalletTrackingDashboard() {
             <div className='mb-4 flex items-center gap-2'>
               <h4 className='text-lg font-bold text-white'>⚡ Live Updates</h4>
               <div className='flex items-center gap-1'>
-                <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                 <span className='text-xs text-green-400'>LIVE</span>
               </div>
             </div>

@@ -263,9 +263,9 @@ export class DocumentFlowService {
 - **Best Practices**: Recommended workflows and configurations
 
 ### Contact Information
-- **Technical Support**: support@fleetflow.com
-- **Sales & Demo**: sales@fleetflow.com
-- **Documentation**: docs@fleetflow.com
+- **Technical Support**: support@fleetflowapp.com
+- **Sales & Demo**: sales@fleetflowapp.com
+- **Documentation**: docs@fleetflowapp.com
 - **Emergency Support**: 24/7 hotline for critical issues
 
 ---

@@ -92,7 +92,7 @@ const mockSecurityAlerts: SecurityAlert[] = [
     type: 'vulnerability',
     severity: 'medium',
     title: 'Outdated SSL Certificate',
-    description: 'SSL certificate for api.fleetflow.com expires in 7 days',
+    description: 'SSL certificate for api.fleetflowapp.com expires in 7 days',
     timestamp: new Date(Date.now() - 7200000).toISOString(),
     status: 'active',
     affectedSystems: ['API Gateway', 'Mobile App'],

@@ -126,7 +126,7 @@ export default function ResourcesPage() {
     {
       name: 'ELDT CDL Training Program',
         description: 'Required ELDT theory course for Class A Commercial Driver\'s License permit test. FMCSA approved Entry-Level Driver Training curriculum.',
-      website: 'mailto:admin@fleetflow.com?subject=CDL Training Inquiry',
+      website: 'mailto:admin@fleetflowapp.com?subject=CDL Training Inquiry',
         category: 'Training & Certification',
         contact: 'Contact Admin for Enrollment',
         tags: ['cdl', 'training', 'eldt', 'fmcsa']

@@ -168,7 +168,7 @@ class AutomatedCommunicationService {
       conditions: ['normal_pickup', 'on_time', 'no_issues'],
       automationType: 'sms',
       message:
-        '✅ Load FL-{loadId} picked up by {driverName}. ETA: {eta}. Track: fleetflow.com/track/{loadId}',
+        '✅ Load FL-{loadId} picked up by {driverName}. ETA: {eta}. Track: fleetflowapp.com/track/{loadId}',
       escalationTriggers: ['customer_reply_concern', 'delivery_critical'],
       humanRequired: false,
     },
@@ -188,7 +188,7 @@ class AutomatedCommunicationService {
       conditions: ['successful_delivery', 'on_time', 'no_damage'],
       automationType: 'sms',
       message:
-        '✅ Load FL-{loadId} delivered successfully! Thank you for choosing FleetFlow. Rate: fleetflow.com/rate/{loadId}',
+        '✅ Load FL-{loadId} delivered successfully! Thank you for choosing FleetFlow. Rate: fleetflowapp.com/rate/{loadId}',
       escalationTriggers: ['negative_rating', 'damage_report'],
       humanRequired: false,
     },

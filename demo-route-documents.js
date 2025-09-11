@@ -153,7 +153,7 @@ console.log('\n\n📧 EMAIL NOTIFICATION EXAMPLE:');
 console.log('==============================');
 
 console.log(`
-TO: driver001@fleetflow.com
+TO: driver001@fleetflowapp.com
 SUBJECT: Route Document: Manufacturing Plant Delivery
 
 📋 Route Document Generated: Manufacturing Plant Delivery

@@ -378,7 +378,7 @@ export default function AdminDriverOTRFlow() {
           name: 'Demo Driver', // CLEARED FROM: 'John Rodriguez'
           licenseNumber: 'CDL-DEMO-000', // CLEARED FROM: 'CDL-TX-8834592'
           phone: '(000) 000-0000', // CLEARED FROM: '(555) 234-5678'
-          email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
+          email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflowapp.com'
         },
         employmentInfo: {
           startDate: 'N/A', // CLEARED FROM: '2023-01-15'
@@ -390,7 +390,7 @@ export default function AdminDriverOTRFlow() {
   const currentUser: EnhancedDriverUser = {
     id: 'DEMO-000', // CLEARED FROM: 'JR-OO-2025002'
     name: demoDriver.personalInfo?.name || 'Demo Driver', // CLEARED FROM: 'John Rodriguez'
-    email: demoDriver.personalInfo?.email || 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
+    email: demoDriver.personalInfo?.email || 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflowapp.com'
     phone: demoDriver.personalInfo?.phone || '(000) 000-0000', // CLEARED FROM: '(555) 234-5678'
     role: {
       type: 'owner_operator',
@@ -408,7 +408,7 @@ export default function AdminDriverOTRFlow() {
     dispatcher: {
       name: 'Demo Dispatcher', // CLEARED FROM: 'Sarah Martinez'
       phone: '+1 (000) 000-0000', // CLEARED FROM: '+1 (555) 987-6543'
-      email: 'demo@example.com', // CLEARED FROM: 'dispatch@fleetflow.com'
+      email: 'demo@example.com', // CLEARED FROM: 'dispatch@fleetflowapp.com'
       department: 'Demo Dispatch', // CLEARED FROM: 'Dispatch Central'
       availability: 'N/A', // CLEARED FROM: 'Available 24/7'
       responsiveness: 'N/A', // CLEARED FROM: 'Avg Response: 8 mins'
@@ -1646,7 +1646,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                           animation: 'pulse 2s infinite',
                         }}
-                      ></div>
+                       />
                       <span
                         style={{
                           color: 'rgba(255, 255, 255, 0.9)',

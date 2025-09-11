@@ -401,8 +401,8 @@ export default function CarrierPortal() {
                       strokeLinejoin='round'
                       style={{ marginLeft: '4px' }}
                     >
-                      <path d='M5 12h14'></path>
-                      <path d='M12 5l7 7-7 7'></path>
+                      <path d='M5 12h14' />
+                      <path d='M12 5l7 7-7 7' />
                     </svg>
                   </span>
                 </div>

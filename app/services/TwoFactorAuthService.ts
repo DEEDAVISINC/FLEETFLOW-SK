@@ -40,36 +40,36 @@ export class TwoFactorAuthService {
   // Demo user contact information (in production, store in database)
   private userContacts: Map<string, UserContact> = new Map([
     [
-      'admin@fleetflow.com',
+      'admin@fleetflowapp.com',
       {
-        email: 'admin@fleetflow.com',
+        email: 'admin@fleetflowapp.com',
         phone: '+1234567890',
         name: 'FleetFlow Admin',
         role: 'admin',
       },
     ],
     [
-      'dispatch@fleetflow.com',
+      'dispatch@fleetflowapp.com',
       {
-        email: 'dispatch@fleetflow.com',
+        email: 'dispatch@fleetflowapp.com',
         phone: '+1234567891',
         name: 'Dispatch Manager',
         role: 'dispatcher',
       },
     ],
     [
-      'driver@fleetflow.com',
+      'driver@fleetflowapp.com',
       {
-        email: 'driver@fleetflow.com',
+        email: 'driver@fleetflowapp.com',
         phone: '+1234567892',
         name: 'John Smith',
         role: 'driver',
       },
     ],
     [
-      'broker@fleetflow.com',
+      'broker@fleetflowapp.com',
       {
-        email: 'broker@fleetflow.com',
+        email: 'broker@fleetflowapp.com',
         phone: '+1234567893',
         name: 'Sarah Wilson',
         role: 'broker',

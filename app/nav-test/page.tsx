@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function NavigationTestPage() {
   return (
     <div
@@ -48,23 +50,23 @@ export default function NavigationTestPage() {
           </h2>
           <ol style={{ color: '#475569', lineHeight: '1.6' }}>
             <li>
-              <strong>Operations Dropdown:</strong> Click ""🚛 OPERATIONS
-              ▼"" - should show Dispatch Central and Broker Box
+              <strong>Operations Dropdown:</strong> Click ""🚛 OPERATIONS ▼"" -
+              should show Dispatch Central and Broker Box
             </li>
             <li>
               <strong>Driver Management Dropdown:</strong> Click ""🚛 DRIVER
-              MANAGEMENT ▼"" - should show Driver Management, Driver
-              Dashboard, and Live Load Tracking
+              MANAGEMENT ▼"" - should show Driver Management, Driver Dashboard,
+              and Live Load Tracking
             </li>
             <li>
-              <strong>FleetFlow Dropdown:</strong> Click ""🚛 FLEETFLOW
-              ▼"" - should show Route Optimization, Freight Quoting, and
-              Fleet Management
+              <strong>FleetFlow Dropdown:</strong> Click ""🚛 FLEETFLOW ▼"" -
+              should show Route Optimization, Freight Quoting, and Fleet
+              Management
             </li>
             <li>
-              <strong>Resources Dropdown:</strong> Click ""📚 RESOURCES
-              ▼"" - should show Document Generation, Resource Library,
-              Safety Resources, Documentation Hub, and Training
+              <strong>Resources Dropdown:</strong> Click ""📚 RESOURCES ▼"" -
+              should show Document Generation, Resource Library, Safety
+              Resources, Documentation Hub, and Training
             </li>
             <li>
               <strong>Click Outside:</strong> Open any dropdown, then click
@@ -103,7 +105,7 @@ export default function NavigationTestPage() {
             marginTop: '30px',
           }}
         >
-          <a
+          <Link
             href='/'
             style={{
               background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -113,10 +115,11 @@ export default function NavigationTestPage() {
               textDecoration: 'none',
               fontWeight: '600',
               boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+              display: 'inline-block',
             }}
           >
             🏠 Back to Dashboard
-          </a>
+          </Link>
         </div>
       </div>
     </div>

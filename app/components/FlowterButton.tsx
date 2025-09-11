@@ -95,9 +95,15 @@ const UnifiedFlowterAI: React.FC<UnifiedFlowterAIProps> = ({
   const handleSendMessage = async () => {
     if (!input.trim() || isTyping) return;
 
+    // Handle subscription query prefix
+    let processedInput = input.trim();
+    if (processedInput.startsWith('subscription_query:')) {
+      processedInput = processedInput.replace('subscription_query:', '').trim();
+    }
+
     const userMessage: FlowterMessage = {
       role: 'user',
-      content: input.trim(),
+      content: processedInput,
       timestamp: new Date().toLocaleTimeString(),
     };
 
@@ -107,7 +113,7 @@ const UnifiedFlowterAI: React.FC<UnifiedFlowterAIProps> = ({
     setCurrentResponse(null);
 
     try {
-      const response = await flowterAI.current.handleUserQuery(input.trim());
+      const response = await flowterAI.current.handleUserQuery(processedInput);
       const assistantMessage: FlowterMessage = {
         role: 'assistant',
         content: response.message,

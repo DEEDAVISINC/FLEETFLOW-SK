@@ -186,7 +186,7 @@ The customer will receive the invoice via email with a payment link.`);
               width: '8px',
               height: '8px',
             }}
-          ></span>
+           />
           Multi-Tenant Square Invoicing
         </h3>
         <div

@@ -58,7 +58,7 @@ const TooltipPortal: React.FC<TooltipPortalProps> = ({
     };
 
     // Adjust position if tooltip goes off-screen
-    let adjustedPosition = { ...position };
+    const adjustedPosition = { ...position };
 
     if (rect.right > viewport.width) {
       adjustedPosition.left = viewport.width - rect.width - 10;

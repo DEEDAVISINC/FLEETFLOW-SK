@@ -450,7 +450,7 @@ export default function OpenELDDashboard({
                       borderRadius: '50%',
                       animation: 'pulse 2s infinite',
                     }}
-                  ></div>
+                   />
                   <span style={{ fontSize: '14px', fontWeight: 'bold' }}>
                     AI ACTIVE
                   </span>
@@ -570,7 +570,7 @@ export default function OpenELDDashboard({
                       borderRadius: '2px',
                       width: `${devices && devices.length > 0 ? (devices.filter((d) => d.status === 'connected').length / devices.length) * 100 : 0}%`,
                     }}
-                  ></div>
+                   />
                 </div>
               </div>
 
@@ -638,7 +638,7 @@ export default function OpenELDDashboard({
                       borderRadius: '2px',
                       width: `${drivers && drivers.length > 0 ? (drivers.filter((d) => d.eldStatus === 'certified').length / drivers.length) * 100 : 0}%`,
                     }}
-                  ></div>
+                   />
                 </div>
               </div>
 
@@ -703,7 +703,7 @@ export default function OpenELDDashboard({
                       borderRadius: '2px',
                       width: '99.9%',
                     }}
-                  ></div>
+                   />
                 </div>
               </div>
             </div>

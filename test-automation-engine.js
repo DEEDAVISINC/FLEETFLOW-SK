@@ -159,7 +159,7 @@ class TestAutomationEngine {
     const notifications = [
       {
         type: 'email',
-        to: 'driver001@fleetflow.com',
+        to: 'driver001@fleetflowapp.com',
         subject: 'Route Document: Manufacturing Plant Delivery',
         purpose: 'Route document delivery to driver'
       },
@@ -171,7 +171,7 @@ class TestAutomationEngine {
       },
       {
         type: 'email',
-        to: 'dispatch@fleetflow.com',
+        to: 'dispatch@fleetflowapp.com',
         subject: 'Route Document Generated: Manufacturing Plant Delivery',
         purpose: 'Dispatch notification'
       }

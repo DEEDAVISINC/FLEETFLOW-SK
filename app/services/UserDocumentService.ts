@@ -321,7 +321,7 @@ By: ${ndaAcknowledgment?.acknowledgedBy}`,
 
     signedAgreements.forEach((agreement) => {
       let documentType: 'agreement' | 'contract' = 'agreement';
-      let category: 'onboarding' | 'employment' = 'onboarding';
+      const category: 'onboarding' | 'employment' = 'onboarding';
 
       // Determine document type based on agreement type
       switch (agreement.type) {

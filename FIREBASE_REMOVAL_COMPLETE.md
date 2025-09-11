@@ -100,10 +100,10 @@ Visit: http://localhost:3000/test-supabase-simple
 Visit: http://localhost:3000/drivers/page-simple
 
 ### **4. Check Authentication**
-- Admin: admin@fleetflow.com / admin123
-- Dispatch: dispatch@fleetflow.com / dispatch123
-- Driver: driver@fleetflow.com / driver123
-- Broker: broker@fleetflow.com / broker123
+- Admin: admin@fleetflowapp.com / admin123
+- Dispatch: dispatch@fleetflowapp.com / dispatch123
+- Driver: driver@fleetflowapp.com / driver123
+- Broker: broker@fleetflowapp.com / broker123
 
 ## 📝 **Environment Variables:**
 

@@ -16,19 +16,19 @@ const MOCK_DISPATCHERS: User[] = [
   {
     id: 'disp_001',
     name: 'Sarah Johnson',
-    email: 'sarah.johnson@fleetflow.com',
+    email: 'sarah.johnson@fleetflowapp.com',
     role: 'dispatcher'
   },
   {
     id: 'disp_002', 
     name: 'Mike Chen',
-    email: 'mike.chen@fleetflow.com',
+    email: 'mike.chen@fleetflowapp.com',
     role: 'dispatcher'
   },
   {
     id: 'disp_003',
     name: 'Jessica Martinez',
-    email: 'jessica.martinez@fleetflow.com',
+    email: 'jessica.martinez@fleetflowapp.com',
     role: 'dispatcher'
   }
 ];

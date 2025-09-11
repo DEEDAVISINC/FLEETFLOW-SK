@@ -118,7 +118,7 @@ class VendorDocumentService {
           shipperId: 'ABC-204-070', // ABC Manufacturing
           brokerId: 'FM-MGR-2023005', // From user system
           brokerName: 'Frank Martinez',
-          brokerEmail: 'frank.martinez@fleetflow.com',
+          brokerEmail: 'frank.martinez@fleetflowapp.com',
           brokerPhone: '+1-555-0123',
           relationshipType: 'primary',
           createdAt: new Date(Date.now() - 7776000000).toISOString(), // 90 days ago
@@ -128,7 +128,7 @@ class VendorDocumentService {
           shipperId: 'RDI-204-050', // Retail Distribution
           brokerId: 'SJ-DC-2024014', // Dispatcher
           brokerName: 'Sarah Johnson',
-          brokerEmail: 'sarah.johnson@fleetflow.com',
+          brokerEmail: 'sarah.johnson@fleetflowapp.com',
           brokerPhone: '+1-555-0124',
           relationshipType: 'primary',
           createdAt: new Date(Date.now() - 5184000000).toISOString(), // 60 days ago
@@ -138,7 +138,7 @@ class VendorDocumentService {
           shipperId: 'TSL-204-085', // Tech Solutions
           brokerId: 'ED-BB-2024061', // Broker
           brokerName: 'Emily Davis',
-          brokerEmail: 'emily.davis@fleetflow.com',
+          brokerEmail: 'emily.davis@fleetflowapp.com',
           brokerPhone: '+1-555-0125',
           relationshipType: 'primary',
           createdAt: new Date(Date.now() - 2592000000).toISOString(), // 30 days ago

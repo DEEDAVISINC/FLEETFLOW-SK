@@ -62,7 +62,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
         carrierPhone: '+0987654321',
         carrierEmail: 'carrier@example.com',
         shipperEmail: 'shipper@example.com',
-        brokerEmail: 'broker@fleetflow.com'
+        brokerEmail: 'broker@fleetflowapp.com'
       };
 
       const result = await documentFlowService.sendCompleteDocumentPackage(loadId, contacts);

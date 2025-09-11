@@ -33,10 +33,10 @@ class UserIdentifierService {
    */
   private initializeDemoMappings(): void {
     const demoMappings = [
-      { email: 'admin@fleetflow.com', userId: 'FM-MGR-20230115-1' },
-      { email: 'dispatch@fleetflow.com', userId: 'SJ-DC-20240114-1' },
-      { email: 'driver@fleetflow.com', userId: 'JD-DM-20240115-1' },
-      { email: 'broker@fleetflow.com', userId: 'SW-BB-20240116-1' },
+      { email: 'admin@fleetflowapp.com', userId: 'FM-MGR-20230115-1' },
+      { email: 'dispatch@fleetflowapp.com', userId: 'SJ-DC-20240114-1' },
+      { email: 'driver@fleetflowapp.com', userId: 'JD-DM-20240115-1' },
+      { email: 'broker@fleetflowapp.com', userId: 'SW-BB-20240116-1' },
       { email: 'vendor@abcmanufacturing.com', userId: 'JM-VN-20240117-1' },
       { email: 'vendor@retaildist.com', userId: 'RD-VN-20240118-1' },
       { email: 'vendor@techsolutions.com', userId: 'TS-VN-20240119-1' },

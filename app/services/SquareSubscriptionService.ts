@@ -63,6 +63,20 @@ export class SquareSubscriptionService {
   }
 
   /**
+   * Calculate subscription period based on plan interval
+   */
+  private calculateSubscriptionPeriod(planIds: string[]): {
+    periodDays: number;
+    isAnnual: boolean;
+  } {
+    const firstPlan = getPlanById(planIds[0]);
+    const isAnnual = firstPlan?.interval === 'year';
+    const periodDays = isAnnual ? 365 : 30;
+
+    return { periodDays, isAnnual };
+  }
+
+  /**
    * Initialize with mock subscription data for development
    */
   private initializeMockData() {
@@ -133,15 +147,24 @@ export class SquareSubscriptionService {
         };
       }
 
-      // Calculate total amount
+      // Calculate total amount based on plan pricing
       const totalAmount = planIds.reduce((sum, planId) => {
         const plan = getPlanById(planId);
         return sum + (plan?.price || 0);
       }, 0);
 
+      // Note: Annual plans already have discounted pricing built into their price field
+      // No additional calculation needed here as annual plans are separate plan IDs
+
       const subscriptionId = `sub_${Date.now()}_${Math.random().toString(36).substring(7)}`;
       const now = new Date();
-      const periodEnd = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+      // Calculate billing period based on plan interval (monthly vs annual)
+      const { periodDays, isAnnual } =
+        this.calculateSubscriptionPeriod(planIds);
+      const periodEnd = new Date(
+        now.getTime() + periodDays * 24 * 60 * 60 * 1000
+      );
 
       const subscription: SquareSubscription = {
         id: subscriptionId,

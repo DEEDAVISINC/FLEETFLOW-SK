@@ -392,7 +392,7 @@ export class UnifiedLoadboardService {
     portalId?: string
   ): Load[] {
     const searchLower = searchTerm.toLowerCase();
-    let searchableLoads = portalId
+    const searchableLoads = portalId
       ? this.getLoadsForPortal(portalId)
       : this.currentLoads;
 

@@ -673,7 +673,7 @@ export class OnboardingIntegrationService {
             dotNumber: 'DOT-000000',
             physicalAddress: '789 Demo St, Demo City, TX 00000', // CLEARED FROM: real address
             phone: '(000) 000-0000', // CLEARED FROM: '(555) 000-0000'
-            email: 'demo@example.com', // CLEARED FROM: 'demo@fleetflow.com'
+            email: 'demo@example.com', // CLEARED FROM: 'demo@fleetflowapp.com'
             safetyRating: 'Satisfactory',
             equipmentTypes: ['Dry Van'],
           },
@@ -755,7 +755,7 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
       carrierId: 'demo_carrier_001',
       personalInfo: {
         name: 'Demo Driver', // CLEARED FROM: 'John Rodriguez'
-        email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
+        email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflowapp.com'
         phone: '(000) 000-0000', // CLEARED FROM: '(555) 123-4567'
         licenseNumber: 'CDL-DEMO-000', // CLEARED FROM: 'CDL-A-12345'
         licenseExpiration: '2025-12-31',
@@ -766,7 +766,7 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
         role: 'company_driver',
       },
       credentials: {
-        email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflow.com'
+        email: 'demo@example.com', // CLEARED FROM: 'john.rodriguez@fleetflowapp.com'
         temporaryPassword: 'demo123',
         accountActivated: true,
         lastLogin: new Date().toISOString(),
@@ -783,7 +783,7 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
       carrierId: 'demo_carrier_001',
       personalInfo: {
         name: 'Demo Driver 2', // CLEARED FROM: 'Maria Santos'
-        email: 'demo2@example.com', // CLEARED FROM: 'maria.santos@fleetflow.com'
+        email: 'demo2@example.com', // CLEARED FROM: 'maria.santos@fleetflowapp.com'
         phone: '(000) 000-0000', // CLEARED FROM: '(555) 234-5678'
         licenseNumber: 'CDL-DEMO-002', // CLEARED FROM: 'CDL-A-23456'
         licenseExpiration: '2025-11-30',
@@ -794,7 +794,7 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
         role: 'company_driver',
       },
       credentials: {
-        email: 'demo2@example.com', // CLEARED FROM: 'maria.santos@fleetflow.com'
+        email: 'demo2@example.com', // CLEARED FROM: 'maria.santos@fleetflowapp.com'
         temporaryPassword: 'demo456',
         accountActivated: true,
         lastLogin: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
@@ -811,7 +811,7 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
       carrierId: 'demo_carrier_002',
       personalInfo: {
         name: 'Demo Driver 3', // CLEARED FROM: 'David Thompson'
-        email: 'demo3@example.com', // CLEARED FROM: 'david.thompson@fleetflow.com'
+        email: 'demo3@example.com', // CLEARED FROM: 'david.thompson@fleetflowapp.com'
         phone: '(000) 000-0000', // CLEARED FROM: '(555) 345-6789'
         licenseNumber: 'CDL-DEMO-003', // CLEARED FROM: 'CDL-A-34567'
         licenseExpiration: '2025-10-15',
@@ -822,7 +822,7 @@ export const onboardingIntegration = OnboardingIntegrationService.getInstance();
         role: 'owner_operator',
       },
       credentials: {
-        email: 'demo3@example.com', // CLEARED FROM: 'david.thompson@fleetflow.com'
+        email: 'demo3@example.com', // CLEARED FROM: 'david.thompson@fleetflowapp.com'
         temporaryPassword: 'demo789',
         accountActivated: true,
         lastLogin: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago

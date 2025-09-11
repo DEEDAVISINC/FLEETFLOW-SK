@@ -1,7 +1,10 @@
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { organizationService } from '../services/OrganizationService';
-import { checkAction, checkPermission } from '../utils/accessControl';
+import {
+  checkActionSimple as checkAction,
+  checkPermissionSimple as checkPermission,
+} from '../utils';
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: {
@@ -219,7 +222,3 @@ export const AuthorizationPatterns = {
   VIEW_REPORTS: { requiredAction: 'view_reports' },
   EXPORT_DATA: { requiredAction: 'export_data' },
 } as const;
-
-
-
-

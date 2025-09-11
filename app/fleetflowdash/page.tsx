@@ -768,7 +768,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#22c55e', fontSize: '28px', fontWeight: '700' }}
-            ></div>
+             />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -784,7 +784,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            ></div>
+             />
           </div>
           <div
             style={{
@@ -798,7 +798,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#3b82f6', fontSize: '28px', fontWeight: '700' }}
-            ></div>
+             />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -814,7 +814,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            ></div>
+             />
           </div>
           <div
             style={{
@@ -828,7 +828,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#f59e0b', fontSize: '28px', fontWeight: '700' }}
-            ></div>
+             />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -844,7 +844,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            ></div>
+             />
           </div>
           <div
             style={{
@@ -858,7 +858,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#10b981', fontSize: '28px', fontWeight: '700' }}
-            ></div>
+             />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -874,7 +874,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-            ></div>
+             />
           </div>
         </div>
 
@@ -1004,7 +1004,7 @@ export default function HomePage() {
                     textAlign: 'center',
                     color: 'rgba(255, 255, 255, 0.6)',
                   }}
-                ></div>
+                 />
               )}
             </div>
           </div>
@@ -1152,7 +1152,7 @@ export default function HomePage() {
                     textAlign: 'center',
                     color: 'rgba(255, 255, 255, 0.6)',
                   }}
-                ></div>
+                 />
               )}
             </div>
           </div>
@@ -1231,7 +1231,7 @@ export default function HomePage() {
                             ? '#f59e0b'
                             : '#3b82f6',
                     }}
-                  ></div>
+                   />
                 </div>
               ))
             ) : (
@@ -1242,7 +1242,7 @@ export default function HomePage() {
                   color: 'rgba(255, 255, 255, 0.6)',
                   fontSize: '14px',
                 }}
-              ></div>
+               />
             )}
           </div>
         </div>
@@ -1434,7 +1434,7 @@ export default function HomePage() {
                 fontWeight: '700',
                 marginBottom: '5px',
               }}
-            ></div>
+             />
             <div
               style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
             >
@@ -1720,7 +1720,7 @@ export default function HomePage() {
                 fontWeight: '700',
                 marginBottom: '5px',
               }}
-            ></div>
+             />
             <div
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
             >

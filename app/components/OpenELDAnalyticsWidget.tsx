@@ -279,7 +279,7 @@ export default function OpenELDAnalyticsWidget() {
                       : '#ef4444',
                 animation: 'pulse 2s infinite',
               }}
-            ></div>
+             />
             <span
               style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}
             >

@@ -1,10 +1,7 @@
 import { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import ClientLayout from './components/ClientLayout';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'FleetFlow™ - Transportation Management System',
@@ -66,7 +63,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

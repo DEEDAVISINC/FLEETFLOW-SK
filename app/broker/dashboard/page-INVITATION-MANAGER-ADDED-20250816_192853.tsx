@@ -10,9 +10,9 @@ import BrokerCarrierNetworkManager from '../../components/BrokerCarrierNetworkMa
 import BrokerFinancialDashboard from '../../components/BrokerFinancialDashboard';
 import BrokerMarketIntelligence from '../../components/BrokerMarketIntelligence';
 import BrokerShipperAcquisition from '../../components/BrokerShipperAcquisition';
-import InvitationQuickManager from '../../components/InvitationQuickManager';
 import BrokerTaskPrioritizationPanel from '../../components/BrokerTaskPrioritizationPanel';
 import CreateLoadForm from '../../components/CreateLoadForm';
+import InvitationQuickManager from '../../components/InvitationQuickManager';
 // import CustomizableDashboard from '../../components/CustomizableDashboard'; // Temporarily disabled due to Grid3x3 import issue
 import EnhancedLoadBoard from '../../components/EnhancedLoadBoard';
 
@@ -542,7 +542,7 @@ export default function BrokerDashboard() {
       id: 'broker-demo-001',
       brokerCode: 'DEMO001',
       brokerName: 'Demo Broker',
-      email: 'demo@fleetflow.com',
+      email: 'demo@fleetflowapp.com',
       role: 'broker',
       loginTime: new Date().toISOString(),
     };
@@ -2162,7 +2162,9 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.info('🎯 Specialized Calculate Button Clicked!');
+                        console.info(
+                          '🎯 Specialized Calculate Button Clicked!'
+                        );
                         calculateSpecialized();
                       }}
                       style={{
@@ -2384,7 +2386,9 @@ export default function BrokerDashboard() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.info('🎯 Warehousing Calculate Button Clicked!');
+                        console.info(
+                          '🎯 Warehousing Calculate Button Clicked!'
+                        );
                         calculateWarehousing();
                       }}
                       style={{
@@ -4508,12 +4512,10 @@ export default function BrokerDashboard() {
                 <BrokerFinancialDashboard
                   brokerId={brokerSession?.id || 'demo-broker'}
                 />
-                
+
                 {/* Carrier Invitation Management */}
                 <div style={{ marginTop: '25px' }}>
-                  <InvitationQuickManager 
-                    compact={false}
-                  />
+                  <InvitationQuickManager compact={false} />
                 </div>
               </div>
             )}
@@ -6022,7 +6024,7 @@ export default function BrokerDashboard() {
                                             : '#ef4444',
                                       borderRadius: '3px',
                                     }}
-                                  ></div>
+                                  />
                                 </div>
                                 <span
                                   style={{
@@ -7491,7 +7493,7 @@ export default function BrokerDashboard() {
                             width: `${workflowStatus.progress}%`,
                             transition: 'width 0.3s ease',
                           }}
-                        ></div>
+                        />
                       </div>
 
                       <div style={{ display: 'grid', gap: '12px' }}>

@@ -135,9 +135,9 @@
 - Agreement signing technical problems
 
 ### **Escalation Contacts**
-- **Training:** training@fleetflow.com | (555) 123-4567
-- **Technical Support:** support@fleetflow.com | (555) 987-6543
-- **Compliance:** compliance@fleetflow.com | (555) 456-7890
+- **Training:** training@fleetflowapp.com | (555) 123-4567
+- **Technical Support:** support@fleetflowapp.com | (555) 987-6543
+- **Compliance:** compliance@fleetflowapp.com | (555) 456-7890
 
 ---
 

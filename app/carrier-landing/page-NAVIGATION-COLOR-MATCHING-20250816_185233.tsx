@@ -822,7 +822,7 @@ export default function CarrierLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  carriers@fleetflow.com
+                  carriers@fleetflowapp.com
                 </div>
                 <div
                   style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}

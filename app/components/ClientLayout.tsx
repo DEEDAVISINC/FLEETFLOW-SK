@@ -1,6 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
@@ -25,9 +26,82 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(false); // Default to false for SSR
   const [hasNewSuggestions, setHasNewSuggestions] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Safely handle useSession - only use when SessionProvider is available
+  let session: any = null;
+  let status: string = 'unauthenticated';
+  try {
+    const sessionData = useSession();
+    session = sessionData.data;
+    status = sessionData.status;
+  } catch (error) {
+    // SessionProvider not available, use defaults
+    session = null;
+    status = 'unauthenticated';
+  }
 
   // Get user data for permissions and functionality - but don't use until hydrated
   const { user } = getCurrentUser();
+
+  // Define public pages that don't require authentication
+  const publicPages = [
+    '/',
+    '/about',
+    '/contact',
+    '/privacy-policy',
+    '/terms-of-service',
+    '/plans',
+    '/pricing',
+    '/features',
+    '/carrier-landing',
+    '/broker',
+    '/shipper-portal',
+  ];
+
+  const isPublicPage = pathname
+    ? publicPages.includes(pathname) ||
+      publicPages.some((page) => pathname.startsWith(page))
+    : false;
+
+  // Authentication check - backup layer to middleware
+  useEffect(() => {
+    if (!isHydrated) return; // Wait for hydration
+
+    // Skip auth check for public pages
+    if (isPublicPage) return;
+
+    // OWNER BYPASS: Dee Davis accessing from localhost
+    const isLocalhost =
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname === '192.168.12.189');
+
+    if (isLocalhost) {
+      console.log(
+        `👑 OWNER ACCESS: Dee Davis accessing ${pathname} from localhost - bypassing client auth check`
+      );
+      return;
+    }
+
+    // If session is still loading, wait
+    if (status === 'loading') return;
+
+    // If user is not authenticated and trying to access protected page, redirect to login
+    if (status === 'unauthenticated') {
+      console.log(
+        `🚫 ClientLayout: Unauthenticated access blocked for ${pathname}`
+      );
+      const signInUrl = `/auth/signin?callbackUrl=${encodeURIComponent(pathname || '/')}`;
+      router.push(signInUrl);
+      return;
+    }
+
+    console.log(`✅ ClientLayout: Authenticated user accessing ${pathname}`, {
+      email: session?.user?.email,
+    });
+  }, [status, pathname, isHydrated, isPublicPage, router, session]);
 
   // Track hydration to prevent mismatches
   useEffect(() => {
@@ -171,6 +245,30 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       isHydrated,
       user: user?.id,
     });
+  }
+
+  // Check if this is localhost (owner access)
+  const isLocalhostAccess =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === '192.168.12.189');
+
+  // Show loading screen while authentication is being checked (but not for localhost owner access)
+  if (
+    !isHydrated ||
+    (!isPublicPage && !isLocalhostAccess && status === 'loading')
+  ) {
+    return (
+      <Providers>
+        <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'>
+          <div className='text-center'>
+            <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
+            <p className='mt-4 text-gray-600'>Loading FleetFlow...</p>
+          </div>
+        </div>
+      </Providers>
+    );
   }
 
   if (isAdminDashboard) {

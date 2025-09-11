@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 // import { SubscriptionManagementService } from '../../services/SubscriptionManagementService';
-// import UserIdentifierService from '../../services/user-identifier-service';
+import UserIdentifierService from '../../../services/user-identifier-service';
 
 // Complete user registration schema
 const CompleteRegistrationSchema = z.object({

@@ -23,45 +23,45 @@ export const authOptions = {
       async authorize(credentials) {
         // For demo purposes - in production, verify against your Supabase database
         if (
-          credentials?.email === 'admin@fleetflow.com' &&
+          credentials?.email === 'admin@fleetflowapp.com' &&
           credentials?.password === 'admin123'
         ) {
           return {
             id: '1',
-            email: 'admin@fleetflow.com',
+            email: 'admin@fleetflowapp.com',
             name: 'FleetFlow Admin',
             role: 'admin',
           };
         }
         if (
-          credentials?.email === 'dispatch@fleetflow.com' &&
+          credentials?.email === 'dispatch@fleetflowapp.com' &&
           credentials?.password === 'dispatch123'
         ) {
           return {
             id: '2',
-            email: 'dispatch@fleetflow.com',
+            email: 'dispatch@fleetflowapp.com',
             name: 'Dispatch Manager',
             role: 'dispatcher',
           };
         }
         if (
-          credentials?.email === 'driver@fleetflow.com' &&
+          credentials?.email === 'driver@fleetflowapp.com' &&
           credentials?.password === 'driver123'
         ) {
           return {
             id: '3',
-            email: 'driver@fleetflow.com',
+            email: 'driver@fleetflowapp.com',
             name: 'John Smith',
             role: 'driver',
           };
         }
         if (
-          credentials?.email === 'broker@fleetflow.com' &&
+          credentials?.email === 'broker@fleetflowapp.com' &&
           credentials?.password === 'broker123'
         ) {
           return {
             id: '4',
-            email: 'broker@fleetflow.com',
+            email: 'broker@fleetflowapp.com',
             name: 'Sarah Wilson',
             role: 'broker',
           };
@@ -116,10 +116,10 @@ export const authOptions = {
         token.role = user.role;
         // Map email to FleetFlow user ID for UserDataService integration
         const userIdMap: Record<string, string> = {
-          'admin@fleetflow.com': 'FM-MGR-20230115-1', // Frank Miller
-          'dispatch@fleetflow.com': 'SJ-DC-20240114-1', // Sarah Johnson
-          'driver@fleetflow.com': 'demo_driver_001',
-          'broker@fleetflow.com': 'demo_broker_001',
+          'admin@fleetflowapp.com': 'FM-MGR-20230115-1', // Frank Miller
+          'dispatch@fleetflowapp.com': 'SJ-DC-20240114-1', // Sarah Johnson
+          'driver@fleetflowapp.com': 'demo_driver_001',
+          'broker@fleetflowapp.com': 'demo_broker_001',
           'vendor@abcmanufacturing.com': 'demo_vendor_001',
           'vendor@retaildist.com': 'demo_vendor_002',
           'vendor@techsolutions.com': 'demo_vendor_003',

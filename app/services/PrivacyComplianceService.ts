@@ -331,7 +331,7 @@ export class PrivacyComplianceService {
           filename: `data_access_report_${request.id}.json`,
           format: 'json',
           recordCount: personalData.recordCount,
-          downloadLink: `https://fleetflow.com/privacy/download/${request.id}`,
+          downloadLink: `https://fleetflowapp.com/privacy/download/${request.id}`,
         },
       };
 
@@ -439,7 +439,7 @@ export class PrivacyComplianceService {
           filename,
           format,
           recordCount: portableData.records.length,
-          downloadLink: `https://fleetflow.com/privacy/download/${request.id}`,
+          downloadLink: `https://fleetflowapp.com/privacy/download/${request.id}`,
         },
       };
 
@@ -652,7 +652,7 @@ export class PrivacyComplianceService {
         dataSubjectRights:
           'You have rights to access, delete, correct, restrict, object, and port your personal data.',
         contactInformation:
-          'Contact our privacy team at privacy@fleetflow.com for questions or requests.',
+          'Contact our privacy team at privacy@fleetflowapp.com for questions or requests.',
         changes:
           'We will notify you of material changes to this privacy notice via email or platform notification.',
       },

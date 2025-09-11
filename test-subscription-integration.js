@@ -14,7 +14,7 @@ async function testSubscriptionIntegration() {
     // Test 1: Create a new subscription
     console.log('📝 Test 1: Creating new subscription...');
     const testUserId = 'TEST-USER-001';
-    const testEmail = 'test@fleetflow.com';
+    const testEmail = 'test@fleetflowapp.com';
     const testName = 'Test User';
 
     const subscription = await SubscriptionManagementService.createSubscription(

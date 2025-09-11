@@ -199,7 +199,7 @@ class BrokerSnapshotService {
       submittedBy: 'system',
       complaintId,
       evidenceUrls: [
-        `https://fleetflow.com/invoice-verification/${invoiceNumber}`,
+        `https://fleetflowapp.com/invoice-verification/${invoiceNumber}`,
       ],
     });
   }

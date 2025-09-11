@@ -168,7 +168,7 @@ export class ContractorWorkflowService {
   ];
 
   private static readonly SIGNATURE_SYSTEM_CONFIG = {
-    baseUrl: process.env.SIGNATURE_API_URL || 'https://signature.fleetflow.com',
+    baseUrl: process.env.SIGNATURE_API_URL || 'https://signature.fleetflowapp.com',
     apiKey: process.env.SIGNATURE_API_KEY || 'ff_signature_key',
     webhookSecret: process.env.SIGNATURE_WEBHOOK_SECRET || 'ff_webhook_secret',
     expirationDays: 7,

@@ -68,7 +68,7 @@ const BrokerOperationsPage: React.FC = () => {
     id: 'broker-001',
     name: 'Alex Rodriguez',
     role: 'Senior Broker',
-    email: 'alex.rodriguez@fleetflow.com',
+    email: 'alex.rodriguez@fleetflowapp.com',
   });
 
   // Loadboard state

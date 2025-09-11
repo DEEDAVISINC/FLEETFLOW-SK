@@ -288,7 +288,7 @@ const sendWelcomeEmail = (
   Your shipper portal account has been created successfully!
 
   Portal Login Details:
-  🌐 URL: https://app.fleetflow.com/vendor-login
+  🌐 URL: https://app.fleetflowapp.com/vendor-login
   👤 Username: ${credentials.username}
   🔐 Temporary Password: ${credentials.password}
 
@@ -393,7 +393,7 @@ const sendInvitationEmail = (
   You've been invited to set up your FleetFlow Vendor Portal account for ${shipper.companyName}.
 
   🔗 Complete Your Account Setup:
-  https://app.fleetflow.com/vendor-setup?token=${invitation.invitationToken}
+  https://app.fleetflowapp.com/vendor-setup?token=${invitation.invitationToken}
 
   This link expires in 48 hours.
 
@@ -508,7 +508,7 @@ const sendSetupCompletionNotifications = (
 
   Your FleetFlow Vendor Portal account has been successfully activated!
 
-  🌐 Login at: https://app.fleetflow.com/vendor-login
+  🌐 Login at: https://app.fleetflowapp.com/vendor-login
   👤 Username: [Your chosen username]
 
   You can now:

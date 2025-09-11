@@ -649,3 +649,5 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
     </div>
   );
 };
+
+export default DocumentUpload;

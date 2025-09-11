@@ -192,7 +192,7 @@ This policy applies to:
 
 **Request Intake:**
 
-- Dedicated privacy request portal: `privacy@fleetflow.com`
+- Dedicated privacy request portal: `privacy@fleetflowapp.com`
 - Identity verification using multi-factor authentication
 - Request categorization and priority assignment
 - Automatic acknowledgment within 72 hours
@@ -451,7 +451,7 @@ This policy applies to:
 
 **Contact Information:**
 
-- Email: dpo@fleetflow.com
+- Email: dpo@fleetflowapp.com
 - Phone: [DPO Phone Number]
 - Address: [FleetFlow Corporate Address]
 
@@ -546,18 +546,18 @@ This policy applies to:
 
 **General Privacy Questions:**
 
-- Email: privacy@fleetflow.com
+- Email: privacy@fleetflowapp.com
 - Response Time: 48 hours
 
 **Data Subject Requests:**
 
-- Portal: https://fleetflow.com/privacy-requests
-- Email: requests@fleetflow.com
+- Portal: https://fleetflowapp.com/privacy-requests
+- Email: requests@fleetflowapp.com
 - Phone: (833) 386-3509 ext. PRIVACY
 
 **Privacy Complaints:**
 
-- Email: complaints@fleetflow.com
+- Email: complaints@fleetflowapp.com
 - Response Time: 24 hours
 - Escalation: Chief Privacy Officer
 

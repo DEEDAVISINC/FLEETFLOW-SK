@@ -9,7 +9,7 @@ const demoUsers = [
   {
     userId: 'driver_001',
     userName: 'John Smith',
-    userEmail: 'john.smith@fleetflow.com',
+    userEmail: 'john.smith@fleetflowapp.com',
     userRole: 'driver',
     assignedModules: ['safety', 'compliance'],
     completedModules: ['safety'],
@@ -21,7 +21,7 @@ const demoUsers = [
   {
     userId: 'dispatcher_001',
     userName: 'Sarah Johnson',
-    userEmail: 'sarah.johnson@fleetflow.com',
+    userEmail: 'sarah.johnson@fleetflowapp.com',
     userRole: 'dispatcher',
     assignedModules: ['dispatch', 'compliance', 'workflow'],
     completedModules: ['dispatch', 'workflow'],
@@ -34,7 +34,7 @@ const demoUsers = [
   {
     userId: 'broker_001',
     userName: 'Mike Rodriguez',
-    userEmail: 'mike.rodriguez@fleetflow.com',
+    userEmail: 'mike.rodriguez@fleetflowapp.com',
     userRole: 'broker',
     assignedModules: ['broker', 'compliance'],
     completedModules: ['broker'],
@@ -46,7 +46,7 @@ const demoUsers = [
   {
     userId: 'driver_002',
     userName: 'Lisa Chen',
-    userEmail: 'lisa.chen@fleetflow.com',
+    userEmail: 'lisa.chen@fleetflowapp.com',
     userRole: 'driver',
     assignedModules: ['safety', 'compliance', 'sms-workflow'],
     completedModules: [],
@@ -57,7 +57,7 @@ const demoUsers = [
   {
     userId: 'manager_001',
     userName: 'David Wilson',
-    userEmail: 'david.wilson@fleetflow.com',
+    userEmail: 'david.wilson@fleetflowapp.com',
     userRole: 'manager',
     assignedModules: ['dispatch', 'broker', 'compliance', 'safety', 'workflow'],
     completedModules: ['dispatch', 'broker', 'compliance'],

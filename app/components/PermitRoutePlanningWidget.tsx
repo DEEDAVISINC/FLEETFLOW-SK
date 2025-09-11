@@ -318,7 +318,7 @@ export default function PermitRoutePlanningWidget() {
             cargoType: loadRequest.cargoType,
           },
           notifications: {
-            email: ['permits@fleetflow.com'],
+            email: ['permits@fleetflowapp.com'],
             phone: ['+1-555-PERMITS'],
           },
         }),
@@ -393,7 +393,7 @@ export default function PermitRoutePlanningWidget() {
                   cargoType: loadRequest.cargoType,
                 },
                 notifications: {
-                  email: ['permits@fleetflow.com'],
+                  email: ['permits@fleetflowapp.com'],
                   phone: ['+1-555-PERMITS'],
                 },
               }),

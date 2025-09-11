@@ -487,7 +487,7 @@ export class AIAutomationEngine {
 
       // Notify dispatch
       await this.sendEmailNotification(
-        'dispatch@fleetflow.com',
+        'dispatch@fleetflowapp.com',
         `Route Document Generated: ${route.routeName}`,
         this.generateRouteDocumentEmailHTML(route, document),
         'route_notification'
@@ -562,7 +562,7 @@ export class AIAutomationEngine {
 
   private async getDriverEmailById(driverId: string): Promise<string> {
     // Mock email - in real app, get from database
-    return `driver${driverId.slice(-3)}@fleetflow.com`;
+    return `driver${driverId.slice(-3)}@fleetflowapp.com`;
   }
 
   private async getDriverPhoneById(driverId: string): Promise<string> {

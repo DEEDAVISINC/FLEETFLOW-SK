@@ -272,14 +272,14 @@ Welcome to the FleetFlow network!"
 
 ### **FleetFlow University:**
 
-- **URL:** `https://fleetflow.com/university`
+- **URL:** `https://fleetflowapp.com/university`
 - **Training Portal:** Interactive courses and certifications
 - **Mobile Access:** Available on all devices
 - **Progress Tracking:** Real-time completion monitoring
 
 ### **Primary Dashboard:**
 
-- **URL:** `https://fleetflow.com/onboarding/dashboard`
+- **URL:** `https://fleetflowapp.com/onboarding/dashboard`
 - **Mobile App:** Available on iOS and Android
 - **Browser Requirements:** Chrome, Firefox, Safari (latest versions)
 
@@ -330,11 +330,11 @@ Welcome to the FleetFlow network!"
 
 ## 📞 **Training Support Contacts**
 
-**Training Coordinator:** Sarah Johnson **Email:** training@fleetflow.com **Phone:** (555) 123-4567
+**Training Coordinator:** Sarah Johnson **Email:** training@fleetflowapp.com **Phone:** (555) 123-4567
 
-**Technical Support:** Mike Rodriguez **Email:** support@fleetflow.com **Phone:** (555) 987-6543
+**Technical Support:** Mike Rodriguez **Email:** support@fleetflowapp.com **Phone:** (555) 987-6543
 
-**Compliance Officer:** Lisa Chen **Email:** compliance@fleetflow.com **Phone:** (555) 456-7890
+**Compliance Officer:** Lisa Chen **Email:** compliance@fleetflowapp.com **Phone:** (555) 456-7890
 
 ---
 

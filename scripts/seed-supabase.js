@@ -22,21 +22,21 @@ async function seedDatabase() {
       .insert([
         {
           name: 'John Smith',
-          email: 'john.smith@fleetflow.com',
+          email: 'john.smith@fleetflowapp.com',
           phone: '(555) 123-4567',
           license_number: 'DL123456789',
           status: 'active'
         },
         {
           name: 'Sarah Johnson',
-          email: 'sarah.johnson@fleetflow.com',
+          email: 'sarah.johnson@fleetflowapp.com',
           phone: '(555) 234-5678',
           license_number: 'DL987654321',
           status: 'active'
         },
         {
           name: 'Mike Wilson',
-          email: 'mike.wilson@fleetflow.com',
+          email: 'mike.wilson@fleetflowapp.com',
           phone: '(555) 345-6789',
           license_number: 'DL456789123',
           status: 'inactive'

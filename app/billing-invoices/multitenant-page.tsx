@@ -205,7 +205,7 @@ export default function MultiTenantBillingPage() {
                 width: '8px',
                 height: '8px',
               }}
-            ></span>
+             />
             <span>
               Square: {squareConfig.connected ? 'Connected' : 'Not Connected'}
             </span>

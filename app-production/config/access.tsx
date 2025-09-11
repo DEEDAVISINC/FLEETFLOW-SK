@@ -15,7 +15,7 @@ export function getCurrentUser(): { user: User; permissions: any } {
     id: '1',
     role: 'admin' as const,
     name: 'Demo User',
-    email: 'demo@fleetflow.com'
+    email: 'demo@fleetflowapp.com'
   }
   
   const permissions = {
@@ -48,9 +48,9 @@ export function checkPermission(permission: string): boolean {
 export function getAvailableDispatchers() {
   // Mock dispatcher list for demo
   return [
-    { id: '1', name: 'John Smith', email: 'john@fleetflow.com' },
-    { id: '2', name: 'Sarah Johnson', email: 'sarah@fleetflow.com' },
-    { id: '3', name: 'Mike Davis', email: 'mike@fleetflow.com' },
-    { id: '4', name: 'Lisa Wilson', email: 'lisa@fleetflow.com' }
+    { id: '1', name: 'John Smith', email: 'john@fleetflowapp.com' },
+    { id: '2', name: 'Sarah Johnson', email: 'sarah@fleetflowapp.com' },
+    { id: '3', name: 'Mike Davis', email: 'mike@fleetflowapp.com' },
+    { id: '4', name: 'Lisa Wilson', email: 'lisa@fleetflowapp.com' }
   ]
 }

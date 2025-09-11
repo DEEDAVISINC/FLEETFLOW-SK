@@ -1,6 +1,11 @@
 // 🔐 Driver Load Board Access Management Service
 // Handles secure sharing of load board credentials between drivers and dispatchers
 
+// Export the driverLoadBoardAccess service
+export const driverLoadBoardAccess = {
+  // Add methods as needed
+};
+
 export interface LoadBoardCredentials {
   id: string;
   driverId: string;

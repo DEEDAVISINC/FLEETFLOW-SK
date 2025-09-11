@@ -156,7 +156,7 @@ export default function NotificationsHub() {
                 },
               ].map((item, index) => (
                 <div key={index} className='flex items-center gap-3'>
-                  <div className={`h-4 w-4 ${item.color} rounded-full`}></div>
+                  <div className={`h-4 w-4 ${item.color} rounded-full`} />
                   <div>
                     <span className='font-medium text-gray-900'>
                       {item.type}

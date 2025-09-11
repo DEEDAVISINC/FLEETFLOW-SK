@@ -178,7 +178,7 @@ const LoadBoardPortalSection = () => {
               animation: 'spin 1s linear infinite',
               marginBottom: '10px',
             }}
-          ></div>
+           />
           <div>Loading The Flow Hub...</div>
         </div>
       ) : (
@@ -235,7 +235,7 @@ const LoadBoardPortalSection = () => {
                       borderRadius: '50%',
                       background: board.count > 0 ? '#22c55e' : '#6b7280',
                     }}
-                  ></div>
+                   />
                 </div>
 
                 <div

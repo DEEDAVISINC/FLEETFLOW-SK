@@ -292,7 +292,7 @@ const InvitationLandingPage: React.FC<{
         {/* Footer */}
         <div style={{ marginTop: '40px', paddingTop: '24px', borderTop: '1px solid rgba(255, 255, 255, 0.2)' }}>
           <p style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
-            Questions? Contact us at support@fleetflow.com
+            Questions? Contact us at support@fleetflowapp.com
           </p>
         </div>
       </div>

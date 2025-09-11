@@ -233,7 +233,7 @@ export class AIAutomationEngine {
 
     // Send email with detailed report
     await this.sendEmailNotification(
-      process.env.FLEET_MANAGER_EMAIL || 'manager@fleetflow.com',
+      process.env.FLEET_MANAGER_EMAIL || 'manager@fleetflowapp.com',
       `🔧 Urgent: Vehicle ${vehicle.name} Maintenance Required`,
       this.generateMaintenanceEmailHTML(vehicle, analysis),
       'maintenance_alert'
@@ -254,7 +254,7 @@ export class AIAutomationEngine {
   // Send driver performance alert
   private async sendDriverPerformanceAlert(driver: any, analysis: any) {
     await this.sendEmailNotification(
-      process.env.HR_EMAIL || 'hr@fleetflow.com',
+      process.env.HR_EMAIL || 'hr@fleetflowapp.com',
       `📊 Driver Performance Review: ${driver.name}`,
       this.generateDriverAnalysisEmailHTML(driver, analysis),
       'performance_review'
@@ -264,7 +264,7 @@ export class AIAutomationEngine {
   // Send cost optimization report
   private async sendCostOptimizationReport(optimization: any) {
     await this.sendEmailNotification(
-      process.env.MANAGEMENT_EMAIL || 'management@fleetflow.com',
+      process.env.MANAGEMENT_EMAIL || 'management@fleetflowapp.com',
       `💰 Monthly Cost Optimization Report - Potential Savings: ${optimization.totalPotentialSavings}`,
       this.generateCostOptimizationEmailHTML(optimization),
       'cost_optimization'

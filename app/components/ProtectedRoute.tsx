@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import { useOrganization } from '../contexts/OrganizationContext';
-import { checkAction } from '../utils/accessControl';
+import { checkActionSimple as checkAction } from '../utils';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -118,7 +118,7 @@ export default function ProtectedRoute({
     return (
       <div className='flex min-h-screen items-center justify-center bg-gray-50'>
         <div className='text-center'>
-          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
           <p className='mt-4 text-gray-600'>Checking permissions...</p>
         </div>
       </div>
@@ -244,7 +244,3 @@ export function WithPermission({
     </ProtectedRoute>
   );
 }
-
-
-
-

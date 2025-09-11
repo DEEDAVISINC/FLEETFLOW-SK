@@ -95,10 +95,10 @@ Pre-configured demo accounts with consistent IDs:
 
 | Email                       | User ID           | Name                | Role       |
 | --------------------------- | ----------------- | ------------------- | ---------- |
-| admin@fleetflow.com         | FM-MGR-20230115-1 | Frank Miller        | Manager    |
-| dispatch@fleetflow.com      | SJ-DC-20240114-1  | Sarah Johnson       | Dispatcher |
-| driver@fleetflow.com        | JD-DM-20240115-1  | John Doe            | Driver     |
-| broker@fleetflow.com        | SW-BB-20240116-1  | Sarah Wilson        | Broker     |
+| admin@fleetflowapp.com         | FM-MGR-20230115-1 | Frank Miller        | Manager    |
+| dispatch@fleetflowapp.com      | SJ-DC-20240114-1  | Sarah Johnson       | Dispatcher |
+| driver@fleetflowapp.com        | JD-DM-20240115-1  | John Doe            | Driver     |
+| broker@fleetflowapp.com        | SW-BB-20240116-1  | Sarah Wilson        | Broker     |
 | vendor@abcmanufacturing.com | JM-VN-20240117-1  | Jane Miller         | Vendor     |
 | vendor@retaildist.com       | RD-VN-20240118-1  | Retail Distribution | Vendor     |
 | vendor@techsolutions.com    | TS-VN-20240119-1  | Tech Solutions      | Vendor     |

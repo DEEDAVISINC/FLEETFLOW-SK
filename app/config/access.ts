@@ -1912,7 +1912,7 @@ export const getCurrentUser = (): {
   const user: User = {
     id: 'admin-user-123',
     name: 'Admin User',
-    email: 'admin@fleetflow.com',
+    email: 'admin@fleetflowapp.com',
     role: 'admin',
   };
   const permissions = getSectionPermissions(user);
@@ -2113,14 +2113,14 @@ export const getBrokersWithoutDispatcher = (): User[] => {
       id: 'BRK-001',
       name: 'Michael Brown',
       role: 'broker',
-      email: 'michael.brown@fleetflow.com',
+      email: 'michael.brown@fleetflowapp.com',
       specialization: 'Food Grade Transportation',
     },
     {
       id: 'BRK-002',
       name: 'Sarah Wilson',
       role: 'broker',
-      email: 'sarah.wilson@fleetflow.com',
+      email: 'sarah.wilson@fleetflowapp.com',
       specialization: 'Automotive Parts',
     },
   ];

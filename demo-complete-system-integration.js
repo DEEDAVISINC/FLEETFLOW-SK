@@ -163,7 +163,7 @@ async function demonstrateCompleteIntegration() {
 
   console.log('\n📧 Driver Email Notification:');
   console.log('-'.repeat(30));
-  console.log('TO: driver001@fleetflow.com');
+  console.log('TO: driver001@fleetflowapp.com');
   console.log('SUBJECT: Route Document: Manufacturing Plant Delivery');
   console.log('');
   console.log('📋 Your route document is ready!');
@@ -175,13 +175,13 @@ async function demonstrateCompleteIntegration() {
   console.log('• Miles: 177 | Rate: $450');
   console.log('• Optimization Score: 92%');
   console.log('');
-  console.log('🛰️ Live Tracking: https://track.fleetflow.com/load/LD-001');
+  console.log('🛰️ Live Tracking: https://track.fleetflowapp.com/load/LD-001');
   console.log('[Full route document attached with safety requirements]');
 
   console.log('\n📱 Driver SMS Notification:');
   console.log('-'.repeat(30));
   console.log('📋 Load LD-001 assigned! Route optimized (92% efficiency).');
-  console.log('Steel plant pickup 6AM. Track: https://track.fleetflow.com/LD-001');
+  console.log('Steel plant pickup 6AM. Track: https://track.fleetflowapp.com/LD-001');
 
   console.log('\n📧 Customer Email Notification:');
   console.log('-'.repeat(30));
@@ -196,7 +196,7 @@ async function demonstrateCompleteIntegration() {
   console.log('• Delivery: Construction Site Alpha (ETA: 10:00 AM)');
   console.log('• Driver: John Smith | Vehicle: T-001');
   console.log('');
-  console.log('🛰️ Track your shipment: https://track.fleetflow.com/load/LD-001');
+  console.log('🛰️ Track your shipment: https://track.fleetflowapp.com/load/LD-001');
 
   console.log('\n\n🎯 AUTOMATION SCHEDULE:');
   console.log('=' .repeat(50));

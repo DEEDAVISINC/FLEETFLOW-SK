@@ -328,11 +328,11 @@ public runDailyCleanupJob(): void {
 
 ### **COMPLIANCE CONTACT INFORMATION**
 
-**Chief Privacy Officer** Email: privacy@fleetflow.com Phone: [Privacy Team Direct Line]
+**Chief Privacy Officer** Email: privacy@fleetflowapp.com Phone: [Privacy Team Direct Line]
 
-**Data Protection Officer** Email: dpo@fleetflow.com Phone: [DPO Direct Line]
+**Data Protection Officer** Email: dpo@fleetflowapp.com Phone: [DPO Direct Line]
 
-**Legal Compliance Team** Email: legal@fleetflow.com Phone: [Legal Team Direct Line]
+**Legal Compliance Team** Email: legal@fleetflowapp.com Phone: [Legal Team Direct Line]
 
 ### **DOCUMENTATION REPOSITORY**
 

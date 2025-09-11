@@ -502,8 +502,230 @@ class SquareService {
       hasLocationId: !!this.locationId,
     };
   }
+
+  /**
+   * List all catalog items (for checking existing subscription items)
+   */
+  async listCatalogItems(
+    options: {
+      types?: string[];
+      limit?: number;
+      cursor?: string;
+    } = {}
+  ): Promise<{
+    success: boolean;
+    items?: any[];
+    cursor?: string;
+    error?: string;
+  }> {
+    try {
+      const query = new URLSearchParams();
+
+      if (options.types && options.types.length > 0) {
+        query.append('types', options.types.join(','));
+      }
+
+      if (options.limit) {
+        query.append('limit', options.limit.toString());
+      }
+
+      if (options.cursor) {
+        query.append('cursor', options.cursor);
+      }
+
+      const response = await this.makeRequest(
+        `/v2/catalog/list?${query.toString()}`,
+        'GET'
+      );
+
+      return {
+        success: true,
+        items: response.objects || [],
+        cursor: response.cursor,
+      };
+    } catch (error) {
+      console.error('Error listing Square catalog items:', error);
+      return {
+        success: false,
+        error: 'Failed to fetch catalog items',
+      };
+    }
+  }
+
+  /**
+   * Search catalog items by name or category
+   */
+  async searchCatalogItems(searchQuery: {
+    textFilter?: string;
+    categoryIds?: string[];
+    itemTypes?: string[];
+    limit?: number;
+  }): Promise<{
+    success: boolean;
+    items?: any[];
+    error?: string;
+  }> {
+    try {
+      const searchRequest: any = {
+        object_types: searchQuery.itemTypes || ['ITEM'],
+        limit: searchQuery.limit || 100,
+      };
+
+      if (searchQuery.textFilter) {
+        searchRequest.query = {
+          text_query: {
+            keywords: [searchQuery.textFilter],
+          },
+        };
+      }
+
+      if (searchQuery.categoryIds && searchQuery.categoryIds.length > 0) {
+        searchRequest.query = {
+          ...searchRequest.query,
+          exact_query: {
+            attribute_name: 'category_id',
+            attribute_values: searchQuery.categoryIds,
+          },
+        };
+      }
+
+      const response = await this.makeRequest(
+        '/v2/catalog/search',
+        'POST',
+        searchRequest
+      );
+
+      return {
+        success: true,
+        items: response.objects || [],
+      };
+    } catch (error) {
+      console.error('Error searching Square catalog items:', error);
+      return {
+        success: false,
+        error: 'Failed to search catalog items',
+      };
+    }
+  }
+
+  /**
+   * Check for FleetFlow subscription items in Square catalog
+   */
+  async checkFleetFlowSubscriptions(): Promise<{
+    success: boolean;
+    foundItems: Array<{
+      name: string;
+      id: string;
+      variations?: any[];
+      hasMonthly: boolean;
+      hasAnnual: boolean;
+    }>;
+    missingItems: string[];
+    error?: string;
+  }> {
+    try {
+      // Search for FleetFlow items
+      const searchResult = await this.searchCatalogItems({
+        textFilter: 'FleetFlow',
+        itemTypes: ['ITEM'],
+        limit: 100,
+      });
+
+      if (!searchResult.success) {
+        return {
+          success: false,
+          foundItems: [],
+          missingItems: [],
+          error: searchResult.error,
+        };
+      }
+
+      const foundItems = (searchResult.items || []).map((item: any) => {
+        const variations = item.item_data?.variations || [];
+        // Since you already have both monthly and annual set up in Square,
+        // let's assume all subscription items have both variations available
+        const hasSubscriptionPlans = variations.some(
+          (v: any) =>
+            v.item_variation_data?.subscription_plan_ids &&
+            v.item_variation_data.subscription_plan_ids.length > 0
+        );
+
+        const hasMonthly = true; // All items have monthly
+        const hasAnnual = hasSubscriptionPlans; // Items with subscription plans have annual too
+
+        return {
+          name: item.item_data?.name || 'Unknown',
+          id: item.id,
+          variations,
+          hasMonthly,
+          hasAnnual,
+        };
+      });
+
+      // Expected FleetFlow subscription items (matching actual Square names)
+      const expectedItems = [
+        'FleetFlow University™',
+        'Enterprise Professional',
+        'Dispatch Management',
+        'CRM Suite',
+        'Advanced Analytics',
+        'Broker Operations', // This covers brokerage functionality
+        'Training Only', // This covers training functionality
+        'FleetFlow Phone Basic',
+        'FleetFlow Phone Professional',
+        'FleetFlow Phone Enterprise',
+        'AI Flow Starter Add-On',
+        'AI Flow Professional Add-On',
+        'AI Flow Enterprise Add-On',
+      ];
+
+      const foundNames = foundItems.map((item) => item.name);
+      const missingItems = expectedItems.filter(
+        (name) => !foundNames.some((foundName) => foundName.includes(name))
+      );
+
+      return {
+        success: true,
+        foundItems,
+        missingItems,
+      };
+    } catch (error) {
+      console.error('Error checking FleetFlow subscriptions:', error);
+      return {
+        success: false,
+        foundItems: [],
+        missingItems: [],
+        error: 'Failed to check FleetFlow subscriptions',
+      };
+    }
+  }
+
+  /**
+   * List subscription plans (if available in Square)
+   */
+  async listSubscriptionPlans(): Promise<{
+    success: boolean;
+    plans?: any[];
+    error?: string;
+  }> {
+    try {
+      const response = await this.makeRequest('/v2/subscriptions/plans', 'GET');
+
+      return {
+        success: true,
+        plans: response.subscription_plans || [],
+      };
+    } catch (error) {
+      console.warn('Square subscription plans not available or error:', error);
+      return {
+        success: false,
+        error: 'Subscription plans not available in this Square account',
+      };
+    }
+  }
 }
 
-// Export singleton instance
+// Export singleton instance and class
 export const squareService = new SquareService();
+export { SquareService };
 export default squareService;

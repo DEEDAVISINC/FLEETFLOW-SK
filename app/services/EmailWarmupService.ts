@@ -278,7 +278,7 @@ export class EmailWarmupService {
     // Add some test accounts for development
     this.friendlyAccounts = [
       {
-        email: 'test1@fleetflow.com',
+        email: 'test1@fleetflowapp.com',
         name: 'Test Account 1',
         type: 'internal',
         autoRespond: true,
@@ -286,7 +286,7 @@ export class EmailWarmupService {
         clickRate: 0.8,
       },
       {
-        email: 'test2@fleetflow.com',
+        email: 'test2@fleetflowapp.com',
         name: 'Test Account 2',
         type: 'internal',
         autoRespond: true,

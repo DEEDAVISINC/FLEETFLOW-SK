@@ -806,7 +806,7 @@ export default function DEPOINTEAICompanyDashboard() {
                             ? 'bg-yellow-500'
                             : 'bg-blue-500'
                       }`}
-                    ></div>
+                     />
                     <div className='flex-1'>
                       <p className='text-white'>{activity.message}</p>
                       <p className='text-sm text-slate-400'>{activity.time}</p>

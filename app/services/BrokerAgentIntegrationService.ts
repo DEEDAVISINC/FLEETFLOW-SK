@@ -136,7 +136,7 @@ class BrokerAgentIntegrationService {
     const mockAgent: BrokerAgent = {
       id: currentUser.user.id,
       name: currentUser.user.name,
-      email: `${currentUser.user.name.toLowerCase().replace(' ', '.')}@fleetflow.com`,
+      email: `${currentUser.user.name.toLowerCase().replace(' ', '.')}@fleetflowapp.com`,
       phone: '+1 (555) 123-4567',
       department: 'Broker Agent',
       brokerageId: 'brokerage-001',
@@ -178,7 +178,7 @@ class BrokerAgentIntegrationService {
       {
         id: 'agent-001',
         name: 'Emily Davis',
-        email: 'emily.davis@fleetflow.com',
+        email: 'emily.davis@fleetflowapp.com',
         phone: '+1 (555) 123-4567',
         department: 'Broker Agent',
         brokerageId: 'brokerage-001',
@@ -207,7 +207,7 @@ class BrokerAgentIntegrationService {
       {
         id: 'agent-002',
         name: 'Michael Chen',
-        email: 'michael.chen@fleetflow.com',
+        email: 'michael.chen@fleetflowapp.com',
         phone: '+1 (555) 234-5678',
         department: 'Broker Agent',
         brokerageId: 'brokerage-001',
@@ -236,7 +236,7 @@ class BrokerAgentIntegrationService {
       {
         id: 'agent-003',
         name: 'Jessica Rodriguez',
-        email: 'jessica.rodriguez@fleetflow.com',
+        email: 'jessica.rodriguez@fleetflowapp.com',
         phone: '+1 (555) 345-6789',
         department: 'Broker Agent',
         brokerageId: 'brokerage-001',

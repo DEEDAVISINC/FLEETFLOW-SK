@@ -624,7 +624,7 @@ export class FleetFlowSystemOrchestrator {
     console.info('✅ Live tracking initialized');
     return {
       tracking: trackingData,
-      trackingUrl: `https://track.fleetflow.com/load/${loadData.id}`,
+      trackingUrl: `https://track.fleetflowapp.com/load/${loadData.id}`,
       initializedAt: new Date().toISOString(),
     };
   }

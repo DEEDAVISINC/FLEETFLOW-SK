@@ -107,7 +107,7 @@ export default function OrganizationDashboard() {
     return (
       <div className='flex min-h-screen items-center justify-center bg-gray-50'>
         <div className='text-center'>
-          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600'></div>
+          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
           <p className='mt-4 text-gray-600'>
             Loading organization dashboard...
           </p>
@@ -330,7 +330,7 @@ export default function OrganizationDashboard() {
                       style={{
                         width: `${metrics.loads.total > 0 ? (metrics.loads.available / metrics.loads.total) * 100 : 0}%`,
                       }}
-                    ></div>
+                     />
                   </div>
                   <span className='text-sm font-medium text-gray-900'>
                     {metrics.loads.available}
@@ -347,7 +347,7 @@ export default function OrganizationDashboard() {
                       style={{
                         width: `${metrics.loads.total > 0 ? (metrics.loads.active / metrics.loads.total) * 100 : 0}%`,
                       }}
-                    ></div>
+                     />
                   </div>
                   <span className='text-sm font-medium text-gray-900'>
                     {metrics.loads.active}
@@ -364,7 +364,7 @@ export default function OrganizationDashboard() {
                       style={{
                         width: `${metrics.loads.total > 0 ? (metrics.loads.completed / metrics.loads.total) * 100 : 0}%`,
                       }}
-                    ></div>
+                     />
                   </div>
                   <span className='text-sm font-medium text-gray-900'>
                     {metrics.loads.completed}
@@ -393,7 +393,7 @@ export default function OrganizationDashboard() {
                     style={{
                       width: `${Math.min(metrics.performance.completionRate, 100)}%`,
                     }}
-                  ></div>
+                   />
                 </div>
               </div>
 
@@ -412,7 +412,7 @@ export default function OrganizationDashboard() {
                     style={{
                       width: `${Math.min(metrics.performance.activeLoadRatio, 100)}%`,
                     }}
-                  ></div>
+                   />
                 </div>
               </div>
 

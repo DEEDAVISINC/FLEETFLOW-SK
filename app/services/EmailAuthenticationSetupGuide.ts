@@ -464,7 +464,7 @@ export class EmailAuthenticationSetupGuide {
     const { businessType, emailVolume, industryType, riskTolerance } = options;
 
     // Default recommendation
-    let result = {
+    const result = {
       policy: 'none' as const,
       implementation: 'phased' as const,
       recommendations: [],

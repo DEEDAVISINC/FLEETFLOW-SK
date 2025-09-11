@@ -265,7 +265,9 @@ export class ContractGenerationService {
     data: DispatcherLeadContractData
   ): Promise<GeneratedContract> {
     try {
-      console.info(`📄 Generating dispatcher contract for lead: ${data.leadId}`);
+      console.info(
+        `📄 Generating dispatcher contract for lead: ${data.leadId}`
+      );
 
       // Generate professional contract identifier using DP format (Dispatcher Partnership)
       const idData: ContractIdentificationData = {
@@ -674,7 +676,7 @@ Principal Place of Business: 1234 Technology Drive, Suite 100, Atlanta, GA 30309
 Federal Tax ID: 88-1234567
 FMCSA MC Number: MC-123456
 Contact: Chief Revenue Officer
-Email: contracts@fleetflow.com
+Email: contracts@fleetflowapp.com
 Phone: (555) 123-4567
 
 **${contract.parties.dispatcher!.company}** ("Dispatcher" or "Service Provider")

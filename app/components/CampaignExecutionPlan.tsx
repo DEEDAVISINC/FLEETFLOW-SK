@@ -250,7 +250,7 @@ export default function CampaignExecutionPlan() {
                   <div className='flex items-center space-x-3'>
                     <div
                       className={`h-4 w-4 rounded-full ${getDifficultyColor(campaign.difficulty)}`}
-                    ></div>
+                     />
                     <h3 className='text-xl font-bold'>{campaign.name}</h3>
                   </div>
                   <span

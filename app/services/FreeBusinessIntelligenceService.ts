@@ -145,7 +145,7 @@ export class FreeBusinessIntelligenceService {
 
     try {
       const headers = {
-        'User-Agent': 'FleetFlow contact@fleetflow.com',
+        'User-Agent': 'FleetFlow contact@fleetflowapp.com',
       };
 
       // Get company concepts

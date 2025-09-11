@@ -57,7 +57,7 @@ const BrokerOperationsPage: React.FC = () => {
   const [user] = useState({
     name: 'Alex Rodriguez',
     role: 'Senior Broker',
-    email: 'alex.rodriguez@fleetflow.com'
+    email: 'alex.rodriguez@fleetflowapp.com'
   });
 
   // Loadboard state
@@ -95,7 +95,7 @@ const BrokerOperationsPage: React.FC = () => {
       {
         id: 'DISP001',
         name: 'Sarah Johnson',
-        email: 'sarah.johnson@fleetflow.com',
+        email: 'sarah.johnson@fleetflowapp.com',
         phone: '555-0123',
         region: 'Southeast',
         activeLoads: 8,
@@ -105,7 +105,7 @@ const BrokerOperationsPage: React.FC = () => {
       {
         id: 'DISP002',
         name: 'Mike Chen',
-        email: 'mike.chen@fleetflow.com',
+        email: 'mike.chen@fleetflowapp.com',
         phone: '555-0456',
         region: 'West Coast',
         activeLoads: 12,
@@ -115,7 +115,7 @@ const BrokerOperationsPage: React.FC = () => {
       {
         id: 'DISP003',
         name: 'Emily Davis',
-        email: 'emily.davis@fleetflow.com',
+        email: 'emily.davis@fleetflowapp.com',
         phone: '555-0789',
         region: 'Midwest',
         activeLoads: 6,
@@ -125,7 +125,7 @@ const BrokerOperationsPage: React.FC = () => {
       {
         id: 'DISP004',
         name: 'James Wilson',
-        email: 'james.wilson@fleetflow.com',
+        email: 'james.wilson@fleetflowapp.com',
         phone: '555-0321',
         region: 'Northeast',
         activeLoads: 10,

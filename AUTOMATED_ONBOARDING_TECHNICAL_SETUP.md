@@ -314,7 +314,7 @@ export class NotificationService {
       const msg = {
         to,
         from: {
-          email: 'onboarding@fleetflow.com',
+          email: 'onboarding@fleetflowapp.com',
           name: 'FleetFlow Onboarding Team'
         },
         subject,
@@ -567,7 +567,7 @@ async function getCarrierDocuments(carrierId: string): Promise<any[]> {
   </div>
   
   <div style="background: #1f2937; color: white; padding: 16px; text-align: center; font-size: 12px;">
-    <p>FleetFlow Logistics LLC | (555) 123-4567 | onboarding@fleetflow.com</p>
+    <p>FleetFlow Logistics LLC | (555) 123-4567 | onboarding@fleetflowapp.com</p>
   </div>
 </div>
 ```

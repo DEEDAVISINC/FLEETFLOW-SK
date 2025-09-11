@@ -191,8 +191,8 @@ export const getAllowedOrigins = () => {
       return [
         ...baseOrigins,
         'https://fleetflow.vercel.app',
-        'https://fleetflow.com',
-        'https://www.fleetflow.com',
+        'https://fleetflowapp.com',
+        'https://www.fleetflowapp.com',
       ];
 
     case 'staging':

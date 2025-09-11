@@ -51,8 +51,8 @@ export default function SignIn() {
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <h3 className="font-semibold text-blue-900 mb-2">Demo Accounts:</h3>
             <div className="text-sm text-blue-800 space-y-1">
-              <p><strong>Admin:</strong> admin@fleetflow.com / admin123</p>
-              <p><strong>Dispatcher:</strong> dispatch@fleetflow.com / dispatch123</p>
+              <p><strong>Admin:</strong> admin@fleetflowapp.com / admin123</p>
+              <p><strong>Dispatcher:</strong> dispatch@fleetflowapp.com / dispatch123</p>
             </div>
           </div>
 

@@ -7,7 +7,7 @@ const mockUsers = [
   {
     id: 'FM-MGR-2023005',
     name: 'Frank Miller',
-    email: 'frank.miller@fleetflow.com',
+    email: 'frank.miller@fleetflowapp.com',
     phone: '(555) 123-4567',
     department: 'Management',
     departmentCode: 'MGR',
@@ -129,7 +129,7 @@ const mockUsers = [
   {
     id: 'SJ-DC-2024014',
     name: 'Sarah Johnson',
-    email: 'sarah.johnson@fleetflow.com',
+    email: 'sarah.johnson@fleetflowapp.com',
     phone: '(555) 234-5678',
     department: 'Dispatch',
     departmentCode: 'DC',
@@ -212,7 +212,7 @@ const mockUsers = [
   {
     id: 'MW-BB-2024061',
     name: 'Mike Wilson',
-    email: 'mike.wilson@fleetflow.com',
+    email: 'mike.wilson@fleetflowapp.com',
     phone: '(555) 345-6789',
     department: 'Brokerage',
     departmentCode: 'BB',
@@ -295,7 +295,7 @@ const mockUsers = [
   {
     id: 'JD-DC-2024015',
     name: 'John Davis',
-    email: 'john.davis@fleetflow.com',
+    email: 'john.davis@fleetflowapp.com',
     phone: '(555) 456-7890',
     department: 'Dispatch',
     departmentCode: 'DC',
@@ -379,7 +379,7 @@ const mockUsers = [
   {
     id: 'RL-DM-2024032',
     name: 'Robert Lopez',
-    email: 'robert.lopez@fleetflow.com',
+    email: 'robert.lopez@fleetflowapp.com',
     phone: '(555) 567-8901',
     department: 'Driver Management',
     departmentCode: 'DM',
@@ -467,7 +467,7 @@ const mockUsers = [
   {
     id: 'AS-DM-2024028',
     name: 'Angela Smith',
-    email: 'angela.smith@fleetflow.com',
+    email: 'angela.smith@fleetflowapp.com',
     phone: '(555) 678-9012',
     department: 'Driver Management',
     departmentCode: 'DM',

@@ -175,7 +175,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   ELD Compliance Training
                 </a>
               </li>
@@ -199,7 +199,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Hours of Service Regulations
                 </a>
               </li>
@@ -245,7 +245,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Driver Qualification File
                 </a>
               </li>
@@ -269,7 +269,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Vehicle Inspection Reports
                 </a>
               </li>
@@ -293,7 +293,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Accident Report Forms
                 </a>
               </li>
@@ -339,7 +339,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Contact Compliance Officer
                 </a>
               </li>
@@ -363,7 +363,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Schedule Compliance Review
                 </a>
               </li>
@@ -387,7 +387,7 @@ export default function CarrierCompliancePage() {
                       background: 'white',
                       marginRight: '8px',
                     }}
-                  ></span>
+                   />
                   Request Document Assistance
                 </a>
               </li>

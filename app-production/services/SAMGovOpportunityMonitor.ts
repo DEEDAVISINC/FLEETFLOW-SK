@@ -63,7 +63,7 @@ export class SAMGovOpportunityMonitor {
       recipients: [
         {
           name: 'FleetFlow Dispatch',
-          email: 'dispatch@fleetflow.com',
+          email: 'dispatch@fleetflowapp.com',
           phone: '+1234567890',
           roles: ['dispatch', 'admin']
         }

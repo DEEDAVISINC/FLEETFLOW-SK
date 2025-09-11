@@ -35,7 +35,7 @@ export const MOCK_ENHANCED_USERS: EnhancedUser[] = [
   {
     id: 'U001',
     name: 'Fleet Manager',
-    email: 'manager@fleetflow.com',
+    email: 'manager@fleetflowapp.com',
     role: 'Admin',
     status: 'Active',
     lastLogin: 'Current session',
@@ -90,7 +90,7 @@ export const MOCK_ENHANCED_USERS: EnhancedUser[] = [
   {
     id: 'U002',
     name: 'Sarah Johnson',
-    email: 'sarah.j@fleetflow.com',
+    email: 'sarah.j@fleetflowapp.com',
     role: 'Dispatcher',
     status: 'Active',
     lastLogin: '2024-12-18 14:30',
@@ -144,7 +144,7 @@ export const MOCK_ENHANCED_USERS: EnhancedUser[] = [
   {
     id: 'U003',
     name: 'John Smith',
-    email: 'j.smith@fleetflow.com',
+    email: 'j.smith@fleetflowapp.com',
     role: 'Driver',
     status: 'Active',
     lastLogin: '2024-12-18 09:15',
@@ -184,7 +184,7 @@ export const MOCK_ENHANCED_USERS: EnhancedUser[] = [
   {
     id: 'U004',
     name: 'Mike Wilson',
-    email: 'mike.wilson@fleetflow.com',
+    email: 'mike.wilson@fleetflowapp.com',
     role: 'Manager',
     status: 'Active',
     lastLogin: '2024-12-19 12:15',
@@ -242,7 +242,7 @@ export const MOCK_ENHANCED_USERS: EnhancedUser[] = [
   {
     id: 'U005',
     name: 'Jessica Davis',
-    email: 'jessica.davis@fleetflow.com',
+    email: 'jessica.davis@fleetflowapp.com',
     role: 'Driver',
     status: 'Inactive',
     lastLogin: '2024-12-10 16:45',
@@ -292,7 +292,7 @@ export const MOCK_ENHANCED_USERS: EnhancedUser[] = [
   {
     id: 'U006',
     name: 'Sarah Martinez',
-    email: 'sarah.martinez@fleetflow.com',
+    email: 'sarah.martinez@fleetflowapp.com',
     role: 'Broker Agent',
     status: 'Active',
     lastLogin: '2024-12-19 15:45',

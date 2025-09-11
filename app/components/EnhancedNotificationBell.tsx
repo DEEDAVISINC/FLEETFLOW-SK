@@ -569,7 +569,7 @@ export const EnhancedNotificationBell: React.FC<
           <div className='max-h-96 overflow-y-auto'>
             {isLoading ? (
               <div className='p-4 text-center'>
-                <div className='mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600'></div>
+                <div className='mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-blue-600' />
               </div>
             ) : filteredNotifications.length === 0 ? (
               <div className='p-4 text-center'>
@@ -590,7 +590,7 @@ export const EnhancedNotificationBell: React.FC<
                       <div className='flex flex-shrink-0 items-center gap-2'>
                         {getPriorityIcon(notification.priority)}
                         {!notification.isRead && (
-                          <div className='h-2 w-2 rounded-full bg-blue-600'></div>
+                          <div className='h-2 w-2 rounded-full bg-blue-600' />
                         )}
                       </div>
 

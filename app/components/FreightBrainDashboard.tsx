@@ -516,180 +516,222 @@ export default function FreightBrainDashboard({
               gap: '16px',
             }}
           >
-            {knowledgeResults.map((knowledge) => {
-              const CategoryIcon = getCategoryIcon(knowledge.category);
-
-              return (
+            {knowledgeResults.length === 0 ? (
+              <div
+                style={{
+                  borderRadius: '12px',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  background: 'rgba(30, 41, 59, 0.5)',
+                  padding: '32px',
+                  textAlign: 'center',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
                 <div
-                  key={knowledge.id}
-                  onClick={() => setSelectedKnowledge(knowledge)}
                   style={{
-                    cursor: 'pointer',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                    background: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '8px',
+                    background: 'rgba(59, 130, 246, 0.2)',
                     padding: '16px',
-                    transition: 'all 0.2s',
+                    display: 'inline-block',
+                    marginBottom: '16px',
                   }}
-                  onMouseEnter={(e) =>
-                    (e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)')
-                  }
-                  onMouseLeave={(e) =>
-                    (e.target.style.borderColor = 'rgba(148, 163, 184, 0.2)')
-                  }
                 >
+                  📚
+                </div>
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    color: 'white',
+                    margin: '0 0 8px 0',
+                  }}
+                >
+                  Knowledge Base Empty
+                </h3>
+                <p style={{ margin: 0, fontSize: '14px' }}>
+                  The Freight Brain AI knowledge base is currently empty.
+                  <br />
+                  Knowledge will be populated through verified sources and
+                  business operations.
+                </p>
+              </div>
+            ) : (
+              knowledgeResults.map((knowledge) => {
+                const CategoryIcon = getCategoryIcon(knowledge.category);
+
+                return (
                   <div
+                    key={knowledge.id}
+                    onClick={() => setSelectedKnowledge(knowledge)}
                     style={{
-                      marginBottom: '12px',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      justifyContent: 'space-between',
+                      cursor: 'pointer',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(148, 163, 184, 0.2)',
+                      background: 'rgba(30, 41, 59, 0.5)',
+                      padding: '16px',
+                      transition: 'all 0.2s',
                     }}
+                    onMouseEnter={(e) =>
+                      (e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.borderColor = 'rgba(148, 163, 184, 0.2)')
+                    }
                   >
                     <div
                       style={{
+                        marginBottom: '12px',
                         display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                      }}
-                    >
-                      <div
-                        style={{
-                          borderRadius: '8px',
-                          padding: '8px',
-                          background:
-                            knowledge.category === 'market_data'
-                              ? 'rgba(34, 197, 94, 0.2)'
-                              : knowledge.category === 'carrier_intel'
-                                ? 'rgba(59, 130, 246, 0.2)'
-                                : knowledge.category === 'customer_profiles'
-                                  ? 'rgba(139, 92, 246, 0.2)'
-                                  : knowledge.category === 'lane_analytics'
-                                    ? 'rgba(245, 158, 11, 0.2)'
-                                    : knowledge.category === 'compliance_rules'
-                                      ? 'rgba(239, 68, 68, 0.2)'
-                                      : 'rgba(107, 114, 128, 0.2)',
-                        }}
-                      >
-                        <CategoryIcon
-                          style={{
-                            height: '16px',
-                            width: '16px',
-                            color:
-                              knowledge.category === 'market_data'
-                                ? '#22c55e'
-                                : knowledge.category === 'carrier_intel'
-                                  ? '#3b82f6'
-                                  : knowledge.category === 'customer_profiles'
-                                    ? '#8b5cf6'
-                                    : knowledge.category === 'lane_analytics'
-                                      ? '#f59e0b'
-                                      : knowledge.category ===
-                                          'compliance_rules'
-                                        ? '#ef4444'
-                                        : '#6b7280',
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <h3
-                          style={{
-                            fontWeight: '600',
-                            color: 'white',
-                            margin: '0 0 4px 0',
-                            fontSize: '16px',
-                          }}
-                        >
-                          {knowledge.title}
-                        </h3>
-                        <p
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            margin: 0,
-                            textTransform: 'capitalize',
-                          }}
-                        >
-                          {knowledge.category.replace('_', ' ')}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-between',
                       }}
                     >
                       <div
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '4px',
+                          gap: '12px',
                         }}
                       >
-                        <Star
+                        <div
                           style={{
-                            height: '16px',
-                            width: '16px',
-                            color: '#fbbf24',
-                          }}
-                        />
-                        <span
-                          style={{
-                            fontSize: '14px',
-                            color: '#fbbf24',
+                            borderRadius: '8px',
+                            padding: '8px',
+                            background:
+                              knowledge.category === 'market_data'
+                                ? 'rgba(34, 197, 94, 0.2)'
+                                : knowledge.category === 'carrier_intel'
+                                  ? 'rgba(59, 130, 246, 0.2)'
+                                  : knowledge.category === 'customer_profiles'
+                                    ? 'rgba(139, 92, 246, 0.2)'
+                                    : knowledge.category === 'lane_analytics'
+                                      ? 'rgba(245, 158, 11, 0.2)'
+                                      : knowledge.category ===
+                                          'compliance_rules'
+                                        ? 'rgba(239, 68, 68, 0.2)'
+                                        : 'rgba(107, 114, 128, 0.2)',
                           }}
                         >
-                          {knowledge.confidence}%
-                        </span>
+                          <CategoryIcon
+                            style={{
+                              height: '16px',
+                              width: '16px',
+                              color:
+                                knowledge.category === 'market_data'
+                                  ? '#22c55e'
+                                  : knowledge.category === 'carrier_intel'
+                                    ? '#3b82f6'
+                                    : knowledge.category === 'customer_profiles'
+                                      ? '#8b5cf6'
+                                      : knowledge.category === 'lane_analytics'
+                                        ? '#f59e0b'
+                                        : knowledge.category ===
+                                            'compliance_rules'
+                                          ? '#ef4444'
+                                          : '#6b7280',
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <h3
+                            style={{
+                              fontWeight: '600',
+                              color: 'white',
+                              margin: '0 0 4px 0',
+                              fontSize: '16px',
+                            }}
+                          >
+                            {knowledge.title}
+                          </h3>
+                          <p
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              margin: 0,
+                              textTransform: 'capitalize',
+                            }}
+                          >
+                            {knowledge.category.replace('_', ' ')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '16px',
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    <span>Source: {knowledge.source}</span>
-                    <span>•</span>
-                    <span>
-                      Updated: {knowledge.lastUpdated.toLocaleDateString()}
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '4px',
-                    }}
-                  >
-                    {knowledge.tags.slice(0, 3).map((tag) => (
-                      <span
-                        key={tag}
+                      <div
                         style={{
-                          borderRadius: '4px',
-                          background: 'rgba(30, 41, 59, 0.5)',
-                          padding: '4px 8px',
-                          fontSize: '12px',
-                          color: 'rgba(255, 255, 255, 0.7)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
                         }}
                       >
-                        #{tag}
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <Star
+                            style={{
+                              height: '16px',
+                              width: '16px',
+                              color: '#fbbf24',
+                            }}
+                          />
+                          <span
+                            style={{
+                              fontSize: '14px',
+                              color: '#fbbf24',
+                            }}
+                          >
+                            {knowledge.confidence}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '16px',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <span>Source: {knowledge.source}</span>
+                      <span>•</span>
+                      <span>
+                        Updated: {knowledge.lastUpdated.toLocaleDateString()}
                       </span>
-                    ))}
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '4px',
+                      }}
+                    >
+                      {knowledge.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          style={{
+                            borderRadius: '4px',
+                            background: 'rgba(30, 41, 59, 0.5)',
+                            padding: '4px 8px',
+                            fontSize: '12px',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                          }}
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -702,7 +744,7 @@ export default function FreightBrainDashboard({
           }}
         >
           {/* AI Recommendations */}
-          {recommendations && (
+          {recommendations && recommendations.recommendations.length > 0 ? (
             <div
               style={{
                 background: 'rgba(30, 41, 59, 0.5)',
@@ -826,10 +868,48 @@ export default function FreightBrainDashboard({
                 )}
               </div>
             </div>
-          )}
+          ) : selectedStaff ? (
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.5)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '24px',
+                textAlign: 'center',
+                color: 'rgba(255, 255, 255, 0.7)',
+              }}
+            >
+              <div
+                style={{
+                  borderRadius: '8px',
+                  background: 'rgba(139, 92, 246, 0.2)',
+                  padding: '12px',
+                  display: 'inline-block',
+                  marginBottom: '12px',
+                }}
+              >
+                💭
+              </div>
+              <h3
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  margin: '0 0 8px 0',
+                }}
+              >
+                No AI Recommendations Available
+              </h3>
+              <p style={{ margin: 0, fontSize: '14px' }}>
+                Recommendations for {selectedStaff} will be generated as the
+                knowledge base grows and real operational data becomes
+                available.
+              </p>
+            </div>
+          ) : null}
 
           {/* Market Intelligence */}
-          {marketIntel && (
+          {marketIntel && Object.keys(marketIntel).length > 0 && (
             <div
               style={{
                 background: 'rgba(30, 41, 59, 0.5)',
@@ -996,7 +1076,7 @@ export default function FreightBrainDashboard({
               </h3>
             </div>
 
-            {stats && (
+            {stats && Object.keys(stats.categoryCounts).length > 0 ? (
               <div
                 style={{
                   display: 'flex',
@@ -1035,6 +1115,34 @@ export default function FreightBrainDashboard({
                     </div>
                   )
                 )}
+              </div>
+            ) : (
+              <div
+                style={{
+                  borderRadius: '12px',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  background: 'rgba(30, 41, 59, 0.5)',
+                  padding: '24px',
+                  textAlign: 'center',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                <div
+                  style={{
+                    borderRadius: '8px',
+                    background: 'rgba(59, 130, 246, 0.2)',
+                    padding: '12px',
+                    display: 'inline-block',
+                    marginBottom: '12px',
+                  }}
+                >
+                  📈
+                </div>
+                <p style={{ margin: 0, fontSize: '14px' }}>
+                  No knowledge statistics available yet.
+                  <br />
+                  Stats will populate as the knowledge base grows.
+                </p>
               </div>
             )}
           </div>

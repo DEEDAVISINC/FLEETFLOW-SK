@@ -24,7 +24,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-001',
     name: 'John Smith',
-    email: 'john.smith@fleetflow.com',
+    email: 'john.smith@fleetflowapp.com',
     phone: '+1 (555) 123-4567',
     licenseNumber: 'CDL-TX-123456',
     carrierMC: 'MC-123456',
@@ -40,7 +40,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-002',
     name: 'Sarah Wilson',
-    email: 'sarah.wilson@fleetflow.com',
+    email: 'sarah.wilson@fleetflowapp.com',
     phone: '+1 (555) 234-5678',
     licenseNumber: 'CDL-CA-234567',
     carrierMC: 'MC-234567',
@@ -56,7 +56,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-003',
     name: 'Mike Johnson',
-    email: 'mike.johnson@fleetflow.com',
+    email: 'mike.johnson@fleetflowapp.com',
     phone: '+1 (555) 345-6789',
     licenseNumber: 'CDL-FL-345678',
     carrierMC: 'MC-345678',

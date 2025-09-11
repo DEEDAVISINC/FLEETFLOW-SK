@@ -1162,12 +1162,12 @@ export const getSectionPermissions = (user: User): PageSectionPermissions => {
 
 // Mock users with custom permission examples
 export const MOCK_USERS: User[] = [
-  { id: 'admin-001', name: 'System Admin', email: 'admin@fleetflow.com', role: 'admin', departmentCode: 'MGR' },
-  { id: 'mgr-001', name: 'Fleet Manager', email: 'manager@fleetflow.com', role: 'manager', departmentCode: 'MGR' },
+  { id: 'admin-001', name: 'System Admin', email: 'admin@fleetflowapp.com', role: 'admin', departmentCode: 'MGR' },
+  { id: 'mgr-001', name: 'Fleet Manager', email: 'manager@fleetflowapp.com', role: 'manager', departmentCode: 'MGR' },
   
   // Dispatchers (DC Department)
-  { id: 'disp-001', name: 'Sarah Johnson', email: 'sarah@fleetflow.com', role: 'dispatcher', departmentCode: 'DC', assignedBrokers: ['broker-001', 'broker-002'] },
-  { id: 'disp-002', name: 'Mike Chen', email: 'mike@fleetflow.com', role: 'dispatcher', departmentCode: 'DC', assignedBrokers: ['broker-003'] },
+  { id: 'disp-001', name: 'Sarah Johnson', email: 'sarah@fleetflowapp.com', role: 'dispatcher', departmentCode: 'DC', assignedBrokers: ['broker-001', 'broker-002'] },
+  { id: 'disp-002', name: 'Mike Chen', email: 'mike@fleetflowapp.com', role: 'dispatcher', departmentCode: 'DC', assignedBrokers: ['broker-003'] },
   
   // Brokers (BB Department)
   { id: 'broker-001', name: 'John Smith', email: 'john.smith@globalfreight.com', role: 'broker', departmentCode: 'BB', brokerId: 'broker-001', dispatcherId: 'disp-001', companyName: 'Global Freight Solutions' },
@@ -1175,17 +1175,17 @@ export const MOCK_USERS: User[] = [
   { id: 'broker-003', name: 'David Wilson', email: 'david.wilson@express.com', role: 'broker', departmentCode: 'BB', brokerId: 'broker-003', dispatcherId: 'disp-002', companyName: 'Express Cargo' },
   
   // Drivers (DM Department)
-  { id: 'driver-001', name: 'Robert Johnson', email: 'robert.j@fleetflow.com', role: 'driver', departmentCode: 'DM' },
-  { id: 'driver-002', name: 'Michelle Davis', email: 'michelle.d@fleetflow.com', role: 'driver', departmentCode: 'DM' },
+  { id: 'driver-001', name: 'Robert Johnson', email: 'robert.j@fleetflowapp.com', role: 'driver', departmentCode: 'DM' },
+  { id: 'driver-002', name: 'Michelle Davis', email: 'michelle.d@fleetflowapp.com', role: 'driver', departmentCode: 'DM' },
   
   // Instructors
-  { id: 'instructor-001', name: 'Dr. Patricia Wilson', email: 'p.wilson@fleetflow.com', role: 'instructor', departmentCode: 'MGR' },
+  { id: 'instructor-001', name: 'Dr. Patricia Wilson', email: 'p.wilson@fleetflowapp.com', role: 'instructor', departmentCode: 'MGR' },
   
   // Example: Custom permissions for a dispatcher with limited access
   { 
     id: 'disp-003', 
     name: 'Limited Dispatcher', 
-    email: 'limited@fleetflow.com', 
+    email: 'limited@fleetflowapp.com', 
     role: 'dispatcher', 
     departmentCode: 'DC',
     customPermissions: {

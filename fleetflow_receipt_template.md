@@ -3,9 +3,7 @@
 ```
 ======================================================================
                 FLEETFLOW TMS
-         Transportation Management System
-           755 W. Big Beaver Rd. STE 2020
-              Troy, Michigan 48084
+         FleetFlow Business Intelligence
               (833) 386-3509
            www.fleetflowapp.com
 ======================================================================
@@ -52,6 +50,8 @@ Questions? Contact us:
 📧 support@fleetflowapp.com
 📞 (833) 386-3509
 🌐 www.fleetflowapp.com
+📍 755 W. Big Beaver Rd. STE 2020
+   Troy, Michigan 48084
 
 This receipt serves as confirmation of payment and may be used for
 accounting and tax purposes.

@@ -398,7 +398,7 @@ export default function ProfessionalTemplateManager({
                 background: brandingProfile.colors.primary,
                 borderRadius: '4px',
               }}
-            ></div>
+             />
             <div>
               <div style={{ fontSize: '12px', fontWeight: '600' }}>
                 {brandingProfile.companyName}
@@ -693,7 +693,7 @@ export default function ProfessionalTemplateManager({
                         height: '24px',
                         borderRadius: '4px',
                       }}
-                    ></div>
+                     />
                   </div>
 
                   <p

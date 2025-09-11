@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>({
     id: 'U001',
     name: 'Fleet Manager',
-    email: 'manager@fleetflow.com',
+    email: 'manager@fleetflowapp.com',
     role: 'Admin',
     permissions: ['all']
   });

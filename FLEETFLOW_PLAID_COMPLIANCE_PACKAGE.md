@@ -468,11 +468,11 @@ public getPlaidComplianceStatus(): {
 
 ### Compliance Team
 
-**Chief Privacy Officer** Email: privacy@fleetflow.com
+**Chief Privacy Officer** Email: privacy@fleetflowapp.com
 
-**Data Protection Officer** Email: dpo@fleetflow.com
+**Data Protection Officer** Email: dpo@fleetflowapp.com
 
-**Legal Compliance Team** Email: legal@fleetflow.com
+**Legal Compliance Team** Email: legal@fleetflowapp.com
 
 ### Documentation Repository
 

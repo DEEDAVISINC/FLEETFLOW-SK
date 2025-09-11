@@ -679,7 +679,7 @@ export default function AITaskAssignmentSystem() {
                         <div className='mb-2 flex items-center gap-2'>
                           <div
                             className={`h-3 w-3 rounded-full ${getUrgencyColor(staff.currentAssignment.urgencyLevel)}`}
-                          ></div>
+                           />
                           <h4 className='font-medium capitalize'>
                             {staff.currentAssignment.targetType.replace(
                               '_',
@@ -870,7 +870,7 @@ export default function AITaskAssignmentSystem() {
                         <div className='flex items-center gap-2'>
                           <div
                             className={`h-2 w-2 rounded-full ${getUrgencyColor(preset.criteria.urgencyLevel)}`}
-                          ></div>
+                           />
                           <p className='font-medium capitalize'>
                             {preset.criteria.urgencyLevel}
                           </p>

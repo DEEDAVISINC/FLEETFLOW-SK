@@ -144,8 +144,8 @@ https://fleetflow-staging.vercel.app
 
 ```
 https://fleetflow.vercel.app
-https://fleetflow.com
-https://www.fleetflow.com
+https://fleetflowapp.com
+https://www.fleetflowapp.com
 ```
 
 ## 🛠️ Setup Instructions

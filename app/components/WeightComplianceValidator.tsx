@@ -123,7 +123,7 @@ export default function WeightComplianceValidator({
         </h3>
         {isLoading && (
           <div className='flex items-center space-x-2'>
-            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white'></div>
+            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-white' />
             <span className='text-sm'>Evaluating...</span>
           </div>
         )}

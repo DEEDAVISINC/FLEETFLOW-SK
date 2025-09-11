@@ -508,7 +508,7 @@ export default function LoadBoardPortal() {
               animation: 'spin 1s linear infinite',
               marginBottom: '16px',
             }}
-          ></div>
+           />
           <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '16px' }}>
             Loading The Flow Hub...
           </p>
@@ -568,7 +568,7 @@ export default function LoadBoardPortal() {
                   width: '1px',
                   background: 'rgba(255, 255, 255, 0.2)',
                 }}
-              ></div>
+               />
               <h1
                 style={{
                   fontSize: '28px',
@@ -751,7 +751,7 @@ export default function LoadBoardPortal() {
                       borderRadius: '50%',
                       animation: 'spin 1s linear infinite',
                     }}
-                  ></div>
+                   />
                   <p
                     style={{
                       color: 'white',
@@ -964,7 +964,7 @@ export default function LoadBoardPortal() {
                             borderRadius: '50%',
                             background: 'rgba(255, 255, 255, 0.4)',
                           }}
-                        ></div>
+                         />
                         <span
                           style={{
                             fontSize: '12px',
@@ -991,7 +991,7 @@ export default function LoadBoardPortal() {
                           ? '0 0 8px rgba(34, 197, 94, 0.5)'
                           : 'none',
                       }}
-                    ></div>
+                     />
                   </div>
 
                   {/* Description */}

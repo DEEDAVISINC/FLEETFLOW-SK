@@ -107,14 +107,22 @@ export default function SignIn() {
 
   const getUserInfo = (email: string) => {
     const userMap = {
-      'admin@fleetflow.com': { email, name: 'FleetFlow Admin', role: 'admin' },
-      'dispatch@fleetflow.com': {
+      'admin@fleetflowapp.com': {
+        email,
+        name: 'FleetFlow Admin',
+        role: 'admin',
+      },
+      'dispatch@fleetflowapp.com': {
         email,
         name: 'Dispatch Manager',
         role: 'dispatcher',
       },
-      'driver@fleetflow.com': { email, name: 'John Smith', role: 'driver' },
-      'broker@fleetflow.com': { email, name: 'Sarah Wilson', role: 'broker' },
+      'driver@fleetflowapp.com': { email, name: 'John Smith', role: 'driver' },
+      'broker@fleetflowapp.com': {
+        email,
+        name: 'Sarah Wilson',
+        role: 'broker',
+      },
       'vendor@abcmanufacturing.com': {
         email,
         name: 'ABC Manufacturing Corp',

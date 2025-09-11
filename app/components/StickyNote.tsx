@@ -40,7 +40,7 @@ export default function StickyNote({
   const user = {
     id: 'guest',
     name: 'Guest User',
-    email: 'guest@fleetflow.com',
+    email: 'guest@fleetflowapp.com',
     role: 'Viewer' as const
   }
   
@@ -56,12 +56,12 @@ export default function StickyNote({
   
   // Available team members for assignment
   const teamMembers = [
-    'dispatch@fleetflow.com',
-    'operations@fleetflow.com', 
-    'admin@fleetflow.com',
-    'john.smith@fleetflow.com',
-    'sarah.wilson@fleetflow.com',
-    'mike.johnson@fleetflow.com'
+    'dispatch@fleetflowapp.com',
+    'operations@fleetflowapp.com', 
+    'admin@fleetflowapp.com',
+    'john.smith@fleetflowapp.com',
+    'sarah.wilson@fleetflowapp.com',
+    'mike.johnson@fleetflowapp.com'
   ]
 
   // Load notes from localStorage (in production, this would be from your backend)

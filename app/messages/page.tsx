@@ -45,7 +45,7 @@ export default function MessageCenter() {
 
       setLoading(true);
       try {
-        let filters: MessageFilters = {};
+        const filters: MessageFilters = {};
 
         // Apply filters based on active tab
         switch (activeTab) {

@@ -94,7 +94,7 @@ export default function SubscriptionDashboard() {
     : {
         userId: 'demo_user',
         userName: 'Demo User',
-        userEmail: 'demo@fleetflow.com',
+        userEmail: 'demo@fleetflowapp.com',
       };
 
   const loadSubscriptionData = useCallback(async () => {

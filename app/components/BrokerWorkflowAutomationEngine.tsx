@@ -176,7 +176,7 @@ const BrokerWorkflowAutomationEngine: React.FC<
   if (loading) {
     return (
       <div className='flex h-96 items-center justify-center'>
-        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500'></div>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500' />
       </div>
     );
   }
@@ -690,7 +690,7 @@ const BrokerWorkflowAutomationEngine: React.FC<
                   <div
                     className='h-2 rounded-full bg-blue-500'
                     style={{ width: `${pipeline.progress}%` }}
-                  ></div>
+                   />
                 </div>
 
                 {/* Pipeline Steps */}
@@ -811,7 +811,7 @@ const BrokerWorkflowAutomationEngine: React.FC<
                           ? 'bg-yellow-500'
                           : 'bg-green-500'
                     }`}
-                  ></div>
+                   />
                   <div>
                     <p className='text-sm font-medium text-gray-900'>
                       {action.description}
@@ -1031,7 +1031,7 @@ const BrokerWorkflowAutomationEngine: React.FC<
                                       ? 'bg-yellow-500'
                                       : 'bg-blue-500'
                               }`}
-                            ></div>
+                             />
                             <div className='flex-1'>
                               <p className='text-sm font-medium text-gray-900'>
                                 {issue.description}
@@ -1202,7 +1202,7 @@ const BrokerWorkflowAutomationEngine: React.FC<
                                   key={actionIndex}
                                   className='flex items-center'
                                 >
-                                  <div className='mr-2 h-1 w-1 rounded-full bg-gray-400'></div>
+                                  <div className='mr-2 h-1 w-1 rounded-full bg-gray-400' />
                                   {action}
                                 </li>
                               )

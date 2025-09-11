@@ -158,7 +158,7 @@ const OnboardingComplianceCheck: React.FC<OnboardingComplianceCheckProps> = ({
               margin: '0 auto 20px',
               animation: 'spin 1s linear infinite',
             }}
-          ></div>
+           />
           <div
             style={{
               fontSize: '18px',

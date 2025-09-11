@@ -393,7 +393,7 @@ class UniversalQuoteService {
           estimatedDuration: 11.5,
           routePlanningStatus: 'not_planned',
         },
-        createdBy: 'dispatcher@fleetflow.com',
+        createdBy: 'dispatcher@fleetflowapp.com',
         notes: 'Regular customer, priority delivery',
       },
       {
@@ -452,7 +452,7 @@ class UniversalQuoteService {
           routePlanningStatus: 'optimized',
           lastRouteUpdate: '2024-01-17T14:30:00Z',
         },
-        createdBy: 'sales@fleetflow.com',
+        createdBy: 'sales@fleetflowapp.com',
         notes: 'Multiple delivery windows available',
       },
       {
@@ -520,7 +520,7 @@ class UniversalQuoteService {
             specialEquipment: ['Spill kit', 'Emergency contact system'],
           },
         },
-        createdBy: 'hazmat@fleetflow.com',
+        createdBy: 'hazmat@fleetflowapp.com',
         notes: 'Requires certified hazmat driver and special routing',
       },
     ];
@@ -534,101 +534,3 @@ class UniversalQuoteService {
 // Singleton instance
 export const universalQuoteService = new UniversalQuoteService();
 export default universalQuoteService;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

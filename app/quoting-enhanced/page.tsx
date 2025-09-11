@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import CompetitiveIntelligence from '../components/CompetitiveIntelligence';
+import { CompetitiveIntelligence } from '../components/CompetitiveIntelligence';
 import FreightQuotingDashboard from '../components/FreightQuotingDashboard';
 
 export default function EnhancedQuotingPage() {

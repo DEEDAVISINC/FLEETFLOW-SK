@@ -310,19 +310,19 @@ class UserProfileWorkflowService {
     const assignments: TrainingAssignment[] = [];
 
     moduleIds.forEach((moduleId, index) => {
-      const module = this.AVAILABLE_MODULES.find((m) => m.id === moduleId);
-      if (module) {
+      const moduleItem = this.AVAILABLE_MODULES.find((m) => m.id === moduleId);
+      if (moduleItem) {
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 30 * (index + 1)); // Stagger due dates
 
         assignments.push({
-          moduleId: module.id,
-          moduleName: module.name,
+          moduleId: moduleItem.id,
+          moduleName: moduleItem.name,
           assignedDate: new Date().toISOString().split('T')[0],
           dueDate: dueDate.toISOString().split('T')[0],
           priority: index === 0 ? 'Critical' : index === 1 ? 'High' : 'Medium',
           assignedBy: 'SYSTEM_AUTO_ASSIGN',
-          instructor: module.instructor,
+          instructor: moduleItem.instructor,
           status: 'assigned',
         });
       }

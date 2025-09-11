@@ -256,7 +256,7 @@ const demoEnvironments: DemoEnvironment[] = [
     id: 'DE-001',
     companyName: 'Microsoft Corporation',
     environmentType: 'Strategic Buyer Sandbox',
-    accessUrl: 'https://demo-microsoft.fleetflow.com',
+    accessUrl: 'https://demo-microsoft.fleetflowapp.com',
     createdDate: '2024-12-15T10:30:00Z',
     expiryDate: '2025-03-15T10:30:00Z',
     usageStats: {
@@ -276,7 +276,7 @@ const demoEnvironments: DemoEnvironment[] = [
     id: 'DE-002',
     companyName: 'ServiceNow Inc.',
     environmentType: 'Executive Demo',
-    accessUrl: 'https://demo-servicenow.fleetflow.com',
+    accessUrl: 'https://demo-servicenow.fleetflowapp.com',
     createdDate: '2024-12-14T16:45:00Z',
     expiryDate: '2025-01-14T16:45:00Z',
     usageStats: {

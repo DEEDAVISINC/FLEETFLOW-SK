@@ -136,7 +136,7 @@ export default function BrokerCommunicationHub({
       DELIVERY_DATE: 'TBD',
       RATE: '1,850',
       BROKER_NAME: 'John Smith',
-      BROKER_CONTACT: 'john@fleetflow.com',
+      BROKER_CONTACT: 'john@fleetflowapp.com',
       BROKER_PHONE: '+1-555-0123',
       COMPANY_NAME: 'FleetFlow Solutions',
       EXPIRY_TIME: '5:00 PM today',

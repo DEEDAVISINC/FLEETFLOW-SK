@@ -868,9 +868,9 @@ Check your app for full details.`
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px' }}>
                     {[
-                      { dept: 'Technical Support', contact: 'tech-support@fleetflow.com' },
+                      { dept: 'Technical Support', contact: 'tech-support@fleetflowapp.com' },
                       { dept: 'Twilio Account Issues', contact: 'support.twilio.com' },
-                      { dept: 'System Administrator', contact: 'admin@fleetflow.com' },
+                      { dept: 'System Administrator', contact: 'admin@fleetflowapp.com' },
                       { dept: 'Emergency Hotline', contact: '1-800-FLEET-911' }
                     ].map((contact, index) => (
                       <div key={index} style={{

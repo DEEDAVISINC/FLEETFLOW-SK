@@ -166,14 +166,14 @@ async function main() {
       name: 'FleetFlow Demo',
       address: '123 Main St, Atlanta, GA 30309',
       phone: '(555) 123-4567',
-      email: 'demo@fleetflow.com'
+      email: 'demo@fleetflowapp.com'
     }
   })
 
   // Create demo users
   const adminUser = await prisma.user.create({
     data: {
-      email: 'admin@fleetflow.com',
+      email: 'admin@fleetflowapp.com',
       name: 'Admin User',
       role: 'ADMIN',
       companyId: company.id
@@ -182,7 +182,7 @@ async function main() {
 
   const brokerUser = await prisma.user.create({
     data: {
-      email: 'broker@fleetflow.com',
+      email: 'broker@fleetflowapp.com',
       name: 'John Broker',
       role: 'BROKER',
       companyId: company.id

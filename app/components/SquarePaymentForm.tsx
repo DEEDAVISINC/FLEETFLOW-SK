@@ -44,10 +44,16 @@ function SquarePaymentForm({
     const initializeSquarePaymentForm = async () => {
       if (typeof window !== 'undefined' && window.Square) {
         try {
-          const payments = window.Square.payments(
-            process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID!,
-            process.env.NEXT_PUBLIC_SQUARE_ACCESS_TOKEN!
+          // Use FleetFlow's new Square credentials
+          const applicationId =
+            process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID ||
+            'sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw';
+          console.log(
+            '🟨 Square Payment Form initializing with Application ID:',
+            applicationId.substring(0, 20) + '...'
           );
+
+          const payments = window.Square.payments(applicationId);
 
           const card = await payments.card();
           await card.attach('#square-card-container');
@@ -172,7 +178,7 @@ function SquarePaymentForm({
         <div className='form-section'>
           <h4>Payment Information</h4>
           <div className='card-element-container'>
-            <div id='square-card-container' style={{ minHeight: '60px' }}></div>
+            <div id='square-card-container' style={{ minHeight: '60px' }} />
           </div>
 
           <div className='payment-notice'>
@@ -190,7 +196,7 @@ function SquarePaymentForm({
           <div className='terms-agreement'>
             <label className='checkbox-container'>
               <input type='checkbox' required />
-              <span className='checkmark'></span>I agree to the{' '}
+              <span className='checkmark' />I agree to the{' '}
               <a href='/terms' target='_blank'>
                 Terms of Service
               </a>{' '}
@@ -222,7 +228,7 @@ function SquarePaymentForm({
           >
             {isProcessing ? (
               <div className='processing'>
-                <div className='spinner'></div>
+                <div className='spinner' />
                 Processing...
               </div>
             ) : (

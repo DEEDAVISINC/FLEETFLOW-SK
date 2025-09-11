@@ -618,7 +618,7 @@ export default function CarrierLandingPage() {
               </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ color: '#14b8a6', fontSize: '1.5rem', marginBottom: '5px' }}>✉️</div>
-                <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '700' }}>carriers@fleetflow.com</div>
+                <div style={{ color: 'white', fontSize: '0.9rem', fontWeight: '700' }}>carriers@fleetflowapp.com</div>
                 <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}>2hr Response</div>
               </div>
               <div style={{ textAlign: 'center' }}>

@@ -16,10 +16,10 @@ All authentication is now unified through one secure 2FA system - **NO MORE CONF
 ### **👥 All User Types Now Included:**
 
 ```typescript
-✅ admin@fleetflow.com → Admin role
-✅ dispatch@fleetflow.com → Dispatcher role
-✅ driver@fleetflow.com → Driver role
-✅ broker@fleetflow.com → Broker role
+✅ admin@fleetflowapp.com → Admin role
+✅ dispatch@fleetflowapp.com → Dispatcher role
+✅ driver@fleetflowapp.com → Driver role
+✅ broker@fleetflowapp.com → Broker role
 ✅ vendor@abcmanufacturing.com → Vendor role (NEW)
 ✅ vendor@retaildist.com → Vendor role (NEW)
 ✅ vendor@techsolutions.com → Vendor role (NEW)
@@ -128,10 +128,10 @@ All authentication is now unified through one secure 2FA system - **NO MORE CONF
 ### **🏢 Internal FleetFlow Users:**
 
 ```
-admin@fleetflow.com / admin123 → Admin access
-dispatch@fleetflow.com / dispatch123 → Dispatcher operations
-driver@fleetflow.com / driver123 → Driver portal
-broker@fleetflow.com / broker123 → Broker functions
+admin@fleetflowapp.com / admin123 → Admin access
+dispatch@fleetflowapp.com / dispatch123 → Dispatcher operations
+driver@fleetflowapp.com / driver123 → Driver portal
+broker@fleetflowapp.com / broker123 → Broker functions
 ```
 
 ### **🏭 External Vendor Users:**

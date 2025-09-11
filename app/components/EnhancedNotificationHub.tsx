@@ -566,7 +566,7 @@ export const EnhancedNotificationHub: React.FC<NotificationHubProps> = ({
       <div className='flex-1 overflow-auto' style={{ maxHeight }}>
         {isLoading ? (
           <div className='flex items-center justify-center py-8'>
-            <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600'></div>
+            <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600' />
           </div>
         ) : error ? (
           <div className='p-4 text-center'>
@@ -624,7 +624,7 @@ export const EnhancedNotificationHub: React.FC<NotificationHubProps> = ({
 
                     {/* Unread Indicator */}
                     {!notification.isRead && (
-                      <div className='h-2 w-2 rounded-full bg-blue-600'></div>
+                      <div className='h-2 w-2 rounded-full bg-blue-600' />
                     )}
                   </div>
 

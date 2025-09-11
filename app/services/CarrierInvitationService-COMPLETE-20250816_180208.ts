@@ -188,7 +188,7 @@ Questions? Contact {{INVITER_EMAIL}}
         startedDate: '2024-12-15T11:00:00Z',
         completedDate: '2024-12-16T14:30:00Z',
         expiresDate: '2025-01-15T10:00:00Z',
-        invitationLink: 'https://fleetflow.com/onboard?ref=INV001&carrier=Highway%20Express',
+        invitationLink: 'https://fleetflowapp.com/onboard?ref=INV001&carrier=Highway%20Express',
         templateUsed: 'default-email',
         source: 'broker_portal',
         metadata: {
@@ -214,7 +214,7 @@ Questions? Contact {{INVITER_EMAIL}}
         openedDate: '2024-12-18T09:45:00Z',
         startedDate: '2024-12-18T10:15:00Z',
         expiresDate: '2025-01-18T09:15:00Z',
-        invitationLink: 'https://fleetflow.com/onboard?ref=INV002&carrier=Rocky%20Mountain%20Freight',
+        invitationLink: 'https://fleetflowapp.com/onboard?ref=INV002&carrier=Rocky%20Mountain%20Freight',
         customMessage: 'We have consistent loads on I-80 corridor that would be perfect for your operation.',
         templateUsed: 'default-email',
         source: 'dispatch_central',
@@ -240,7 +240,7 @@ Questions? Contact {{INVITER_EMAIL}}
         status: 'sent',
         sentDate: '2024-12-19T16:30:00Z',
         expiresDate: '2025-01-19T16:30:00Z',
-        invitationLink: 'https://fleetflow.com/onboard?ref=INV003&carrier=Elite%20Transport%20Solutions',
+        invitationLink: 'https://fleetflowapp.com/onboard?ref=INV003&carrier=Elite%20Transport%20Solutions',
         templateUsed: 'default-email',
         source: 'enhanced_portal',
         metadata: {
@@ -297,7 +297,7 @@ Questions? Contact {{INVITER_EMAIL}}
 
   // Generate invitation link with pre-filled data
   private generateInvitationLink(invitationData: Partial<CarrierInvitation>): string {
-    const baseUrl = 'https://fleetflow.com/carriers/enhanced-portal';
+    const baseUrl = 'https://fleetflowapp.com/carriers/enhanced-portal';
     const params = new URLSearchParams();
     
     if (invitationData.id) params.set('ref', invitationData.id);

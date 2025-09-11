@@ -145,7 +145,7 @@ const BrokerFinancialDashboard: React.FC<BrokerFinancialDashboardProps> = ({
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
           }}
-        ></div>
+         />
       </div>
     );
   }
@@ -1922,7 +1922,7 @@ const BrokerFinancialDashboard: React.FC<BrokerFinancialDashboardProps> = ({
                   <div
                     className='h-2 rounded-full bg-blue-500'
                     style={{ width: `${category.percentage}%` }}
-                  ></div>
+                   />
                 </div>
                 <div className='grid grid-cols-2 gap-2 text-sm md:grid-cols-4'>
                   {category.subcategories.map((sub: any, subIndex: number) => (

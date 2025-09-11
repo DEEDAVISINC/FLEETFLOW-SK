@@ -6022,7 +6022,7 @@ export default function FreightFlowQuotingEngine() {
                                   (quote.details.miles || 500) / 55,
                                 routePlanningStatus: 'not_planned' as const,
                               },
-                              createdBy: 'quoting-system@fleetflow.com',
+                              createdBy: 'quoting-system@fleetflowapp.com',
                               notes: `Converted from ${quote.type} quote ${quote.quoteNumber}`,
                             };
 

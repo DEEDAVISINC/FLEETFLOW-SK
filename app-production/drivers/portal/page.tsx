@@ -323,9 +323,9 @@ export default function DriversPortalPage() {
                       Demo Login Credentials:
                     </h4>
                     <div style={{ fontSize: '13px', color: '#374151', lineHeight: '1.5' }}>
-                      <div><strong>John Rodriguez:</strong> driver_001 or john.rodriguez@fleetflow.com</div>
-                      <div><strong>Maria Santos:</strong> driver_002 or maria.santos@fleetflow.com</div>
-                      <div><strong>David Johnson:</strong> driver_003 or david.johnson@fleetflow.com</div>
+                      <div><strong>John Rodriguez:</strong> driver_001 or john.rodriguez@fleetflowapp.com</div>
+                      <div><strong>Maria Santos:</strong> driver_002 or maria.santos@fleetflowapp.com</div>
+                      <div><strong>David Johnson:</strong> driver_003 or david.johnson@fleetflowapp.com</div>
                       <div style={{ marginTop: '8px', fontStyle: 'italic' }}>
                         Password: Any password will work for demo
                       </div>

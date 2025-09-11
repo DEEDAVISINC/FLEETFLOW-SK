@@ -270,7 +270,7 @@ class TrainingProgressManager {
     const trainingModule = progress.modules.find(
       (m) => m.moduleId === moduleId
     );
-    return module?.certificateEligible || false;
+    return trainingModule?.certificateEligible || false;
   }
 
   // Get module completion percentage
@@ -280,7 +280,7 @@ class TrainingProgressManager {
       (m) => m.moduleId === moduleId
     );
 
-    if (!module) return 0;
+    if (!trainingModule) return 0;
 
     const requirements = this.getModuleRequirements(moduleId);
     const completedLessons = trainingModule.lessons.filter(

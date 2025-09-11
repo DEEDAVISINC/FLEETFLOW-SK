@@ -130,8 +130,8 @@ export class FreightEmailAI {
     this.tenantConfigs.set('fleetflow-default', {
       tenantId: 'fleetflow-default',
       companyName: 'FleetFlow',
-      fromEmail: 'loads@fleetflow.com',
-      replyToEmail: 'loads@fleetflow.com',
+      fromEmail: 'loads@fleetflowapp.com',
+      replyToEmail: 'loads@fleetflowapp.com',
       phoneNumber: '+1-833-386-3509',
       brandingColors: {
         primary: '#14b8a6',
@@ -144,7 +144,7 @@ export class FreightEmailAI {
 Best regards,
 FleetFlow AI Assistant
 📞 Direct: +1-833-386-3509
-📧 loads@fleetflow.com
+📧 loads@fleetflowapp.com
 
 P.S. Our AI system can book loads 24/7 - even after hours!
       `,
@@ -1753,7 +1753,7 @@ These loads are moving fast - I'd love to discuss rates and get you booked today
 Best regards,
 Sarah - FleetFlow AI Assistant
 📞 Direct: +1-833-386-3509
-📧 loads@fleetflow.com
+📧 loads@fleetflowapp.com
 
 P.S. Our AI system can book loads 24/7 - even after hours!
       `,
@@ -1777,9 +1777,9 @@ I'd love to provide you with an instant quote. Can I call you in the next 30 min
 Best regards,
 FleetFlow Freight Solutions
 📞 +1-833-386-3509
-📧 quotes@fleetflow.com
+📧 quotes@fleetflowapp.com
 
-**Get instant quote:** fleetflow.com/quote
+**Get instant quote:** fleetflowapp.com/quote
       `,
 
       rate_quote: `

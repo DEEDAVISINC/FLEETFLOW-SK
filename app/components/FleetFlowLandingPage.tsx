@@ -188,7 +188,7 @@ export default function FleetFlowLandingPage() {
         }}
       >
         {/* Hero Section */}
-        <div style={{ marginBottom: '50px', maxWidth: '800px' }}>
+        <header style={{ marginBottom: '50px', maxWidth: '800px' }}>
           <h1
             style={{
               fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
@@ -237,6 +237,7 @@ export default function FleetFlowLandingPage() {
                 cursor: 'pointer',
                 boxShadow: '0 3px 12px rgba(59,130,246,0.25)',
               }}
+              aria-label='Book an enterprise demo of FleetFlow'
             >
               Book Enterprise Demo
             </button>
@@ -253,18 +254,27 @@ export default function FleetFlowLandingPage() {
                   cursor: 'pointer',
                   backdropFilter: 'blur(10px)',
                 }}
+                aria-label='Sign in to your FleetFlow account'
               >
                 Log In
               </button>
             </Link>
           </div>
-        </div>
+        </header>
 
         {/* Autoplay App Screenshots Video */}
-        <FleetFlowAppVideo autoPlay={true} />
+        <section aria-labelledby='app-demo-heading'>
+          <h2 id='app-demo-heading' className='sr-only'>
+            FleetFlow App Demo
+          </h2>
+          <FleetFlowAppVideo autoPlay={true} />
+        </section>
 
         {/* Go With the Flow Section */}
-        <div style={{ marginTop: '50px', marginBottom: '50px' }}>
+        <section
+          style={{ marginTop: '50px', marginBottom: '50px' }}
+          aria-labelledby='marketplace-heading'
+        >
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.1)',
@@ -277,8 +287,9 @@ export default function FleetFlowLandingPage() {
               boxShadow: '0 8px 25px rgba(244, 168, 50, 0.3)',
             }}
           >
-            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <header style={{ textAlign: 'center', marginBottom: '30px' }}>
               <h2
+                id='marketplace-heading'
                 style={{
                   fontSize: '2.5rem',
                   fontWeight: '800',
@@ -289,646 +300,642 @@ export default function FleetFlowLandingPage() {
               >
                 🌊 Go With the Flow
               </h2>
-              <p
+            </header>
+            <p
+              style={{
+                fontSize: '1.3rem',
+                color: 'white',
+                lineHeight: '1.6',
+                marginBottom: '25px',
+                fontWeight: '500',
+              }}
+            >
+              An advanced{' '}
+              <strong style={{ color: '#f4a832' }}>instant marketplace</strong>{' '}
+              - connecting shippers and drivers in real-time with AI-powered
+              matching and dynamic pricing.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '25px',
+              marginBottom: '30px',
+            }}
+          >
+            {/* For Shippers */}
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.15)',
+                borderRadius: '12px',
+                padding: '25px',
+                border: '1px solid rgba(59, 130, 246, 0.4)',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+                  📦
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.4rem',
+                    color: '#3b82f6',
+                    marginBottom: '15px',
+                    fontWeight: '700',
+                  }}
+                >
+                  For Shippers
+                </h3>
+              </div>
+              <ul
                 style={{
-                  fontSize: '1.3rem',
                   color: 'white',
-                  lineHeight: '1.6',
-                  marginBottom: '25px',
-                  fontWeight: '500',
+                  fontSize: '1rem',
+                  lineHeight: '1.5',
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: 0,
                 }}
               >
-                An advanced{' '}
-                <strong style={{ color: '#f4a832' }}>
-                  instant marketplace
-                </strong>{' '}
-                - connecting shippers and drivers in real-time with AI-powered
-                matching and dynamic pricing.
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Request trucks instantly - no waiting
+                </li>
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  AI-powered fair pricing
+                </li>
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Real-time driver matching
+                </li>
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Live GPS tracking & updates
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  No long-term contracts required
+                </li>
+              </ul>
+            </div>
+
+            {/* For Drivers */}
+            <div
+              style={{
+                background: 'rgba(244, 168, 50, 0.15)',
+                borderRadius: '12px',
+                padding: '25px',
+                border: '1px solid rgba(244, 168, 50, 0.4)',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+                  🚛
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.4rem',
+                    color: '#f4a832',
+                    marginBottom: '15px',
+                    fontWeight: '700',
+                  }}
+                >
+                  For Drivers
+                </h3>
+              </div>
+              <ul
+                style={{
+                  color: 'white',
+                  fontSize: '1rem',
+                  lineHeight: '1.5',
+                  listStyle: 'none',
+                  padding: 0,
+                  margin: 0,
+                }}
+              >
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Go online/offline instantly
+                </li>
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Find high-paying loads nearby
+                </li>
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Competitive market rates
+                </li>
+                <li
+                  style={{
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Fast payment processing
+                </li>
+                <li style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ color: '#10b981', marginRight: '8px' }}>
+                    ✓
+                  </span>
+                  Build your reputation & earnings
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.15)',
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '25px',
+                border: '1px solid rgba(16, 185, 129, 0.4)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '1.3rem',
+                  color: '#10b981',
+                  marginBottom: '10px',
+                  fontWeight: '700',
+                }}
+              >
+                🤖 Powered by Advanced AI
+              </h3>
+              <p
+                style={{
+                  color: 'white',
+                  fontSize: '1rem',
+                  lineHeight: '1.5',
+                  margin: 0,
+                }}
+              >
+                Our intelligent system analyzes market conditions, traffic
+                patterns, fuel costs, and demand in real-time to provide optimal
+                pricing and instant matching.
               </p>
+            </div>
+
+            {/* GO WITH THE FLOW Marketplace Subscription Section */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                borderRadius: '16px',
+                padding: '40px',
+                marginBottom: '40px',
+                border: '1px solid rgba(244, 168, 50, 0.3)',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <h2
+                  style={{
+                    fontSize: '2.2rem',
+                    color: '#f4a832',
+                    marginBottom: '15px',
+                    fontWeight: '700',
+                  }}
+                >
+                  🌊 GO WITH THE FLOW Marketplace
+                </h2>
+                <p
+                  style={{
+                    fontSize: '1.2rem',
+                    color: 'rgba(255,255,255,0.9)',
+                    lineHeight: '1.6',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Start FREE, Scale with Premium Features
+                </p>
+                <p
+                  style={{
+                    fontSize: '1rem',
+                    color: 'rgba(255,255,255,0.7)',
+                    lineHeight: '1.5',
+                  }}
+                >
+                  Carriers get FREE access • Shippers pay for premium
+                  marketplace features
+                </p>
+              </div>
+
+              {/* Subscription Tiers Grid */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '20px',
+                  marginBottom: '30px',
+                }}
+              >
+                {/* Free Tier */}
+                <div
+                  style={{
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    borderRadius: '12px',
+                    padding: '25px',
+                    border: '2px solid rgba(59, 130, 246, 0.3)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                    🎁
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#3b82f6',
+                      marginBottom: '10px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    FREE-FLOW
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#3b82f6',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    $0/month
+                  </div>
+                  <ul
+                    style={{
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.5',
+                      listStyle: 'none',
+                      padding: 0,
+                      margin: 0,
+                      textAlign: 'left',
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>✅ 5 loads/month</li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Basic load posting
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Standard carrier access
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>✅ Email support</li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ❌ Premium dispatch services
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ❌ Priority carrier matching
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ❌ Load value cap: $750/load
+                    </li>
+                  </ul>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      marginTop: '15px',
+                      width: '100%',
+                    }}
+                  >
+                    Start FREE Trial
+                  </button>
+                </div>
+
+                {/* Professional Tier */}
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.1)',
+                    borderRadius: '12px',
+                    padding: '25px',
+                    border: '2px solid rgba(16, 185, 129, 0.3)',
+                    textAlign: 'center',
+                    transform: 'scale(1.05)',
+                  }}
+                >
+                  <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                    🚀
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#10b981',
+                      marginBottom: '10px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    PRO-FLOW
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#10b981',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    $249/month
+                  </div>
+                  <ul
+                    style={{
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.5',
+                      listStyle: 'none',
+                      padding: 0,
+                      margin: 0,
+                      textAlign: 'left',
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ 25 loads/month included
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Priority load promotion
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Premium carrier access
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>✅ Phone support</li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Basic dispatch ($50/load)
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Advanced analytics
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ No load value limits
+                    </li>
+                  </ul>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      marginTop: '15px',
+                      width: '100%',
+                    }}
+                  >
+                    Start Professional
+                  </button>
+                </div>
+
+                {/* Enterprise Tier */}
+                <div
+                  style={{
+                    background: 'rgba(244, 168, 50, 0.1)',
+                    borderRadius: '12px',
+                    padding: '25px',
+                    border: '2px solid rgba(244, 168, 50, 0.3)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                    🏢
+                  </div>
+                  <h3
+                    style={{
+                      fontSize: '1.3rem',
+                      color: '#f4a832',
+                      marginBottom: '10px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    FLOW ON THE GO
+                  </h3>
+                  <div
+                    style={{
+                      fontSize: '2rem',
+                      fontWeight: 'bold',
+                      color: '#f4a832',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    $699/month
+                  </div>
+                  <ul
+                    style={{
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.5',
+                      listStyle: 'none',
+                      padding: 0,
+                      margin: 0,
+                      textAlign: 'left',
+                    }}
+                  >
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ 100 loads/month included
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ VIP load promotion
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Elite carrier network
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Dedicated account manager
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ Advanced dispatch ($100/load)
+                    </li>
+                    <li style={{ marginBottom: '8px' }}>✅ API integration</li>
+                    <li style={{ marginBottom: '8px' }}>
+                      ✅ White-glove service
+                    </li>
+                  </ul>
+                  <button
+                    style={{
+                      background: 'linear-gradient(135deg, #f4a832, #d97706)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      marginTop: '15px',
+                      width: '100%',
+                    }}
+                  >
+                    Start Enterprise
+                  </button>
+                </div>
+              </div>
+
+              {/* Verification Notice */}
+              <div
+                style={{
+                  marginTop: '20px',
+                  padding: '15px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                <p
+                  style={{
+                    color: 'white',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.4',
+                    margin: 0,
+                    textAlign: 'center',
+                  }}
+                >
+                  🔒 <strong>Business Verification Required:</strong> All
+                  accounts require verified business credentials, insurance, and
+                  compliance documentation for marketplace access.
+                </p>
+              </div>
             </div>
 
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '25px',
-                marginBottom: '30px',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '20px',
               }}
             >
-              {/* For Shippers */}
-              <div
-                style={{
-                  background: 'rgba(59, 130, 246, 0.15)',
-                  borderRadius: '12px',
-                  padding: '25px',
-                  border: '1px solid rgba(59, 130, 246, 0.4)',
-                }}
-              >
-                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
-                    📦
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: '1.4rem',
-                      color: '#3b82f6',
-                      marginBottom: '15px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    For Shippers
-                  </h3>
-                </div>
-                <ul
+              <Link href='/go-with-the-flow'>
+                <button
                   style={{
+                    background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
                     color: 'white',
-                    fontSize: '1rem',
-                    lineHeight: '1.5',
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                  }}
-                >
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Request trucks instantly - no waiting
-                  </li>
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    AI-powered fair pricing
-                  </li>
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Real-time driver matching
-                  </li>
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Live GPS tracking & updates
-                  </li>
-                  <li style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    No long-term contracts required
-                  </li>
-                </ul>
-              </div>
-
-              {/* For Drivers */}
-              <div
-                style={{
-                  background: 'rgba(244, 168, 50, 0.15)',
-                  borderRadius: '12px',
-                  padding: '25px',
-                  border: '1px solid rgba(244, 168, 50, 0.4)',
-                }}
-              >
-                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
-                    🚛
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: '1.4rem',
-                      color: '#f4a832',
-                      marginBottom: '15px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    For Drivers
-                  </h3>
-                </div>
-                <ul
-                  style={{
-                    color: 'white',
-                    fontSize: '1rem',
-                    lineHeight: '1.5',
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                  }}
-                >
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Go online/offline instantly
-                  </li>
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Find high-paying loads nearby
-                  </li>
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Competitive market rates
-                  </li>
-                  <li
-                    style={{
-                      marginBottom: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Fast payment processing
-                  </li>
-                  <li style={{ display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#10b981', marginRight: '8px' }}>
-                      ✓
-                    </span>
-                    Build your reputation & earnings
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  background: 'rgba(16, 185, 129, 0.15)',
-                  borderRadius: '12px',
-                  padding: '20px',
-                  marginBottom: '25px',
-                  border: '1px solid rgba(16, 185, 129, 0.4)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '1.3rem',
-                    color: '#10b981',
-                    marginBottom: '10px',
+                    border: '2px solid #f4a832',
+                    padding: '15px 30px',
+                    borderRadius: '10px',
+                    fontSize: '1.1rem',
                     fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 15px rgba(244, 168, 50, 0.4)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow =
+                      '0 0 20px rgba(244, 168, 50, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow =
+                      '0 0 15px rgba(244, 168, 50, 0.4)';
                   }}
                 >
-                  🤖 Powered by Advanced AI
-                </h3>
-                <p
+                  🚀 Start Using Go With the Flow
+                </button>
+              </Link>
+
+              <Link href='/launchpad'>
+                <button
                   style={{
+                    background:
+                      'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
                     color: 'white',
-                    fontSize: '1rem',
-                    lineHeight: '1.5',
-                    margin: 0,
+                    border: '2px solid rgba(59, 130, 246, 0.8)',
+                    padding: '15px 30px',
+                    borderRadius: '10px',
+                    fontSize: '1.1rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 15px rgba(59, 130, 246, 0.4)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.boxShadow =
+                      '0 0 20px rgba(59, 130, 246, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow =
+                      '0 0 15px rgba(59, 130, 246, 0.4)';
                   }}
                 >
-                  Our intelligent system analyzes market conditions, traffic
-                  patterns, fuel costs, and demand in real-time to provide
-                  optimal pricing and instant matching.
-                </p>
-              </div>
-
-              {/* GO WITH THE FLOW Marketplace Subscription Section */}
-              <div
-                style={{
-                  background: 'rgba(15, 23, 42, 0.8)',
-                  borderRadius: '16px',
-                  padding: '40px',
-                  marginBottom: '40px',
-                  border: '1px solid rgba(244, 168, 50, 0.3)',
-                }}
-              >
-                <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                  <h2
-                    style={{
-                      fontSize: '2.2rem',
-                      color: '#f4a832',
-                      marginBottom: '15px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    🌊 GO WITH THE FLOW Marketplace
-                  </h2>
-                  <p
-                    style={{
-                      fontSize: '1.2rem',
-                      color: 'rgba(255,255,255,0.9)',
-                      lineHeight: '1.6',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    Start FREE, Scale with Premium Features
-                  </p>
-                  <p
-                    style={{
-                      fontSize: '1rem',
-                      color: 'rgba(255,255,255,0.7)',
-                      lineHeight: '1.5',
-                    }}
-                  >
-                    Carriers get FREE access • Shippers pay for premium
-                    marketplace features
-                  </p>
-                </div>
-
-                {/* Subscription Tiers Grid */}
-                <div
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '20px',
-                    marginBottom: '30px',
-                  }}
-                >
-                  {/* Free Tier */}
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      borderRadius: '12px',
-                      padding: '25px',
-                      border: '2px solid rgba(59, 130, 246, 0.3)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
-                      🎁
-                    </div>
-                    <h3
-                      style={{
-                        fontSize: '1.3rem',
-                        color: '#3b82f6',
-                        marginBottom: '10px',
-                        fontWeight: '700',
-                      }}
-                    >
-                      FREE-FLOW
-                    </h3>
-                    <div
-                      style={{
-                        fontSize: '2rem',
-                        fontWeight: 'bold',
-                        color: '#3b82f6',
-                        marginBottom: '15px',
-                      }}
-                    >
-                      $0/month
-                    </div>
-                    <ul
-                      style={{
-                        color: 'white',
-                        fontSize: '0.9rem',
-                        lineHeight: '1.5',
-                        listStyle: 'none',
-                        padding: 0,
-                        margin: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      <li style={{ marginBottom: '8px' }}>✅ 5 loads/month</li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Basic load posting
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Standard carrier access
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>✅ Email support</li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ❌ Premium dispatch services
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ❌ Priority carrier matching
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ❌ Load value cap: $750/load
-                      </li>
-                    </ul>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: '8px',
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        marginTop: '15px',
-                        width: '100%',
-                      }}
-                    >
-                      Start FREE Trial
-                    </button>
-                  </div>
-
-                  {/* Professional Tier */}
-                  <div
-                    style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      borderRadius: '12px',
-                      padding: '25px',
-                      border: '2px solid rgba(16, 185, 129, 0.3)',
-                      textAlign: 'center',
-                      transform: 'scale(1.05)',
-                    }}
-                  >
-                    <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
-                      🚀
-                    </div>
-                    <h3
-                      style={{
-                        fontSize: '1.3rem',
-                        color: '#10b981',
-                        marginBottom: '10px',
-                        fontWeight: '700',
-                      }}
-                    >
-                      PRO-FLOW
-                    </h3>
-                    <div
-                      style={{
-                        fontSize: '2rem',
-                        fontWeight: 'bold',
-                        color: '#10b981',
-                        marginBottom: '15px',
-                      }}
-                    >
-                      $249/month
-                    </div>
-                    <ul
-                      style={{
-                        color: 'white',
-                        fontSize: '0.9rem',
-                        lineHeight: '1.5',
-                        listStyle: 'none',
-                        padding: 0,
-                        margin: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ 25 loads/month included
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Priority load promotion
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Premium carrier access
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>✅ Phone support</li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Basic dispatch ($50/load)
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Advanced analytics
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ No load value limits
-                      </li>
-                    </ul>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #10b981, #059669)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: '8px',
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        marginTop: '15px',
-                        width: '100%',
-                      }}
-                    >
-                      Start Professional
-                    </button>
-                  </div>
-
-                  {/* Enterprise Tier */}
-                  <div
-                    style={{
-                      background: 'rgba(244, 168, 50, 0.1)',
-                      borderRadius: '12px',
-                      padding: '25px',
-                      border: '2px solid rgba(244, 168, 50, 0.3)',
-                      textAlign: 'center',
-                    }}
-                  >
-                    <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
-                      🏢
-                    </div>
-                    <h3
-                      style={{
-                        fontSize: '1.3rem',
-                        color: '#f4a832',
-                        marginBottom: '10px',
-                        fontWeight: '700',
-                      }}
-                    >
-                      FLOW ON THE GO
-                    </h3>
-                    <div
-                      style={{
-                        fontSize: '2rem',
-                        fontWeight: 'bold',
-                        color: '#f4a832',
-                        marginBottom: '15px',
-                      }}
-                    >
-                      $699/month
-                    </div>
-                    <ul
-                      style={{
-                        color: 'white',
-                        fontSize: '0.9rem',
-                        lineHeight: '1.5',
-                        listStyle: 'none',
-                        padding: 0,
-                        margin: 0,
-                        textAlign: 'left',
-                      }}
-                    >
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ 100 loads/month included
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ VIP load promotion
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Elite carrier network
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Dedicated account manager
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ Advanced dispatch ($100/load)
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ API integration
-                      </li>
-                      <li style={{ marginBottom: '8px' }}>
-                        ✅ White-glove service
-                      </li>
-                    </ul>
-                    <button
-                      style={{
-                        background: 'linear-gradient(135deg, #f4a832, #d97706)',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: '8px',
-                        fontSize: '0.9rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        marginTop: '15px',
-                        width: '100%',
-                      }}
-                    >
-                      Start Enterprise
-                    </button>
-                  </div>
-                </div>
-
-                {/* Verification Notice */}
-                <div
-                  style={{
-                    marginTop: '20px',
-                    padding: '15px',
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                  }}
-                >
-                  <p
-                    style={{
-                      color: 'white',
-                      fontSize: '0.9rem',
-                      lineHeight: '1.4',
-                      margin: 0,
-                      textAlign: 'center',
-                    }}
-                  >
-                    🔒 <strong>Business Verification Required:</strong> All
-                    accounts require verified business credentials, insurance,
-                    and compliance documentation for marketplace access.
-                  </p>
-                </div>
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '20px',
-                }}
-              >
-                <Link href='/go-with-the-flow'>
-                  <button
-                    style={{
-                      background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
-                      color: 'white',
-                      border: '2px solid #f4a832',
-                      padding: '15px 30px',
-                      borderRadius: '10px',
-                      fontSize: '1.1rem',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: '0 0 15px rgba(244, 168, 50, 0.4)',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.05)';
-                      e.currentTarget.style.boxShadow =
-                        '0 0 20px rgba(244, 168, 50, 0.6)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                      e.currentTarget.style.boxShadow =
-                        '0 0 15px rgba(244, 168, 50, 0.4)';
-                    }}
-                  >
-                    🚀 Start Using Go With the Flow
-                  </button>
-                </Link>
-
-                <Link href='/launchpad'>
-                  <button
-                    style={{
-                      background:
-                        'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-                      color: 'white',
-                      border: '2px solid rgba(59, 130, 246, 0.8)',
-                      padding: '15px 30px',
-                      borderRadius: '10px',
-                      fontSize: '1.1rem',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: '0 0 15px rgba(59, 130, 246, 0.4)',
-                      transition: 'all 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.05)';
-                      e.currentTarget.style.boxShadow =
-                        '0 0 20px rgba(59, 130, 246, 0.6)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                      e.currentTarget.style.boxShadow =
-                        '0 0 15px rgba(59, 130, 246, 0.4)';
-                    }}
-                  >
-                    🎯 Explore LaunchPad℠
-                  </button>
-                </Link>
-              </div>
+                  🎯 Explore LaunchPad℠
+                </button>
+              </Link>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Professional Subscription Section */}
         <div style={{ marginTop: '50px', marginBottom: '60px' }}>
@@ -2114,8 +2121,12 @@ export default function FleetFlowLandingPage() {
         </div>
 
         {/* Who It's For Section */}
-        <div style={{ marginBottom: '60px', maxWidth: '800px' }}>
+        <section
+          style={{ marginBottom: '60px', maxWidth: '800px' }}
+          aria-labelledby='audience-heading'
+        >
           <h2
+            id='audience-heading'
             style={{
               fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
               fontWeight: 'bold',
@@ -2211,11 +2222,15 @@ export default function FleetFlowLandingPage() {
               </button>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Platform Reliability & Trust */}
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+        <section
+          style={{ textAlign: 'center', marginBottom: '60px' }}
+          aria-labelledby='reliability-heading'
+        >
           <h2
+            id='reliability-heading'
             style={{
               fontSize: '2.2rem',
               fontWeight: '700',
@@ -2634,7 +2649,7 @@ export default function FleetFlowLandingPage() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Demo Booking Modal */}

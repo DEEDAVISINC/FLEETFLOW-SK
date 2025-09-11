@@ -32,7 +32,9 @@ interface CompetitiveIntelligenceProps {
   equipment?: string;
 }
 
-const CompetitiveIntelligence: React.FC<CompetitiveIntelligenceProps> = ({
+export const CompetitiveIntelligence: React.FC<
+  CompetitiveIntelligenceProps
+> = ({
   origin = 'Los Angeles, CA',
   destination = 'Chicago, IL',
   equipment = 'Dry Van',

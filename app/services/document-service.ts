@@ -84,7 +84,7 @@ USDOT Number: [FleetFlow USDOT]
 MC Number: MC-123456
 Federal Tax ID: [Tax ID]
 Phone: (555) 123-4567
-Email: contracts@fleetflow.com
+Email: contracts@fleetflowapp.com
 Emergency Contact: Operations Manager - (555) 123-4567
 
 CARRIER:
@@ -446,7 +446,7 @@ DISPATCHER: FleetFlow Logistics LLC (Dispatch Services Division)
 MC Number: MC-123456
 Address: [Dispatcher Address]
 Phone: (555) 123-4567
-Email: dispatch@fleetflow.com
+Email: dispatch@fleetflowapp.com
 
 CARRIER: ${carrierData.legalName || '[Carrier Name]'}
 MC Number: ${carrierData.mcNumber || '[MC Number]'}
@@ -732,7 +732,7 @@ FleetFlow Technologies, Inc. - AI Flow Platform Division
       signedBy: signerData.signerName,
       signedDate: currentDate,
       signerTitle: signerData.signerTitle,
-      distributionList: [carrierData.email, 'contracts@fleetflow.com'],
+      distributionList: [carrierData.email, 'contracts@fleetflowapp.com'],
       metadata: {
         carrierInfo: carrierData,
         brokerInfo: signerData,
@@ -826,7 +826,7 @@ FleetFlow Technologies, Inc. - AI Flow Platform Division
       signedBy: signerData.signerName,
       signedDate: currentDate,
       signerTitle: signerData.signerTitle,
-      distributionList: [carrierData.email, 'contracts@fleetflow.com'],
+      distributionList: [carrierData.email, 'contracts@fleetflowapp.com'],
       metadata: {
         carrierInfo: carrierData,
         brokerInfo: signerData,
@@ -877,7 +877,7 @@ PARTIES TO THIS AGREEMENT:
 COMPANY: FleetFlow Transportation LLC
 Business Address: [FleetFlow Business Address]
 MC Number: MC-123456
-Contact: contracts@fleetflow.com
+Contact: contracts@fleetflowapp.com
 
 CONTRACTOR: ${signerData.signerName}
 Title: ${signerData.signerTitle || 'Independent Contractor'}
@@ -1068,7 +1068,7 @@ Security Level: CONFIDENTIAL - Authorized Personnel Only
    */
   public async storeAgreement(document: AgreementDocument): Promise<string> {
     // In production, this would upload to cloud storage
-    const storageUrl = `https://documents.fleetflow.com/agreements/${document.id}.pdf`;
+    const storageUrl = `https://documents.fleetflowapp.com/agreements/${document.id}.pdf`;
     console.info(`💾 Storing agreement: ${storageUrl}`);
     return storageUrl;
   }

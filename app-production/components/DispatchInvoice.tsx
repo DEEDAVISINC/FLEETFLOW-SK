@@ -49,8 +49,8 @@ const DispatchInvoice = forwardRef<HTMLDivElement, DispatchInvoiceProps>(
       name: 'FleetFlow Dispatch Services',
       address: '1234 Logistics Way, Suite 100\nAtlanta, GA 30309',
       phone: '(555) 123-4567',
-      email: 'billing@fleetflow.com',
-      website: 'www.fleetflow.com',
+      email: 'billing@fleetflowapp.com',
+      website: 'www.fleetflowapp.com',
       logo: '🚛'
     };
 
@@ -262,7 +262,7 @@ export const generateInvoicePDF = async (invoice: InvoiceData) => {
   pdf.setFont('helvetica', 'normal');
   pdf.text('1234 Logistics Way, Suite 100', 20, 35);
   pdf.text('Atlanta, GA 30309', 20, 42);
-  pdf.text('Phone: (555) 123-4567 | Email: billing@fleetflow.com', 20, 49);
+  pdf.text('Phone: (555) 123-4567 | Email: billing@fleetflowapp.com', 20, 49);
 
   // Invoice Info
   pdf.setFontSize(16);

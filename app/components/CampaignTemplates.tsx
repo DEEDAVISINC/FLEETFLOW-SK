@@ -678,7 +678,7 @@ export default function CampaignTemplates() {
       name: 'Carrier Dispatch Services Campaign',
       description:
         'Target carriers who need professional dispatch services - 10% of their load fees revenue stream',
-      category: 'dispatch_services',
+      category: 'lead_generation',
       targetAudience:
         'Carriers needing dispatch support, load management, and fee collection services',
       expectedResults: {
@@ -750,7 +750,7 @@ export default function CampaignTemplates() {
       name: 'Carrier/Owner Operator Acquisition Campaign',
       description:
         'Proactively recruit carriers and owner operators to build dispatch network featuring GO WITH THE FLOW instant load matching and MARKETPLACE BIDDING competitive opportunities - earn 6-10% load fees',
-      category: 'carrier_acquisition',
+      category: 'lead_generation',
       targetAudience:
         'Independent carriers, owner operators, and small trucking companies seeking dispatch partnerships',
       expectedResults: {
@@ -824,7 +824,7 @@ export default function CampaignTemplates() {
       name: 'Flatbed Carrier Network Expansion',
       description:
         'Target flatbed carriers specializing in construction materials, machinery, and oversized equipment - HIGH MARGIN OPPORTUNITY featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with premium rates (12-15% load fees)',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Flatbed carriers, heavy haul specialists, and equipment transporters with oversized load experience',
       expectedResults: {
@@ -885,7 +885,7 @@ export default function CampaignTemplates() {
       name: 'Refrigerated Carrier Acquisition',
       description:
         'Target temperature-controlled carriers for food, pharmaceuticals, and perishable goods - CONSISTENT HIGH DEMAND featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with steady revenue streams',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Reefer carriers, temperature-controlled specialists, and cold chain logistics providers',
       expectedResults: {
@@ -945,7 +945,7 @@ export default function CampaignTemplates() {
       name: 'Dry Van Carrier Fleet Growth',
       description:
         'Target dry van carriers for general freight and LTL shipments - HIGH VOLUME OPPORTUNITY featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with consistent load availability',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Dry van carriers, general freight specialists, and LTL transportation providers',
       expectedResults: {
@@ -1006,7 +1006,7 @@ export default function CampaignTemplates() {
       name: 'Owner-Operator Acquisition Blitz',
       description:
         'Target independent owner-operators and solo drivers - FLEXIBLE HIGH-MARGIN RECRUITMENT featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with premium dispatch fees',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Independent owner-operators, solo drivers, and small carrier businesses',
       expectedResults: {
@@ -1066,7 +1066,7 @@ export default function CampaignTemplates() {
       name: 'Regional Carrier Partnership Program',
       description:
         'Target regional carriers for local and short-haul opportunities - STEADY RELIABLE REVENUE featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing within defined geographic areas',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Regional carriers, local trucking companies, and short-haul specialists',
       expectedResults: {
@@ -1128,7 +1128,7 @@ export default function CampaignTemplates() {
       name: 'Dump Truck Network Development',
       description:
         'Target dump truck carriers for construction materials, aggregates, and bulk commodities - PREMIUM RATES (15-20% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for high-demand construction materials',
-      category: 'specialty_equipment',
+      category: 'lead_generation',
       targetAudience:
         'Dump truck carriers, construction material haulers, and aggregate transportation specialists with proper licensing and equipment',
       expectedResults: {
@@ -1193,7 +1193,7 @@ export default function CampaignTemplates() {
       name: 'Cement & Bulk Carrier Acquisition',
       description:
         'Target cement mixers and bulk carriers for construction materials - ULTRA-PREMIUM RATES (18-25% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for time-critical construction projects',
-      category: 'specialty_equipment',
+      category: 'lead_generation',
       targetAudience:
         'Cement carriers, bulk material haulers, and ready-mix concrete transportation specialists',
       expectedResults: {
@@ -1258,7 +1258,7 @@ export default function CampaignTemplates() {
       name: 'Oversized Heavy Haul Carrier Network',
       description:
         'Target heavy haul carriers for oversized and overweight equipment - MAXIMUM PREMIUM RATES (20-30% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with pilot car coordination',
-      category: 'specialty_equipment',
+      category: 'lead_generation',
       targetAudience:
         'Heavy haul carriers, oversized load specialists, and industrial equipment transporters with proper permits and pilot car services',
       expectedResults: {
@@ -1323,7 +1323,7 @@ export default function CampaignTemplates() {
       name: 'Lowboy Trailer Carrier Network',
       description:
         'Target lowboy trailer carriers for heavy machinery and equipment transport - PREMIUM RATES (16-22% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for construction equipment',
-      category: 'specialty_equipment',
+      category: 'lead_generation',
       targetAudience:
         'Lowboy trailer carriers, heavy equipment haulers, and machinery transportation specialists',
       expectedResults: {
@@ -1388,7 +1388,7 @@ export default function CampaignTemplates() {
       name: 'Tanker & Chemical Carrier Acquisition',
       description:
         'Target tanker carriers for liquids, chemicals, and hazardous materials - HIGH COMPLIANCE PREMIUM RATES (15-20% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with HazMat expertise',
-      category: 'specialty_equipment',
+      category: 'lead_generation',
       targetAudience:
         'Tanker carriers, chemical haulers, and hazardous materials transportation specialists with proper certifications',
       expectedResults: {
@@ -1453,7 +1453,7 @@ export default function CampaignTemplates() {
       name: 'Pilot Car Escort Service Network',
       description:
         'Target pilot car drivers and escort services for oversized loads - ESSENTIAL SUPPORT SERVICE (8-12% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for oversized load coordination',
-      category: 'specialty_equipment',
+      category: 'lead_generation',
       targetAudience:
         'Pilot car drivers, escort service providers, and oversized load coordination specialists',
       expectedResults: {
@@ -1519,7 +1519,7 @@ export default function CampaignTemplates() {
       name: 'Healthcare & Pharma Distribution Blitz - PREMIER CAMPAIGN',
       description:
         'Target hospitals, pharmacies, and medical suppliers with temperature-controlled and time-sensitive freight needs - HIGH VALUE SPECIALIZATION featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing',
-      category: 'industry_specific',
+      category: 'lead_generation',
       targetAudience:
         'Healthcare facilities, pharmaceutical distributors, medical suppliers, and biotech companies',
       expectedResults: {
@@ -1590,7 +1590,7 @@ export default function CampaignTemplates() {
       name: 'E-commerce Seasonal Rush Blitz',
       description:
         'Target online retailers and e-commerce companies during peak shopping seasons with express delivery solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing',
-      category: 'seasonal_ecommerce',
+      category: 'lead_generation',
       targetAudience:
         'E-commerce retailers, online marketplaces, and direct-to-consumer brands',
       expectedResults: {
@@ -1661,7 +1661,7 @@ export default function CampaignTemplates() {
       name: 'Regional Market Penetration Blitz',
       description:
         'Target specific geographic regions with localized freight solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with regional carrier partnerships',
-      category: 'geographic_focus',
+      category: 'lead_generation',
       targetAudience:
         'Regional manufacturers, distributors, and businesses in target markets',
       expectedResults: {
@@ -1732,7 +1732,7 @@ export default function CampaignTemplates() {
       name: 'Enterprise Account Conversion Blitz',
       description:
         'Target large corporations currently using multiple carriers with comprehensive enterprise freight solutions featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing',
-      category: 'enterprise_focus',
+      category: 'lead_generation',
       targetAudience:
         'Large corporations, Fortune 1000 companies, and enterprise-level shippers',
       expectedResults: {
@@ -1803,7 +1803,7 @@ export default function CampaignTemplates() {
       name: 'Recovery Relationship Blitz',
       description:
         'Target businesses that have had bad freight experiences and are seeking reliable alternatives',
-      category: 'recovery_focus',
+      category: 'lead_generation',
       targetAudience:
         'Businesses recovering from poor freight experiences, damaged relationships, or service failures',
       expectedResults: {
@@ -1874,7 +1874,7 @@ export default function CampaignTemplates() {
       name: 'Referral Network Acceleration Blitz',
       description:
         'Leverage existing satisfied customers to generate high-quality referrals and expand network rapidly',
-      category: 'referral_focus',
+      category: 'lead_generation',
       targetAudience:
         'Existing satisfied customers and their professional networks',
       expectedResults: {
@@ -1945,7 +1945,7 @@ export default function CampaignTemplates() {
       name: 'Food & Beverage Supply Chain Blitz',
       description:
         'Target food manufacturers, distributors, and restaurants with temperature-controlled and time-critical freight',
-      category: 'industry_specific',
+      category: 'lead_generation',
       targetAudience:
         'Food manufacturers, beverage producers, restaurants, and grocery chains',
       expectedResults: {
@@ -2580,7 +2580,7 @@ export default function CampaignTemplates() {
       name: 'Construction Dump Truck Load Acquisition',
       description:
         'Target construction companies, demolition firms, and earth-moving contractors who need dump truck services for bulk material transport',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Construction companies, demolition contractors, landscaping firms, mining operations',
       expectedResults: {
@@ -2641,7 +2641,7 @@ export default function CampaignTemplates() {
       name: 'Cement & Bulk Carrier Load Acquisition',
       description:
         'Target cement plants, ready-mix concrete producers, and bulk material suppliers needing pneumatic and dry bulk transport',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Cement manufacturers, ready-mix plants, aggregate suppliers, chemical processors',
       expectedResults: {
@@ -2702,7 +2702,7 @@ export default function CampaignTemplates() {
       name: 'Oversized Heavy Haul Load Acquisition',
       description:
         'Target industrial manufacturers, construction equipment dealers, and machinery movers needing oversized transport services',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Heavy equipment manufacturers, construction machinery dealers, industrial plant builders',
       expectedResults: {
@@ -2762,7 +2762,7 @@ export default function CampaignTemplates() {
       name: 'Lowboy Trailer Load Acquisition',
       description:
         'Target construction equipment dealers, crane companies, and industrial equipment manufacturers needing lowboy transport',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Construction equipment dealers, crane rental companies, industrial equipment manufacturers',
       expectedResults: {
@@ -2822,7 +2822,7 @@ export default function CampaignTemplates() {
       name: 'Tanker & Chemical Transport Load Acquisition',
       description:
         'Target chemical manufacturers, petroleum distributors, and hazardous material shippers needing specialized tanker transport',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Chemical manufacturers, petroleum distributors, hazardous waste companies',
       expectedResults: {
@@ -2883,7 +2883,7 @@ export default function CampaignTemplates() {
       name: 'Pilot Car Escort Service Load Acquisition',
       description:
         'Target oversized load shippers and heavy haul carriers needing certified pilot car escort services',
-      category: 'carrier_specialization',
+      category: 'lead_generation',
       targetAudience:
         'Heavy haul carriers, oversized load shippers, construction companies',
       expectedResults: {
@@ -3063,7 +3063,7 @@ export default function CampaignTemplates() {
       name: 'Air Freight Express Network Blitz - PREMIUM SPEED CAMPAIGN',
       description:
         'Target time-critical shippers and high-value cargo companies with air freight solutions - PREMIUM RATES (18-25% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with airport partnerships',
-      category: 'air_freight',
+      category: 'lead_generation',
       targetAudience:
         'E-commerce companies, electronics manufacturers, pharmaceuticals, perishables, and time-sensitive cargo shippers',
       expectedResults: {
@@ -3139,7 +3139,7 @@ export default function CampaignTemplates() {
       name: 'Maritime Container Network Blitz - GLOBAL TRADE CAMPAIGN',
       description:
         'Target international shippers and importers with ocean freight solutions - CONTAINER RATES (12-18% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with port partnerships',
-      category: 'maritime_freight',
+      category: 'lead_generation',
       targetAudience:
         'International manufacturers, importers, retailers, and global supply chain companies',
       expectedResults: {
@@ -3215,7 +3215,7 @@ export default function CampaignTemplates() {
       name: 'Express Air Cargo Acceleration Blitz - URGENT DELIVERY FOCUS',
       description:
         'Target pharmaceutical, electronics, and e-commerce companies with same-day/next-day air cargo solutions - PREMIUM EXPRESS RATES (20-28% load fees) featuring GO WITH THE FLOW instant matching with emergency routing',
-      category: 'air_freight',
+      category: 'lead_generation',
       targetAudience:
         'Pharmaceutical distributors, electronics manufacturers, urgent e-commerce, medical supplies, and perishable goods companies',
       expectedResults: {
@@ -3291,7 +3291,7 @@ export default function CampaignTemplates() {
       name: 'International Container Shipping Blitz - GLOBAL EXPANSION',
       description:
         'Target multinational corporations and global manufacturers with full container shipping solutions - ENTERPRISE RATES (10-15% load fees) featuring GO WITH THE FLOW instant matching with international consolidation',
-      category: 'maritime_freight',
+      category: 'lead_generation',
       targetAudience:
         'Multinational corporations, global manufacturers, international retailers, and enterprise-level importers',
       expectedResults: {
@@ -3367,7 +3367,7 @@ export default function CampaignTemplates() {
       name: 'Air Charter Emergency Response Blitz - CRITICAL MISSIONS',
       description:
         'Target emergency services, disaster relief, and critical medical transport with air charter solutions - EMERGENCY RATES (25-35% load fees) featuring GO WITH THE FLOW instant matching with priority aircraft availability',
-      category: 'air_freight',
+      category: 'lead_generation',
       targetAudience:
         'Emergency services, disaster relief organizations, medical transport companies, and critical supply chain providers',
       expectedResults: {
@@ -3443,7 +3443,7 @@ export default function CampaignTemplates() {
       name: 'Bulk Ocean Shipping Network Blitz - VOLUME OPTIMIZATION',
       description:
         'Target manufacturers and commodity traders with bulk ocean shipping solutions - VOLUME DISCOUNTS (8-12% load fees) featuring GO WITH THE FLOW instant matching with bulk consolidation services',
-      category: 'maritime_freight',
+      category: 'lead_generation',
       targetAudience:
         'Agricultural exporters, mining companies, chemical manufacturers, and bulk commodity traders',
       expectedResults: {
@@ -3522,7 +3522,7 @@ export default function CampaignTemplates() {
       name: 'FEMA Tender of Service Program (STOS) - Complete Registration & LSCMS-C Setup',
       description:
         'Complete FEMA STOS Program registration for DEE DAVIS INC freight brokerage (SCAC: DFCL) including $300K cargo insurance verification, ACORD form submission, LSCMS-C access control setup (Document Upload & Web Tenders), TSP registration, and full onboarding process for disaster relief transportation services across all modes: FTL, LTL, Maritime, Air, Rail, and TTHU',
-      category: 'government_contracting',
+      category: 'lead_generation',
       targetAudience:
         'FEMA Transportation Programs (FEMA-Transportation-Programs@fema.dhs.gov), Federal Emergency Management Agency Logistics Management Directorate, Disaster Relief Organizations, Emergency Services Procurement Officers, FEMA Logistics Supply Chain Management System (LSCMS-C) Administrators',
       expectedResults: {
@@ -5822,9 +5822,9 @@ export default function CampaignTemplates() {
                     }}
                   >
                     $
-                    {(selectedTemplate.expectedResults.revenue / 1000).toFixed(
-                      0
-                    )}
+                    {(
+                      selectedTemplate.expectedResults.totalRevenue / 1000
+                    ).toFixed(0)}
                     K
                   </p>
                 </div>

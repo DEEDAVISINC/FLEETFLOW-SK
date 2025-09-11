@@ -78,11 +78,11 @@ node scripts/seed-supabase.js
 
 ```bash
 # Creates demo users for testing:
-# 1. Admin user: admin@fleetflow.com
-# 2. Dispatcher: dispatcher@fleetflow.com
-# 3. Driver: driver@fleetflow.com
-# 4. Broker: broker@fleetflow.com
-# 5. Manager: manager@fleetflow.com
+# 1. Admin user: admin@fleetflowapp.com
+# 2. Dispatcher: dispatcher@fleetflowapp.com
+# 3. Driver: driver@fleetflowapp.com
+# 4. Broker: broker@fleetflowapp.com
+# 5. Manager: manager@fleetflowapp.com
 
 # Each with appropriate role-based permissions
 ```
@@ -169,13 +169,13 @@ node scripts/seed-supabase.js
 
 ```sql
 -- Admin Users
-admin@fleetflow.com (password: admin123)
-manager@fleetflow.com (password: manager123)
+admin@fleetflowapp.com (password: admin123)
+manager@fleetflowapp.com (password: manager123)
 
 -- Operational Users
-dispatcher@fleetflow.com (password: dispatch123)
-broker@fleetflow.com (password: broker123)
-driver@fleetflow.com (password: driver123)
+dispatcher@fleetflowapp.com (password: dispatch123)
+broker@fleetflowapp.com (password: broker123)
+driver@fleetflowapp.com (password: driver123)
 
 -- DEPOINTE/FREIGHT 1ST DIRECT Users
 ddavis@freight1stdirect.com (Owner)

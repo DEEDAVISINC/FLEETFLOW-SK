@@ -146,7 +146,7 @@ const launchPadReferral = {
   serviceType: 'mc_authority',
   partnerId: 'rapid_registration',
   commissionRate: 0.25,
-  webhookUrl: 'https://launchpad.fleetflow.com/webhook/commission',
+  webhookUrl: 'https://launchpad.fleetflowapp.com/webhook/commission',
 };
 
 // Automated commission tracking
@@ -271,7 +271,7 @@ app.post('/webhook/commission', (req, res) => {
 const partnerAuth = {
   clientId: process.env.PARTNER_CLIENT_ID,
   clientSecret: process.env.PARTNER_CLIENT_SECRET,
-  redirectUri: 'https://launchpad.fleetflow.com/auth/callback',
+  redirectUri: 'https://launchpad.fleetflowapp.com/auth/callback',
   scope: ['referrals:read', 'commissions:write'],
 };
 ```

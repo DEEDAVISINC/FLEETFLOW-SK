@@ -16,7 +16,9 @@ import {
 import UserProfileWorkflowService, {
   UserProfileWorkflowData,
 } from '../services/UserProfileWorkflowService';
-import UserDataService, { UserProfile as UserProfileType } from '../services/user-data-service';
+import UserDataService, {
+  UserProfile as UserProfileType,
+} from '../services/user-data-service';
 import UserIdentifierService from '../services/user-identifier-service';
 
 // Default empty user profile structure

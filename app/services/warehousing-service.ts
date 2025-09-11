@@ -141,7 +141,7 @@ class WarehousingService {
         contactInfo: {
           manager: 'Sarah Johnson',
           phone: '+1-404-555-0123',
-          email: 'atlanta@fleetflow.com',
+          email: 'atlanta@fleetflowapp.com',
         },
       },
       {
@@ -170,7 +170,7 @@ class WarehousingService {
         contactInfo: {
           manager: 'Michael Rodriguez',
           phone: '+1-214-555-0456',
-          email: 'dallas@fleetflow.com',
+          email: 'dallas@fleetflowapp.com',
         },
       },
       {
@@ -199,7 +199,7 @@ class WarehousingService {
         contactInfo: {
           manager: 'Jennifer Chen',
           phone: '+1-312-555-0789',
-          email: 'chicago@fleetflow.com',
+          email: 'chicago@fleetflowapp.com',
         },
       },
     ];

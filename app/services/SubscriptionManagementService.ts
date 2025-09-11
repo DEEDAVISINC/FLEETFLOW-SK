@@ -917,8 +917,8 @@ export class SubscriptionManagementService {
   static calculateAlacartePrice(selectedModules: string[]): number {
     const basePrice = 59; // À la carte professional base
     const modulePrice = selectedModules.reduce((total, moduleId) => {
-      const module = this.ALACARTE_MODULES.find((m) => m.id === moduleId);
-      return total + (module ? module.price : 0);
+      const moduleItem = this.ALACARTE_MODULES.find((m) => m.id === moduleId);
+      return total + (moduleItem ? moduleItem.price : 0);
     }, 0);
     return basePrice + modulePrice;
   }
@@ -942,9 +942,9 @@ export class SubscriptionManagementService {
 
     // Add features from selected modules
     selectedModules.forEach((moduleId) => {
-      const module = this.ALACARTE_MODULES.find((m) => m.id === moduleId);
-      if (module) {
-        features.push(...module.features);
+      const moduleItem = this.ALACARTE_MODULES.find((m) => m.id === moduleId);
+      if (moduleItem) {
+        features.push(...moduleItem.features);
       }
     });
 

@@ -894,7 +894,7 @@ export default function CarrierLandingPage() {
                   Email Support
                 </h4>
                 <p style={{ color: 'white', fontSize: '1rem' }}>
-                  carriers@fleetflow.com
+                  carriers@fleetflowapp.com
                 </p>
                 <p
                   style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}

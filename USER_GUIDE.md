@@ -647,7 +647,7 @@ into logistics solutions across ALL industry verticals.
 
 ### **Logging In**
 
-1. **Navigate** to your FleetFlow URL (e.g., `https://yourcompany.fleetflow.com`)
+1. **Navigate** to your FleetFlow URL (e.g., `https://yourcompany.fleetflowapp.com`)
 2. **Enter** your email and password
 3. **Click** "Sign In"
 4. **Your role determines** what you'll see:
@@ -2190,9 +2190,9 @@ management, and department-specific templates for seamless internal coordination
 
 **Available Team Members**:
 
-- **Department Emails**: dispatch@fleetflow.com, operations@fleetflow.com, admin@fleetflow.com
-- **Specialized Teams**: safety@fleetflow.com, maintenance@fleetflow.com, finance@fleetflow.com
-- **Individual Users**: john.smith@fleetflow.com, sarah.wilson@fleetflow.com, etc.
+- **Department Emails**: dispatch@fleetflowapp.com, operations@fleetflowapp.com, admin@fleetflowapp.com
+- **Specialized Teams**: safety@fleetflowapp.com, maintenance@fleetflowapp.com, finance@fleetflowapp.com
+- **Individual Users**: john.smith@fleetflowapp.com, sarah.wilson@fleetflowapp.com, etc.
 - **Multi-Assignment**: Send to multiple team members simultaneously
 
 #### **🎯 Priority Management**

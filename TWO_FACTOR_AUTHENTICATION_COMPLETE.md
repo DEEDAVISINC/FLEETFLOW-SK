@@ -26,10 +26,10 @@ keeping vendor systems separate as requested.
 **Protected Accounts:**
 
 ```typescript
-✅ admin@fleetflow.com     → Admin access (email + SMS available)
-✅ dispatch@fleetflow.com  → Dispatcher operations (email + SMS available)
-✅ driver@fleetflow.com    → Driver portal (email + SMS available)
-✅ broker@fleetflow.com    → Broker functions (email + SMS available)
+✅ admin@fleetflowapp.com     → Admin access (email + SMS available)
+✅ dispatch@fleetflowapp.com  → Dispatcher operations (email + SMS available)
+✅ driver@fleetflowapp.com    → Driver portal (email + SMS available)
+✅ broker@fleetflowapp.com    → Broker functions (email + SMS available)
 ```
 
 ### **2. TwoFactorVerification Component** ✅
@@ -149,10 +149,10 @@ keeping vendor systems separate as requested.
 ### **Demo Credentials:**
 
 ```
-admin@fleetflow.com / admin123
-dispatch@fleetflow.com / dispatch123
-driver@fleetflow.com / driver123
-broker@fleetflow.com / broker123
+admin@fleetflowapp.com / admin123
+dispatch@fleetflowapp.com / dispatch123
+driver@fleetflowapp.com / driver123
+broker@fleetflowapp.com / broker123
 ```
 
 ### **Test Flow:**

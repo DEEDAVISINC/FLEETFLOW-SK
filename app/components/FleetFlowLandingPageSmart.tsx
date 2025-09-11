@@ -12,7 +12,7 @@ const FleetFlowLandingPageMobile = dynamic(
       <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'>
         <div className='text-center'>
           <div className='mb-6 text-7xl'>🚀</div>
-          <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent'></div>
+          <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent' />
           <h2 className='mb-2 text-2xl font-bold text-white'>FleetFlow</h2>
           <p className='text-white/80'>The Salesforce of Transportation</p>
         </div>
@@ -29,7 +29,7 @@ const FleetFlowLandingPageDesktop = dynamic(
       <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'>
         <div className='text-center'>
           <div className='mb-6 text-7xl'>🚀</div>
-          <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent'></div>
+          <div className='mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent' />
           <h2 className='mb-2 text-2xl font-bold text-white'>FleetFlow</h2>
           <p className='text-white/80'>The Salesforce of Transportation</p>
         </div>

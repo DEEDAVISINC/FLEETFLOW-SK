@@ -542,7 +542,7 @@ export default function BrokerDashboard() {
       id: 'broker-demo-001',
       brokerCode: 'DEMO001',
       brokerName: 'Demo Broker',
-      email: 'demo@fleetflow.com',
+      email: 'demo@fleetflowapp.com',
       role: 'broker',
       loginTime: new Date().toISOString(),
     };
@@ -6000,7 +6000,7 @@ export default function BrokerDashboard() {
                                             : '#ef4444',
                                       borderRadius: '3px',
                                     }}
-                                  ></div>
+                                   />
                                 </div>
                                 <span
                                   style={{
@@ -7469,7 +7469,7 @@ export default function BrokerDashboard() {
                             width: `${workflowStatus.progress}%`,
                             transition: 'width 0.3s ease',
                           }}
-                        ></div>
+                         />
                       </div>
 
                       <div style={{ display: 'grid', gap: '12px' }}>

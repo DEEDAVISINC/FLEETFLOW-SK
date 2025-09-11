@@ -246,8 +246,8 @@ We do not sell personal information. We may share data with:
 
 ## Contact Information
 
-Privacy Officer: privacy@fleetflow.com
-Data Protection Officer: dpo@fleetflow.com
+Privacy Officer: privacy@fleetflowapp.com
+Data Protection Officer: dpo@fleetflowapp.com
       `,
       effectiveDate: new Date('2024-01-01'),
       isActive: true,

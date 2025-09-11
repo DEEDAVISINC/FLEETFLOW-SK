@@ -48,8 +48,8 @@ export function PlatformAIMonitor() {
   if (!report) {
     return (
       <div className='animate-pulse rounded-lg border bg-white p-4 shadow-sm'>
-        <div className='mb-2 h-4 w-32 rounded bg-gray-200'></div>
-        <div className='h-6 w-24 rounded bg-gray-200'></div>
+        <div className='mb-2 h-4 w-32 rounded bg-gray-200' />
+        <div className='h-6 w-24 rounded bg-gray-200' />
       </div>
     );
   }
@@ -99,7 +99,7 @@ export function PlatformAIMonitor() {
                   ),
                 }}
                 title={`Quality Grade: ${report.metrics.quality.overallGrade}`}
-              ></div>
+               />
               <span className='text-xs text-gray-600'>
                 Grade: {report.metrics.quality.overallGrade}
               </span>
@@ -294,7 +294,7 @@ export function PlatformAIStatusBadge() {
   }, []);
 
   if (!status) {
-    return <div className='h-6 w-16 animate-pulse rounded bg-gray-200'></div>;
+    return <div className='h-6 w-16 animate-pulse rounded bg-gray-200' />;
   }
 
   return (
@@ -302,7 +302,7 @@ export function PlatformAIStatusBadge() {
       <div
         className='h-2 w-2 rounded-full'
         style={{ backgroundColor: getStatusColor(status.grade) }}
-      ></div>
+       />
       <span className='text-xs text-gray-700'>
         AI: {status.grade} | ${status.dailySpend.toFixed(2)}
       </span>

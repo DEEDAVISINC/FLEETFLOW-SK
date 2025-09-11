@@ -276,9 +276,9 @@ Standards**
 
 ### **Primary Contacts**
 
-- **Chief Privacy Officer**: privacy@fleetflow.com
-- **Data Protection Officer**: dpo@fleetflow.com
-- **Legal Compliance Team**: legal@fleetflow.com
+- **Chief Privacy Officer**: privacy@fleetflowapp.com
+- **Data Protection Officer**: dpo@fleetflowapp.com
+- **Legal Compliance Team**: legal@fleetflowapp.com
 
 ### **Company Information**
 

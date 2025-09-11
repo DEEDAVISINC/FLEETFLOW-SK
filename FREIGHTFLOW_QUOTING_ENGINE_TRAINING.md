@@ -563,7 +563,7 @@ Continue your professional development with:
 
 ### **Training Support**
 
-- **Email**: university@fleetflow.com
+- **Email**: university@fleetflowapp.com
 - **Live Chat**: Available during training sessions
 - **Phone**: (833) 386-3509 (training hours: 8 AM - 6 PM EST)
 

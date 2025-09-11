@@ -559,7 +559,7 @@ export const freightflowQuotingTrainingContent = {
       'System Updates: Regular feature announcements and training',
     ],
     support: {
-      email: 'university@fleetflow.com',
+      email: 'university@fleetflowapp.com',
       liveChat: 'Available during training sessions',
       phone: '(833) 386-3509 (training hours: 8 AM - 6 PM EST)',
     },

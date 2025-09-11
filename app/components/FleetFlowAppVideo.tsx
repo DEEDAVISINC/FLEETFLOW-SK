@@ -483,7 +483,7 @@ export function FleetFlowAppVideo({
               background: '#ef4444',
               borderRadius: '50%',
             }}
-          ></div>
+           />
           <div
             style={{
               width: '8px',
@@ -491,7 +491,7 @@ export function FleetFlowAppVideo({
               background: '#f59e0b',
               borderRadius: '50%',
             }}
-          ></div>
+           />
           <div
             style={{
               width: '8px',
@@ -499,7 +499,7 @@ export function FleetFlowAppVideo({
               background: '#10b981',
               borderRadius: '50%',
             }}
-          ></div>
+           />
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>

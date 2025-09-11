@@ -316,7 +316,7 @@ export default function RateConfirmation() {
     yPosition += 7;
     pdf.text('Address: 123 Main Street, Anytown, ST 12345', 20, yPosition);
     yPosition += 7;
-    pdf.text('Phone: (555) 123-4567 | Email: dispatch@fleetflow.com', 20, yPosition);
+    pdf.text('Phone: (555) 123-4567 | Email: dispatch@fleetflowapp.com', 20, yPosition);
     yPosition += 20;
 
     // Carrier Information

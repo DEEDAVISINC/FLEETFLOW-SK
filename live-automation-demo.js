@@ -170,9 +170,9 @@ class RouteAutomationDemo {
       }
 
       console.log(`   ✅ Route document generated (${routeDocument.length} characters)`);
-      console.log(`   📧 Email sent to: driver${route.driverId.slice(-3)}@fleetflow.com`);
+      console.log(`   📧 Email sent to: driver${route.driverId.slice(-3)}@fleetflowapp.com`);
       console.log(`   📱 SMS sent to: (555) ${route.driverId.slice(-3)}-XXXX`);
-      console.log(`   📋 Dispatch notified: dispatch@fleetflow.com\n`);
+      console.log(`   📋 Dispatch notified: dispatch@fleetflowapp.com\n`);
 
       // Show a preview of the generated document
       console.log(`📄 GENERATED DOCUMENT PREVIEW for ${route.routeName}:`);

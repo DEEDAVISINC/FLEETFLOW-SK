@@ -191,10 +191,10 @@ export default function UnifiedLoadboard({
     return (
       <div className={`rounded-lg bg-white p-6 shadow-lg ${className}`}>
         <div className='animate-pulse'>
-          <div className='mb-4 h-6 w-1/3 rounded bg-gray-200'></div>
+          <div className='mb-4 h-6 w-1/3 rounded bg-gray-200' />
           <div className='space-y-3'>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className='h-16 rounded bg-gray-200'></div>
+              <div key={i} className='h-16 rounded bg-gray-200' />
             ))}
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function UnifiedLoadboard({
           <div className='flex items-center space-x-3'>
             {showRealTimeStatus && (
               <div className='flex items-center space-x-2'>
-                <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+                <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
                 <span className='text-sm text-gray-600'>Live</span>
               </div>
             )}

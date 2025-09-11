@@ -49,7 +49,7 @@ export default function WorkflowDriverPortal() {
     dispatcherId: 'DSP-001',
     dispatcherName: 'Sarah Johnson',
     dispatcherPhone: '+1 (555) 987-6543',
-    dispatcherEmail: 'sarah.johnson@fleetflow.com',
+    dispatcherEmail: 'sarah.johnson@fleetflowapp.com',
     currentLocation: 'Dallas, TX',
     eldStatus: 'Connected',
     hoursRemaining: 8.5

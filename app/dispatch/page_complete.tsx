@@ -71,7 +71,7 @@ interface Driver {
 const dispatcher: DispatcherProfile = {
   id: 'disp-001',
   name: 'Sarah Johnson',
-  email: 'sarah.johnson@fleetflow.com',
+  email: 'sarah.johnson@fleetflowapp.com',
   phone: '(555) 123-4567',
   department: 'Operations',
   role: 'Senior Dispatcher',

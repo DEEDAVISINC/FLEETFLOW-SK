@@ -58,13 +58,13 @@ interface DeliveryVerification {
 const MOCK_DRIVER: DriverProfile = {
   id: 'DRV-001',
   name: 'John Smith',
-  email: 'john.smith@fleetflow.com',
+  email: 'john.smith@fleetflowapp.com',
   phone: '+1 (555) 123-4567',
   licenseNumber: 'CDL-TX-123456',
   assignedTruck: 'TRK-001 (Freightliner Cascadia)',
   dispatcherName: 'Sarah Johnson',
   dispatcherPhone: '+1 (555) 987-6543',
-  dispatcherEmail: 'sarah.johnson@fleetflow.com',
+  dispatcherEmail: 'sarah.johnson@fleetflowapp.com',
   currentLocation: 'Dallas, TX',
   eldStatus: 'Connected',
   hoursRemaining: 8.5

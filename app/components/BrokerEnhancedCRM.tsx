@@ -182,7 +182,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
   if (loading) {
     return (
       <div className='flex h-96 items-center justify-center'>
-        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500'></div>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500' />
       </div>
     );
   }
@@ -335,7 +335,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
                           ? 'bg-orange-500'
                           : 'bg-yellow-500'
                     }`}
-                  ></div>
+                   />
                   <div className='flex-1'>
                     <h4 className='text-sm font-medium text-gray-900'>
                       {rec.customerName}
@@ -526,7 +526,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
                                     <div
                                       className='h-2 rounded-full bg-blue-500'
                                       style={{ width: `${value}%` }}
-                                    ></div>
+                                     />
                                   </div>
                                   <span className='text-sm font-medium text-gray-900'>
                                     {value}
@@ -769,7 +769,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
                             <div
                               className='h-2 rounded-full bg-blue-500'
                               style={{ width: `${opp.probability}%` }}
-                            ></div>
+                             />
                           </div>
                           <span className='text-sm font-medium text-gray-900'>
                             {opp.probability}%
@@ -898,7 +898,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
                               : 'bg-red-500'
                         }`}
                         style={{ width: `${renewal.probability}%` }}
-                      ></div>
+                       />
                     </div>
                     <span className='text-sm font-medium text-gray-900'>
                       {renewal.probability}%
@@ -975,7 +975,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
                                 style={{
                                   width: `${contract.performance.onTimeDelivery}%`,
                                 }}
-                              ></div>
+                               />
                             </div>
                             <span>
                               {formatPercent(
@@ -1026,7 +1026,7 @@ const BrokerEnhancedCRM: React.FC<BrokerEnhancedCRMProps> = ({ brokerId }) => {
                                 style={{
                                   width: `${contract.renewalProbability}%`,
                                 }}
-                              ></div>
+                               />
                             </div>
                             <span className='text-xs'>
                               {contract.renewalProbability}%

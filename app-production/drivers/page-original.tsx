@@ -199,7 +199,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-001',
     name: 'John Smith',
-    email: 'john.smith@fleetflow.com',
+    email: 'john.smith@fleetflowapp.com',
     phone: '+1 (555) 123-4567',
     licenseNumber: 'CDL-TX-123456',
     status: 'Driving',
@@ -214,7 +214,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-002',
     name: 'Sarah Wilson',
-    email: 'sarah.wilson@fleetflow.com',
+    email: 'sarah.wilson@fleetflowapp.com',
     phone: '+1 (555) 234-5678',
     licenseNumber: 'CDL-CA-234567',
     status: 'Available',
@@ -229,7 +229,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-003',
     name: 'Mike Johnson',
-    email: 'mike.johnson@fleetflow.com',
+    email: 'mike.johnson@fleetflowapp.com',
     phone: '+1 (555) 345-6789',
     licenseNumber: 'CDL-FL-345678',
     status: 'Off Duty',
@@ -244,7 +244,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-004',
     name: 'Emily Davis',
-    email: 'emily.davis@fleetflow.com',
+    email: 'emily.davis@fleetflowapp.com',
     phone: '+1 (555) 456-7890',
     licenseNumber: 'CDL-NY-456789',
     status: 'On Duty',
@@ -259,7 +259,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-005',
     name: 'David Brown',
-    email: 'david.brown@fleetflow.com',
+    email: 'david.brown@fleetflowapp.com',
     phone: '+1 (555) 567-8901',
     licenseNumber: 'CDL-IL-567890',
     status: 'Inactive',
@@ -273,7 +273,7 @@ const MOCK_DRIVERS: Driver[] = [
   {
     id: 'DRV-006',
     name: 'Lisa Garcia',
-    email: 'lisa.garcia@fleetflow.com',
+    email: 'lisa.garcia@fleetflowapp.com',
     phone: '+1 (555) 678-9012',
     licenseNumber: 'CDL-AZ-678901',
     status: 'Driving',

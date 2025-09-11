@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { ReactNode, createContext, useContext, useState } from 'react';
 
 interface User {
   id: string;
@@ -36,9 +36,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>({
     id: 'U001',
     name: 'Fleet Manager',
-    email: 'manager@fleetflow.com',
+    email: 'manager@fleetflowapp.com',
     role: 'Admin',
-    permissions: ['all']
+    permissions: ['all'],
   });
 
   const hasPermission = (permission: string): boolean => {
@@ -71,25 +71,44 @@ interface ProtectedRouteProps {
   fallback?: ReactNode;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
   requiredPermission,
-  fallback 
+  fallback,
 }) => {
   const { hasPermission } = useAuth();
 
   if (requiredPermission && !hasPermission(requiredPermission)) {
-    return fallback || (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center"">
-        <svg className="w-12 h-12 text-red-400 mx-auto mb-4"" fill=""none"" stroke=""currentColor"" viewBox=""0 0 24 24"">
-          <path strokeLinecap=""round"" strokeLinejoin=""round"" strokeWidth={2} d=""M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"" />
-        </svg>
-        <h3 className="text-lg font-medium text-red-800 mb-2"">Access Denied</h3>
-        <p className="text-red-600"">You don't have permission to access this feature.</p>
-        <p className="text-sm text-red-500 mt-2"">
-          Required permission: <code className="bg-red-100 px-2 py-1 rounded"">{requiredPermission}</code>
-        </p>
-      </div>
+    return (
+      fallback || (
+        <div className='rounded-lg border border-red-200 bg-red-50 p-6 text-center'>
+          <svg
+            className='mx-auto mb-4 h-12 w-12 text-red-400'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z'
+            />
+          </svg>
+          <h3 className='mb-2 text-lg font-medium text-red-800'>
+            Access Denied
+          </h3>
+          <p className='text-red-600'>
+            You don't have permission to access this feature.
+          </p>
+          <p className='mt-2 text-sm text-red-500'>
+            Required permission:{' '}
+            <code className='rounded bg-red-100 px-2 py-1'>
+              {requiredPermission}
+            </code>
+          </p>
+        </div>
+      )
     );
   }
 

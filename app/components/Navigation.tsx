@@ -1052,6 +1052,20 @@ export default function ProfessionalNavigation() {
                     🤖 DEPOINTE AI Dashboard
                   </Link>
                   <Link
+                    href='/admin/business-intelligence'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '10px 20px',
+                      color: '#8B5CF6',
+                      textDecoration: 'none',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    📊 Business Intelligence
+                  </Link>
+                  <Link
                     href='/user-profile'
                     onClick={handleDropdownClose}
                     style={{

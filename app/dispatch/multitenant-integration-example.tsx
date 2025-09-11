@@ -247,7 +247,7 @@ The customer will receive the invoice via email.`);
             borderRadius: '50%',
             width: '8px',
             height: '8px',
-          }}></span>
+          }} />
           Multi-Provider Invoice Creation
         </h3>
         <div style={{

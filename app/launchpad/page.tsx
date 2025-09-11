@@ -147,7 +147,9 @@ export default function LaunchPadPage() {
           }}
         >
           <Link href='/' style={{ textDecoration: 'none' }}>
-            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>
+            <div
+              style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}
+            >
               🚛 FleetFlow
             </div>
           </Link>
@@ -342,7 +344,8 @@ export default function LaunchPadPage() {
                     lineHeight: '1.4',
                   }}
                 >
-                  DOT registration, insurance coordination, and training
+                  DOT registration, insurance coordination, and business launch
+                  (ELDT optional)
                 </p>
               </div>
               <div>
@@ -1010,12 +1013,68 @@ export default function LaunchPadPage() {
                       marginBottom: '15px',
                     }}
                   >
-                    $699
+                    <div
+                      style={{
+                        display: 'flex',
+                        gap: '20px',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            fontSize: '2.5rem',
+                            color: 'white',
+                            fontWeight: '900',
+                          }}
+                        >
+                          $499
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255,255,255,0.8)',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          Base Program
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          borderLeft: '2px solid rgba(255,255,255,0.3)',
+                          paddingLeft: '20px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '2.5rem',
+                            color: '#10b981',
+                            fontWeight: '900',
+                          }}
+                        >
+                          $799
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255,255,255,0.8)',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          + ELDT Training ($350 value)
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <p
-                    style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem' }}
+                    style={{
+                      color: 'rgba(255,255,255,0.8)',
+                      fontSize: '1rem',
+                      textAlign: 'center',
+                    }}
                   >
-                    One-time fee • Complete launch package
+                    Choose your program level • ELDT training optional for CDL
+                    licensing
                   </p>
                 </div>
 
@@ -1098,7 +1157,7 @@ export default function LaunchPadPage() {
                       </span>
                       <span>
                         <strong>FleetFlow University℠:</strong> Owner operator
-                        certification training
+                        certification training (ELDT Course optional add-on)
                       </span>
                     </li>
                     <li
@@ -1367,8 +1426,9 @@ export default function LaunchPadPage() {
               }}
             >
               Join hundreds of successful transportation professionals who
-              started their careers with FleetFlow LaunchPad℠. Get licensed,
-              trained, and launched in record time.
+              started their careers with FleetFlow LaunchPad℠. Choose from our
+              Base Program ($499) or Enhanced Program ($699) with ELDT training
+              included for those pursuing CDL licensing.
             </p>
 
             <div

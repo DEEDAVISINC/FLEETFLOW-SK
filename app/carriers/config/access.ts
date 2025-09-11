@@ -18,24 +18,30 @@ const mockUsers: User[] = [
   {
     id: 'user_001',
     name: 'Admin User',
-    email: 'admin@fleetflow.com',
+    email: 'admin@fleetflowapp.com',
     role: 'admin',
-    permissions: ['*']
+    permissions: ['*'],
   },
   {
     id: 'user_002',
     name: 'Broker User',
-    email: 'broker@fleetflow.com',
+    email: 'broker@fleetflowapp.com',
     role: 'broker',
-    permissions: ['view_carriers', 'manage_carriers', 'view_onboarding', 'manage_onboarding', 'canManageCarrierPortal']
+    permissions: [
+      'view_carriers',
+      'manage_carriers',
+      'view_onboarding',
+      'manage_onboarding',
+      'canManageCarrierPortal',
+    ],
   },
   {
     id: 'user_003',
     name: 'Dispatcher User',
-    email: 'dispatcher@fleetflow.com',
+    email: 'dispatcher@fleetflowapp.com',
     role: 'dispatcher',
-    permissions: ['view_carriers', 'view_onboarding']
-  }
+    permissions: ['view_carriers', 'view_onboarding'],
+  },
 ];
 
 // Get current user (mock implementation)
@@ -47,12 +53,12 @@ export const getCurrentUser = (): User => {
 // Check if user has permission
 export const checkPermission = (permission: string): boolean => {
   const user = getCurrentUser();
-  
+
   // Admin has all permissions
   if (user.permissions.includes('*')) {
     return true;
   }
-  
+
   // Check specific permission
   return user.permissions.includes(permission);
 };
@@ -63,7 +69,7 @@ export const ACCESS_MESSAGES = {
   CARRIERS_MANAGE: 'You need permission to manage carriers.',
   ONBOARDING_VIEW: 'You need permission to view onboarding data.',
   ONBOARDING_MANAGE: 'You need permission to manage onboarding processes.',
-  GENERAL_ACCESS: 'You do not have permission to access this resource.'
+  GENERAL_ACCESS: 'You do not have permission to access this resource.',
 };
 
 // Role definitions
@@ -72,7 +78,7 @@ export const ROLES = {
   BROKER: 'broker',
   DISPATCHER: 'dispatcher',
   CARRIER: 'carrier',
-  DRIVER: 'driver'
+  DRIVER: 'driver',
 };
 
 // Permission definitions
@@ -85,5 +91,5 @@ export const PERMISSIONS = {
   VIEW_ANALYTICS: 'view_analytics',
   MANAGE_ANALYTICS: 'manage_analytics',
   VIEW_ACCOUNTING: 'view_accounting',
-  MANAGE_ACCOUNTING: 'manage_accounting'
+  MANAGE_ACCOUNTING: 'manage_accounting',
 };

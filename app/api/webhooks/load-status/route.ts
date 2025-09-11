@@ -23,8 +23,8 @@ interface LoadStatusWebhookPayload {
 // WEBHOOK AUTHENTICATION
 // ================================================================
 
-const verifyWebhookAuth = (request: NextRequest): boolean => {
-  const headersList = headers();
+const verifyWebhookAuth = async (request: NextRequest): Promise<boolean> => {
+  const headersList = await headers();
   const authHeader = headersList.get('authorization');
   const expectedSecret =
     process.env.WEBHOOK_SECRET || 'fleetflow-webhook-secret';
@@ -356,7 +356,7 @@ const sendPushNotifications = async (
 export async function POST(request: NextRequest) {
   try {
     // Verify webhook authentication
-    if (!verifyWebhookAuth(request)) {
+    if (!(await verifyWebhookAuth(request))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

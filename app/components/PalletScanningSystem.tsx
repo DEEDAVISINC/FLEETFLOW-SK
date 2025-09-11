@@ -354,7 +354,7 @@ export default function PalletScanningSystem({
                   style={{
                     width: `${loadData.expectedCount > 0 ? (scannedPallets.length / loadData.expectedCount) * 100 : 0}%`,
                   }}
-                ></div>
+                 />
               </div>
               <span className='text-sm font-medium text-white'>
                 {scannedPallets.length}/{loadData.expectedCount || 0}

@@ -136,7 +136,7 @@ export class BOLWorkflowService {
       recipientId: submission.brokerId,
       recipientType: 'broker',
       recipientName: submission.brokerName,
-      recipientEmail: `${submission.brokerId}@fleetflow.com`,
+      recipientEmail: `${submission.brokerId}@fleetflowapp.com`,
       recipientPhone: this.getBrokerPhone(submission.brokerId),
       message: this.generateBrokerReviewMessage(submission),
       sentAt: new Date().toISOString(),
@@ -167,6 +167,13 @@ export class BOLWorkflowService {
         additionalCharges?: Array<{ description: string; amount: number }>;
         deductions?: Array<{ description: string; amount: number }>;
       };
+      customEmailTemplate?: {
+        subject: string;
+        body: string;
+        paymentTerms: string;
+        specialInstructions: string;
+        contactInfo: string;
+      };
     }
   ): Promise<{
     success: boolean;
@@ -192,7 +199,8 @@ export class BOLWorkflowService {
         // Generate and send invoice via EMAIL to vendor
         const invoiceResult = await this.generateAndSendInvoice(
           submission,
-          approvalData.adjustments
+          approvalData.adjustments,
+          approvalData.customEmailTemplate
         );
 
         if (invoiceResult.success) {
@@ -249,6 +257,13 @@ export class BOLWorkflowService {
       rate?: number;
       additionalCharges?: Array<{ description: string; amount: number }>;
       deductions?: Array<{ description: string; amount: number }>;
+    },
+    customEmailTemplate?: {
+      subject: string;
+      body: string;
+      paymentTerms: string;
+      specialInstructions: string;
+      contactInfo: string;
     }
   ): Promise<{
     success: boolean;
@@ -309,7 +324,7 @@ export class BOLWorkflowService {
       console.info(`💰 Amount: $${totalAmount.toLocaleString()}`);
 
       // Send invoice to vendor via EMAIL ONLY
-      await this.sendInvoiceToVendor(submission, invoice);
+      await this.sendInvoiceToVendor(submission, invoice, customEmailTemplate);
 
       // Mock invoice URL (in production, this would be a real PDF/link)
       const invoiceUrl = `/invoices/${invoiceId}.pdf`;
@@ -334,7 +349,14 @@ export class BOLWorkflowService {
    */
   private static async sendInvoiceToVendor(
     submission: BOLSubmission,
-    invoice: any
+    invoice: any,
+    customEmailTemplate?: {
+      subject: string;
+      body: string;
+      paymentTerms: string;
+      specialInstructions: string;
+      contactInfo: string;
+    }
   ): Promise<void> {
     const notificationId = `NOTIF-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
 
@@ -346,7 +368,13 @@ export class BOLWorkflowService {
       recipientType: 'shipper',
       recipientName: submission.shipperName,
       recipientEmail: submission.shipperEmail,
-      message: this.generateProfessionalInvoiceEmail(submission, invoice),
+      message: customEmailTemplate
+        ? this.generateCustomInvoiceEmail(
+            submission,
+            invoice,
+            customEmailTemplate
+          )
+        : this.generateProfessionalInvoiceEmail(submission, invoice),
       sentAt: new Date().toISOString(),
       status: 'pending',
     };
@@ -496,7 +524,7 @@ export class BOLWorkflowService {
 
 ⚡ URGENT: Please review and approve BOL to generate vendor invoice.
 
-Login to FleetFlow Broker Portal to review: https://fleetflow.com/broker/dashboard
+Login to FleetFlow Broker Portal to review: https://fleetflowapp.com/broker/dashboard
 
 BOL ID: ${submission.id}`;
   }
@@ -563,7 +591,7 @@ Total Amount: $${invoice.amount.toLocaleString()}
 REMIT PAYMENT TO:
 FleetFlow Transportation Services
 Accounts Receivable Department
-Email: billing@fleetflow.com
+Email: billing@fleetflowapp.com
 Reference: ${submission.loadIdentifierId}
 
 For questions regarding this invoice, please contact our billing department or reference the load number ${submission.loadIdentifierId}.
@@ -572,6 +600,51 @@ Thank you for your business!
 
 FleetFlow Transportation Services
 Professional Freight & Logistics Solutions`;
+  }
+
+  /**
+   * Generate custom invoice email using broker's customizations
+   */
+  private static generateCustomInvoiceEmail(
+    submission: BOLSubmission,
+    invoice: any,
+    customTemplate: {
+      subject: string;
+      body: string;
+      paymentTerms: string;
+      specialInstructions: string;
+      contactInfo: string;
+    }
+  ): string {
+    let emailBody = customTemplate.body;
+
+    // Add special instructions if provided
+    if (customTemplate.specialInstructions.trim()) {
+      emailBody += `
+
+SPECIAL INSTRUCTIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${customTemplate.specialInstructions}`;
+    }
+
+    // Add payment information
+    emailBody += `
+
+REMIT PAYMENT TO:
+FleetFlow Transportation Services
+Accounts Receivable Department
+Email: ${customTemplate.contactInfo}
+Payment Terms: ${customTemplate.paymentTerms}
+Reference: ${submission.loadIdentifierId}
+
+For questions regarding this invoice, please contact our billing department.
+
+Thank you for your business!
+
+FleetFlow Transportation Services
+Professional Freight & Logistics Solutions`;
+
+    return emailBody;
   }
 
   /**

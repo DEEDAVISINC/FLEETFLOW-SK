@@ -18,21 +18,21 @@ const mockUsers: User[] = [
   {
     id: 'user_001',
     name: 'Admin User',
-    email: 'admin@fleetflow.com',
+    email: 'admin@fleetflowapp.com',
     role: 'admin',
     permissions: ['*']
   },
   {
     id: 'user_002',
     name: 'Broker User',
-    email: 'broker@fleetflow.com',
+    email: 'broker@fleetflowapp.com',
     role: 'broker',
     permissions: ['view_carriers', 'manage_carriers', 'view_onboarding', 'manage_onboarding', 'canManageCarrierPortal']
   },
   {
     id: 'user_003',
     name: 'Dispatcher User',
-    email: 'dispatcher@fleetflow.com',
+    email: 'dispatcher@fleetflowapp.com',
     role: 'dispatcher',
     permissions: ['view_carriers', 'view_onboarding']
   }

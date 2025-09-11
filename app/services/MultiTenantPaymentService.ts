@@ -141,6 +141,47 @@ export class MultiTenantPaymentService {
    */
   private async getTenantConfigsFromDatabase(): Promise<TenantPaymentConfig[]> {
     return [
+      // DEPOINTE AI / FleetFlow - Dee Davis's Primary Account
+      {
+        tenantId: 'depointe-fleetflow',
+        primaryProvider: 'square',
+        providers: {
+          square: {
+            // Primary Square Account (Sandbox for now, Production ready)
+            applicationId:
+              process.env.NODE_ENV === 'production'
+                ? 'sq0idp-5GklzNdvq_BqP1gSCYAudA'
+                : 'sandbox-sq0idb-Zpm9bPbV6iJ8npH8MN8sIw',
+            accessToken:
+              process.env.NODE_ENV === 'production'
+                ? 'EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb'
+                : 'EAAAlxxcSOnzYX40Ebpqqzf2zPpajcV6PbYT6QOqsZ4a4iWCfpwEKv1pfLgNh5rv',
+            locationId:
+              process.env.NODE_ENV === 'production'
+                ? process.env.SQUARE_LOCATION_ID_DEPOINTE_PROD ||
+                  'main-location-prod'
+                : process.env.SQUARE_LOCATION_ID_DEPOINTE || 'main-location',
+            environment:
+              process.env.NODE_ENV === 'production' ? 'production' : 'sandbox',
+            enabled: true,
+            connected: true,
+          },
+          billcom: {
+            apiKey: '01ICBWLWIERUAFTN2157',
+            username: 'notary@deedavis.biz',
+            password: 'D13@sha1$',
+            orgId: '0297208089826008',
+            environment: 'sandbox',
+            enabled: true,
+            connected: true,
+          },
+        },
+        preferences: {
+          defaultProvider: 'square',
+          fallbackProvider: 'billcom',
+          autoSwitchOnFailure: true,
+        },
+      },
       {
         tenantId: 'acme-logistics',
         primaryProvider: 'square',
@@ -702,37 +743,3 @@ export class MultiTenantPaymentService {
 }
 
 export default MultiTenantPaymentService;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -71,7 +71,7 @@ export default function OrganizationSwitcher() {
   if (isLoading) {
     return (
       <div className='flex h-10 w-48 items-center justify-center rounded-lg bg-gray-100'>
-        <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600'></div>
+        <div className='h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600' />
       </div>
     );
   }
@@ -146,7 +146,7 @@ export default function OrganizationSwitcher() {
                   </p>
                 </div>
                 <div className='flex items-center space-x-1'>
-                  <div className='h-2 w-2 rounded-full bg-green-400'></div>
+                  <div className='h-2 w-2 rounded-full bg-green-400' />
                   <span className='text-xs text-gray-500'>Active</span>
                 </div>
               </div>

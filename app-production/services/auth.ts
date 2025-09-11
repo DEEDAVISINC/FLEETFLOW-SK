@@ -22,7 +22,7 @@ class AuthServiceClass {
     {
       id: 'DRV-001',
       name: 'John Smith',
-      email: 'john.smith@fleetflow.com',
+      email: 'john.smith@fleetflowapp.com',
       phone: '555-0123',
       licenseNumber: 'CDL-123456',
       vehicleId: 'TRK-001',
@@ -32,7 +32,7 @@ class AuthServiceClass {
     {
       id: 'DRV-002',
       name: 'Maria Rodriguez',
-      email: 'maria.rodriguez@fleetflow.com',
+      email: 'maria.rodriguez@fleetflowapp.com',
       phone: '555-0124',
       licenseNumber: 'CDL-789012',
       vehicleId: 'TRK-002',

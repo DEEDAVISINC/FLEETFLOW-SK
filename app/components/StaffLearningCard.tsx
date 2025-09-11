@@ -183,7 +183,7 @@ export default function StaffLearningCard({
               <div
                 className={`h-2 rounded-full transition-all duration-500 ${getMaturityBarColor(maturityScore)}`}
                 style={{ width: `${maturityScore}%` }}
-              ></div>
+               />
             </div>
 
             {/* Level Recommendation */}
@@ -233,7 +233,7 @@ export default function StaffLearningCard({
                 <div className='text-xs text-blue-200'>
                   {suggestions.slice(0, 1).map((suggestion, index) => (
                     <div key={index} className='flex items-start gap-1'>
-                      <span className='mt-1.5 h-1 w-1 rounded-full bg-blue-400'></span>
+                      <span className='mt-1.5 h-1 w-1 rounded-full bg-blue-400' />
                       <span>{suggestion}</span>
                     </div>
                   ))}
@@ -314,7 +314,7 @@ export function CompactStaffLearningCard({
                   ? 'bg-green-400'
                   : 'bg-orange-400'
           }`}
-        ></div>
+         />
       </div>
 
       {/* Maturity Progress */}
@@ -332,7 +332,7 @@ export function CompactStaffLearningCard({
                       : 'bg-orange-500'
               }`}
               style={{ width: `${maturityScore}%` }}
-            ></div>
+             />
           </div>
           <div className='mt-1 text-xs text-white/70'>
             {maturityScore}% maturity

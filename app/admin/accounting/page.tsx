@@ -2199,7 +2199,7 @@ export default function ModernAccountingPage() {
         // Fallback for guest/non-logged in users
         id: 'GUEST-001',
         name: 'Guest User',
-        email: 'guest@fleetflow.com',
+        email: 'guest@fleetflowapp.com',
         phone: '(555) 000-0000',
         role: {
           type: 'guest',

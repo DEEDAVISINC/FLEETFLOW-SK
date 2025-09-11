@@ -58,7 +58,7 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
     body: '',
     paymentTerms: 'Net 30 Days',
     specialInstructions: '',
-    contactInfo: 'billing@fleetflow.com'
+    contactInfo: 'billing@fleetflowapp.com'
   });
   const [previewMode, setPreviewMode] = useState(false);
 
@@ -150,7 +150,7 @@ FleetFlow Transportation Services
 Professional Freight & Logistics Solutions`,
       paymentTerms: 'Net 30 Days',
       specialInstructions: '',
-      contactInfo: 'billing@fleetflow.com'
+      contactInfo: 'billing@fleetflowapp.com'
     });
   };
 

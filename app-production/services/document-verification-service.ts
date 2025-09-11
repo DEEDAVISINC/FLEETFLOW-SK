@@ -222,7 +222,7 @@ export class DocumentVerificationService {
           <li>Correct the document according to our requirements</li>
           <li>Upload the corrected document through your onboarding portal</li>
         </ol>
-        <p><strong>Need Help?</strong> Contact our support team at (555) 123-4567 or support@fleetflow.com</p>
+        <p><strong>Need Help?</strong> Contact our support team at (555) 123-4567 or support@fleetflowapp.com</p>
         <p>Best regards,<br>FleetFlow Onboarding Team</p>
       `
     },

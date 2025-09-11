@@ -338,7 +338,7 @@ export const FleetGuardSecurityAnalysis: React.FC<
                 animation: 'spin 1s linear infinite',
                 margin: '0 auto 24px auto',
               }}
-            ></div>
+             />
             <h3 style={{ margin: '0 0 12px 0' }}>
               Running Security Analysis...
             </h3>

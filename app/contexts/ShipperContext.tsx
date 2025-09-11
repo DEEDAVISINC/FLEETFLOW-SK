@@ -21,7 +21,7 @@ const mockBrokerAgents: BrokerAgent[] = [
   {
     id: 'broker-001',
     name: 'Sarah Johnson',
-    email: 'sarah.j@fleetflow.com',
+    email: 'sarah.j@fleetflowapp.com',
     phone: '(555) 123-4567',
     hireDate: '2023-01-15',
     status: 'active',
@@ -32,7 +32,7 @@ const mockBrokerAgents: BrokerAgent[] = [
   {
     id: 'broker-002',
     name: 'Mike Chen',
-    email: 'mike.c@fleetflow.com',
+    email: 'mike.c@fleetflowapp.com',
     phone: '(555) 234-5678',
     hireDate: '2023-03-20',
     status: 'active',

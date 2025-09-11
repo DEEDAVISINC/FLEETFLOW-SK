@@ -283,7 +283,7 @@ export default function BusinessVerificationForm({
             style={{
               width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
             }}
-          ></div>
+           />
         </div>
       </div>
 

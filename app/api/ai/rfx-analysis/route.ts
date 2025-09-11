@@ -160,7 +160,7 @@ We look forward to the opportunity to serve your transportation needs and are av
 Best regards,
 FleetFlow Logistics Team
 Phone: (555) 123-4567
-Email: bids@fleetflow.com`
+Email: bids@fleetflowapp.com`
       };
     }
 

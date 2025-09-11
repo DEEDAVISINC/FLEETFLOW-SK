@@ -151,7 +151,7 @@ export default function AccountPage() {
       <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50'>
         {/* Modern Header with Gradient */}
         <div className='relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700'>
-          <div className='absolute inset-0 bg-black/10'></div>
+          <div className='absolute inset-0 bg-black/10' />
           <div className='relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-4'>
@@ -257,7 +257,7 @@ export default function AccountPage() {
                     {tab.description}
                   </p>
                   {activeTab === tab.id && (
-                    <div className='absolute top-2 right-2 h-3 w-3 rounded-full bg-white'></div>
+                    <div className='absolute top-2 right-2 h-3 w-3 rounded-full bg-white' />
                   )}
                 </button>
               ))}
@@ -270,7 +270,7 @@ export default function AccountPage() {
               <div className='space-y-8'>
                 {/* Welcome Card */}
                 <div className='relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white shadow-xl'>
-                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10'></div>
+                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10' />
                   <div className='relative'>
                     <h2 className='text-2xl font-bold'>Account Overview</h2>
                     <p className='mt-2 text-blue-100'>
@@ -449,7 +449,7 @@ export default function AccountPage() {
               <div className='space-y-8'>
                 {/* Square Status Banner */}
                 <div className='relative overflow-hidden rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 p-8 text-white shadow-xl'>
-                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10'></div>
+                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10' />
                   <div className='relative flex items-center justify-between'>
                     <div>
                       <h2 className='text-2xl font-bold'>
@@ -602,7 +602,7 @@ export default function AccountPage() {
               <div className='space-y-8'>
                 {/* Billing Header */}
                 <div className='relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 p-8 text-white shadow-xl'>
-                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10'></div>
+                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10' />
                   <div className='relative'>
                     <h2 className='text-2xl font-bold'>Billing & Payments</h2>
                     <p className='mt-2 text-purple-100'>
@@ -752,7 +752,7 @@ export default function AccountPage() {
               <div className='space-y-8'>
                 {/* Subscription Header */}
                 <div className='relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 p-8 text-white shadow-xl'>
-                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10'></div>
+                  <div className='absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-white/10' />
                   <div className='relative'>
                     <h2 className='text-2xl font-bold'>
                       Subscription Management

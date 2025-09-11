@@ -392,7 +392,7 @@ export default function BrokerLoginPage() {
           fontSize: '12px'
         }}>
           <p>Powered by FleetFlow | Secure Broker Portal</p>
-          <p>Need help? Contact: support@fleetflow.com</p>
+          <p>Need help? Contact: support@fleetflowapp.com</p>
         </div>
       </div>
     </div>

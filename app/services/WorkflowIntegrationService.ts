@@ -305,7 +305,7 @@ This document serves as proof of delivery and acceptance of goods.
         id: cascadeData.loadId,
         brokerName: 'FleetFlow Broker',
         shipperName: 'FleetFlow Shipper',
-        shipperEmail: 'shipper@fleetflow.com',
+        shipperEmail: 'shipper@fleetflowapp.com',
         driverName: 'FleetFlow Driver',
         proNumber: `PRO-${cascadeData.loadId}`,
         weight: '80,000 lbs',

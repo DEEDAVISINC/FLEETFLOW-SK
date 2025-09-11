@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { useLoadWorkflow } from '../../lib/useWorkflowHooks';
 import { WorkflowStepId } from '../../lib/workflowManager';
+import TransitTracking from '../components/TransitTracking';
 
 interface Driver {
   id: string;

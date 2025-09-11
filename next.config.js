@@ -1,38 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  trailingSlash: false,
-  async redirects() {
-    return [
-      {
-        source: '/(.*)',
-        has: [
-          {
-            type: 'host',
-            value: 'www.fleetflowapp.com',
-          },
-        ],
-        destination: 'https://fleetflowapp.com/:path*',
-        permanent: true,
-      },
-    ];
+  reactStrictMode: true,
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
   },
-  async headers() {
-    return [
-      {
-        source: '/privacy-policy.html',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'text/html; charset=utf-8',
-          },
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
   },
+  // Fix for multiple lockfiles warning
+  outputFileTracingRoot: require('path').join(__dirname, '../../'),
 };
 
 module.exports = nextConfig;

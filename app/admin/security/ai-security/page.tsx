@@ -620,7 +620,7 @@ export default function AISecurityDashboard() {
                 <input
                   type='text'
                   className='w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500'
-                  defaultValue='security@fleetflow.com, admin@fleetflow.com'
+                  defaultValue='security@fleetflowapp.com, admin@fleetflowapp.com'
                 />
               </div>
 

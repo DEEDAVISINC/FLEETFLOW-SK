@@ -350,12 +350,12 @@ class TenantBrandingService {
           emergency: '(555) 123-4569',
         },
         email: {
-          main: 'info@fleetflow.com',
-          dispatch: 'dispatch@fleetflow.com',
-          legal: 'legal@fleetflow.com',
-          support: 'support@fleetflow.com',
+          main: 'info@fleetflowapp.com',
+          dispatch: 'dispatch@fleetflowapp.com',
+          legal: 'legal@fleetflowapp.com',
+          support: 'support@fleetflowapp.com',
         },
-        website: 'www.fleetflow.com',
+        website: 'www.fleetflowapp.com',
         socialMedia: {
           linkedin: 'linkedin.com/company/fleetflow',
           twitter: 'twitter.com/fleetflow',

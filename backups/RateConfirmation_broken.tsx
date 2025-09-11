@@ -72,7 +72,7 @@ export default function RateConfirmation() {
     brokerMC: 'MC-123456',
     brokerContact: 'Operations Manager',
     brokerPhone: '(555) 123-4567',
-    brokerEmail: 'dispatch@fleetflow.com'
+    brokerEmail: 'dispatch@fleetflowapp.com'
   });
 
   // Auto-populate from selected load
@@ -110,7 +110,7 @@ export default function RateConfirmation() {
         brokerMC: selectedLoad.brokerAgentMC || 'MC-123456',
         brokerContact: selectedLoad.brokerAgentName || 'Operations Manager',
         brokerPhone: selectedLoad.brokerAgentPhone || '(555) 123-4567',
-        brokerEmail: selectedLoad.brokerAgentEmail || 'dispatch@fleetflow.com'
+        brokerEmail: selectedLoad.brokerAgentEmail || 'dispatch@fleetflowapp.com'
       }));
     }
   }, [selectedLoad]);

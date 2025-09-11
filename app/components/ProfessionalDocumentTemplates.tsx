@@ -130,7 +130,7 @@ export default function ProfessionalDocumentTemplates() {
           tenant: {
             companyName: 'FleetFlow Logistics',
             phone: '(555) 123-4567',
-            website: 'www.fleetflow.com',
+            website: 'www.fleetflowapp.com',
           },
         };
 

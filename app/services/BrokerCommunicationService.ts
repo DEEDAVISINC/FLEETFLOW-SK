@@ -303,7 +303,7 @@ Contact me directly with any questions: {BROKER_PHONE}
           from: {
             id: 'broker_001',
             name: 'John Smith',
-            contact: 'john@fleetflow.com',
+            contact: 'john@fleetflowapp.com',
             type: 'broker',
           },
           to: {
@@ -340,7 +340,7 @@ Contact me directly with any questions: {BROKER_PHONE}
           to: {
             id: 'broker_001',
             name: 'John Smith',
-            contact: 'john@fleetflow.com',
+            contact: 'john@fleetflowapp.com',
             type: 'broker',
           },
           subject: 'RE: Rate Quote for Load WMT_ATL_001',
@@ -472,7 +472,7 @@ Contact me directly with any questions: {BROKER_PHONE}
       from: {
         id: thread.brokerId,
         name: thread.brokerName,
-        contact: 'broker@fleetflow.com',
+        contact: 'broker@fleetflowapp.com',
         type: 'broker',
       },
       to: {

@@ -68,7 +68,7 @@ export default function BOLReviewPanel({ brokerId, brokerName }: BOLReviewPanelP
     body: '',
     paymentTerms: 'Net 30 Days',
     specialInstructions: '',
-    contactInfo: 'billing@fleetflow.com'
+    contactInfo: 'billing@fleetflowapp.com'
   });
   const [previewMode, setPreviewMode] = useState(false);
 
@@ -160,7 +160,7 @@ FleetFlow Transportation Services
 Professional Freight & Logistics Solutions\`,
       paymentTerms: 'Net 30 Days',
       specialInstructions: '',
-      contactInfo: 'billing@fleetflow.com'
+      contactInfo: 'billing@fleetflowapp.com'
     });
   };
 
@@ -170,12 +170,9 @@ Professional Freight & Logistics Solutions\`,
 
     // Main Layout Component
     layout: `import { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import ClientLayout from './components/ClientLayout';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'FleetFlow™ - Transportation Management System',
@@ -230,7 +227,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

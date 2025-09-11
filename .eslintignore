@@ -1,0 +1,16 @@
+# Ignore backup files
+app/archive/*
+app/**/page-*.tsx
+app/**/page_*.tsx
+app/maintenance/page_old.tsx
+app/page-*.tsx
+app/page_*.tsx
+app/resources/page-*.tsx
+app/resources/page_*.tsx
+app/scheduling/page_*.tsx
+app/settings/page_*.tsx
+app/university/page-*.tsx
+app/user-profile/page-*.tsx
+
+# Ignore node modules
+node_modules/

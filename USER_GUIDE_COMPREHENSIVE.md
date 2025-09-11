@@ -801,20 +801,20 @@ algorithms.
 ### Technical Support
 
 - **Help Desk**: Available 24/7
-- **Email Support**: support@fleetflow.com
+- **Email Support**: support@fleetflowapp.com
 - **Phone Support**: (833) 386-3509
 - **Live Chat**: Available during business hours
 
 ### Training Support
 
-- **Training Coordinator**: training@fleetflow.com
-- **Certification Questions**: certifications@fleetflow.com
-- **Technical Training**: technical@fleetflow.com
+- **Training Coordinator**: training@fleetflowapp.com
+- **Certification Questions**: certifications@fleetflowapp.com
+- **Technical Training**: technical@fleetflowapp.com
 
 ### Emergency Support
 
 - **Emergency Hotline**: 1-800-EMERGENCY
-- **After Hours**: emergency@fleetflow.com
+- **After Hours**: emergency@fleetflowapp.com
 - **Escalation Process**: Immediate response for critical issues
 
 ---

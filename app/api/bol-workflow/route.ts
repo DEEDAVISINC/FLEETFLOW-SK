@@ -104,6 +104,7 @@ async function handleBOLApproval(body: any) {
     approved,
     reviewNotes,
     adjustments,
+    customEmailTemplate,
   });
 
   if (result.success) {

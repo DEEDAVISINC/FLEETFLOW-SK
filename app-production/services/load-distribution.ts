@@ -112,7 +112,7 @@ export class LoadDistributionService {
         id: 'D001',
         name: 'John Smith',
         phone: '+1234567890',
-        email: 'john@fleetflow.com',
+        email: 'john@fleetflowapp.com',
         preferredEquipment: ['Dry Van', 'Refrigerated'],
         preferredRoutes: ['Southeast', 'Northeast'],
         homeLocation: { lat: 33.7490, lng: -84.3880, city: 'Atlanta', state: 'GA' },
@@ -124,7 +124,7 @@ export class LoadDistributionService {
         id: 'D002',
         name: 'Sarah Johnson',
         phone: '+1234567891',
-        email: 'sarah@fleetflow.com',
+        email: 'sarah@fleetflowapp.com',
         preferredEquipment: ['Flatbed', 'Step Deck'],
         preferredRoutes: ['Midwest', 'West'],
         homeLocation: { lat: 41.8781, lng: -87.6298, city: 'Chicago', state: 'IL' },
@@ -136,7 +136,7 @@ export class LoadDistributionService {
         id: 'D003',
         name: 'Mike Wilson',
         phone: '+1234567892',
-        email: 'mike@fleetflow.com',
+        email: 'mike@fleetflowapp.com',
         preferredEquipment: ['Dry Van'],
         preferredRoutes: ['West Coast', 'Southwest'],
         homeLocation: { lat: 34.0522, lng: -118.2437, city: 'Los Angeles', state: 'CA' },
@@ -267,7 +267,7 @@ export class LoadDistributionService {
       try {
         const response = await this.sendSMS({
           phone: carrier.contactPhone,
-          message: `📋 LOAD OPPORTUNITY\n${loadMessage}\nContact: dispatch@fleetflow.com\nLoad ID: ${load.id}`,
+          message: `📋 LOAD OPPORTUNITY\n${loadMessage}\nContact: dispatch@fleetflowapp.com\nLoad ID: ${load.id}`,
           recipientName: carrier.name,
           recipientType: 'carrier'
         });

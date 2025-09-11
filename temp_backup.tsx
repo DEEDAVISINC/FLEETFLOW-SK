@@ -4536,7 +4536,7 @@ export default function GoWithTheFlow() {
                       {
                         icon: '📧',
                         title: 'Email Support',
-                        value: 'support@fleetflow.com',
+                        value: 'support@fleetflowapp.com',
                         subtitle: 'Response within 2 hours',
                       },
                       {

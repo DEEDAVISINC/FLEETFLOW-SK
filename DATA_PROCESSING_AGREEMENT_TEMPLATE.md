@@ -14,7 +14,7 @@ Business Associate Agreement**
 
 **DATA PROCESSOR** Organization Name: FleetFlow Technologies, Inc. Business Address: [FleetFlow
 Corporate Address] City, State, ZIP: [City, State ZIP] Contact Person: Chief Privacy Officer Email:
-privacy@fleetflow.com Phone: [Privacy Team Phone Number]
+privacy@fleetflowapp.com Phone: [Privacy Team Phone Number]
 
 ---
 

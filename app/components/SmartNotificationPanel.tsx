@@ -145,7 +145,7 @@ export default function SmartNotificationPanel({
           </div>
           <div className='flex items-center gap-2'>
             <div className='flex items-center gap-2 rounded-full bg-green-100 px-3 py-1'>
-              <div className='h-2 w-2 animate-pulse rounded-full bg-green-500'></div>
+              <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
               <span className='text-sm font-medium text-green-700'>Active</span>
             </div>
           </div>
@@ -321,7 +321,7 @@ export default function SmartNotificationPanel({
                       className={`h-3 w-3 rounded-full ${
                         channel.config.enabled ? 'bg-green-500' : 'bg-gray-300'
                       }`}
-                    ></div>
+                     />
                   </div>
 
                   <div className='space-y-2'>
@@ -486,7 +486,7 @@ export default function SmartNotificationPanel({
                               style={{
                                 width: `${(count / summary.metrics.totalSent) * 100}%`,
                               }}
-                            ></div>
+                             />
                           </div>
                           <span className='w-12 text-right font-medium text-gray-900'>
                             {count}
@@ -512,7 +512,7 @@ export default function SmartNotificationPanel({
                         <div className='flex items-center gap-2'>
                           <div
                             className={`h-3 w-3 rounded-full ${getPriorityColor(priority).split(' ')[1]}`}
-                          ></div>
+                           />
                           <span className='text-gray-700 capitalize'>
                             {priority}
                           </span>
@@ -524,7 +524,7 @@ export default function SmartNotificationPanel({
                               style={{
                                 width: `${(count / summary.metrics.totalSent) * 100}%`,
                               }}
-                            ></div>
+                             />
                           </div>
                           <span className='w-12 text-right font-medium text-gray-900'>
                             {count}

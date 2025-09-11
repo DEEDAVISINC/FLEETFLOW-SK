@@ -358,7 +358,7 @@ When users don't have access, they see:
 - **In-App**: Ask Flowter "help" for immediate assistance
 - **Documentation**: Visit FleetFlow University for tutorials
 - **Support Ticket**: Use the support system for technical issues
-- **Email**: support@fleetflow.com for urgent matters
+- **Email**: support@fleetflowapp.com for urgent matters
 
 ---
 

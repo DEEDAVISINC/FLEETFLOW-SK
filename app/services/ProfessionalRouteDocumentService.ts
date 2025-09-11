@@ -153,8 +153,8 @@ class ProfessionalRouteDocumentService {
     fontFamily: "'Inter', sans-serif",
     contactInfo: {
       phone: '(555) 123-4567',
-      email: 'dispatch@fleetflow.com',
-      website: 'www.fleetflow.com',
+      email: 'dispatch@fleetflowapp.com',
+      website: 'www.fleetflowapp.com',
       address: 'FleetFlow Operations Center',
     },
   };

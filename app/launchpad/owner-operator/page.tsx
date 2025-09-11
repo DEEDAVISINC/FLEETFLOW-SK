@@ -11,6 +11,7 @@ interface EnrollmentForm {
   experience: string;
   goals: string;
   timeline: string;
+  includeELDT: boolean;
 }
 
 export default function OwnerOperatorLaunchPage() {
@@ -23,6 +24,7 @@ export default function OwnerOperatorLaunchPage() {
     experience: '',
     goals: '',
     timeline: '',
+    includeELDT: false,
   });
 
   // Add CSS animations
@@ -90,6 +92,7 @@ export default function OwnerOperatorLaunchPage() {
       experience: '',
       goals: '',
       timeline: '',
+      includeELDT: false,
     });
   };
 
@@ -345,12 +348,68 @@ export default function OwnerOperatorLaunchPage() {
                   color: 'white',
                 }}
               >
-                $699
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '20px',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <div style={{ textAlign: 'center' }}>
+                    <div
+                      style={{
+                        fontSize: '2rem',
+                        color: 'white',
+                        fontWeight: '900',
+                      }}
+                    >
+                      $499
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      Base Program
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      textAlign: 'center',
+                      borderLeft: '2px solid rgba(255,255,255,0.3)',
+                      paddingLeft: '20px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '2rem',
+                        color: '#10b981',
+                        fontWeight: '900',
+                      }}
+                    >
+                      $799
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255,255,255,0.8)',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      + ELDT Training ($350 value)
+                    </div>
+                  </div>
+                </div>
               </div>
               <div
-                style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}
+                style={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: '0.9rem',
+                  textAlign: 'center',
+                }}
               >
-                One-time fee • Complete program
+                Choose your program level • ELDT training optional for CDL
+                licensing
               </div>
             </div>
             <div
@@ -1171,6 +1230,37 @@ export default function OwnerOperatorLaunchPage() {
                   <option value='within-quarter'>Within 3 months</option>
                   <option value='exploring'>Just exploring options</option>
                 </select>
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    color: 'white',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <input
+                    type='checkbox'
+                    checked={enrollmentForm.includeELDT}
+                    onChange={(e) =>
+                      setEnrollmentForm({
+                        ...enrollmentForm,
+                        includeELDT: e.target.checked,
+                      })
+                    }
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      accentColor: '#10b981',
+                    }}
+                  />
+                  <span style={{ fontSize: '14px' }}>
+                    <strong>Add ELDT Training (+$300)</strong> - CDL licensing
+                    preparation and certification course
+                  </span>
+                </label>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <button

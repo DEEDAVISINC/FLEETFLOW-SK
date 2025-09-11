@@ -182,7 +182,7 @@ export class AccountingEmailService {
 
             <p style="color: #6b7280; font-size: 14px;">
               If you have any questions about this invoice, please contact our billing department at
-              <a href="mailto:billing@fleetflow.com" style="color: #059669;">billing@fleetflow.com</a>
+              <a href="mailto:billing@fleetflowapp.com" style="color: #059669;">billing@fleetflowapp.com</a>
               or call (555) 123-4567.
             </p>
           </div>
@@ -207,7 +207,7 @@ Invoice Details:
 - Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}
 - Load: ${invoice.loadDetails?.origin} → ${invoice.loadDetails?.destination}
 
-If you have any questions, please contact billing@fleetflow.com or call (555) 123-4567.
+If you have any questions, please contact billing@fleetflowapp.com or call (555) 123-4567.
 
 FleetFlow Transportation Services
 1234 Logistics Way, Atlanta, GA 30309
@@ -290,7 +290,7 @@ Overdue Invoice Details:
 WARNING: Late fees may apply. Please contact us immediately.
 
 Emergency Contact: (555) 123-4567
-Email: billing@fleetflow.com
+Email: billing@fleetflowapp.com
 
 FleetFlow Transportation Services
       `,
@@ -338,7 +338,7 @@ FleetFlow Transportation Services
 
           <div style="text-align: center; color: #9ca3af; font-size: 12px; padding: 20px;">
             FleetFlow Transportation Services - HR Department<br>
-            Questions? Contact hr@fleetflow.com
+            Questions? Contact hr@fleetflowapp.com
           </div>
         </div>
       `,
@@ -357,7 +357,7 @@ Pay Statement Summary:
 - Status: ${payrollRecord.status}
 ${payrollRecord.payDate ? `- Pay Date: ${new Date(payrollRecord.payDate).toLocaleDateString()}` : ''}
 
-Questions? Contact hr@fleetflow.com
+Questions? Contact hr@fleetflowapp.com
 
 FleetFlow Transportation Services
       `,
@@ -425,7 +425,7 @@ FleetFlow Transportation Services
 
           <div style="text-align: center; color: #9ca3af; font-size: 12px; padding: 20px;">
             FleetFlow Factoring Services<br>
-            Questions? Contact factoring@fleetflow.com
+            Questions? Contact factoring@fleetflowapp.com
           </div>
         </div>
       `,
@@ -447,7 +447,7 @@ ${factoringRecord.fundingDate ? `- Funded: ${new Date(factoringRecord.fundingDat
 
 ${factoringRecord.status === 'Funded' ? 'Funds have been transferred to your account!' : ''}
 
-Questions? Contact factoring@fleetflow.com
+Questions? Contact factoring@fleetflowapp.com
 
 FleetFlow Factoring Services
       `,
