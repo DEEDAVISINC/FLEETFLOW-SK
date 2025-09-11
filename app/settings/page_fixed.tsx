@@ -125,7 +125,7 @@ const SUBSCRIPTION_FEATURES: Record<SubscriptionTier, SubscriptionFeatures> = {
     maxUsers: 25,
     phoneMinutes: 500,
     smsMessages: 200,
-    price: 289,
+    price: 199,
   },
   enterprise: {
     features: [
@@ -139,7 +139,7 @@ const SUBSCRIPTION_FEATURES: Record<SubscriptionTier, SubscriptionFeatures> = {
     maxUsers: 'unlimited',
     phoneMinutes: 'unlimited',
     smsMessages: 'unlimited',
-    price: 2698,
+    price: 3999,
   },
 };
 

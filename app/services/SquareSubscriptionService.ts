@@ -80,15 +80,15 @@ export class SquareSubscriptionService {
    * Initialize with mock subscription data for development
    */
   private initializeMockData() {
-    // Mock active subscription for admin user
+    // Mock active subscription for admin user (Updated pricing per corrections)
     const adminSubscription: SquareSubscription = {
       id: 'sub_admin_enterprise',
       customerId: 'cus_admin_001',
-      planIds: ['enterprise_professional'],
+      planIds: ['enterprise'],
       status: 'active',
       currentPeriodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
       currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      totalAmount: 299,
+      totalAmount: 3999, // Updated to correct enterprise pricing
       currency: 'USD',
       metadata: {
         userId: 'admin-001',

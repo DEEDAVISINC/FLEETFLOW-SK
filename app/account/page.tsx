@@ -628,7 +628,7 @@ export default function AccountPage() {
                       <div className='flex justify-between'>
                         <span className='text-gray-600'>Monthly Cost</span>
                         <span className='font-semibold text-gray-900'>
-                          ${accountInfo.subscription?.tierDetails?.price || 289}
+                          ${accountInfo.subscription?.tierDetails?.price || 199}
                         </span>
                       </div>
                       <div className='flex justify-between'>
@@ -818,7 +818,7 @@ export default function AccountPage() {
                       <div className='flex items-center justify-between'>
                         <span className='text-gray-600'>Monthly Cost</span>
                         <span className='text-2xl font-bold text-gray-900'>
-                          ${accountInfo.subscription?.tierDetails?.price || 289}
+                          ${accountInfo.subscription?.tierDetails?.price || 199}
                         </span>
                       </div>
                       <div className='flex items-center justify-between'>

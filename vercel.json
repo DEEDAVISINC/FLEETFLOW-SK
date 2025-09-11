@@ -24,17 +24,6 @@
       "source": "/login",
       "destination": "/auth/signin",
       "permanent": false
-    },
-    {
-      "source": "/(.*)",
-      "destination": "https://fleetflowapp.com/$1",
-      "permanent": true,
-      "has": [
-        {
-          "type": "host",
-          "value": "www.fleetflowapp.com"
-        }
-      ]
     }
   ],
   "trailingSlash": false,

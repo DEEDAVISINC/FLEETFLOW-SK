@@ -13,8 +13,6 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-  // Fix for multiple lockfiles warning
-  outputFileTracingRoot: require('path').join(__dirname, '../../'),
 };
 
 module.exports = nextConfig;

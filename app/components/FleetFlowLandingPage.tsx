@@ -706,7 +706,7 @@ export default function FleetFlowLandingPage() {
                       marginBottom: '15px',
                     }}
                   >
-                    $249/month
+                    $349/month
                   </div>
                   <ul
                     style={{
@@ -788,7 +788,7 @@ export default function FleetFlowLandingPage() {
                       marginBottom: '15px',
                     }}
                   >
-                    $699/month
+                    $999/month
                   </div>
                   <ul
                     style={{
@@ -1168,7 +1168,7 @@ export default function FleetFlowLandingPage() {
                     Starting at
                   </span>
                   <br />
-                  $289
+                  $199
                   <span style={{ fontSize: '1rem', fontWeight: '500' }}>
                     /month
                   </span>

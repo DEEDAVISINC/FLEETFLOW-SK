@@ -251,7 +251,7 @@ export default function SignUpPage() {
     {
       id: 'broker-elite',
       name: 'Professional Brokerage',
-      price: '$289/month',
+      price: '$199/month',
       description: 'Advanced brokerage operations + phone',
       icon: '🏢',
       popular: false,

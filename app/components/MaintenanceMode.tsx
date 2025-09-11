@@ -36,18 +36,32 @@ export default function MaintenanceMode({ children }: MaintenanceModeProps) {
     return <>{children}</>;
   }
 
-  // In production, allow access to privacy policy and essential legal pages
+  // In production, allow access to all main application routes
   const allowedPaths = [
+    '/', // Allow homepage
+    '/dashboard',
+    '/dispatcher-portal',
+    '/carrier-portal',
+    '/shipper-portal',
+    '/driver-portal',
+    '/vendor-portal',
+    '/auth',
+    '/login',
+    '/api',
     '/privacy-policy',
     '/terms-of-service',
     '/privacy',
     '/terms',
     '/legal',
-    '/about', // Allow About page to be accessible
-    '/vendor-portal', // Allow Vendor Portal to be accessible
-    '/vendor-management', // Allow Vendor Management page to be accessible
-    '/admin/driver-otr-flow', // Allow Driver OTR Flow page to be accessible
-    '/api', // Allow API routes to function
+    '/about',
+    '/vendor-management',
+    '/admin/driver-otr-flow',
+    '/depointe-dashboard',
+    '/ai-flow',
+    '/routes',
+    '/billing-invoices',
+    '/quality-control',
+    '/plans',
   ];
 
   // Check if current path should be allowed in production

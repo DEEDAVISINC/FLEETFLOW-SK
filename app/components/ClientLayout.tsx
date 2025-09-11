@@ -57,6 +57,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     '/carrier-landing',
     '/broker',
     '/shipper-portal',
+    '/auth/signin',
+    '/auth/signup',
+    '/landingpage',
   ];
 
   const isPublicPage = pathname

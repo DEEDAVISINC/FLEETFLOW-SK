@@ -518,11 +518,11 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
     ],
   },
 
-  // Dispatcher Pro
-  DISPATCHER_PRO: {
-    id: 'dispatcher_pro',
-    name: 'Dispatcher Pro',
-    price: 99,
+  // Professional Dispatcher (Updated pricing per corrections)
+  PROFESSIONAL_DISPATCHER: {
+    id: 'professional_dispatcher',
+    name: 'Professional Dispatcher',
+    price: 79,
     interval: 'month',
     category: 'TMS',
     features: [
@@ -536,6 +536,7 @@ export const FLEETFLOW_PRICING_PLANS: Record<string, SubscriptionPlan> = {
       'Emergency response protocols',
       'Load board integration',
       'Automated notifications',
+      'Phone integration (50 minutes + 25 SMS)',
     ],
   },
 
