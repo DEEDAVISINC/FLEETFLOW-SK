@@ -29,10 +29,17 @@ export default function ProfessionalNavigation() {
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Hide navigation on landing page and other marketing pages
+  // Check if this is localhost (owner access) - matches ClientLayout.tsx logic
+  const isLocalhostAccess =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === '192.168.12.189');
+
+  // Hide navigation on landing page and other marketing pages (but not for localhost owner access)
   const hiddenPaths = ['/', '/plans', '/privacy', '/terms'];
   const shouldHideNavigation = pathname
-    ? hiddenPaths.includes(pathname)
+    ? hiddenPaths.includes(pathname) && !isLocalhostAccess
     : false;
 
   // Debug logging for navigation visibility
@@ -40,6 +47,7 @@ export default function ProfessionalNavigation() {
     pathname,
     shouldHideNavigation,
     hiddenPaths,
+    isLocalhostAccess,
     isHidden: shouldHideNavigation,
   });
 
