@@ -88,8 +88,16 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       return;
     }
 
-    // If session is still loading, wait
-    if (status === 'loading') return;
+    // If session is still loading, wait (but add fallback for production)
+    if (status === 'loading') {
+      // Add fallback to prevent infinite loading - allow root page to load
+      if (pathname === '/') {
+        console.log('⏰ Root page authentication loading - allowing access');
+        // Don't return, continue with page loading
+      } else {
+        return;
+      }
+    }
 
     // If user is not authenticated and trying to access protected page, redirect to login
     // BUT allow root page to remain public
@@ -307,10 +315,13 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         <SimpleErrorBoundary>
           <ShipperProvider>
             <LoadProvider>
-              {(!isPublicPage || isLocalhostAccess) && <ProfessionalNavigation />}
+              {(!isPublicPage || isLocalhostAccess) && (
+                <ProfessionalNavigation />
+              )}
               <main
                 style={{
-                  paddingTop: (isPublicPage && !isLocalhostAccess) ? '0px' : '70px',
+                  paddingTop:
+                    isPublicPage && !isLocalhostAccess ? '0px' : '70px',
                   minHeight: '100vh',
                   background:
                     'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
