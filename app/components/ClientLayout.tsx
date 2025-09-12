@@ -88,16 +88,24 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       return;
     }
 
-    // If session is still loading, wait (but add fallback for production)
-    if (status === 'loading') {
-      // Add fallback to prevent infinite loading - allow root page to load
-      if (pathname === '/') {
-        console.log('⏰ Root page authentication loading - allowing access');
-        // Don't return, continue with page loading
-      } else {
-        return;
-      }
-    }
+    // CRITICAL FIX: Always allow root page to load without authentication
+  if (pathname === '/') {
+    console.log('✅ ROOT PAGE: Bypassing all authentication checks');
+    return (
+      <>
+        <Providers>
+          <main style={{ minHeight: '100vh' }}>
+            {children}
+          </main>
+        </Providers>
+      </>
+    );
+  }
+
+  // If session is still loading, wait
+  if (status === 'loading') {
+    return;
+  }
 
     // If user is not authenticated and trying to access protected page, redirect to login
     // BUT allow root page to remain public
