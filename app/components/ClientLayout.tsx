@@ -81,7 +81,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // AUTHENTICATION COMPLETELY DISABLED - All pages are now public
   useEffect(() => {
-    console.log(`✅ ClientLayout: Public access enabled for ${pathname} - No authentication required`);
+    console.log(
+      `✅ ClientLayout: Public access enabled for ${pathname} - No authentication required`
+    );
   }, [pathname]);
 
   // Track hydration to prevent mismatches
@@ -235,22 +237,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname === '192.168.12.189');
 
-  // Show loading screen while authentication is being checked (but not for localhost owner access)
-  if (
-    !isHydrated ||
-    (!isPublicPage && !isLocalhostAccess && status === 'loading')
-  ) {
-    return (
-      <Providers>
-        <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'>
-          <div className='text-center'>
-            <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600' />
-            <p className='mt-4 text-gray-600'>Loading FleetFlow...</p>
-          </div>
-        </div>
-      </Providers>
-    );
-  }
+  // AUTHENTICATION DISABLED: No loading screen needed
+  // All pages are now public and load immediately
 
   if (isAdminDashboard) {
     return (

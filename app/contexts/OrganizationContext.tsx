@@ -61,14 +61,11 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
   const [userPermissions, setUserPermissions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Load user's organizations on mount
+  // AUTHENTICATION DISABLED: Skip organization loading completely
   useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
-      loadUserOrganizations();
-    } else if (status === 'unauthenticated') {
-      setIsLoading(false);
-    }
-  }, [status, session]);
+    console.log('🚨 OrganizationProvider: Authentication disabled - skipping organization loading');
+    setIsLoading(false);
+  }, []);
 
   // Set current organization when organizations are loaded
   useEffect(() => {
