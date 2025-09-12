@@ -21,6 +21,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // CRITICAL FIX: Always allow root page access in production
+  if (pathname === '/') {
+    console.log(`✅ ROOT PAGE: Allowing public access to landing page at ${request.nextUrl.hostname}`);
+    return NextResponse.next();
+  }
+
   // ================================
   // OWNER BYPASS - DEE DAVIS ONLY
   // ================================
