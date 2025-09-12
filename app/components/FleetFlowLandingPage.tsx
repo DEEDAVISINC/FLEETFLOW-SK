@@ -155,22 +155,6 @@ export default function FleetFlowLandingPage() {
               FLEETFLOWDASH
             </button>
           </Link>
-          <Link href='/auth/signin'>
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-              }}
-            >
-              Sign In
-            </button>
-          </Link>
         </div>
       </div>
 
@@ -240,24 +224,6 @@ export default function FleetFlowLandingPage() {
             >
               Book Enterprise Demo
             </button>
-            <Link href='/auth/signin'>
-              <button
-                style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  color: 'white',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  padding: '10px 20px',
-                  borderRadius: '6px',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  backdropFilter: 'blur(10px)',
-                }}
-                aria-label='Sign in to your FleetFlow account'
-              >
-                Log In
-              </button>
-            </Link>
           </div>
         </header>
 
@@ -1776,36 +1742,6 @@ export default function FleetFlowLandingPage() {
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <Link href='/auth/signup'>
-                <button
-                  style={{
-                    background:
-                      'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '15px 40px',
-                    borderRadius: '12px',
-                    fontSize: '1.2rem',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
-                    transition: 'all 0.3s ease',
-                    marginRight: '15px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 12px 35px rgba(59, 130, 246, 0.4)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0px)';
-                    e.currentTarget.style.boxShadow =
-                      '0 8px 25px rgba(59, 130, 246, 0.3)';
-                  }}
-                >
-                  🚀 Start Free Trial
-                </button>
-              </Link>
               <Link href='/plans'>
                 <button
                   style={{

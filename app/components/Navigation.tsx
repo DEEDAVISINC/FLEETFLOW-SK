@@ -1026,20 +1026,6 @@ export default function ProfessionalNavigation() {
                   }}
                 >
                   <Link
-                    href='/auth/signin'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🔐 Login
-                  </Link>
-                  <Link
                     href='/user-management'
                     onClick={handleDropdownClose}
                     style={{
