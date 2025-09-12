@@ -47,7 +47,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // IMMEDIATE ROOT PAGE BYPASS - No authentication required
   if (pathname === '/') {
     console.log(
-      '🚨 ROOT PAGE BYPASS: Skipping all ClientLayout authentication'
+      '🚨 ROOT PAGE BYPASS: Skipping all ClientLayout authentication - PRODUCTION FIX DEPLOYED'
     );
     return (
       <Providers>
