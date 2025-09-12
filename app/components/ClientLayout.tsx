@@ -100,17 +100,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       return;
     }
 
-    // CRITICAL FIX: Always allow root page to load without authentication
-    if (pathname === '/') {
-      console.log('✅ ROOT PAGE: Bypassing all authentication checks');
-      return (
-        <>
-          <Providers>
-            <main style={{ minHeight: '100vh' }}>{children}</main>
-          </Providers>
-        </>
-      );
-    }
+    // Root page bypass is handled at component level above, no need to repeat here
 
     // If session is still loading, wait
     if (status === 'loading') {
