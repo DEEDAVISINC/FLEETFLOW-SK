@@ -79,7 +79,7 @@ const PhotoUpload = ({
           style={{ display: 'none' }}
         />
         <button
-          type="button""
+          type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={photos.length >= maxPhotos}
           style={{
@@ -145,7 +145,7 @@ const PhotoUpload = ({
                 {photo.name.substring(0, 15)}...
               </p>
               <button
-                type="button""
+                type="button"
                 onClick={() => removePhoto(index)}
                 style={{
                   position: 'absolute',
@@ -288,7 +288,7 @@ const SignaturePad = ({
             {placeholder}
           </span>
           <button
-            type="button""
+            type="button"
             onClick={clearSignature}
             style={{
               background: 'rgba(239, 68, 68, 0.8)',
@@ -376,7 +376,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.confirmed || false}
                   onChange={(e) => handleInputChange('confirmed', e.target.checked)}
                   required
@@ -438,7 +438,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.rateConfirmed || false}
                   onChange={(e) => handleInputChange('rateConfirmed', e.target.checked)}
                   required
@@ -463,7 +463,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.bolReceived || false}
                   onChange={(e) => handleInputChange('bolReceived', e.target.checked)}
                   required
@@ -474,7 +474,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.documentsComplete || false}
                   onChange={(e) => handleInputChange('documentsComplete', e.target.checked)}
                   required
@@ -622,7 +622,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.cargoSecured || false}
                   onChange={(e) => handleInputChange('cargoSecured', e.target.checked)}
                   required
@@ -677,7 +677,7 @@ export default function WorkflowStepModal({
             <PhotoUpload 
               onPhotosChange={setPhotos}
               maxPhotos={3}
-              category=""delivery""
+              category="delivery"
             />
           </div>
         )
@@ -744,7 +744,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.cargoUnloaded || false}
                   onChange={(e) => handleInputChange('cargoUnloaded', e.target.checked)}
                   required
@@ -755,11 +755,11 @@ export default function WorkflowStepModal({
             <PhotoUpload 
               onPhotosChange={setPhotos}
               maxPhotos={5}
-              category=""delivery""
+              category="delivery"
             />
             <SignaturePad 
               onSignatureChange={setSignature}
-              placeholder="Receiver signature""
+              placeholder="Receiver signature"
             />
           </div>
         )
@@ -773,7 +773,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.allPhotosUploaded || false}
                   onChange={(e) => handleInputChange('allPhotosUploaded', e.target.checked)}
                   required
@@ -784,7 +784,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.documentationComplete || false}
                   onChange={(e) => handleInputChange('documentationComplete', e.target.checked)}
                   required
@@ -805,7 +805,7 @@ export default function WorkflowStepModal({
               <textarea
                 value={formData.finalNotes || ''}
                 onChange={(e) => handleInputChange('finalNotes', e.target.value)}
-                placeholder="Any final notes about this delivery...""
+                placeholder="Any final notes about this delivery..."
                 style={{
                   width: '100%',
                   height: '80px',
@@ -831,7 +831,7 @@ export default function WorkflowStepModal({
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'white' }}>
                 <input
-                  type="checkbox""
+                  type="checkbox"
                   checked={formData.completed || false}
                   onChange={(e) => handleInputChange('completed', e.target.checked)}
                   required
@@ -842,7 +842,7 @@ export default function WorkflowStepModal({
             <PhotoUpload 
               onPhotosChange={setPhotos}
               maxPhotos={3}
-              category=""general""
+              category="general"
             />
           </div>
         )
@@ -915,7 +915,7 @@ export default function WorkflowStepModal({
             marginTop: '24px'
           }}>
             <button
-              type="button""
+              type="button"
               onClick={onClose}
               style={{
                 background: 'rgba(107, 114, 128, 0.8)',
@@ -931,7 +931,7 @@ export default function WorkflowStepModal({
               Cancel
             </button>
             <button
-              type="submit""
+              type="submit"
               disabled={isSubmitting}
               style={{
                 background: isSubmitting 

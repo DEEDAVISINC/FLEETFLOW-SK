@@ -157,7 +157,7 @@ export default function DriverManagementSimple() {
     }}>
       {/* Back Button */}
       <div style={{ padding: '0 0 24px 0', maxWidth: '1200px', margin: '0 auto' }}>
-        <Link href="/"" style={{ display: 'inline-block', textDecoration: 'none' }}>
+        <Link href="/" style={{ display: 'inline-block', textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
@@ -256,7 +256,7 @@ export default function DriverManagementSimple() {
         }}>
           <div style={{ position: 'relative' }}>
             <input
-              type="text""
+              type="text"
               placeholder="Search drivers by name, email, license, phone, location...""
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

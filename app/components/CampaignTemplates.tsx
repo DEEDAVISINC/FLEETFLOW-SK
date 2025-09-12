@@ -75,7 +75,19 @@ export default function CampaignTemplates() {
   const [selectedTemplate, setSelectedTemplate] =
     useState<CampaignTemplate | null>(null);
   const [activeCampaigns, setActiveCampaigns] = useState<CampaignInstance[]>(
-    []
+    () => {
+      // Load campaigns from localStorage on initialization
+      if (typeof window !== 'undefined') {
+        try {
+          const saved = localStorage.getItem('fleetflow-active-campaigns');
+          return saved ? JSON.parse(saved) : [];
+        } catch (error) {
+          console.error('Error loading campaigns from localStorage:', error);
+          return [];
+        }
+      }
+      return [];
+    }
   );
 
   // ORGANIZATION & FILTERING STATE
@@ -83,6 +95,20 @@ export default function CampaignTemplates() {
   const [sortBy, setSortBy] = useState<string>('difficulty');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  // 💾 Save campaigns to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(
+          'fleetflow-active-campaigns',
+          JSON.stringify(activeCampaigns)
+        );
+      } catch (error) {
+        console.error('Error saving campaigns to localStorage:', error);
+      }
+    }
+  }, [activeCampaigns]);
 
   // 🚀 SALESFLOW AI BACKGROUND AUTOMATION
   useEffect(() => {

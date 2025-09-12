@@ -1790,6 +1790,107 @@ export default function ProfessionalNavigation() {
           </div>
         </div>
       </div>
+
+      {/* DEPOINTE AI Quick Access Bar - Only on DEPOINTE Dashboard */}
+      {pathname === '/depointe-dashboard' && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '8px',
+            right: '20px',
+            zIndex: 1001,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'rgba(15, 23, 42, 0.9)',
+            padding: '6px 12px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '10px',
+              opacity: 0.7,
+              fontWeight: 'bold',
+              color: 'white',
+            }}
+          >
+            🚛 DEPOINTE AI:
+          </span>
+          <Link
+            href='/dashboard'
+            style={{
+              color: '#60a5fa',
+              textDecoration: 'none',
+              fontSize: '10px',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              background: 'rgba(96, 165, 250, 0.15)',
+              border: '1px solid rgba(96, 165, 250, 0.3)',
+            }}
+          >
+            📊 Main
+          </Link>
+          <Link
+            href='/loads'
+            style={{
+              color: '#34d399',
+              textDecoration: 'none',
+              fontSize: '10px',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              background: 'rgba(52, 211, 153, 0.15)',
+              border: '1px solid rgba(52, 211, 153, 0.3)',
+            }}
+          >
+            🚚 Loads
+          </Link>
+          <Link
+            href='/drivers'
+            style={{
+              color: '#fbbf24',
+              textDecoration: 'none',
+              fontSize: '10px',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              background: 'rgba(251, 191, 36, 0.15)',
+              border: '1px solid rgba(251, 191, 36, 0.3)',
+            }}
+          >
+            👤 Drivers
+          </Link>
+          <Link
+            href='/analytics'
+            style={{
+              color: '#f472b6',
+              textDecoration: 'none',
+              fontSize: '10px',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              background: 'rgba(244, 114, 182, 0.15)',
+              border: '1px solid rgba(244, 114, 182, 0.3)',
+            }}
+          >
+            📈 Analytics
+          </Link>
+          <Link
+            href='/billing-invoices'
+            style={{
+              color: '#a78bfa',
+              textDecoration: 'none',
+              fontSize: '10px',
+              padding: '3px 8px',
+              borderRadius: '4px',
+              background: 'rgba(167, 139, 250, 0.15)',
+              border: '1px solid rgba(167, 139, 250, 0.3)',
+            }}
+          >
+            💰 Billing
+          </Link>
+        </div>
+      )}
     </nav>
   );
 }

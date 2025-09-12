@@ -1155,7 +1155,7 @@ export default function EmailSignaturesPage() {
                       height: '40px',
                       margin: '0 auto 16px',
                     }}
-                  ></div>
+                   />
                   <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
                     Loading signatures...
                   </div>

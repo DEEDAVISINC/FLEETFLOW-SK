@@ -176,30 +176,30 @@ export default function DriverManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800"" style={{ paddingTop: '80px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800" style={{ paddingTop: '80px' }}>
       {/* Header */}
-      <div className="p-6"">
-        <Link href="/"" className="inline-block"">
-          <button className="group bg-white/20 hover:bg-white/30 backdrop-blur-lg border border-white/30 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg"">
-            <span className="mr-2"">←</span>
+      <div className="p-6"
+        <Link href="/" className="inline-block"
+          <button className="group bg-white/20 hover:bg-white/30 backdrop-blur-lg border border-white/30 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg"
+            <span className="mr-2">←</span>
             Back to Dashboard
           </button>
         </Link>
       </div>
 
-      <div className="container mx-auto px-6 pb-8"">
+      <div className="container mx-auto px-6 pb-8"
         {/* Page Header */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 mb-8"">
-          <h1 className="text-4xl font-bold text-white mb-3 drop-shadow-lg"">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 mb-8"
+          <h1 className="text-4xl font-bold text-white mb-3 drop-shadow-lg"
             👥 DRIVER MANAGEMENT
           </h1>
-          <p className="text-xl text-white/90"">
+          <p className="text-xl text-white/90"
             Driver Fleet Operations & Performance Monitoring - {user.name}
           </p>
         </div>
 
         {/* Stats Dashboard */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8"">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8"
           {[
             { label: 'Total Drivers', value: stats.total, color: 'from-blue-500 to-blue-600', icon: '👥' },
             { label: 'Available', value: stats.available, color: 'from-green-500 to-green-600', icon: '✅' },
@@ -208,36 +208,36 @@ export default function DriverManagement() {
             { label: 'Off Duty', value: stats.offDuty, color: 'from-yellow-500 to-yellow-600', icon: '⏸️' },
             { label: 'Inactive', value: stats.inactive, color: 'from-gray-500 to-gray-600', icon: '⚫' }
           ].map((stat, index) => (
-            <div key={index} className="bg-white/90 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"">
-              <div className={`bg-gradient-to-r ${stat.color} text-white text-2xl font-bold rounded-lg py-3 mb-3 shadow-md`}>
-                <div className="text-sm opacity-90 mb-1"">{stat.icon}</div>
+            <div key={index} className="bg-white/90 backdrop-blur-sm rounded-xl p-4 text-center shadow-lg hover:shadow-xl transition-all duration-300 hover:transform hover:-translate-y-1"
+              <div className={`bg-gradient-to-r ${stat.color} text-white text-2xl font-bold rounded-lg py-3 mb-3 shadow-md`}
+                <div className="text-sm opacity-90 mb-1">{stat.icon}</div>
                 <div>{stat.value}</div>
               </div>
-              <div className="text-gray-700 text-sm font-semibold"">{stat.label}</div>
+              <div className="text-gray-700 text-sm font-semibold">{stat.label}</div>
             </div>
           ))}
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg"">
-          <div className="relative"">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"">
-              <svg className="h-5 w-5 text-gray-400"" fill=""none"" viewBox=""0 0 24 24"" stroke=""currentColor"">
-                <path strokeLinecap=""round"" strokeLinejoin=""round"" strokeWidth={2} d=""M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"" />
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 mb-8 shadow-lg"
+          <div className="relative"
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <input
-              type="text""
-              placeholder="Search drivers by name, email, license, phone, location, truck...""
+              type="text"
+              placeholder="Search drivers by name, email, license, phone, location, truck..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 shadow-sm""
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 shadow-sm"
             />
           </div>
         </div>
 
         {/* Driver Table */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-white/20">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden border border-white/20"
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gradient-to-r from-gray-50 to-gray-100">

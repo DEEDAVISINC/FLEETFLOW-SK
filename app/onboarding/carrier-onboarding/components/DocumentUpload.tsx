@@ -548,7 +548,7 @@ export const DocumentUpload: React.FC<DocumentUploadProps> = ({ onDocumentUpload
             ) : (
               <div style={{ marginTop: '12px' }}>
                 <input
-                  type="file""
+                  type="file"
                   id={`file-${document.id}`}
                   accept="".pdf,.jpg,.jpeg,.png,.doc,.docx""
                   onChange={(e) => {
