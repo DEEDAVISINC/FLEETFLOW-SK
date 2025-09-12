@@ -1,13 +1,11 @@
+'use client';
+
 import { Metadata } from 'next';
 import Script from 'next/script';
 import ClientLayout from './components/ClientLayout';
-import './globals.css';
-
-// Simple client component to bypass authentication for root page
-'use client';
-
 import { usePathname } from 'next/navigation';
 import Providers from './components/Providers';
+import './globals.css';
 
 function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
