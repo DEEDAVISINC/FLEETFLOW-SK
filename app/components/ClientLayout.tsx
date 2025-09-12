@@ -79,49 +79,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       publicPages.some((page) => pathname.startsWith(page))
     : false;
 
-  // Authentication check - backup layer to middleware
+  // AUTHENTICATION COMPLETELY DISABLED - All pages are now public
   useEffect(() => {
-    if (!isHydrated) return; // Wait for hydration
-
-    // Skip auth check for public pages
-    if (isPublicPage) return;
-
-    // OWNER BYPASS: Dee Davis accessing from localhost
-    const isLocalhost =
-      typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.hostname === '192.168.12.189');
-
-    if (isLocalhost) {
-      console.log(
-        `👑 OWNER ACCESS: Dee Davis accessing ${pathname} from localhost - bypassing client auth check`
-      );
-      return;
-    }
-
-    // Root page bypass is handled at component level above, no need to repeat here
-
-    // If session is still loading, wait
-    if (status === 'loading') {
-      return;
-    }
-
-    // If user is not authenticated and trying to access protected page, redirect to login
-    // BUT allow root page to remain public
-    if (status === 'unauthenticated' && pathname !== '/') {
-      console.log(
-        `🚫 ClientLayout: Unauthenticated access blocked for ${pathname}`
-      );
-      const signInUrl = `/auth/signin?callbackUrl=${encodeURIComponent(pathname || '/')}`;
-      router.push(signInUrl);
-      return;
-    }
-
-    console.log(`✅ ClientLayout: Authenticated user accessing ${pathname}`, {
-      email: session?.user?.email,
-    });
-  }, [status, pathname, isHydrated, isPublicPage, router, session]);
+    console.log(`✅ ClientLayout: Public access enabled for ${pathname} - No authentication required`);
+  }, [pathname]);
 
   // Track hydration to prevent mismatches
   useEffect(() => {
