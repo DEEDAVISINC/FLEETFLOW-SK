@@ -7,7 +7,9 @@ interface ConditionalLayoutProps {
   children: React.ReactNode;
 }
 
-export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
+export default function ConditionalLayout({
+  children,
+}: ConditionalLayoutProps) {
   const pathname = usePathname();
 
   // For root page, render children directly without ClientLayout

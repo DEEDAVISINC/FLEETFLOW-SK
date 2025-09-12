@@ -46,12 +46,12 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   // IMMEDIATE ROOT PAGE BYPASS - No authentication required
   if (pathname === '/') {
-    console.log('🚨 ROOT PAGE BYPASS: Skipping all ClientLayout authentication');
+    console.log(
+      '🚨 ROOT PAGE BYPASS: Skipping all ClientLayout authentication'
+    );
     return (
       <Providers>
-        <main style={{ minHeight: '100vh' }}>
-          {children}
-        </main>
+        <main style={{ minHeight: '100vh' }}>{children}</main>
       </Providers>
     );
   }
@@ -101,23 +101,21 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     }
 
     // CRITICAL FIX: Always allow root page to load without authentication
-  if (pathname === '/') {
-    console.log('✅ ROOT PAGE: Bypassing all authentication checks');
-    return (
-      <>
-        <Providers>
-          <main style={{ minHeight: '100vh' }}>
-            {children}
-          </main>
-        </Providers>
-      </>
-    );
-  }
+    if (pathname === '/') {
+      console.log('✅ ROOT PAGE: Bypassing all authentication checks');
+      return (
+        <>
+          <Providers>
+            <main style={{ minHeight: '100vh' }}>{children}</main>
+          </Providers>
+        </>
+      );
+    }
 
-  // If session is still loading, wait
-  if (status === 'loading') {
-    return;
-  }
+    // If session is still loading, wait
+    if (status === 'loading') {
+      return;
+    }
 
     // If user is not authenticated and trying to access protected page, redirect to login
     // BUT allow root page to remain public
