@@ -23,7 +23,9 @@ export async function middleware(request: NextRequest) {
 
   // CRITICAL FIX: Always allow root page access in production
   if (pathname === '/') {
-    console.log(`✅ ROOT PAGE: Allowing public access to landing page at ${request.nextUrl.hostname}`);
+    console.log(
+      `✅ ROOT PAGE: Allowing public access to landing page at ${request.nextUrl.hostname}`
+    );
     return NextResponse.next();
   }
 

@@ -92,7 +92,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     if (status === 'loading') return;
 
     // If user is not authenticated and trying to access protected page, redirect to login
-    if (status === 'unauthenticated') {
+    // BUT allow root page to remain public
+    if (status === 'unauthenticated' && pathname !== '/') {
       console.log(
         `🚫 ClientLayout: Unauthenticated access blocked for ${pathname}`
       );
