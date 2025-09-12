@@ -44,6 +44,18 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // Get user data for permissions and functionality - but don't use until hydrated
   const { user } = getCurrentUser();
 
+  // IMMEDIATE ROOT PAGE BYPASS - No authentication required
+  if (pathname === '/') {
+    console.log('🚨 ROOT PAGE BYPASS: Skipping all ClientLayout authentication');
+    return (
+      <Providers>
+        <main style={{ minHeight: '100vh' }}>
+          {children}
+        </main>
+      </Providers>
+    );
+  }
+
   // Define public pages that don't require authentication
   const publicPages = [
     '/',
