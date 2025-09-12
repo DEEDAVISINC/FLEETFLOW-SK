@@ -1,33 +1,8 @@
-'use client';
-
 import { Metadata } from 'next';
 import Script from 'next/script';
 import ClientLayout from './components/ClientLayout';
-import { usePathname } from 'next/navigation';
-import Providers from './components/Providers';
 import './globals.css';
 
-function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
-  // For root page, bypass all authentication
-  if (pathname === '/') {
-    return (
-      <Providers>
-        <main style={{ minHeight: '100vh' }}>
-          {children}
-        </main>
-      </Providers>
-    );
-  }
-
-  // For all other pages, use normal ClientLayout
-  return (
-    <ClientLayout>
-      {children}
-    </ClientLayout>
-  );
-}
 
 // Enhanced SEO metadata for FleetFlow
 export const metadata: Metadata = {
@@ -435,9 +410,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <RootLayoutWrapper>
+        <ClientLayout>
           {children}
-        </RootLayoutWrapper>
+        </ClientLayout>
       </body>
     </html>
   );
