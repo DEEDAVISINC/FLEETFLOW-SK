@@ -306,10 +306,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         <SimpleErrorBoundary>
           <ShipperProvider>
             <LoadProvider>
-              {!isPublicPage && <ProfessionalNavigation />}
+              {(!isPublicPage || isLocalhostAccess) && <ProfessionalNavigation />}
               <main
                 style={{
-                  paddingTop: isPublicPage ? '0px' : '70px',
+                  paddingTop: (isPublicPage && !isLocalhostAccess) ? '0px' : '70px',
                   minHeight: '100vh',
                   background:
                     'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
