@@ -63,7 +63,9 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 
   // AUTHENTICATION DISABLED: Skip organization loading completely
   useEffect(() => {
-    console.log('🚨 OrganizationProvider: Authentication disabled - skipping organization loading');
+    console.log(
+      '🚨 OrganizationProvider: Authentication disabled - skipping organization loading'
+    );
     setIsLoading(false);
   }, []);
 
@@ -244,7 +246,3 @@ export function useRole() {
     isStaff,
   };
 }
-
-
-
-

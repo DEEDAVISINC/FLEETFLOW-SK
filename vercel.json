@@ -1,89 +1,39 @@
 {
-  "version": 2,
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "outputDirectory": ".next",
-  "public": false,
-  "regions": ["iad1"],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
+    "app/auth/signin/page.tsx": {
+      "maxDuration": 1
+    },
+    "app/auth/signup/page.tsx": {
+      "maxDuration": 1
     }
   },
-  "redirects": [
-    {
-      "source": "/home",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/login",
-      "destination": "/auth/signin",
-      "permanent": false
-    }
-  ],
-  "trailingSlash": false,
-  "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
-    {
-      "source": "/privacy-policy",
-      "destination": "/api/privacy-policy"
-    },
-    {
-      "source": "/privacy-policy.html",
-      "destination": "/api/privacy-policy"
-    }
-  ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/auth/(.*)",
       "headers": [
         {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
         },
         {
-          "key": "X-Frame-Options",
-          "value": "DENY"
+          "key": "Pragma",
+          "value": "no-cache"
         },
         {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com *.vercel-insights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' *.supabase.co *.anthropic.com wss://*.supabase.co *.vercel-analytics.com *.vercel-insights.com; media-src 'self' data: blob:;"
+          "key": "Expires",
+          "value": "0"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/auth/signin",
+      "destination": "/"
     },
     {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        }
-      ]
+      "source": "/auth/signup", 
+      "destination": "/"
     }
   ]
 }
