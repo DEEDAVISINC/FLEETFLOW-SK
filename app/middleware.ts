@@ -37,16 +37,6 @@ export async function middleware(request: NextRequest) {
     console.log(
       `👑 OWNER ACCESS: Dee Davis accessing ${pathname} from localhost - bypassing all authentication`
     );
-
-    // Redirect root localhost access to DEPOINTE AI Company Dashboard
-    if (pathname === '/') {
-      const depointeUrl = new URL('/depointe-dashboard', request.url);
-      console.log(
-        `🎯 LOCALHOST ROOT: Redirecting Dee Davis to DEPOINTE AI Company Dashboard`
-      );
-      return NextResponse.redirect(depointeUrl);
-    }
-
     return NextResponse.next();
   }
 
