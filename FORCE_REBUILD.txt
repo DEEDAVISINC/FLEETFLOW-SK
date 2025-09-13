@@ -1,0 +1,2 @@
+Force rebuild timestamp: 2025-09-13T02:29:00Z
+Auth routing fix deployed - NextAuth now redirects to landing page
