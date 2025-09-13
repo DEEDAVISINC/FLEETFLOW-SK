@@ -1,8 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Force cache invalidation
+  // NUCLEAR CACHE INVALIDATION
   generateBuildId: async () => {
-    return `build-${Date.now()}`;
+    return `nuclear-rebuild-${Date.now()}-${Math.random()}`;
+  },
+  experimental: {
+    staleTimes: {
+      dynamic: 0,
+      static: 0,
+    },
   },
   // Disable caching for auth-related pages
   async headers() {

@@ -10,10 +10,16 @@ interface ProvidersProps {
 }
 
 export function Providers({ children }: ProvidersProps) {
+  console.log('🔧 PROVIDERS LOADING - CACHE CLEAR ACTIVE');
   return (
     <SessionProvider>
       <OrganizationProvider>
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider>
+          {/* CACHE BUSTER: Force fresh render */}
+          <div key={Date.now()}>
+            {children}
+          </div>
+        </LanguageProvider>
       </OrganizationProvider>
     </SessionProvider>
   );

@@ -1,5 +1,10 @@
 import FleetFlowLandingPage from './components/FleetFlowLandingPage';
 
 export default function HomePage() {
-  return <FleetFlowLandingPage />;
+  console.log('🏠 HOMEPAGE LOADING - NO AUTH REDIRECT ALLOWED');
+  return (
+    <div key="force-refresh">
+      <FleetFlowLandingPage />
+    </div>
+  );
 }
