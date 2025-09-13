@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Script from 'next/script';
+import ClientLayoutWrapper from './components/ClientLayoutWrapper';
 import './globals.css';
 
 // Enhanced SEO metadata for FleetFlow
@@ -408,8 +409,8 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* COMPLETELY BYPASS ALL AUTH - NO PROVIDERS, NO CLIENT LOGIC */}
-        {children}
+        {/* CONDITIONAL: Only bypass auth for homepage, keep ClientLayout for other pages */}
+        <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>
     </html>
   );
