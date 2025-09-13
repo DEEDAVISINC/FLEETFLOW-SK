@@ -1,0 +1,64 @@
+# DigitalOcean App Platform Configuration
+# FleetFlow Business Intelligence Application
+name: fleetflow-business-intelligence
+region: nyc
+
+services:
+  - name: web
+    source_dir: /
+    github:
+      repo: fleetflow-sk
+      branch: main
+      deploy_on_push: true
+
+    run_command: npm start
+    build_command: npm run build
+
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+
+    http_port: 3000
+
+    health_check:
+      http_path: /
+
+    # Environment Variables
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: NEXT_PUBLIC_APP_URL
+        value: ${APP_URL}
+
+    # Routes
+    routes:
+      - path: /
+      - path: /depointe-dashboard
+      - path: /api
+
+# Database (if needed)
+databases:
+  - name: fleetflow-db
+    engine: PG
+    version: "14"
+    size: db-s-dev-database
+
+# Static Sites (if needed)
+static_sites:
+  - name: fleetflow-assets
+    source_dir: public
+    github:
+      repo: fleetflow-sk
+      branch: main
+      deploy_on_push: true
+    routes:
+      - path: /assets
+
+# Domain Configuration
+domains:
+  - domain: fleetflowapp.com
+    type: PRIMARY
+    wildcard: false
+    zone: fleetflowapp.com

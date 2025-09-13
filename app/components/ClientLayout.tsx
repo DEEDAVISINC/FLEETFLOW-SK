@@ -47,7 +47,23 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // FORCE IMMEDIATE LANDING PAGE - KILL ALL LOADING STATES
   if (pathname === '/') {
     console.log('🚨 FORCE LANDING PAGE: Bypassing ALL authentication logic');
-    return children; // NO Providers, NO loading, just the landing page
+    return (
+      <MaintenanceMode>
+        <SimpleErrorBoundary>
+          <div
+            style={{
+              minHeight: '100vh',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {children}
+            <FleetFlowFooter variant='transparent' />
+          </div>
+        </SimpleErrorBoundary>
+      </MaintenanceMode>
+    ); // NO SessionProvider, NO OrganizationProvider, just the landing page
   }
 
   // Define public pages that don't require authentication
@@ -67,6 +83,38 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     '/auth/signup',
     '/landingpage',
   ];
+
+  // ADDITIONAL BYPASS: Also bypass auth for other marketing/public pages
+  const isMarketingPage =
+    pathname &&
+    (pathname.startsWith('/carrier') ||
+      pathname.startsWith('/broker') ||
+      pathname.startsWith('/shipper') ||
+      pathname.includes('landing'));
+
+  if (isMarketingPage) {
+    console.log(
+      '🚨 MARKETING PAGE: Bypassing authentication logic for',
+      pathname
+    );
+    return (
+      <MaintenanceMode>
+        <SimpleErrorBoundary>
+          <div
+            style={{
+              minHeight: '100vh',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {children}
+            <FleetFlowFooter variant='transparent' />
+          </div>
+        </SimpleErrorBoundary>
+      </MaintenanceMode>
+    );
+  }
 
   const isPublicPage = pathname
     ? publicPages.includes(pathname) ||

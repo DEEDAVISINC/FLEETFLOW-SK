@@ -115,7 +115,17 @@ export const authOptions = {
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // Always redirect to landing page, never to auth pages
+      // Don't redirect if user is on landing page or public pages
+      if (
+        url === baseUrl + '/' ||
+        url.includes('landing') ||
+        url.includes('carrier') ||
+        url.includes('broker')
+      ) {
+        console.log(`🚨 NextAuth: NOT redirecting public page: ${url}`);
+        return url;
+      }
+      // For auth success, redirect to landing page
       console.log(`🔄 NextAuth redirect: ${url} -> ${baseUrl}/`);
       return baseUrl + '/';
     },
@@ -167,7 +177,7 @@ export const authOptions = {
   },
   pages: {
     signIn: '/auth/signin', // Use proper auth signin page
-    error: '/auth/signin',  // Redirect errors to signin page
+    error: '/auth/signin', // Redirect errors to signin page
   },
 };
 

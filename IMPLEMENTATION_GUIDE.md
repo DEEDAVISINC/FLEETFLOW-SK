@@ -2,13 +2,15 @@
 
 ## 🎯 **RECOMMENDED IMPLEMENTATION PATH**
 
-Based on your needs, I recommend the **Supabase + Railway + Twilio** stack for the best balance of features, cost, and simplicity.
+Based on your needs, I recommend the **Supabase + DigitalOcean + Twilio** stack for the best balance
+of features, cost, and simplicity.
 
 ---
 
 ## 📋 **PHASE 1: SUPABASE SETUP (15 minutes)**
 
 ### **1. Create Supabase Project**
+
 ```bash
 # Go to https://supabase.com
 # Click "Start your project"
@@ -19,6 +21,7 @@ Based on your needs, I recommend the **Supabase + Railway + Twilio** stack for t
 ```
 
 ### **2. Get Supabase Credentials**
+
 ```bash
 # From Supabase Dashboard > Settings > API
 # Copy these values:
@@ -29,6 +32,7 @@ SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### **3. Create Database Tables**
+
 ```sql
 -- Go to Supabase Dashboard > SQL Editor
 -- Run this script:
@@ -55,7 +59,7 @@ create table public.drivers (
 
 create sequence if not exists driver_seq start 1;
 
--- Loads table  
+-- Loads table
 create table public.loads (
   id text primary key default 'LD-' || extract(year from now()) || '-' || lpad(nextval('load_seq')::text, 3, '0'),
   broker_name text not null,
@@ -133,41 +137,50 @@ create table public.notifications (
 create sequence if not exists notification_seq start 1;
 
 -- Insert sample data
-insert into public.drivers (id, name, email, phone, license_number, dispatcher_id, current_location, eld_status, hours_remaining) values 
+insert into public.drivers (id, name, email, phone, license_number, dispatcher_id, current_location, eld_status, hours_remaining) values
 ('DRV-001', 'John Smith', 'john.smith@fleetflowapp.com', '+15551234567', 'CDL-TX-123456', 'DSP-001', 'Dallas, TX', 'Connected', 8.5);
 
-insert into public.loads (id, broker_name, dispatcher_id, assigned_driver_id, origin, destination, rate, distance, weight, equipment, status, pickup_date, delivery_date) values 
+insert into public.loads (id, broker_name, dispatcher_id, assigned_driver_id, origin, destination, rate, distance, weight, equipment, status, pickup_date, delivery_date) values
 ('LD-2025-001', 'ABC Logistics', 'DSP-001', 'DRV-001', 'Dallas, TX', 'Atlanta, GA', 2500.00, '925 miles', '45,000 lbs', 'Dry Van', 'Assigned', '2025-07-03 08:00:00+00', '2025-07-05 17:00:00+00'),
 ('LD-2025-002', 'XYZ Freight', null, null, 'Houston, TX', 'Miami, FL', 3200.00, '1200 miles', '40,000 lbs', 'Refrigerated', 'Available', '2025-07-04 06:00:00+00', '2025-07-06 18:00:00+00');
 ```
 
 ---
 
-## 📋 **PHASE 2: RAILWAY HOSTING (10 minutes)**
+## 📋 **PHASE 2: DIGITALOCEAN HOSTING (10 minutes)**
 
-### **1. Deploy to Railway**
+### **1. Deploy to DigitalOcean App Platform**
+
 ```bash
-# Install Railway CLI
-npm install -g @railway/cli
+# Go to DigitalOcean App Platform
+# Visit: https://cloud.digitalocean.com/apps
+# Click "Create App"
 
-# Login to Railway
-railway login
-
-# In your FleetFlow directory
-railway init
-
-# Select "Deploy from GitHub repo"
-# Connect your GitHub account
-# Select your FleetFlow repository
-# Railway will auto-detect Node.js and deploy
+# Connect GitHub Repository
+# Select "GitHub" as source
+# Repository: fleetflow-production ✅
+# Branch: main
+# Autodeploy: Enable
 ```
 
-### **2. Add Environment Variables**
+### **2. Configure App Settings**
+
 ```bash
-# In Railway dashboard, go to Variables tab:
+# App Configuration:
+# App Name: fleetflow-business-intelligence
+# Region: New York (NYC3)
+# Build Command: npm run build
+# Run Command: npm start
+# Port: 3000
+```
+
+### **3. Add Environment Variables**
+
+```bash
+# In DigitalOcean App Platform, go to Settings → Environment Variables:
 
 NODE_ENV=production
-PORT=8000
+PORT=3000
 
 # Supabase credentials
 SUPABASE_URL=https://your-project.supabase.co
@@ -180,13 +193,14 @@ JWT_SECRET=your_super_secret_jwt_key_here
 # Add Twilio later...
 ```
 
-### **3. Test Deployment**
+### **4. Test Deployment**
+
 ```bash
-# Railway will give you a URL like:
-# https://fleetflow-backend-production.up.railway.app
+# DigitalOcean will give you a URL like:
+# https://fleetflow-business-intelligence-xxxxx.ondigitalocean.app
 
 # Test the health endpoint:
-curl https://your-railway-url.railway.app/api/health
+curl https://your-digitalocean-url/api/health
 ```
 
 ---
@@ -194,6 +208,7 @@ curl https://your-railway-url.railway.app/api/health
 ## 📋 **PHASE 3: TWILIO SMS (5 minutes)**
 
 ### **1. Create Twilio Account**
+
 ```bash
 # Go to https://www.twilio.com/try-twilio
 # Sign up for free account
@@ -202,6 +217,7 @@ curl https://your-railway-url.railway.app/api/health
 ```
 
 ### **2. Get Twilio Credentials**
+
 ```bash
 # From Twilio Console Dashboard:
 TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -213,11 +229,12 @@ TWILIO_AUTH_TOKEN=your_auth_token
 TWILIO_PHONE_NUMBER=+15551234567
 ```
 
-### **3. Add to Railway**
+### **3. Add to DigitalOcean**
+
 ```bash
-# In Railway Variables tab, add:
+# In DigitalOcean App Platform Environment Variables, add:
 TWILIO_ACCOUNT_SID=your_sid
-TWILIO_AUTH_TOKEN=your_token  
+TWILIO_AUTH_TOKEN=your_token
 TWILIO_PHONE_NUMBER=your_twilio_number
 ```
 
@@ -226,6 +243,7 @@ TWILIO_PHONE_NUMBER=your_twilio_number
 ## 📋 **PHASE 4: CLOUDINARY IMAGES (5 minutes)**
 
 ### **1. Create Cloudinary Account**
+
 ```bash
 # Go to https://cloudinary.com
 # Sign up for free account
@@ -233,6 +251,7 @@ TWILIO_PHONE_NUMBER=your_twilio_number
 ```
 
 ### **2. Get Cloudinary Credentials**
+
 ```bash
 # From Cloudinary Dashboard:
 CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -240,9 +259,10 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
-### **3. Add to Railway**
+### **3. Add to DigitalOcean**
+
 ```bash
-# In Railway Variables, add:
+# In DigitalOcean Environment Variables, add:
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
@@ -253,12 +273,14 @@ CLOUDINARY_API_SECRET=your_api_secret
 ## 📋 **PHASE 5: UPDATE BACKEND CODE**
 
 ### **1. Install Supabase Client**
+
 ```bash
 npm install @supabase/supabase-js
 npm install cloudinary
 ```
 
 ### **2. Update Backend Starter**
+
 Create a new file `supabase-backend.js`:
 
 ```javascript
@@ -274,23 +296,17 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Initialize Supabase
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
-);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 // Initialize Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Initialize Twilio
-const twilioClient = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // Middleware
 app.use(cors());
@@ -308,7 +324,7 @@ app.get('/api/health', (req, res) => {
 app.post('/api/auth/driver/login', async (req, res) => {
   try {
     const { phone } = req.body;
-    
+
     const { data: driver, error } = await supabase
       .from('drivers')
       .select('*')
@@ -332,8 +348,8 @@ app.post('/api/auth/driver/login', async (req, res) => {
         licenseNumber: driver.license_number,
         currentLocation: driver.current_location,
         eldStatus: driver.eld_status,
-        hoursRemaining: driver.hours_remaining
-      }
+        hoursRemaining: driver.hours_remaining,
+      },
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -392,16 +408,18 @@ app.post('/api/loads/:loadId/confirm', upload.array('photos'), async (req, res) 
     const photoUrls = [];
     for (const photo of photos) {
       const result = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { 
-            folder: 'fleetflow/confirmations',
-            resource_type: 'image'
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        ).end(photo.buffer);
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: 'fleetflow/confirmations',
+              resource_type: 'image',
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          )
+          .end(photo.buffer);
       });
       photoUrls.push(result.secure_url);
     }
@@ -414,7 +432,7 @@ app.post('/api/loads/:loadId/confirm', upload.array('photos'), async (req, res) 
         driver_id: driverId,
         confirmed_at: new Date().toISOString(),
         driver_signature: driverSignature,
-        notes
+        notes,
       })
       .select()
       .single();
@@ -424,24 +442,21 @@ app.post('/api/loads/:loadId/confirm', upload.array('photos'), async (req, res) 
     }
 
     // Update load status
-    await supabase
-      .from('loads')
-      .update({ status: 'In Transit' })
-      .eq('id', loadId);
+    await supabase.from('loads').update({ status: 'In Transit' }).eq('id', loadId);
 
     // Send SMS notification
     if (process.env.TWILIO_PHONE_NUMBER) {
       await twilioClient.messages.create({
         body: `Load ${loadId} confirmed successfully by driver.`,
         from: process.env.TWILIO_PHONE_NUMBER,
-        to: '+15551234567' // Replace with dispatcher phone
+        to: '+15551234567', // Replace with dispatcher phone
       });
     }
 
     res.json({
       confirmation,
       photoUrls,
-      message: 'Load confirmed successfully'
+      message: 'Load confirmed successfully',
     });
   } catch (error) {
     console.error('Confirmation error:', error);
@@ -460,16 +475,18 @@ app.post('/api/deliveries/:loadId/complete', upload.array('photos'), async (req,
     const photoUrls = [];
     for (const photo of photos) {
       const result = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          { 
-            folder: 'fleetflow/deliveries',
-            resource_type: 'image'
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        ).end(photo.buffer);
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: 'fleetflow/deliveries',
+              resource_type: 'image',
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          )
+          .end(photo.buffer);
       });
       photoUrls.push(result.secure_url);
     }
@@ -484,7 +501,7 @@ app.post('/api/deliveries/:loadId/complete', upload.array('photos'), async (req,
         receiver_signature: receiverSignature,
         delivery_time: new Date().toISOString(),
         notes,
-        status: 'completed'
+        status: 'completed',
       })
       .select()
       .single();
@@ -494,15 +511,12 @@ app.post('/api/deliveries/:loadId/complete', upload.array('photos'), async (req,
     }
 
     // Update load status
-    await supabase
-      .from('loads')
-      .update({ status: 'Delivered' })
-      .eq('id', loadId);
+    await supabase.from('loads').update({ status: 'Delivered' }).eq('id', loadId);
 
     res.json({
       delivery,
       photoUrls,
-      message: 'Delivery completed successfully'
+      message: 'Delivery completed successfully',
     });
   } catch (error) {
     console.error('Delivery error:', error);
@@ -523,9 +537,9 @@ Update your frontend to use the real backend:
 
 ```typescript
 // Create lib/api.ts
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-railway-url.railway.app/api'
-  : 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://your-digitalocean-url/api'
+  : 'http://localhost:3001/api';
 
 export const loginDriver = async (phone: string) => {
   const response = await fetch(`${API_BASE_URL}/auth/driver/login`, {
@@ -559,7 +573,7 @@ export const confirmLoad = async (loadId: string, data: FormData, token: string)
 
 ```
 ✅ Supabase: $0/month (free tier)
-✅ Railway: $5/month (hobby plan)  
+✅ DigitalOcean: $12/month (basic droplet)
 ✅ Twilio: $1/month (phone number) + $0.0075 per SMS
 ✅ Cloudinary: $0/month (free tier)
 
@@ -571,7 +585,7 @@ Total: ~$6/month + SMS costs
 ## 🚀 **GO LIVE CHECKLIST**
 
 - [ ] Supabase project created and tables set up
-- [ ] Railway deployment successful  
+- [ ] DigitalOcean deployment successful
 - [ ] Twilio SMS working
 - [ ] Cloudinary image upload working
 - [ ] Frontend connected to backend
@@ -582,6 +596,7 @@ Total: ~$6/month + SMS costs
 
 **You're ready to launch! 🎉**
 
-This setup gives you a production-ready backend that can handle real drivers, loads, and operations for under $10/month.
+This setup gives you a production-ready backend that can handle real drivers, loads, and operations
+for under $10/month.
 
 Need help with any of these steps?
