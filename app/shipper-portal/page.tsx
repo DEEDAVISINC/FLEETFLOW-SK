@@ -1,13 +1,13 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import {
   ShipperAccount,
   shipperAccountService,
 } from '../services/shipper-account-service';
 
-export default function ShipperPortal() {
+function ShipperPortalContent() {
   const searchParams = useSearchParams();
   const [account, setAccount] = useState<ShipperAccount | null>(null);
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -962,5 +962,13 @@ export default function ShipperPortal() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ShipperPortal() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
+      <ShipperPortalContent />
+    </Suspense>
   );
 }

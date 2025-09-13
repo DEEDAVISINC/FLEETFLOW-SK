@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
         // TEMPORARILY DISABLED FOR BUILD FIX
         return NextResponse.json({
           success: true,
-          message: 'AI onboarding temporarily disabled for emergency deployment',
+          message:
+            'AI onboarding temporarily disabled for emergency deployment',
         });
 
       case 'get_ai_onboardings':
@@ -28,7 +29,8 @@ export async function POST(req: NextRequest) {
         // TEMPORARILY DISABLED FOR BUILD FIX
         return NextResponse.json({
           success: true,
-          message: 'AI onboarding temporarily disabled for emergency deployment',
+          message:
+            'AI onboarding temporarily disabled for emergency deployment',
         });
 
       default:
