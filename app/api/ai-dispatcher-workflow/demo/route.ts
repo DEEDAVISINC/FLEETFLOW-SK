@@ -12,15 +12,17 @@ export async function POST(req: NextRequest) {
         // TEMPORARILY DISABLED FOR BUILD FIX
         return NextResponse.json({
           success: true,
-          message: 'AI workflow temporarily disabled for emergency deployment fix',
+          message:
+            'AI workflow temporarily disabled for emergency deployment fix',
           description: 'Will be re-enabled after site fixes deploy',
         });
 
       case 'execute_workflow':
-        // TEMPORARILY DISABLED FOR BUILD FIX  
+        // TEMPORARILY DISABLED FOR BUILD FIX
         return NextResponse.json({
           success: true,
-          message: 'AI workflow temporarily disabled for emergency deployment fix',
+          message:
+            'AI workflow temporarily disabled for emergency deployment fix',
         });
 
       case 'get_status':
@@ -28,7 +30,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({
           success: true,
           status: { message: 'Temporarily disabled for deployment fix' },
-          message: 'AI workflow temporarily disabled for emergency deployment fix',
+          message:
+            'AI workflow temporarily disabled for emergency deployment fix',
         });
 
       default:
@@ -54,7 +57,8 @@ export async function GET(req: NextRequest) {
       workflowStatus: { message: 'Temporarily disabled for deployment fix' },
       info: {
         title: 'AI Dispatcher Workflow Status (Temporarily Disabled)',
-        description: 'Complete AI-to-Contract Pipeline Status - Will be re-enabled after deployment fix',
+        description:
+          'Complete AI-to-Contract Pipeline Status - Will be re-enabled after deployment fix',
         workflow: [
           '🔧 Emergency deployment in progress',
           '🚀 Full workflow will be restored shortly',
