@@ -1,12 +1,12 @@
 /**
  * Multi-Tenant Payment Provider Service for FleetFlow
- * Supports Square, Bill.com, QuickBooks, and Stripe
+ * Supports Square, Bill.com, and QuickBooks
  * Each tenant can choose their preferred payment provider(s)
  */
 
 // Unified payment interfaces
 export interface PaymentProvider {
-  name: 'square' | 'billcom' | 'quickbooks' | 'stripe';
+  name: 'square' | 'billcom' | 'quickbooks';
   displayName: string;
   supportedFeatures: PaymentFeature[];
 }
@@ -18,7 +18,7 @@ export interface PaymentFeature {
 
 export interface UnifiedInvoiceRequest {
   tenantId: string;
-  provider: 'square' | 'billcom' | 'quickbooks' | 'stripe';
+  provider: 'square' | 'billcom' | 'quickbooks';
   customerName: string;
   companyName?: string;
   email: string;
@@ -64,16 +64,15 @@ export interface UnifiedInvoiceResponse {
 
 export interface TenantPaymentConfig {
   tenantId: string;
-  primaryProvider: 'square' | 'billcom' | 'quickbooks' | 'stripe';
+  primaryProvider: 'square' | 'billcom' | 'quickbooks';
   providers: {
     square?: SquareConfig;
     billcom?: BillcomConfig;
     quickbooks?: QuickBooksConfig;
-    stripe?: StripeConfig;
   };
   preferences: {
-    defaultProvider: 'square' | 'billcom' | 'quickbooks' | 'stripe';
-    fallbackProvider?: 'square' | 'billcom' | 'quickbooks' | 'stripe';
+    defaultProvider: 'square' | 'billcom' | 'quickbooks';
+    fallbackProvider?: 'square' | 'billcom' | 'quickbooks';
     autoSwitchOnFailure: boolean;
   };
 }
@@ -108,14 +107,6 @@ interface QuickBooksConfig {
   connected: boolean;
 }
 
-interface StripeConfig {
-  publishableKey: string;
-  secretKey: string;
-  webhookSecret: string;
-  environment: 'test' | 'live';
-  enabled: boolean;
-  connected: boolean;
-}
 
 export class MultiTenantPaymentService {
   private tenantConfigs: Map<string, TenantPaymentConfig> = new Map();
@@ -227,41 +218,11 @@ export class MultiTenantPaymentService {
             enabled: true,
             connected: true,
           },
-          stripe: {
-            publishableKey:
-              process.env.STRIPE_PUBLISHABLE_KEY_BETA || 'pk_test_beta',
-            secretKey: process.env.STRIPE_SECRET_KEY_BETA || 'REMOVED_STRIPE_KEYbeta',
-            webhookSecret:
-              process.env.STRIPE_WEBHOOK_SECRET_BETA || 'whsec_beta',
-            environment: 'test',
-            enabled: true,
-            connected: true,
-          },
         },
         preferences: {
           defaultProvider: 'quickbooks',
-          fallbackProvider: 'stripe',
+          fallbackProvider: 'billcom',
           autoSwitchOnFailure: true,
-        },
-      },
-      {
-        tenantId: 'gamma-freight',
-        primaryProvider: 'stripe',
-        providers: {
-          stripe: {
-            publishableKey:
-              process.env.STRIPE_PUBLISHABLE_KEY_GAMMA || 'pk_test_gamma',
-            secretKey: process.env.STRIPE_SECRET_KEY_GAMMA || 'REMOVED_STRIPE_KEYgamma',
-            webhookSecret:
-              process.env.STRIPE_WEBHOOK_SECRET_GAMMA || 'whsec_gamma',
-            environment: 'test',
-            enabled: true,
-            connected: true,
-          },
-        },
-        preferences: {
-          defaultProvider: 'stripe',
-          autoSwitchOnFailure: false,
         },
       },
     ];
@@ -303,17 +264,6 @@ export class MultiTenantPaymentService {
           { type: 'customers', available: true },
           { type: 'reporting', available: true },
           { type: 'subscriptions', available: false },
-        ],
-      },
-      {
-        name: 'stripe',
-        displayName: 'Stripe',
-        supportedFeatures: [
-          { type: 'invoicing', available: true },
-          { type: 'payments', available: true },
-          { type: 'customers', available: true },
-          { type: 'reporting', available: true },
-          { type: 'subscriptions', available: true },
         ],
       },
     ];
@@ -376,11 +326,6 @@ export class MultiTenantPaymentService {
           return await this.createQuickBooksInvoice(
             request,
             config.providers.quickbooks!
-          );
-        case 'stripe':
-          return await this.createStripeInvoice(
-            request,
-            config.providers.stripe!
           );
         default:
           throw new Error(`Unsupported payment provider: ${provider}`);
@@ -618,30 +563,6 @@ export class MultiTenantPaymentService {
     };
   }
 
-  /**
-   * Create Stripe invoice
-   */
-  private async createStripeInvoice(
-    request: UnifiedInvoiceRequest,
-    config: StripeConfig
-  ): Promise<UnifiedInvoiceResponse> {
-    // Stripe API implementation would go here
-    // For now, return mock response
-    return {
-      success: true,
-      provider: 'stripe',
-      tenantId: request.tenantId,
-      invoiceId: `in_${Date.now()}`,
-      invoiceNumber: `ST-${request.tenantId.toUpperCase()}-${Date.now()}`,
-      publicUrl: `https://invoice.stripe.com/i/acct_test123/in_${Date.now()}`,
-      status: 'open',
-      amount: request.lineItems.reduce((sum, item) => sum + item.amount, 0),
-      currency: 'USD',
-      providerSpecificData: {
-        stripe: { message: 'Mock Stripe invoice created' },
-      },
-    };
-  }
 
   /**
    * Test provider connection
@@ -665,8 +586,6 @@ export class MultiTenantPaymentService {
           return await this.testQuickBooksConnection(
             config.providers.quickbooks!
           );
-        case 'stripe':
-          return await this.testStripeConnection(config.providers.stripe!);
         default:
           return { success: false, error: 'Unsupported provider' };
       }
@@ -711,12 +630,6 @@ export class MultiTenantPaymentService {
     return { success: true };
   }
 
-  private async testStripeConnection(
-    config: StripeConfig
-  ): Promise<{ success: boolean; error?: string }> {
-    // Mock Stripe connection test
-    return { success: true };
-  }
 
   /**
    * Update tenant payment configuration

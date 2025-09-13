@@ -4,11 +4,11 @@
  */
 
 interface EnvironmentConfig {
-  // Stripe Configuration
-  stripe: {
-    publishableKey?: string;
-    secretKey?: string;
-    webhookSecret?: string;
+  // Square Configuration
+  square: {
+    applicationId?: string;
+    accessToken?: string;
+    locationId?: string;
   };
 
   // Bill.com Configuration
@@ -40,12 +40,10 @@ class EnvironmentValidator {
 
   private loadConfig(): EnvironmentConfig {
     return {
-      stripe: {
-        publishableKey:
-          process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ||
-          process.env.STRIPE_PUBLISHABLE_KEY,
-        secretKey: process.env.STRIPE_SECRET_KEY,
-        webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+      square: {
+        applicationId: process.env.NEXT_PUBLIC_SQUARE_APPLICATION_ID,
+        accessToken: process.env.NEXT_PUBLIC_SQUARE_ACCESS_TOKEN,
+        locationId: process.env.SQUARE_LOCATION_ID,
       },
       billcom: {
         apiKey: process.env.BILLCOM_API_KEY,
@@ -67,54 +65,38 @@ class EnvironmentValidator {
   }
 
   private validate(): void {
-    this.validateStripe();
+    this.validateSquare();
     this.validateBillcom();
     this.validateApp();
   }
 
-  private validateStripe(): void {
-    const { stripe } = this.config;
+  private validateSquare(): void {
+    const { square } = this.config;
 
-    if (!stripe.publishableKey) {
-      this.errors.push(
-        'Missing STRIPE_PUBLISHABLE_KEY or NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'
-      );
-    } else if (!stripe.publishableKey.startsWith('pk_')) {
-      this.errors.push(
-        'Invalid Stripe publishable key format (must start with pk_)'
-      );
-    }
-
-    if (!stripe.secretKey) {
-      this.errors.push('Missing STRIPE_SECRET_KEY');
-    } else if (!stripe.secretKey.startsWith('sk_')) {
-      this.errors.push(
-        'Invalid Stripe secret key format (must start with sk_)'
-      );
-    }
-
-    if (!stripe.webhookSecret) {
+    if (!square.applicationId) {
       this.warnings.push(
-        'Missing STRIPE_WEBHOOK_SECRET - webhooks will not work'
+        'Missing NEXT_PUBLIC_SQUARE_APPLICATION_ID - Square payments will not work'
       );
-    } else if (!stripe.webhookSecret.startsWith('whsec_')) {
-      this.errors.push(
-        'Invalid Stripe webhook secret format (must start with whsec_)'
+      return;
+    }
+
+    if (!square.accessToken) {
+      this.warnings.push(
+        'Missing NEXT_PUBLIC_SQUARE_ACCESS_TOKEN - Square payments will not work'
       );
     }
 
-    // Check for test vs production key consistency
-    const isPublishableTest = stripe.publishableKey?.includes('test');
-    const isSecretTest = stripe.secretKey?.includes('test');
-
-    if (isPublishableTest !== isSecretTest) {
-      this.errors.push(
-        'Stripe key mismatch: publishable and secret keys must both be test or both be live'
+    if (!square.locationId) {
+      this.warnings.push(
+        'Missing SQUARE_LOCATION_ID - some Square features may not work correctly'
       );
     }
 
-    if (this.config.app.nodeEnv === 'production' && isSecretTest) {
-      this.warnings.push('Using Stripe test keys in production environment');
+    // Check for sandbox vs production environment
+    const isSandbox = square.applicationId?.includes('sandbox') || square.accessToken?.includes('sandbox');
+    
+    if (this.config.app.nodeEnv === 'production' && isSandbox) {
+      this.warnings.push('Using Square sandbox credentials in production environment');
     }
   }
 
@@ -211,7 +193,7 @@ class EnvironmentValidator {
 
     console.info('\n📊 Configuration Summary:');
     console.info(
-      `  • Stripe: ${results.config.stripe.secretKey ? '✅ Configured' : '❌ Missing'}`
+      `  • Square: ${results.config.square.accessToken ? '✅ Configured' : '⚠️  Optional'}`
     );
     console.info(
       `  • Bill.com: ${results.config.billcom.apiKey ? '✅ Configured' : '⚠️  Optional'}`
@@ -220,9 +202,9 @@ class EnvironmentValidator {
       `  • Environment: ${results.config.app.nodeEnv || 'development'}`
     );
 
-    if (results.config.stripe.secretKey) {
-      const isTest = results.config.stripe.secretKey.includes('test');
-      console.info(`  • Stripe Mode: ${isTest ? 'Test' : 'Live'}`);
+    if (results.config.square.accessToken) {
+      const isSandbox = results.config.square.accessToken.includes('sandbox');
+      console.info(`  • Square Mode: ${isSandbox ? 'Sandbox' : 'Production'}`);
     }
 
     if (results.config.billcom.environment) {
@@ -244,7 +226,7 @@ class EnvironmentValidator {
         ...results.errors.map((e) => `  • ${e}`),
         '',
         'Please check your environment variables and try again.',
-        'See BILLING_ENVIRONMENT_SETUP.md for detailed setup instructions.',
+        'Please configure Square payment credentials or check your environment variables.',
       ].join('\n');
 
       throw new Error(errorMessage);
@@ -256,7 +238,7 @@ class EnvironmentValidator {
    */
   public isBillingEnabled(): boolean {
     return !!(
-      this.config.stripe.secretKey && this.config.stripe.publishableKey
+      this.config.square.accessToken && this.config.square.applicationId
     );
   }
 
