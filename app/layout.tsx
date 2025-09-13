@@ -408,7 +408,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* BYPASS ClientLayout for homepage to avoid auth interference */}
+        {/* COMPLETELY BYPASS ALL AUTH - NO PROVIDERS, NO CLIENT LOGIC */}
         {children}
       </body>
     </html>
