@@ -204,7 +204,8 @@ function CarrierLandingContent() {
           radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)
         `,
         minHeight: '100vh',
-        fontFamily: '""Inter"", system-ui, -apple-system, ""Segoe UI"", sans-serif',
+        fontFamily:
+          '""Inter"", system-ui, -apple-system, ""Segoe UI"", sans-serif',
         position: 'relative',
         overflow: 'hidden',
       }}
