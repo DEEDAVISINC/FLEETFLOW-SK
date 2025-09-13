@@ -230,7 +230,7 @@ export class MultiTenantPaymentService {
           stripe: {
             publishableKey:
               process.env.STRIPE_PUBLISHABLE_KEY_BETA || 'pk_test_beta',
-            secretKey: process.env.STRIPE_SECRET_KEY_BETA || 'sk_test_beta',
+            secretKey: process.env.STRIPE_SECRET_KEY_BETA || 'REMOVED_STRIPE_KEYbeta',
             webhookSecret:
               process.env.STRIPE_WEBHOOK_SECRET_BETA || 'whsec_beta',
             environment: 'test',
@@ -251,7 +251,7 @@ export class MultiTenantPaymentService {
           stripe: {
             publishableKey:
               process.env.STRIPE_PUBLISHABLE_KEY_GAMMA || 'pk_test_gamma',
-            secretKey: process.env.STRIPE_SECRET_KEY_GAMMA || 'sk_test_gamma',
+            secretKey: process.env.STRIPE_SECRET_KEY_GAMMA || 'REMOVED_STRIPE_KEYgamma',
             webhookSecret:
               process.env.STRIPE_WEBHOOK_SECRET_GAMMA || 'whsec_gamma',
             environment: 'test',

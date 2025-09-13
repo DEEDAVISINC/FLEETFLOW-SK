@@ -230,7 +230,7 @@ export async function getTenantConfig(
         connected: true,
       },
       stripe: {
-        publishableKey: 'pk_test_acme123',
+        publishableKey: 'REMOVED_STRIPE_KEYacme123',
         environment: 'test',
         enabled: false,
         connected: false,
@@ -253,7 +253,7 @@ export async function getTenantConfig(
     },
     'gamma-freight': {
       stripe: {
-        publishableKey: 'pk_test_gamma789',
+        publishableKey: 'REMOVED_STRIPE_KEYgamma789',
         environment: 'test',
         enabled: true,
         connected: true,
