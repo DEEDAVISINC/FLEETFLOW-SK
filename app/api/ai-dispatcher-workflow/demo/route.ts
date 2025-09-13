@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { aiDispatcherWorkflowOrchestrator } from '../../../services/AIDispatcherWorkflowOrchestrator';
+// TEMPORARILY DISABLED FOR BUILD FIX - EMERGENCY DEPLOYMENT
+// import { aiDispatcherWorkflowOrchestrator } from '../../../services/AIDispatcherWorkflowOrchestrator';
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,33 +9,26 @@ export async function POST(req: NextRequest) {
 
     switch (action) {
       case 'run_complete_demo':
-        // Run the complete AI dispatcher workflow demo
-        await aiDispatcherWorkflowOrchestrator.runCompleteDemo();
+        // TEMPORARILY DISABLED FOR BUILD FIX
         return NextResponse.json({
           success: true,
-          message:
-            'Complete AI dispatcher workflow demo completed successfully',
-          description:
-            '🤖→🚛→👨‍💼→📄 AI leads → onboarding → assignment → contracts',
+          message: 'AI workflow temporarily disabled for emergency deployment fix',
+          description: 'Will be re-enabled after site fixes deploy',
         });
 
       case 'execute_workflow':
-        // Execute the AI workflow (AI leads → onboarding)
-        await aiDispatcherWorkflowOrchestrator.executeCompleteWorkflow();
+        // TEMPORARILY DISABLED FOR BUILD FIX  
         return NextResponse.json({
           success: true,
-          message:
-            'AI workflow executed - carriers identified and onboarding started',
+          message: 'AI workflow temporarily disabled for emergency deployment fix',
         });
 
       case 'get_status':
-        // Get current workflow status
-        const status =
-          await aiDispatcherWorkflowOrchestrator.getWorkflowStatus();
+        // TEMPORARILY DISABLED FOR BUILD FIX
         return NextResponse.json({
           success: true,
-          status,
-          message: 'Workflow status retrieved successfully',
+          status: { message: 'Temporarily disabled for deployment fix' },
+          message: 'AI workflow temporarily disabled for emergency deployment fix',
         });
 
       default:
@@ -54,22 +48,16 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    // Get current workflow status
-    const status = await aiDispatcherWorkflowOrchestrator.getWorkflowStatus();
-
+    // TEMPORARILY DISABLED FOR BUILD FIX
     return NextResponse.json({
       success: true,
-      workflowStatus: status,
+      workflowStatus: { message: 'Temporarily disabled for deployment fix' },
       info: {
-        title: 'AI Dispatcher Workflow Status',
-        description: 'Complete AI-to-Contract Pipeline Status',
+        title: 'AI Dispatcher Workflow Status (Temporarily Disabled)',
+        description: 'Complete AI-to-Contract Pipeline Status - Will be re-enabled after deployment fix',
         workflow: [
-          '🤖 AI identifies owner operators needing dispatchers',
-          '🚛 Automatically starts carrier onboarding',
-          '📢 Sends management notification: DISPATCHER NEEDED',
-          '👨‍💼 Management assigns dispatcher',
-          '✅ Dispatcher accepts assignment',
-          '📄 5% commission contract automatically generated',
+          '🔧 Emergency deployment in progress',
+          '🚀 Full workflow will be restored shortly',
         ],
       },
     });
