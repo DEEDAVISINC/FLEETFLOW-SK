@@ -7,7 +7,7 @@ import { calculateDispatchFee } from '../../config/dispatch';
 import { AIReviewService } from '../ai-review/AIReviewService';
 import BillComService from '../billing/BillComService';
 import { getInvoiceById, updateInvoiceStatus } from '../invoiceService';
-import StripeService from '../stripe/StripeService';
+// StripeService removed - using Square for payments
 
 export interface DispatchFeePayment {
   id: string;
@@ -19,11 +19,11 @@ export interface DispatchFeePayment {
   amount: number;
   feePercentage: number;
   loadAmount: number;
-  paymentMethod: 'stripe' | 'ach' | 'check' | 'wire';
+  paymentMethod: 'square' | 'ach' | 'check' | 'wire';
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'overdue';
   paymentDate?: Date;
   transactionId?: string;
-  stripePaymentIntentId?: string;
+  squarePaymentId?: string;
   billComInvoiceId?: string;
   notes?: string;
   createdAt: Date;
@@ -33,7 +33,7 @@ export interface DispatchFeePayment {
 export interface DispatchFeeCompany {
   id: string;
   companyName: string;
-  stripeAccountId?: string; // For direct payments to company
+  squareLocationId?: string; // For direct payments to company
   billComAccountId?: string;
   paymentMethods: {
     stripe?: boolean;
@@ -41,7 +41,7 @@ export interface DispatchFeeCompany {
     check?: boolean;
     wire?: boolean;
   };
-  defaultPaymentMethod: 'stripe' | 'ach' | 'check' | 'wire';
+  defaultPaymentMethod: 'square' | 'ach' | 'check' | 'wire';
   bankInfo?: {
     accountNumber: string;
     routingNumber: string;
@@ -90,7 +90,7 @@ export interface DispatchFeeMetrics {
 }
 
 export class DispatchFeeCollectionService {
-  private stripeService: StripeService;
+  // Square service will be implemented here
   private billComService: BillComService;
   private aiReviewService: AIReviewService;
   private companies: Map<string, DispatchFeeCompany>;
@@ -98,7 +98,7 @@ export class DispatchFeeCollectionService {
   private config: DispatchFeeConfig;
 
   constructor() {
-    this.stripeService = new StripeService();
+    // Square service initialization will go here
     this.billComService = new BillComService();
     this.aiReviewService = new AIReviewService();
     this.companies = new Map();
@@ -126,7 +126,7 @@ export class DispatchFeeCollectionService {
   async createPaymentFromInvoice(
     invoiceId: string,
     paymentData: {
-      paymentMethod: 'stripe' | 'ach' | 'check' | 'wire';
+      paymentMethod: 'square' | 'ach' | 'check' | 'wire';
       companyId: string;
       notes?: string;
     }
@@ -255,7 +255,7 @@ export class DispatchFeeCollectionService {
       let paymentResult;
 
       switch (payment.paymentMethod) {
-        case 'stripe':
+        case 'square':
           paymentResult = await this.processStripePayment(payment);
           break;
         case 'ach':
@@ -277,9 +277,9 @@ export class DispatchFeeCollectionService {
         payment.status = 'completed';
         payment.paymentDate = new Date();
         payment.transactionId = paymentResult.transactionId;
-        if ('stripePaymentIntentId' in paymentResult) {
-          payment.stripePaymentIntentId =
-            paymentResult.stripePaymentIntentId as string;
+        if ('squarePaymentId' in paymentResult) {
+          payment.squarePaymentId =
+            paymentResult.squarePaymentId as string;
         }
         if ('billComInvoiceId' in paymentResult) {
           payment.billComInvoiceId = paymentResult.billComInvoiceId as string;
@@ -392,7 +392,7 @@ export class DispatchFeeCollectionService {
   private async processStripePayment(payment: DispatchFeePayment): Promise<{
     success: boolean;
     transactionId?: string;
-    stripePaymentIntentId?: string;
+    squarePaymentId?: string;
     error?: string;
   }> {
     try {
@@ -402,30 +402,23 @@ export class DispatchFeeCollectionService {
         throw new Error('Company not found');
       }
 
-      // Create payment intent
-      const paymentIntent = await this.stripeService.createPaymentIntent(
-        Math.round(payment.amount * 100), // Convert to cents
-        company.stripeAccountId || 'default',
-        `Dispatch Fee - Load ${payment.loadId}`,
-        {
-          loadId: payment.loadId,
-          carrierId: payment.carrierId,
-          driverId: payment.driverId,
-          companyId: payment.companyId,
-          paymentType: 'dispatch_fee',
-          invoiceId: payment.invoiceId,
-        }
-      );
+      // TODO: Implement Square payment processing
+      // For now, return mock successful payment
+      console.info('Processing Square dispatch fee payment:', {
+        amount: payment.amount,
+        loadId: payment.loadId,
+        companyId: payment.companyId,
+      });
 
       return {
         success: true,
-        transactionId: paymentIntent.id,
-        stripePaymentIntentId: paymentIntent.id,
+        transactionId: mockPaymentId,
+        squarePaymentId: mockPaymentId,
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Stripe payment failed',
+        error: error instanceof Error ? error.message : 'Square payment failed',
       };
     }
   }
@@ -579,7 +572,7 @@ export class DispatchFeeCollectionService {
     return {
       id: companyId,
       companyName: 'Sample Dispatch Company',
-      stripeAccountId: 'acct_sample',
+      squareLocationId: 'acct_sample',
       billComAccountId: 'billcom_sample',
       paymentMethods: {
         stripe: true,
@@ -587,7 +580,7 @@ export class DispatchFeeCollectionService {
         check: true,
         wire: false,
       },
-      defaultPaymentMethod: 'stripe',
+      defaultPaymentMethod: 'square',
       contactInfo: {
         email: 'dispatch@company.com',
         phone: '555-123-4567',

@@ -4,7 +4,7 @@
 import { isBillingEnabled } from '../utils/environmentValidator';
 import { BillingAutomationService } from './billing/BillingAutomationService';
 import { quickBooksService } from './quickbooksService';
-import StripeService from './stripe/StripeService';
+// StripeService removed - using Square for payments
 import { SubscriptionManagementService } from './SubscriptionManagementService';
 import UserDataService, { type UserProfile } from './user-data-service';
 
@@ -72,7 +72,7 @@ export interface CompanyFinancialData {
 }
 
 export class CompanyAccountingService {
-  private stripeService: StripeService | null = null;
+  // Stripe service removed - using Square for payments
   private billingService: BillingAutomationService | null = null;
   private userDataService: UserDataService;
 
@@ -126,13 +126,11 @@ export class CompanyAccountingService {
     // Get data from existing services
     const [
       qbConnection,
-      stripeData,
       billingData,
       invoiceData,
       subscriptionData,
     ] = await Promise.all([
       this.getQuickBooksData(currentUser.id),
-      this.getStripeData(currentUser.id),
       this.getBillingData(currentUser.id),
       this.getInvoiceData(currentUser.id),
       this.getSubscriptionData(currentUser.id),
@@ -141,18 +139,16 @@ export class CompanyAccountingService {
     // Calculate company-specific KPIs based on user's department (including subscription revenue)
     const kpis = this.calculateCompanyKPIs(
       qbConnection,
-      stripeData,
       billingData,
       currentUser,
       subscriptionData
     );
     const arAging = this.calculateARaging(invoiceData);
     const recentTransactions = this.getRecentTransactions(
-      stripeData,
       billingData,
       currentUser
     );
-    const monthlyPnL = this.calculateMonthlyPnL(qbConnection, stripeData);
+    const monthlyPnL = this.calculateMonthlyPnL(qbConnection, null);
 
     return {
       userId: currentUser.id,
@@ -388,8 +384,8 @@ export class CompanyAccountingService {
   /**
    * Get recent transactions for tenant
    */
-  private getRecentTransactions(stripeData: any, billingData: any) {
-    const seed = this.getTenantSeed(stripeData?.tenantId || '');
+  private getRecentTransactions(billingData: any) {
+    const seed = this.getTenantSeed('default');
 
     return [
       {
@@ -422,7 +418,7 @@ export class CompanyAccountingService {
   /**
    * Calculate monthly P&L for tenant
    */
-  private calculateMonthlyPnL(qbData: any, stripeData: any) {
+  private calculateMonthlyPnL(qbData: any, mockData: any) {
     return [
       {
         month: 'Jan',
@@ -560,7 +556,6 @@ export class CompanyAccountingService {
    */
   private calculateCompanyKPIs(
     qbData: any,
-    stripeData: any,
     billingData: any,
     user: UserProfile,
     subscriptionData?: any
@@ -635,40 +630,6 @@ export class CompanyAccountingService {
   /**
    * Update recent transactions to include user context
    */
-  private getRecentTransactions(
-    stripeData: any,
-    billingData: any,
-    user: UserProfile
-  ) {
-    const seed = this.getUserSeed(user.id);
-
-    return [
-      {
-        id: `TXN-${seed}001`,
-        type: 'Wire',
-        entity: 'No Recent Transactions',
-        amount: 0,
-        status: 'No Data',
-        time: '--:-- EST',
-      },
-      {
-        id: `TXN-${seed}002`,
-        type: 'ACH',
-        entity: 'No Recent Transactions',
-        amount: 0,
-        status: 'No Data',
-        time: '--:-- EST',
-      },
-      {
-        id: `TXN-${seed}003`,
-        type: 'Check',
-        entity: 'No Recent Transactions',
-        amount: 0,
-        status: 'No Data',
-        time: '--:-- EST',
-      },
-    ];
-  }
 
   /**
    * Get department-specific customer names

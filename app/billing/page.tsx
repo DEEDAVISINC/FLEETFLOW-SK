@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { FLEETFLOW_PRICING_PLANS } from '../services/stripe/StripeService';
+import { FLEETFLOW_PRICING_PLANS } from '../config/pricing-plans';
 
 // FleetFlow interfaces
 interface FleetMetrics {

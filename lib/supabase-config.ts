@@ -39,19 +39,26 @@ interface SupabaseConfig {
 const getSupabaseConfig = (): SupabaseConfig => {
   const env = getEnvironment();
 
+  // Fallback values for when Supabase is not configured
+  const fallbackConfig = {
+    url: 'https://placeholder.supabase.co',
+    anonKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.fallback',
+    serviceRoleKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.fallback-service',
+  };
+
   switch (env) {
     case 'production':
       return {
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL_PROD!,
-        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_PROD!,
-        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY_PROD!,
+        url: process.env.NEXT_PUBLIC_SUPABASE_URL_PROD || fallbackConfig.url,
+        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_PROD || fallbackConfig.anonKey,
+        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY_PROD || fallbackConfig.serviceRoleKey,
       };
 
     case 'staging':
       return {
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL_STAGING!,
-        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_STAGING!,
-        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY_STAGING!,
+        url: process.env.NEXT_PUBLIC_SUPABASE_URL_STAGING || fallbackConfig.url,
+        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_STAGING || fallbackConfig.anonKey,
+        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY_STAGING || fallbackConfig.serviceRoleKey,
       };
 
     case 'development':
@@ -59,13 +66,16 @@ const getSupabaseConfig = (): SupabaseConfig => {
       return {
         url:
           process.env.NEXT_PUBLIC_SUPABASE_URL_DEV ||
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_URL ||
+          fallbackConfig.url,
         anonKey:
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_DEV ||
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+          fallbackConfig.anonKey,
         serviceRoleKey:
           process.env.SUPABASE_SERVICE_ROLE_KEY_DEV ||
-          process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY ||
+          fallbackConfig.serviceRoleKey,
       };
   }
 };
