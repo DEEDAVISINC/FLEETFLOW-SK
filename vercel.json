@@ -26,14 +26,4 @@
       ]
     }
   ],
-  "rewrites": [
-    {
-      "source": "/auth/signin",
-      "destination": "/"
-    },
-    {
-      "source": "/auth/signup", 
-      "destination": "/"
-    }
-  ]
 }

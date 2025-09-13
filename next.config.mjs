@@ -2,14 +2,14 @@
 const nextConfig = {
   // Force cache busting for auth pages
   generateBuildId: async () => {
-    return `build-${Date.now()}-no-auth-cache`
+    return `build-${Date.now()}-no-auth-cache`;
   },
-  
+
   // Disable static optimization for auth pages
   experimental: {
     isrMemoryCacheSize: 0,
   },
-  
+
   // Force no caching
   async headers() {
     return [
@@ -30,24 +30,9 @@ const nextConfig = {
           },
         ],
       },
-    ]
+    ];
   },
-  
-  // Force redirects at build level
-  async redirects() {
-    return [
-      {
-        source: '/auth/signin',
-        destination: '/',
-        permanent: true,
-      },
-      {
-        source: '/auth/signup',
-        destination: '/',
-        permanent: true,
-      },
-    ]
-  },
-}
 
-export default nextConfig
+};
+
+export default nextConfig;
