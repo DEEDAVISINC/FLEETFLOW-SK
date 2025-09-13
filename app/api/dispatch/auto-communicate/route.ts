@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { automatedCommunicationService } from '../../../services/AutomatedCommunicationService';
+// TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
+// import { automatedCommunicationService } from '../../../services/AutomatedCommunicationService';
 
 export async function POST(request: NextRequest) {
   try {
-    const { loadId, customerId, customerPhone, triggerType, context } =
-      await request.json();
+    // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
+    return NextResponse.json({
+      success: true,
+      message: 'Auto-communication temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes'
+    });
 
     // Create automation trigger
     const trigger = {

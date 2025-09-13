@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { contractGenerationService } from '../../../services/ContractGenerationService';
+// TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
+// import { contractGenerationService } from '../../../services/ContractGenerationService';
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,22 +38,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Track revenue and calculate commission
-    await contractGenerationService.trackRevenue(contractId, revenue, transactionId);
-
-    // Calculate commission (5% of revenue)
-    const commission = revenue * 0.05;
-
-    // Get updated contract for response
-    const contract = await contractGenerationService.getContract(contractId);
-
+    // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
     return NextResponse.json({
       success: true,
-      revenue,
-      commission,
-      transactionId,
-      contract,
-      message: 'Revenue tracked successfully'
+      message: 'Contract revenue tracking temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes'
     });
 
   } catch (error: any) {
@@ -69,70 +59,12 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const contractId = searchParams.get('contractId');
-    const tenantId = searchParams.get('tenantId');
-
-    if (!contractId && !tenantId) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Either contractId or tenantId is required' 
-        },
-        { status: 400 }
-      );
-    }
-
-    if (contractId) {
-      // Get revenue tracking for specific contract
-      const contract = await contractGenerationService.getContract(contractId);
-      
-      if (!contract) {
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Contract not found' 
-          },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        revenueTracking: contract.revenueTracking,
-        contract
-      });
-    } else {
-      // Get revenue summary for tenant
-      const contracts = await contractGenerationService.getContractsByTenant(tenantId!);
-      
-      const revenueSummary = contracts.reduce((summary, contract) => {
-        summary.totalRevenue += contract.revenueTracking.totalRevenue;
-        summary.totalCommission += contract.revenueTracking.commissionEarned;
-        summary.activeContracts += contract.status === 'active' ? 1 : 0;
-        summary.pendingContracts += contract.status === 'pending_signature' ? 1 : 0;
-        return summary;
-      }, {
-        totalRevenue: 0,
-        totalCommission: 0,
-        activeContracts: 0,
-        pendingContracts: 0,
-        totalContracts: contracts.length
-      });
-
-      return NextResponse.json({
-        success: true,
-        revenueSummary,
-        contracts: contracts.map(c => ({
-          contractId: c.contractId,
-          contractNumber: c.contractNumber,
-          status: c.status,
-          totalRevenue: c.revenueTracking.totalRevenue,
-          commissionEarned: c.revenueTracking.commissionEarned,
-          nextPaymentDate: c.revenueTracking.nextPaymentDate
-        }))
-      });
-    }
+    // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
+    return NextResponse.json({
+      success: true,
+      message: 'Contract revenue tracking temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes'
+    });
 
   } catch (error: any) {
     console.error('Revenue tracking retrieval API error:', error);

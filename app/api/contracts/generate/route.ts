@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { contractGenerationService, LeadContractData } from '../../../services/ContractGenerationService';
+// TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
+// import { contractGenerationService, LeadContractData } from '../../../services/ContractGenerationService';
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
+    return NextResponse.json({
+      success: true,
+      message: 'Contract generation temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes'
+    });
     
     const {
       leadId,
