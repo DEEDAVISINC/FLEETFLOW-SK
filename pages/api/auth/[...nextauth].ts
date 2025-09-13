@@ -166,8 +166,8 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: '/', // Keep users on landing page for sign-in
-    error: '/', // Keep users on landing page for errors
+    signIn: '/auth/signin', // Use proper auth signin page
+    error: '/auth/signin',  // Redirect errors to signin page
   },
 };
 
