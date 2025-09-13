@@ -115,9 +115,15 @@ class CentralCRMService {
   private supabase;
 
   constructor() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (supabaseUrl && supabaseKey) {
+      this.supabase = createClient(supabaseUrl, supabaseKey);
+    } else {
+      console.warn('⚠️ CentralCRMService: Supabase credentials not configured, using mock data');
+      this.supabase = null;
+    }
   }
 
   // ============================================================================

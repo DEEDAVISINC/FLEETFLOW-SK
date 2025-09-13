@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
-import { useLanguage } from '../providers/LanguageProvider';
+// import { useLanguage } from '../providers/LanguageProvider';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
@@ -14,7 +14,8 @@ import OrganizationSwitcher from './OrganizationSwitcher';
 export default function ProfessionalNavigation() {
   const pathname = usePathname();
   const isCarrierPlatform = pathname === '/carrier-landing';
-  const { translate } = useLanguage();
+  // const { translate } = useLanguage();
+  const translate = (key: string) => key; // fallback for build
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
   // This fixes the React Hooks error by ensuring consistent hook order

@@ -341,9 +341,9 @@ export default function AIFlowPage() {
 
         // Monitor WebSocket connection status
         const statusInterval = setInterval(() => {
-          const wsStatus = webSocketNotificationService.getConnectionStatus();
+          const wsStatus = webSocketNotificationService?.getConnectionStatus?.() || 'disconnected';
           const notificationHealth =
-            fleetFlowNotificationManager.getHealthStatus();
+            fleetFlowNotificationManager?.getHealthStatus?.() || 'offline';
           setConnectionStatus({
             websocket: wsStatus,
             notifications: notificationHealth,

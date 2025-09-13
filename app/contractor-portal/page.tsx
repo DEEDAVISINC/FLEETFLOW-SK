@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
-const ContractorPortal = () => {
+const ContractorPortalContent = () => {
   const searchParams = useSearchParams();
   const [workflowSession, setWorkflowSession] = useState<any>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -1266,6 +1266,14 @@ const ContractorPortal = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const ContractorPortal = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ContractorPortalContent />
+    </Suspense>
   );
 };
 

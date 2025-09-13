@@ -50,15 +50,23 @@ const getSupabaseConfig = (): SupabaseConfig => {
     case 'production':
       return {
         url: process.env.NEXT_PUBLIC_SUPABASE_URL_PROD || fallbackConfig.url,
-        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_PROD || fallbackConfig.anonKey,
-        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY_PROD || fallbackConfig.serviceRoleKey,
+        anonKey:
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_PROD ||
+          fallbackConfig.anonKey,
+        serviceRoleKey:
+          process.env.SUPABASE_SERVICE_ROLE_KEY_PROD ||
+          fallbackConfig.serviceRoleKey,
       };
 
     case 'staging':
       return {
         url: process.env.NEXT_PUBLIC_SUPABASE_URL_STAGING || fallbackConfig.url,
-        anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_STAGING || fallbackConfig.anonKey,
-        serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY_STAGING || fallbackConfig.serviceRoleKey,
+        anonKey:
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY_STAGING ||
+          fallbackConfig.anonKey,
+        serviceRoleKey:
+          process.env.SUPABASE_SERVICE_ROLE_KEY_STAGING ||
+          fallbackConfig.serviceRoleKey,
       };
 
     case 'development':
