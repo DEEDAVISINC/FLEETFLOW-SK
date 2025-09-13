@@ -107,7 +107,6 @@ interface QuickBooksConfig {
   connected: boolean;
 }
 
-
 export class MultiTenantPaymentService {
   private tenantConfigs: Map<string, TenantPaymentConfig> = new Map();
 
@@ -563,13 +562,12 @@ export class MultiTenantPaymentService {
     };
   }
 
-
   /**
    * Test provider connection
    */
   async testProviderConnection(
     tenantId: string,
-    provider: 'square' | 'billcom' | 'quickbooks' | 'stripe'
+    provider: 'square' | 'billcom' | 'quickbooks'
   ): Promise<{ success: boolean; error?: string }> {
     const config = this.getTenantConfig(tenantId);
     if (!config || !config.providers[provider]) {
@@ -629,7 +627,6 @@ export class MultiTenantPaymentService {
     // Mock QuickBooks connection test
     return { success: true };
   }
-
 
   /**
    * Update tenant payment configuration

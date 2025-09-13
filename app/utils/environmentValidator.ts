@@ -93,10 +93,14 @@ class EnvironmentValidator {
     }
 
     // Check for sandbox vs production environment
-    const isSandbox = square.applicationId?.includes('sandbox') || square.accessToken?.includes('sandbox');
-    
+    const isSandbox =
+      square.applicationId?.includes('sandbox') ||
+      square.accessToken?.includes('sandbox');
+
     if (this.config.app.nodeEnv === 'production' && isSandbox) {
-      this.warnings.push('Using Square sandbox credentials in production environment');
+      this.warnings.push(
+        'Using Square sandbox credentials in production environment'
+      );
     }
   }
 
