@@ -7,10 +7,11 @@ export async function POST(req: NextRequest) {
     // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
     return NextResponse.json({
       success: true,
-      message: 'Contract generation temporarily disabled for emergency deployment',
-      note: 'Feature will be re-enabled after deployment fixes'
+      message:
+        'Contract generation temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes',
     });
-    
+
     const {
       leadId,
       brokerId,
@@ -23,15 +24,26 @@ export async function POST(req: NextRequest) {
       potentialValue,
       conversionType,
       tenantId,
-      contractTerms
+      contractTerms,
     } = body;
 
     // Validate required fields
-    if (!leadId || !brokerId || !brokerName || !brokerCompany || !shipperId || !shipperName || !shipperCompany || !source || !tenantId) {
+    if (
+      !leadId ||
+      !brokerId ||
+      !brokerName ||
+      !brokerCompany ||
+      !shipperId ||
+      !shipperName ||
+      !shipperCompany ||
+      !source ||
+      !tenantId
+    ) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Missing required fields: leadId, brokerId, brokerName, brokerCompany, shipperId, shipperName, shipperCompany, source, tenantId' 
+        {
+          success: false,
+          error:
+            'Missing required fields: leadId, brokerId, brokerName, brokerCompany, shipperId, shipperName, shipperCompany, source, tenantId',
         },
         { status: 400 }
       );
@@ -55,25 +67,25 @@ export async function POST(req: NextRequest) {
         paymentTerms: 'Net 15 days',
         contractDuration: '1 year with auto-renewal',
         exclusivity: false,
-        territory: 'United States'
-      }
+        territory: 'United States',
+      },
     };
 
     // Generate contract
-    const contract = await contractGenerationService.generateLeadContract(contractData);
+    const contract =
+      await contractGenerationService.generateLeadContract(contractData);
 
     return NextResponse.json({
       success: true,
       contract,
-      message: 'Contract generated successfully'
+      message: 'Contract generated successfully',
     });
-
   } catch (error: any) {
     console.error('Contract generation API error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error' 
+      {
+        success: false,
+        error: 'Internal server error',
       },
       { status: 500 }
     );
@@ -88,9 +100,9 @@ export async function GET(req: NextRequest) {
 
     if (!tenantId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'tenantId is required' 
+        {
+          success: false,
+          error: 'tenantId is required',
         },
         { status: 400 }
       );
@@ -99,12 +111,12 @@ export async function GET(req: NextRequest) {
     if (contractId) {
       // Get specific contract
       const contract = await contractGenerationService.getContract(contractId);
-      
+
       if (!contract) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Contract not found' 
+          {
+            success: false,
+            error: 'Contract not found',
           },
           { status: 404 }
         );
@@ -112,27 +124,27 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        contract
+        contract,
       });
     } else {
       // Get all contracts for tenant
-      const contracts = await contractGenerationService.getContractsByTenant(tenantId);
-      
+      const contracts =
+        await contractGenerationService.getContractsByTenant(tenantId);
+
       return NextResponse.json({
         success: true,
         contracts,
-        count: contracts.length
+        count: contracts.length,
       });
     }
-
   } catch (error: any) {
     console.error('Contract retrieval API error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error' 
+      {
+        success: false,
+        error: 'Internal server error',
       },
       { status: 500 }
     );
   }
-} 
+}

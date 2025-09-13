@@ -7,8 +7,9 @@ export async function POST(request: NextRequest) {
     // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
     return NextResponse.json({
       success: true,
-      message: 'Auto-communication temporarily disabled for emergency deployment',
-      note: 'Feature will be re-enabled after deployment fixes'
+      message:
+        'Auto-communication temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes',
     });
 
     // Create automation trigger

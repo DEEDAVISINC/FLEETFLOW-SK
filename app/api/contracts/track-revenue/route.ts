@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    
+
     const {
       contractId,
       revenue,
@@ -13,15 +13,15 @@ export async function POST(req: NextRequest) {
       invoiceNumber,
       invoiceDate,
       paymentStatus,
-      description
+      description,
     } = body;
 
     // Validate required fields
     if (!contractId || !revenue || !transactionId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Missing required fields: contractId, revenue, transactionId' 
+        {
+          success: false,
+          error: 'Missing required fields: contractId, revenue, transactionId',
         },
         { status: 400 }
       );
@@ -30,9 +30,9 @@ export async function POST(req: NextRequest) {
     // Validate revenue amount
     if (typeof revenue !== 'number' || revenue <= 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Revenue must be a positive number' 
+        {
+          success: false,
+          error: 'Revenue must be a positive number',
         },
         { status: 400 }
       );
@@ -41,16 +41,16 @@ export async function POST(req: NextRequest) {
     // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
     return NextResponse.json({
       success: true,
-      message: 'Contract revenue tracking temporarily disabled for emergency deployment',
-      note: 'Feature will be re-enabled after deployment fixes'
+      message:
+        'Contract revenue tracking temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes',
     });
-
   } catch (error: any) {
     console.error('Revenue tracking API error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error' 
+      {
+        success: false,
+        error: 'Internal server error',
       },
       { status: 500 }
     );
@@ -62,18 +62,18 @@ export async function GET(req: NextRequest) {
     // TEMPORARILY DISABLED FOR EMERGENCY DEPLOYMENT
     return NextResponse.json({
       success: true,
-      message: 'Contract revenue tracking temporarily disabled for emergency deployment',
-      note: 'Feature will be re-enabled after deployment fixes'
+      message:
+        'Contract revenue tracking temporarily disabled for emergency deployment',
+      note: 'Feature will be re-enabled after deployment fixes',
     });
-
   } catch (error: any) {
     console.error('Revenue tracking retrieval API error:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Internal server error' 
+      {
+        success: false,
+        error: 'Internal server error',
       },
       { status: 500 }
     );
   }
-} 
+}

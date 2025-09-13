@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import CarrierInvitationService from '../services/CarrierInvitationService';
 
-export default function CarrierLandingPage() {
+function CarrierLandingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [invitationData, setInvitationData] = useState({
@@ -1377,5 +1377,19 @@ export default function CarrierLandingPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function CarrierLandingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className='flex min-h-screen items-center justify-center'>
+          <div className='h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600'></div>
+        </div>
+      }
+    >
+      <CarrierLandingContent />
+    </Suspense>
   );
 }
