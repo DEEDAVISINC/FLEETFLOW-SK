@@ -16,9 +16,7 @@ export function Providers({ children }: ProvidersProps) {
       <OrganizationProvider>
         <LanguageProvider>
           {/* CACHE BUSTER: Force fresh render */}
-          <div key={Date.now()}>
-            {children}
-          </div>
+          <div key={Date.now()}>{children}</div>
         </LanguageProvider>
       </OrganizationProvider>
     </SessionProvider>

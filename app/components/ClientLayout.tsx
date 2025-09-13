@@ -44,16 +44,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // Get user data for permissions and functionality - but don't use until hydrated
   const { user } = getCurrentUser();
 
-  // IMMEDIATE ROOT PAGE BYPASS - No authentication required
+  // FORCE IMMEDIATE LANDING PAGE - KILL ALL LOADING STATES
   if (pathname === '/') {
-    console.log(
-      '🚨 ROOT PAGE BYPASS: Skipping all ClientLayout authentication - PRODUCTION FIX DEPLOYED'
-    );
-    return (
-      <Providers>
-        <main style={{ minHeight: '100vh' }}>{children}</main>
-      </Providers>
-    );
+    console.log('🚨 FORCE LANDING PAGE: Bypassing ALL authentication logic');
+    return children; // NO Providers, NO loading, just the landing page
   }
 
   // Define public pages that don't require authentication
