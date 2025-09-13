@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // NUCLEAR CACHE INVALIDATION
+  // FORCE VERCEL COMPLETE REBUILD
   generateBuildId: async () => {
-    return `nuclear-rebuild-${Date.now()}-${Math.random()}`;
+    return `force-vercel-rebuild-${Date.now()}-${Math.random()}-${process.env.VERCEL_GIT_COMMIT_SHA || 'local'}`;
   },
   experimental: {
     staleTimes: {
