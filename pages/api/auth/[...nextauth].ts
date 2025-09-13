@@ -114,6 +114,11 @@ export const authOptions = {
     strategy: 'jwt' as const,
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Always redirect to landing page, never to auth pages
+      console.log(`🔄 NextAuth redirect: ${url} -> ${baseUrl}/`);
+      return baseUrl + '/';
+    },
     async jwt({ token, user }: { token: any; user: any }) {
       console.log('🔑 JWT callback:', {
         hasUser: !!user,
@@ -161,8 +166,8 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: '/',
-    error: '/',
+    signIn: '/', // Keep users on landing page for sign-in
+    error: '/', // Keep users on landing page for errors
   },
 };
 

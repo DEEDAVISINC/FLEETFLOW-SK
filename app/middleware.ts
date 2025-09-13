@@ -17,6 +17,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // CRITICAL FIX: Redirect auth/signin to root page (landing page)
+  if (pathname === '/auth/signin' || pathname === '/auth/signup') {
+    console.log(`🔄 REDIRECT FIX: ${pathname} -> / (landing page)`);
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
   // COMPLETE BYPASS: Allow all pages without any authentication
   console.log(`✅ PUBLIC ACCESS: ${pathname} - No authentication required`);
   return NextResponse.next();
