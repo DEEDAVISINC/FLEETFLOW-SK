@@ -66,31 +66,21 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     ); // NO SessionProvider, NO OrganizationProvider, just the landing page
   }
 
-  // Define public pages that don't require authentication
+  // Define public pages that don't require authentication - ONLY these are free
   const publicPages = [
-    '/',
-    '/about',
-    '/contact',
-    '/privacy-policy',
-    '/terms-of-service',
-    '/plans',
-    '/pricing',
-    '/features',
-    '/carrier-landing',
-    '/broker',
-    '/shipper-portal',
-    '/auth/signin',
-    '/auth/signup',
-    '/landingpage',
+    '/', // Landing/Homepage
+    '/go-with-the-flow', // Marketing content
+    '/launchpad', // Marketing content
+    '/about', // Company info
+    '/contact', // Contact info
+    '/privacy-policy', // Legal
+    '/terms-of-service', // Legal
+    '/auth/signin', // Login page
+    '/auth/signup', // Registration page
   ];
 
-  // ADDITIONAL BYPASS: Also bypass auth for other marketing/public pages
-  const isMarketingPage =
-    pathname &&
-    (pathname.startsWith('/carrier') ||
-      pathname.startsWith('/broker') ||
-      pathname.startsWith('/shipper') ||
-      pathname.includes('landing'));
+  // NO ADDITIONAL MARKETING BYPASSES - Everything else requires auth
+  const isMarketingPage = false; // All marketing content now requires subscription
 
   if (isMarketingPage) {
     console.log(
@@ -121,17 +111,30 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       publicPages.some((page) => pathname.startsWith(page))
     : false;
 
-  // AUTHENTICATION COMPLETELY DISABLED - All pages are now public
+  // PROPER AUTHENTICATION - Protect app pages, allow public marketing pages
   useEffect(() => {
-    console.log(
-      `✅ ClientLayout: Public access enabled for ${pathname} - No authentication required`
-    );
-  }, [pathname]);
+    if (isPublicPage) {
+      console.log(`✅ PUBLIC PAGE: ${pathname} - No authentication required`);
+    } else {
+      console.log(`🔒 PROTECTED PAGE: ${pathname} - Authentication required`);
+    }
+  }, [pathname, isPublicPage]);
 
   // Track hydration to prevent mismatches
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  // AUTHENTICATION CHECK - Redirect to signin if not authenticated and on protected page
+  useEffect(() => {
+    if (!isPublicPage && status === 'unauthenticated' && isHydrated) {
+      console.log(
+        `🚨 REDIRECT: ${pathname} requires authentication - redirecting to signin`
+      );
+      router.push('/auth/signin');
+      return;
+    }
+  }, [status, isPublicPage, pathname, router, isHydrated]);
 
   // ✅ Initialize Platform AI on app startup
   useEffect(() => {
@@ -196,7 +199,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // Show Flowter on landing page for subscription questions, and on other pages except university
   const shouldShowFlowter = isHydrated
     ? pathname === '/' || // Always show on landing page for subscription help
-      !pathname?.includes('/university') ||
+      (!pathname?.includes('/university') && user?.id) || // Show on app pages when authenticated
       pathname?.includes('/training/instructor')
     : false;
 
@@ -218,8 +221,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       !pathname.includes('/carrier-landing') &&
       pathname !== '/broker' && // Allow broker subpages, just not the main broker page
       !pathname.includes('/university') &&
-      pathname !== '/' &&
-      pathname !== '/plans'
+      pathname !== '/' && // Exclude homepage from phone system
+      pathname !== '/plans' &&
+      user?.id // Only operations pages for authenticated users
     : false;
 
   // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
@@ -338,8 +342,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                   {console.info('🎯 Rendering Unified Flowter AI')}
                   <UnifiedFlowterAI
                     hasNewSuggestions={hasNewSuggestions}
-                    userTier={user.subscriptionTier}
-                    userRole={user.role}
+                    userTier={user?.subscriptionTier || 'basic'}
+                    userRole={user?.role || 'visitor'}
                   />
                 </>
               )}
