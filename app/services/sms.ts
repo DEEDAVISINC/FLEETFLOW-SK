@@ -40,9 +40,10 @@ class SMSService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = typeof window !== 'undefined' 
-      ? window.location.origin 
-      : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+    this.baseUrl =
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
   }
 
   /**
@@ -58,7 +59,7 @@ class SMSService {
       recipients,
       notificationType: 'sms',
       messageTemplate: 'new-load',
-      urgency
+      urgency,
     });
   }
 
@@ -74,7 +75,7 @@ class SMSService {
       recipients,
       notificationType: 'sms',
       messageTemplate: 'pickup-reminder',
-      urgency: 'high'
+      urgency: 'high',
     });
   }
 
@@ -90,7 +91,7 @@ class SMSService {
       recipients,
       notificationType: 'sms',
       messageTemplate: 'delivery-reminder',
-      urgency: 'high'
+      urgency: 'high',
     });
   }
 
@@ -109,7 +110,7 @@ class SMSService {
       notificationType: 'sms',
       messageTemplate: 'custom',
       customMessage,
-      urgency
+      urgency,
     });
   }
 
@@ -126,7 +127,7 @@ class SMSService {
       recipients,
       notificationType: 'sms',
       messageTemplate: 'load-update',
-      urgency
+      urgency,
     });
   }
 
@@ -156,7 +157,7 @@ class SMSService {
       return {
         status: 'error',
         twilioConfigured: false,
-        availableTemplates: []
+        availableTemplates: [],
       };
     }
   }
@@ -167,14 +168,14 @@ class SMSService {
   formatPhoneNumber(phone: string): string {
     // Remove all non-digit characters
     const digits = phone.replace(/\D/g, '');
-    
+
     // Add country code if not present
     if (digits.length === 10) {
       return `+1${digits}`;
     } else if (digits.length === 11 && digits.startsWith('1')) {
       return `+${digits}`;
     }
-    
+
     return phone; // Return as-is if already formatted
   }
 
@@ -195,14 +196,14 @@ class SMSService {
         id: 'driver-001',
         name: 'John Smith',
         phone: '+15551234567',
-        type: 'driver'
+        type: 'driver',
       },
       {
         id: 'carrier-001',
         name: 'ABC Logistics',
         phone: '+15559876543',
-        type: 'carrier'
-      }
+        type: 'carrier',
+      },
     ];
   }
 
@@ -216,9 +217,11 @@ class SMSService {
       destination: 'Miami, FL',
       rate: '$2,500',
       distance: '650 miles',
-      pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString(),
+      pickupDate: new Date(
+        Date.now() + 24 * 60 * 60 * 1000
+      ).toLocaleDateString(),
       equipment: 'Dry Van',
-      weight: '25,000 lbs'
+      weight: '25,000 lbs',
     };
   }
 
@@ -228,7 +231,7 @@ class SMSService {
   async sendTestSMS(): Promise<SMSResponse> {
     const mockLoad = this.getMockLoadData();
     const mockRecipients = this.getMockRecipients();
-    
+
     return this.sendNewLoadNotification(mockLoad, mockRecipients, 'normal');
   }
 
@@ -245,9 +248,9 @@ class SMSService {
   }): Promise<SMSResponse> {
     try {
       // Format phone numbers
-      const formattedRecipients = payload.recipients.map(recipient => ({
+      const formattedRecipients = payload.recipients.map((recipient) => ({
         ...recipient,
-        phone: this.formatPhoneNumber(recipient.phone)
+        phone: this.formatPhoneNumber(recipient.phone),
       }));
 
       const response = await fetch(`${this.baseUrl}/api/notifications/send`, {
@@ -257,7 +260,7 @@ class SMSService {
         },
         body: JSON.stringify({
           ...payload,
-          recipients: formattedRecipients
+          recipients: formattedRecipients,
         }),
       });
 
@@ -266,7 +269,7 @@ class SMSService {
       }
 
       const result = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'SMS sending failed');
       }
@@ -274,15 +277,19 @@ class SMSService {
       return {
         success: true,
         results: result.results || [],
-        summary: result.summary || { total: 0, sent: 0, failed: 0, totalCost: 0 }
+        summary: result.summary || {
+          total: 0,
+          sent: 0,
+          failed: 0,
+          totalCost: 0,
+        },
       };
-
     } catch (error) {
       console.error('SMS Service Error:', error);
       return {
         success: false,
         results: [],
-        summary: { total: 0, sent: 0, failed: 1, totalCost: 0 }
+        summary: { total: 0, sent: 0, failed: 1, totalCost: 0 },
       };
     }
   }
@@ -292,7 +299,7 @@ class SMSService {
 export const smsService = new SMSService();
 
 // Export types for use in other files
-export type { SMSRecipient, SMSLoadData, SMSResponse };
+export type { SMSLoadData, SMSRecipient, SMSResponse };
 
 // Export class for advanced usage
 export { SMSService };
