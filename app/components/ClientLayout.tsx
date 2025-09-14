@@ -210,14 +210,33 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     setPhoneDialerEnabled(isEnabled);
   }, [user?.id, isHydrated]);
 
-  // Show Phone System everywhere except auth/legal pages - LIKE IT WAS BEFORE
-  const shouldShowPhoneWidget = isHydrated
+  // Compute all conditional logic safely - only after hydration
+  const isOperationsPage = isHydrated
     ? pathname &&
       !pathname.includes('/auth/') &&
       !pathname.includes('/privacy') &&
       !pathname.includes('/terms') &&
-      !pathname.includes('/university') // Keep university exclusion
+      !pathname.includes('/carrier-landing') &&
+      pathname !== '/broker' && // Allow broker subpages, just not the main broker page
+      !pathname.includes('/university') &&
+      pathname !== '/plans' &&
+      user?.id // Only operations pages for authenticated users
     : false;
+
+  // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
+  const hasPhoneEligibleRole =
+    isHydrated && user
+      ? user.role === 'admin' ||
+        user.role === 'manager' ||
+        user.role === 'dispatcher' ||
+        checkPermission('hasDispatchAccess')
+      : false;
+
+  const shouldShowPhoneWidget =
+    isHydrated &&
+    hasPhoneEligibleRole &&
+    phoneDialerEnabled &&
+    isOperationsPage;
 
   // Debug logging
   if (isHydrated) {
