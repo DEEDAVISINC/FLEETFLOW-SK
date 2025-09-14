@@ -7,6 +7,8 @@ import FleetFlowFooter from './FleetFlowFooter';
 import MaintenanceMode from './MaintenanceMode';
 import ProfessionalNavigation from './Navigation';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
+import UnifiedFlowterAI from './UnifiedFlowterAI';
+import PhoneSystemWidget from './PhoneSystemWidget';
 
 interface ClientLayoutWrapperProps {
   children: React.ReactNode;
@@ -36,6 +38,14 @@ export default function ClientLayoutWrapper({
             <ProfessionalNavigation />
             {children}
             <FleetFlowFooter variant='transparent' />
+            
+            {/* RESTORE ESSENTIAL COMPONENTS ON HOMEPAGE */}
+            <UnifiedFlowterAI
+              hasNewSuggestions={false}
+              userTier="basic"
+              userRole="visitor"
+            />
+            <PhoneSystemWidget position="bottom-left" />
           </div>
         </SimpleErrorBoundary>
       </MaintenanceMode>

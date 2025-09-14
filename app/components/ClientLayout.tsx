@@ -196,11 +196,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     generateSampleData();
   }, [user?.id, isHydrated]); // Run when user is available and hydrated
 
-  // Show Flowter on landing page for subscription questions, and on other pages except university
+  // Show Flowter AI everywhere except university pages - LIKE IT WAS BEFORE
   const shouldShowFlowter = isHydrated
-    ? pathname === '/' || // Always show on landing page for subscription help
-      (!pathname?.includes('/university') && user?.id) || // Show on app pages when authenticated
-      pathname?.includes('/training/instructor')
+    ? !pathname?.includes('/university') // Simple: show everywhere except university
     : false;
 
   // Check if user has phone dialer enabled (from user profile settings)
@@ -212,33 +210,14 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     setPhoneDialerEnabled(isEnabled);
   }, [user?.id, isHydrated]);
 
-  // Compute all conditional logic safely - only after hydration
-  const isOperationsPage = isHydrated
+  // Show Phone System everywhere except auth/legal pages - LIKE IT WAS BEFORE
+  const shouldShowPhoneWidget = isHydrated
     ? pathname &&
       !pathname.includes('/auth/') &&
       !pathname.includes('/privacy') &&
       !pathname.includes('/terms') &&
-      !pathname.includes('/carrier-landing') &&
-      pathname !== '/broker' && // Allow broker subpages, just not the main broker page
-      !pathname.includes('/university') &&
-      pathname !== '/plans'
-      // HOMEPAGE NOW INCLUDED for phone system like before
+      !pathname.includes('/university') // Keep university exclusion
     : false;
-
-  // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
-  const hasPhoneEligibleRole =
-    isHydrated && user
-      ? user.role === 'admin' ||
-        user.role === 'manager' ||
-        user.role === 'dispatcher' ||
-        checkPermission('hasDispatchAccess')
-      : false;
-
-  const shouldShowPhoneWidget =
-    isHydrated &&
-    (hasPhoneEligibleRole || pathname === '/') && // Allow phone on homepage for everyone
-    (phoneDialerEnabled || pathname === '/') && // Allow phone on homepage regardless of setting
-    isOperationsPage;
 
   // Debug logging
   if (isHydrated) {
