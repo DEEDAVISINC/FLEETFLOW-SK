@@ -1,7 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import React from 'react';
 import ClientLayout from './ClientLayout';
+import FleetFlowFooter from './FleetFlowFooter';
+import MaintenanceMode from './MaintenanceMode';
+import ProfessionalNavigation from './Navigation';
+import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 
 interface ClientLayoutWrapperProps {
   children: React.ReactNode;
@@ -12,12 +17,29 @@ export default function ClientLayoutWrapper({
 }: ClientLayoutWrapperProps) {
   const pathname = usePathname();
 
-  // ONLY bypass ClientLayout for homepage - keep it for all other pages
+  // Homepage gets navigation but NO auth requirements
   if (pathname === '/') {
     console.log(
-      '🏠 HOMEPAGE: Bypassing ClientLayout to avoid auth interference'
+      '🏠 HOMEPAGE: Using navigation layout WITHOUT auth requirements'
     );
-    return <>{children}</>;
+    return (
+      <MaintenanceMode>
+        <SimpleErrorBoundary>
+          <div
+            style={{
+              minHeight: '100vh',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <ProfessionalNavigation />
+            {children}
+            <FleetFlowFooter variant='transparent' />
+          </div>
+        </SimpleErrorBoundary>
+      </MaintenanceMode>
+    );
   }
 
   // All other pages use normal ClientLayout with full functionality
