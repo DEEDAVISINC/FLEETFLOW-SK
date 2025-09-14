@@ -322,8 +322,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
               )}
               <main
                 style={{
-                  paddingTop:
-                    isPublicPage && !isLocalhostAccess ? '0px' : '70px',
+                  paddingTop: isHydrated
+                    ? isPublicPage && !isLocalhostAccess
+                      ? '0px'
+                      : '70px'
+                    : '70px', // Default to 70px for server render consistency
                   minHeight: '100vh',
                   background:
                     'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
