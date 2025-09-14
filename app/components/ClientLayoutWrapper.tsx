@@ -7,7 +7,7 @@ import FleetFlowFooter from './FleetFlowFooter';
 import MaintenanceMode from './MaintenanceMode';
 import ProfessionalNavigation from './Navigation';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
-import UnifiedFlowterAI from './UnifiedFlowterAI';
+import UnifiedFlowterAI from './FlowterButton';
 import PhoneSystemWidget from './PhoneSystemWidget';
 
 interface ClientLayoutWrapperProps {
