@@ -37,8 +37,8 @@ export default function ProfessionalNavigation() {
       window.location.hostname === '127.0.0.1' ||
       window.location.hostname === '192.168.12.189');
 
-  // Hide navigation on landing page and other marketing pages (but not for localhost owner access)
-  const hiddenPaths = ['/', '/plans', '/privacy', '/terms'];
+  // Hide navigation on specific marketing pages (but not homepage - homepage now has navigation)
+  const hiddenPaths = ['/plans', '/privacy', '/terms'];
   const shouldHideNavigation = pathname
     ? hiddenPaths.includes(pathname) && !isLocalhostAccess
     : false;
