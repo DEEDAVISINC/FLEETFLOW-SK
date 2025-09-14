@@ -71,7 +71,7 @@ async function sendVerificationEmail(
   userId: string
 ): Promise<void> {
   const verificationToken = generateVerificationToken(userId);
-  const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/auth/verify-email?token=${verificationToken}`;
+  const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'}/auth/verify-email?token=${verificationToken}`;
 
   // In production, integrate with email service like SendGrid, Mailgun, or Resend
   console.info('📧 Verification email sent to:', email);
