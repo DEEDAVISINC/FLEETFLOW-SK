@@ -128,7 +128,91 @@ export interface RFxResponse {
     implementationPlan: string;
     references: string;
     appendices: string[];
+    solicitationQuestions?: SolicitationQuestion[];
+    requirementCompliance?: RequirementMapping[];
   };
+}
+
+export interface SolicitationQuestion {
+  id: string;
+  question: string;
+  type: 'text' | 'numeric' | 'yes_no' | 'multiple_choice' | 'date' | 'document';
+  required: boolean;
+  section: string;
+  context: string;
+  responseRequired: string;
+}
+
+export interface RequirementMapping {
+  requirementId: string;
+  requirementText: string;
+  requirementType: 'mandatory' | 'preferred' | 'optional';
+  responseSection: string;
+  responseText: string;
+  complianceLevel: 'full' | 'partial' | 'none';
+  evidence: string[];
+}
+
+export interface ResponseStructure {
+  requiredSections: string[];
+  sectionOrder: string[];
+  mandatoryElements: string[];
+  evaluationCriteria: string[];
+  scoringElements: string[];
+}
+
+export interface ContractingOfficer {
+  id: string;
+  name: string;
+  title: string;
+  agency: string;
+  department: string;
+  email: string;
+  phone?: string;
+  officeAddress: string;
+  specializations: string[];
+  contractHistory: {
+    contractNumber: string;
+    title: string;
+    value: number;
+    awardDate: Date;
+    contractor: string;
+  }[];
+  communicationHistory: {
+    date: Date;
+    type: 'email' | 'phone' | 'meeting' | 'conference';
+    subject: string;
+    notes: string;
+  }[];
+  relationshipScore: number; // 0-100
+  lastContact: Date;
+  preferredCommunication: 'email' | 'phone' | 'formal_meeting';
+  upcomingOpportunities: string[];
+}
+
+export interface RelationshipBuildingStrategy {
+  phase:
+    | 'pre_sources_sought'
+    | 'sources_sought_response'
+    | 'rfi_engagement'
+    | 'pre_rfp_positioning'
+    | 'rfp_response'
+    | 'post_award_relationship';
+  timeline: string;
+  actions: string[];
+  communications: {
+    type:
+      | 'capability_statement'
+      | 'market_research_response'
+      | 'technical_expertise_demo'
+      | 'past_performance_showcase'
+      | 'industry_insights';
+    template: string;
+    timing: string;
+    followUp: string[];
+  }[];
+  relationshipGoals: string[];
+  successMetrics: string[];
 }
 
 export class RFxResponseService {
@@ -136,12 +220,532 @@ export class RFxResponseService {
   private marketDataCache: Map<string, MarketIntelligence>;
   private cacheExpiry: number = 300000; // 5 minutes
   private notificationService: UniversalRFxNotificationService;
+  private contractingOfficerDatabase: Map<string, ContractingOfficer>;
+  private relationshipStrategies: Map<string, RelationshipBuildingStrategy>;
 
   constructor() {
     this.apiUrl =
       process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
     this.marketDataCache = new Map();
     this.notificationService = new UniversalRFxNotificationService();
+    this.contractingOfficerDatabase = new Map();
+    this.relationshipStrategies = new Map();
+    this.initializeRelationshipStrategies();
+  }
+
+  // ========================================
+  // RELATIONSHIP BUILDING & STRATEGIC POSITIONING
+  // ========================================
+
+  private initializeRelationshipStrategies(): void {
+    // Pre-Sources Sought Strategy: The power is in connecting before the bid drops
+    this.relationshipStrategies.set('pre_sources_sought', {
+      phase: 'pre_sources_sought',
+      timeline: '6-12 months before anticipated RFP',
+      actions: [
+        'Research contracting officers and their specializations',
+        'Identify upcoming procurement cycles through market intelligence',
+        'Attend industry days and networking events',
+        'Build relationships through professional associations',
+        'Establish thought leadership through industry publications',
+      ],
+      communications: [
+        {
+          type: 'capability_statement',
+          template: this.generateCapabilityStatementTemplate(),
+          timing: 'Quarterly updates to contracting officers',
+          followUp: [
+            'Schedule capability briefings',
+            'Invite to facility tours',
+            'Share industry insights',
+          ],
+        },
+        {
+          type: 'industry_insights',
+          template: this.generateIndustryInsightsTemplate(),
+          timing: 'Monthly market intelligence sharing',
+          followUp: [
+            'Request feedback on market trends',
+            'Offer to participate in market research',
+          ],
+        },
+      ],
+      relationshipGoals: [
+        'Become known to contracting officers before opportunities arise',
+        'Establish credibility and expertise in transportation services',
+        'Position as preferred vendor for future opportunities',
+        'Build trust through consistent, valuable communication',
+      ],
+      successMetrics: [
+        'Number of contracting officers in database',
+        'Frequency of proactive communications',
+        'Invitations to industry days and briefings',
+        'References in market research documents',
+      ],
+    });
+
+    // Sources Sought Response Strategy: Critical visibility phase
+    this.relationshipStrategies.set('sources_sought_response', {
+      phase: 'sources_sought_response',
+      timeline: 'Immediate response within 48 hours of publication',
+      actions: [
+        'Respond to ALL Sources Sought notices in our domain',
+        'Provide comprehensive capability demonstrations',
+        'Request follow-up meetings with contracting officers',
+        'Submit detailed past performance information',
+        'Offer to participate in market research activities',
+      ],
+      communications: [
+        {
+          type: 'market_research_response',
+          template: this.generateSourcesSoughtResponseTemplate(),
+          timing: 'Within 24-48 hours of notice publication',
+          followUp: [
+            'Request capability briefing',
+            'Offer facility tour',
+            'Provide additional documentation',
+          ],
+        },
+      ],
+      relationshipGoals: [
+        'Ensure visibility to contracting officers',
+        'Demonstrate comprehensive capabilities',
+        'Position for RFI and RFP opportunities',
+        'Establish direct communication channels',
+      ],
+      successMetrics: [
+        '100% response rate to relevant Sources Sought notices',
+        'Number of follow-up meetings scheduled',
+        'Inclusion in vendor databases',
+        'Requests for additional information',
+      ],
+    });
+
+    // RFI Engagement Strategy: Deep relationship building
+    this.relationshipStrategies.set('rfi_engagement', {
+      phase: 'rfi_engagement',
+      timeline: 'Comprehensive response with strategic positioning',
+      actions: [
+        'Provide detailed technical expertise',
+        'Offer alternative approaches and innovations',
+        'Share market intelligence and best practices',
+        'Request clarification meetings',
+        'Propose pilot programs or demonstrations',
+      ],
+      communications: [
+        {
+          type: 'technical_expertise_demo',
+          template: this.generateRFIResponseTemplate(),
+          timing: 'Comprehensive response with follow-up',
+          followUp: [
+            'Technical presentation',
+            'Pilot program proposal',
+            'Best practices sharing',
+          ],
+        },
+      ],
+      relationshipGoals: [
+        'Demonstrate deep technical expertise',
+        'Influence RFP requirements development',
+        'Establish preferred vendor status',
+        'Build personal relationships with key personnel',
+      ],
+      successMetrics: [
+        'Quality and comprehensiveness of RFI responses',
+        'Number of clarification meetings',
+        'Influence on final RFP requirements',
+        'Invitations to pre-proposal conferences',
+      ],
+    });
+  }
+
+  // ========================================
+  // CONTRACTING OFFICER RELATIONSHIP MANAGEMENT
+  // ========================================
+
+  async addContractingOfficer(
+    officer: Omit<
+      ContractingOfficer,
+      'id' | 'relationshipScore' | 'communicationHistory'
+    >
+  ): Promise<ContractingOfficer> {
+    const newOfficer: ContractingOfficer = {
+      ...officer,
+      id: `co-${Date.now()}`,
+      relationshipScore: 0,
+      communicationHistory: [],
+    };
+
+    this.contractingOfficerDatabase.set(newOfficer.id, newOfficer);
+    return newOfficer;
+  }
+
+  async getContractingOfficers(filters?: {
+    agency?: string;
+    specialization?: string;
+    relationshipScore?: number;
+  }): Promise<ContractingOfficer[]> {
+    const officers = Array.from(this.contractingOfficerDatabase.values());
+
+    if (!filters) return officers;
+
+    return officers.filter((officer) => {
+      if (filters.agency && officer.agency !== filters.agency) return false;
+      if (
+        filters.specialization &&
+        !officer.specializations.includes(filters.specialization)
+      )
+        return false;
+      if (
+        filters.relationshipScore &&
+        officer.relationshipScore < filters.relationshipScore
+      )
+        return false;
+      return true;
+    });
+  }
+
+  async logCommunication(
+    officerId: string,
+    communication: {
+      type: 'email' | 'phone' | 'meeting' | 'conference';
+      subject: string;
+      notes: string;
+    }
+  ): Promise<void> {
+    const officer = this.contractingOfficerDatabase.get(officerId);
+    if (!officer) throw new Error('Contracting officer not found');
+
+    officer.communicationHistory.push({
+      date: new Date(),
+      ...communication,
+    });
+
+    officer.lastContact = new Date();
+    officer.relationshipScore = this.calculateRelationshipScore(officer);
+
+    this.contractingOfficerDatabase.set(officerId, officer);
+  }
+
+  private calculateRelationshipScore(officer: ContractingOfficer): number {
+    let score = 0;
+
+    // Recent communication bonus
+    const daysSinceLastContact =
+      (Date.now() - officer.lastContact.getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSinceLastContact < 30) score += 20;
+    else if (daysSinceLastContact < 90) score += 10;
+
+    // Communication frequency
+    const recentCommunications = officer.communicationHistory.filter(
+      (comm) => (Date.now() - comm.date.getTime()) / (1000 * 60 * 60 * 24) < 180
+    );
+    score += Math.min(recentCommunications.length * 5, 30);
+
+    // Communication quality (meetings and calls worth more)
+    const qualityCommunications = recentCommunications.filter(
+      (comm) => comm.type === 'meeting' || comm.type === 'phone'
+    );
+    score += qualityCommunications.length * 10;
+
+    // Contract history relevance
+    score += Math.min(officer.contractHistory.length * 5, 25);
+
+    return Math.min(score, 100);
+  }
+
+  // ========================================
+  // STRATEGIC EMAIL TEMPLATES FOR RELATIONSHIP BUILDING
+  // ========================================
+
+  private generateCapabilityStatementTemplate(): string {
+    return `Subject: FleetFlow Logistics - Transportation Services Capability Statement
+
+Dear [CONTRACTING_OFFICER_NAME],
+
+I hope this message finds you well. As a transportation services provider specializing in government contracting, I wanted to ensure you have our current capability statement for your vendor database and future procurement planning.
+
+COMPANY OVERVIEW:
+FleetFlow Logistics is a certified transportation services provider with over 15 years of experience serving federal agencies and commercial clients. We specialize in:
+
+• Full Truckload (FTL) and Less-Than-Truckload (LTL) services
+• Specialized equipment for sensitive and high-value cargo
+• Nationwide coverage with security clearance capabilities
+• C-TPAT certified operations with comprehensive compliance programs
+
+KEY DIFFERENTIATORS:
+• 99.8% on-time delivery performance across all contract types
+• $50M+ in successfully completed government contracts
+• Consistent CPARS ratings of "Exceptional" and "Very Good"
+• ISO 9001:2015 certified quality management system
+• Advanced technology platform with real-time tracking and reporting
+
+RELEVANT PAST PERFORMANCE:
+• Department of Defense: $12M annual transportation services (2019-2024)
+• GSA Multiple Award Schedule: Transportation services nationwide
+• Federal Agency Logistics: $25M ceiling contract (2017-2022)
+
+We understand the critical importance of reliable, compliant transportation services for government operations. Our team is committed to supporting your mission requirements with the highest levels of service and professionalism.
+
+I would welcome the opportunity to discuss how FleetFlow can support your upcoming transportation requirements. Please let me know if you would like to schedule a capability briefing or facility tour.
+
+Thank you for your service and dedication to our nation.
+
+Respectfully,
+
+[SENDER_NAME]
+Business Development Manager
+FleetFlow Logistics
+[CONTACT_INFORMATION]
+
+P.S. I've attached our current capability statement and relevant certifications for your records.`;
+  }
+
+  private generateIndustryInsightsTemplate(): string {
+    return `Subject: Transportation Industry Market Intelligence - [MONTH] [YEAR]
+
+Dear [CONTRACTING_OFFICER_NAME],
+
+I hope you're doing well. As promised, I'm sharing our monthly transportation market intelligence report that may be valuable for your procurement planning and market research activities.
+
+KEY MARKET TRENDS:
+• Capacity: Current market conditions show [CAPACITY_STATUS] with [TREND_DIRECTION]
+• Pricing: Transportation rates have [PRICE_TREND] by [PERCENTAGE] compared to last quarter
+• Technology: New developments in [TECHNOLOGY_AREA] are improving [BENEFIT_AREA]
+• Regulatory: Recent changes in [REGULATION_AREA] affecting [IMPACT_AREA]
+
+GOVERNMENT CONTRACTING INSIGHTS:
+• Increased focus on [FOCUS_AREA] in recent solicitations
+• Best practices emerging in [PRACTICE_AREA]
+• Common challenges agencies are facing: [CHALLENGE_LIST]
+
+RECOMMENDATIONS FOR PROCUREMENT PLANNING:
+• Consider [RECOMMENDATION_1] for improved cost effectiveness
+• Evaluate [RECOMMENDATION_2] for enhanced service quality
+• Plan for [RECOMMENDATION_3] to address upcoming regulatory changes
+
+I hope this information is helpful for your planning activities. If you have any questions or would like to discuss any of these trends in more detail, please don't hesitate to reach out.
+
+Also, if there are specific market research questions or areas where our industry expertise could be valuable, I'm always happy to contribute to your market research efforts.
+
+Best regards,
+
+[SENDER_NAME]
+Market Intelligence Analyst
+FleetFlow Logistics
+[CONTACT_INFORMATION]`;
+  }
+
+  private generateSourcesSoughtResponseTemplate(): string {
+    return `Subject: Sources Sought Response - [SOLICITATION_NUMBER] - FleetFlow Logistics
+
+Dear Contracting Officer,
+
+FleetFlow Logistics respectfully submits this response to your Sources Sought notice for [SOLICITATION_TITLE]. We appreciate the opportunity to provide information about our capabilities and express our strong interest in supporting this requirement.
+
+COMPANY QUALIFICATION SUMMARY:
+• DUNS Number: [DUNS_NUMBER]
+• CAGE Code: [CAGE_CODE]
+• NAICS Codes: [RELEVANT_NAICS_CODES]
+• Size Status: [SIZE_STATUS]
+• Certifications: [CERTIFICATIONS_LIST]
+
+CAPABILITY DEMONSTRATION:
+We possess comprehensive capabilities to fulfill the requirements outlined in your Sources Sought notice:
+
+1. TECHNICAL CAPABILITIES:
+   • [SPECIFIC_CAPABILITY_1]
+   • [SPECIFIC_CAPABILITY_2]
+   • [SPECIFIC_CAPABILITY_3]
+
+2. PAST PERFORMANCE:
+   • [RELEVANT_CONTRACT_1]: $[VALUE] ([DATES])
+   • [RELEVANT_CONTRACT_2]: $[VALUE] ([DATES])
+   • [RELEVANT_CONTRACT_3]: $[VALUE] ([DATES])
+
+3. RESOURCES AND CAPACITY:
+   • [RESOURCE_DESCRIPTION_1]
+   • [RESOURCE_DESCRIPTION_2]
+   • [RESOURCE_DESCRIPTION_3]
+
+MARKET RESEARCH CONTRIBUTION:
+Based on our industry experience, we offer the following insights for your market research:
+
+• Estimated fair and reasonable pricing range: $[RANGE]
+• Typical performance period considerations: [CONSIDERATIONS]
+• Industry best practices relevant to this requirement: [BEST_PRACTICES]
+• Potential challenges and recommended mitigation strategies: [CHALLENGES_AND_SOLUTIONS]
+
+SMALL BUSINESS OPPORTUNITIES:
+We are committed to supporting small business participation and can provide:
+• Subcontracting opportunities for [SPECIFIC_AREAS]
+• Mentor-protégé relationships in [RELEVANT_AREAS]
+• Joint venture possibilities for enhanced capability
+
+REQUEST FOR ENGAGEMENT:
+We would welcome the opportunity to:
+• Participate in any industry days or pre-solicitation conferences
+• Provide additional technical information or demonstrations
+• Discuss our capabilities in greater detail through a capability briefing
+• Contribute to your market research through surveys or interviews
+
+CONTACT INFORMATION:
+Primary Contact: [NAME], [TITLE]
+Email: [EMAIL]
+Phone: [PHONE]
+Address: [ADDRESS]
+
+We thank you for the opportunity to respond to this Sources Sought notice and look forward to supporting your mission requirements. Please contact us if you need any additional information or clarification.
+
+Respectfully submitted,
+
+[SENDER_NAME]
+[TITLE]
+FleetFlow Logistics
+
+Attachments:
+- Company Capability Statement
+- Past Performance References
+- Relevant Certifications
+- Technical Specifications`;
+  }
+
+  private generateRFIResponseTemplate(): string {
+    return `Subject: Request for Information Response - [SOLICITATION_NUMBER] - FleetFlow Logistics
+
+Dear Contracting Officer,
+
+FleetFlow Logistics is pleased to provide this comprehensive response to your Request for Information regarding [RFI_SUBJECT]. We appreciate the opportunity to share our expertise and contribute to your market research and requirements development process.
+
+EXECUTIVE SUMMARY:
+Our response demonstrates FleetFlow's deep understanding of [REQUIREMENT_AREA] and our proven capability to deliver innovative, cost-effective solutions that exceed government performance standards. With [X] years of specialized experience and over $[X]M in successful contract performance, we bring both technical expertise and operational excellence to support your mission requirements.
+
+DETAILED RESPONSES TO RFI QUESTIONS:
+
+[For each RFI question, provide comprehensive, detailed responses that demonstrate expertise while providing valuable market intelligence]
+
+QUESTION 1: [RFI_QUESTION_1]
+RESPONSE: [Comprehensive response demonstrating expertise and providing valuable insights]
+
+QUESTION 2: [RFI_QUESTION_2]
+RESPONSE: [Detailed technical response with recommendations and best practices]
+
+[Continue for all RFI questions...]
+
+INNOVATIVE APPROACHES AND RECOMMENDATIONS:
+Based on our industry experience, we recommend the following considerations for your requirements development:
+
+1. TECHNICAL INNOVATIONS:
+   • [INNOVATION_1]: [Description and benefits]
+   • [INNOVATION_2]: [Description and benefits]
+   • [INNOVATION_3]: [Description and benefits]
+
+2. COST OPTIMIZATION STRATEGIES:
+   • [STRATEGY_1]: Potential savings of [PERCENTAGE]
+   • [STRATEGY_2]: Efficiency improvements of [METRIC]
+   • [STRATEGY_3]: Risk reduction through [APPROACH]
+
+3. PERFORMANCE ENHANCEMENT OPPORTUNITIES:
+   • [ENHANCEMENT_1]: [Description and impact]
+   • [ENHANCEMENT_2]: [Description and impact]
+   • [ENHANCEMENT_3]: [Description and impact]
+
+MARKET INTELLIGENCE AND INDUSTRY INSIGHTS:
+• Current market conditions: [MARKET_ANALYSIS]
+• Industry trends affecting this requirement: [TREND_ANALYSIS]
+• Recommended procurement strategies: [STRATEGY_RECOMMENDATIONS]
+• Potential challenges and mitigation approaches: [RISK_ANALYSIS]
+
+COLLABORATION OPPORTUNITIES:
+We would welcome the opportunity to:
+• Participate in technical working groups or advisory panels
+• Provide subject matter expertise during requirements refinement
+• Conduct pilot programs or proof-of-concept demonstrations
+• Share additional industry best practices and lessons learned
+
+FOLLOW-UP ENGAGEMENT:
+We are prepared to:
+• Provide additional technical information or clarification
+• Participate in follow-up meetings or technical discussions
+• Conduct capability demonstrations or facility tours
+• Support requirements development through continued collaboration
+
+Thank you for the opportunity to contribute to your market research. We look forward to continued engagement and the opportunity to support your mission requirements.
+
+Respectfully submitted,
+
+[SENDER_NAME]
+[TITLE]
+FleetFlow Logistics
+[CONTACT_INFORMATION]
+
+Attachments:
+- Detailed Technical Specifications
+- Past Performance Documentation
+- Industry Analysis and Market Research
+- Innovative Solution Proposals`;
+  }
+
+  // ========================================
+  // AUTOMATED RELATIONSHIP BUILDING WORKFLOWS
+  // ========================================
+
+  async executeRelationshipStrategy(
+    phase: RelationshipBuildingStrategy['phase'],
+    officerId: string
+  ): Promise<void> {
+    const strategy = this.relationshipStrategies.get(phase);
+    const officer = this.contractingOfficerDatabase.get(officerId);
+
+    if (!strategy || !officer) {
+      throw new Error('Strategy or officer not found');
+    }
+
+    // Execute communications based on strategy
+    for (const communication of strategy.communications) {
+      await this.sendStrategicCommunication(officer, communication);
+    }
+
+    // Log the strategy execution
+    await this.logCommunication(officerId, {
+      type: 'email',
+      subject: `Relationship Building - ${phase}`,
+      notes: `Executed ${phase} strategy with ${strategy.communications.length} communications`,
+    });
+  }
+
+  private async sendStrategicCommunication(
+    officer: ContractingOfficer,
+    communication: RelationshipBuildingStrategy['communications'][0]
+  ): Promise<void> {
+    // This would integrate with the email system to send personalized communications
+    const personalizedTemplate = this.personalizeTemplate(
+      communication.template,
+      officer
+    );
+
+    // Send email through FleetFlow's email system
+    // await this.emailService.send({
+    //   to: officer.email,
+    //   subject: this.extractSubjectFromTemplate(personalizedTemplate),
+    //   body: personalizedTemplate,
+    //   type: communication.type
+    // });
+
+    console.log(
+      `Strategic communication sent to ${officer.name}: ${communication.type}`
+    );
+  }
+
+  private personalizeTemplate(
+    template: string,
+    officer: ContractingOfficer
+  ): string {
+    return template
+      .replace(/\[CONTRACTING_OFFICER_NAME\]/g, officer.name)
+      .replace(/\[AGENCY\]/g, officer.agency)
+      .replace(/\[DEPARTMENT\]/g, officer.department)
+      .replace(/\[SPECIALIZATIONS\]/g, officer.specializations.join(', '));
   }
 
   // ========================================
@@ -427,20 +1031,28 @@ export class RFxResponseService {
     riskFactors: string[];
     evaluationCriteria: string[];
     mandatoryElements: string[];
+    specificQuestions: SolicitationQuestion[];
+    requirementMapping: RequirementMapping[];
+    responseStructure: ResponseStructure;
   } {
-    // Analyze the solicitation text to extract key elements
-    const description = rfxRequest.description.toLowerCase();
+    // Comprehensive solicitation analysis with requirement mapping
+    const description = rfxRequest.description;
     const requirements = rfxRequest.requirements || [];
 
+    const solicitationAnalysis = this.parseSolicitationDocument(
+      description,
+      requirements
+    );
+
     return {
-      keyRequirements: this.extractKeyRequirements(description, requirements),
+      keyRequirements: solicitationAnalysis.keyRequirements,
       criticalDates: this.extractCriticalDates(rfxRequest),
       riskFactors: this.identifyRiskFactors(rfxRequest),
-      evaluationCriteria: this.extractEvaluationCriteria(description),
-      mandatoryElements: this.extractMandatoryElements(
-        description,
-        requirements
-      ),
+      evaluationCriteria: solicitationAnalysis.evaluationCriteria,
+      mandatoryElements: solicitationAnalysis.mandatoryElements,
+      specificQuestions: solicitationAnalysis.specificQuestions,
+      requirementMapping: solicitationAnalysis.requirementMapping,
+      responseStructure: solicitationAnalysis.responseStructure,
     };
   }
 
@@ -449,11 +1061,17 @@ export class RFxResponseService {
     strategy: BidStrategy,
     solicitation: any
   ) {
+    // Generate targeted response based on specific solicitation requirements
+    const targetedServiceDescription = this.generateTargetedServiceDescription(
+      rfxRequest,
+      solicitation.specificQuestions,
+      solicitation.requirementMapping
+    );
+
     return {
-      serviceDescription: this.generateDetailedServiceDescription(
-        rfxRequest,
-        'bid'
-      ),
+      serviceDescription:
+        targetedServiceDescription ||
+        this.generateDetailedServiceDescription(rfxRequest, 'bid'),
       valueProposition: [
         `Competitive rate of $${strategy.recommendedRate.toFixed(2)} per mile`,
         `Proven track record with ${rfxRequest.equipment} equipment`,
@@ -603,6 +1221,8 @@ export class RFxResponseService {
           strategy,
           solicitation
         ),
+        solicitationQuestions: solicitation.specificQuestions,
+        requirementCompliance: solicitation.requirementMapping,
         technicalSpecifications:
           this.generateComprehensiveTechnicalSpecs(rfxRequest),
         companyCapabilities: this.generateExtensiveCompanyCapabilities(),
@@ -2805,36 +3425,170 @@ INDUSTRY CERTIFICATIONS:
   // COMPREHENSIVE RESPONSE HELPER METHODS
   // ========================================
 
-  private extractKeyRequirements(
+  private parseSolicitationDocument(
     description: string,
     requirements: string[]
-  ): string[] {
-    const keyTerms = [
-      'must',
-      'required',
-      'mandatory',
-      'shall',
-      'should',
-      'need',
-      'delivery',
-      'pickup',
-      'schedule',
-      'equipment',
-      'insurance',
-      'certification',
-      'compliance',
-      'safety',
-      'security',
+  ): {
+    keyRequirements: string[];
+    evaluationCriteria: string[];
+    mandatoryElements: string[];
+    specificQuestions: SolicitationQuestion[];
+    requirementMapping: RequirementMapping[];
+    responseStructure: ResponseStructure;
+  } {
+    const fullText = `${description} ${requirements.join(' ')}`.toLowerCase();
+
+    // Extract specific questions from solicitation
+    const specificQuestions = this.extractSpecificQuestions(
+      description,
+      requirements
+    );
+
+    // Extract and classify requirements
+    const requirementMapping = this.extractAndClassifyRequirements(
+      description,
+      requirements
+    );
+
+    // Determine response structure based on solicitation content
+    const responseStructure = this.determineResponseStructure(
+      description,
+      requirements,
+      specificQuestions
+    );
+
+    return {
+      keyRequirements: this.extractKeyRequirements(description, requirements),
+      evaluationCriteria: this.extractEvaluationCriteria(description),
+      mandatoryElements: this.extractMandatoryElements(
+        description,
+        requirements
+      ),
+      specificQuestions,
+      requirementMapping,
+      responseStructure,
+    };
+  }
+
+  private extractSpecificQuestions(
+    description: string,
+    requirements: string[]
+  ): SolicitationQuestion[] {
+    const questions: SolicitationQuestion[] = [];
+    const fullText = `${description} ${requirements.join(' ')}`;
+
+    // Question patterns to identify
+    const questionPatterns = [
+      /\?\s*$/m, // Questions ending with ?
+      /please (?:provide|describe|explain|detail|specify|state)/i,
+      /provide (?:the|a|an) (?:following|information|details)/i,
+      /submit (?:the|a|an) (?:following|information|documentation)/i,
+      /include (?:the|a|an) (?:following|information)/i,
+      /address (?:the|a|an) (?:following|requirements)/i,
     ];
 
-    const extracted: string[] = [];
-    keyTerms.forEach((term) => {
-      if (description.includes(term)) {
-        extracted.push(`${term} mentioned in solicitation`);
+    // Extract questions by analyzing text structure
+    const sentences = fullText
+      .split(/[.!?]+/)
+      .filter((s) => s.trim().length > 0);
+
+    sentences.forEach((sentence, index) => {
+      const trimmed = sentence.trim();
+
+      // Check if sentence contains question indicators
+      const hasQuestionIndicators = questionPatterns.some((pattern) =>
+        pattern.test(trimmed)
+      );
+
+      if (hasQuestionIndicators || trimmed.includes('?')) {
+        const question: SolicitationQuestion = {
+          id: `q-${index}`,
+          question: trimmed,
+          type: this.determineQuestionType(trimmed),
+          required: this.isQuestionRequired(trimmed),
+          section: this.determineQuestionSection(trimmed),
+          context: this.extractQuestionContext(sentences, index),
+          responseRequired: this.determineRequiredResponse(trimmed),
+        };
+        questions.push(question);
       }
     });
 
-    return [...extracted, ...requirements];
+    return questions;
+  }
+
+  private extractAndClassifyRequirements(
+    description: string,
+    requirements: string[]
+  ): RequirementMapping[] {
+    const mappings: RequirementMapping[] = [];
+    const allText = `${description} ${requirements.join(' ')}`;
+
+    // Split into individual requirements
+    const requirementTexts = this.splitRequirements(allText);
+
+    requirementTexts.forEach((reqText, index) => {
+      const mapping: RequirementMapping = {
+        requirementId: `req-${index}`,
+        requirementText: reqText,
+        requirementType: this.classifyRequirementType(reqText),
+        responseSection: this.mapToResponseSection(reqText),
+        responseText: this.generateRequirementResponse(reqText),
+        complianceLevel: this.assessComplianceLevel(reqText),
+        evidence: this.extractEvidenceRequirements(reqText),
+      };
+      mappings.push(mapping);
+    });
+
+    return mappings;
+  }
+
+  private determineResponseStructure(
+    description: string,
+    requirements: string[],
+    questions: SolicitationQuestion[]
+  ): ResponseStructure {
+    const fullText = `${description} ${requirements.join(' ')}`.toLowerCase();
+
+    // Determine required sections based on content analysis
+    const requiredSections: string[] = [];
+
+    if (
+      fullText.includes('experience') ||
+      fullText.includes('past performance')
+    ) {
+      requiredSections.push('Past Performance');
+    }
+    if (fullText.includes('technical') || fullText.includes('capability')) {
+      requiredSections.push('Technical Approach');
+    }
+    if (fullText.includes('price') || fullText.includes('cost')) {
+      requiredSections.push('Pricing');
+    }
+    if (fullText.includes('timeline') || fullText.includes('schedule')) {
+      requiredSections.push('Schedule');
+    }
+    if (fullText.includes('management') || fullText.includes('team')) {
+      requiredSections.push('Management Approach');
+    }
+
+    // Add sections based on specific questions
+    questions.forEach((question) => {
+      if (!requiredSections.includes(question.section)) {
+        requiredSections.push(question.section);
+      }
+    });
+
+    return {
+      requiredSections,
+      sectionOrder: this.determineSectionOrder(requiredSections),
+      mandatoryElements: this.extractMandatoryElements(
+        description,
+        requirements
+      ),
+      evaluationCriteria: this.extractEvaluationCriteria(description),
+      scoringElements: this.extractScoringElements(description),
+    };
   }
 
   private extractCriticalDates(rfxRequest: RFxRequest): Date[] {
@@ -2885,6 +3639,570 @@ INDUSTRY CERTIFICATIONS:
       ...mandatory,
       ...requirements.filter((req) => req.toLowerCase().includes('required')),
     ];
+  }
+
+  // ========================================
+  // REQUIREMENT ANALYSIS HELPER METHODS
+  // ========================================
+
+  private extractKeyRequirements(
+    description: string,
+    requirements: string[]
+  ): string[] {
+    const keyTerms = [
+      'must',
+      'required',
+      'mandatory',
+      'shall',
+      'should',
+      'need',
+      'delivery',
+      'pickup',
+      'schedule',
+      'equipment',
+      'insurance',
+      'certification',
+      'compliance',
+      'safety',
+      'security',
+    ];
+
+    const extracted: string[] = [];
+    keyTerms.forEach((term) => {
+      if (description.includes(term)) {
+        extracted.push(`${term} mentioned in solicitation`);
+      }
+    });
+
+    return [...extracted, ...requirements];
+  }
+
+  private splitRequirements(text: string): string[] {
+    // Split text into individual requirements based on common patterns
+    const requirements: string[] = [];
+    const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
+
+    sentences.forEach((sentence) => {
+      const trimmed = sentence.trim();
+      // Check if sentence contains requirement indicators
+      if (this.containsRequirementIndicators(trimmed)) {
+        requirements.push(trimmed);
+      }
+    });
+
+    return requirements;
+  }
+
+  private containsRequirementIndicators(text: string): boolean {
+    const indicators = [
+      /must\s+/i,
+      /shall\s+/i,
+      /required/i,
+      /mandatory/i,
+      /provide\s+/i,
+      /submit\s+/i,
+      /include\s+/i,
+      /demonstrate/i,
+      /certified/i,
+      /licensed/i,
+      /experience/i,
+      /capability/i,
+    ];
+
+    return indicators.some((pattern) => pattern.test(text));
+  }
+
+  private determineQuestionType(
+    question: string
+  ): SolicitationQuestion['type'] {
+    const lowerQuestion = question.toLowerCase();
+
+    if (
+      lowerQuestion.includes('how many') ||
+      (lowerQuestion.includes('what is the') && /\d/.test(question))
+    ) {
+      return 'numeric';
+    }
+    if (
+      lowerQuestion.includes('yes') ||
+      lowerQuestion.includes('no') ||
+      lowerQuestion.includes('do you')
+    ) {
+      return 'yes_no';
+    }
+    if (lowerQuestion.includes('when') || lowerQuestion.includes('date')) {
+      return 'date';
+    }
+    if (
+      lowerQuestion.includes('which') ||
+      lowerQuestion.includes('choose') ||
+      lowerQuestion.includes('select')
+    ) {
+      return 'multiple_choice';
+    }
+    if (
+      lowerQuestion.includes('document') ||
+      lowerQuestion.includes('certificate') ||
+      lowerQuestion.includes('license')
+    ) {
+      return 'document';
+    }
+
+    return 'text';
+  }
+
+  private isQuestionRequired(question: string): boolean {
+    const lowerQuestion = question.toLowerCase();
+    return (
+      lowerQuestion.includes('must') ||
+      lowerQuestion.includes('required') ||
+      lowerQuestion.includes('mandatory') ||
+      lowerQuestion.includes('shall')
+    );
+  }
+
+  private determineQuestionSection(question: string): string {
+    const lowerQuestion = question.toLowerCase();
+
+    if (
+      lowerQuestion.includes('experience') ||
+      lowerQuestion.includes('past performance')
+    ) {
+      return 'Past Performance';
+    }
+    if (
+      lowerQuestion.includes('technical') ||
+      lowerQuestion.includes('capability')
+    ) {
+      return 'Technical Approach';
+    }
+    if (
+      lowerQuestion.includes('price') ||
+      lowerQuestion.includes('cost') ||
+      lowerQuestion.includes('rate')
+    ) {
+      return 'Pricing';
+    }
+    if (
+      lowerQuestion.includes('timeline') ||
+      lowerQuestion.includes('schedule') ||
+      lowerQuestion.includes('time')
+    ) {
+      return 'Schedule';
+    }
+    if (
+      lowerQuestion.includes('management') ||
+      lowerQuestion.includes('team') ||
+      lowerQuestion.includes('personnel')
+    ) {
+      return 'Management Approach';
+    }
+    if (
+      lowerQuestion.includes('insurance') ||
+      lowerQuestion.includes('safety') ||
+      lowerQuestion.includes('compliance')
+    ) {
+      return 'Compliance & Safety';
+    }
+
+    return 'General Information';
+  }
+
+  private extractQuestionContext(
+    sentences: string[],
+    questionIndex: number
+  ): string {
+    const contextStart = Math.max(0, questionIndex - 2);
+    const contextEnd = Math.min(sentences.length, questionIndex + 3);
+    return sentences.slice(contextStart, contextEnd).join(' ');
+  }
+
+  private determineRequiredResponse(question: string): string {
+    const lowerQuestion = question.toLowerCase();
+
+    if (lowerQuestion.includes('describe')) {
+      return 'Detailed description required';
+    }
+    if (lowerQuestion.includes('explain')) {
+      return 'Detailed explanation required';
+    }
+    if (lowerQuestion.includes('provide')) {
+      return 'Specific information required';
+    }
+    if (lowerQuestion.includes('list') || lowerQuestion.includes('enumerate')) {
+      return 'Itemized list required';
+    }
+
+    return 'Direct response required';
+  }
+
+  private classifyRequirementType(
+    requirement: string
+  ): RequirementMapping['requirementType'] {
+    const lowerReq = requirement.toLowerCase();
+
+    if (
+      lowerReq.includes('must') ||
+      lowerReq.includes('mandatory') ||
+      lowerReq.includes('required')
+    ) {
+      return 'mandatory';
+    }
+    if (
+      lowerReq.includes('preferred') ||
+      lowerReq.includes('should') ||
+      lowerReq.includes('recommended')
+    ) {
+      return 'preferred';
+    }
+
+    return 'optional';
+  }
+
+  private mapToResponseSection(requirement: string): string {
+    const lowerReq = requirement.toLowerCase();
+
+    if (
+      lowerReq.includes('experience') ||
+      lowerReq.includes('past performance')
+    ) {
+      return 'Past Performance';
+    }
+    if (
+      lowerReq.includes('technical') ||
+      lowerReq.includes('capability') ||
+      lowerReq.includes('equipment')
+    ) {
+      return 'Technical Approach';
+    }
+    if (
+      lowerReq.includes('price') ||
+      lowerReq.includes('cost') ||
+      lowerReq.includes('rate')
+    ) {
+      return 'Pricing';
+    }
+    if (lowerReq.includes('timeline') || lowerReq.includes('schedule')) {
+      return 'Schedule';
+    }
+    if (
+      lowerReq.includes('insurance') ||
+      lowerReq.includes('safety') ||
+      lowerReq.includes('compliance')
+    ) {
+      return 'Compliance & Safety';
+    }
+    if (lowerReq.includes('management') || lowerReq.includes('team')) {
+      return 'Management Approach';
+    }
+
+    return 'General Information';
+  }
+
+  private generateRequirementResponse(requirement: string): string {
+    // Generate specific response based on requirement type
+    const lowerReq = requirement.toLowerCase();
+
+    if (lowerReq.includes('insurance')) {
+      return 'FleetFlow maintains comprehensive insurance coverage including $1M commercial auto liability and $100K cargo insurance, exceeding industry standards.';
+    }
+    if (lowerReq.includes('safety')) {
+      return 'FleetFlow maintains a Satisfactory DOT safety rating with comprehensive safety training programs and regular vehicle inspections.';
+    }
+    if (lowerReq.includes('experience')) {
+      return 'FleetFlow has extensive experience in transportation services with proven track record and customer references available.';
+    }
+    if (lowerReq.includes('equipment')) {
+      return 'FleetFlow operates modern, well-maintained equipment with GPS tracking and advanced safety features.';
+    }
+
+    return `FleetFlow meets this requirement through our comprehensive service capabilities and proven operational excellence.`;
+  }
+
+  private assessComplianceLevel(
+    requirement: string
+  ): RequirementMapping['complianceLevel'] {
+    // Assess our ability to meet this requirement
+    const lowerReq = requirement.toLowerCase();
+
+    if (
+      lowerReq.includes('dot') ||
+      lowerReq.includes('safety') ||
+      lowerReq.includes('insurance')
+    ) {
+      return 'full'; // We fully comply with standard transportation requirements
+    }
+    if (lowerReq.includes('experience') || lowerReq.includes('capability')) {
+      return 'full'; // We have the experience and capabilities
+    }
+    if (lowerReq.includes('certification') || lowerReq.includes('license')) {
+      return 'full'; // We maintain all required certifications
+    }
+
+    return 'full'; // Default to full compliance
+  }
+
+  private extractEvidenceRequirements(requirement: string): string[] {
+    const evidence: string[] = [];
+    const lowerReq = requirement.toLowerCase();
+
+    if (lowerReq.includes('insurance')) {
+      evidence.push('Certificate of Insurance', 'Policy Declaration Page');
+    }
+    if (lowerReq.includes('safety')) {
+      evidence.push('DOT Safety Rating', 'Safety Management Certificate');
+    }
+    if (lowerReq.includes('license') || lowerReq.includes('authority')) {
+      evidence.push('Operating Authority (MC Number)', 'Carrier Registration');
+    }
+    if (lowerReq.includes('experience')) {
+      evidence.push('Customer References', 'Past Performance Documentation');
+    }
+
+    return evidence;
+  }
+
+  private determineSectionOrder(sections: string[]): string[] {
+    // Define standard section order for RFx responses
+    const standardOrder = [
+      'Executive Summary',
+      'Technical Approach',
+      'Past Performance',
+      'Management Approach',
+      'Pricing',
+      'Schedule',
+      'Compliance & Safety',
+      'General Information',
+    ];
+
+    // Sort sections according to standard order
+    return sections.sort((a, b) => {
+      const indexA = standardOrder.indexOf(a);
+      const indexB = standardOrder.indexOf(b);
+
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+
+      return indexA - indexB;
+    });
+  }
+
+  private extractScoringElements(description: string): string[] {
+    const scoringElements: string[] = [];
+    const lowerDesc = description.toLowerCase();
+
+    if (lowerDesc.includes('price') || lowerDesc.includes('cost')) {
+      scoringElements.push('Price (30-40%)');
+    }
+    if (lowerDesc.includes('technical') || lowerDesc.includes('capability')) {
+      scoringElements.push('Technical Approach (20-30%)');
+    }
+    if (
+      lowerDesc.includes('past performance') ||
+      lowerDesc.includes('experience')
+    ) {
+      scoringElements.push('Past Performance (20-25%)');
+    }
+    if (lowerDesc.includes('management') || lowerDesc.includes('team')) {
+      scoringElements.push('Management Approach (10-15%)');
+    }
+
+    return scoringElements.length > 0
+      ? scoringElements
+      : ['Technical Merit (40%)', 'Price (30%)', 'Past Performance (30%)'];
+  }
+
+  private generateTargetedServiceDescription(
+    rfxRequest: RFxRequest,
+    specificQuestions: SolicitationQuestion[],
+    requirementMapping: RequirementMapping[]
+  ): string {
+    let description = `Comprehensive response to your transportation requirements for ${rfxRequest.commodity} shipments from ${rfxRequest.origin} to ${rfxRequest.destination}.\n\n`;
+
+    // Address specific questions first
+    if (specificQuestions.length > 0) {
+      description += `DIRECT RESPONSES TO YOUR REQUIREMENTS:\n\n`;
+      specificQuestions.forEach((question, index) => {
+        description += `${index + 1}. ${question.question}\n`;
+        description += `   Response: ${this.generateQuestionResponse(question, rfxRequest)}\n\n`;
+      });
+    }
+
+    // Address specific requirements
+    if (requirementMapping.length > 0) {
+      description += `REQUIREMENT COMPLIANCE:\n\n`;
+      requirementMapping.forEach((mapping, index) => {
+        if (mapping.requirementType === 'mandatory') {
+          description += `${index + 1}. ${mapping.requirementText}\n`;
+          description += `   ✓ COMPLIANT: ${mapping.responseText}\n`;
+          if (mapping.evidence.length > 0) {
+            description += `   📋 EVIDENCE: ${mapping.evidence.join(', ')}\n`;
+          }
+          description += `\n`;
+        }
+      });
+    }
+
+    // Standard service description
+    description += `SERVICE OVERVIEW:\n`;
+    description += `Our service includes professional handling of ${rfxRequest.weight} lbs using ${rfxRequest.equipment} equipment with:\n`;
+    description += `• End-to-end logistics management with real-time tracking\n`;
+    description += `• Dedicated customer service and guaranteed delivery\n`;
+    description += `• Experienced drivers and modern fleet meeting all regulatory requirements\n`;
+    description += `• Comprehensive insurance coverage and safety standards\n`;
+
+    return description;
+  }
+
+  private generateQuestionResponse(
+    question: SolicitationQuestion,
+    rfxRequest: RFxRequest
+  ): string {
+    const lowerQuestion = question.question.toLowerCase();
+
+    if (
+      lowerQuestion.includes('experience') ||
+      lowerQuestion.includes('past performance')
+    ) {
+      return 'FleetFlow has over 15 years of experience in transportation services with a 99.8% on-time delivery rate and extensive customer references.';
+    }
+    if (lowerQuestion.includes('insurance')) {
+      return 'We maintain $1M commercial auto liability and $100K cargo insurance coverage, exceeding industry standards.';
+    }
+    if (lowerQuestion.includes('safety') || lowerQuestion.includes('dot')) {
+      return 'We maintain a Satisfactory DOT safety rating with comprehensive safety training and regular vehicle inspections.';
+    }
+    if (lowerQuestion.includes('equipment')) {
+      return `We operate modern ${rfxRequest.equipment} equipment with GPS tracking and advanced safety features.`;
+    }
+    if (
+      lowerQuestion.includes('capacity') ||
+      lowerQuestion.includes('available')
+    ) {
+      return 'We have sufficient capacity to meet your transportation requirements with backup equipment available.';
+    }
+    if (
+      lowerQuestion.includes('timeline') ||
+      lowerQuestion.includes('schedule')
+    ) {
+      return 'We can meet your required pickup and delivery dates with our comprehensive logistics network.';
+    }
+    if (
+      lowerQuestion.includes('certification') ||
+      lowerQuestion.includes('license')
+    ) {
+      return 'We are fully licensed and certified with all required operating authorities and insurance certificates.';
+    }
+
+    return this.generateComprehensiveDefaultResponse(question, rfxRequest);
+  }
+
+  private generatePastPerformanceResponse(
+    question: SolicitationQuestion,
+    rfxRequest: RFxRequest
+  ): string {
+    return `PAST PERFORMANCE AND RELEVANT EXPERIENCE
+
+FleetFlow Logistics brings extensive experience in transportation services with a proven track record of successful contract performance across government and commercial sectors:
+
+CONTRACT PERFORMANCE HISTORY:
+• 15+ years of continuous operations in freight transportation
+• $50M+ in successfully completed transportation contracts
+• 99.8% on-time delivery performance across all contract types
+• Zero contract terminations for cause or performance issues
+• Consistent CPARS ratings of "Exceptional" and "Very Good" on federal contracts
+
+RELEVANT SIMILAR CONTRACTS:
+• DOD Transportation Services Contract (2019-2024): $12M annual value
+  - ${rfxRequest.equipment} transportation for military installations
+  - 100% compliance with security and safety requirements
+  - Achieved 99.9% on-time delivery rate throughout contract period
+
+PERFORMANCE METRICS AND REFERENCES:
+• Customer Retention Rate: 98% over 5+ year periods
+• Claims Ratio: 0.02% of total shipment value (industry average: 0.5%)
+• Safety Record: Zero preventable accidents in past 36 months
+
+REFERENCES AVAILABLE UPON REQUEST:
+Three (3) references from similar contracts within the past five years.`;
+  }
+
+  private generateTechnicalApproachResponse(
+    question: SolicitationQuestion,
+    rfxRequest: RFxRequest
+  ): string {
+    return `TECHNICAL APPROACH AND METHODOLOGY
+
+FleetFlow's technical approach ensures optimal performance for ${rfxRequest.commodity} transportation:
+
+TRANSPORTATION METHODOLOGY:
+• Route Optimization: Advanced algorithms for optimal ${rfxRequest.origin} to ${rfxRequest.destination} routing
+• Load Planning: Weight distribution and securement protocols for cargo integrity
+• Multi-Modal Integration: Coordination between trucking, rail, and intermodal services
+• Contingency Planning: Pre-established alternative routes and backup protocols
+
+TECHNOLOGY INTEGRATION:
+• Transportation Management System (TMS): Enterprise-grade shipment lifecycle management
+• Electronic Logging Devices (ELD): Full FMCSA compliance with real-time monitoring
+• GPS Tracking: Satellite monitoring with 30-second updates and geofencing
+• Customer Portal: Real-time visibility with automated notifications
+
+COMPLIANCE PROTOCOLS:
+• DOT Compliance: Full FMCSA regulation adherence
+• Security Procedures: C-TPAT certified protocols for sensitive cargo
+• Environmental Compliance: EPA SmartWay certified operations`;
+  }
+
+  private generateManagementResponse(
+    question: SolicitationQuestion,
+    rfxRequest: RFxRequest
+  ): string {
+    return `MANAGEMENT APPROACH AND ORGANIZATIONAL STRUCTURE
+
+PROJECT MANAGEMENT STRUCTURE:
+• Dedicated Contract Manager: Senior-level professional assigned exclusively
+• Account Management Team: Cross-functional operations, safety, and service specialists
+• Executive Oversight: C-level involvement in strategic planning
+• 24/7 Operations Center: Round-the-clock monitoring and support
+
+KEY PERSONNEL QUALIFICATIONS:
+• Contract Manager: 15+ years experience, PMP certified
+• Operations Manager: Former military logistics officer with clearance
+• Safety Director: Certified Safety Professional (CSP) with DOT expertise
+• Quality Manager: Six Sigma Black Belt with continuous improvement focus
+
+MANAGEMENT PROCESSES:
+• Weekly Performance Reviews: KPI analysis and corrective actions
+• Monthly Client Meetings: Performance metrics and strategic planning
+• Quarterly Business Reviews: Executive-level contract assessment`;
+  }
+
+  private generateComprehensiveDefaultResponse(
+    question: SolicitationQuestion,
+    rfxRequest: RFxRequest
+  ): string {
+    return `COMPREHENSIVE RESPONSE TO SOLICITATION REQUIREMENT
+
+REQUIREMENT UNDERSTANDING:
+We have analyzed the requirement: "${question.question}"
+
+CAPABILITY DEMONSTRATION:
+• Proven Performance: Documented success in similar requirements
+• Technical Expertise: Specialized knowledge relevant to requirement
+• Resource Availability: Adequate personnel, equipment, and systems
+• Quality Assurance: Established high-quality performance processes
+• Compliance Framework: Full regulatory adherence
+
+IMPLEMENTATION APPROACH:
+• Detailed Planning: Comprehensive project planning with milestones
+• Resource Allocation: Dedicated qualified personnel and equipment
+• Performance Monitoring: Continuous tracking against criteria
+• Quality Control: Multi-level review and verification processes
+
+PERFORMANCE ASSURANCE:
+• Service Level Agreements: Specific performance commitments
+• Performance Metrics: Quantifiable success measures with reporting
+• Executive Oversight: Senior management requirement satisfaction involvement`;
   }
 
   private generateDetailedServiceDescription(
@@ -3010,34 +4328,204 @@ INDUSTRY CERTIFICATIONS:
     strategy: BidStrategy,
     solicitation: any
   ) {
-    return `Comprehensive Proposal Response:
+    let response = `COMPREHENSIVE PROPOSAL RESPONSE
 
-    Section 1: Understanding Your Requirements
-    We have carefully reviewed your Request for Proposal and understand your need for reliable, cost-effective transportation services for ${rfxRequest.commodity}. Our response addresses each requirement outlined in your solicitation.
+EXECUTIVE SUMMARY
 
-    Section 2: Our Approach
-    Our transportation solution is designed to provide:
-    • Consistent, reliable service performance
-    • Cost-effective pricing with transparent billing
-    • Advanced technology integration for visibility
-    • Scalable capacity to meet growing demands
-    • Continuous improvement and optimization
+FleetFlow Logistics respectfully submits this comprehensive proposal in response to your Request for Proposal for ${rfxRequest.commodity} transportation services. Our proposal demonstrates our deep understanding of your requirements, proven capability to deliver exceptional results, and commitment to exceeding performance expectations.
 
-    Section 3: Technical Solution
-    • Modern ${rfxRequest.equipment} fleet with GPS tracking
-    • Experienced, safety-trained professional drivers
-    • Real-time shipment monitoring and communication
-    • Electronic documentation and proof of delivery
-    • Integrated TMS for order management and tracking
+With over 15 years of specialized experience in transportation services and a track record of successful contract performance exceeding $50 million in value, FleetFlow brings the expertise, resources, and dedication necessary to ensure mission success.
 
-    Section 4: Implementation Plan
-    Phase 1 (Week 1): Contract execution and system setup
-    Phase 2 (Week 2): Driver training and route optimization
-    Phase 3 (Week 3): Service launch with dedicated support
-    Phase 4 (Ongoing): Performance monitoring and optimization
+SECTION I: UNDERSTANDING OF REQUIREMENTS
 
-    Section 5: Pricing and Terms
-    Our pricing structure is designed to provide competitive rates while ensuring service quality and reliability. We propose a ${strategy.recommendedRate.toFixed(2)} per mile rate with performance guarantees and service level agreements.`;
+We have conducted a thorough analysis of your solicitation and understand that you require:
+
+`;
+
+    // Add specific requirement understanding based on solicitation analysis
+    if (
+      solicitation.specificQuestions &&
+      solicitation.specificQuestions.length > 0
+    ) {
+      response += `SPECIFIC REQUIREMENTS ADDRESSED:\n\n`;
+      solicitation.specificQuestions.forEach((question: any, index: number) => {
+        response += `${index + 1}. REQUIREMENT: ${question.question}\n`;
+        response += `   UNDERSTANDING: We recognize this requirement seeks detailed information regarding our capabilities and approach.\n`;
+        response += `   OUR RESPONSE: ${this.generateQuestionResponse(question, rfxRequest)}\n\n`;
+      });
+    }
+
+    if (
+      solicitation.requirementMapping &&
+      solicitation.requirementMapping.length > 0
+    ) {
+      response += `COMPLIANCE MATRIX:\n\n`;
+      response += `| Requirement | Compliance Status | Response | Supporting Evidence |\n`;
+      response += `|-------------|------------------|----------|--------------------|\n`;
+
+      solicitation.requirementMapping.forEach((mapping: any) => {
+        response += `| ${mapping.requirementText} | ${mapping.complianceLevel.toUpperCase()} | ${mapping.responseText} | ${mapping.evidence.join(', ')} |\n`;
+      });
+      response += `\n`;
+    }
+
+    response += `
+SECTION II: TECHNICAL APPROACH
+
+Our technical approach is specifically designed to address the unique requirements of your ${rfxRequest.commodity} transportation needs:
+
+A. TRANSPORTATION METHODOLOGY
+   1. Pre-Transportation Planning
+      • Comprehensive route analysis utilizing advanced logistics software
+      • Weather pattern analysis and contingency route identification
+      • Regulatory compliance verification for all jurisdictions
+      • Special handling requirement assessment and preparation
+
+   2. Execution Phase
+      • Professional loading supervision with certified personnel
+      • Real-time monitoring throughout transportation cycle
+      • Proactive communication with all stakeholders
+      • Continuous performance optimization
+
+   3. Delivery and Documentation
+      • Verified delivery with electronic proof of delivery
+      • Comprehensive documentation package
+      • Post-delivery performance analysis
+      • Customer satisfaction verification
+
+B. QUALITY ASSURANCE FRAMEWORK
+   • ISO 9001:2015 certified quality management system
+   • Six Sigma methodology for continuous improvement
+   • Regular performance audits and corrective action protocols
+   • Customer feedback integration and response procedures
+
+C. TECHNOLOGY INTEGRATION
+   • Enterprise Transportation Management System (TMS)
+   • Real-time GPS tracking with 30-second update intervals
+   • Electronic Logging Devices (ELD) for full FMCSA compliance
+   • Customer portal with 24/7 access to shipment information
+   • Automated exception reporting and notification systems
+
+SECTION III: MANAGEMENT APPROACH
+
+FleetFlow employs a comprehensive management structure designed to ensure contract success:
+
+A. ORGANIZATIONAL STRUCTURE
+   • Dedicated Contract Manager with exclusive assignment to this contract
+   • Cross-functional account team including operations, safety, and quality specialists
+   • Executive oversight with C-level involvement in strategic decisions
+   • 24/7 operations center with round-the-clock monitoring capabilities
+
+B. KEY PERSONNEL
+   • Contract Manager: [Name], 15+ years experience, PMP certified
+   • Operations Manager: [Name], Former military logistics officer with security clearance
+   • Safety Director: [Name], Certified Safety Professional (CSP) with DOT expertise
+   • Quality Assurance Manager: [Name], Six Sigma Black Belt with continuous improvement focus
+
+C. PERFORMANCE MANAGEMENT
+   • Daily performance monitoring with automated reporting
+   • Weekly performance reviews with corrective action protocols
+   • Monthly client meetings with comprehensive performance analysis
+   • Quarterly business reviews with strategic planning sessions
+
+SECTION IV: PAST PERFORMANCE
+
+FleetFlow's past performance demonstrates our capability to successfully execute contracts of similar scope and complexity:
+
+CONTRACT REFERENCE 1:
+• Client: Department of Defense
+• Contract Value: $12M annually (2019-2024)
+• Scope: ${rfxRequest.equipment} transportation for military installations
+• Performance: 99.9% on-time delivery, zero contract modifications for performance issues
+• CPARS Rating: Exceptional
+
+CONTRACT REFERENCE 2:
+• Client: Fortune 500 Manufacturing Company
+• Contract Value: $8M annually (2018-Present)
+• Scope: Dedicated fleet management for ${rfxRequest.commodity} transportation
+• Performance: 100% customer retention, 0.02% claims ratio
+• Reference Available: [Contact Information]
+
+CONTRACT REFERENCE 3:
+• Client: Federal Agency (GSA Schedule)
+• Contract Value: $25M ceiling (2017-2022)
+• Scope: Nationwide transportation services
+• Performance: Top performer recognition, contract extension awarded
+• Security Clearance: Maintained throughout contract period
+
+SECTION V: PRICING PROPOSAL
+
+Our pricing proposal reflects our understanding of your requirements and our commitment to providing exceptional value:
+
+A. PRICING STRUCTURE
+   • Base Transportation Rate: $${strategy.recommendedRate.toFixed(2)} per mile
+   • Fuel Surcharge: Included in base rate (no additional charges)
+   • Detention: $75 per hour after 2 hours free time
+   • Special Handling: Included for standard requirements
+
+B. COST ANALYSIS
+   • Total Estimated Annual Value: $${(strategy.recommendedRate * rfxRequest.distance * 52).toLocaleString()}
+   • Cost Comparison: 8% below market average while maintaining premium service levels
+   • Value Proposition: Superior service quality at competitive pricing
+
+C. PRICING GUARANTEE
+   • Rate guarantee for initial contract period
+   • Transparent pricing with no hidden fees
+   • Annual rate review with mutual agreement on adjustments
+
+SECTION VI: RISK MANAGEMENT
+
+FleetFlow has identified potential risks and developed comprehensive mitigation strategies:
+
+A. OPERATIONAL RISKS
+   • Weather Delays: Alternative routing and contingency planning
+   • Equipment Failure: Backup equipment and emergency response protocols
+   • Driver Availability: Qualified driver pool with 24-hour availability
+
+B. FINANCIAL RISKS
+   • Performance Bond: Available up to $5M for contract performance guarantee
+   • Insurance Coverage: $5M commercial auto liability, $1M cargo coverage
+   • Financial Stability: Strong balance sheet and credit rating
+
+C. COMPLIANCE RISKS
+   • Regulatory Changes: Continuous monitoring and immediate implementation
+   • Safety Requirements: Comprehensive safety program with zero tolerance policy
+   • Security Protocols: C-TPAT certification and security clearance maintenance
+
+SECTION VII: IMPLEMENTATION PLAN
+
+Our implementation plan ensures smooth transition and immediate operational readiness:
+
+PHASE 1 (Days 1-30): Contract Mobilization
+• Contract execution and legal documentation
+• Account team assignment and training
+• System integration and testing
+• Initial route planning and optimization
+
+PHASE 2 (Days 31-60): Operational Launch
+• Service commencement with dedicated support
+• Performance monitoring and optimization
+• Customer feedback integration
+• Process refinement and improvement
+
+PHASE 3 (Days 61+): Steady State Operations
+• Full operational capability
+• Continuous improvement implementation
+• Regular performance reviews
+• Strategic planning for contract expansion
+
+CONCLUSION
+
+FleetFlow Logistics is uniquely qualified to provide the transportation services outlined in your solicitation. Our combination of proven experience, technical expertise, comprehensive management approach, and commitment to excellence ensures successful contract performance that will exceed your expectations.
+
+We look forward to the opportunity to discuss our proposal and demonstrate how FleetFlow can contribute to your mission success.
+
+Respectfully submitted,
+
+FleetFlow Logistics Team
+Contract Response Division`;
+
+    return response;
   }
 
   private generateDetailedInformationResponse(
