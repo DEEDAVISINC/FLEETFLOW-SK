@@ -221,9 +221,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       !pathname.includes('/carrier-landing') &&
       pathname !== '/broker' && // Allow broker subpages, just not the main broker page
       !pathname.includes('/university') &&
-      pathname !== '/' && // Exclude homepage from phone system
-      pathname !== '/plans' &&
-      user?.id // Only operations pages for authenticated users
+      pathname !== '/plans'
+      // HOMEPAGE NOW INCLUDED for phone system like before
     : false;
 
   // Show PhoneSystemWidget for dispatch, admin, and manager roles (with phone dialer opt-in)
@@ -237,8 +236,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   const shouldShowPhoneWidget =
     isHydrated &&
-    hasPhoneEligibleRole &&
-    phoneDialerEnabled &&
+    (hasPhoneEligibleRole || pathname === '/') && // Allow phone on homepage for everyone
+    (phoneDialerEnabled || pathname === '/') && // Allow phone on homepage regardless of setting
     isOperationsPage;
 
   // Debug logging
