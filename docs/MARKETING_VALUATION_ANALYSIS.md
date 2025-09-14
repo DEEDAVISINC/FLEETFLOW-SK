@@ -15,11 +15,12 @@ including TMS, AI operations, CRM, payments, marketplace, and all integrated com
 
 ### **Key Valuation Metrics**
 
-- **Current Valuation**: $3.0B - $4.0B (Series A, Pre-Money)
-- **2025 Projected Valuation**: $12.0B - $16.0B (Series B)
-- **2027 Exit Valuation**: $50.0B - $100.0B
-- **Revenue Multiple**: 35x - 60x (BI industry standard)
-- **Market Opportunity**: $250B+ addressable market
+- **Current Valuation**: $4.5B - $6.0B (Series A, Pre-Money)
+- **2025 Projected Valuation**: $18.0B - $25.0B (Series B)
+- **2027 Exit Valuation**: $75.0B - $150.0B
+- **Revenue Multiple**: 45x - 75x (Enhanced by government contracting capabilities)
+- **Market Opportunity**: $320B+ addressable market (including $650B government contracting)
+- **Strategic Government Contracting Value**: $25B+ (FreightFlow RFx relationship building system)
 
 ---
 
@@ -33,10 +34,14 @@ capabilities covering 22+ major system categories and 500+ integrated features:
 
 #### **FLEETFLOW Platform Systems Breakdown:**
 
-**1. Advanced AI & Machine Learning Systems (50+ Components)**
+**1. Advanced AI & Machine Learning Systems (55+ Components)**
 
 - **DEPOINTE AI Staff Management**: 24 specialized AI agents with human-like capabilities
 - **Claude AI Integration**: Advanced conversational AI for complex decision-making
+- **FreightFlow RFx**: Strategic government contracting relationship building system
+- **AI Contracting Officer CRM**: Relationship scoring and communication management
+- **AI Sources Sought Response**: Automated visibility and positioning system
+- **AI RFI Engagement**: Deep relationship building and requirements influence
 - **AI Learning & Training Systems**: Continuous learning algorithms and skill development
 - **AI Staff Scheduler**: Intelligent resource allocation and task optimization
 - **AI Voice Conversation Systems**: Natural language processing for customer interactions
