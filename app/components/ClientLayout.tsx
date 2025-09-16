@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
-// import DailyBriefingModal from './DailyBriefingModal';
+import DailyBriefingModal from './DailyBriefingModal';
 import FleetFlowFooter from './FleetFlowFooter';
 import UnifiedFlowterAI from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
