@@ -194,9 +194,20 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 export function useOrganization() {
   const context = useContext(OrganizationContext);
   if (context === undefined) {
-    throw new Error(
-      'useOrganization must be used within an OrganizationProvider'
+    console.warn(
+      'useOrganization called outside OrganizationProvider - returning defaults'
     );
+    // Return safe defaults instead of throwing
+    return {
+      currentOrganization: null,
+      userOrganizations: [],
+      setCurrentOrganization: () => {},
+      switchOrganization: async () => false,
+      userRole: '',
+      userPermissions: [],
+      isLoading: false,
+      refreshOrganizations: async () => {},
+    };
   }
   return context;
 }
