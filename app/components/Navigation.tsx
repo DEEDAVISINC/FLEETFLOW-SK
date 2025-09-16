@@ -8,7 +8,7 @@ import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
-import OrganizationSwitcher from './OrganizationSwitcher';
+import SafeOrganizationSwitcher from './SafeOrganizationSwitcher';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
@@ -1308,7 +1308,7 @@ export default function ProfessionalNavigation() {
           {/* Organization Switcher */}
           {!isCarrierPlatform && (
             <div style={{ marginLeft: '10px' }}>
-              <OrganizationSwitcher />
+              <SafeOrganizationSwitcher />
             </div>
           )}
 
