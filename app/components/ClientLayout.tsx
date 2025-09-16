@@ -10,11 +10,10 @@ import DailyBriefingModal from './DailyBriefingModal';
 import FleetFlowFooter from './FleetFlowFooter';
 import UnifiedFlowterAI from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
-import ProfessionalNavigation from './Navigation';
+import MinimalNavigation from './MinimalNavigation';
+import MinimalProviders from './MinimalProviders';
 import NotificationBell from './NotificationBell';
-import OrganizationErrorBoundary from './OrganizationErrorBoundary';
 import PhoneSystemWidget from './PhoneSystemWidget';
-import Providers from './Providers';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
 // ✅ ADD: Platform AI initialization
 import { initializeFleetFlowAI } from '../config/ai-config';
@@ -324,10 +323,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   if (isAdminDashboard) {
     return (
-      <OrganizationErrorBoundary>
-        <Providers>
-          <MaintenanceMode>
-            <SimpleErrorBoundary>
+      <MinimalProviders>
+        <MaintenanceMode>
+          <SimpleErrorBoundary>
             <ShipperProvider>
               <LoadProvider>
                 {/* Full-screen admin interface - no navigation */}
@@ -386,24 +384,22 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 )}
 
                 {/* TODO: Add Daily Briefing Modal for Admin Dashboard */}
-                </LoadProvider>
-              </ShipperProvider>
-            </SimpleErrorBoundary>
-          </MaintenanceMode>
-        </Providers>
-      </OrganizationErrorBoundary>
+              </LoadProvider>
+            </ShipperProvider>
+          </SimpleErrorBoundary>
+        </MaintenanceMode>
+      </MinimalProviders>
     );
   }
 
   return (
-    <OrganizationErrorBoundary>
-      <Providers>
-        <MaintenanceMode>
-          <SimpleErrorBoundary>
-            <ShipperProvider>
-              <LoadProvider>
+    <MinimalProviders>
+      <MaintenanceMode>
+        <SimpleErrorBoundary>
+          <ShipperProvider>
+            <LoadProvider>
               {(!isPublicPage || isLocalhostAccess) && (
-                <ProfessionalNavigation />
+                <MinimalNavigation />
               )}
               <main
                 style={{
@@ -454,13 +450,24 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 pathname !== '/carrier-landing' &&
                 !pathname?.includes('/auth/') &&
                 !pathname?.includes('/launchpad') && (
-                  <NotificationBell userId={user.id} position='bottom-right' />
+                  // <NotificationBell userId={user.id} position='bottom-right' />
+                  <div style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    right: '20px',
+                    background: '#3b82f6',
+                    color: 'white',
+                    padding: '10px',
+                    borderRadius: '50%',
+                    fontSize: '12px'
+                  }}>
+                    🔔
+                  </div>
                 )}
-              </LoadProvider>
-            </ShipperProvider>
-          </SimpleErrorBoundary>
-        </MaintenanceMode>
-      </Providers>
-    </OrganizationErrorBoundary>
+            </LoadProvider>
+          </ShipperProvider>
+        </SimpleErrorBoundary>
+      </MaintenanceMode>
+    </MinimalProviders>
   );
 }
