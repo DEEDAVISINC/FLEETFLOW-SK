@@ -2,35 +2,40 @@
 const nextConfig = {
   reactStrictMode: true,
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
     ignoreBuildErrors: true,
   },
-  // Digital Ocean deployment configuration
+  // Digital Ocean App Platform configuration
   output: 'standalone',
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Handle external packages
-  serverExternalPackages: ['@supabase/supabase-js'],
-  // Add trailing slash handling for proper routing
+  // External packages optimization
+  serverExternalPackages: [
+    '@supabase/supabase-js',
+    'anthropic',
+    'elevenlabs'
+  ],
+  // Production optimizations
   trailingSlash: false,
-  // Digital Ocean specific settings
-  generateBuildId: async () => {
-    // Generate a unique build ID for Digital Ocean
-    return `digital-ocean-${Date.now()}`;
-  },
-  // Skip type checking and linting during build (already configured above)
-  // Optimize for Digital Ocean App Platform
   poweredByHeader: false,
   compress: true,
+  // Digital Ocean build optimization
+  generateBuildId: async () => {
+    return `fleetflow-${Date.now()}`;
+  },
+  // Handle large apps
+  experimental: {
+    largePageDataBytes: 128 * 1024, // 128KB
+  },
+  // Image optimization for Digital Ocean
+  images: {
+    domains: [],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
 };
 
 module.exports = nextConfig;

@@ -1,36 +1,40 @@
 name: fleetflow
 region: nyc
 services:
-  - build_command: npm run build
-    environment_slug: node-js
-    github:
-      branch: main
-      deploy_on_push: true
-      repo: YOUR_GITHUB_REPO
-    http_port: 3000
-    instance_count: 1
-    instance_size_slug: basic-xs
-    name: fleetflow-app
-    run_command: npm start
-    source_dir: /
-    envs:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: "3000"
-      - key: NEXT_PUBLIC_SUPABASE_URL
-        value: "${NEXT_PUBLIC_SUPABASE_URL}"
-      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
-        value: "${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
-      - key: ANTHROPIC_API_KEY
-        value: "${ANTHROPIC_API_KEY}"
-      - key: ELEVENLABS_API_KEY
-        value: "${ELEVENLABS_API_KEY}"
-      - key: TWILIO_ACCOUNT_SID
-        value: "${TWILIO_ACCOUNT_SID}"
-      - key: TWILIO_AUTH_TOKEN
-        value: "${TWILIO_AUTH_TOKEN}"
-      - key: NEXT_PUBLIC_SQUARE_APPLICATION_ID
-        value: "${NEXT_PUBLIC_SQUARE_APPLICATION_ID}"
-      - key: SQUARE_ACCESS_TOKEN
-        value: "${SQUARE_ACCESS_TOKEN}"
+- name: fleetflow-app
+  source_dir: /
+  environment_slug: node-js
+  instance_size_slug: professional-xs
+  instance_count: 1
+  http_port: 3000
+  build_command: npm ci && npm run build
+  run_command: npm start
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: DEEDAVISINC/FLEETFLOW-SK
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: PORT
+    value: "3000"
+  - key: NEXT_PUBLIC_SUPABASE_URL
+    value: "${NEXT_PUBLIC_SUPABASE_URL}"
+  - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+    value: "${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
+  - key: ANTHROPIC_API_KEY
+    value: "${ANTHROPIC_API_KEY}"
+  - key: ELEVENLABS_API_KEY
+    value: "${ELEVENLABS_API_KEY}"
+  - key: TWILIO_ACCOUNT_SID
+    value: "${TWILIO_ACCOUNT_SID}"
+  - key: TWILIO_AUTH_TOKEN
+    value: "${TWILIO_AUTH_TOKEN}"
+  - key: NEXT_PUBLIC_SQUARE_APPLICATION_ID
+    value: "${NEXT_PUBLIC_SQUARE_APPLICATION_ID}"
+  - key: SQUARE_ACCESS_TOKEN
+    value: "${SQUARE_ACCESS_TOKEN}"
+  - key: NEXTAUTH_SECRET
+    value: "${NEXTAUTH_SECRET}"
+  - key: NEXTAUTH_URL
+    value: "${NEXTAUTH_URL}"

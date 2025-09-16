@@ -1,8 +1,16 @@
-export default function TestPage() {
+'use client';
+
+export default function TestSimplePage() {
   return (
-    <div style={{ padding: '20px', color: 'white', background: 'black' }}>
-      <h1>Test Page Working</h1>
-      <p>If you can see this, Next.js is working properly.</p>
+    <div className='min-h-screen bg-gray-50 p-8'>
+      <div className='mx-auto max-w-7xl'>
+        <h1 className='mb-8 text-3xl font-bold text-gray-900'>
+          Simple Test Page
+        </h1>
+        <div className='rounded-lg bg-white p-6 shadow'>
+          <p className='text-gray-600'>Simple test page for debugging.</p>
+        </div>
+      </div>
     </div>
   );
 }
