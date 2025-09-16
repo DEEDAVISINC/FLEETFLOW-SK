@@ -12,6 +12,7 @@ import UnifiedFlowterAI from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
 import ProfessionalNavigation from './Navigation';
 import NotificationBell from './NotificationBell';
+import OrganizationErrorBoundary from './OrganizationErrorBoundary';
 import PhoneSystemWidget from './PhoneSystemWidget';
 import Providers from './Providers';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
@@ -323,9 +324,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   if (isAdminDashboard) {
     return (
-      <Providers>
-        <MaintenanceMode>
-          <SimpleErrorBoundary>
+      <OrganizationErrorBoundary>
+        <Providers>
+          <MaintenanceMode>
+            <SimpleErrorBoundary>
             <ShipperProvider>
               <LoadProvider>
                 {/* Full-screen admin interface - no navigation */}
@@ -384,20 +386,22 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 )}
 
                 {/* TODO: Add Daily Briefing Modal for Admin Dashboard */}
-              </LoadProvider>
-            </ShipperProvider>
-          </SimpleErrorBoundary>
-        </MaintenanceMode>
-      </Providers>
+                </LoadProvider>
+              </ShipperProvider>
+            </SimpleErrorBoundary>
+          </MaintenanceMode>
+        </Providers>
+      </OrganizationErrorBoundary>
     );
   }
 
   return (
-    <Providers>
-      <MaintenanceMode>
-        <SimpleErrorBoundary>
-          <ShipperProvider>
-            <LoadProvider>
+    <OrganizationErrorBoundary>
+      <Providers>
+        <MaintenanceMode>
+          <SimpleErrorBoundary>
+            <ShipperProvider>
+              <LoadProvider>
               {(!isPublicPage || isLocalhostAccess) && (
                 <ProfessionalNavigation />
               )}
@@ -452,10 +456,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 !pathname?.includes('/launchpad') && (
                   <NotificationBell userId={user.id} position='bottom-right' />
                 )}
-            </LoadProvider>
-          </ShipperProvider>
-        </SimpleErrorBoundary>
-      </MaintenanceMode>
-    </Providers>
+              </LoadProvider>
+            </ShipperProvider>
+          </SimpleErrorBoundary>
+        </MaintenanceMode>
+      </Providers>
+    </OrganizationErrorBoundary>
   );
 }
