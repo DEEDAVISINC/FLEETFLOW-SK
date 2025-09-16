@@ -179,7 +179,7 @@ export class NotificationService {
         console.info(
           '📭 NotificationService: Supabase not configured, notification not stored'
         );
-        return notification;
+        return notification.id;
       }
 
       const { data, error } = await this.supabase
@@ -634,6 +634,35 @@ export class NotificationService {
       ],
     });
 
+    // Daily Briefing notifications
+    this.templates.set('daily_briefing', {
+      id: 'daily_briefing',
+      type: 'system',
+      title: '🌅 Your Daily Briefing',
+      messageTemplate: '{briefing_message}',
+      priority: 'medium',
+      channels: ['in-app'],
+      roles: ['admin', 'manager', 'dispatcher', 'broker'],
+      actions: [
+        {
+          id: 'view_full_briefing',
+          label: 'View Full Briefing',
+          type: 'modal',
+          payload: { modal: 'daily_briefing' },
+          style: 'primary',
+          icon: '📋',
+        },
+        {
+          id: 'generate_new_briefing',
+          label: 'Generate New',
+          type: 'api',
+          payload: { endpoint: '/api/daily-briefing/generate', method: 'POST' },
+          style: 'secondary',
+          icon: '🔄',
+        },
+      ],
+    });
+
     console.info(
       `✅ Initialized ${this.templates.size} notification templates`
     );
@@ -910,7 +939,7 @@ export class NotificationService {
         title: 'New Shipment Assigned',
         message:
           'Shipment #FL2024-15A has been assigned to Route 15A. Pickup scheduled for 2:30 PM.',
-        priority: 'normal',
+        priority: 'medium',
         userId,
         tenantId,
         category: 'operations',
@@ -956,7 +985,7 @@ export class NotificationService {
         title: 'Vehicle Maintenance Due',
         message:
           'Truck #204 is due for scheduled maintenance inspection. Service appointment recommended within 48 hours.',
-        priority: 'urgent',
+        priority: 'high',
         userId,
         tenantId,
         category: 'maintenance',
@@ -982,7 +1011,7 @@ export class NotificationService {
         relatedEntityId: '204',
       },
       {
-        type: 'financial',
+        type: 'billing',
         title: 'Payment Received',
         message:
           'Payment of $2,450.00 received for Invoice #INV-2024-0892 from Premier Logistics.',
@@ -1009,7 +1038,7 @@ export class NotificationService {
         title: 'Route Optimization Complete',
         message:
           "AI route optimization completed for today's deliveries. Estimated 15% fuel savings achieved.",
-        priority: 'normal',
+        priority: 'medium',
         userId,
         tenantId,
         category: 'ai',

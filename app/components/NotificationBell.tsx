@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { MessageService } from '../services/MessageService';
 import { NotificationService } from '../services/NotificationService';
+import DailyBriefingModal from './DailyBriefingModal';
 import MessageComposer from './MessageComposer';
 import NotificationDropdown from './NotificationDropdown';
 
@@ -18,6 +19,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [composerOpen, setComposerOpen] = useState(false);
+  const [briefingOpen, setBriefingOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -185,11 +187,40 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
     setComposerOpen(false);
   };
 
+  const handleOpenBriefing = () => {
+    setIsOpen(false);
+    setBriefingOpen(true);
+  };
+
+  const handleBriefingClose = () => {
+    setBriefingOpen(false);
+  };
+
   if (!isHydrated) {
     return null; // Prevent hydration mismatch
   }
 
-  const getPositionStyles = () => {
+  const getBellPositionStyles = () => {
+    const baseStyles = {
+      position: 'fixed' as const,
+      zIndex: 9999,
+    };
+
+    switch (position) {
+      case 'bottom-right':
+        return { ...baseStyles, bottom: '20px', right: '20px' };
+      case 'bottom-left':
+        return { ...baseStyles, bottom: '20px', left: '20px' };
+      case 'top-right':
+        return { ...baseStyles, top: '20px', right: '20px' };
+      case 'top-left':
+        return { ...baseStyles, top: '20px', left: '20px' };
+      default:
+        return { ...baseStyles, bottom: '20px', right: '20px' };
+    }
+  };
+
+  const getBriefingPositionStyles = () => {
     const baseStyles = {
       position: 'fixed' as const,
       zIndex: 9999,
@@ -199,11 +230,11 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
       case 'bottom-right':
         return { ...baseStyles, bottom: '20px', right: '90px' };
       case 'bottom-left':
-        return { ...baseStyles, bottom: '20px', left: '20px' };
+        return { ...baseStyles, bottom: '20px', left: '90px' };
       case 'top-right':
         return { ...baseStyles, top: '20px', right: '90px' };
       case 'top-left':
-        return { ...baseStyles, top: '20px', left: '20px' };
+        return { ...baseStyles, top: '20px', left: '90px' };
       default:
         return { ...baseStyles, bottom: '20px', right: '90px' };
     }
@@ -211,8 +242,41 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
   return (
     <>
+      {/* Daily Briefing Button */}
+      <div style={getBriefingPositionStyles()} onClick={handleOpenBriefing}>
+        <div
+          style={{
+            width: '56px',
+            height: '56px',
+            backgroundColor: '#3b82f6',
+            borderRadius: '50%',
+            border: '3px solid white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px',
+            boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow =
+              '0 6px 20px rgba(59, 130, 246, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow =
+              '0 4px 12px rgba(59, 130, 246, 0.3)';
+          }}
+          title='Daily Briefing'
+        >
+          🌅
+        </div>
+      </div>
+
       {/* Notification Bell Button */}
-      <div style={getPositionStyles()} onClick={handleBellClick}>
+      <div style={getBellPositionStyles()} onClick={handleBellClick}>
         <div
           style={{
             width: '56px',
@@ -238,6 +302,7 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
             e.currentTarget.style.boxShadow =
               '0 4px 12px rgba(245, 158, 11, 0.3)';
           }}
+          title='Notifications & Messages'
         >
           🔔
           {/* Unread Badge - Combined notifications and messages */}
@@ -280,6 +345,9 @@ export const NotificationBell: React.FC<NotificationBellProps> = ({
 
       {/* Message Composer */}
       <MessageComposer isOpen={composerOpen} onClose={handleComposerClose} />
+
+      {/* Daily Briefing Modal */}
+      <DailyBriefingModal isOpen={briefingOpen} onClose={handleBriefingClose} />
     </>
   );
 };

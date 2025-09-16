@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
+// import DailyBriefingModal from './DailyBriefingModal';
 import FleetFlowFooter from './FleetFlowFooter';
 import UnifiedFlowterAI from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
@@ -23,8 +24,9 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [isHydrated, setIsHydrated] = useState(false);
-  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(false); // Default to false for SSR
+  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true); // Enable phone dialer by default
   const [hasNewSuggestions, setHasNewSuggestions] = useState(false);
+  // const [briefingModalOpen, setBriefingModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -205,9 +207,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   useEffect(() => {
     if (!isHydrated || !user?.id) return; // Wait for hydration and user
 
-    const isEnabled =
-      localStorage.getItem(`fleetflow-phone-dialer-${user.id}`) !== 'disabled';
-    setPhoneDialerEnabled(isEnabled);
+    // Enable by default for eligible roles, disable only if explicitly disabled
+    const isExplicitlyDisabled =
+      localStorage.getItem(`fleetflow-phone-dialer-${user.id}`) === 'disabled';
+    setPhoneDialerEnabled(!isExplicitlyDisabled);
   }, [user?.id, isHydrated]);
 
   // Compute all conditional logic safely - only after hydration
@@ -217,7 +220,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       !pathname.includes('/privacy') &&
       !pathname.includes('/terms') &&
       !pathname.includes('/carrier-landing') &&
-      pathname !== '/broker' && // Allow broker subpages, just not the main broker page
+      // Allow broker pages for authenticated users
       !pathname.includes('/university') &&
       pathname !== '/plans' &&
       user?.id // Only operations pages for authenticated users
@@ -252,11 +255,23 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       isLandingPage: pathname === '/',
       isUniversity: pathname?.includes('/university'),
       isInstructor: pathname?.includes('/training/instructor'),
+      isDispatcherPortal: pathname?.includes('dispatcher-portal'),
+      isBrokerPage: pathname === '/broker',
+      isBrokerSubpage: pathname?.includes('/broker/'),
+      isAICompanyDashboard: pathname === '/ai-company-dashboard',
       willShowNotificationBell:
         user?.id &&
         pathname !== '/' &&
+        pathname !== '/carrier-landing' &&
         !pathname?.includes('/auth/') &&
         !pathname?.includes('/launchpad'),
+      notificationBellConditions: {
+        hasUser: !!user?.id,
+        notLanding: pathname !== '/',
+        notCarrierLanding: pathname !== '/carrier-landing',
+        notAuth: !pathname?.includes('/auth/'),
+        notLaunchpad: !pathname?.includes('/launchpad'),
+      },
     });
   }
 
@@ -270,6 +285,29 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       isAdminDashboard,
       isHydrated,
       user: user?.id,
+    });
+  }
+
+  // Debug logging for user-mentioned pages
+  if (
+    pathname?.includes('dispatcher-portal') ||
+    pathname === '/broker' ||
+    pathname === '/ai-company-dashboard'
+  ) {
+    console.info('🔍 User-Mentioned Page Debug:', {
+      pathname,
+      isDispatcherPortal: pathname?.includes('dispatcher-portal'),
+      isBrokerPage: pathname === '/broker',
+      isAICompanyDashboard: pathname === '/ai-company-dashboard',
+      userId: user?.id,
+      isHydrated,
+      willShowNotificationBell:
+        user?.id &&
+        pathname !== '/' &&
+        pathname !== '/carrier-landing' &&
+        !pathname?.includes('/auth/') &&
+        !pathname?.includes('/launchpad'),
+      isAdminLayout: pathname === '/ai-company-dashboard',
     });
   }
 
@@ -301,6 +339,51 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 >
                   {children}
                 </main>
+
+                {/* Notification Bell for Admin Dashboard */}
+                {isHydrated && user?.id && (
+                  <NotificationBell userId={user.id} position='bottom-right' />
+                )}
+
+                {/* Daily Briefing Button for Admin Dashboard */}
+                {isHydrated && user?.id && (
+                  <div
+                    style={{
+                      position: 'fixed',
+                      bottom: '20px',
+                      right: '90px',
+                      zIndex: 9999,
+                    }}
+                    onClick={() => {
+                      console.info(
+                        '🌅 Daily briefing requested from admin dashboard'
+                      );
+                      // TODO: Implement daily briefing modal for admin dashboard
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        backgroundColor: '#3b82f6',
+                        borderRadius: '50%',
+                        border: '3px solid white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '20px',
+                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      title='Daily Briefing'
+                    >
+                      🌅
+                    </div>
+                  </div>
+                )}
+
+                {/* TODO: Add Daily Briefing Modal for Admin Dashboard */}
               </LoadProvider>
             </ShipperProvider>
           </SimpleErrorBoundary>
@@ -357,6 +440,8 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                   <PhoneSystemWidget position='bottom-left' />
                 </>
               )}
+
+              {/* TODO: Add Daily Briefing Modal for authenticated users */}
 
               {/* Notification Bell - Only for logged-in users, not on landing/marketing/auth/launchpad pages */}
               {isHydrated &&
