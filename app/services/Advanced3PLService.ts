@@ -272,8 +272,11 @@ class Advanced3PLService extends EventEmitter {
     this.initializeMock3PLData();
 
     // Real-time processing intervals
-    setInterval(() => this.processVendorConsolidations(), 300000); // 5 minutes
-    setInterval(() => this.updatePoolDistribution(), 600000); // 10 minutes
+    // TODO: Implement processVendorConsolidations method
+    // setInterval(() => this.processVendorConsolidations(), 300000); // 5 minutes
+
+    // Use existing processPoolDistribution method (not updatePoolDistribution)
+    setInterval(() => this.processPoolDistribution(), 600000); // 10 minutes
     setInterval(() => this.processAutomatedNotifications(), 60000); // 1 minute
   }
 
@@ -444,7 +447,10 @@ class Advanced3PLService extends EventEmitter {
         name: 'Vendor Consolidation Complete',
         triggerEvent: 'consolidation_complete',
         recipients: {
-          internal: ['dispatch@fleetflowapp.com', 'operations@fleetflowapp.com'],
+          internal: [
+            'dispatch@fleetflowapp.com',
+            'operations@fleetflowapp.com',
+          ],
           customer: true,
           vendor: false,
           carrier: true,

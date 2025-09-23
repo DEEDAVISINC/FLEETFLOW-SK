@@ -39,11 +39,11 @@ interface SupabaseConfig {
 const getSupabaseConfig = (): SupabaseConfig => {
   const env = getEnvironment();
 
-  // Fallback values for when Supabase is not configured
+  // Secure fallback - no functional keys exposed
   const fallbackConfig = {
-    url: 'https://placeholder.supabase.co',
-    anonKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.fallback',
-    serviceRoleKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.fallback-service',
+    url: '',
+    anonKey: '',
+    serviceRoleKey: '',
   };
 
   switch (env) {
