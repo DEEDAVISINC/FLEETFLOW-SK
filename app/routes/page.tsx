@@ -180,7 +180,7 @@ export default function RoutesPage() {
     >
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
-        <Link href='/' style={{ textDecoration: 'none' }}>
+        <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
           <button
             style={{
               background: 'rgba(255, 255, 255, 0.2)',
@@ -1874,111 +1874,111 @@ export default function RoutesPage() {
                     const pharmaceuticalRoutes: any[] = [];
                     return pharmaceuticalRoutes.length > 0 ? (
                       pharmaceuticalRoutes.map((route, index) => (
-                    <div
-                      key={route.id}
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns:
-                          '120px 1fr 1fr 100px 120px 100px 80px',
-                        gap: '12px',
-                        padding: '12px',
-                        background:
-                          index % 2 === 0
-                            ? 'rgba(255, 255, 255, 0.5)'
-                            : 'transparent',
-                        borderRadius: '6px',
-                        alignItems: 'center',
-                        fontSize: '13px',
-                        color: '#374151',
-                      }}
-                    >
-                      <div style={{ fontWeight: 'bold', color: '#3b82f6' }}>
-                        {route.id}
-                      </div>
-                      <div>{route.route}</div>
-                      <div>{route.product}</div>
+                        <div
+                          key={route.id}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              '120px 1fr 1fr 100px 120px 100px 80px',
+                            gap: '12px',
+                            padding: '12px',
+                            background:
+                              index % 2 === 0
+                                ? 'rgba(255, 255, 255, 0.5)'
+                                : 'transparent',
+                            borderRadius: '6px',
+                            alignItems: 'center',
+                            fontSize: '13px',
+                            color: '#374151',
+                          }}
+                        >
+                          <div style={{ fontWeight: 'bold', color: '#3b82f6' }}>
+                            {route.id}
+                          </div>
+                          <div>{route.route}</div>
+                          <div>{route.product}</div>
+                          <div
+                            style={{
+                              background: 'rgba(59, 130, 246, 0.1)',
+                              color: '#1d4ed8',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {route.temperature}
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(16, 185, 129, 0.1)',
+                              color: '#059669',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {route.compliance}
+                          </div>
+                          <div>{route.eta}</div>
+                          <div
+                            style={{
+                              background:
+                                route.status === 'Delivered'
+                                  ? 'rgba(16, 185, 129, 0.1)'
+                                  : route.status === 'In Transit'
+                                    ? 'rgba(59, 130, 246, 0.1)'
+                                    : route.status === 'Loading'
+                                      ? 'rgba(245, 158, 11, 0.1)'
+                                      : 'rgba(107, 114, 128, 0.1)',
+                              color:
+                                route.status === 'Delivered'
+                                  ? '#059669'
+                                  : route.status === 'In Transit'
+                                    ? '#1d4ed8'
+                                    : route.status === 'Loading'
+                                      ? '#d97706'
+                                      : '#374151',
+                              padding: '4px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {route.status}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
                       <div
                         style={{
-                          background: 'rgba(59, 130, 246, 0.1)',
-                          color: '#1d4ed8',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '11px',
+                          gridColumn: '1 / -1',
                           textAlign: 'center',
-                          fontWeight: 'bold',
+                          padding: '40px 20px',
+                          color: 'rgba(255, 255, 255, 0.6)',
                         }}
                       >
-                        {route.temperature}
+                        <div
+                          style={{
+                            fontSize: '48px',
+                            marginBottom: '16px',
+                          }}
+                        >
+                          💊
+                        </div>
+                        <p style={{ fontSize: '16px', margin: 0 }}>
+                          No pharmaceutical routes yet
+                        </p>
+                        <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                          Pharmaceutical routes will appear here once created
+                        </p>
                       </div>
-                      <div
-                        style={{
-                          background: 'rgba(16, 185, 129, 0.1)',
-                          color: '#059669',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '11px',
-                          textAlign: 'center',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {route.compliance}
-                      </div>
-                      <div>{route.eta}</div>
-                      <div
-                        style={{
-                          background:
-                            route.status === 'Delivered'
-                              ? 'rgba(16, 185, 129, 0.1)'
-                              : route.status === 'In Transit'
-                                ? 'rgba(59, 130, 246, 0.1)'
-                                : route.status === 'Loading'
-                                  ? 'rgba(245, 158, 11, 0.1)'
-                                  : 'rgba(107, 114, 128, 0.1)',
-                          color:
-                            route.status === 'Delivered'
-                              ? '#059669'
-                              : route.status === 'In Transit'
-                                ? '#1d4ed8'
-                                : route.status === 'Loading'
-                                  ? '#d97706'
-                                  : '#374151',
-                          padding: '4px 6px',
-                          borderRadius: '4px',
-                          fontSize: '10px',
-                          textAlign: 'center',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {route.status}
-                      </div>
-                    </div>
-                    ))
-                  ) : (
-                    <div
-                      style={{
-                        gridColumn: '1 / -1',
-                        textAlign: 'center',
-                        padding: '40px 20px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '48px',
-                          marginBottom: '16px',
-                        }}
-                      >
-                        💊
-                      </div>
-                      <p style={{ fontSize: '16px', margin: 0 }}>
-                        No pharmaceutical routes yet
-                      </p>
-                      <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
-                        Pharmaceutical routes will appear here once created
-                      </p>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
                 </div>
 
                 {/* Pharmaceutical Route Actions */}
@@ -2248,121 +2248,121 @@ export default function RoutesPage() {
                     const medicalCourierRoutes: any[] = [];
                     return medicalCourierRoutes.length > 0 ? (
                       medicalCourierRoutes.map((route, index) => (
-                    <div
-                      key={route.id}
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns:
-                          '120px 1fr 1fr 100px 120px 100px 80px',
-                        gap: '12px',
-                        padding: '12px',
-                        background:
-                          index % 2 === 0
-                            ? 'rgba(255, 255, 255, 0.5)'
-                            : 'transparent',
-                        borderRadius: '6px',
-                        alignItems: 'center',
-                        fontSize: '13px',
-                        color: '#374151',
-                      }}
-                    >
-                      <div style={{ fontWeight: 'bold', color: '#dc2626' }}>
-                        {route.id}
-                      </div>
-                      <div>{route.route}</div>
-                      <div>{route.service}</div>
+                        <div
+                          key={route.id}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns:
+                              '120px 1fr 1fr 100px 120px 100px 80px',
+                            gap: '12px',
+                            padding: '12px',
+                            background:
+                              index % 2 === 0
+                                ? 'rgba(255, 255, 255, 0.5)'
+                                : 'transparent',
+                            borderRadius: '6px',
+                            alignItems: 'center',
+                            fontSize: '13px',
+                            color: '#374151',
+                          }}
+                        >
+                          <div style={{ fontWeight: 'bold', color: '#dc2626' }}>
+                            {route.id}
+                          </div>
+                          <div>{route.route}</div>
+                          <div>{route.service}</div>
+                          <div
+                            style={{
+                              background:
+                                route.urgencyLevel === 'critical'
+                                  ? 'rgba(220, 38, 38, 0.1)'
+                                  : route.urgencyLevel === 'high'
+                                    ? 'rgba(245, 158, 11, 0.1)'
+                                    : 'rgba(34, 197, 94, 0.1)',
+                              color:
+                                route.urgencyLevel === 'critical'
+                                  ? '#dc2626'
+                                  : route.urgencyLevel === 'high'
+                                    ? '#f59e0b'
+                                    : '#22c55e',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {route.urgency}
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(59, 130, 246, 0.1)',
+                              color: '#3b82f6',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {route.compliance}
+                          </div>
+                          <div>{route.eta}</div>
+                          <div
+                            style={{
+                              background:
+                                route.status === 'Emergency'
+                                  ? 'rgba(220, 38, 38, 0.1)'
+                                  : route.status === 'In Transit'
+                                    ? 'rgba(59, 130, 246, 0.1)'
+                                    : route.status === 'Loading'
+                                      ? 'rgba(245, 158, 11, 0.1)'
+                                      : 'rgba(34, 197, 94, 0.1)',
+                              color:
+                                route.status === 'Emergency'
+                                  ? '#dc2626'
+                                  : route.status === 'In Transit'
+                                    ? '#3b82f6'
+                                    : route.status === 'Loading'
+                                      ? '#f59e0b'
+                                      : '#22c55e',
+                              padding: '4px 6px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              textAlign: 'center',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {route.status}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
                       <div
                         style={{
-                          background:
-                            route.urgencyLevel === 'critical'
-                              ? 'rgba(220, 38, 38, 0.1)'
-                              : route.urgencyLevel === 'high'
-                                ? 'rgba(245, 158, 11, 0.1)'
-                                : 'rgba(34, 197, 94, 0.1)',
-                          color:
-                            route.urgencyLevel === 'critical'
-                              ? '#dc2626'
-                              : route.urgencyLevel === 'high'
-                                ? '#f59e0b'
-                                : '#22c55e',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '11px',
+                          gridColumn: '1 / -1',
                           textAlign: 'center',
-                          fontWeight: 'bold',
+                          padding: '40px 20px',
+                          color: 'rgba(255, 255, 255, 0.6)',
                         }}
                       >
-                        {route.urgency}
+                        <div
+                          style={{
+                            fontSize: '48px',
+                            marginBottom: '16px',
+                          }}
+                        >
+                          🏥
+                        </div>
+                        <p style={{ fontSize: '16px', margin: 0 }}>
+                          No medical courier routes yet
+                        </p>
+                        <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                          Medical courier routes will appear here once created
+                        </p>
                       </div>
-                      <div
-                        style={{
-                          background: 'rgba(59, 130, 246, 0.1)',
-                          color: '#3b82f6',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '11px',
-                          textAlign: 'center',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {route.compliance}
-                      </div>
-                      <div>{route.eta}</div>
-                      <div
-                        style={{
-                          background:
-                            route.status === 'Emergency'
-                              ? 'rgba(220, 38, 38, 0.1)'
-                              : route.status === 'In Transit'
-                                ? 'rgba(59, 130, 246, 0.1)'
-                                : route.status === 'Loading'
-                                  ? 'rgba(245, 158, 11, 0.1)'
-                                  : 'rgba(34, 197, 94, 0.1)',
-                          color:
-                            route.status === 'Emergency'
-                              ? '#dc2626'
-                              : route.status === 'In Transit'
-                                ? '#3b82f6'
-                                : route.status === 'Loading'
-                                  ? '#f59e0b'
-                                  : '#22c55e',
-                          padding: '4px 6px',
-                          borderRadius: '4px',
-                          fontSize: '10px',
-                          textAlign: 'center',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {route.status}
-                      </div>
-                    </div>
-                    ))
-                  ) : (
-                    <div
-                      style={{
-                        gridColumn: '1 / -1',
-                        textAlign: 'center',
-                        padding: '40px 20px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '48px',
-                          marginBottom: '16px',
-                        }}
-                      >
-                        🏥
-                      </div>
-                      <p style={{ fontSize: '16px', margin: 0 }}>
-                        No medical courier routes yet
-                      </p>
-                      <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
-                        Medical courier routes will appear here once created
-                      </p>
-                    </div>
-                  );
-                })()}
+                    );
+                  })()}
                 </div>
 
                 {/* Medical Courier Service Actions */}

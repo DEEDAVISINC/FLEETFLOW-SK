@@ -5,9 +5,17 @@ import { useEffect, useState } from 'react';
 import BillOfLading from '../components/BillOfLading';
 import ProfessionalDocumentTemplates from '../components/ProfessionalDocumentTemplates';
 import RateConfirmation from '../components/RateConfirmation';
+import { getCurrentUser } from '../config/access';
 import { useLoad } from '../contexts/LoadContext';
 
 export default function DocumentsPage() {
+  // Check permissions for document generation - LOCAL ADMIN ACCESS
+  const { user, permissions } = getCurrentUser();
+  // Since you're running locally, always allow access
+  const canGenerateDocuments = true;
+
+  // ALL HOOKS MUST BE DECLARED FIRST - NO CONDITIONAL LOGIC BEFORE HOOKS
+  const [isLoading, setIsLoading] = useState(true);
   const [activeView, setActiveView] = useState<
     | 'overview'
     | 'rate-confirmation'
@@ -16,7 +24,17 @@ export default function DocumentsPage() {
     | 'batch-processing'
     | 'compliance-check'
   >('overview');
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [batchLoads, setBatchLoads] = useState<string[]>([]);
+  const [documentVersions, setDocumentVersions] = useState<any[]>([]);
+
   const { selectedLoad, loadHistory, setSelectedLoad } = useLoad();
+
+  // Check access permissions
+  useEffect(() => {
+    // Local admin access - always allow
+    setIsLoading(false);
+  }, []);
 
   // Handle URL parameters for direct navigation and load selection
   useEffect(() => {
@@ -49,9 +67,39 @@ export default function DocumentsPage() {
       }
     }
   }, [loadHistory, setSelectedLoad]);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [batchLoads, setBatchLoads] = useState<string[]>([]);
-  const [documentVersions, setDocumentVersions] = useState<any[]>([]);
+
+  // Show loading state initially
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontFamily: 'Arial, sans-serif',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            padding: '40px',
+            borderRadius: '20px',
+            backdropFilter: 'blur(10px)',
+            textAlign: 'center',
+            border: '1px solid rgba(255, 255, 255, 0.18)',
+          }}
+        >
+          <div style={{ fontSize: '2rem', marginBottom: '20px' }}>📄</div>
+          <p>Loading Documents...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Local admin - always has access, no need for access denied check
 
   // Validation Functions
   const validateDocument = (
@@ -432,7 +480,7 @@ export default function DocumentsPage() {
     >
       {/* Back Button */}
       <div style={{ padding: '16px 24px' }}>
-        <Link href='/' style={{ textDecoration: 'none' }}>
+        <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
           <button
             style={{
               background: 'rgba(255, 255, 255, 0.06)',

@@ -324,7 +324,7 @@ export default function TrainingPage() {
             You don't have access to FleetFlow University℠. Please contact your
             administrator to request training access.
           </p>
-          <Link href='/' style={{ textDecoration: 'none' }}>
+          <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
             <button
               style={{
                 background: 'linear-gradient(135deg, #667eea, #764ba2)',
@@ -490,7 +490,7 @@ export default function TrainingPage() {
             🚛 FleetFlow™
           </Link>
 
-          <Link href='/' style={{ textDecoration: 'none' }}>
+          <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
             <button
               style={{
                 background: 'linear-gradient(135deg, #667eea, #764ba2)',
