@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 
+// Prevent static generation for test page
+export const dynamic = 'force-dynamic';
+
 export default function ButtonTestPage() {
   const [clickCount, setClickCount] = useState(0);
   const [testResults, setTestResults] = useState<string[]>([]);
