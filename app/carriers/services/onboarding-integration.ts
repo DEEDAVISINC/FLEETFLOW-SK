@@ -20,6 +20,10 @@ export interface CarrierPortalProfile {
   factoringApproved: boolean;
   agreementSigned: boolean;
   portalAccess: boolean;
+  onboardingProgress: number; // Progress step in onboarding (0-5)
+  fleetSize: number; // Number of drivers/vehicles
+  factoringCompany?: string; // Optional factoring partner
+  dateJoined?: string; // ISO date string when carrier joined
   createdAt: Date;
   updatedAt: Date;
 }
