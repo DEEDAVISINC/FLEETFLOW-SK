@@ -571,6 +571,21 @@ export const getSubscriptionPermissions = (
             canViewCommissionTracking: true,
             canManageBrokerTools: true,
           },
+          // Fleet access for brokers who operate their own fleets
+          fleetFlow: {
+            canViewFleetPerformance: true,
+            canViewFleetAnalytics: true,
+            canViewVehicleManagement: true,
+            canViewRouteOptimization: true,
+            canAccessFleetTracking: true,
+          },
+          driverManagement: {
+            canViewDriverList: true,
+            canViewDriverPerformance: true,
+            canManageDriverScheduling: true,
+            canAccessDriverCommunication: true,
+            canViewDriverDocuments: true,
+          },
           analytics: {
             canViewPerformanceMetrics: true,
             canViewCustomerAnalytics: true,
@@ -587,6 +602,7 @@ export const getSubscriptionPermissions = (
         break;
 
       case 'broker_elite':
+      case 'solo_broker_premium':
         permissions = {
           ...permissions,
           dashboard: {
@@ -608,6 +624,23 @@ export const getSubscriptionPermissions = (
             canViewCommissionTracking: true,
             canManageBrokerTools: true,
           },
+          // Advanced fleet access for premium broker plans
+          fleetFlow: {
+            canViewFleetPerformance: true,
+            canViewFleetAnalytics: true,
+            canViewVehicleManagement: true,
+            canViewRouteOptimization: true,
+            canAccessFleetTracking: true,
+            canAccessMaintenanceScheduling: true,
+          },
+          driverManagement: {
+            canViewDriverList: true,
+            canCreateDriverProfiles: true,
+            canViewDriverPerformance: true,
+            canManageDriverScheduling: true,
+            canAccessDriverCommunication: true,
+            canViewDriverDocuments: true,
+          },
           analytics: {
             canViewPerformanceMetrics: true,
             canViewCustomerAnalytics: true,
@@ -619,6 +652,96 @@ export const getSubscriptionPermissions = (
             canViewRevenueDashboard: true,
             canViewExpenseTracking: true,
             canViewInvoiceManagement: true,
+          },
+        };
+        break;
+
+      // Carrier-specific subscription plans
+      case 'carrier_starter':
+      case 'carrier_professional':
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+          },
+          fleetFlow: {
+            canViewFleetPerformance: true,
+            canViewFleetAnalytics: true,
+            canViewVehicleManagement: true,
+            canViewRouteOptimization: true,
+            canAccessFleetTracking: true,
+            canAccessMaintenanceScheduling: true,
+            canViewFuelManagement: true,
+            canManageVehicleDocuments: true,
+            canAccessFleetReporting: true,
+          },
+          driverManagement: {
+            canViewDriverList: true,
+            canCreateDriverProfiles: true,
+            canEditDriverDetails: true,
+            canViewDriverPerformance: true,
+            canManageDriverScheduling: true,
+            canAccessDriverCommunication: true,
+            canViewDriverDocuments: true,
+            canManageDriverOnboarding: true,
+            canAccessDriverPortal: true,
+          },
+          compliance: {
+            canViewDOTCompliance: true,
+            canManageDriverQualifications: true,
+            canViewSafetyRecords: true,
+            canAccessInspectionReports: true,
+            canViewViolationTracking: true,
+            canManageComplianceDocuments: true,
+          },
+        };
+        break;
+
+      // Team dispatch plans
+      case 'dispatch_starter':
+      case 'dispatch_professional':
+      case 'team_brokerage_starter':
+      case 'team_brokerage_pro':
+        permissions = {
+          ...permissions,
+          dashboard: {
+            canViewLoadStatistics: true,
+            canViewPerformanceCharts: true,
+            canViewQuickActions: true,
+            canViewAlerts: true,
+            canViewRecentActivity: true,
+          },
+          dispatchCentral: {
+            canViewLoadBoard: true,
+            canCreateLoads: true,
+            canAssignDrivers: true,
+            canViewDriverLocations: true,
+            canAccessRoutePlanning: true,
+            canViewCommunicationHub: true,
+            canGenerateDocuments: true,
+            canViewRealTimeTracking: true,
+            canViewLoadHistory: true,
+          },
+          fleetFlow: {
+            canViewFleetPerformance: true,
+            canViewFleetAnalytics: true,
+            canViewVehicleManagement: true,
+            canViewRouteOptimization: true,
+            canAccessFleetTracking: true,
+            canAccessMaintenanceScheduling: true,
+          },
+          driverManagement: {
+            canViewDriverList: true,
+            canCreateDriverProfiles: true,
+            canEditDriverDetails: true,
+            canViewDriverPerformance: true,
+            canManageDriverScheduling: true,
+            canAccessDriverCommunication: true,
+            canViewDriverDocuments: true,
           },
         };
         break;

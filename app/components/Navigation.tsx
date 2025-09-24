@@ -1,24 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
-// import { useLanguage } from '../providers/LanguageProvider';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
-import LanguageSwitcher from './LanguageSwitcher';
+import GlobalNotificationBell from './GlobalNotificationBell';
 import Logo from './Logo';
-import SafeOrganizationSwitcher from './SafeOrganizationSwitcher';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
-  const pathname = usePathname();
-  const isCarrierPlatform = pathname === '/carrier-landing';
-  // const { translate } = useLanguage();
-  const translate = (key: string) => key; // fallback for build
-
-  // ALL HOOKS MUST BE CALLED BEFORE ANY CONDITIONAL RETURNS
-  // This fixes the React Hooks error by ensuring consistent hook order
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(
     null
@@ -26,111 +16,46 @@ export default function ProfessionalNavigation() {
   const [isManager, setIsManager] = useState(false);
   const [isBrokerAgent, setIsBrokerAgent] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
+  const [permissions, setPermissions] = useState<any>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check if this is localhost (owner access) - matches ClientLayout.tsx logic
-  const isLocalhostAccess =
-    typeof window !== 'undefined' &&
-    (window.location.hostname === 'localhost' ||
-      window.location.hostname === '127.0.0.1' ||
-      window.location.hostname === '192.168.12.189');
-
-  // Hide navigation on specific marketing pages (but not homepage - homepage now has navigation)
-  const hiddenPaths = ['/plans', '/privacy', '/terms'];
-  const shouldHideNavigation = pathname
-    ? hiddenPaths.includes(pathname) && !isLocalhostAccess
-    : false;
-
-  // Debug logging for navigation visibility
-  console.log('🧭 Navigation visibility check:', {
-    pathname,
-    shouldHideNavigation,
-    hiddenPaths,
-    isLocalhostAccess,
-    isHidden: shouldHideNavigation,
-  });
-
-  // LaunchPad pages have blue backgrounds, so use solid white background
-  const isLaunchPadPage = pathname ? pathname.startsWith('/launchpad') : false;
-
-  // Debug logging for LaunchPad navigation styling
-  if (isLaunchPadPage) {
-    console.info('🚀 LaunchPad page detected:', {
-      pathname,
-      isLaunchPadPage,
-      navBackground: '#ffffff',
-      backdropFilter: 'none',
-    });
-  }
-
-  // Add dynamic CSS for LaunchPad navigation styling
-  React.useEffect(() => {
-    if (isLaunchPadPage) {
-      // Remove any existing style first
-      const existingStyle = document.getElementById('launchpad-nav-override');
-      if (existingStyle) {
-        document.head.removeChild(existingStyle);
-      }
-
-      const style = document.createElement('style');
-      style.id = 'launchpad-nav-override';
-      style.textContent = `
-        nav[data-launchpad="true"] {
-          background: #ffffff !important;
-          background-color: #ffffff !important;
-          background-image: none !important;
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
-          filter: none !important;
-          opacity: 1 !important;
-
-        }
-        nav[data-launchpad="true"] * {
-          background: transparent !important;
-        }
-        nav[data-launchpad="true"]::before,
-        nav[data-launchpad="true"]::after {
-          display: none !important;
-        }
-      `;
-      document.head.appendChild(style);
-
-      console.info('🎨 LaunchPad navigation CSS injected');
-
-      return () => {
-        const styleToRemove = document.getElementById('launchpad-nav-override');
-        if (styleToRemove) {
-          document.head.removeChild(styleToRemove);
-          console.info('🧹 LaunchPad navigation CSS removed');
-        }
-      };
-    }
-  }, [isLaunchPadPage]);
-
-  // Hydration effect
+  // Ensure hydration consistency and get user data after hydration
   useEffect(() => {
     setIsHydrated(true);
+    // Get user data only after hydration to prevent SSR mismatch
+    try {
+      const userData = getCurrentUser();
+      setUser(userData.user);
+      setPermissions(userData.permissions);
+    } catch (error) {
+      console.error('Error getting user data in navigation:', error);
+      setUser(null);
+      setPermissions(null);
+    }
   }, []);
 
-  // Get user data and check role on component mount (after hydration)
+  // Check user role on component mount (only after hydration)
   useEffect(() => {
-    if (!isHydrated) return;
+    if (isHydrated) {
+      const checkUserRole = () => {
+        try {
+          const managerStatus =
+            ManagerAccessControlService.isCurrentUserManager();
+          const brokerAgentStatus =
+            ManagerAccessControlService.isCurrentUserBrokerAgent();
+          setIsManager(managerStatus);
+          setIsBrokerAgent(brokerAgentStatus);
+        } catch (error) {
+          console.error('Error checking user roles:', error);
+          setIsManager(false);
+          setIsBrokerAgent(false);
+        }
+      };
 
-    // Get current user data after hydration to prevent SSR/client mismatch
-    const { user, permissions } = getCurrentUser();
-    setCurrentUser({ user, permissions });
-
-    const checkUserRole = () => {
-      const managerStatus = ManagerAccessControlService.isCurrentUserManager();
-      const brokerAgentStatus =
-        ManagerAccessControlService.isCurrentUserBrokerAgent();
-      setIsManager(managerStatus);
-      setIsBrokerAgent(brokerAgentStatus);
-    };
-
-    checkUserRole();
+      checkUserRole();
+    }
   }, [isHydrated]);
 
   // Cleanup timer on unmount
@@ -142,35 +67,40 @@ export default function ProfessionalNavigation() {
 
   // Helper function to get user display info
   const getUserDisplayInfo = () => {
-    if (!currentUser) return { title: 'Loading...', badges: [] };
+    const roleDisplayMap = {
+      admin: {
+        title: 'System Administrator',
+        badges: ['Manager Access', 'Full Permissions'],
+      },
+      dispatcher: {
+        title: 'Dispatch Operations',
+        badges: ['Dispatch Access', 'Operations'],
+      },
+      broker: { title: 'Freight Broker', badges: ['Broker Access', 'Sales'] },
+      driver: {
+        title: 'Professional Driver',
+        badges: ['Driver Access', 'Mobile'],
+      },
+      manager: {
+        title: 'Operations Manager',
+        badges: ['Manager Access', 'Oversight'],
+      },
+      instructor: {
+        title: 'Training Instructor',
+        badges: ['Training Access', 'Education'],
+      },
+    };
 
-    const roleDisplayMap: Record<string, { title: string; badges: string[] }> =
-      {
-        admin: {
-          title: 'System Administrator',
-          badges: ['Manager Access', 'Full Permissions'],
-        },
-        dispatcher: {
-          title: 'Dispatch Operations',
-          badges: ['Dispatch Access', 'Operations'],
-        },
-        broker: { title: 'Freight Broker', badges: ['Broker Access', 'Sales'] },
-        driver: {
-          title: 'Professional Driver',
-          badges: ['Driver Access', 'Mobile'],
-        },
-        manager: {
-          title: 'Operations Manager',
-          badges: ['Manager Access', 'Oversight'],
-        },
-        instructor: {
-          title: 'FleetFlow Instructor',
-          badges: ['Training Access', 'Education'],
-        },
+    // Return default if user is not loaded yet
+    if (!user) {
+      return {
+        title: 'FleetFlow User',
+        badges: ['User Access'],
       };
+    }
 
     return (
-      roleDisplayMap[currentUser.user.role as string] || {
+      roleDisplayMap[user.role as keyof typeof roleDisplayMap] || {
         title: 'FleetFlow User',
         badges: ['User Access'],
       }
@@ -178,8 +108,8 @@ export default function ProfessionalNavigation() {
   };
 
   const userInfo = getUserDisplayInfo();
-  const userInitials = currentUser?.user.name
-    ? currentUser.user.name
+  const userInitials = user?.name
+    ? user.name
         .split(' ')
         .map((n: string) => n[0])
         .join('')
@@ -241,9 +171,6 @@ export default function ProfessionalNavigation() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    // Extra safety guard for SSR
-    if (!isHydrated || typeof document === 'undefined') return;
-
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
 
@@ -267,57 +194,74 @@ export default function ProfessionalNavigation() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [activeDropdown, activeSubDropdown, isHydrated]);
+  }, [activeDropdown, activeSubDropdown]);
 
-  // Prevent hydration mismatch by not rendering until hydrated
+  // Prevent hydration mismatch - show minimal navigation until client-side hydration is complete
   if (!isHydrated) {
-    console.info('🚫 Navigation not hydrated yet, waiting...');
-    return null; // Return null to prevent hydration mismatch
+    return (
+      <nav
+        style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+          padding: '12px 20px',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            maxWidth: '1400px',
+            margin: '0 auto',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '1.8rem',
+              fontWeight: 'bold',
+              background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            🚛 FleetFlow
+          </div>
+          <div
+            style={{
+              color: '#6b7280',
+              fontSize: '0.875rem',
+            }}
+          >
+            Loading navigation...
+          </div>
+        </div>
+      </nav>
+    );
   }
-
-  console.info('✅ Navigation is hydrated and rendering...');
 
   return (
     <nav
       ref={navRef}
-      data-launchpad={isLaunchPadPage ? 'true' : 'false'}
-      style={
-        isLaunchPadPage
-          ? {
-              // LaunchPad specific styling - solid white
-              background: '#ffffff',
-              backgroundColor: '#ffffff',
-              backgroundImage: 'none',
-              backdropFilter: 'none',
-              WebkitBackdropFilter: 'none',
-              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-              padding: '12px 20px',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1000,
-              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-              display: shouldHideNavigation ? 'none' : 'block',
-              filter: 'none',
-              opacity: 1,
-            }
-          : {
-              // Regular pages styling - semi-transparent with blur
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-              padding: '12px 20px',
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1000,
-              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-              display: shouldHideNavigation ? 'none' : 'block',
-            }
-      }
+      style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+        padding: '12px 20px',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+      }}
     >
       <div
         style={{
@@ -329,7 +273,7 @@ export default function ProfessionalNavigation() {
         }}
       >
         <Link
-          href='/fleetflowdash'
+          href='/'
           style={{
             textDecoration: 'none',
             display: 'flex',
@@ -347,188 +291,132 @@ export default function ProfessionalNavigation() {
           }}
         >
           {/* OPERATIONS Dropdown - Blue */}
-          {!isCarrierPlatform && (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
-                onClick={() => handleDropdownClick('operations')}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              onClick={() => handleDropdownClick('operations')}
+              style={{
+                background:
+                  activeDropdown === 'operations'
+                    ? 'linear-gradient(135deg, #1d4ed8, #1e40af)'
+                    : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              🚛 OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
+            </button>
+            {activeDropdown === 'operations' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
-                  background:
-                    activeDropdown === 'operations'
-                      ? 'linear-gradient(135deg, #1d4ed8, #1e40af)'
-                      : 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                  color: 'white',
-                  padding: '8px 14px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
+                  position: 'absolute',
+                  background: 'white',
+                  minWidth: '200px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+                  borderRadius: '12px',
+                  padding: '12px 0',
+                  top: '100%',
+                  left: 0,
+                  border: '2px solid #3b82f6',
+                  zIndex: 1001,
                 }}
               >
-                🚛 OPERATIONS {activeDropdown === 'operations' ? '🔽' : '▼'}
-              </button>
-              {activeDropdown === 'operations' && (
-                <div
-                  onMouseEnter={handleDropdownMouseEnter}
-                  onMouseLeave={handleDropdownMouseLeave}
+                <Link
+                  href='/dispatch'
+                  onClick={handleDropdownClose}
                   style={{
-                    position: 'absolute',
-                    background: 'white',
-                    minWidth: '200px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-                    borderRadius: '12px',
-                    padding: '12px 0',
-                    top: '100%',
-                    left: 0,
-                    border: '2px solid #3b82f6',
-                    zIndex: 1001,
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#3b82f6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
                   }}
                 >
-                  <Link
-                    href='/dispatch'
-                    onClick={handleDropdownClose}
+                  🚛 Dispatch Central
+                </Link>
+                <Link
+                  href='/dispatcher-portal'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#3b82f6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  👤 Dispatcher Portal
+                </Link>
+                <div style={{ padding: '5px 0' }}>
+                  <div
                     style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#3b82f6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
+                      padding: '8px 20px',
+                      color: '#1f2937',
+                      fontSize: '0.75rem',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
                     }}
                   >
-                    🚛 Dispatch Central
-                  </Link>
-                  <Link
-                    href='/dispatcher-portal'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#3b82f6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    👤 Dispatcher Portal
-                  </Link>
-                  {/* Broker Operations Sub-Dropdown */}
-                  <div style={{ position: 'relative' }}>
-                    <div
-                      onClick={() => handleSubDropdownClick('broker')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '10px 20px',
-                        color: '#3b82f6',
-                        fontSize: '0.85rem',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.2s ease',
-                      }}
-                      onMouseEnter={(e) =>
-                        ((e.target as HTMLElement).style.backgroundColor =
-                          'rgba(59, 130, 246, 0.05)')
-                      }
-                      onMouseLeave={(e) =>
-                        ((e.target as HTMLElement).style.backgroundColor =
-                          'transparent')
-                      }
-                    >
-                      🏢 Broker Operations
-                      <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>
-                        {activeSubDropdown === 'broker' ? '🔽' : '▶'}
-                      </span>
-                    </div>
-
-                    {/* Broker Sub-Dropdown Menu */}
-                    {activeSubDropdown === 'broker' && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          left: '100%',
-                          top: '0',
-                          background: 'white',
-                          minWidth: '220px',
-                          boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-                          borderRadius: '12px',
-                          padding: '8px 0',
-                          border: '1px solid rgba(59, 130, 246, 0.2)',
-                          zIndex: 1002,
-                          marginLeft: '4px',
-                        }}
-                      >
-                        <Link
-                          href='/broker/dashboard'
-                          onClick={handleDropdownClose}
-                          style={{
-                            display: 'block',
-                            padding: '8px 16px',
-                            color: '#3b82f6',
-                            textDecoration: 'none',
-                            fontSize: '0.8rem',
-                            fontWeight: '500',
-                            transition: 'background-color 0.2s ease',
-                          }}
-                          onMouseEnter={(e) =>
-                            ((e.target as HTMLElement).style.backgroundColor =
-                              'rgba(59, 130, 246, 0.05)')
-                          }
-                          onMouseLeave={(e) =>
-                            ((e.target as HTMLElement).style.backgroundColor =
-                              'transparent')
-                          }
-                        >
-                          📊 Broker Dashboard
-                        </Link>
-                        <Link
-                          href='/broker/agent-portal'
-                          onClick={handleDropdownClose}
-                          style={{
-                            display: 'block',
-                            padding: '8px 16px',
-                            color: '#3b82f6',
-                            textDecoration: 'none',
-                            fontSize: '0.8rem',
-                            fontWeight: '500',
-                            transition: 'background-color 0.2s ease',
-                          }}
-                          onMouseEnter={(e) =>
-                            ((e.target as HTMLElement).style.backgroundColor =
-                              'rgba(59, 130, 246, 0.05)')
-                          }
-                          onMouseLeave={(e) =>
-                            ((e.target as HTMLElement).style.backgroundColor =
-                              'transparent')
-                          }
-                        >
-                          👥 Broker Agent Portal
-                        </Link>
-                      </div>
-                    )}
+                    🏢 Broker Operations
                   </div>
                   <Link
-                    href='/freightflow-rfx'
+                    href='/broker/dashboard'
                     onClick={handleDropdownClose}
                     style={{
                       display: 'block',
-                      padding: '10px 20px',
+                      padding: '8px 30px',
                       color: '#3b82f6',
                       textDecoration: 'none',
                       fontSize: '0.85rem',
                       fontWeight: '500',
                     }}
                   >
-                    📋 FreightFlow RFx℠
+                    📊 Broker Dashboard
+                  </Link>
+                  <Link
+                    href='/broker/agent-portal'
+                    onClick={handleDropdownClose}
+                    style={{
+                      display: 'block',
+                      padding: '8px 30px',
+                      color: '#3b82f6',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: '500',
+                    }}
+                  >
+                    👥 Agent Portal
                   </Link>
                 </div>
-              )}
-            </div>
-          )}
+                <Link
+                  href='/freightflow-rfx'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#3b82f6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📋 FreightFlow RFx℠
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* DRIVER MANAGEMENT Dropdown - Yellow */}
           <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -568,7 +456,7 @@ export default function ProfessionalNavigation() {
                 }}
               >
                 <Link
-                  href='/carrier-landing'
+                  href='/carriers/enhanced-portal?showInvitations=true'
                   onClick={handleDropdownClose}
                   style={{
                     display: 'block',
@@ -579,144 +467,153 @@ export default function ProfessionalNavigation() {
                     fontWeight: '500',
                   }}
                 >
-                  🌐 Carrier Network
+                  📧 Carrier Invitations
                 </Link>
 
-                {!isCarrierPlatform && (
-                  <Link
-                    href='/drivers'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f4a832',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🚛 Driver Management
-                  </Link>
-                )}
+                <Link
+                  href='/drivers'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f4a832',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🚛 Driver Management
+                </Link>
 
-                {!isCarrierPlatform && (
-                  <Link
-                    href='/carriers/enhanced-portal'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f4a832',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🏢 Enhanced Carrier Portal
-                  </Link>
-                )}
+                <Link
+                  href='/carriers/enhanced-portal'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f4a832',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🏢 Enhanced Carrier Portal
+                </Link>
               </div>
             )}
           </div>
 
           {/* FLEETFLOW Dropdown - Teal */}
-          {!isCarrierPlatform && (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
-                onClick={() => handleDropdownClick('fleet')}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              onClick={() => handleDropdownClick('fleet')}
+              style={{
+                background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              🚛 FLEETFLOW ▼
+            </button>
+            {activeDropdown === 'fleet' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
-                  background: 'linear-gradient(135deg, #14b8a6, #0d9488)',
-                  color: 'white',
-                  padding: '8px 14px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
+                  position: 'absolute',
+                  background: 'white',
+                  minWidth: '220px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  borderRadius: '12px',
+                  padding: '12px 0',
+                  top: '100%',
+                  left: 0,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  zIndex: 1001,
                 }}
               >
-                🚛 FLEETFLOW ▼
-              </button>
-              {activeDropdown === 'fleet' && (
-                <div
-                  onMouseEnter={handleDropdownMouseEnter}
-                  onMouseLeave={handleDropdownMouseLeave}
+                <Link
+                  href='/vehicles'
+                  onClick={handleDropdownClose}
                   style={{
-                    position: 'absolute',
-                    background: 'white',
-                    minWidth: '220px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-                    borderRadius: '12px',
-                    padding: '12px 0',
-                    top: '100%',
-                    left: 0,
-                    border: '1px solid rgba(0,0,0,0.1)',
-                    zIndex: 1001,
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
                   }}
                 >
-                  <Link
-                    href='/vehicles'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#14b8a6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🚛 Fleet Management
-                  </Link>
-                  <Link
-                    href='/routes'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#14b8a6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🗺️ Route Optimization
-                  </Link>
-                  <Link
-                    href='/quoting'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#14b8a6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    💰 Freight Quoting
-                  </Link>
-                  <Link
-                    href='/tracking'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#14b8a6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🗺️ Live Load Tracking
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
+                  🚛 Fleet Management
+                </Link>
+                <Link
+                  href='/routes'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🗺️ Route Optimization
+                </Link>
+                <Link
+                  href='/quoting'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  💰 Freight Quoting
+                </Link>
+                <Link
+                  href='/tracking'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🗺️ Live Load Tracking
+                </Link>
+
+                <Link
+                  href='/performance'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#14b8a6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📊 Fleet Performance
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* GO WITH THE FLOW - Single Button */}
           <Link href='/go-with-the-flow' style={{ textDecoration: 'none' }}>
@@ -741,581 +638,601 @@ export default function ProfessionalNavigation() {
           </Link>
 
           {/* COMPLIANCE Dropdown - Red */}
-          {!isCarrierPlatform && (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
-                onClick={() => handleDropdownClick('compliance')}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              onClick={() => handleDropdownClick('compliance')}
+              style={{
+                background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              ✅ COMPLIANCE ▼
+            </button>
+            {activeDropdown === 'compliance' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
-                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-                  color: 'white',
-                  padding: '8px 14px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
+                  position: 'absolute',
+                  background: 'white',
+                  minWidth: '220px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  borderRadius: '12px',
+                  padding: '12px 0',
+                  top: '100%',
+                  left: 0,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  zIndex: 1001,
                 }}
               >
-                ✅ {translate('compliance')} ▼
-              </button>
-              {activeDropdown === 'compliance' && (
-                <div
-                  onMouseEnter={handleDropdownMouseEnter}
-                  onMouseLeave={handleDropdownMouseLeave}
+                <Link
+                  href='/compliance'
+                  onClick={handleDropdownClose}
                   style={{
-                    position: 'absolute',
-                    background: 'white',
-                    minWidth: '220px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-                    borderRadius: '12px',
-                    padding: '12px 0',
-                    top: '100%',
-                    left: 0,
-                    border: '1px solid rgba(0,0,0,0.1)',
-                    zIndex: 1001,
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
                   }}
                 >
-                  <Link
-                    href='/compliance'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#dc2626',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📋 DOT Compliance Center
-                  </Link>
-                  <Link
-                    href='/openeld'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#dc2626',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📱 OpenELD System
-                  </Link>
-                  <Link
-                    href='/fleetguard-demo'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#dc2626',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🛡️ FleetGuard AI - Fraud Detection
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
+                  📋 DOT Compliance Center
+                </Link>
+                <Link
+                  href='/openeld'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📱 OpenELD System
+                </Link>
+                <Link
+                  href='/safety'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ Safety & Training
+                </Link>
+                <Link
+                  href='/fleetguard-demo'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#dc2626',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ FleetGuard AI - Fraud Detection
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* RESOURCES Dropdown - Orange */}
-          {!isCarrierPlatform && (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
-                onClick={() => handleDropdownClick('resources')}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              onClick={() => handleDropdownClick('resources')}
+              style={{
+                background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                color: 'white',
+                padding: '8px 14px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              📚 RESOURCES ▼
+            </button>
+            {activeDropdown === 'resources' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
-                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                  color: 'white',
-                  padding: '8px 14px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
+                  position: 'absolute',
+                  background: 'white',
+                  minWidth: '220px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  borderRadius: '12px',
+                  padding: '12px 0',
+                  top: '100%',
+                  left: 0,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  zIndex: 1001,
                 }}
               >
-                📚 RESOURCES ▼
-              </button>
-              {activeDropdown === 'resources' && (
-                <div
-                  onMouseEnter={handleDropdownMouseEnter}
-                  onMouseLeave={handleDropdownMouseLeave}
+                <Link
+                  href='/university'
+                  onClick={handleDropdownClose}
                   style={{
-                    position: 'absolute',
-                    background: 'white',
-                    minWidth: '220px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-                    borderRadius: '12px',
-                    padding: '12px 0',
-                    top: '100%',
-                    left: 0,
-                    border: '1px solid rgba(0,0,0,0.1)',
-                    zIndex: 1001,
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
                   }}
                 >
-                  <Link
-                    href='/university'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🎓 FleetFlow University℠
-                  </Link>
+                  🎓 FleetFlow University℠
+                </Link>
 
-                  <Link
-                    href='/about'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                    onMouseEnter={(e) =>
-                      ((e.target as HTMLElement).style.backgroundColor =
-                        'rgba(249, 115, 22, 0.05)')
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.target as HTMLElement).style.backgroundColor =
-                        'transparent')
-                    }
-                  >
-                    🏢 About FleetFlow
-                  </Link>
+                <Link
+                  href='/about'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🏢 About FleetFlow
+                </Link>
 
-                  <Link
-                    href='/resources'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📚 Resources Library
-                  </Link>
-                  <Link
-                    href='/safety'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🦺 Safety Resources
-                  </Link>
-                  <Link
-                    href='/documents'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📄 Documents
-                  </Link>
-                  <Link
-                    href='/documentation'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📋 Documents Hub
-                  </Link>
-                  <Link
-                    href='/insurance-partnerships'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#f97316',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🛡️ Insurance Partnerships
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
+                <Link
+                  href='/training'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🎓 Training Portal
+                </Link>
+
+                <Link
+                  href='/resources'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📚 Resources Library
+                </Link>
+                <Link
+                  href='/safety'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🦺 Safety Resources
+                </Link>
+                <Link
+                  href='/documents'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📄 Documents
+                </Link>
+                <Link
+                  href='/documents-hub'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📋 Documents Hub
+                </Link>
+                <Link
+                  href='/insurance-partnerships'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#f97316',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🛡️ Insurance Partnerships
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* SETTINGS/ADMIN Dropdown - Purple */}
-          {!isCarrierPlatform && (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <button
-                onClick={() => handleDropdownClick('settings')}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <button
+              onClick={() => handleDropdownClick('settings')}
+              style={{
+                background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)',
+                color: 'white',
+                padding: '10px 18px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}
+            >
+              ⚙️ ADMIN ▼
+            </button>
+            {activeDropdown === 'settings' && (
+              <div
+                onMouseEnter={handleDropdownMouseEnter}
+                onMouseLeave={handleDropdownMouseLeave}
                 style={{
-                  background: 'linear-gradient(135deg, #8B5CF6, #7C3AED)',
-                  color: 'white',
-                  padding: '10px 18px',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
+                  position: 'absolute',
+                  background: 'white',
+                  minWidth: '240px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                  borderRadius: '12px',
+                  padding: '12px 0',
+                  top: '100%',
+                  right: 0,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  zIndex: 1001,
                 }}
               >
-                ⚙️ ADMIN ▼
-              </button>
-              {activeDropdown === 'settings' && (
-                <div
-                  onMouseEnter={handleDropdownMouseEnter}
-                  onMouseLeave={handleDropdownMouseLeave}
+                <Link
+                  href='/settings'
+                  onClick={handleDropdownClose}
                   style={{
-                    position: 'absolute',
-                    background: 'white',
-                    minWidth: '240px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
-                    borderRadius: '12px',
-                    padding: '12px 0',
-                    top: '100%',
-                    right: 0,
-                    border: '1px solid rgba(0,0,0,0.1)',
-                    zIndex: 1001,
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
                   }}
                 >
-                  <Link
-                    href='/user-management'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    👥 User Management
-                  </Link>
-                  <Link
-                    href='/depointe-dashboard'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🤖 DEPOINTE AI Dashboard
-                  </Link>
-                  <Link
-                    href='/admin/business-intelligence'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📊 Business Intelligence
-                  </Link>
-                  <Link
-                    href='/user-profile'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px 10px 40px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '400',
-                      opacity: '0.8',
-                    }}
-                  >
-                    👤 User Profile
-                  </Link>
-                  <Link
-                    href='/call-flow'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📞 Call Flow Manager
-                  </Link>
-                  <Link
-                    href='/dialer'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px 10px 40px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '400',
-                      opacity: '0.8',
-                    }}
-                  >
-                    📞 Phone Dialer
-                  </Link>
-                  <Link
-                    href='/analytics'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📊 Analytics Dashboard
-                  </Link>
+                  ⚙️ Settings
+                </Link>
+                <Link
+                  href='/user-management'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  👥 User Management
+                </Link>
+                <Link
+                  href='/ai-company-dashboard'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🤖 AI Company Dashboard
+                </Link>
+                <Link
+                  href='/user-profile'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px 10px 40px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '400',
+                    opacity: '0.8',
+                  }}
+                >
+                  👤 User Profile
+                </Link>
+                <Link
+                  href='/dialer'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px 10px 40px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '400',
+                    opacity: '0.8',
+                  }}
+                >
+                  📞 Phone Dialer
+                </Link>
+                <Link
+                  href='/analytics'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📊 Analytics Dashboard
+                </Link>
 
-                  {/* MANAGER-ONLY ITEMS */}
-                  {isManager && (
-                    <>
-                      <Link
-                        href='/financials'
-                        onClick={handleDropdownClose}
-                        style={{
-                          display: 'block',
-                          padding: '10px 20px',
-                          color: '#8B5CF6',
-                          textDecoration: 'none',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          background: 'rgba(139, 92, 246, 0.1)',
-                          borderLeft: '3px solid #8B5CF6',
-                        }}
-                      >
-                        💰 Company Financial Management
-                      </Link>
-                      <Link
-                        href='/plans'
-                        onClick={handleDropdownClose}
-                        style={{
-                          display: 'block',
-                          padding: '10px 20px',
-                          color: '#8B5CF6',
-                          textDecoration: 'none',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          background: 'rgba(139, 92, 246, 0.1)',
-                          borderLeft: '3px solid #8B5CF6',
-                        }}
-                      >
-                        🎯 Professional Subscription Plans
-                      </Link>
-                      <Link
-                        href='/billing'
-                        onClick={handleDropdownClose}
-                        style={{
-                          display: 'block',
-                          padding: '10px 20px',
-                          color: '#8B5CF6',
-                          textDecoration: 'none',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          background: 'rgba(139, 92, 246, 0.1)',
-                          borderLeft: '3px solid #8B5CF6',
-                        }}
-                      >
-                        💰 Billing & Pricing
-                      </Link>
-                      <div
-                        style={{
-                          padding: '8px 20px',
-                          fontSize: '0.75rem',
-                          color: '#6B7280',
-                          fontWeight: '500',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px',
-                        }}
-                      >
-                        🔒 Manager Only
-                      </div>
-                    </>
-                  )}
-
-                  {/* RESTRICTED MESSAGE FOR BROKER AGENTS */}
-                  {isBrokerAgent && (
-                    <div
+                {/* MANAGER-ONLY ITEMS */}
+                {isManager && (
+                  <>
+                    <Link
+                      href='/financials'
+                      onClick={handleDropdownClose}
                       style={{
-                        padding: '12px 20px',
-                        fontSize: '0.8rem',
-                        color: '#EF4444',
+                        display: 'block',
+                        padding: '10px 20px',
+                        color: '#8B5CF6',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
                         fontWeight: '500',
-                        background: 'rgba(239, 68, 68, 0.05)',
-                        borderLeft: '3px solid #EF4444',
-                        fontStyle: 'italic',
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderLeft: '3px solid #8B5CF6',
                       }}
                     >
-                      🔒 Financial & billing management
-                      <br />
-                      requires manager access
+                      💰 Company Financial Management
+                    </Link>
+                    <Link
+                      href='/subscription-management/subscription-dashboard'
+                      onClick={handleDropdownClose}
+                      style={{
+                        display: 'block',
+                        padding: '10px 20px',
+                        color: '#8B5CF6',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        fontWeight: '500',
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderLeft: '3px solid #8B5CF6',
+                      }}
+                    >
+                      💳 Subscription Plans & Billing
+                    </Link>
+                    <Link
+                      href='/billing'
+                      onClick={handleDropdownClose}
+                      style={{
+                        display: 'block',
+                        padding: '10px 20px',
+                        color: '#8B5CF6',
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        fontWeight: '500',
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderLeft: '3px solid #8B5CF6',
+                      }}
+                    >
+                      💰 Billing & Pricing
+                    </Link>
+                    <div
+                      style={{
+                        padding: '8px 20px',
+                        fontSize: '0.75rem',
+                        color: '#6B7280',
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      🔒 Manager Only
                     </div>
-                  )}
-                  <Link
-                    href='/admin/driver-otr-flow'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🚛 Driver OTR Flow
-                  </Link>
-                  <Link
-                    href='/admin/accounting'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    💰 Accounting & Finance
-                  </Link>
+                  </>
+                )}
 
-                  <Link
-                    href='/billing-invoices'
-                    onClick={handleDropdownClose}
+                {/* RESTRICTED MESSAGE FOR BROKER AGENTS */}
+                {isBrokerAgent && (
+                  <div
                     style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
+                      padding: '12px 20px',
+                      fontSize: '0.8rem',
+                      color: '#EF4444',
                       fontWeight: '500',
+                      background: 'rgba(239, 68, 68, 0.05)',
+                      borderLeft: '3px solid #EF4444',
+                      fontStyle: 'italic',
                     }}
                   >
-                    🧾 Billing & Invoices
-                  </Link>
+                    🔒 Financial & billing management
+                    <br />
+                    requires manager access
+                  </div>
+                )}
+                <Link
+                  href='/admin/driver-otr-flow'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🚛 Driver OTR Flow
+                </Link>
+                <Link
+                  href='/admin/accounting'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  💰 Accounting & Finance
+                </Link>
+                <Link
+                  href='/billing'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  💳 Subscriptions
+                </Link>
+                <Link
+                  href='/billing-invoices'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🧾 Billing & Invoices
+                </Link>
 
-                  <Link
-                    href='/reports'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    📊 Reports & Analytics
-                  </Link>
-                  <Link
-                    href='/vendor-management'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🤝 Vendor Management
-                  </Link>
-                  <Link
-                    href='/vendor-portal'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px 10px 40px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '400',
-                      opacity: '0.8',
-                    }}
-                  >
-                    🏢 Vendor/Shipper Portal
-                  </Link>
-                  <Link
-                    href='/automation-demo'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'block',
-                      padding: '10px 20px',
-                      color: '#8B5CF6',
-                      textDecoration: 'none',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                    }}
-                  >
-                    🔧 Tech System
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
+                <Link
+                  href='/reports'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  📊 Reports & Analytics
+                </Link>
+                <Link
+                  href='/vendor-management'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🤝 Vendor Management
+                </Link>
+                <Link
+                  href='/vendor-portal'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px 10px 40px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '400',
+                    opacity: '0.8',
+                  }}
+                >
+                  🏢 Vendor/Shipper Portal
+                </Link>
+                <Link
+                  href='/automation-demo'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🔧 Tech System
+                </Link>
 
-          {/* Organization Switcher */}
-          {!isCarrierPlatform && (
-            <div style={{ marginLeft: '10px' }}>
-              <SafeOrganizationSwitcher />
-            </div>
-          )}
-
-          {/* Language Switcher */}
-          <div style={{ marginLeft: '10px' }}>
-            <LanguageSwitcher />
+                <Link
+                  href='/security'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#8B5CF6',
+                    textDecoration: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🔐 Security & Settings
+                </Link>
+              </div>
+            )}
           </div>
+
+          {/* Notification Bell */}
+          <GlobalNotificationBell department='admin' />
 
           {/* User Profile Dropdown */}
           <div style={{ position: 'relative', marginLeft: '10px' }}>
@@ -1403,7 +1320,7 @@ export default function ProfessionalNavigation() {
                           fontWeight: '600',
                         }}
                       >
-                        {currentUser?.user.name || 'Loading...'}
+                        {user.name}
                       </div>
                       <div style={{ color: '#6b7280', fontSize: '14px' }}>
                         {userInfo.title}
@@ -1468,33 +1385,6 @@ export default function ProfessionalNavigation() {
                     My Profile & Access{' '}
                     {activeSubDropdown === 'userprofileview' ? '🔽' : '▼'}
                   </div>
-
-                  <Link
-                    href='/user-profile'
-                    onClick={handleDropdownClose}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '12px 20px',
-                      color: '#374151',
-                      textDecoration: 'none',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'background-color 0.2s ease',
-                    }}
-                    onMouseEnter={(e) =>
-                      ((e.target as HTMLElement).style.backgroundColor =
-                        'rgba(20, 184, 166, 0.05)')
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.target as HTMLElement).style.backgroundColor =
-                        'transparent')
-                    }
-                  >
-                    <span style={{ fontSize: '16px' }}>👤</span>
-                    My Profile
-                  </Link>
 
                   <Link
                     href='/settings'
@@ -1584,14 +1474,14 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (currentUser?.permissions as any)?.canEditLoads
+                          color: (permissions as any)?.canEditLoads
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(currentUser?.permissions as any)?.canEditLoads
+                        {(permissions as any)?.canEditLoads
                           ? '✓ Full'
                           : '✗ Limited'}
                       </span>
@@ -1608,15 +1498,14 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (currentUser?.permissions as any)
-                            ?.canViewAllLoads
+                          color: (permissions as any)?.canViewAllLoads
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(currentUser?.permissions as any)?.canViewAllLoads
+                        {(permissions as any)?.canViewAllLoads
                           ? '✓ Full'
                           : '✗ Limited'}
                       </span>
@@ -1633,15 +1522,14 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (currentUser?.permissions as any)
-                            ?.hasManagementAccess
+                          color: (permissions as any)?.hasManagementAccess
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(currentUser?.permissions as any)?.hasManagementAccess
+                        {(permissions as any)?.hasManagementAccess
                           ? '✓ Admin'
                           : '✗ No Access'}
                       </span>
@@ -1658,15 +1546,14 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (currentUser?.permissions as any)
-                            ?.canViewFinancials
+                          color: (permissions as any)?.canViewFinancials
                             ? '#10b981'
                             : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(currentUser?.permissions as any)?.canViewFinancials
+                        {(permissions as any)?.canViewFinancials
                           ? '✓ Manager'
                           : '✗ No Access'}
                       </span>
@@ -1765,107 +1652,6 @@ export default function ProfessionalNavigation() {
           </div>
         </div>
       </div>
-
-      {/* DEPOINTE AI Quick Access Bar - Only on DEPOINTE Dashboard */}
-      {pathname === '/depointe-dashboard' && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '8px',
-            right: '20px',
-            zIndex: 1001,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(15, 23, 42, 0.9)',
-            padding: '6px 12px',
-            borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '10px',
-              opacity: 0.7,
-              fontWeight: 'bold',
-              color: 'white',
-            }}
-          >
-            🚛 DEPOINTE AI:
-          </span>
-          <Link
-            href='/dashboard'
-            style={{
-              color: '#60a5fa',
-              textDecoration: 'none',
-              fontSize: '10px',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(96, 165, 250, 0.15)',
-              border: '1px solid rgba(96, 165, 250, 0.3)',
-            }}
-          >
-            📊 Main
-          </Link>
-          <Link
-            href='/loads'
-            style={{
-              color: '#34d399',
-              textDecoration: 'none',
-              fontSize: '10px',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(52, 211, 153, 0.15)',
-              border: '1px solid rgba(52, 211, 153, 0.3)',
-            }}
-          >
-            🚚 Loads
-          </Link>
-          <Link
-            href='/drivers'
-            style={{
-              color: '#fbbf24',
-              textDecoration: 'none',
-              fontSize: '10px',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(251, 191, 36, 0.15)',
-              border: '1px solid rgba(251, 191, 36, 0.3)',
-            }}
-          >
-            👤 Drivers
-          </Link>
-          <Link
-            href='/analytics'
-            style={{
-              color: '#f472b6',
-              textDecoration: 'none',
-              fontSize: '10px',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(244, 114, 182, 0.15)',
-              border: '1px solid rgba(244, 114, 182, 0.3)',
-            }}
-          >
-            📈 Analytics
-          </Link>
-          <Link
-            href='/billing-invoices'
-            style={{
-              color: '#a78bfa',
-              textDecoration: 'none',
-              fontSize: '10px',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(167, 139, 250, 0.15)',
-              border: '1px solid rgba(167, 139, 250, 0.3)',
-            }}
-          >
-            💰 Billing
-          </Link>
-        </div>
-      )}
     </nav>
   );
 }
