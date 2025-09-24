@@ -7,8 +7,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Digital Ocean App Platform configuration - Force dynamic rendering
-  output: undefined, // Remove standalone to prevent static generation issues
+  // Digital Ocean App Platform configuration
+  output: 'standalone',
   // Disable static generation to prevent prerendering issues
   trailingSlash: false,
   compiler: {
@@ -36,9 +36,15 @@ const nextConfig = {
     serverActions: true,
     // Force dynamic rendering
     forceSwcTransforms: true,
+    // Skip static optimization for all pages
+    skipTrailingSlashRedirect: true,
   },
-  // Disable static optimization entirely
+  // Disable static optimization entirely for problematic builds
   staticPageGenerationTimeout: 0,
+  // Force all pages to be dynamic
+  async rewrites() {
+    return [];
+  },
   // Image optimization for Digital Ocean
   images: {
     domains: [],
