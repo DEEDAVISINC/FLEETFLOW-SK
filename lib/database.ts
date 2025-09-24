@@ -7,8 +7,10 @@ import {
   mockVehicleService,
 } from './database-mock';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
 
 // Check if environment variables are properly set for production
 if (
@@ -26,28 +28,39 @@ console.log(
   supabaseUrl?.substring(0, 30) + '...'
 );
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+let supabase;
+try {
+  supabase = createClient(supabaseUrl, supabaseKey);
+} catch (error) {
+  console.warn('⚠️ Failed to create Supabase client, using mock fallback');
+  supabase = null;
+}
 
 // Test Supabase connection
 let supabaseAvailable = false;
 try {
   // Quick test to see if Supabase is available
-  const testConnection = async () => {
-    const { data, error } = await supabase
-      .from('loads')
-      .select('count')
-      .limit(1);
+  if (supabase) {
+    const testConnection = async () => {
+      const { data, error } = await supabase
+        .from('loads')
+        .select('count')
+        .limit(1);
 
-    if (!error) {
-      supabaseAvailable = true;
-      console.info('✅ Supabase connection successful');
-    } else {
-      console.warn('⚠️ Supabase connection failed, using mock data');
-      supabaseAvailable = false;
-    }
-  };
+      if (!error) {
+        supabaseAvailable = true;
+        console.info('✅ Supabase connection successful');
+      } else {
+        console.warn('⚠️ Supabase connection failed, using mock data');
+        supabaseAvailable = false;
+      }
+    };
 
-  testConnection();
+    testConnection();
+  } else {
+    console.warn('⚠️ Supabase client not created, using mock data');
+    supabaseAvailable = false;
+  }
 } catch (error) {
   console.warn('⚠️ Supabase connection error, using mock data');
   supabaseAvailable = false;

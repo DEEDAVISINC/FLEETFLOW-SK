@@ -96,6 +96,19 @@ const getSupabaseConfig = (): SupabaseConfig => {
 export const createSupabaseClient = () => {
   const config = getSupabaseConfig();
 
+  // During build time, return a mock client if config is empty
+  if (!config.url || !config.anonKey) {
+    console.warn('⚠️ Supabase client: Using mock client due to missing config');
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: null, error: null }),
+        insert: () => Promise.resolve({ data: null, error: null }),
+        update: () => Promise.resolve({ data: null, error: null }),
+        delete: () => Promise.resolve({ data: null, error: null }),
+      }),
+    };
+  }
+
   return createClientComponentClient({
     supabaseUrl: config.url,
     supabaseKey: config.anonKey,
@@ -106,6 +119,21 @@ export const createSupabaseClient = () => {
 export const createSupabaseServerClient = () => {
   const config = getSupabaseConfig();
   const cookieStore = cookies();
+
+  // During build time, return a mock client if config is empty
+  if (!config.url || !config.anonKey) {
+    console.warn(
+      '⚠️ Supabase server client: Using mock client due to missing config'
+    );
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: null, error: null }),
+        insert: () => Promise.resolve({ data: null, error: null }),
+        update: () => Promise.resolve({ data: null, error: null }),
+        delete: () => Promise.resolve({ data: null, error: null }),
+      }),
+    };
+  }
 
   return createServerComponentClient(
     { cookies: () => cookieStore },
@@ -122,6 +150,21 @@ export const createSupabaseAdminClient = () => {
 
   if (typeof window !== 'undefined') {
     throw new Error('Admin client should only be used on the server side');
+  }
+
+  // During build time, return a mock client if config is empty
+  if (!config.url || !config.serviceRoleKey) {
+    console.warn(
+      '⚠️ Supabase admin client: Using mock client due to missing config'
+    );
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: null, error: null }),
+        insert: () => Promise.resolve({ data: null, error: null }),
+        update: () => Promise.resolve({ data: null, error: null }),
+        delete: () => Promise.resolve({ data: null, error: null }),
+      }),
+    };
   }
 
   return createClient(config.url, config.serviceRoleKey, {
