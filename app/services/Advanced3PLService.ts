@@ -272,8 +272,8 @@ class Advanced3PLService extends EventEmitter {
     this.initializeMock3PLData();
 
     // Real-time processing intervals
-    // TODO: Implement processVendorConsolidations method
-    // setInterval(() => this.processVendorConsolidations(), 300000); // 5 minutes
+    // processVendorConsolidations method now implemented
+    setInterval(() => this.processVendorConsolidations(), 300000); // 5 minutes
 
     // Use existing processPoolDistribution method (not updatePoolDistribution)
     setInterval(() => this.processPoolDistribution(), 600000); // 10 minutes
@@ -1008,6 +1008,33 @@ class Advanced3PLService extends EventEmitter {
       equipmentAvailability: equipmentBreakdown,
       integrationStatus: 'active',
     };
+  }
+
+  // ========================================
+  // MISSING METHODS FIX - PRODUCTION CRITICAL
+  // ========================================
+
+  private processVendorConsolidations() {
+    console.info('🔄 Processing vendor consolidations...');
+    this.vendorConsolidationPlans.forEach((plan) => {
+      if (plan.status === 'planning') {
+        // Check if all inbound shipments have arrived
+        const allReceived = plan.inboundShipments.every(
+          (shipment) => shipment.status === 'received'
+        );
+
+        if (allReceived) {
+          plan.status = 'consolidating';
+          console.info(`📦 Processing consolidation for plan ${plan.id}`);
+          this.emit('consolidationStarted', plan);
+        }
+      }
+    });
+  }
+
+  // Alias method to prevent naming confusion
+  private updatePoolDistribution() {
+    this.processPoolDistribution();
   }
 }
 
