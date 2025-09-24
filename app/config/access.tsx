@@ -39,9 +39,53 @@ export function checkPermission(permission: string): boolean {
       return user.role === 'admin' || user.role === 'dispatcher';
     case 'canViewFinancials':
       return user.role === 'admin';
+    case 'canViewFleetPerformance':
+      return (
+        user.role === 'admin' ||
+        user.role === 'dispatcher' ||
+        user.role === 'driver' ||
+        user.role === 'broker' // Allow brokers - subscription check will be done at page level
+      );
+    case 'canViewFleetAnalytics':
+      return (
+        user.role === 'admin' ||
+        user.role === 'dispatcher' ||
+        user.role === 'broker'
+      );
+    case 'canViewVehicleManagement':
+      return (
+        user.role === 'admin' ||
+        user.role === 'dispatcher' ||
+        user.role === 'driver' ||
+        user.role === 'broker'
+      );
     default:
       return true;
   }
+}
+
+// Get section-specific permissions based on user role and subscription
+export function getSectionPermissions(user: User) {
+  return {
+    fleetFlow: {
+      canViewFleetPerformance: user.role === 'admin' || user.role === 'dispatcher' || user.role === 'driver' || user.role === 'broker',
+      canViewFleetAnalytics: user.role === 'admin' || user.role === 'dispatcher' || user.role === 'broker',
+      canViewVehicleManagement: user.role === 'admin' || user.role === 'dispatcher' || user.role === 'driver' || user.role === 'broker',
+      canManageFleet: user.role === 'admin' || user.role === 'dispatcher',
+      canViewFinancials: user.role === 'admin',
+    },
+    dispatch: {
+      canViewAllLoads: user.role === 'admin' || user.role === 'dispatcher',
+      canEditLoads: user.role === 'admin' || user.role === 'dispatcher',
+      canAssignLoads: user.role === 'admin' || user.role === 'dispatcher',
+      canViewLoadHistory: user.role === 'admin' || user.role === 'dispatcher' || user.role === 'driver',
+    },
+    carriers: {
+      canViewCarrierPortal: user.role === 'admin' || user.role === 'dispatcher' || user.role === 'broker',
+      canManageCarriers: user.role === 'admin' || user.role === 'dispatcher',
+      canViewCompliance: user.role === 'admin' || user.role === 'dispatcher' || user.role === 'broker',
+    }
+  };
 }
 
 // Get available dispatchers for load assignment
