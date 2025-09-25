@@ -2149,6 +2149,12 @@ export default function BrokerDashboard() {
             icon: '📋',
             color: '#ef4444',
           },
+          {
+            id: 'agent-portal',
+            label: 'Agent Portal',
+            icon: '👥',
+            color: '#6366f1',
+          },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -3978,6 +3984,208 @@ export default function BrokerDashboard() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {selectedTab === 'agent-portal' && (
+          <div id='tab-agent-portal' style={{ color: 'white' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <h2
+                style={{
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                👥 Agent Portal
+              </h2>
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: 0 }}>
+                Manage broker agents, assignments, and performance tracking
+              </p>
+            </div>
+
+            {/* Quick agent overview cards */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '24px',
+                marginBottom: '32px',
+              }}
+            >
+              {/* Active Agents */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '24px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(99, 102, 241, 0.3)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#6366f1',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    marginBottom: '16px',
+                  }}
+                >
+                  👤 Active Agents
+                </h4>
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#6366f1',
+                  }}
+                >
+                  12
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Agents currently online and working
+                </div>
+              </div>
+
+              {/* Today's Assignments */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '24px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#10b981',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📋 Today's Assignments
+                </h4>
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#10b981',
+                  }}
+                >
+                  47
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Load assignments distributed today
+                </div>
+              </div>
+
+              {/* Performance Summary */}
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '24px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                }}
+              >
+                <h4
+                  style={{
+                    color: '#f59e0b',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    marginBottom: '16px',
+                  }}
+                >
+                  📊 Team Performance
+                </h4>
+                <div
+                  style={{
+                    fontSize: '36px',
+                    fontWeight: 'bold',
+                    color: '#f59e0b',
+                  }}
+                >
+                  94%
+                </div>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }}
+                >
+                  Average completion rate this week
+                </div>
+              </div>
+            </div>
+
+            {/* Direct link to full agent portal */}
+            <div
+              style={{
+                background: 'rgba(99, 102, 241, 0.1)',
+                padding: '24px',
+                borderRadius: '12px',
+                border: '1px solid rgba(99, 102, 241, 0.3)',
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>👥</div>
+              <h3
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  marginBottom: '16px',
+                  color: '#6366f1',
+                }}
+              >
+                Full Agent Portal
+              </h3>
+              <p
+                style={{
+                  fontSize: '16px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  marginBottom: '24px',
+                  lineHeight: 1.6,
+                }}
+              >
+                Access the complete Agent Portal with full functionality and
+                features.
+              </p>
+              <button
+                onClick={() => window.open('/broker/agent-portal', '_blank')}
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'transform 0.3s ease',
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.transform = 'translateY(-2px)')
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.transform = 'translateY(0)')
+                }
+              >
+                🚀 Open Full Agent Portal
+              </button>
             </div>
           </div>
         )}

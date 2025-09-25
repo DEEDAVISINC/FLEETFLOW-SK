@@ -6,6 +6,9 @@ import { EnhancedNotificationHub } from '../components/EnhancedNotificationHub';
 import NotificationPreferences from '../components/NotificationPreferences';
 import { getCurrentUser } from '../config/access';
 
+// Force dynamic rendering - no static generation
+export const dynamic = 'force-dynamic';
+
 export default function NotificationsHub() {
   const [showPreferences, setShowPreferences] = useState(false);
   const { user } = getCurrentUser();

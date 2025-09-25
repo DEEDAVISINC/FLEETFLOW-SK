@@ -409,7 +409,7 @@ export default function WorkflowDriverPortal() {
           >
             <Link
               style={{ display: 'inline-block', textDecoration: 'none' }}
-              href='/'
+              href='/fleetflowdash'
             >
               <button
                 style={{

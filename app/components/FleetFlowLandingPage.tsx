@@ -139,6 +139,23 @@ export default function FleetFlowLandingPage() {
               🚀 LAUNCHPAD℠
             </button>
           </Link>{' '}
+          <Link href='/carrier-landing'>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #f4a832, #d97706)',
+                color: 'white',
+                border: '2px solid #f4a832',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 0 8px rgba(244, 168, 50, 0.3)',
+              }}
+            >
+              🌐 CARRIER NETWORK
+            </button>
+          </Link>{' '}
           <Link href='/fleetflowdash'>
             <button
               style={{

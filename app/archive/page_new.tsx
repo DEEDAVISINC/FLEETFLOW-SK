@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
+import { useState } from 'react'
 
 export default function ResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState<'drivers' | 'dispatch' | 'broker' | 'heavyhaul'>('drivers')
@@ -156,7 +156,7 @@ export default function ResourcesPage() {
     }}>
       {/* Back Button */}
       <div style={{ padding: '24px' }}>
-        <Link href="/"" style={{ textDecoration: 'none' }}>
+        <Link href='/fleetflowdash' style={{ textDecoration: 'none' }}>
           <button style={{
             background: 'rgba(255, 255, 255, 0.2)',
             backdropFilter: 'blur(10px)',
@@ -185,10 +185,10 @@ export default function ResourcesPage() {
       </div>
 
       {/* Main Content Container */}
-      <div style={{ 
-        maxWidth: '1400px', 
-        margin: '0 auto', 
-        padding: '0 24px 80px 24px' 
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '0 24px 80px 24px'
       }}>
         {/* Header */}
         <div style={{
@@ -245,8 +245,8 @@ export default function ResourcesPage() {
                     transition: 'all 0.3s ease',
                     border: 'none',
                     cursor: 'pointer',
-                    background: selectedCategory === category 
-                      ? 'rgba(255, 255, 255, 0.25)' 
+                    background: selectedCategory === category
+                      ? 'rgba(255, 255, 255, 0.25)'
                       : 'rgba(255, 255, 255, 0.1)',
                     color: 'white',
                     backdropFilter: 'blur(10px)',
@@ -266,7 +266,7 @@ export default function ResourcesPage() {
         {/* Content Sections */}
         {selectedCategory === 'drivers' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            
+
             {/* Trucker-Friendly Hotels & Motels */}
             <div style={{
               background: 'rgba(255, 255, 255, 0.12)',

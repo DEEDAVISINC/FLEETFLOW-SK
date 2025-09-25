@@ -18,7 +18,7 @@ import {
   Heart,
   Mail,
   MessageSquare,
-  Navigation,
+  Navigation as NavigationIcon,
   Phone,
   Shield,
   Target,
@@ -341,7 +341,9 @@ export default function AIFlowPage() {
 
         // Monitor WebSocket connection status
         const statusInterval = setInterval(() => {
-          const wsStatus = webSocketNotificationService?.getConnectionStatus?.() || 'disconnected';
+          const wsStatus =
+            webSocketNotificationService?.getConnectionStatus?.() ||
+            'disconnected';
           const notificationHealth =
             fleetFlowNotificationManager?.getHealthStatus?.() || 'offline';
           setConnectionStatus({
@@ -582,7 +584,7 @@ export default function AIFlowPage() {
               Freight AI
             </TabsTrigger>
             <TabsTrigger value='dispatch' className='flex items-center gap-2'>
-              <Navigation className='h-4 w-4' />
+              <NavigationIcon className='h-4 w-4' />
               AI Dispatch
             </TabsTrigger>
             <TabsTrigger value='recruiting' className='flex items-center gap-2'>
@@ -990,7 +992,7 @@ export default function AIFlowPage() {
               {/* Dispatch Metrics */}
               <div className='rounded-xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm'>
                 <div className='mb-6 flex items-center gap-3'>
-                  <Navigation className='h-6 w-6 text-blue-400' />
+                  <NavigationIcon className='h-6 w-6 text-blue-400' />
                   <h3 className='text-lg font-semibold text-white'>
                     AI Dispatch Control
                   </h3>
@@ -1450,7 +1452,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-blue-600'
                           style={{ width: '65%' }}
-                         />
+                        />
                       </div>
                     </div>
 
@@ -1465,7 +1467,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-green-600'
                           style={{ width: '78%' }}
-                         />
+                        />
                       </div>
                     </div>
 
@@ -1480,7 +1482,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-purple-600'
                           style={{ width: '45%' }}
-                         />
+                        />
                       </div>
                     </div>
 
@@ -1497,7 +1499,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-orange-600'
                           style={{ width: '85%' }}
-                         />
+                        />
                       </div>
                     </div>
                   </div>
@@ -1686,7 +1688,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-red-600'
                           style={{ width: '72%' }}
-                         />
+                        />
                       </div>
                     </div>
 
@@ -1703,7 +1705,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-blue-600'
                           style={{ width: '68%' }}
-                         />
+                        />
                       </div>
                     </div>
 
@@ -1720,7 +1722,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-purple-600'
                           style={{ width: '55%' }}
-                         />
+                        />
                       </div>
                     </div>
 
@@ -1737,7 +1739,7 @@ export default function AIFlowPage() {
                         <div
                           className='h-2 rounded-full bg-orange-600'
                           style={{ width: '88%' }}
-                         />
+                        />
                       </div>
                     </div>
                   </div>

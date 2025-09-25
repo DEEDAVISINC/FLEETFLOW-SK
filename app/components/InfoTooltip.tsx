@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 interface InfoTooltipProps {
   text: string
@@ -12,9 +12,9 @@ interface InfoTooltipProps {
   className?: string
 }
 
-export default function InfoTooltip({ 
-  text, 
-  children, 
+export default function InfoTooltip({
+  text,
+  children,
   position = 'top',
   maxWidth = '200px',
   showDelay = 500,
@@ -79,7 +79,7 @@ export default function InfoTooltip({
   const getArrowStyle = () => {
     const arrowSize = '6px'
     const arrowColor = 'rgba(0, 0, 0, 0.9)'
-    
+
     switch (position) {
       case 'top':
         return {
@@ -145,7 +145,7 @@ export default function InfoTooltip({
   }
 
   return (
-    <div 
+    <div
       className={className}
       style={{ position: 'relative', display: 'inline-block' }}
       onMouseEnter={handleMouseEnter}
@@ -178,9 +178,9 @@ export default function InfoTooltip({
 }
 
 // Specialized tooltip for feature explanations
-export function FeatureTooltip({ 
-  feature, 
-  description, 
+export function FeatureTooltip({
+  feature,
+  description,
   children,
   position = 'top',
   className = ''
@@ -192,12 +192,12 @@ export function FeatureTooltip({
   className?: string
 }) {
   const tooltipText = `${feature}: ${description}`
-  
+
   return (
-    <InfoTooltip 
+    <InfoTooltip
       text={tooltipText}
       position={position}
-      maxWidth=""250px""
+      maxWidth="250px"
       className={className}
     >
       {children}
@@ -206,8 +206,8 @@ export function FeatureTooltip({
 }
 
 // Specialized tooltip for help icons
-export function HelpTooltip({ 
-  text, 
+export function HelpTooltip({
+  text,
   position = 'top',
   className = ''
 }: {
@@ -216,7 +216,7 @@ export function HelpTooltip({
   className?: string
 }) {
   return (
-    <InfoTooltip 
+    <InfoTooltip
       text={text}
       position={position}
       maxWidth=""300px""
@@ -243,9 +243,9 @@ export function HelpTooltip({
 }
 
 // Specialized tooltip for status indicators
-export function StatusTooltip({ 
-  status, 
-  description, 
+export function StatusTooltip({
+  status,
+  description,
   color = '#6b7280',
   children,
   position = 'top',
@@ -259,9 +259,9 @@ export function StatusTooltip({
   className?: string
 }) {
   const tooltipText = `Status: ${status} - ${description}`
-  
+
   return (
-    <InfoTooltip 
+    <InfoTooltip
       text={tooltipText}
       position={position}
       maxWidth=""200px""
@@ -282,4 +282,4 @@ export function StatusTooltip({
       </div>
     </InfoTooltip>
   )
-} 
+}

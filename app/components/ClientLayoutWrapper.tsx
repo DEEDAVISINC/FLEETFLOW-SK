@@ -59,5 +59,9 @@ export default function ClientLayoutWrapper({
   console.log(
     `📄 PAGE ${pathname}: Using ClientLayout with authentication and navigation`
   );
-  return <ClientLayout>{children}</ClientLayout>;
+  return (
+    <MinimalProviders>
+      <ClientLayout>{children}</ClientLayout>
+    </MinimalProviders>
+  );
 }

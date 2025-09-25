@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { CarrierInfo, DriverInfo } from '../../lib/brokersnapshot-service';
-import Navigation from '../components/Navigation';
+import ProfessionalNavigation from '../components/Navigation';
 
 export default function CarrierVerificationPage() {
   const [savedCarriers, setSavedCarriers] = useState<CarrierInfo[]>([]);
@@ -75,7 +75,7 @@ export default function CarrierVerificationPage() {
 
   return (
     <>
-      <Navigation />
+      <ProfessionalNavigation />
       <div className='min-h-screen bg-gray-50 pt-16'>
         <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
           <div className='mb-8'>

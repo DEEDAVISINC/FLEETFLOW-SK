@@ -5,19 +5,24 @@
 
 'use client';
 
-import { useLanguage } from '../providers/LanguageProvider';
+// Language functionality temporarily disabled
+// import { useLanguage } from '../providers/LanguageProvider';
 
 export default function MultiLanguageDemo() {
-  const {
-    currentLanguage,
-    translate,
-    generateGreeting,
-    getFreightTerms,
-    formatCurrency,
-  } = useLanguage();
+  // Temporarily return null to prevent useLanguage errors
+  if (true) return null;
 
-  const demoTerms = getFreightTerms();
-  const demoPrice = 2500.75;
+  // const {
+  //   currentLanguage,
+  //   translate,
+  //   generateGreeting,
+  //   getFreightTerms,
+  //   formatCurrency,
+  // } = useLanguage();
+
+  // Disabled functionality
+  // const demoTerms = getFreightTerms();
+  // const demoPrice = 2500.75;
 
   return (
     <div className='rounded-xl border border-slate-700 bg-slate-800/50 p-6'>

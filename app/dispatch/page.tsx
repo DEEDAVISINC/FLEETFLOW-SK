@@ -1609,6 +1609,13 @@ export default function DispatchCentral() {
               color: 'linear-gradient(135deg, #ef4444, #dc2626)',
               icon: '🔔',
             },
+            {
+              label: 'Team Dispatchers',
+              value: dispatcher.activeLoads > 5 ? '8' : '5',
+              color: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+              icon: '👥',
+              onClick: () => window.open('/dispatcher-portal', '_blank'),
+            },
           ].map((stat, index) => (
             <div
               key={index}
@@ -1631,6 +1638,7 @@ export default function DispatchCentral() {
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
+              onClick={stat.onClick}
             >
               <div
                 style={{
@@ -1736,6 +1744,199 @@ export default function DispatchCentral() {
                 {tab.label}
               </button>
             ))}
+          </div>
+
+          {/* Dispatcher Team Portal Integration */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(20px)',
+              borderRadius: '15px',
+              padding: '20px',
+              marginBottom: '25px',
+              border: '2px solid rgba(99, 102, 241, 0.3)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '15px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  margin: 0,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+                }}
+              >
+                👥 Dispatcher Team Portal
+              </h3>
+              <button
+                onClick={() => window.open('/dispatcher-portal', '_blank')}
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 15px rgba(99, 102, 241, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    '0 2px 8px rgba(0, 0, 0, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                🚀 Open Team Portal
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '15px',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(99, 102, 241, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#6366f1',
+                    marginBottom: '5px',
+                  }}
+                >
+                  {dispatcher.activeLoads > 5 ? '8' : '5'}
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Active Dispatchers
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#10b981',
+                    marginBottom: '5px',
+                  }}
+                >
+                  {dispatcher.activeLoads}
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Active Loads Today
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#f59e0b',
+                    marginBottom: '5px',
+                  }}
+                >
+                  {dispatcher.efficiency}%
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Team Efficiency
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '15px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(239, 68, 68, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#ef4444',
+                    marginBottom: '5px',
+                  }}
+                >
+                  {dispatcher.avgResponseTime}
+                </div>
+                <div
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    fontSize: '14px',
+                  }}
+                >
+                  Avg Response Time
+                </div>
+              </div>
+            </div>
+
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginTop: '15px',
+                marginBottom: '0',
+                lineHeight: '1.4',
+              }}
+            >
+              Monitor dispatcher performance, track team assignments, and manage
+              dispatch operations directly from dispatch central.
+            </p>
           </div>
 
           {/* Tab Content */}
@@ -1904,6 +2105,322 @@ export default function DispatchCentral() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Agent Information Section */}
+              <div
+                style={{
+                  marginTop: '25px',
+                  marginBottom: '15px',
+                }}
+              >
+                <h3
+                  style={{
+                    color: 'white',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    marginBottom: '15px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  👥 Broker Agent Information
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '15px',
+                  }}
+                >
+                  {/* Active Agents */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '18px',
+                      border: '2px solid rgba(99, 102, 241, 0.8)',
+                      boxShadow: '0 6px 24px rgba(99, 102, 241, 0.2)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        fontSize: '24px',
+                      }}
+                    >
+                      👤
+                    </div>
+                    <h4
+                      style={{
+                        color: '#6366f1',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Active Agents
+                    </h4>
+                    <div
+                      style={{
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        color: '#6366f1',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      12
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#64748b',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Currently online & working
+                    </div>
+                  </div>
+
+                  {/* Agent Assignments Today */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '18px',
+                      border: '2px solid rgba(16, 185, 129, 0.8)',
+                      boxShadow: '0 6px 24px rgba(16, 185, 129, 0.2)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        fontSize: '24px',
+                      }}
+                    >
+                      📋
+                    </div>
+                    <h4
+                      style={{
+                        color: '#10b981',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Today's Assignments
+                    </h4>
+                    <div
+                      style={{
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        color: '#10b981',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      47
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#64748b',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Loads assigned today
+                    </div>
+                  </div>
+
+                  {/* Agent Performance */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '18px',
+                      border: '2px solid rgba(245, 158, 11, 0.8)',
+                      boxShadow: '0 6px 24px rgba(245, 158, 11, 0.2)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        fontSize: '24px',
+                      }}
+                    >
+                      📊
+                    </div>
+                    <h4
+                      style={{
+                        color: '#f59e0b',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Team Performance
+                    </h4>
+                    <div
+                      style={{
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        color: '#f59e0b',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      94%
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#64748b',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Average completion rate
+                    </div>
+                  </div>
+
+                  {/* Agent Response Time */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(20px)',
+                      borderRadius: '16px',
+                      padding: '18px',
+                      border: '2px solid rgba(239, 68, 68, 0.8)',
+                      boxShadow: '0 6px 24px rgba(239, 68, 68, 0.2)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        fontSize: '24px',
+                      }}
+                    >
+                      ⚡
+                    </div>
+                    <h4
+                      style={{
+                        color: '#ef4444',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      Avg Response Time
+                    </h4>
+                    <div
+                      style={{
+                        fontSize: '28px',
+                        fontWeight: 'bold',
+                        color: '#ef4444',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      2.3m
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#64748b',
+                        fontWeight: '500',
+                      }}
+                    >
+                      Minutes to respond
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Agent Actions */}
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '10px',
+                    marginTop: '15px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <button
+                    onClick={() =>
+                      window.open('/broker/agent-portal', '_blank')
+                    }
+                    style={{
+                      background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.transform = 'translateY(-1px)')
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.transform = 'translateY(0)')
+                    }
+                  >
+                    👥 Open Agent Portal
+                  </button>
+                  <button
+                    onClick={() => window.open('/broker/dashboard', '_blank')}
+                    style={{
+                      background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                    onMouseOver={(e) =>
+                      (e.currentTarget.style.transform = 'translateY(-1px)')
+                    }
+                    onMouseOut={(e) =>
+                      (e.currentTarget.style.transform = 'translateY(0)')
+                    }
+                  >
+                    📊 View Broker Dashboard
+                  </button>
+                </div>
               </div>
             </div>
           )}

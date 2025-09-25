@@ -10,6 +10,9 @@ import PhoneConnectionSetup from '../components/PhoneConnectionSetup';
 import SimplePhoneDialer from '../components/SimplePhoneDialer';
 import { getCurrentUser } from '../config/access';
 
+// Force dynamic rendering - no static generation
+export const dynamic = 'force-dynamic';
+
 export default function CallFlow() {
   const [user, setUser] = useState(null);
   const [lastRefresh, setLastRefresh] = useState(new Date());
