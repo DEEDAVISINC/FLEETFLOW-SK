@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import GlobalNotificationBell from './GlobalNotificationBell';
+import LanguageSwitcher from './LanguageSwitcher';
 import Logo from './Logo';
 
 // Professional Navigation Component with Nested Dropdowns
@@ -1233,6 +1234,11 @@ export default function ProfessionalNavigation() {
 
           {/* Notification Bell */}
           <GlobalNotificationBell department='admin' />
+
+          {/* Language Switcher */}
+          <div style={{ marginLeft: '10px' }}>
+            <LanguageSwitcher />
+          </div>
 
           {/* User Profile Dropdown */}
           <div style={{ position: 'relative', marginLeft: '10px' }}>

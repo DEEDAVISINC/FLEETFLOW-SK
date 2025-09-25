@@ -6,12 +6,11 @@ import React, { useEffect, useState } from 'react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import { LoadProvider } from '../contexts/LoadContext';
 import { ShipperProvider } from '../contexts/ShipperContext';
-import DailyBriefingModal from './DailyBriefingModal';
 import FleetFlowFooter from './FleetFlowFooter';
 import UnifiedFlowterAI from './FlowterButton';
 import MaintenanceMode from './MaintenanceMode';
-import MinimalNavigation from './MinimalNavigation';
 import MinimalProviders from './MinimalProviders';
+import ProfessionalNavigation from './Navigation';
 import NotificationBell from './NotificationBell';
 import PhoneSystemWidget from './PhoneSystemWidget';
 import { SimpleErrorBoundary } from './SimpleErrorBoundary';
@@ -24,55 +23,24 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   const [isHydrated, setIsHydrated] = useState(false);
-  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true); // Enable phone dialer by default
+  const [phoneDialerEnabled, setPhoneDialerEnabled] = useState(true);
   const [hasNewSuggestions, setHasNewSuggestions] = useState(false);
-  // const [briefingModalOpen, setBriefingModalOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
   const router = useRouter();
 
-  // Safely handle useSession - only use when SessionProvider is available
-  let session: any = null;
-  let status: string = 'unauthenticated';
-  try {
-    const sessionData = useSession();
-    session = sessionData.data;
-    status = sessionData.status;
-  } catch (error) {
-    // SessionProvider not available, use defaults
-    session = null;
-    status = 'unauthenticated';
-  }
-
-  // Get user data for permissions and functionality - but don't use until hydrated
-  const { user } = getCurrentUser();
-
-  // FORCE IMMEDIATE LANDING PAGE - KILL ALL LOADING STATES
-  if (pathname === '/') {
-    console.log('🚨 FORCE LANDING PAGE: Bypassing ALL authentication logic');
-    return (
-      <MaintenanceMode>
-        <SimpleErrorBoundary>
-          <div
-            style={{
-              minHeight: '100vh',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {children}
-            <FleetFlowFooter variant='transparent' />
-          </div>
-        </SimpleErrorBoundary>
-      </MaintenanceMode>
-    ); // NO SessionProvider, NO OrganizationProvider, just the landing page
-  }
+  // Always call useSession at top level (Rules of Hooks)
+  // This must be called unconditionally to follow React hooks rules
+  const sessionData = useSession();
+  const session = sessionData?.data || null;
+  const status = sessionData?.status || 'unauthenticated';
 
   // Define public pages that don't require authentication - ONLY these are free
   const publicPages = [
     '/', // Landing/Homepage
     '/go-with-the-flow', // Marketing content
     '/launchpad', // Marketing content
+    '/carrier-landing', // Public carrier landing page
     '/about', // Company info
     '/contact', // Contact info
     '/privacy-policy', // Legal
@@ -81,51 +49,34 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     '/auth/signup', // Registration page
   ];
 
-  // NO ADDITIONAL MARKETING BYPASSES - Everything else requires auth
-  const isMarketingPage = false; // All marketing content now requires subscription
-
-  if (isMarketingPage) {
-    console.log(
-      '🚨 MARKETING PAGE: Bypassing authentication logic for',
-      pathname
-    );
-    return (
-      <MaintenanceMode>
-        <SimpleErrorBoundary>
-          <div
-            style={{
-              minHeight: '100vh',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {children}
-            <FleetFlowFooter variant='transparent' />
-          </div>
-        </SimpleErrorBoundary>
-      </MaintenanceMode>
-    );
-  }
-
   const isPublicPage = pathname
     ? publicPages.includes(pathname) ||
       publicPages.some((page) => pathname.startsWith(page))
     : false;
 
-  // PROPER AUTHENTICATION - Protect app pages, allow public marketing pages
-  useEffect(() => {
-    if (isPublicPage) {
-      console.log(`✅ PUBLIC PAGE: ${pathname} - No authentication required`);
-    } else {
-      console.log(`🔒 PROTECTED PAGE: ${pathname} - Authentication required`);
-    }
-  }, [pathname, isPublicPage]);
-
-  // Track hydration to prevent mismatches
+  // Initialize client-side data after hydration to prevent SSR mismatch
   useEffect(() => {
     setIsHydrated(true);
+    // Only get user data after hydration
+    try {
+      const { user: userData } = getCurrentUser();
+      setUser(userData);
+    } catch (error) {
+      console.error('Error getting user data after hydration:', error);
+      setUser(null);
+    }
   }, []);
+
+  // PROPER AUTHENTICATION - Protect app pages, allow public marketing pages
+  useEffect(() => {
+    if (isHydrated) {
+      if (isPublicPage) {
+        console.log(`✅ PUBLIC PAGE: ${pathname} - No authentication required`);
+      } else {
+        console.log(`🔒 PROTECTED PAGE: ${pathname} - Authentication required`);
+      }
+    }
+  }, [pathname, isPublicPage, isHydrated]);
 
   // AUTHENTICATION CHECK - Redirect to signin if not authenticated and on protected page
   useEffect(() => {
@@ -138,24 +89,39 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     }
   }, [status, isPublicPage, pathname, router, isHydrated]);
 
-  // ✅ Initialize Platform AI on app startup
+  // ✅ Initialize FleetFlow AI system during layout mount (only after hydration)
   useEffect(() => {
-    console.info('🚀 FleetFlow app starting - initializing Platform AI...');
-    try {
-      initializeFleetFlowAI();
-      console.info('✅ Platform AI initialized successfully');
-    } catch (error) {
-      console.error('❌ Platform AI initialization failed:', error);
-      console.warn('⚠️ FleetFlow will continue with original AI behavior');
+    if (isHydrated) {
+      try {
+        initializeFleetFlowAI();
+        console.log('🤖 AI System initialized in ClientLayout');
+      } catch (error) {
+        console.error('❌ AI System initialization failed:', error);
+      }
     }
+  }, [isHydrated]);
 
-    // Initialize test notification generator in development
-    if (process.env.NODE_ENV === 'development') {
-      console.info(
-        '🧪 Test notification generator initialized. Use testNotifications.help() in console.'
-      );
+  // Handle phone system integration
+  useEffect(() => {
+    if (isHydrated && pathname && !pathname.startsWith('/auth/')) {
+      console.log('📞 Phone system integration ready');
+      setPhoneDialerEnabled(true);
     }
-  }, []);
+  }, [pathname, isHydrated]);
+
+  // AI suggestions monitoring
+  useEffect(() => {
+    if (isHydrated) {
+      const checkForSuggestions = () => {
+        // Mock suggestion checking logic
+        const hasNewSuggestions = Math.random() > 0.8;
+        setHasNewSuggestions(hasNewSuggestions);
+      };
+
+      const interval = setInterval(checkForSuggestions, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isHydrated]);
 
   // Generate sample notifications for the current user
   useEffect(() => {
@@ -198,11 +164,6 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     generateSampleData();
   }, [user?.id, isHydrated]); // Run when user is available and hydrated
 
-  // Show Flowter AI everywhere except university pages - LIKE IT WAS BEFORE
-  const shouldShowFlowter = isHydrated
-    ? !pathname?.includes('/university') // Simple: show everywhere except university
-    : false;
-
   // Check if user has phone dialer enabled (from user profile settings)
   useEffect(() => {
     if (!isHydrated || !user?.id) return; // Wait for hydration and user
@@ -212,6 +173,119 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       localStorage.getItem(`fleetflow-phone-dialer-${user.id}`) === 'disabled';
     setPhoneDialerEnabled(!isExplicitlyDisabled);
   }, [user?.id, isHydrated]);
+
+  // Show loading state during hydration to prevent SSR mismatch
+  if (!isHydrated) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            padding: '40px',
+            borderRadius: '20px',
+            textAlign: 'center',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <div
+            style={{
+              width: '60px',
+              height: '60px',
+              border: '4px solid rgba(255, 255, 255, 0.3)',
+              borderTop: '4px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 20px',
+            }}
+          ></div>
+          <p
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: '600',
+            }}
+          >
+            Loading FleetFlow...
+          </p>
+        </div>
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // FORCE IMMEDIATE LANDING PAGE - KILL ALL LOADING STATES
+  if (pathname === '/') {
+    console.log('🚨 FORCE LANDING PAGE: Bypassing ALL authentication logic');
+    return (
+      <MinimalProviders>
+        <MaintenanceMode>
+          <SimpleErrorBoundary>
+            <div
+              style={{
+                minHeight: '100vh',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              {children}
+              <FleetFlowFooter variant='transparent' />
+            </div>
+          </SimpleErrorBoundary>
+        </MaintenanceMode>
+      </MinimalProviders>
+    ); // Uses MinimalProviders which includes LanguageProvider
+  }
+
+  // NO ADDITIONAL MARKETING BYPASSES - Everything else requires auth
+  const isMarketingPage = false; // All marketing content now requires subscription
+
+  if (isMarketingPage) {
+    console.log(
+      '🚨 MARKETING PAGE: Bypassing authentication logic for',
+      pathname
+    );
+    return (
+      <MaintenanceMode>
+        <SimpleErrorBoundary>
+          <div
+            style={{
+              minHeight: '100vh',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {children}
+            <FleetFlowFooter variant='transparent' />
+          </div>
+        </SimpleErrorBoundary>
+      </MaintenanceMode>
+    );
+  }
+
+  // Show Flowter AI everywhere except university pages - LIKE IT WAS BEFORE
+  const shouldShowFlowter = isHydrated
+    ? !pathname?.includes('/university') // Simple: show everywhere except university
+    : false;
 
   // Compute all conditional logic safely - only after hydration
   const isOperationsPage = isHydrated
@@ -398,16 +472,18 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
         <SimpleErrorBoundary>
           <ShipperProvider>
             <LoadProvider>
-              {(!isPublicPage || isLocalhostAccess) && (
-                <MinimalNavigation />
-              )}
+              {(!isPublicPage || isLocalhostAccess) &&
+                pathname !== '/carrier-landing' && <ProfessionalNavigation />}
               <main
                 style={{
                   paddingTop: isHydrated
-                    ? isPublicPage && !isLocalhostAccess
+                    ? (isPublicPage && !isLocalhostAccess) ||
+                      pathname === '/carrier-landing'
                       ? '0px'
                       : '70px'
-                    : '70px', // Default to 70px for server render consistency
+                    : pathname === '/carrier-landing'
+                      ? '0px'
+                      : '70px', // Default to 70px for server render consistency, 0px for carrier-landing
                   minHeight: '100vh',
                   background:
                     'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -451,16 +527,18 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 !pathname?.includes('/auth/') &&
                 !pathname?.includes('/launchpad') && (
                   // <NotificationBell userId={user.id} position='bottom-right' />
-                  <div style={{
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    background: '#3b82f6',
-                    color: 'white',
-                    padding: '10px',
-                    borderRadius: '50%',
-                    fontSize: '12px'
-                  }}>
+                  <div
+                    style={{
+                      position: 'fixed',
+                      bottom: '20px',
+                      right: '20px',
+                      background: '#3b82f6',
+                      color: 'white',
+                      padding: '10px',
+                      borderRadius: '50%',
+                      fontSize: '12px',
+                    }}
+                  >
                     🔔
                   </div>
                 )}

@@ -45,27 +45,45 @@ interface LanguageProviderProps {
 export function LanguageProvider({ children }: LanguageProviderProps) {
   const [currentLanguage, setCurrentLanguageState] =
     useState<SupportedLanguage>('en');
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load saved language preference on mount
+  // Load saved language preference on mount - with SSR safety
   useEffect(() => {
-    const savedLanguage = localStorage.getItem(
-      'fleetflow-language'
-    ) as SupportedLanguage;
-    if (
-      savedLanguage &&
-      multiLanguageService
-        .getSupportedLanguages()
-        .find((l) => l.code === savedLanguage)
-    ) {
-      setCurrentLanguageState(savedLanguage);
-      multiLanguageService.setLanguage(savedLanguage);
+    setIsHydrated(true);
+
+    // Only access localStorage after hydration to prevent SSR mismatch
+    try {
+      const savedLanguage = localStorage.getItem(
+        'fleetflow-language'
+      ) as SupportedLanguage;
+      if (
+        savedLanguage &&
+        multiLanguageService
+          .getSupportedLanguages()
+          .find((l) => l.code === savedLanguage)
+      ) {
+        setCurrentLanguageState(savedLanguage);
+        multiLanguageService.setLanguage(savedLanguage);
+      }
+    } catch (error) {
+      console.warn('Failed to load saved language preference:', error);
+      // Fallback to default language
+      setCurrentLanguageState('en');
     }
   }, []);
 
   const setLanguage = (language: SupportedLanguage) => {
     setCurrentLanguageState(language);
     multiLanguageService.setLanguage(language);
-    localStorage.setItem('fleetflow-language', language);
+
+    // Only access localStorage if it's available (client-side)
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('fleetflow-language', language);
+      } catch (error) {
+        console.warn('Failed to save language preference:', error);
+      }
+    }
   };
 
   const translate = (key: string, variables?: Record<string, string>) => {
@@ -111,6 +129,19 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 export function useLanguage() {
   const context = useContext(LanguageContext);
   if (context === undefined) {
+    // Check if we're in a server environment or during hydration
+    if (typeof window === 'undefined') {
+      console.warn('useLanguage called during SSR - returning default values');
+      return {
+        currentLanguage: 'en' as SupportedLanguage,
+        setLanguage: () => {},
+        translate: (key: string) => key,
+        getSupportedLanguages: () => [],
+        generateGreeting: (staffName: string) => `Hello, ${staffName}`,
+        getFreightTerms: () => ({}),
+        formatCurrency: (amount: number) => `$${amount.toFixed(2)}`,
+      };
+    }
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
