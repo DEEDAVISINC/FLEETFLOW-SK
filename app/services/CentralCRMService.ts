@@ -117,11 +117,13 @@ class CentralCRMService {
   constructor() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
+
     if (supabaseUrl && supabaseKey) {
       this.supabase = createClient(supabaseUrl, supabaseKey);
     } else {
-      console.warn('⚠️ CentralCRMService: Supabase credentials not configured, using mock data');
+      console.warn(
+        '⚠️ CentralCRMService: Supabase credentials not configured, using empty data'
+      );
       this.supabase = null;
     }
   }
@@ -131,73 +133,8 @@ class CentralCRMService {
   // ============================================================================
 
   async getAllUsers(): Promise<UserIdentifier[]> {
-    // Demo data - replace with actual database call
-    return [
-      {
-        userId: 'user_001',
-        userCode: 'JR-DC-2024015',
-        department: 'DC',
-        role: 'dispatcher',
-        firstName: 'John',
-        lastName: 'Rodriguez',
-        email: 'john.rodriguez@fleetflowapp.com',
-        phone: '+1 (555) 123-4567',
-        extension: '1001',
-        isOnline: true,
-        lastActive: new Date().toISOString(),
-      },
-      {
-        userId: 'user_002',
-        userCode: 'MS-BB-2024032',
-        department: 'BB',
-        role: 'broker',
-        firstName: 'Maria',
-        lastName: 'Santos',
-        email: 'maria.santos@fleetflowapp.com',
-        phone: '+1 (555) 234-5678',
-        extension: '1002',
-        isOnline: true,
-        lastActive: new Date().toISOString(),
-      },
-      {
-        userId: 'user_003',
-        userCode: 'DT-DM-2024045',
-        department: 'DM',
-        role: 'driver',
-        firstName: 'David',
-        lastName: 'Thompson',
-        email: 'david.thompson@fleetflowapp.com',
-        phone: '+1 (555) 345-6789',
-        isOnline: false,
-        lastActive: new Date(Date.now() - 3600000).toISOString(),
-      },
-      {
-        userId: 'user_004',
-        userCode: 'SM-MGR-2023005',
-        department: 'MGR',
-        role: 'manager',
-        firstName: 'Sarah',
-        lastName: 'Mitchell',
-        email: 'sarah.mitchell@fleetflowapp.com',
-        phone: '+1 (555) 456-7890',
-        extension: '1004',
-        isOnline: true,
-        lastActive: new Date().toISOString(),
-      },
-      {
-        userId: 'user_005',
-        userCode: 'AJ-CS-2024067',
-        department: 'CS',
-        role: 'customer_service',
-        firstName: 'Alex',
-        lastName: 'Johnson',
-        email: 'alex.johnson@fleetflowapp.com',
-        phone: '+1 (555) 567-8901',
-        extension: '1005',
-        isOnline: true,
-        lastActive: new Date().toISOString(),
-      },
-    ];
+    // Mock data removed - requires real database connection for user data
+    return [];
   }
 
   async getUserByCode(userCode: string): Promise<UserIdentifier | null> {
@@ -243,35 +180,8 @@ class CentralCRMService {
   async getInteractionsByContact(
     contactId: string
   ): Promise<CentralInteraction[]> {
-    const users = await this.getAllUsers();
-    const broker = users.find((u) => u.department === 'BB');
-
-    if (!broker) return [];
-
-    return [
-      {
-        id: 'INT_001',
-        interactionType: 'call',
-        contactId: contactId,
-        contactName: 'ABC Logistics',
-        contactCompany: 'ABC Logistics Inc.',
-        contactPhone: '+1 (555) 123-4567',
-        initiatedBy: broker,
-        subject: 'Rate negotiation for Q1 2025',
-        content:
-          'Discussed freight rates for upcoming quarter. Customer interested in volume discounts.',
-        priority: 'high',
-        status: 'completed',
-        callType: 'outbound',
-        callDuration: '12:45',
-        callStatus: 'completed',
-        requiresFollowUp: true,
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        updatedAt: new Date(Date.now() - 3600000).toISOString(),
-        tags: ['negotiation', 'rates', 'follow-up'],
-        attachments: [],
-      },
-    ];
+    // Mock data removed - requires real database connection for contact interaction data
+    return [];
   }
 
   // ============================================================================
@@ -492,41 +402,8 @@ class CentralCRMService {
   }
 
   private async getAllRecentInteractions(): Promise<CentralInteraction[]> {
-    const users = await this.getAllUsers();
-    const mockInteractions: CentralInteraction[] = [];
-
-    for (let i = 0; i < 5; i++) {
-      const randomUser = users[Math.floor(Math.random() * users.length)];
-      mockInteractions.push({
-        id: `INT_${i + 100}`,
-        interactionType: ['call', 'email', 'note', 'transfer'][
-          Math.floor(Math.random() * 4)
-        ] as any,
-        contactId: `CONTACT_${i + 100}`,
-        contactName: `Customer ${i + 1}`,
-        contactCompany: `Company ${i + 1} LLC`,
-        initiatedBy: randomUser,
-        subject: `Activity ${i + 1}`,
-        content: `Sample interaction content ${i + 1}`,
-        priority: ['low', 'medium', 'high'][
-          Math.floor(Math.random() * 3)
-        ] as any,
-        status: ['completed', 'pending', 'in_progress'][
-          Math.floor(Math.random() * 3)
-        ] as any,
-        requiresFollowUp: Math.random() > 0.5,
-        createdAt: new Date(
-          Date.now() - Math.random() * 86400000
-        ).toISOString(),
-        updatedAt: new Date(
-          Date.now() - Math.random() * 86400000
-        ).toISOString(),
-        tags: [`tag${i}`, 'sample'],
-        attachments: [],
-      });
-    }
-
-    return mockInteractions;
+    // Mock data removed - requires real database connection for interaction data
+    return [];
   }
 
   // ============================================================================

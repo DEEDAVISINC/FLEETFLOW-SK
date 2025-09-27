@@ -956,8 +956,9 @@ export default function FreightBrainDashboard({
                   gap: '16px',
                 }}
               >
-                {Object.entries(marketIntel).map(
-                  ([lane, intel]: [string, any]) => (
+                {Object.entries(marketIntel)
+                  .filter(([lane, intel]) => intel !== null)
+                  .map(([lane, intel]: [string, any]) => (
                     <div
                       key={lane}
                       style={{
@@ -1030,8 +1031,7 @@ export default function FreightBrainDashboard({
                         </p>
                       </div>
                     </div>
-                  )
-                )}
+                  ))}
               </div>
             </div>
           )}

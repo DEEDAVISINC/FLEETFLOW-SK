@@ -108,170 +108,24 @@ export default function CRMDashboard() {
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [currentUser, setCurrentUser] = useState<UserIdentifier | null>(null);
 
-  // Mock data for development (in production, this would come from API)
+  // Mock data removed - CRM dashboard ready for real data
   const [dashboardMetrics, setDashboardMetrics] = useState<DashboardMetrics>({
-    total_contacts: 1247,
-    total_opportunities: 89,
-    total_activities: 2456,
-    pipeline_value: 2850000,
-    won_opportunities: 34,
-    conversion_rate: 38.2,
-    recent_activities: [
-      {
-        id: '1',
-        activity_type: 'call',
-        subject: 'Follow-up call with Walmart Logistics',
-        activity_date: new Date().toISOString(),
-        status: 'completed',
-        contact_name: 'Sarah Johnson',
-        company_name: 'Walmart Distribution',
-        priority: 'high',
-      },
-      {
-        id: '2',
-        activity_type: 'quote',
-        subject: 'Generated quote for Atlanta-Miami route',
-        activity_date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        status: 'completed',
-        contact_name: 'Mike Rodriguez',
-        company_name: 'Home Depot Supply Chain',
-        priority: 'urgent',
-      },
-      {
-        id: '3',
-        activity_type: 'email',
-        subject: 'Contract renewal discussion',
-        activity_date: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-        status: 'completed',
-        contact_name: 'Jennifer Lee',
-        company_name: 'Amazon Freight',
-        priority: 'normal',
-      },
-    ],
-    top_opportunities: [
-      {
-        id: '1',
-        opportunity_name: 'Q1 2025 Contract Renewal - Walmart',
-        stage: 'negotiation',
-        value: 850000,
-        probability: 85,
-        expected_close_date: new Date(
-          Date.now() + 15 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        contact_name: 'Sarah Johnson',
-        company_name: 'Walmart Distribution',
-        status: 'open',
-        origin_city: 'Atlanta',
-        destination_city: 'Multiple',
-      },
-      {
-        id: '2',
-        opportunity_name: 'Home Depot Southeast Expansion',
-        stage: 'proposal',
-        value: 450000,
-        probability: 65,
-        expected_close_date: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        contact_name: 'Mike Rodriguez',
-        company_name: 'Home Depot Supply Chain',
-        status: 'open',
-        origin_city: 'Jacksonville',
-        destination_city: 'Miami',
-      },
-    ],
-    lead_sources: [
-      { source: 'referrals', count: 45 },
-      { source: 'website', count: 38 },
-      { source: 'cold_outreach', count: 29 },
-      { source: 'trade_shows', count: 22 },
-    ],
-    contact_types: [
-      { type: 'shipper', count: 89 },
-      { type: 'carrier', count: 76 },
-      { type: 'driver', count: 234 },
-      { type: 'broker', count: 45 },
-    ],
-    monthly_revenue: [
-      { month: '2024-08', revenue: 185000 },
-      { month: '2024-09', revenue: 225000 },
-      { month: '2024-10', revenue: 198000 },
-      { month: '2024-11', revenue: 267000 },
-      { month: '2024-12', revenue: 312000 },
-    ],
+    total_contacts: 0,
+    total_opportunities: 0,
+    total_activities: 0,
+    pipeline_value: 0,
+    won_opportunities: 0,
+    conversion_rate: 0,
+    recent_activities: [],
+    top_opportunities: [],
+    lead_sources: [],
+    contact_types: [],
+    monthly_revenue: [],
   });
 
-  const [contacts, setContacts] = useState<Contact[]>([
-    {
-      id: '1',
-      first_name: 'Sarah',
-      last_name: 'Johnson',
-      email: 'sarah.johnson@walmart.com',
-      phone: '(555) 123-4567',
-      contact_type: 'shipper',
-      company_name: 'Walmart Distribution',
-      status: 'active',
-      lead_score: 92,
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      first_name: 'Mike',
-      last_name: 'Rodriguez',
-      email: 'mike.r@homedepot.com',
-      phone: '(555) 234-5678',
-      contact_type: 'shipper',
-      company_name: 'Home Depot Supply Chain',
-      status: 'active',
-      lead_score: 78,
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      first_name: 'Jennifer',
-      last_name: 'Lee',
-      email: 'jennifer.lee@amazon.com',
-      phone: '(555) 345-6789',
-      contact_type: 'shipper',
-      company_name: 'Amazon Freight',
-      status: 'prospect',
-      lead_score: 85,
-      created_at: new Date().toISOString(),
-    },
-  ]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
-  const [opportunities, setOpportunities] = useState<Opportunity[]>([
-    {
-      id: '1',
-      opportunity_name: 'Q1 2025 Contract Renewal - Walmart',
-      stage: 'negotiation',
-      value: 850000,
-      probability: 85,
-      expected_close_date: new Date(
-        Date.now() + 15 * 24 * 60 * 60 * 1000
-      ).toISOString(),
-      contact_name: 'Sarah Johnson',
-      company_name: 'Walmart Distribution',
-      status: 'open',
-      origin_city: 'Atlanta',
-      destination_city: 'Multiple',
-    },
-    {
-      id: '2',
-      opportunity_name: 'Home Depot Southeast Expansion',
-      stage: 'proposal',
-      value: 450000,
-      probability: 65,
-      expected_close_date: new Date(
-        Date.now() + 30 * 24 * 60 * 60 * 1000
-      ).toISOString(),
-      contact_name: 'Mike Rodriguez',
-      company_name: 'Home Depot Supply Chain',
-      status: 'open',
-      origin_city: 'Jacksonville',
-      destination_city: 'Miami',
-    },
-  ]);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
 
   const [activities, setActivities] = useState<Activity[]>(
     dashboardMetrics.recent_activities
@@ -3280,7 +3134,7 @@ export default function CRMDashboard() {
                         boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                         animation: 'pulse 2s infinite',
                       }}
-                     />
+                    />
                     <span
                       style={{
                         color: 'rgba(255, 255, 255, 0.9)',

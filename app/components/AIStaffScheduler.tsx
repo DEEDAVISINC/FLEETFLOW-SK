@@ -12,7 +12,12 @@ interface AIStaffMember {
     | 'operations'
     | 'support'
     | 'lead_generation'
-    | 'analytics';
+    | 'analytics'
+    | 'procurement'
+    | 'government_contracting'
+    | 'executive_operations'
+    | 'front_office'
+    | 'executive_leadership';
   avatar: string;
   status: 'active' | 'busy' | 'idle' | 'scheduled_break' | 'off_duty';
   currentTask: string;
@@ -52,6 +57,11 @@ interface ScheduleTemplate {
     leadGen: number;
     support: number;
     analytics: number;
+    procurement: number;
+    governmentContracting: number;
+    executiveOperations: number;
+    frontOffice: number;
+    executiveLeadership: number;
   };
 }
 

@@ -95,6 +95,18 @@ export class TenantPhoneService {
         voiceEnabled: true,
         provider: 'both',
       },
+      {
+        tenantId: 'depointe-fleetflow',
+        tenantName: 'DEPOINTE AI Company',
+        primaryPhone: '+1-833-386-3509', // Production Twilio number
+        backupPhone: '+1-888-DEPOINTE',
+        twilioSubAccount: 'AC_depointe',
+        freeswitchExtension: '2000',
+        callerIdName: 'DEPOINTE AI',
+        smsEnabled: true,
+        voiceEnabled: true,
+        provider: 'both',
+      },
     ];
 
     demoConfigs.forEach((config) => {
@@ -106,22 +118,57 @@ export class TenantPhoneService {
    * Get current user's tenant phone configuration
    */
   public getCurrentTenantPhoneConfig(): TenantPhoneConfig | null {
-    const { user } = getCurrentUser();
+    try {
+      // For DEPOINTE dashboard users, always return the DEPOINTE configuration
+      // Check both client-side and server-side path detection
+      let isDepointeDashboard = false;
 
-    // Map user to tenant ID based on company or role
-    let tenantId = 'fleetflow-demo'; // Default
+      if (typeof window !== 'undefined') {
+        // Client-side path detection
+        isDepointeDashboard =
+          window.location.pathname.includes('depointe-dashboard');
+      } else {
+        // Server-side: Default to DEPOINTE configuration since it's the primary dashboard
+        console.info(
+          '📞 TenantPhoneService: Server-side call, defaulting to DEPOINTE configuration'
+        );
+        isDepointeDashboard = true;
+      }
 
-    if (user.companyName) {
-      // Map company names to tenant IDs
-      const companyToTenantMap: Record<string, string> = {
-        'Global Freight Solutions': 'global-freight-solutions',
-        'Swift Freight': 'swift-freight',
-        'Express Cargo': 'express-cargo',
-      };
-      tenantId = companyToTenantMap[user.companyName] || 'fleetflow-demo';
+      if (isDepointeDashboard) {
+        console.info(
+          '📞 TenantPhoneService: Using DEPOINTE configuration for dashboard'
+        );
+        return this.tenantPhones.get('depointe-fleetflow') || null;
+      }
+
+      // Only attempt to get user info on client-side
+      if (typeof window !== 'undefined') {
+        const { user } = getCurrentUser();
+
+        // Map user to tenant ID based on company or role
+        let tenantId = 'fleetflow-demo'; // Default
+
+        if (user.companyName) {
+          // Map company names to tenant IDs
+          const companyToTenantMap: Record<string, string> = {
+            'Global Freight Solutions': 'global-freight-solutions',
+            'Swift Freight': 'swift-freight',
+            'Express Cargo': 'express-cargo',
+          };
+          tenantId = companyToTenantMap[user.companyName] || 'fleetflow-demo';
+        }
+
+        return this.tenantPhones.get(tenantId) || null;
+      }
+
+      // Server-side fallback to DEPOINTE
+      return this.tenantPhones.get('depointe-fleetflow') || null;
+    } catch (error) {
+      console.error('❌ Error getting tenant phone config:', error);
+      // Fallback to DEPOINTE configuration
+      return this.tenantPhones.get('depointe-fleetflow') || null;
     }
-
-    return this.tenantPhones.get(tenantId) || null;
   }
 
   /**
@@ -129,6 +176,16 @@ export class TenantPhoneService {
    */
   public getTenantPhoneConfig(tenantId: string): TenantPhoneConfig | null {
     return this.tenantPhones.get(tenantId) || null;
+  }
+
+  /**
+   * Get DEPOINTE AI Company phone configuration directly
+   */
+  public getDepointePhoneConfig(): TenantPhoneConfig | null {
+    console.info(
+      '📞 TenantPhoneService: Getting DEPOINTE phone configuration directly'
+    );
+    return this.tenantPhones.get('depointe-fleetflow') || null;
   }
 
   /**
@@ -279,28 +336,3 @@ export class TenantPhoneService {
 
 // Export singleton instance
 export const tenantPhoneService = TenantPhoneService.getInstance();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

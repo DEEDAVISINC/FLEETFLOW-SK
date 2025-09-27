@@ -26,7 +26,14 @@ interface CampaignTemplate {
     | 'follow_up'
     | 'nurture'
     | 'conversion'
-    | 'retention';
+    | 'retention'
+    | 'procurement'
+    | 'government_contracting'
+    | 'air_freight'
+    | 'maritime_freight'
+    | 'specialty_equipment'
+    | 'carrier_specialization'
+    | 'fundraising';
   targetAudience: string;
   expectedResults: {
     leads: number;
@@ -776,7 +783,7 @@ export default function CampaignTemplates() {
       name: 'Carrier/Owner Operator Acquisition Campaign',
       description:
         'Proactively recruit carriers and owner operators to build dispatch network featuring GO WITH THE FLOW instant load matching and MARKETPLACE BIDDING competitive opportunities - earn 6-10% load fees',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Independent carriers, owner operators, and small trucking companies seeking dispatch partnerships',
       expectedResults: {
@@ -850,7 +857,7 @@ export default function CampaignTemplates() {
       name: 'Flatbed Carrier Network Expansion',
       description:
         'Target flatbed carriers specializing in construction materials, machinery, and oversized equipment - HIGH MARGIN OPPORTUNITY featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with premium rates (12-15% load fees)',
-      category: 'lead_generation',
+      category: 'specialty_equipment',
       targetAudience:
         'Flatbed carriers, heavy haul specialists, and equipment transporters with oversized load experience',
       expectedResults: {
@@ -911,7 +918,7 @@ export default function CampaignTemplates() {
       name: 'Refrigerated Carrier Acquisition',
       description:
         'Target temperature-controlled carriers for food, pharmaceuticals, and perishable goods - CONSISTENT HIGH DEMAND featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with steady revenue streams',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Reefer carriers, temperature-controlled specialists, and cold chain logistics providers',
       expectedResults: {
@@ -971,7 +978,7 @@ export default function CampaignTemplates() {
       name: 'Dry Van Carrier Fleet Growth',
       description:
         'Target dry van carriers for general freight and LTL shipments - HIGH VOLUME OPPORTUNITY featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with consistent load availability',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Dry van carriers, general freight specialists, and LTL transportation providers',
       expectedResults: {
@@ -1092,7 +1099,7 @@ export default function CampaignTemplates() {
       name: 'Regional Carrier Partnership Program',
       description:
         'Target regional carriers for local and short-haul opportunities - STEADY RELIABLE REVENUE featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing within defined geographic areas',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Regional carriers, local trucking companies, and short-haul specialists',
       expectedResults: {
@@ -1219,7 +1226,7 @@ export default function CampaignTemplates() {
       name: 'Cement & Bulk Carrier Acquisition',
       description:
         'Target cement mixers and bulk carriers for construction materials - ULTRA-PREMIUM RATES (18-25% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for time-critical construction projects',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Cement carriers, bulk material haulers, and ready-mix concrete transportation specialists',
       expectedResults: {
@@ -1284,7 +1291,7 @@ export default function CampaignTemplates() {
       name: 'Oversized Heavy Haul Carrier Network',
       description:
         'Target heavy haul carriers for oversized and overweight equipment - MAXIMUM PREMIUM RATES (20-30% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with pilot car coordination',
-      category: 'lead_generation',
+      category: 'specialty_equipment',
       targetAudience:
         'Heavy haul carriers, oversized load specialists, and industrial equipment transporters with proper permits and pilot car services',
       expectedResults: {
@@ -1349,7 +1356,7 @@ export default function CampaignTemplates() {
       name: 'Lowboy Trailer Carrier Network',
       description:
         'Target lowboy trailer carriers for heavy machinery and equipment transport - PREMIUM RATES (16-22% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing for construction equipment',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Lowboy trailer carriers, heavy equipment haulers, and machinery transportation specialists',
       expectedResults: {
@@ -1414,7 +1421,7 @@ export default function CampaignTemplates() {
       name: 'Tanker & Chemical Carrier Acquisition',
       description:
         'Target tanker carriers for liquids, chemicals, and hazardous materials - HIGH COMPLIANCE PREMIUM RATES (15-20% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with HazMat expertise',
-      category: 'lead_generation',
+      category: 'carrier_specialization',
       targetAudience:
         'Tanker carriers, chemical haulers, and hazardous materials transportation specialists with proper certifications',
       expectedResults: {
@@ -2728,7 +2735,7 @@ export default function CampaignTemplates() {
       name: 'Oversized Heavy Haul Load Acquisition',
       description:
         'Target industrial manufacturers, construction equipment dealers, and machinery movers needing oversized transport services',
-      category: 'lead_generation',
+      category: 'specialty_equipment',
       targetAudience:
         'Heavy equipment manufacturers, construction machinery dealers, industrial plant builders',
       expectedResults: {
@@ -3089,7 +3096,7 @@ export default function CampaignTemplates() {
       name: 'Air Freight Express Network Blitz - PREMIUM SPEED CAMPAIGN',
       description:
         'Target time-critical shippers and high-value cargo companies with air freight solutions - PREMIUM RATES (18-25% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with airport partnerships',
-      category: 'lead_generation',
+      category: 'air_freight',
       targetAudience:
         'E-commerce companies, electronics manufacturers, pharmaceuticals, perishables, and time-sensitive cargo shippers',
       expectedResults: {
@@ -3165,7 +3172,7 @@ export default function CampaignTemplates() {
       name: 'Maritime Container Network Blitz - GLOBAL TRADE CAMPAIGN',
       description:
         'Target international shippers and importers with ocean freight solutions - CONTAINER RATES (12-18% load fees) featuring GO WITH THE FLOW instant matching and MARKETPLACE BIDDING competitive pricing with port partnerships',
-      category: 'lead_generation',
+      category: 'maritime_freight',
       targetAudience:
         'International manufacturers, importers, retailers, and global supply chain companies',
       expectedResults: {
@@ -3979,12 +3986,12 @@ export default function CampaignTemplates() {
     // 🏥 HEALTHCARE & MEDICAL FREIGHT CAMPAIGNS
     {
       id: 'critical_care_courier_network',
-      name: 'Critical Care Courier Network',
+      name: 'WOSB Critical Care Courier Network - CERTIFIED MEDICAL LOGISTICS',
       description:
-        'Specialized network for medical supplies, pharmaceuticals, and organs with temperature-controlled transport, real-time GPS tracking, emergency response protocols, and FDA/CDC compliance - Life-critical logistics excellence',
+        'PREMIUM WOSB-CERTIFIED specialized network for medical supplies, pharmaceuticals, and organs with temperature-controlled transport, real-time GPS tracking, emergency response protocols, and FDA/CDC compliance. COMPETITIVE ADVANTAGE: Women-Owned Small Business certification meets healthcare system diversity requirements, appeals to hospitals with supplier diversity mandates, and provides preference for medical institution partnerships. Life-critical logistics excellence with certified diversity credentials.',
       category: 'lead_generation',
       targetAudience:
-        'Hospitals, pharmaceutical companies, organ procurement organizations, and medical suppliers requiring specialized temperature-controlled and time-critical transport services',
+        'ENHANCED TARGET: Hospitals with diversity supplier programs, pharmaceutical companies meeting ESG requirements, organ procurement organizations, medical suppliers with supplier diversity mandates, healthcare procurement officers focused on certified diverse suppliers, and medical institutions requiring WOSB-certified temperature-controlled and time-critical transport services',
       expectedResults: {
         leads: 95, // Conservative: Based on healthcare logistics demand
         conversions: 29, // Realistic: 30% conversion for specialized healthcare services
@@ -4171,12 +4178,12 @@ export default function CampaignTemplates() {
     // 🚨 EMERGENCY & CRISIS RESPONSE CAMPAIGNS
     {
       id: 'disaster_recovery_logistics',
-      name: 'Disaster Recovery Logistics',
+      name: 'WOSB Disaster Recovery Logistics - CERTIFIED EMERGENCY RESPONSE',
       description:
-        'Rapid response teams for natural disasters with emergency supply chain coordination, government and NGO partnerships, and specialized transportation for FEMA-compliant temporary housing from approved manufacturers - Critical infrastructure logistics excellence',
+        'PREMIUM WOSB-CERTIFIED rapid response teams for natural disasters with emergency supply chain coordination, government and NGO partnerships, and specialized transportation for FEMA-compliant temporary housing. COMPETITIVE ADVANTAGE: Women-Owned Small Business certification provides priority consideration for FEMA contracts, diversity supplier requirements for NGOs, and reduced competition in government emergency response contracting. Critical infrastructure logistics excellence with certified diversity credentials.',
       category: 'lead_generation',
       targetAudience:
-        'Government agencies (FEMA, state/local emergency management), NGOs, disaster relief organizations, and businesses requiring emergency logistics support during natural disasters and crisis situations',
+        'ENHANCED TARGET: Government agencies (FEMA, state/local emergency management), NGO diversity officers and procurement managers, disaster relief organizations with supplier diversity goals, government small business liaisons, and businesses requiring emergency logistics support with certified WOSB suppliers during natural disasters and crisis situations',
       expectedResults: {
         leads: 95, // Increased: FEMA temporary housing demand
         conversions: 29, // Realistic: 30% conversion for emergency services
@@ -4370,11 +4377,546 @@ export default function CampaignTemplates() {
         '85% improvement in client supply chain resilience',
       ],
     },
+
+    // PROCUREMENT FORECAST CAMPAIGN
+    {
+      id: 'procurement_forecast_campaign',
+      name: 'AI-Powered Procurement Forecast Campaign',
+      description:
+        'Advanced AI-driven procurement forecasting and supplier engagement for optimal cost savings and supply chain optimization',
+      category: 'procurement',
+      targetAudience:
+        'Enterprise buyers, procurement managers, supply chain directors, and strategic sourcing professionals',
+      expectedResults: {
+        leads: 200,
+        conversions: 60,
+        dailyRevenue: 12500,
+        monthlyRevenue: 375000,
+        totalRevenue: 750000,
+      },
+      duration: '60 days',
+      difficulty: 'medium',
+      aiStaff: ['Preston', 'Samantha', 'Quincy', 'Riley'],
+      channels: ['Email', 'LinkedIn', 'Phone', 'Direct Mail'],
+      icon: '📊',
+      color: 'bg-purple-500',
+      steps: [
+        {
+          id: 'demand_forecasting_analysis',
+          name: 'AI Demand Forecasting Analysis',
+          description:
+            'Use advanced ML algorithms to analyze historical data, market trends, and business factors to predict procurement needs',
+          timing: 'Days 1-5',
+          channel: 'Data Analysis',
+          aiStaff: 'Preston',
+          automationLevel: 'full',
+        },
+        {
+          id: 'supplier_market_intelligence',
+          name: 'Supplier Market Intelligence Gathering',
+          description:
+            'Comprehensive analysis of supplier landscape, pricing trends, risk assessment, and competitive benchmarking',
+          timing: 'Days 3-10',
+          channel: 'Market Research',
+          aiStaff: 'Quincy & Riley',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'procurement_opportunity_identification',
+          name: 'Procurement Opportunity Identification',
+          description:
+            'Identify high-impact procurement opportunities, cost savings potential, and strategic sourcing advantages',
+          timing: 'Days 8-15',
+          channel: 'Analysis',
+          aiStaff: 'Preston',
+          automationLevel: 'full',
+        },
+        {
+          id: 'targeted_buyer_outreach',
+          name: 'Strategic Buyer Outreach Campaign',
+          description:
+            'Personalized outreach to procurement professionals with tailored forecast insights and cost-saving opportunities',
+          timing: 'Days 12-25',
+          channel: 'Email/LinkedIn',
+          aiStaff: 'Samantha',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'supplier_engagement_program',
+          name: 'Supplier Engagement & Partnership Program',
+          description:
+            'Engage potential suppliers with partnership opportunities, competitive quotes, and long-term relationship building',
+          timing: 'Days 15-35',
+          channel: 'Phone/Email',
+          aiStaff: 'Samantha & Riley',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'cost_optimization_presentation',
+          name: 'Cost Optimization Presentation & Proposal',
+          description:
+            'Create detailed cost analysis presentations and procurement optimization proposals for qualified prospects',
+          timing: 'Days 25-45',
+          channel: 'Meetings/Presentations',
+          aiStaff: 'Quinn',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'procurement_relationship_nurturing',
+          name: 'Long-term Procurement Relationship Nurturing',
+          description:
+            'Establish ongoing relationships with procurement professionals through valuable insights and market intelligence',
+          timing: 'Days 30-60',
+          channel: 'Email/LinkedIn',
+          aiStaff: 'Preston & Samantha',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '200+ procurement professionals contacted',
+        '60+ qualified procurement leads generated',
+        '25+ supplier partnerships established',
+        '$375K monthly revenue pipeline created',
+        '15% average cost savings identified',
+        '90% client satisfaction with procurement forecasts',
+        '80% forecast accuracy achieved',
+        '50+ long-term procurement contracts secured',
+      ],
+    },
+
+    // GOVERNMENT RFI & SOURCES SOUGHT CAMPAIGN
+    {
+      id: 'government_rfi_sources_sought_campaign',
+      name: 'WOSB Government RFI & Sources Sought Intelligence Campaign - CERTIFIED ADVANTAGE',
+      description:
+        'PREMIUM WOSB-CERTIFIED government contracting campaign leveraging Women-Owned Small Business status for exclusive access to set-aside contracts ($15B+ annually). Comprehensive NAICS-based monitoring and strategic response to government opportunities with logistics components across all sectors. COMPETITIVE ADVANTAGE: 50-80% fewer bidders on WOSB set-asides, priority consideration, and SBA program access. Position for prime contracts before RFPs released with certified diversity credentials.',
+      category: 'government_contracting',
+      targetAudience:
+        'ENHANCED TARGET: Government contracting officers, WOSB program managers, diversity and inclusion officers, small business liaisons, procurement specialists across DOD, FEMA, GSA, VA, DHS, SBA, and all federal agencies prioritizing diversity supplier goals',
+      expectedResults: {
+        leads: 150,
+        conversions: 45,
+        dailyRevenue: 25000,
+        monthlyRevenue: 750000,
+        totalRevenue: 2250000,
+      },
+      duration: '90 days',
+      difficulty: 'hard',
+      aiStaff: ['Monica', 'Rae', 'Quincy', 'Samantha'],
+      channels: [
+        'SAM.gov WOSB Set-Asides',
+        'SBA WOSB Programs',
+        'Diversity Officer Outreach',
+        'Government Meetings',
+        'Industry Days & Conferences',
+        'Prime Contractor Partnerships',
+        'Email Campaigns',
+        'WOSB Networking Events',
+      ],
+      icon: '🏛️',
+      color: 'bg-blue-600',
+      steps: [
+        {
+          id: 'naics_intelligence_setup',
+          name: 'Strategic NAICS Code Intelligence Setup',
+          description:
+            'Configure automated monitoring for 25+ strategic NAICS codes including 488510, 484110, 484121 and cross-sector logistics opportunities across manufacturing, healthcare, technology, and construction',
+          timing: 'Days 1-5',
+          channel: 'SAM.gov Automation',
+          aiStaff: 'Monica',
+          automationLevel: 'full',
+        },
+        {
+          id: 'wosb_certification_leverage',
+          name: 'WOSB Certification Strategic Positioning',
+          description:
+            'Leverage Women-Owned Small Business certification for exclusive access to set-aside contracts, priority consideration, and reduced competition. Target WOSB-specific opportunities, engage diversity officers, and position FleetFlow as certified diversity supplier for large prime contractors seeking subcontractor partnerships.',
+          timing: 'Days 2-10',
+          channel: 'WOSB Programs',
+          aiStaff: 'Monica & Samantha',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'cross_sector_keyword_monitoring',
+          name: 'Cross-Sector Logistics Keyword Monitoring',
+          description:
+            'Set up AI-powered keyword monitoring for logistics components in all government contracts: "supply chain", "distribution", "logistics support", "equipment deployment", "materials transport"',
+          timing: 'Days 3-8',
+          channel: 'Government Intelligence',
+          aiStaff: 'Monica & Rae',
+          automationLevel: 'full',
+        },
+        {
+          id: 'agency_relationship_mapping',
+          name: 'Multi-Agency Relationship Mapping',
+          description:
+            'Build comprehensive database of 500+ contracting officers across DOD, FEMA, GSA, VA, DHS, EPA, NASA, USAID with contract history and procurement patterns',
+          timing: 'Days 6-15',
+          channel: 'Government Relations',
+          aiStaff: 'Samantha',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'strategic_rfi_responses',
+          name: 'Strategic RFI Response Campaign',
+          description:
+            'Submit 20+ comprehensive RFI responses showcasing technical capabilities, past performance, and innovative solutions across direct transportation and logistics component opportunities',
+          timing: 'Days 10-35',
+          channel: 'Technical Submissions',
+          aiStaff: 'Rae & Quincy',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'government_relationship_building',
+          name: 'Contracting Officer Relationship Building',
+          description:
+            'Schedule and conduct 25+ one-on-one meetings with contracting officers, attend 8+ industry days, establish trusted advisor relationships',
+          timing: 'Days 20-60',
+          channel: 'Government Meetings',
+          aiStaff: 'Samantha',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'teaming_partnerships',
+          name: 'Strategic Teaming Partnership Development',
+          description:
+            'Establish teaming agreements with 5+ prime contractors, develop subcontracting relationships, create joint capability statements',
+          timing: 'Days 35-70',
+          channel: 'Partnership Development',
+          aiStaff: 'Quincy & Samantha',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'requirement_influence',
+          name: 'Requirement Development Influence',
+          description:
+            'Provide technical input on requirement development, conduct market research studies, influence specifications to favor our capabilities',
+          timing: 'Days 50-85',
+          channel: 'Technical Advisory',
+          aiStaff: 'Rae',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'pipeline_management',
+          name: 'Contract Pipeline Management & Positioning',
+          description:
+            'Track RFI-to-RFP conversions, maintain relationship momentum, position for upcoming $15M+ in contract opportunities',
+          timing: 'Days 70-90',
+          channel: 'Strategic Positioning',
+          aiStaff: 'All Staff',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '150+ government opportunities identified and tracked',
+        '20+ comprehensive RFI responses submitted',
+        '25+ contracting officer relationships established',
+        '8+ industry day participations completed',
+        '5+ teaming partnership agreements signed',
+        '$15M+ contract pipeline developed',
+        '85% RFI response rate achieved',
+        '3+ preferred vendor designations obtained',
+        '45+ qualified government leads generated',
+        '15+ upcoming RFP early insights gained',
+        '90+ NAICS code opportunities monitored',
+        '$2.25M revenue pipeline created',
+        '100% WOSB certification leverage achieved',
+        '25+ diversity officer relationships established',
+        '15+ prime contractor partnerships secured',
+      ],
+    },
+
+    // DEDICATED WOSB CAMPAIGNS
+    {
+      id: 'wosb_diversity_contracting_blitz',
+      name: 'WOSB Diversity Contracting Blitz - CERTIFIED ADVANTAGE CAMPAIGN',
+      description:
+        'EXCLUSIVE Women-Owned Small Business campaign leveraging WOSB certification for corporate diversity supplier requirements, government set-aside contracts, and prime contractor subcontracting opportunities. TARGET: Fortune 500 companies with diversity mandates, large prime contractors needing WOSB subcontractors, and government agencies with diversity goals. COMPETITIVE ADVANTAGE: 50-80% reduced competition, priority consideration, SBA program access, and corporate ESG compliance benefits.',
+      category: 'government_contracting',
+      targetAudience:
+        'Corporate diversity officers, procurement managers with supplier diversity mandates, prime contractors seeking WOSB subcontractors, government small business liaisons, SBA program managers, ESG-focused procurement teams',
+      expectedResults: {
+        leads: 100,
+        conversions: 35,
+        dailyRevenue: 15000,
+        monthlyRevenue: 450000,
+        totalRevenue: 1350000,
+      },
+      duration: '60 days',
+      difficulty: 'medium',
+      aiStaff: ['Monica', 'Samantha', 'Deeva', 'Will'],
+      channels: [
+        'Corporate Diversity Programs',
+        'SBA WOSB Certification Portal',
+        'Prime Contractor Outreach',
+        'Government Small Business Offices',
+        'ESG Compliance Networks',
+        'Women Business Enterprise Councils',
+        'Corporate Supplier Portals',
+        'Diversity Conference Networking',
+      ],
+      icon: '🏆',
+      color: 'bg-purple-600',
+      steps: [
+        {
+          id: 'wosb_portfolio_development',
+          name: 'WOSB Capability Portfolio Development',
+          description:
+            'Create comprehensive WOSB capability statement, certifications portfolio, past performance documentation, and diversity supplier credentials for corporate and government presentations',
+          timing: 'Days 1-7',
+          channel: 'Portfolio Development',
+          aiStaff: 'Monica & Deeva',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'corporate_diversity_targeting',
+          name: 'Corporate Diversity Officer Targeting',
+          description:
+            'Identify and engage 150+ diversity officers at Fortune 500 companies with supplier diversity mandates, focusing on transportation, logistics, and technology procurement needs',
+          timing: 'Days 5-20',
+          channel: 'Corporate Diversity Programs',
+          aiStaff: 'Samantha & Will',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'prime_contractor_partnerships',
+          name: 'Prime Contractor Subcontracting Partnerships',
+          description:
+            'Target 50+ large prime contractors needing WOSB subcontractors to meet diversity requirements on government contracts, establish teaming agreements and subcontracting relationships',
+          timing: 'Days 10-35',
+          channel: 'Prime Contractor Outreach',
+          aiStaff: 'Monica & Deeva',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'sba_program_leverage',
+          name: 'SBA Program & Resource Leverage',
+          description:
+            'Maximize SBA WOSB programs, mentor-protege opportunities, government contracting assistance, and small business development resources for competitive advantage',
+          timing: 'Days 15-40',
+          channel: 'SBA WOSB Programs',
+          aiStaff: 'Monica',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'diversity_networking_blitz',
+          name: 'Diversity Conference & Networking Blitz',
+          description:
+            'Attend 8+ diversity supplier conferences, women business enterprise events, and corporate diversity summits to establish relationships and showcase WOSB capabilities',
+          timing: 'Days 20-55',
+          channel: 'Diversity Conference Networking',
+          aiStaff: 'Samantha & Will',
+          automationLevel: 'manual',
+        },
+        {
+          id: 'esg_compliance_positioning',
+          name: 'ESG Compliance & Impact Positioning',
+          description:
+            'Position FleetFlow as essential ESG compliance partner for corporations meeting diversity supplier goals, sustainability requirements, and social impact mandates',
+          timing: 'Days 30-60',
+          channel: 'ESG Compliance Networks',
+          aiStaff: 'Deeva & Monica',
+          automationLevel: 'semi',
+        },
+      ],
+      successMetrics: [
+        '100+ corporate diversity officers contacted',
+        '50+ prime contractor partnerships explored',
+        '35+ qualified WOSB opportunities secured',
+        '25+ supplier diversity portal registrations completed',
+        '20+ teaming agreements signed',
+        '15+ government small business office relationships',
+        '10+ diversity conference participations',
+        '8+ prime contractor subcontracting agreements',
+        '5+ Fortune 500 diversity supplier certifications',
+        '$1.35M+ revenue pipeline from WOSB advantages',
+        '90% WOSB certification leverage success rate',
+      ],
+    },
+
+    // FUNDRAISING CAMPAIGNS
+    {
+      id: 'fleetflow_series_seed_intelligence',
+      name: 'FleetFlow Series Seed Intelligence Campaign - STRATEGIC FUNDING RAISE',
+      description:
+        'PREMIUM WOSB-CERTIFIED seed funding campaign targeting VCs, impact investors, government-focused funds, and strategic partners to raise $2M-5M Series Seed for FleetFlow platform expansion. COMPETITIVE ADVANTAGES: Women-Owned Small Business certification, government contracting access ($500B market), founder-market fit with industry experience, dual revenue model (SaaS + Gov contracts), and ESG compliance. Features multi-phase investor intelligence, warm introduction mapping, and systematic fundraising execution with all 27 AI staff coordinating outreach across logistics VCs, impact investment firms, government contracting specialists, and diversity-focused institutional investors.',
+      category: 'fundraising',
+      targetAudience:
+        'ENHANCED TARGET AUDIENCE: Logistics/Supply Chain VCs (Bessemer, Dynamo), Impact Investment Firms (diversity-focused), Women-Led Investment Funds (All Raise, Female Founders Fund), Government/Defense Tech VCs, ESG-Compliant Institutional Investors, Strategic Corporate VCs (C.H. Robinson, Schneider ventures), Angel Investors (freight industry veterans), Government Innovation Programs (SBIR, DOT grants, WOSB programs), GovTech Accelerators, Transportation-focused Strategic Partners',
+      expectedResults: {
+        leads: 200, // Qualified investors identified
+        conversions: 50, // Investor meetings secured
+        dailyRevenue: 0, // Fundraising doesn\'t generate daily revenue
+        monthlyRevenue: 0, // Monthly milestones instead
+        totalRevenue: 3500000, // Target $3.5M raise (mid-range of $2M-5M)
+      },
+      duration: '90 days',
+      difficulty: 'hard', // High complexity fundraising process
+      aiStaff: ['All 27 AI Staff - Specialized Assignments'],
+      channels: [
+        'WOSB-Focused Investor Outreach',
+        'Impact Investment Fund Targeting',
+        'ESG-Compliant VC Database',
+        'Women-Led Fund Engagement',
+        'Government Contracting Networks',
+        'LinkedIn Investor Engagement',
+        'Diversity & Inclusion Conferences',
+        'SBA/WOSB Networking Events',
+        'GovTech Investor Meetings',
+        'Strategic Corporate Partnership',
+        'Angel Network Platforms',
+        'Government Grant Portals (SBIR/DOT)',
+      ],
+      icon: '💰',
+      color: 'bg-green-600',
+      steps: [
+        {
+          id: 'market_research_validation',
+          name: 'Market Research & Competitive Analysis',
+          description:
+            "Comprehensive market analysis, competitive landscape mapping, and validation of FleetFlow's unique value proposition for investors",
+          timing: 'Days 1-10',
+          channel: 'Research & Analysis',
+          aiStaff: 'Monica, Ana Lyles, Quincy',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'wosb_advantage_positioning',
+          name: 'WOSB Certification & Government Contracting Strategy',
+          description:
+            'Develop comprehensive WOSB advantage messaging, government contracting revenue projections, impact investment positioning, and ESG compliance documentation for diversity-focused investors',
+          timing: 'Days 2-8',
+          channel: 'Strategic Positioning',
+          aiStaff: 'Monica, Rae, Deeva, Preston',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'financial_modeling_projections',
+          name: 'Financial Modeling & Revenue Projections',
+          description:
+            'Develop detailed financial models, revenue projections, unit economics, and growth forecasts for investor presentations',
+          timing: 'Days 3-12',
+          channel: 'Financial Analysis',
+          aiStaff: 'Resse A. Bell, Preston, Cal',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'pitch_deck_development',
+          name: 'Investor Pitch Deck & Materials Creation',
+          description:
+            'Create compelling pitch deck, executive summary, product demo, and all investor presentation materials',
+          timing: 'Days 5-20',
+          channel: 'Content Development',
+          aiStaff: 'Drew, Alexis, Riley, Dell',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'investor_database_building',
+          name: 'Comprehensive Investor Database Development',
+          description:
+            'Build detailed database of 200+ qualified investors including VCs, angels, strategics, and government programs with contact information and investment thesis',
+          timing: 'Days 10-25',
+          channel: 'Database Development',
+          aiStaff: 'Desiree, Cliff, Gary, Shanell',
+          automationLevel: 'full',
+        },
+        {
+          id: 'warm_introduction_mapping',
+          name: 'Warm Introduction Network Mapping',
+          description:
+            'Map existing network connections to target investors and systematically request warm introductions through industry contacts',
+          timing: 'Days 15-35',
+          channel: 'Network Mapping',
+          aiStaff: 'Brook R., Carrie R., Will, Hunter',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'accelerator_applications',
+          name: 'Accelerator & Incubator Applications',
+          description:
+            'Apply to top-tier accelerators including Techstars, Y Combinator, supply chain focused programs, and industry-specific incubators',
+          timing: 'Days 20-40',
+          channel: 'Application Process',
+          aiStaff: 'Kameelah, Regina, Rae, Clarence',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'government_grant_pursuit',
+          name: 'Government Grant & SBIR Applications',
+          description:
+            'Pursue non-dilutive funding through SBIR, DOT innovation grants, state economic development programs, and transportation technology initiatives',
+          timing: 'Days 25-60',
+          channel: 'Government Portals',
+          aiStaff: 'Monica, Rae, Kameelah, Regina',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'cold_outreach_sequences',
+          name: 'Multi-Channel Investor Outreach Campaign',
+          description:
+            'Execute systematic outreach to 200+ investors through personalized emails, LinkedIn messages, and direct contact with compelling value propositions',
+          timing: 'Days 30-75',
+          channel: 'Multi-Channel Outreach',
+          aiStaff: 'All AI Staff (Rotating Teams)',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'investor_meeting_coordination',
+          name: 'Investor Meeting & Demo Coordination',
+          description:
+            'Schedule and coordinate investor meetings, product demos, due diligence sessions, and follow-up communications',
+          timing: 'Days 40-85',
+          channel: 'Meeting Coordination',
+          aiStaff: 'Cal, Alexis, Riley, Miles, Logan',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'due_diligence_preparation',
+          name: 'Due Diligence Package & Legal Preparation',
+          description:
+            'Prepare comprehensive due diligence materials, legal documents, financial records, and investor data room for serious prospects',
+          timing: 'Days 50-80',
+          channel: 'Legal & Compliance',
+          aiStaff: 'Kameelah, Regina, Resse A. Bell, Clarence',
+          automationLevel: 'semi',
+        },
+        {
+          id: 'term_sheet_negotiations',
+          name: 'Term Sheet Review & Fundraising Close',
+          description:
+            'Review term sheets, negotiate investment terms, coordinate legal processes, and execute fundraising close with selected investors',
+          timing: 'Days 70-90',
+          channel: 'Legal & Executive',
+          aiStaff: 'Deeva, Alexis, Resse A. Bell, Will',
+          automationLevel: 'low',
+        },
+      ],
+      successMetrics: [
+        '200+ qualified investors identified (including 50+ impact/ESG funds)',
+        '150+ personalized investor outreach messages sent',
+        '100+ WOSB advantage presentations delivered',
+        '75+ warm introductions secured through network',
+        '60+ investor meetings scheduled and completed',
+        '40+ government contracting opportunity briefings',
+        '25+ product demos delivered to investors',
+        '20+ impact investment fund meetings secured',
+        '15+ accelerator applications submitted (including diversity-focused)',
+        '12+ government grant/WOSB program applications filed',
+        '10+ ESG-compliant institutional investor meetings',
+        '8+ serious investor follow-ups with term sheet interest',
+        '5+ term sheets or LOIs received',
+        '3+ strategic partnership discussions with gov contractors',
+        '$3.5M+ funding target achieved with WOSB premium valuation',
+        '95% investor meeting completion rate',
+      ],
+    },
   ];
 
   const categories = [
     { id: 'all', name: 'All Campaigns', icon: '🎯' },
     { id: 'lead_generation', name: 'Lead Generation', icon: '👥' },
+    { id: 'procurement', name: 'Procurement', icon: '📊' },
+    { id: 'fundraising', name: 'Fundraising', icon: '💰' },
     {
       id: 'carrier_specialization',
       name: 'Carrier Specialization',

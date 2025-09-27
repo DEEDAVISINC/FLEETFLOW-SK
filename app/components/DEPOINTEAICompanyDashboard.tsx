@@ -21,6 +21,8 @@ import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
 import CampaignTemplates from './CampaignTemplates';
 import DEPOINTELeadIntelligence from './DEPOINTELeadIntelligence';
+import GovernmentRFICampaign from './GovernmentRFICampaign';
+import ProcurementForecastCampaign from './ProcurementForecastCampaign';
 import TaskCreationInterface from './TaskCreationInterface';
 import TruckingPlanetIntelligence from './TruckingPlanetIntelligence';
 
@@ -65,10 +67,12 @@ export default function DEPOINTEAICompanyDashboard() {
     | 'performance'
     | 'templates'
     | 'leads'
+    | 'procurement'
+    | 'government'
   >('overview');
   const [stats, setStats] = useState<CompanyStats>({
     totalRevenue: 847500,
-    activeStaff: 18,
+    activeStaff: 27,
     completedTasks: 2456,
     efficiency: 94.7,
     leadsGenerated: 1847,
@@ -307,6 +311,69 @@ export default function DEPOINTEAICompanyDashboard() {
       department: 'Operations',
       avatar: '📊',
     },
+    {
+      id: 'alexis',
+      name: 'Alexis Best',
+      role: 'Executive Operations Specialist',
+      department: 'Executive Operations',
+      avatar: '🎯',
+    },
+    {
+      id: 'riley-front',
+      name: 'Riley',
+      role: 'Front Office Coordinator',
+      department: 'Front Office',
+      avatar: '📞',
+    },
+    {
+      id: 'deeva',
+      name: 'Deeva Deveraux',
+      role: 'Senior Executive',
+      department: 'Executive Leadership',
+      avatar: '👑',
+    },
+    {
+      id: 'preston',
+      name: 'Preston',
+      role: 'Procurement Forecast Analyst',
+      department: 'Procurement',
+      avatar: '📊',
+    },
+    {
+      id: 'samantha',
+      name: 'Samantha',
+      role: 'Supplier Relations Specialist',
+      department: 'Procurement',
+      avatar: '🤝',
+    },
+    {
+      id: 'quincy',
+      name: 'Quincy',
+      role: 'Cost Optimization Analyst',
+      department: 'Procurement',
+      avatar: '💰',
+    },
+    {
+      id: 'riley',
+      name: 'Riley',
+      role: 'Risk Assessment Specialist',
+      department: 'Procurement',
+      avatar: '⚠️',
+    },
+    {
+      id: 'monica',
+      name: 'Monica',
+      role: 'Government Intelligence Specialist',
+      department: 'Government Contracting',
+      avatar: '🏛️',
+    },
+    {
+      id: 'rae',
+      name: 'Rae',
+      role: 'Requirements Analysis Engineer',
+      department: 'Government Contracting',
+      avatar: '📋',
+    },
   ];
 
   // Handle task creation
@@ -463,6 +530,12 @@ export default function DEPOINTEAICompanyDashboard() {
               { id: 'scheduler', label: 'AI Staff Scheduler', icon: Calendar },
               { id: 'assignments', label: 'Task Assignments', icon: Target },
               { id: 'leads', label: 'Lead Intelligence', icon: Users },
+              {
+                id: 'procurement',
+                label: 'Procurement Forecast',
+                icon: DollarSign,
+              },
+              { id: 'government', label: 'Government RFI', icon: Building2 },
               { id: 'templates', label: 'Templates', icon: FileText },
               {
                 id: 'performance',
@@ -806,7 +879,7 @@ export default function DEPOINTEAICompanyDashboard() {
                             ? 'bg-yellow-500'
                             : 'bg-blue-500'
                       }`}
-                     />
+                    />
                     <div className='flex-1'>
                       <p className='text-white'>{activity.message}</p>
                       <p className='text-sm text-slate-400'>{activity.time}</p>
@@ -833,6 +906,18 @@ export default function DEPOINTEAICompanyDashboard() {
         {activeView === 'leads' && (
           <div className='rounded-xl bg-slate-800/50 p-6'>
             <DEPOINTELeadIntelligence />
+          </div>
+        )}
+
+        {activeView === 'procurement' && (
+          <div className='rounded-xl bg-slate-800/50 p-6'>
+            <ProcurementForecastCampaign />
+          </div>
+        )}
+
+        {activeView === 'government' && (
+          <div className='rounded-xl bg-slate-800/50 p-6'>
+            <GovernmentRFICampaign />
           </div>
         )}
 

@@ -228,66 +228,9 @@ export class FreightBrainAI {
       recommendations: [] as any[],
     };
 
-    // Generate contextual recommendations based on staff role
-    switch (staffMember) {
-      case 'Logan': // Logistics
-        recommendations.recommendations = [
-          {
-            type: 'market_insight',
-            title: 'High-Demand Lanes This Week',
-            content:
-              'CHI-ATL showing 25% above average rates due to capacity shortage',
-            priority: 'high',
-            action: 'Focus carrier recruitment on this lane',
-          },
-          {
-            type: 'carrier_alert',
-            title: 'Top Performer Available',
-            content: 'Reliable Transport LLC has capacity on preferred lanes',
-            priority: 'medium',
-            action: 'Reach out for upcoming loads',
-          },
-        ];
-        break;
-
-      case 'Will': // Sales
-        recommendations.recommendations = [
-          {
-            type: 'pricing_opportunity',
-            title: 'Rate Increase Opportunity',
-            content: "Market rates up 15% on customer ABC's primary lanes",
-            priority: 'high',
-            action: 'Schedule rate discussion meeting',
-          },
-          {
-            type: 'customer_insight',
-            title: 'Volume Growth Trend',
-            content: 'ABC Manufacturing showing 12% month-over-month growth',
-            priority: 'medium',
-            action: 'Propose volume commitment discount',
-          },
-        ];
-        break;
-
-      case 'Kameelah': // DOT Compliance
-        recommendations.recommendations = [
-          {
-            type: 'compliance_alert',
-            title: 'Insurance Renewals Due',
-            content: '3 carriers have insurance expiring within 30 days',
-            priority: 'high',
-            action: 'Request updated certificates',
-          },
-          {
-            type: 'safety_update',
-            title: 'New FMCSA Regulations',
-            content: 'Updated HOS rules effective next month',
-            priority: 'medium',
-            action: 'Brief operations team on changes',
-          },
-        ];
-        break;
-    }
+    // Generate contextual recommendations based on staff role and available knowledge
+    // Recommendations will be generated from real business data and knowledge base
+    // Currently empty for production deployment
 
     return recommendations;
   }
@@ -314,12 +257,18 @@ export class FreightBrainAI {
    * Get brain statistics
    */
   getBrainStats() {
+    const totalKnowledge = this.knowledgeBase.length;
+    const averageConfidence =
+      totalKnowledge > 0
+        ? Math.round(
+            this.knowledgeBase.reduce((sum, k) => sum + k.confidence, 0) /
+              totalKnowledge
+          )
+        : 0;
+
     return {
-      totalKnowledge: this.knowledgeBase.length,
-      averageConfidence: Math.round(
-        this.knowledgeBase.reduce((sum, k) => sum + k.confidence, 0) /
-          this.knowledgeBase.length
-      ),
+      totalKnowledge,
+      averageConfidence,
       categoryCounts: {
         market_data: this.getKnowledgeByCategory('market_data').length,
         carrier_intel: this.getKnowledgeByCategory('carrier_intel').length,

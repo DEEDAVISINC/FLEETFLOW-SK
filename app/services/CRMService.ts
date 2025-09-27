@@ -94,7 +94,15 @@ interface CRMOpportunity {
 
 interface CRMActivity {
   id?: string;
-  activity_type: 'call' | 'email' | 'meeting' | 'task' | 'note' | 'sms' | 'quote' | 'follow_up';
+  activity_type:
+    | 'call'
+    | 'email'
+    | 'meeting'
+    | 'task'
+    | 'note'
+    | 'sms'
+    | 'quote'
+    | 'follow_up';
   subject: string;
   description?: string;
   contact_id?: string;
@@ -155,11 +163,63 @@ class CRMService {
   private organizationId: string;
 
   constructor(organizationId: string) {
-    this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    // Check if Supabase environment variables are available
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (
+      supabaseUrl &&
+      supabaseKey &&
+      supabaseUrl !== 'your-supabase-url' &&
+      supabaseKey !== 'your-supabase-key'
+    ) {
+      try {
+        this.supabase = createClient(supabaseUrl, supabaseKey);
+        console.info('✅ CRM Service: Supabase client initialized');
+      } catch (error) {
+        console.error(
+          '❌ CRM Service: Supabase client failed to initialize, using empty client'
+        );
+        this.supabase = this.createEmptySupabaseClient();
+      }
+    } else {
+      // Use empty client when Supabase is not configured - no mock data
+      console.warn('⚠️ CRM Service: Supabase not configured, using empty data');
+      this.supabase = this.createEmptySupabaseClient();
+    }
     this.organizationId = organizationId;
+  }
+
+  // ============================================================================
+  // EMPTY SUPABASE CLIENT
+  // ============================================================================
+
+  private createEmptySupabaseClient() {
+    // Mock data removed - CRM will require real Supabase connection for data
+    return {
+      from: (table: string) => ({
+        select: (columns: string, options?: any) => {
+          const result = { data: [], count: 0 };
+
+          return {
+            eq: (column: string, value: any) => Promise.resolve({ data: [] }),
+            not: (column: string, operator: string, value: any) =>
+              Promise.resolve({ data: [] }),
+            order: (column: string, options: any) => ({
+              limit: (count: number) => Promise.resolve({ data: [] }),
+            }),
+            limit: (count: number) => Promise.resolve({ data: [] }),
+            // For direct Promise resolution (like await Promise.all)
+            then: (callback: any) => callback(result),
+            // For count queries
+            ...result,
+          };
+        },
+        insert: (data: any) => Promise.resolve({ data: null, error: null }),
+        update: (data: any) => Promise.resolve({ data: null, error: null }),
+        delete: () => Promise.resolve({ data: null, error: null }),
+      }),
+    };
   }
 
   // ============================================================================
@@ -169,21 +229,30 @@ class CRMService {
   async createContact(contactData: CRMContact): Promise<CRMContact> {
     try {
       // Validate required fields
-      if (!contactData.first_name || !contactData.last_name || !contactData.contact_type) {
-        throw new Error('Missing required fields: first_name, last_name, contact_type');
+      if (
+        !contactData.first_name ||
+        !contactData.last_name ||
+        !contactData.contact_type
+      ) {
+        throw new Error(
+          'Missing required fields: first_name, last_name, contact_type'
+        );
       }
 
       // Calculate initial lead score
-      const initialLeadScore = await this.calculateInitialLeadScore(contactData);
-      
+      const initialLeadScore =
+        await this.calculateInitialLeadScore(contactData);
+
       const { data, error } = await this.supabase
         .from('crm_contacts')
-        .insert([{
-          ...contactData,
-          lead_score: initialLeadScore,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
+        .insert([
+          {
+            ...contactData,
+            lead_score: initialLeadScore,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
@@ -196,7 +265,7 @@ class CRMService {
         description: `New ${contactData.contact_type} contact added to the system`,
         contact_id: data.id,
         activity_date: new Date().toISOString(),
-        status: 'completed'
+        status: 'completed',
       });
 
       return data;
@@ -206,13 +275,16 @@ class CRMService {
     }
   }
 
-  async updateContact(contactId: string, updateData: Partial<CRMContact>): Promise<CRMContact> {
+  async updateContact(
+    contactId: string,
+    updateData: Partial<CRMContact>
+  ): Promise<CRMContact> {
     try {
       const { data, error } = await this.supabase
         .from('crm_contacts')
         .update({
           ...updateData,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', contactId)
         .select()
@@ -232,11 +304,12 @@ class CRMService {
     }
   }
 
-  async getContacts(organizationId: string, filters: CRMFilters = {}): Promise<CRMContact[]> {
+  async getContacts(
+    organizationId: string,
+    filters: CRMFilters = {}
+  ): Promise<CRMContact[]> {
     try {
-      let query = this.supabase
-        .from('v_crm_contacts_with_company')
-        .select('*');
+      let query = this.supabase.from('v_crm_contacts_with_company').select('*');
 
       // Apply filters
       if (filters.contact_type) {
@@ -252,7 +325,9 @@ class CRMService {
         query = query.eq('assigned_to', filters.assigned_to);
       }
       if (filters.search) {
-        query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
+        query = query.or(
+          `first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%`
+        );
       }
 
       // Apply pagination
@@ -260,7 +335,10 @@ class CRMService {
         query = query.limit(filters.limit);
       }
       if (filters.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1
+        );
       }
 
       // Order by latest first
@@ -296,7 +374,9 @@ class CRMService {
   // OPPORTUNITY MANAGEMENT
   // ============================================================================
 
-  async createOpportunity(opportunityData: CRMOpportunity): Promise<CRMOpportunity> {
+  async createOpportunity(
+    opportunityData: CRMOpportunity
+  ): Promise<CRMOpportunity> {
     try {
       // Validate required fields
       if (!opportunityData.opportunity_name || !opportunityData.stage) {
@@ -305,11 +385,13 @@ class CRMService {
 
       const { data, error } = await this.supabase
         .from('crm_opportunities')
-        .insert([{
-          ...opportunityData,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
+        .insert([
+          {
+            ...opportunityData,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
@@ -324,7 +406,7 @@ class CRMService {
         company_id: opportunityData.company_id,
         opportunity_id: data.id,
         activity_date: new Date().toISOString(),
-        status: 'completed'
+        status: 'completed',
       });
 
       return data;
@@ -334,7 +416,10 @@ class CRMService {
     }
   }
 
-  async updateOpportunityStage(opportunityId: string, newStage: string): Promise<CRMOpportunity> {
+  async updateOpportunityStage(
+    opportunityId: string,
+    newStage: string
+  ): Promise<CRMOpportunity> {
     try {
       // Get current opportunity
       const { data: currentOpp, error: fetchError } = await this.supabase
@@ -350,7 +435,7 @@ class CRMService {
         .from('crm_opportunities')
         .update({
           stage: newStage,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', opportunityId)
         .select()
@@ -367,7 +452,7 @@ class CRMService {
         company_id: data.company_id,
         opportunity_id: opportunityId,
         activity_date: new Date().toISOString(),
-        status: 'completed'
+        status: 'completed',
       });
 
       return data;
@@ -377,11 +462,12 @@ class CRMService {
     }
   }
 
-  async getOpportunities(organizationId: string, filters: CRMFilters = {}): Promise<CRMOpportunity[]> {
+  async getOpportunities(
+    organizationId: string,
+    filters: CRMFilters = {}
+  ): Promise<CRMOpportunity[]> {
     try {
-      let query = this.supabase
-        .from('v_crm_opportunity_pipeline')
-        .select('*');
+      let query = this.supabase.from('v_crm_opportunity_pipeline').select('*');
 
       // Apply filters
       if (filters.status) {
@@ -391,7 +477,9 @@ class CRMService {
         query = query.eq('assigned_to', filters.assigned_to);
       }
       if (filters.search) {
-        query = query.or(`opportunity_name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+        query = query.or(
+          `opportunity_name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
+        );
       }
 
       // Apply pagination
@@ -399,7 +487,10 @@ class CRMService {
         query = query.limit(filters.limit);
       }
       if (filters.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1
+        );
       }
 
       // Order by expected close date
@@ -422,17 +513,25 @@ class CRMService {
   async createActivity(activityData: CRMActivity): Promise<CRMActivity> {
     try {
       // Validate required fields
-      if (!activityData.activity_type || !activityData.subject || !activityData.activity_date) {
-        throw new Error('Missing required fields: activity_type, subject, activity_date');
+      if (
+        !activityData.activity_type ||
+        !activityData.subject ||
+        !activityData.activity_date
+      ) {
+        throw new Error(
+          'Missing required fields: activity_type, subject, activity_date'
+        );
       }
 
       const { data, error } = await this.supabase
         .from('crm_activities')
-        .insert([{
-          ...activityData,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
+        .insert([
+          {
+            ...activityData,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
 
@@ -453,11 +552,12 @@ class CRMService {
     }
   }
 
-  async getActivities(organizationId: string, filters: CRMFilters = {}): Promise<CRMActivity[]> {
+  async getActivities(
+    organizationId: string,
+    filters: CRMFilters = {}
+  ): Promise<CRMActivity[]> {
     try {
-      let query = this.supabase
-        .from('v_crm_activity_summary')
-        .select('*');
+      let query = this.supabase.from('v_crm_activity_summary').select('*');
 
       // Apply filters
       if (filters.contact_type) {
@@ -481,7 +581,10 @@ class CRMService {
         query = query.limit(filters.limit);
       }
       if (filters.offset) {
-        query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
+        query = query.range(
+          filters.offset,
+          filters.offset + (filters.limit || 10) - 1
+        );
       }
 
       // Order by activity date
@@ -516,11 +619,11 @@ class CRMService {
 
       // Contact type scoring (20 points)
       const typeScores = {
-        'shipper': 20,
-        'carrier': 15,
-        'broker': 10,
-        'customer': 15,
-        'driver': 5
+        shipper: 20,
+        carrier: 15,
+        broker: 10,
+        customer: 15,
+        driver: 5,
       };
       score += typeScores[contact.contact_type] || 0;
 
@@ -533,7 +636,10 @@ class CRMService {
         .from('crm_activities')
         .select('*')
         .eq('contact_id', contactId)
-        .gte('activity_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+        .gte(
+          'activity_date',
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+        );
 
       const activityCount = activities?.length || 0;
       score += Math.min(activityCount * 3, 30);
@@ -571,15 +677,19 @@ class CRMService {
   async analyzeContactWithAI(contactId: string): Promise<any> {
     try {
       // Import AI Analysis Service dynamically to avoid circular dependencies
-      const AIContactAnalysisService = await import('./AIContactAnalysisService');
-      const aiAnalysis = new AIContactAnalysisService.default(this.organizationId);
-      
+      const AIContactAnalysisService = await import(
+        './AIContactAnalysisService'
+      );
+      const aiAnalysis = new AIContactAnalysisService.default(
+        this.organizationId
+      );
+
       // Perform comprehensive AI analysis
       const analysis = await aiAnalysis.analyzeContactWithAI(contactId);
-      
+
       // Update contact with AI insights
       await this.updateContactAIInsights(contactId, analysis);
-      
+
       return {
         personality_profile: analysis.personality_profile,
         buying_signals: analysis.buying_signals,
@@ -592,7 +702,7 @@ class CRMService {
         risk_factors: analysis.risk_factors,
         opportunities: analysis.opportunities,
         competitor_threat: analysis.competitor_threat,
-        lifetime_value_prediction: analysis.lifetime_value_prediction
+        lifetime_value_prediction: analysis.lifetime_value_prediction,
       };
     } catch (error) {
       console.error('Error in AI contact analysis:', error);
@@ -606,21 +716,64 @@ class CRMService {
 
   async getCRMDashboard(organizationId: string): Promise<CRMDashboard> {
     try {
-      // Get total counts
+      // Check if using empty client (Supabase not configured)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (
+        !supabaseUrl ||
+        !supabaseKey ||
+        supabaseUrl === 'your-supabase-url' ||
+        supabaseKey === 'your-supabase-key'
+      ) {
+        // Return empty dashboard data when Supabase is not configured - no mock data
+        console.info(
+          '📊 CRM Dashboard: Using empty data (Supabase not configured)'
+        );
+        const emptyDashboard: CRMDashboard = {
+          total_contacts: 0,
+          total_opportunities: 0,
+          total_activities: 0,
+          pipeline_value: 0,
+          won_opportunities: 0,
+          conversion_rate: 0,
+          recent_activities: [],
+          top_opportunities: [],
+          lead_sources: [],
+          contact_types: [],
+          monthly_revenue: [],
+        };
+        return emptyDashboard;
+      }
+
+      // Get total counts (real Supabase implementation)
       const [
         { data: contacts },
         { data: opportunities },
         { data: activities },
         { data: wonOpps },
         { data: recentActivities },
-        { data: topOpps }
+        { data: topOpps },
       ] = await Promise.all([
         this.supabase.from('crm_contacts').select('id', { count: 'exact' }),
-        this.supabase.from('crm_opportunities').select('id,value', { count: 'exact' }),
+        this.supabase
+          .from('crm_opportunities')
+          .select('id,value', { count: 'exact' }),
         this.supabase.from('crm_activities').select('id', { count: 'exact' }),
-        this.supabase.from('crm_opportunities').select('id,value').eq('status', 'won'),
-        this.supabase.from('v_crm_activity_summary').select('*').order('activity_date', { ascending: false }).limit(10),
-        this.supabase.from('v_crm_opportunity_pipeline').select('*').order('value', { ascending: false }).limit(10)
+        this.supabase
+          .from('crm_opportunities')
+          .select('id,value')
+          .eq('status', 'won'),
+        this.supabase
+          .from('crm_activities')
+          .select('*')
+          .order('activity_date', { ascending: false })
+          .limit(10),
+        this.supabase
+          .from('crm_opportunities')
+          .select('*')
+          .order('value', { ascending: false })
+          .limit(10),
       ]);
 
       // Calculate metrics
@@ -628,8 +781,15 @@ class CRMService {
       const totalOpportunities = opportunities?.length || 0;
       const totalActivities = activities?.length || 0;
       const wonOpportunities = wonOpps?.length || 0;
-      const pipelineValue = opportunities?.reduce((sum: number, opp: any) => sum + (opp.value || 0), 0) || 0;
-      const conversionRate = totalOpportunities > 0 ? (wonOpportunities / totalOpportunities) * 100 : 0;
+      const pipelineValue =
+        opportunities?.reduce(
+          (sum: number, opp: any) => sum + (opp.value || 0),
+          0
+        ) || 0;
+      const conversionRate =
+        totalOpportunities > 0
+          ? (wonOpportunities / totalOpportunities) * 100
+          : 0;
 
       // Get lead sources
       const { data: leadSources } = await this.supabase
@@ -637,20 +797,28 @@ class CRMService {
         .select('lead_source')
         .not('lead_source', 'is', null);
 
-      const leadSourceCounts = leadSources?.reduce((acc, contact) => {
-        acc[contact.lead_source] = (acc[contact.lead_source] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
+      const leadSourceCounts =
+        leadSources?.reduce(
+          (acc, contact) => {
+            acc[contact.lead_source] = (acc[contact.lead_source] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>
+        ) || {};
 
       // Get contact types
       const { data: contactTypes } = await this.supabase
         .from('crm_contacts')
         .select('contact_type');
 
-      const contactTypeCounts = contactTypes?.reduce((acc, contact) => {
-        acc[contact.contact_type] = (acc[contact.contact_type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
+      const contactTypeCounts =
+        contactTypes?.reduce(
+          (acc, contact) => {
+            acc[contact.contact_type] = (acc[contact.contact_type] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>
+        ) || {};
 
       // Get monthly revenue (last 12 months)
       const monthlyRevenue = await this.getMonthlyRevenue(organizationId);
@@ -664,13 +832,31 @@ class CRMService {
         conversion_rate: conversionRate,
         recent_activities: recentActivities || [],
         top_opportunities: topOpps || [],
-        lead_sources: Object.entries(leadSourceCounts).map(([source, count]) => ({ source, count })),
-        contact_types: Object.entries(contactTypeCounts).map(([type, count]) => ({ type, count })),
-        monthly_revenue: monthlyRevenue
+        lead_sources: Object.entries(leadSourceCounts).map(
+          ([source, count]) => ({ source, count })
+        ),
+        contact_types: Object.entries(contactTypeCounts).map(
+          ([type, count]) => ({ type, count })
+        ),
+        monthly_revenue: monthlyRevenue,
       };
     } catch (error) {
       console.error('Error getting CRM dashboard:', error);
-      throw error;
+      // Return empty dashboard on error to prevent system crashes
+      const emptyDashboard: CRMDashboard = {
+        total_contacts: 0,
+        total_opportunities: 0,
+        total_activities: 0,
+        pipeline_value: 0,
+        won_opportunities: 0,
+        conversion_rate: 0,
+        recent_activities: [],
+        top_opportunities: [],
+        lead_sources: [],
+        contact_types: [],
+        monthly_revenue: [],
+      };
+      return emptyDashboard;
     }
   }
 
@@ -678,48 +864,61 @@ class CRMService {
     try {
       const { data, error } = await this.supabase
         .from('crm_contacts')
-        .select(`
+        .select(
+          `
           lead_source,
           contact_type,
           status,
           lead_score,
           created_at
-        `)
+        `
+        )
         .not('lead_source', 'is', null);
 
       if (error) throw error;
 
       // Group by lead source
-      const sourceReport = data?.reduce((acc, contact) => {
-        const source = contact.lead_source;
-        if (!acc[source]) {
-          acc[source] = {
-            source,
-            total_contacts: 0,
-            active_contacts: 0,
-            average_lead_score: 0,
-            contact_types: {},
-            monthly_trend: {}
-          };
-        }
+      const sourceReport =
+        data?.reduce(
+          (acc, contact) => {
+            const source = contact.lead_source;
+            if (!acc[source]) {
+              acc[source] = {
+                source,
+                total_contacts: 0,
+                active_contacts: 0,
+                average_lead_score: 0,
+                contact_types: {},
+                monthly_trend: {},
+              };
+            }
 
-        acc[source].total_contacts++;
-        if (contact.status === 'active') acc[source].active_contacts++;
-        
-        // Contact type breakdown
-        acc[source].contact_types[contact.contact_type] = (acc[source].contact_types[contact.contact_type] || 0) + 1;
+            acc[source].total_contacts++;
+            if (contact.status === 'active') acc[source].active_contacts++;
 
-        // Monthly trend
-        const month = new Date(contact.created_at).toISOString().substr(0, 7);
-        acc[source].monthly_trend[month] = (acc[source].monthly_trend[month] || 0) + 1;
+            // Contact type breakdown
+            acc[source].contact_types[contact.contact_type] =
+              (acc[source].contact_types[contact.contact_type] || 0) + 1;
 
-        return acc;
-      }, {} as Record<string, any>) || {};
+            // Monthly trend
+            const month = new Date(contact.created_at)
+              .toISOString()
+              .substr(0, 7);
+            acc[source].monthly_trend[month] =
+              (acc[source].monthly_trend[month] || 0) + 1;
+
+            return acc;
+          },
+          {} as Record<string, any>
+        ) || {};
 
       // Calculate average lead scores
       for (const source in sourceReport) {
-        const sourceContacts = data?.filter(c => c.lead_source === source) || [];
-        const avgScore = sourceContacts.reduce((sum, c) => sum + (c.lead_score || 0), 0) / sourceContacts.length;
+        const sourceContacts =
+          data?.filter((c) => c.lead_source === source) || [];
+        const avgScore =
+          sourceContacts.reduce((sum, c) => sum + (c.lead_score || 0), 0) /
+          sourceContacts.length;
         sourceReport[source].average_lead_score = Math.round(avgScore);
       }
 
@@ -734,7 +933,9 @@ class CRMService {
   // HELPER METHODS
   // ============================================================================
 
-  private async calculateInitialLeadScore(contactData: CRMContact): Promise<number> {
+  private async calculateInitialLeadScore(
+    contactData: CRMContact
+  ): Promise<number> {
     let score = 0;
 
     // Basic completeness
@@ -744,11 +945,11 @@ class CRMService {
 
     // Contact type
     const typeScores = {
-      'shipper': 20,
-      'carrier': 15,
-      'broker': 10,
-      'customer': 15,
-      'driver': 5
+      shipper: 20,
+      carrier: 15,
+      broker: 10,
+      customer: 15,
+      driver: 5,
     };
     score += typeScores[contactData.contact_type] || 0;
 
@@ -759,17 +960,24 @@ class CRMService {
     return Math.min(score, 100);
   }
 
-  private calculateContactHealth(contact: any, activities: any[], opportunities: any[]): string {
+  private calculateContactHealth(
+    contact: any,
+    activities: any[],
+    opportunities: any[]
+  ): string {
     let score = 0;
 
     // Recent activity
-    const recentActivities = activities?.filter(a => 
-      new Date(a.activity_date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    ) || [];
+    const recentActivities =
+      activities?.filter(
+        (a) =>
+          new Date(a.activity_date) >
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      ) || [];
     score += Math.min(recentActivities.length * 10, 40);
 
     // Open opportunities
-    const openOpps = opportunities?.filter(o => o.status === 'open') || [];
+    const openOpps = opportunities?.filter((o) => o.status === 'open') || [];
     score += openOpps.length * 20;
 
     // Contact completeness
@@ -784,9 +992,12 @@ class CRMService {
   }
 
   private calculateEngagementLevel(activities: any[]): string {
-    const recentActivities = activities?.filter(a => 
-      new Date(a.activity_date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    ) || [];
+    const recentActivities =
+      activities?.filter(
+        (a) =>
+          new Date(a.activity_date) >
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      ) || [];
 
     if (recentActivities.length >= 10) return 'high';
     if (recentActivities.length >= 5) return 'medium';
@@ -794,19 +1005,29 @@ class CRMService {
     return 'none';
   }
 
-  private suggestNextAction(contact: any, activities: any[], opportunities: any[]): string {
-    const recentActivities = activities?.filter(a => 
-      new Date(a.activity_date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-    ) || [];
+  private suggestNextAction(
+    contact: any,
+    activities: any[],
+    opportunities: any[]
+  ): string {
+    const recentActivities =
+      activities?.filter(
+        (a) =>
+          new Date(a.activity_date) >
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      ) || [];
 
     if (recentActivities.length === 0) return 'Schedule follow-up call';
-    
+
     const lastActivity = activities?.[0];
-    if (lastActivity?.activity_type === 'call' && lastActivity?.call_outcome === 'no_answer') {
+    if (
+      lastActivity?.activity_type === 'call' &&
+      lastActivity?.call_outcome === 'no_answer'
+    ) {
       return 'Send follow-up email';
     }
-    
-    const openOpps = opportunities?.filter(o => o.status === 'open') || [];
+
+    const openOpps = opportunities?.filter((o) => o.status === 'open') || [];
     if (openOpps.length > 0) {
       return 'Update opportunity status';
     }
@@ -814,35 +1035,50 @@ class CRMService {
     return 'Schedule regular check-in';
   }
 
-  private identifyRiskFactors(contact: any, activities: any[], opportunities: any[]): string[] {
+  private identifyRiskFactors(
+    contact: any,
+    activities: any[],
+    opportunities: any[]
+  ): string[] {
     const risks: string[] = [];
 
     // No recent activity
-    const recentActivities = activities?.filter(a => 
-      new Date(a.activity_date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    ) || [];
+    const recentActivities =
+      activities?.filter(
+        (a) =>
+          new Date(a.activity_date) >
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      ) || [];
     if (recentActivities.length === 0) risks.push('No recent activity');
 
     // Low lead score
     if ((contact.lead_score || 0) < 30) risks.push('Low lead score');
 
     // Incomplete profile
-    if (!contact.email && !contact.phone) risks.push('Missing contact information');
+    if (!contact.email && !contact.phone)
+      risks.push('Missing contact information');
 
     // Lost opportunities
-    const lostOpps = opportunities?.filter(o => o.status === 'lost') || [];
+    const lostOpps = opportunities?.filter((o) => o.status === 'lost') || [];
     if (lostOpps.length > 0) risks.push('Previous lost opportunities');
 
     return risks;
   }
 
-  private identifyOpportunities(contact: any, activities: any[], opportunities: any[]): string[] {
+  private identifyOpportunities(
+    contact: any,
+    activities: any[],
+    opportunities: any[]
+  ): string[] {
     const opps: string[] = [];
 
     // High engagement
-    const recentActivities = activities?.filter(a => 
-      new Date(a.activity_date) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    ) || [];
+    const recentActivities =
+      activities?.filter(
+        (a) =>
+          new Date(a.activity_date) >
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+      ) || [];
     if (recentActivities.length >= 5) opps.push('High engagement level');
 
     // Industry match
@@ -859,56 +1095,77 @@ class CRMService {
   }
 
   private analyzeCommPreferences(activities: any[]): any {
-    const commTypes = activities?.reduce((acc, activity) => {
-      acc[activity.activity_type] = (acc[activity.activity_type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>) || {};
+    const commTypes =
+      activities?.reduce(
+        (acc, activity) => {
+          acc[activity.activity_type] = (acc[activity.activity_type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {};
 
-    const total = Object.values(commTypes).reduce((sum, count) => sum + count, 0);
+    const total = Object.values(commTypes).reduce(
+      (sum, count) => sum + count,
+      0
+    );
     const preferences = Object.entries(commTypes)
       .map(([type, count]) => ({ type, percentage: (count / total) * 100 }))
       .sort((a, b) => b.percentage - a.percentage);
 
     return {
       preferred_method: preferences[0]?.type || 'email',
-      preferences
+      preferences,
     };
   }
 
   private predictContactValue(contact: any, opportunities: any[]): number {
-    const avgOppValue = opportunities?.reduce((sum, opp) => sum + (opp.value || 0), 0) / (opportunities?.length || 1);
+    const avgOppValue =
+      opportunities?.reduce((sum, opp) => sum + (opp.value || 0), 0) /
+      (opportunities?.length || 1);
     const leadScoreMultiplier = (contact.lead_score || 50) / 100;
-    
+
     return Math.round(avgOppValue * leadScoreMultiplier);
   }
 
-  private async getMonthlyRevenue(organizationId: string): Promise<Array<{ month: string; revenue: number }>> {
+  private async getMonthlyRevenue(
+    organizationId: string
+  ): Promise<Array<{ month: string; revenue: number }>> {
     const { data, error } = await this.supabase
       .from('crm_opportunities')
       .select('value,actual_close_date')
       .eq('status', 'won')
       .not('actual_close_date', 'is', null)
-      .gte('actual_close_date', new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString());
+      .gte(
+        'actual_close_date',
+        new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+      );
 
     if (error) return [];
 
-    const monthlyData = data?.reduce((acc, opp) => {
-      const month = new Date(opp.actual_close_date).toISOString().substr(0, 7);
-      acc[month] = (acc[month] || 0) + (opp.value || 0);
-      return acc;
-    }, {} as Record<string, number>) || {};
+    const monthlyData =
+      data?.reduce(
+        (acc, opp) => {
+          const month = new Date(opp.actual_close_date)
+            .toISOString()
+            .substr(0, 7);
+          acc[month] = (acc[month] || 0) + (opp.value || 0);
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {};
 
     return Object.entries(monthlyData)
       .map(([month, revenue]) => ({ month, revenue }))
       .sort((a, b) => a.month.localeCompare(b.month));
   }
 
-
-
   /**
    * Update contact with AI insights
    */
-  private async updateContactAIInsights(contactId: string, analysis: any): Promise<void> {
+  private async updateContactAIInsights(
+    contactId: string,
+    analysis: any
+  ): Promise<void> {
     try {
       const { error } = await this.supabase
         .from('crm_contacts')
@@ -926,8 +1183,8 @@ class CRMService {
             risk_factors: analysis.risk_factors,
             opportunities: analysis.opportunities,
             competitor_threat: analysis.competitor_threat,
-            lifetime_value_prediction: analysis.lifetime_value_prediction
-          }
+            lifetime_value_prediction: analysis.lifetime_value_prediction,
+          },
         })
         .eq('id', contactId)
         .eq('organization_id', this.organizationId);
@@ -946,13 +1203,15 @@ class CRMService {
     try {
       const { data, error } = await this.supabase
         .from('crm_contacts')
-        .select('ai_insights, ai_last_analyzed, lead_score, engagement_level, conversion_probability')
+        .select(
+          'ai_insights, ai_last_analyzed, lead_score, engagement_level, conversion_probability'
+        )
         .eq('id', contactId)
         .eq('organization_id', this.organizationId)
         .single();
 
       if (error) throw error;
-      
+
       return data;
     } catch (error) {
       console.error('Error fetching contact AI insights:', error);
@@ -965,24 +1224,24 @@ class CRMService {
    */
   async bulkAnalyzeContactsWithAI(contactIds: string[]): Promise<any[]> {
     const results = [];
-    
+
     for (const contactId of contactIds) {
       try {
         const analysis = await this.analyzeContactWithAI(contactId);
         results.push({
           contact_id: contactId,
           status: 'success',
-          analysis: analysis
+          analysis: analysis,
         });
       } catch (error) {
         results.push({
           contact_id: contactId,
           status: 'failed',
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
     }
-    
+
     return results;
   }
 
@@ -993,13 +1252,18 @@ class CRMService {
     try {
       const { data, error } = await this.supabase
         .from('crm_contacts')
-        .select('id, name, email, company, contact_type, last_contact_date, ai_last_analyzed')
+        .select(
+          'id, name, email, company, contact_type, last_contact_date, ai_last_analyzed'
+        )
         .eq('organization_id', this.organizationId)
-        .or('ai_last_analyzed.is.null,ai_last_analyzed.lt.' + new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .or(
+          'ai_last_analyzed.is.null,ai_last_analyzed.lt.' +
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        )
         .limit(limit);
 
       if (error) throw error;
-      
+
       return data || [];
     } catch (error) {
       console.error('Error fetching contacts needing AI analysis:', error);
@@ -1009,4 +1273,11 @@ class CRMService {
 }
 
 export default CRMService;
-export type { CRMContact, CRMCompany, CRMOpportunity, CRMActivity, CRMFilters, CRMDashboard }; 
+export type {
+  CRMActivity,
+  CRMCompany,
+  CRMContact,
+  CRMDashboard,
+  CRMFilters,
+  CRMOpportunity,
+};

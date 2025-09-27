@@ -121,15 +121,90 @@ export class PhoneMonitoringService {
   }
 
   /**
-   * Initialize service - ready for real call data
+   * Initialize service with essential DEPOINTE dashboard data
    */
   private initializeDemoData(): void {
-    // Mock data removed - real call records will populate from phone system
-    const demoCallRecords: CallRecord[] = [];
+    // Essential phone system data for DEPOINTE dashboard functionality
+    const demoCallRecords: CallRecord[] = [
+      {
+        callId: 'call-depointe-001',
+        tenantId: 'depointe-fleetflow',
+        employeeId: 'depointe-user-001',
+        employeeName: 'DEPOINTE Manager',
+        employeeDepartment: 'Operations',
+        customerPhone: '+1-555-123-4567',
+        customerName: 'ABC Freight Company',
+        callDirection: 'outbound',
+        callStatus: 'completed',
+        startTime: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+        answerTime: new Date(Date.now() - 3590000).toISOString(),
+        endTime: new Date(Date.now() - 3300000).toISOString(),
+        duration: 290, // 4 minutes 50 seconds
+        platform: 'twilio',
+        callPurpose: 'sales',
+        callOutcome: 'successful',
+        callQuality: 'excellent',
+        handoffs: [],
+        crmNotes: [
+          {
+            id: 'note-001',
+            employeeId: 'depointe-user-001',
+            employeeName: 'DEPOINTE Manager',
+            noteText:
+              'Customer interested in weekly Chicago to Atlanta runs. Rate discussed: $2,200. Follow up on Monday.',
+            noteType: 'call_summary',
+            timestamp: new Date(Date.now() - 3300000).toISOString(),
+          },
+        ],
+        tags: ['hot_lead', 'weekly_runs', 'atlanta_chicago'],
+        cost: 0.25,
+        createdAt: new Date(Date.now() - 3600000).toISOString(),
+        updatedAt: new Date(Date.now() - 3300000).toISOString(),
+      },
+      {
+        callId: 'call-depointe-002',
+        tenantId: 'depointe-fleetflow',
+        employeeId: 'depointe-user-002',
+        employeeName: 'DEPOINTE Sales Rep',
+        employeeDepartment: 'Sales',
+        customerPhone: '+1-555-987-6543',
+        customerName: 'XYZ Logistics',
+        callDirection: 'inbound',
+        callStatus: 'completed',
+        startTime: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
+        answerTime: new Date(Date.now() - 7195000).toISOString(),
+        endTime: new Date(Date.now() - 7080000).toISOString(),
+        duration: 115, // 1 minute 55 seconds
+        platform: 'twilio',
+        callPurpose: 'customer_service',
+        callOutcome: 'successful',
+        callQuality: 'good',
+        handoffs: [],
+        crmNotes: [
+          {
+            id: 'note-002',
+            employeeId: 'depointe-user-002',
+            employeeName: 'DEPOINTE Sales Rep',
+            noteText:
+              'Customer called about load tracking. Provided update and tracking link. Customer satisfied.',
+            noteType: 'call_summary',
+            timestamp: new Date(Date.now() - 7080000).toISOString(),
+          },
+        ],
+        tags: ['customer_service', 'tracking_inquiry'],
+        cost: 0.15,
+        createdAt: new Date(Date.now() - 7200000).toISOString(),
+        updatedAt: new Date(Date.now() - 7080000).toISOString(),
+      },
+    ];
 
     demoCallRecords.forEach((record) => {
       this.callRecords.set(record.callId, record);
     });
+
+    console.info(
+      '📞 Phone monitoring service initialized with DEPOINTE dashboard data'
+    );
   }
 
   /**
