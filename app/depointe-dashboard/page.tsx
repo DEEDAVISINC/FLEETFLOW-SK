@@ -711,8 +711,8 @@ const depointeStaff = [
     ],
   },
   {
-    id: 'marcus-025',
-    name: 'Marcus',
+    id: 'foster-025',
+    name: 'Foster',
     role: 'Fleet Optimization Specialist',
     department: 'Operations',
     avatar: '🚚',
@@ -733,8 +733,8 @@ const depointeStaff = [
     ],
   },
   {
-    id: 'sophia-026',
-    name: 'Sophia',
+    id: 'ray-m-allen-026',
+    name: 'Ray M. Allen',
     role: 'Risk Management Analyst',
     department: 'Financial',
     avatar: '⚡',
@@ -755,8 +755,8 @@ const depointeStaff = [
     ],
   },
   {
-    id: 'jordan-027',
-    name: 'Jordan',
+    id: 'dante-davis-027',
+    name: 'Dante Davis',
     role: 'Data Analytics Specialist',
     department: 'Technology',
     avatar: '📊',
