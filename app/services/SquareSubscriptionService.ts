@@ -138,6 +138,15 @@ export class SquareSubscriptionService {
     try {
       const { customerId, planIds, userId, trialDays, metadata } = params;
 
+      // Validate required parameters
+      if (!customerId || !userId || !planIds || planIds.length === 0) {
+        return {
+          success: false,
+          error:
+            'Missing required parameters: customerId, userId, and planIds are required',
+        };
+      }
+
       // Validate plans exist
       const invalidPlans = planIds.filter((id) => !getPlanById(id));
       if (invalidPlans.length > 0) {

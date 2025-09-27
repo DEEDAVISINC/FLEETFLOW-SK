@@ -276,6 +276,60 @@ export class PlatformAIManager {
     console.info(`📝 Registered ${serviceName} with Platform AI Manager`);
   }
 
+  /**
+   * Register campaign enhancement with platform AI
+   */
+  async registerCampaignEnhancement(
+    campaignId: string,
+    techniques: string[],
+    prompts: any[]
+  ): Promise<void> {
+    console.info(`📈 Registering campaign enhancement for ${campaignId}`);
+    console.info(`   - Applied techniques: ${techniques.length}`);
+    console.info(`   - Integrated prompts: ${prompts.length}`);
+
+    // Store campaign enhancement data for future AI processing
+    if (!(this as any).campaignEnhancements) {
+      (this as any).campaignEnhancements = new Map();
+    }
+
+    (this as any).campaignEnhancements.set(campaignId, {
+      techniques,
+      prompts,
+      registeredAt: new Date(),
+    });
+  }
+
+  /**
+   * Update AI staff capabilities with campaign-specific techniques
+   */
+  async updateAIStaffCapabilities(
+    staffId: string,
+    update: {
+      campaignId: string;
+      newTechniques: string[];
+      expectedImprovements: any;
+    }
+  ): Promise<void> {
+    console.info(`👥 Updating AI staff capabilities for ${staffId}`);
+    console.info(`   - Campaign: ${update.campaignId}`);
+    console.info(`   - New techniques: ${update.newTechniques.join(', ')}`);
+
+    // Store staff capability updates for enhanced AI processing
+    if (!(this as any).staffCapabilities) {
+      (this as any).staffCapabilities = new Map();
+    }
+
+    const existingCapabilities =
+      (this as any).staffCapabilities.get(staffId) || [];
+    const updatedCapabilities = [
+      ...existingCapabilities,
+      ...update.newTechniques,
+    ];
+
+    (this as any).staffCapabilities.set(staffId, updatedCapabilities);
+  }
+
   // Helper methods
   private getCurrentTimeOfDay(): 'morning' | 'afternoon' | 'evening' {
     const hour = new Date().getHours();

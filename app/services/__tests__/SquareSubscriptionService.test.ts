@@ -1,7 +1,4 @@
-import {
-  mockApiResponse,
-  mockFetchResponse,
-} from '../../__tests__/utils/test-utils';
+import { mockApiResponse, mockFetchResponse } from '../../test-utils';
 import { squareSubscriptionService } from '../SquareSubscriptionService';
 
 // Mock Square SDK
@@ -52,7 +49,11 @@ describe('SquareSubscriptionService', () => {
     });
 
     it('validates input parameters', async () => {
-      const result = await squareSubscriptionService.createSubscription({});
+      const result = await squareSubscriptionService.createSubscription({
+        customerId: '',
+        planIds: [],
+        paymentMethodId: '',
+      });
 
       expect(result).toBeDefined();
       expect(result.success).toBe(false);

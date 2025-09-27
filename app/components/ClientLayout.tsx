@@ -92,14 +92,30 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
   // ✅ Initialize FleetFlow AI system during layout mount (only after hydration)
   useEffect(() => {
     if (isHydrated) {
-      try {
-        initializeFleetFlowAI();
-        console.log('🤖 AI System initialized in ClientLayout');
-      } catch (error) {
-        console.error('❌ AI System initialization failed:', error);
-      }
+      const initializeAI = async () => {
+        try {
+          initializeFleetFlowAI();
+          console.log('🤖 AI System initialized in ClientLayout');
+
+          // Initialize freight brokerage campaign enhancements for enhanced sales performance
+          if (pathname?.includes('depointe-dashboard')) {
+            const { initializeFreightBrokerageCampaignEnhancements } =
+              await import(
+                '../services/ai-learning/FreightBrokerageCampaignIntegration'
+              );
+            await initializeFreightBrokerageCampaignEnhancements();
+            console.log(
+              '📈 Freight brokerage campaign enhancements initialized'
+            );
+          }
+        } catch (error) {
+          console.error('❌ AI System initialization failed:', error);
+        }
+      };
+
+      initializeAI();
     }
-  }, [isHydrated]);
+  }, [isHydrated, pathname]);
 
   // Handle phone system integration
   useEffect(() => {
@@ -311,9 +327,10 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
   const shouldShowPhoneWidget =
     isHydrated &&
-    hasPhoneEligibleRole &&
-    phoneDialerEnabled &&
-    isOperationsPage;
+    // DEPOINTE Company Dashboard - Full Access Override
+    (pathname === '/depointe-dashboard' ||
+      // Standard logic for all other pages (unchanged)
+      (hasPhoneEligibleRole && phoneDialerEnabled && isOperationsPage));
 
   // Debug logging
   if (isHydrated) {

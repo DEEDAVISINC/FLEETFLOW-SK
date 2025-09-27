@@ -116,22 +116,16 @@ class LinkedInLeadSyncService extends EventEmitter {
   }
 
   private initializeDemoData() {
-    // Demo leads showing what real LinkedIn leads will look like
-    const demoLeads: LinkedInLead[] = [
-      {
-        id: 'LI-LEAD-001',
-        firstName: 'Sarah',
-        lastName: 'Johnson',
-        email: 'sarah.johnson@techcorp.com',
-        phone: '+1-555-0123',
-        company: 'TechCorp Logistics',
-        jobTitle: 'VP of Operations',
-        industry: 'Transportation & Logistics',
-        linkedInProfile: 'https://linkedin.com/in/sarahjohnson',
-        leadSource: {
-          campaign: 'FleetFlow Enterprise Campaign',
-          adSet: 'Transportation Leaders',
-          creative: 'AI Fleet Management ROI',
+    // No demo data - service ready for real LinkedIn leads
+    // Real leads and campaigns will be populated from LinkedIn API
+    this.updateMetrics();
+    console.info('🔗 LinkedIn Lead Sync Service initialized (ready for live data)');
+    console.info(
+      `📋 Case: ${this.apiCredentials.caseId} | CRM: ${this.apiCredentials.clientId}`
+    );
+  }
+
+  // REAL API METHODS (Ready for LinkedIn API credentials)
           formName: 'Enterprise Demo Request',
         },
         leadData: {

@@ -5,7 +5,7 @@ import {
   createMockUser,
   mockFetchResponse,
   render,
-} from '../../__tests__/utils/test-utils';
+} from '../../test-utils';
 import AddShipment from '../AddShipment';
 
 // Mock the services
@@ -199,5 +199,3 @@ describe('AddShipment Component', () => {
     expect(screen.getByText('Creating...')).toBeInTheDocument();
   });
 });
-
-

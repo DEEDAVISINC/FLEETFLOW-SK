@@ -58,7 +58,7 @@ export default function NotFoundPage() {
           The page you're looking for doesn't exist or has been moved.
         </p>
 
-        <Link href="/" style={{ textDecoration: 'none' }}>
+        <Link href='/' style={{ textDecoration: 'none' }}>
           <button
             style={{
               background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
@@ -79,3 +79,4 @@ export default function NotFoundPage() {
     </div>
   );
 }
+

@@ -25,7 +25,8 @@ export default function SignIn() {
       if (result?.error) {
         setError('Invalid credentials');
       } else {
-        router.push('/');
+        // Redirect to subscription-based routing instead of homepage
+        router.push('/auth/dashboard-router');
       }
     } catch (error) {
       setError('An error occurred during sign in');

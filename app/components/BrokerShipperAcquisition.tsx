@@ -72,22 +72,16 @@ export default function BrokerShipperAcquisition({
   const [selectedProspect, setSelectedProspect] =
     useState<ShipperProspect | null>(null);
 
-  // Mock shipper prospect data
+  // Mock data removed - real shipper prospects will populate from API
   useEffect(() => {
-    const mockProspects: ShipperProspect[] = [
-      {
-        id: 'SP001',
-        companyName: 'Pacific Manufacturing Corp',
-        industry: 'Manufacturing',
-        location: { city: 'Los Angeles', state: 'CA', zip: '90210' },
-        annualFreightSpend: 2500000,
-        shippingVolume: 850,
-        primaryLanes: ['CA-TX', 'CA-IL', 'CA-FL'],
-        equipmentNeeds: ['Dry Van', 'Flatbed'],
-        decisionMaker: {
-          name: 'Sarah Johnson',
-          title: 'VP of Logistics',
-          email: 'sjohnson@pacificmfg.com',
+    const mockProspects: ShipperProspect[] = [];
+    const mockCampaigns: CampaignData[] = [];
+
+    setProspects(mockProspects);
+    setCampaigns(mockCampaigns);
+  }, []);
+
+  const getStatusColor = (status: string) => {
           phone: '(555) 123-4567',
         },
         leadScore: 92,

@@ -1,7 +1,4 @@
-import {
-  createMockLoad,
-  mockFetchResponse,
-} from '../../__tests__/utils/test-utils';
+import { createMockLoad, mockFetchResponse } from '../../test-utils';
 import { createLoad, generateLoadId, getBrokerLoads } from '../loadService';
 
 // Mock Supabase client

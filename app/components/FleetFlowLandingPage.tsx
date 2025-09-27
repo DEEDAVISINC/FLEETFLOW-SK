@@ -171,6 +171,23 @@ export default function FleetFlowLandingPage() {
             >
               FLEETFLOWDASH
             </button>
+          </Link>{' '}
+          <Link href='/auth/signin'>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                color: 'white',
+                border: '2px solid rgba(16, 185, 129, 0.8)',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '0.9rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 0 8px rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              🔐 LOGIN
+            </button>
           </Link>
         </div>
       </div>

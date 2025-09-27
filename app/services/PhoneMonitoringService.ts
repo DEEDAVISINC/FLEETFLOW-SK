@@ -121,101 +121,11 @@ export class PhoneMonitoringService {
   }
 
   /**
-   * Initialize with demo call data for different tenants
+   * Initialize service - ready for real call data
    */
   private initializeDemoData(): void {
-    const demoCallRecords: CallRecord[] = [
-      {
-        callId: 'call-001',
-        callSid: 'CA1234567890',
-        tenantId: 'global-freight-solutions',
-        employeeId: 'broker-001',
-        employeeName: 'John Smith',
-        employeeDepartment: 'BB',
-        customerPhone: '+15551234567',
-        customerName: 'ABC Trucking',
-        contactId: 'contact-001',
-        leadId: 'lead-001',
-        callDirection: 'outbound',
-        callStatus: 'completed',
-        startTime: new Date(Date.now() - 3600000).toISOString(),
-        answerTime: new Date(Date.now() - 3590000).toISOString(),
-        endTime: new Date(Date.now() - 3300000).toISOString(),
-        duration: 290,
-        platform: 'twilio',
-        recordingUrl: 'https://api.twilio.com/recordings/RE1234567890',
-        transcriptionText:
-          'Discussion about new load opportunity from Chicago to Atlanta...',
-        callPurpose: 'sales',
-        callOutcome: 'successful',
-        callQuality: 'excellent',
-        handoffs: [],
-        crmNotes: [
-          {
-            id: 'note-001',
-            employeeId: 'broker-001',
-            employeeName: 'John Smith',
-            noteText:
-              'Customer interested in weekly Chicago to Atlanta runs. Rate discussed: $2,200. Follow up on Monday.',
-            noteType: 'call_summary',
-            timestamp: new Date(Date.now() - 3300000).toISOString(),
-          },
-        ],
-        tags: ['hot_lead', 'weekly_runs', 'atlanta_chicago'],
-        cost: 0.15,
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        updatedAt: new Date(Date.now() - 3300000).toISOString(),
-      },
-      {
-        callId: 'call-002',
-        callSid: 'CA1234567891',
-        tenantId: 'swift-freight',
-        employeeId: 'disp-001',
-        employeeName: 'Sarah Johnson',
-        employeeDepartment: 'DC',
-        customerPhone: '+15559876543',
-        customerName: 'XYZ Transport',
-        contactId: 'contact-002',
-        callDirection: 'inbound',
-        callStatus: 'completed',
-        startTime: new Date(Date.now() - 1800000).toISOString(),
-        answerTime: new Date(Date.now() - 1795000).toISOString(),
-        endTime: new Date(Date.now() - 1200000).toISOString(),
-        duration: 595,
-        platform: 'freeswitch',
-        callPurpose: 'dispatch',
-        callOutcome: 'successful',
-        callQuality: 'good',
-        handoffs: [
-          {
-            id: 'handoff-001',
-            fromEmployeeId: 'disp-001',
-            fromEmployeeName: 'Sarah Johnson',
-            toEmployeeId: 'mgr-001',
-            toEmployeeName: 'Fleet Manager',
-            handoffReason: 'Rate negotiation required',
-            handoffTime: new Date(Date.now() - 1500000).toISOString(),
-            handoffType: 'escalation',
-            completed: true,
-          },
-        ],
-        crmNotes: [
-          {
-            id: 'note-002',
-            employeeId: 'disp-001',
-            employeeName: 'Sarah Johnson',
-            noteText:
-              'Driver arrived early at pickup. Load ready. Estimated delivery: 2PM tomorrow.',
-            noteType: 'call_summary',
-            timestamp: new Date(Date.now() - 1200000).toISOString(),
-          },
-        ],
-        tags: ['on_time', 'early_arrival'],
-        cost: 0.08,
-        createdAt: new Date(Date.now() - 1800000).toISOString(),
-        updatedAt: new Date(Date.now() - 1200000).toISOString(),
-      },
-    ];
+    // Mock data removed - real call records will populate from phone system
+    const demoCallRecords: CallRecord[] = [];
 
     demoCallRecords.forEach((record) => {
       this.callRecords.set(record.callId, record);

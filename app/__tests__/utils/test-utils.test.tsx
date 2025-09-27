@@ -6,7 +6,7 @@ import {
   createTestDatabase,
   mockApiResponse,
   waitForNextTick,
-} from './test-utils';
+} from '../../test-utils';
 
 describe('Test Utilities', () => {
   describe('Mock Data Factories', () => {
@@ -105,5 +105,3 @@ describe('Test Utilities', () => {
     });
   });
 });
-
-

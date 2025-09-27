@@ -4,3 +4,4 @@ export const revalidate = 0;
 
 // Disable static generation for the entire app
 export const runtime = 'nodejs';
+
