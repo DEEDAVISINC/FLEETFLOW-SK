@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function SafetyResourcesPage() {
+export default function ResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState<
     'general' | 'drivers' | 'equipment' | 'compliance'
   >('general');
@@ -207,7 +207,7 @@ export default function SafetyResourcesPage() {
                 margin: '0 0 16px 0',
               }}
             >
-              🦺 Safety Resources
+              📚 Resources Hub
             </h1>
             <p
               style={{
@@ -220,8 +220,8 @@ export default function SafetyResourcesPage() {
                 lineHeight: '1.6',
               }}
             >
-              Comprehensive safety resources, regulations, and best practices
-              for transportation professionals
+              Comprehensive resources, regulations, and best practices for
+              transportation professionals
             </p>
           </div>
 

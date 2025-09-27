@@ -12,8 +12,7 @@ const nextConfig = {
   output: 'standalone',
   trailingSlash: false,
   poweredByHeader: false,
-  // Disable optimizations that cause build issues
-  swcMinify: false,
+  // Note: swcMinify is now default in Next.js 15+, removed deprecated option
   compiler: {
     removeConsole: false,
   },

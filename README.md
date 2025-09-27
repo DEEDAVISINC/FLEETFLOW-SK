@@ -1,345 +1,297 @@
-# 🚛 FleetFlow - Enhanced Fleet Management Platform
+# 🚚 FleetFlow TMS - Revolutionary Transportation Management System
 
-> **Professional-grade fleet management with advanced invoice automation and analytics**
+[![Production Ready](https://img.shields.io/badge/Production-Ready-brightgreen)](https://fleetflowapp.com)
+[![WOSB Certified](https://img.shields.io/badge/WOSB-Certified-blue)](https://fleetflowapp.com)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-black)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue)](https://www.typescriptlang.org)
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.3.4-black?logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1.10-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![React](https://img.shields.io/badge/React-19.1.0-61DAFB?logo=react)](https://reactjs.org/)
+**FleetFlow TMS** is the most advanced AI-powered transportation management system, built by freight
+industry professionals for freight brokers, carriers, and fleet managers.
 
-## 🌟 Enhanced Features Overview
+## 🎯 **Quick Start (Production Ready)**
 
-FleetFlow has been **completely enhanced** with enterprise-grade features including professional invoice management, automated email systems, comprehensive analytics, and modern UI/UX design.
+### **1. Prerequisites**
 
-### 🆕 Latest Enhancements
+- Node.js 18+
+- NPM or Yarn
+- Supabase account (free tier available)
 
-- 📄 **Professional Invoice System** - Complete automation from generation to payment tracking
-- 📧 **Advanced Email Automation** - Professional templates with automated follow-ups
-- 📊 **Enhanced Analytics Dashboard** - Comprehensive business intelligence with invoice metrics
-- 🎨 **Modern UI/UX** - Clean, responsive design with improved user experience
-- 🔗 **Unified API System** - SMS and Email notifications in single endpoint
-- 💰 **Financial Tracking** - Advanced payment collection and overdue management
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18.0 or higher
-- npm or yarn package manager
-
-### Installation
+### **2. Clone & Install**
 
 ```bash
-# Clone the repository
-git clone <repository-url>
+git clone https://github.com/deeashaw/FLEETFLOW.git
 cd FLEETFLOW
-
-# Install dependencies
 npm install
+```
 
-# Set up environment variables
+### **3. Environment Setup**
+
+```bash
+# Copy environment template
 cp .env.example .env.local
 
-# Start development server
-npm run dev
+# Edit .env.local with your credentials:
+# - NEXTAUTH_SECRET (generated)
+# - NEXT_PUBLIC_SUPABASE_URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY
+# - ANTHROPIC_API_KEY (for AI features)
+# - GOOGLE_MAPS_API_KEY (for tracking)
 ```
 
-Visit `http://localhost:3000` to access the enhanced FleetFlow dashboard.
+### **4. Database Setup**
 
----
-
-## 🏗️ Enhanced Architecture
-
-### **Core Components**
-```
-📁 app/
-├── 📄 components/
-│   ├── DispatchInvoice.tsx     # Professional invoice component
-│   ├── Navigation.tsx          # Enhanced navigation with access control
-│   └── ...
-├── 📧 services/
-│   ├── email.ts               # Advanced email automation service
-│   └── sms.ts                 # SMS notification service
-├── 🔗 api/
-│   └── notifications/send/     # Unified notification API
-├── 📊 analytics/              # Enhanced analytics dashboard
-├── 🚛 dispatch/               # Advanced dispatch central
-└── ...
-```
-
-### **New Services**
-- **Email Service**: Professional templates and automation
-- **Invoice Management**: Complete lifecycle tracking
-- **Analytics Engine**: Business intelligence and reporting
-- **Notification API**: Unified SMS/Email communication
-
----
-
-## 📊 Enhanced Analytics Dashboard
-
-### **Invoice Analytics**
-- 📈 Revenue vs Payment Trends
-- 💰 Payment Status Distribution  
-- 📊 Monthly Dispatch Fee Tracking
-- 🏆 Top Carriers Analysis
-
-### **Business Intelligence**
-- 💹 Collection Rate Monitoring
-- ⏰ Average Payment Days
-- ⚠️ Overdue Amount Tracking
-- 📋 Performance Metrics
-
-**Access**: `http://localhost:3000/analytics` (Manager/Admin access required)
-
----
-
-## 🧾 Professional Invoice Management
-
-### **Features**
-- ✅ Professional invoice design with company branding
-- ✅ PDF generation and download
-- ✅ Automated email delivery with templates
-- ✅ Payment status tracking (Pending/Sent/Paid/Overdue)
-- ✅ Complete carrier information integration
-- ✅ Detailed load and service breakdown
-
-### **Invoice Operations**
-```typescript
-// Generate professional invoice
-const invoice = await generateInvoice(loadData);
-
-// Send via email with professional template
-await sendInvoiceEmail(carrierEmail, invoice);
-
-// Generate PDF for download/print
-const pdf = await generateInvoicePDF(invoice);
-```
-
----
-
-## 📧 Advanced Email Automation
-
-### **Professional Templates**
-- 📧 **Invoice Delivery**: Comprehensive invoice emails with branding
-- ⚠️ **Overdue Notices**: Escalating reminder system
-- 💼 **Professional Communication**: Business-standard messaging
-
-### **Automation Features**
-- 🔄 Scheduled follow-ups (1, 7, 14, 30 days)
-- 📊 Status-based triggers
-- 📎 PDF attachment support
-- 🎯 Priority-based delivery
-
-### **Usage**
-```typescript
-// Send professional invoice email
-const template = generateInvoiceEmailTemplate(invoiceData);
-await sendInvoiceEmail(carrierEmail, template);
-
-// Schedule automated follow-ups
-scheduleFollowUpEmails({
-  invoiceId: 'INV-001',
-  carrierEmail: 'billing@carrier.com',
-  invoiceData: invoice,
-  reminderDays: [1, 7, 14, 30]
-});
-```
-
----
-
-## 🔗 Unified Notification API
-
-### **Enhanced Endpoint**: `/api/notifications/send`
-
-Supports both SMS and Email notifications with professional templates.
-
-#### **SMS Notification**
 ```bash
-curl -X POST http://localhost:3000/api/notifications/send \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "sms",
-    "to": "+1234567890",
-    "message": "Your FleetFlow dispatch invoice is ready",
-    "priority": "normal"
-  }'
+# Run the Supabase schema setup
+# Copy contents of scripts/setup-supabase-database.sql
+# Paste into your Supabase SQL Editor and execute
 ```
 
-#### **Email Notification**
+### **5. Build & Deploy**
+
 ```bash
-curl -X POST http://localhost:3000/api/notifications/send \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "email",
-    "to": "billing@carrier.com",
-    "subject": "FleetFlow Invoice INV-001",
-    "message": "Please find your dispatch invoice attached",
-    "htmlMessage": "<h1>Invoice Ready</h1><p>Your invoice is attached.</p>",
-    "attachments": ["Invoice-INV-001.pdf"],
-    "priority": "normal"
-  }'
-```
-
----
-
-## 🎯 Access Control System
-
-### **Role-Based Access**
-- 👤 **Driver**: Basic fleet information
-- 📋 **Dispatcher**: Operational access
-- 👨‍💼 **Manager**: Full access including analytics and financials
-- 🔧 **Admin**: Complete system access
-
-### **Protected Features**
-- 📊 Analytics Dashboard (Manager/Admin)
-- 💰 Financial Management (Manager/Admin)
-- 🧾 Invoice Management (Dispatcher/Manager/Admin)
-- ⚙️ System Settings (Admin)
-
----
-
-## 🛠️ Configuration
-
-### **Environment Variables**
-```env
-# Twilio SMS Configuration
-TWILIO_ACCOUNT_SID=your_twilio_account_sid
-TWILIO_AUTH_TOKEN=your_twilio_auth_token
-TWILIO_PHONE_NUMBER=your_twilio_phone_number
-
-# SMTP Email Configuration (Optional)
-SMTP_HOST=your_smtp_host
-SMTP_PORT=587
-SMTP_USER=your_smtp_username
-SMTP_PASS=your_smtp_password
-
-# Next.js Configuration
-NEXT_PUBLIC_APP_ENV=development
-```
-
-### **Development vs Production**
-- **Development**: Uses mock SMS/Email for testing
-- **Production**: Requires Twilio and SMTP configuration
-
----
-
-## 📱 Testing Enhanced Features
-
-### **Run Test Script**
-```bash
-./test-enhanced-features.sh
-```
-
-### **Manual Testing**
-1. **Dashboard**: Visit `http://localhost:3000`
-2. **Analytics**: Navigate to Analytics (Manager access)
-3. **Dispatch Central**: Test invoice generation and sending
-4. **SMS Testing**: Use `/sms-test` page for SMS functionality
-5. **API Testing**: Use provided curl commands
-
----
-
-## 🚀 Deployment Options
-
-### **Vercel (Recommended)**
-```bash
+# Test build locally
 npm run build
-npx vercel --prod
+
+# Deploy (multiple options)
+./scripts/deploy-production.sh
 ```
+
+### **6. Verify Setup**
 
 ```bash
-npm run build
-npm run deploy
+# Test all API integrations
+./scripts/test-api-integrations.sh
 ```
 
-### **Custom Server**
+**🎉 Your FleetFlow TMS is now live at: https://fleetflowapp.com**
+
+---
+
+## 🏢 **Company Information**
+
+### **FleetFlow TMS LLC**
+
+- **Legal Entity**: Limited Liability Company
+- **WOSB Certified**: Women-Owned Small Business
+- **MC License**: #MC-1647572
+- **DOT Number**: #DOT4250594
+- **Address**: 755 W. Big Beaver Rd STE 2020, Troy, MI 48084
+- **Phone**: (833) 386-3509
+- **Email**: ddavis@fleetflowapp.com
+
+### **Founder: Dieasha Davis**
+
+- 9+ years entrepreneurship experience
+- BBA Business Administration, University of Phoenix
+- Active freight industry operator (Account Executive, Freight 1st Direct)
+- Direct freight operations experience with MC license
+
+---
+
+## 🚀 **Core Features**
+
+### **For Freight Brokers**
+
+- 🤖 **AI-Powered Load Matching** - Intelligent carrier selection and pricing optimization
+- 📊 **Advanced CRM** - Lead scoring, pipeline management, contact analysis
+- 🔍 **FMCSA Integration** - Real-time carrier verification and compliance checking
+- 💰 **Bill.com Integration** - Automated invoicing and payment processing
+- 📈 **Performance Analytics** - Revenue tracking, margin analysis, KPI dashboards
+
+### **For Carriers & Fleet Managers**
+
+- 📱 **Mobile-First Design** - Native iOS/Android experience with offline sync
+- 🗺️ **Real-Time Tracking** - GPS integration with automated customer notifications
+- ✅ **Compliance Management** - DOT, FMCSA, state regulations automation
+- 👥 **Driver Management** - Performance tracking, communication, documentation
+- 🔧 **Maintenance Scheduling** - Automated reminders and compliance tracking
+
+### **For Drivers**
+
+- 📲 **Simplified Mobile App** - Intuitive interface with offline capabilities
+- 📄 **Digital Documentation** - Electronic signatures, BOL, proof of delivery
+- 💬 **Real-Time Communication** - Direct messaging with dispatch and brokers
+- 🏆 **Performance Tracking** - Miles, earnings, safety scores, incentives
+
+---
+
+## 🛠️ **Technical Architecture**
+
+### **Frontend Stack**
+
+- **Next.js 15.5** - React framework with SSR/SSG
+- **TypeScript 5.8** - Type-safe development
+- **Tailwind CSS 4.1** - Utility-first styling
+- **React 18.3** - Modern React with concurrent features
+
+### **Backend Services**
+
+- **Next.js API Routes** - Serverless backend architecture
+- **Supabase** - PostgreSQL database with real-time subscriptions
+- **NextAuth** - Authentication with 2FA support
+- **Twilio** - SMS/Voice communication platform
+
+### **AI & Integrations**
+
+- **Claude AI (Anthropic)** - Advanced language model for automation
+- **FMCSA SAFER API** - Real-time carrier verification
+- **Google Maps API** - Routing, tracking, and geocoding
+- **Bill.com API** - Financial operations automation
+- **Square API** - Payment processing
+
+### **Production Infrastructure**
+
+- **405 Pages** - Comprehensive application coverage
+- **Multi-Tenant** - Secure organization isolation
+- **Real-Time** - Live updates and notifications
+- **Mobile Responsive** - Works on all devices
+- **Bank-Level Security** - 2FA, encryption, audit logs
+
+---
+
+## 🔐 **Security & Compliance**
+
+### **Authentication**
+
+- Two-Factor Authentication (2FA) for all users
+- JWT tokens with secure session management
+- Role-based access control (RBAC)
+- Organization-level data isolation
+
+### **Data Protection**
+
+- AES-256 encryption at rest and in transit
+- SOC 2 Type II compliant infrastructure (Supabase)
+- GDPR and CCPA compliance features
+- 7-year data retention policy
+
+### **Industry Compliance**
+
+- DOT and FMCSA regulation adherence
+- ELD mandate compliance
+- Hours of Service (HOS) tracking
+- Safety audit and reporting
+
+---
+
+## 📚 **Demo & Testing**
+
+### **Live Demo Credentials**
+
+Access the production system at: **https://fleetflowapp.com**
+
+- **Admin Portal**: admin@fleetflowapp.com / admin123
+- **Dispatcher**: dispatch@fleetflowapp.com / dispatch123
+- **Driver Portal**: driver@fleetflowapp.com / driver123
+- **Broker Access**: broker@fleetflowapp.com / broker123
+
+### **API Testing**
+
 ```bash
-npm run build
-npm start
+# Test all integrations
+./scripts/test-api-integrations.sh
+
+# Test specific endpoints
+curl https://fleetflowapp.com/api/health
+curl https://fleetflowapp.com/api/deployment-status
 ```
 
 ---
 
-## 📈 Performance Features
+## 🎯 **Business Model**
 
-### **Optimizations**
-- ⚡ Server-side rendering with Next.js
-- 🎯 Component lazy loading
-- 📊 Efficient chart rendering with Chart.js
-- 🔄 Optimized API caching
-- 📱 Responsive design for all devices
+### **Target Market**
 
-### **Monitoring**
-- 📊 Built-in analytics tracking
-- 🚨 Error logging and reporting
-- 📈 Performance metrics collection
-- 🔍 API usage monitoring
+- **Primary**: Freight brokers and 3PL companies (1-500 employees)
+- **Secondary**: Carrier fleets and owner-operators (1-50 trucks)
+- **Enterprise**: Large transportation companies (500+ employees)
 
----
+### **Revenue Projections**
 
-## 🛣️ Roadmap
+- **Year 1**: $185M ARR
+- **Year 2**: $650M ARR
+- **Year 3**: $2.1B ARR
+- **TAM**: $12-20B enterprise transportation software market
 
-### **Next Phase Enhancements**
-- [ ] 💳 **Payment Integration** - Stripe/PayPal integration
-- [ ] 🔄 **Background Jobs** - Queue system for email automation
-- [ ] 📱 **Mobile App** - React Native companion
-- [ ] 🔗 **API Webhooks** - External system integration
-- [ ] 🛡️ **Advanced Security** - OAuth 2.0 and JWT
-- [ ] 📊 **Custom Reports** - Advanced reporting system
+### **Competitive Advantages**
 
-### **Enterprise Features**
-- [ ] 🏢 **Multi-tenant Support** - Multiple organization handling
-- [ ] 🔐 **SSO Integration** - Single sign-on capabilities
-- [ ] 📋 **Compliance Tools** - DOT and FMCSA compliance
-- [ ] 🤖 **AI/ML Features** - Predictive analytics
-- [ ] 🌐 **Real-time Updates** - WebSocket integration
+- **WOSB Certification** - Access to government set-aside contracts
+- **Founder-Market Fit** - Built by active industry operator
+- **AI-First Approach** - Advanced automation and optimization
+- **Mobile-Native** - Modern UX for drivers and managers
 
 ---
 
-## 📚 Documentation
+## 📞 **Support & Contact**
 
-- 📖 **[Feature Documentation](./ENHANCED_FEATURES_SUMMARY.md)** - Comprehensive feature overview
-- 🔐 **[Access Control Guide](./ACCESS_CONTROL_GUIDE.md)** - Security and permissions
-- 🔗 **[Integration Guide](./INTEGRATION_FEATURES.md)** - API and third-party integrations
-- ⚡ **[Quick Setup](./QUICK_SETUP.md)** - Fast deployment guide
+### **Customer Support**
 
----
+- **Phone**: (833) 386-3509 (8 AM - 8 PM EST)
+- **Email**: support@fleetflowapp.com
+- **Emergency**: Available 24/7 for critical issues
 
-## 🤝 Contributing
+### **Business Development**
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your enhancements
-4. Add tests for new features
-5. Submit a pull request
+- **Partnerships**: partnerships@fleetflowapp.com
+- **Enterprise Sales**: sales@fleetflowapp.com
+- **Government Contracts**: government@fleetflowapp.com
 
----
+### **Technical Support**
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Developer API**: developers@fleetflowapp.com
+- **Integration Support**: integrations@fleetflowapp.com
+- **Bug Reports**: bugs@fleetflowapp.com
 
 ---
 
-## 🎉 Enhanced FleetFlow Summary
+## 🌟 **Contributing**
 
-FleetFlow is now a **professional-grade fleet management platform** featuring:
+We welcome contributions from the transportation and technology communities:
 
-✅ **Complete Invoice Automation**  
-✅ **Advanced Analytics & Business Intelligence**  
-✅ **Professional Email Communication**  
-✅ **Modern UI/UX Design**  
-✅ **Scalable Architecture**  
-✅ **Enterprise-Ready Features**  
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
-**Ready for production deployment with sophisticated financial tracking and automation capabilities.**
+### **Development Guidelines**
+
+- Follow TypeScript best practices
+- Include tests for new features
+- Maintain documentation
+- Follow freight industry standards
 
 ---
 
-<div align="center">
-  <h3>🚛 Built for the future of fleet management</h3>
-  <p><strong>FleetFlow - Enhanced Edition</strong></p>
-</div>
-# FleetFlow Production Deployment Sat Aug 23 15:58:42 EDT 2025
-# Force deployment Sat Aug 23 17:29:01 EDT 2025
+## 📄 **License & Legal**
+
+### **Software License**
+
+This project is proprietary software owned by FleetFlow TMS LLC. For licensing inquiries, contact:
+legal@fleetflowapp.com
+
+### **Terms of Service**
+
+By using FleetFlow TMS, you agree to our
+[Terms of Service](https://fleetflowapp.com/terms-of-service) and
+[Privacy Policy](https://fleetflowapp.com/privacy-policy).
+
+### **Trademark**
+
+FleetFlow™ and FleetFlow TMS™ are trademarks of FleetFlow TMS LLC.
+
+---
+
+## 🚀 **Ready to Transform Your Transportation Operations?**
+
+**Get started today**: https://fleetflowapp.com
+
+**Schedule a demo**: https://fleetflowapp.com/demo
+
+**Join our community**: https://linkedin.com/company/fleetflow-tms
+
+---
+
+_Built with ❤️ by the FleetFlow team in Troy, Michigan_
+
+_Revolutionizing transportation management, one load at a time._

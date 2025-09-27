@@ -715,7 +715,7 @@ export default function ProfessionalNavigation() {
                     fontWeight: '500',
                   }}
                 >
-                  🛡️ Safety & Training
+                  📚 Resources
                 </Link>
                 <Link
                   href='/fleetguard-demo'
@@ -814,7 +814,7 @@ export default function ProfessionalNavigation() {
                     fontWeight: '500',
                   }}
                 >
-                  🎓 Training Portal
+                  🎓 FleetFlow University℠
                 </Link>
 
                 <Link

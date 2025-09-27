@@ -250,16 +250,23 @@ transportation platform with unified, cost-optimized, professionally-supervised 
 
 ### **🏢 DEPOINTE AI Company Dashboard: Complete 27-Member AI Workforce**
 
-FleetFlow's **DEPOINTE AI Company Dashboard** features the industry's most comprehensive AI workforce with **27 specialized AI staff members** across 8 departments, each with unique roles, personalities, and specialized learning abilities.
+FleetFlow's **DEPOINTE AI Company Dashboard** features the industry's most comprehensive AI
+workforce with **27 specialized AI staff members** across 8 departments, each with unique roles,
+personalities, and specialized learning abilities.
 
 **🎯 Complete AI Staff Roster:**
 
 **Recent Additions (Staff 25-27):**
-- **Foster** - Fleet Optimization Specialist (Operations): Route optimization algorithms, fleet utilization analytics, fuel efficiency optimization
-- **Ray M. Allen** - Risk Management Analyst (Financial): Credit risk assessment automation, fraud detection algorithms, predictive risk modeling  
-- **Dante Davis** - Data Analytics Specialist (Technology): Advanced data visualization, machine learning model development, business intelligence reporting
+
+- **Foster** - Fleet Optimization Specialist (Operations): Route optimization algorithms, fleet
+  utilization analytics, fuel efficiency optimization
+- **Ray M. Allen** - Risk Management Analyst (Financial): Credit risk assessment automation, fraud
+  detection algorithms, predictive risk modeling
+- **Dante Davis** - Data Analytics Specialist (Technology): Advanced data visualization, machine
+  learning model development, business intelligence reporting
 
 **Complete 27-Member AI Workforce Value:**
+
 - **Department Coverage**: 8 specialized departments with dedicated AI representatives
 - **Learning Specialization**: Each AI staff member has 8+ unique learning abilities
 - **Interactive Directory**: Collapsible staff directory with full transparency
