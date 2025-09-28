@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { FleetFlowAppVideo } from './FleetFlowAppVideo';
 import Logo from './Logo';
@@ -15,6 +17,8 @@ interface DemoBookingForm {
 }
 
 export default function FleetFlowLandingPageMobile() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [demoForm, setDemoForm] = useState<DemoBookingForm>({
@@ -25,6 +29,26 @@ export default function FleetFlowLandingPageMobile() {
     fleetSize: '',
     message: '',
   });
+
+  // Handle FleetFlowDash click with authentication check
+  const handleFleetFlowDashClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Check if user is authenticated
+    if (status === 'loading') {
+      // Still loading session, show loading state
+      return;
+    }
+    
+    if (!session) {
+      // User is not logged in, redirect to login
+      router.push('/auth/signin');
+      return;
+    }
+    
+    // User is authenticated, allow navigation
+    router.push('/fleetflowdash');
+  };
 
   const handleDemoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,11 +84,18 @@ export default function FleetFlowLandingPageMobile() {
                   🌊 GO WITH THE FLOW
                 </button>
               </Link>
-              <Link href='/fleetflowdash'>
-                <button className='rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-blue-700 hover:to-blue-900'>
-                  FLEETFLOWDASH
-                </button>
-              </Link>
+              <button
+                onClick={handleFleetFlowDashClick}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all ${
+                  session
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 cursor-pointer'
+                    : 'bg-gradient-to-r from-gray-500 to-gray-600 cursor-not-allowed opacity-70'
+                }`}
+                disabled={status === 'loading'}
+                title={!session ? 'Please login to access FleetFlowDash' : 'Access FleetFlowDash'}
+              >
+                {status === 'loading' ? '⏳ LOADING...' : 'FLEETFLOWDASH'}
+              </button>
               <Link href='/auth/signin'>
                 <button className='rounded-lg bg-gradient-to-r from-green-600 to-green-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:from-green-700 hover:to-green-800'>
                   Login
@@ -112,11 +143,18 @@ export default function FleetFlowLandingPageMobile() {
                   🌊 GO WITH THE FLOW
                 </button>
               </Link>
-              <Link href='/fleetflowdash'>
-                <button className='w-full rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 py-3 text-sm font-semibold text-white'>
-                  FLEETFLOWDASH
-                </button>
-              </Link>
+              <button
+                onClick={handleFleetFlowDashClick}
+                className={`w-full rounded-lg py-3 text-sm font-semibold text-white ${
+                  session
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-800 cursor-pointer'
+                    : 'bg-gradient-to-r from-gray-500 to-gray-600 cursor-not-allowed opacity-70'
+                }`}
+                disabled={status === 'loading'}
+                title={!session ? 'Please login to access FleetFlowDash' : 'Access FleetFlowDash'}
+              >
+                {status === 'loading' ? '⏳ LOADING...' : 'FLEETFLOWDASH'}
+              </button>
               <Link href='/auth/signin'>
                 <button className='w-full rounded-lg bg-gradient-to-r from-green-600 to-green-700 py-3 text-sm font-semibold text-white'>
                   Login

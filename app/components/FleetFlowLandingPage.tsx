@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { FleetFlowAppVideo } from './FleetFlowAppVideo';
 import Logo from './Logo';
@@ -15,6 +17,8 @@ interface DemoBookingForm {
 }
 
 export default function FleetFlowLandingPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [showDemoForm, setShowDemoForm] = useState(false);
   const [demoForm, setDemoForm] = useState<DemoBookingForm>({
     name: '',
@@ -24,6 +28,26 @@ export default function FleetFlowLandingPage() {
     fleetSize: '',
     message: '',
   });
+
+  // Handle FleetFlowDash click with authentication check
+  const handleFleetFlowDashClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Check if user is authenticated
+    if (status === 'loading') {
+      // Still loading session, show loading state
+      return;
+    }
+    
+    if (!session) {
+      // User is not logged in, redirect to login
+      router.push('/auth/signin');
+      return;
+    }
+    
+    // User is authenticated, allow navigation
+    router.push('/fleetflowdash');
+  };
 
   // Add CSS animations
   React.useEffect(() => {
@@ -156,22 +180,27 @@ export default function FleetFlowLandingPage() {
               🌐 CARRIER NETWORK
             </button>
           </Link>{' '}
-          <Link href='/fleetflowdash'>
-            <button
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                color: 'white',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                fontSize: '0.9rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-              }}
-            >
-              FLEETFLOWDASH
-            </button>
-          </Link>{' '}
+          <button
+            onClick={handleFleetFlowDashClick}
+            style={{
+              background: session 
+                ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+                : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              cursor: session ? 'pointer' : 'not-allowed',
+              opacity: session ? 1 : 0.7,
+              transition: 'all 0.3s ease',
+            }}
+            disabled={status === 'loading'}
+            title={!session ? 'Please login to access FleetFlowDash' : 'Access FleetFlowDash'}
+          >
+            {status === 'loading' ? '⏳ LOADING...' : 'FLEETFLOWDASH'}
+          </button>{' '}
           <Link href='/auth/signin'>
             <button
               style={{
