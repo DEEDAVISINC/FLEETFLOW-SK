@@ -86,11 +86,11 @@ export class TenantPhoneService {
       {
         tenantId: 'fleetflow-demo',
         tenantName: 'FleetFlow Demo Company',
-        primaryPhone: '+1-833-386-3509', // Our existing Twilio number
-        backupPhone: '+1-833-555-0000',
+        primaryPhone: '+1-833-206-0231', // NEW Twilio number - should resolve "scam likely" issue
+        backupPhone: '+1-833-386-3509', // Previous number as backup
         twilioSubAccount: 'main_account',
         freeswitchExtension: '1000',
-        callerIdName: 'FleetFlow',
+        callerIdName: 'FleetFlow TMS LLC',
         smsEnabled: true,
         voiceEnabled: true,
         provider: 'both',
@@ -98,11 +98,11 @@ export class TenantPhoneService {
       {
         tenantId: 'depointe-fleetflow',
         tenantName: 'DEPOINTE AI Company',
-        primaryPhone: '+1-833-386-3509', // Production Twilio number
-        backupPhone: '+1-888-DEPOINTE',
+        primaryPhone: '+1-833-206-0231', // NEW Production Twilio number
+        backupPhone: '+1-833-386-3509', // Previous number as backup
         twilioSubAccount: 'AC_depointe',
         freeswitchExtension: '2000',
-        callerIdName: 'DEPOINTE AI',
+        callerIdName: 'FleetFlow TMS LLC',
         smsEnabled: true,
         voiceEnabled: true,
         provider: 'both',
@@ -201,8 +201,8 @@ export class TenantPhoneService {
     }
 
     if (!config) {
-      // Fallback to system default
-      return '+1-833-386-3509';
+      // Fallback to NEW system default (resolves "scam likely" issues)
+      return '+1-833-206-0231';
     }
 
     return config.primaryPhone;

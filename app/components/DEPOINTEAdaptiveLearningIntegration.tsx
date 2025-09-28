@@ -24,24 +24,8 @@ export default function DEPOINTEAdaptiveLearningIntegration({
   compactView = false,
   selectedStaffId,
 }: AdaptiveLearningIntegrationProps) {
-  let hookData;
-  try {
-    hookData = useAdaptiveLearning();
-  } catch (error) {
-    console.error('Error initializing adaptive learning hook:', error);
-    // Fallback hook data
-    hookData = {
-      systemStats: {
-        totalInteractions: 0,
-        staffProfiles: 0,
-        userProfiles: 0,
-        patterns: 0,
-        averageSuccessRate: 0,
-      },
-      isLearning: false,
-      isRecording: false,
-    };
-  }
+  // Call hook unconditionally - React hooks must be called at top level
+  const hookData = useAdaptiveLearning();
 
   const { systemStats, isLearning, isRecording } = hookData;
   const [activeStaffCount, setActiveStaffCount] = useState(0);

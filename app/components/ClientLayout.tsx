@@ -222,7 +222,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
               animation: 'spin 1s linear infinite',
               margin: '0 auto 20px',
             }}
-          ></div>
+          />
           <p
             style={{
               color: 'white',

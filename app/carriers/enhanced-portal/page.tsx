@@ -325,11 +325,7 @@ const CarrierCard: React.FC<{
 };
 
 export default function EnhancedCarrierPortal() {
-  // Check access permission
-  if (!checkPermission('canManageCarrierPortal')) {
-    return <AccessRestricted />;
-  }
-
+  // Initialize hooks first - React Hooks must be called at top level
   const [activeView, setActiveView] = useState<
     'dashboard' | 'onboarding' | 'analytics'
   >('dashboard');
@@ -347,6 +343,11 @@ export default function EnhancedCarrierPortal() {
     const allCarriers = onboardingIntegration.getAllCarriers();
     setCarriers(allCarriers);
   }, []);
+
+  // Check access permission after hooks are initialized
+  if (!checkPermission('canManageCarrierPortal')) {
+    return <AccessRestricted />;
+  }
 
   const filteredCarriers = carriers.filter((carrier) => {
     const matchesSearch =

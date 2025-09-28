@@ -30,7 +30,7 @@ export default function DashboardRouter() {
               animation: 'spin 1s linear infinite',
               margin: '0 auto 20px',
             }}
-          ></div>
+          />
           🚀 Routing to your personalized dashboard...
         </div>
         <style jsx>{`
@@ -47,4 +47,3 @@ export default function DashboardRouter() {
     </SubscriptionBasedRouter>
   );
 }
-

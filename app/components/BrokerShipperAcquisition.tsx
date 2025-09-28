@@ -82,23 +82,36 @@ export default function BrokerShipperAcquisition({
   }, []);
 
   const getStatusColor = (status: string) => {
-          phone: '(555) 123-4567',
-        },
-        leadScore: 92,
-        leadSource: 'LinkedIn Outreach',
-        status: 'qualified',
-        lastContact: '2024-12-15',
-        notes: [
-          'Looking to reduce freight costs by 15%',
-          'Current provider has poor communication',
-          'Decision timeline: Q1 2025',
-        ],
-        competitorInfo: {
-          currentProvider: 'MegaFreight Solutions',
-          contractExpiry: '2025-03-31',
-          painPoints: ['High rates', 'Poor service', 'Limited technology'],
-        },
-      },
+    switch (status) {
+      case 'qualified': return 'bg-green-100 text-green-800';
+      case 'contacted': return 'bg-blue-100 text-blue-800';
+      case 'new': return 'bg-yellow-100 text-yellow-800';
+      case 'converted': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Mock prospect data structure (for reference)
+  const mockProspectStructure = {
+    phone: '(555) 123-4567',
+    leadScore: 92,
+    leadSource: 'LinkedIn Outreach',
+    status: 'qualified',
+    lastContact: '2024-12-15',
+    notes: [
+      'Looking to reduce freight costs by 15%',
+      'Current provider has poor communication',
+      'Decision timeline: Q1 2025',
+    ],
+    competitorInfo: {
+      currentProvider: 'MegaFreight Solutions',
+      contractExpiry: '2025-03-31',
+      painPoints: ['High rates', 'Poor service', 'Limited technology'],
+    },
+  };
+
+  // Additional prospect data would go here
+  const additionalProspects = [
       {
         id: 'SP002',
         companyName: 'EcoRetail Distributors',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { DocumentFlowService, DocumentPackage } from '../services/document-flow-service';
 import { EnhancedCarrierService } from '../services/enhanced-carrier-service';
 
@@ -66,7 +66,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
       };
 
       const result = await documentFlowService.sendCompleteDocumentPackage(loadId, contacts);
-      
+
       if (result.success) {
         alert('✅ Complete document package sent successfully!');
         // Refresh packages
@@ -127,14 +127,14 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 max-w-7xl mx-auto"">
+    <div className="bg-white rounded-lg shadow-lg p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6"">
-        <h2 className="text-2xl font-bold text-gray-900"">📋 Document Flow Control Center</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">📋 Document Flow Control Center</h2>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl""
+            className="text-gray-400 hover:text-gray-600 text-2xl"
           >
             ×
           </button>
@@ -187,7 +187,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
             </div>
             <div className="bg-purple-50 rounded-lg p-4"">
               <div className="text-2xl font-bold text-purple-600"">
-                {activePackages.reduce((acc, pkg) => 
+                {activePackages.reduce((acc, pkg) =>
                   acc + Object.values(pkg.sentTo).filter(contact => contact?.status === 'delivered').length, 0
                 )}
               </div>
@@ -336,7 +336,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
             <div className="text-sm text-gray-600 mb-4"">
               Manage real-time tracking for carriers and monitor their locations during transit.
             </div>
-            
+
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"">
               <div className="bg-white rounded-lg p-3 text-center"">
@@ -380,7 +380,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
         <div className="space-y-6"">
           <div className="bg-gray-50 rounded-lg p-4"">
             <h3 className="text-lg font-semibold text-gray-900 mb-4"">⚙️ Document Flow Settings</h3>
-            
+
             <div className="space-y-4"">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2"">
@@ -388,14 +388,14 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
                 </label>
                 <input type="checkbox"" className="rounded"" defaultChecked />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2"">
                   Enable automatic carrier verification
                 </label>
                 <input type="checkbox"" className="rounded"" defaultChecked />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2"">
                   SMS notification preferences
@@ -407,19 +407,19 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
                   <option>Disable SMS notifications</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2"">
                   Document retention period (days)
                 </label>
-                <input 
-                  type="number"" 
+                <input
+                  type="number""
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg""
                   defaultValue={365}
                 />
               </div>
             </div>
-            
+
             <div className="mt-6"">
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"">
                 💾 Save Settings
@@ -442,7 +442,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
                 ×
               </button>
             </div>
-            
+
             {/* Document Status */}
             <div className="space-y-4"">
               <div>
@@ -458,7 +458,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-gray-900 mb-2"">Delivery Status</h4>
                 <div className="space-y-2 text-sm"">

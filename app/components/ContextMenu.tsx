@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Note interface
 interface Note {
@@ -189,10 +189,10 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
             Title *
           </label>
           <input
-            type="text""
+            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter note title...""
+            placeholder="Enter note title..."
             style={{
               width: '100%',
               padding: '10px',
@@ -215,7 +215,7 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Enter note content...""
+            placeholder="Enter note content..."
             rows={4}
             style={{
               width: '100%',
@@ -228,9 +228,9 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
           />
         </div>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
           gap: '16px',
           marginBottom: '16px'
         }}>
@@ -635,4 +635,4 @@ export default function ContextMenu({ x, y, onClose, subjectId, subjectType, sub
 }
 
 // Export types for use in other components
-export type { Note, ContextMenuProps } 
+export type { ContextMenuProps, Note }

@@ -496,7 +496,7 @@ export default function AutomationDemoPage() {
                   >
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ color: '#22c55e' }}>
-                        // Load status change (automatic)
+                        {/* Load status change (automatic) */}
                       </div>
                       <div>
                         updateLoad('FL-001', {{ status: 'In Transit' }})
@@ -504,13 +504,13 @@ export default function AutomationDemoPage() {
                     </div>
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ color: '#22c55e' }}>
-                        // Driver emergency
+                        {/* Driver emergency */}
                       </div>
                       <div>handleDriverEvent('FL-001', 'accident', data)</div>
                     </div>
                     <div>
                       <div style={{ color: '#22c55e' }}>
-                        // Customer inquiry
+                        {/* Customer inquiry */}
                       </div>
                       <div>
                         handleCustomerInquiry('CUST-001', 'complaint', data)

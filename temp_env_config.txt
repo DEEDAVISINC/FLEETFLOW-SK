@@ -1,0 +1,39 @@
+# FleetFlow Local Development Configuration
+# Updated with new Twilio number for voice testing
+
+# Application Environment
+NODE_ENV=development
+NEXT_PUBLIC_APP_ENV=development
+
+# Next.js Configuration  
+NEXTAUTH_SECRET=your_nextauth_secret_change_in_production
+NEXTAUTH_URL=http://localhost:3001
+
+# NEW TWILIO CONFIGURATION WITH YOUR NUMBER
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+18332060231
+
+# AI Configuration - Claude API
+ANTHROPIC_API_KEY=your_claude_api_key_here
+
+# ElevenLabs Voice AI (Already configured)
+ELEVENLABS_API_KEY=sk_b6131...
+TTS_PROVIDER=elevenlabs
+ELEVENLABS_VOICE_ID=21m00Tcm4TlvDq8ikWAM
+TTS_VOICE=professional-female
+ENABLE_TTS=true
+
+# FMCSA Integration (Working)
+FMCSA_API_KEY=7de24c4a0eade12f34685829289e0446daf7880e
+ENABLE_REAL_TIME_VERIFICATION=true
+
+# AI Voice System
+AI_CONFIDENCE_THRESHOLD=0.7
+AUTO_TRANSFER_THRESHOLD=0.5
+MAX_AI_CONVERSATION_TIME=15
+
+# Feature Flags
+ENABLE_AI_FEATURES=true
+ENABLE_SMS_NOTIFICATIONS=true
+ENABLE_CALL_CENTER=true

@@ -49,8 +49,11 @@ export default function SimplePhoneDialer() {
 
   const loadCRMContacts = async () => {
     try {
-      // Get contacts from CRM service
-      const crmData = await centralCRMService.getDashboardMetrics();
+      // Get contacts from CRM service - using getAllUsers as contacts source
+      const crmUsers = await centralCRMService.getAllUsers();
+
+      // If we have real CRM users, we could convert them here
+      // For now, using mock data as fallback
 
       // Convert CRM contacts to dialer format
       const convertedContacts: Contact[] = [

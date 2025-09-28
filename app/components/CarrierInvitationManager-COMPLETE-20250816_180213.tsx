@@ -84,7 +84,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
       });
 
       const result = await invitationService.sendInvitation(invitation);
-      
+
       if (result.success) {
         alert('Invitation sent successfully!');
         // Reset form
@@ -238,13 +238,13 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                 <h4 style={{ color: 'white', fontSize: '16px', marginBottom: '16px' }}>
                   Carrier Information
                 </h4>
-                
+
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ color: 'white', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
                     Carrier Name *
                   </label>
                   <input
-                    type="text""
+                    type="text"
                     value={invitationForm.carrierName}
                     onChange={(e) => setInvitationForm({...invitationForm, carrierName: e.target.value})}
                     style={{
@@ -256,7 +256,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       color: 'white',
                       fontSize: '14px',
                     }}
-                    placeholder="Enter carrier company name""
+                    placeholder="Enter carrier company name"
                   />
                 </div>
 
@@ -330,7 +330,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                 <h4 style={{ color: 'white', fontSize: '16px', marginBottom: '16px' }}>
                   Contact Information
                 </h4>
-                
+
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ color: 'white', fontSize: '14px', display: 'block', marginBottom: '8px' }}>
                     Email Address *
@@ -449,8 +449,8 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                 onClick={handleSendInvitation}
                 disabled={loading}
                 style={{
-                  background: loading 
-                    ? 'rgba(107,114,128,0.5)' 
+                  background: loading
+                    ? 'rgba(107,114,128,0.5)'
                     : 'linear-gradient(135deg, #14b8a6, #0d9488)',
                   color: 'white',
                   border: 'none',
@@ -546,19 +546,19 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       {invitation.targetCarrier.email}
                     </div>
                   </div>
-                  
+
                   <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>
                     {invitation.invitedBy}
                   </div>
-                  
+
                   <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>
                     {formatDate(invitation.sentDate)}
                   </div>
-                  
+
                   <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>
                     {invitation.invitationType}
                   </div>
-                  
+
                   <div style={{ textAlign: 'center' }}>
                     <span
                       style={{
@@ -660,7 +660,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
             <h4 style={{ color: 'white', fontSize: '18px', marginBottom: '16px' }}>
               📊 Top Performing Sources
             </h4>
-            
+
             <div style={{ display: 'grid', gap: '12px' }}>
               {analytics.topPerformingSources.map((source, index) => (
                 <div
@@ -693,7 +693,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
           <h3 style={{ color: 'white', fontSize: '20px', marginBottom: '24px' }}>
             📝 Invitation Templates
           </h3>
-          
+
           <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)', fontSize: '16px' }}>
             <p>📧 Template management coming soon</p>
             <p>Currently using default email and SMS templates</p>

@@ -153,15 +153,25 @@ export default function CallFlow() {
                     marginBottom: '4px',
                   }}
                 >
-                  FleetFlow System
+                  FleetFlow Platform
                 </div>
                 <div
                   style={{
                     fontSize: '0.9rem',
                     color: 'rgba(255, 255, 255, 0.7)',
+                    marginBottom: '2px',
                   }}
                 >
-                  Company Info: Not Configured
+                  📞 +1 (833) 206-0231
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.8rem',
+                    color: 'rgba(34, 197, 94, 0.9)',
+                    fontWeight: '500',
+                  }}
+                >
+                  ✅ Voice AI System Active
                 </div>
                 {user && (
                   <div
@@ -408,42 +418,111 @@ export default function CallFlow() {
             </div>
           </div>
 
-          {/* Phone Setup Section */}
+          {/* Phone Setup Section - Enhanced UX */}
           <div
             style={{
-              background: 'rgba(245, 158, 11, 0.1)',
+              background: 'rgba(245, 158, 11, 0.12)',
               backdropFilter: 'blur(10px)',
               borderRadius: '16px',
-              padding: '24px',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+              padding: '28px',
+              border: '2px solid rgba(245, 158, 11, 0.4)',
+              boxShadow: '0 12px 40px rgba(245, 158, 11, 0.15)',
               overflow: 'hidden',
+              position: 'relative',
             }}
           >
-            <div style={{ marginBottom: '20px' }}>
+            {/* Highlight Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '20px',
+                background: 'rgba(34, 197, 94, 0.9)',
+                color: 'white',
+                padding: '6px 12px',
+                borderRadius: '20px',
+                fontSize: '12px',
+                fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
+              }}
+            >
+              ✨ RECOMMENDED
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
               <h3
                 style={{
                   color: '#f59e0b',
-                  fontSize: '20px',
+                  fontSize: '24px',
                   fontWeight: 'bold',
                   margin: '0 0 8px 0',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 }}
               >
-                🔧 Phone Setup Department
+                📞 Phone Setup Department
               </h3>
               <p
                 style={{
-                  color: 'rgba(255, 255, 255, 0.92)',
-                  fontSize: '14px',
-                  margin: 0,
+                  color: 'rgba(255, 255, 255, 0.95)',
+                  fontSize: '16px',
+                  margin: '0 0 12px 0',
+                  lineHeight: '1.4',
                 }}
               >
-                Phone system configuration and connection setup
+                Connect your personal phone to the FleetFlow platform
               </p>
+
+              {/* Quick Setup Callout */}
+              <div
+                style={{
+                  background: 'rgba(34, 197, 94, 0.15)',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  marginTop: '16px',
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <span style={{ fontSize: '24px' }}>🚀</span>
+                  <div>
+                    <div
+                      style={{
+                        color: '#22c55e',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Quick Setup: Call Forwarding (Recommended)
+                    </div>
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        fontSize: '14px',
+                        lineHeight: '1.3',
+                      }}
+                    >
+                      Simply enter your phone number below - no apps to
+                      download!
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Setup Panel */}
-            <div style={{ maxHeight: '400px', overflow: 'auto' }}>
+            {/* Enhanced Setup Panel */}
+            <div
+              style={{
+                maxHeight: '500px',
+                overflow: 'auto',
+                background: 'rgba(0, 0, 0, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
               <PhoneConnectionSetup
                 user={user}
                 onSetupComplete={(setupData) => {

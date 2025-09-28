@@ -115,17 +115,21 @@ class LinkedInLeadSyncService extends EventEmitter {
     setInterval(() => this.updateMetrics(), 300000); // 5 minutes
   }
 
-  private initializeDemoData() {
-    // No demo data - service ready for real LinkedIn leads
-    // Real leads and campaigns will be populated from LinkedIn API
-    this.updateMetrics();
-    console.info('🔗 LinkedIn Lead Sync Service initialized (ready for live data)');
-    console.info(
-      `📋 Case: ${this.apiCredentials.caseId} | CRM: ${this.apiCredentials.clientId}`
-    );
-  }
-
   // REAL API METHODS (Ready for LinkedIn API credentials)
+  private getDemoLeads() {
+    return [
+      {
+        id: 'LI-LEAD-001',
+        firstName: 'Sarah',
+        lastName: 'Johnson',
+        email: 'sjohnson@logisticspro.com',
+        company: 'Logistics Pro LLC',
+        jobTitle: 'Operations Director',
+        industry: 'Transportation',
+        leadSource: {
+          campaign: 'Enterprise TMS Upgrade',
+          adSet: 'Operations Directors 500+',
+          creative: 'Modernize Your TMS Stack',
           formName: 'Enterprise Demo Request',
         },
         leadData: {
@@ -201,6 +205,12 @@ class LinkedInLeadSyncService extends EventEmitter {
         ],
       },
     ];
+
+    return demoLeads;
+  }
+
+  private initializeDemoData() {
+    const demoLeads = this.getDemoLeads();
 
     demoLeads.forEach((lead) => this.leads.set(lead.id, lead));
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
+import { useEffect, useState } from 'react';
 import { useLoad } from '../contexts/LoadContext';
 
 interface BOLInfo {
@@ -38,7 +38,7 @@ interface BOLInfo {
 
 export default function BillOfLading() {
   const { selectedLoad } = useLoad();
-  
+
   const [bolInfo, setBolInfo] = useState<BOLInfo>({
     bolNumber: '',
     shipperName: '',
@@ -90,12 +90,12 @@ export default function BillOfLading() {
   const generateBillOfLading = () => {
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.width;
-    
+
     // Header
     pdf.setFontSize(20);
     pdf.setFont('helvetica', 'bold');
     pdf.text('BILL OF LADING', pageWidth / 2, 20, { align: 'center' });
-    
+
     // BOL Number and Date
     pdf.setFontSize(12);
     pdf.setFont('helvetica', 'normal');
@@ -103,7 +103,7 @@ export default function BillOfLading() {
     pdf.text(`Date: ${new Date().toLocaleDateString()}`, 20, 50);
     pdf.text(`PRO Number: ${bolInfo.proNumber}`, 120, 40);
     pdf.text(`Ship Date: ${bolInfo.shipDate}`, 120, 50);
-    
+
     // Shipper Information
     pdf.setFont('helvetica', 'bold');
     pdf.text('SHIPPER INFORMATION', 20, 80);
@@ -112,7 +112,7 @@ export default function BillOfLading() {
     pdf.text(`Address: ${bolInfo.shipperAddress}`, 20, 100);
     pdf.text(`City: ${bolInfo.shipperCity}, ${bolInfo.shipperState} ${bolInfo.shipperZip}`, 20, 110);
     pdf.text(`Phone: ${bolInfo.shipperPhone}`, 20, 120);
-    
+
     // Consignee Information
     pdf.setFont('helvetica', 'bold');
     pdf.text('CONSIGNEE INFORMATION', 120, 80);
@@ -121,7 +121,7 @@ export default function BillOfLading() {
     pdf.text(`Address: ${bolInfo.consigneeAddress}`, 120, 100);
     pdf.text(`City: ${bolInfo.consigneeCity}, ${bolInfo.consigneeState} ${bolInfo.consigneeZip}`, 120, 110);
     pdf.text(`Phone: ${bolInfo.consigneePhone}`, 120, 120);
-    
+
     // Carrier Information
     pdf.setFont('helvetica', 'bold');
     pdf.text('CARRIER INFORMATION', 20, 150);
@@ -131,7 +131,7 @@ export default function BillOfLading() {
     pdf.text(`DOT: ${bolInfo.carrierDOT}`, 20, 180);
     pdf.text(`Trailer: ${bolInfo.trailerNumber}`, 120, 160);
     pdf.text(`Seal: ${bolInfo.sealNumber}`, 120, 170);
-    
+
     // Commodity Information
     pdf.setFont('helvetica', 'bold');
     pdf.text('COMMODITY INFORMATION', 20, 210);
@@ -141,7 +141,7 @@ export default function BillOfLading() {
     pdf.text(`Pieces: ${bolInfo.totalPieces}`, 20, 240);
     pdf.text(`Package Type: ${bolInfo.packageType}`, 120, 220);
     pdf.text(`Hazmat: ${bolInfo.hazmat ? 'Yes' : 'No'}`, 120, 230);
-    
+
     // Special Instructions
     if (bolInfo.specialInstructions) {
       pdf.setFont('helvetica', 'bold');
@@ -150,38 +150,38 @@ export default function BillOfLading() {
       const instructions = pdf.splitTextToSize(bolInfo.specialInstructions, 170);
       pdf.text(instructions, 20, 280);
     }
-    
+
     // Save the PDF
     pdf.save(`Bill_of_Lading_${bolInfo.bolNumber || 'Draft'}.pdf`);
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-8>
-      <div className="mb-8>
-        <div className="flex items-center space-x-4 mb-6>
-          <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg>
-            <svg className="w-6 h-6 text-white fill=none stroke=currentColor viewBox=0 0 24 24>
-              <path strokeLinecap=round strokeLinejoin=round strokeWidth={2} d=M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z />
+    <div className="max-w-6xl mx-auto p-8">
+      <div className="mb-8">
+        <div className="flex items-center space-x-4 mb-6">
+          <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
           <div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent>Bill of Lading Generator</h2>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Bill of Lading Generator</h2>
             <p className="text-gray-600 text-lg>Create professional bills of lading for freight shipments</p>
           </div>
         </div>
-        
+
         {/* Load Selection Indicator */}
         {selectedLoad && (
-          <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl shadow-md>
-            <div className="flex items-center space-x-3>
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center>
-                <svg className="w-4 h-4 text-white fill=none stroke=currentColor viewBox=0 0 24 24>
-                  <path strokeLinecap=round strokeLinejoin=round strokeWidth={2} d=M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z />
+          <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl shadow-md">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <span className="text-green-800 font-bold text-lg>✅ Load Data Auto-Populated</span>
-                <p className="text-green-700 text-sm mt-1>
+                <span className="text-green-800 font-bold text-lg">✅ Load Data Auto-Populated</span>
+                <p className="text-green-700 text-sm mt-1">
                   Information from Load #{selectedLoad.id} ({selectedLoad.origin} → {selectedLoad.destination}) has been automatically filled.
                 </p>
               </div>
