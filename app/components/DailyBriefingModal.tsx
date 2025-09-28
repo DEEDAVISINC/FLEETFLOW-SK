@@ -389,4 +389,3 @@ const StrategicQuestionCard: React.FC<{ question: StrategicQuestion }> = ({
 };
 
 export default DailyBriefingModal;
-

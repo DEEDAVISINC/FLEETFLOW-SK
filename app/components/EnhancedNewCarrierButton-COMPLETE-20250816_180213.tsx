@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import CarrierInvitationService from '../services/CarrierInvitationService';
 
 interface EnhancedNewCarrierButtonProps {
@@ -73,7 +73,7 @@ export default function EnhancedNewCarrierButton({
       });
 
       const result = await invitationService.sendInvitation(invitation);
-      
+
       if (result.success) {
         alert('Invitation sent successfully!');
         setQuickInviteForm({ email: '', carrierName: '', mcNumber: '' });
@@ -94,7 +94,7 @@ export default function EnhancedNewCarrierButton({
     const baseUrl = window.location.origin;
     const referralCode = `${currentUser.role.substring(0, 3).toUpperCase()}-${currentUser.name.split(' ').map(n => n[0]).join('')}-${Date.now()}`;
     const inviteUrl = `${baseUrl}/carriers/enhanced-portal?ref=${referralCode}&inviter=${encodeURIComponent(currentUser.name)}`;
-    
+
     navigator.clipboard.writeText(inviteUrl).then(() => {
       alert('Invitation link copied to clipboard!');
       setIsOpen(false);
@@ -141,7 +141,7 @@ export default function EnhancedNewCarrierButton({
         }}
       >
         <span>🚛 New Carrier</span>
-        <span style={{ 
+        <span style={{
           transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
           transition: 'transform 0.3s ease'
         }}>
@@ -352,7 +352,7 @@ export default function EnhancedNewCarrierButton({
                     marginBottom: '8px',
                   }}
                 />
-                
+
                 <input
                   type="email""
                   placeholder="Email Address *""
@@ -369,7 +369,7 @@ export default function EnhancedNewCarrierButton({
                     marginBottom: '8px',
                   }}
                 />
-                
+
                 <input
                   type="text""
                   placeholder="MC Number (Optional)""
@@ -392,8 +392,8 @@ export default function EnhancedNewCarrierButton({
                 disabled={loading}
                 style={{
                   width: '100%',
-                  background: loading 
-                    ? 'rgba(107,114,128,0.5)' 
+                  background: loading
+                    ? 'rgba(107,114,128,0.5)'
                     : 'linear-gradient(135deg, #14b8a6, #0d9488)',
                   color: 'white',
                   border: 'none',
