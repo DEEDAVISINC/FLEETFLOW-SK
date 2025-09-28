@@ -254,10 +254,10 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
                 fontSize: '1rem'
               }}
             >
-              <option value="low"">Low</option>
-              <option value="normal"">Normal</option>
-              <option value="high"">High</option>
-              <option value="urgent"">Urgent</option>
+              <option value="low">Low</option>
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
             </select>
           </div>
 
@@ -270,7 +270,7 @@ function NoteModal({ isOpen, onClose, onSave, subjectId, subjectType, subjectLab
               cursor: 'pointer'
             }}>
               <input
-                type="checkbox""
+                type="checkbox"
                 checked={isPrivate}
                 onChange={(e) => setIsPrivate(e.target.checked)}
                 style={{ transform: 'scale(1.2)' }}

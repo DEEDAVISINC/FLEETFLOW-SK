@@ -166,7 +166,7 @@ export default function BillOfLading() {
           </div>
           <div>
             <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Bill of Lading Generator</h2>
-            <p className="text-gray-600 text-lg>Create professional bills of lading for freight shipments</p>
+            <p className="text-gray-600 text-lg">Create professional bills of lading for freight shipments</p>
           </div>
         </div>
 
@@ -190,16 +190,16 @@ export default function BillOfLading() {
         )}
 
         {!selectedLoad && (
-          <div className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl shadow-md>
-            <div className="flex items-center space-x-3>
-              <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center>
-                <svg className="w-4 h-4 text-white fill=none stroke=currentColor viewBox=0 0 24 24>
-                  <path strokeLinecap=round strokeLinejoin=round strokeWidth={2} d=M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z />
+          <div className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl shadow-md">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <span className="text-amber-800 font-bold text-lg>📝 Manual Entry Mode</span>
-                <p className="text-amber-700 text-sm mt-1>
+                <span className="text-amber-800 font-bold text-lg">📝 Manual Entry Mode</span>
+                <p className="text-amber-700 text-sm mt-1">
                   No load selected. Enter information manually or select a load from Dispatch Central first.
                 </p>
               </div>
@@ -212,12 +212,12 @@ export default function BillOfLading() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8>
         <div className="section-card>
           <div className="section-header>
-            <div className="section-icon bg-gradient-to-r from-blue-500 to-cyan-500>
-              <svg className="w-4 h-4 text-white fill=none stroke=currentColor viewBox=0 0 24 24>
-                <path strokeLinecap=round strokeLinejoin=round strokeWidth={2} d=M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m3 0v16a1 1 0 01-1 1H5a1 1 0 01-1-1V4h16z />
+            <div className="section-icon bg-gradient-to-r from-blue-500 to-cyan-500">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m3 0v16a1 1 0 01-1 1H5a1 1 0 01-1-1V4h16z" />
               </svg>
             </div>
-            <h3 className="section-title>📋 BOL Information</h3>
+            <h3 className="section-title">📋 BOL Information</h3>
           </div>
           <div className="space-y-4>
             <div className="grid grid-cols-2 gap-4>

@@ -142,7 +142,7 @@ export default function DocumentFlowControlPanel({ onClose }: DocumentFlowContro
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex space-x-2 mb-6"">
+      <div className="flex space-x-2 mb-6">
         {[
           { id: 'overview', label: 'Overview', icon: '📊' },
           { id: 'packages', label: 'Document Packages', icon: '📄' },

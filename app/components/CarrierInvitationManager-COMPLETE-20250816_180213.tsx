@@ -265,7 +265,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                     Contact Name
                   </label>
                   <input
-                    type="text""
+                    type="text"
                     value={invitationForm.contactName}
                     onChange={(e) => setInvitationForm({...invitationForm, contactName: e.target.value})}
                     style={{
@@ -277,7 +277,7 @@ export default function CarrierInvitationManager({ currentUser }: CarrierInvitat
                       color: 'white',
                       fontSize: '14px',
                     }}
-                    placeholder="Contact person name""
+                    placeholder="Contact person name"
                   />
                 </div>
 

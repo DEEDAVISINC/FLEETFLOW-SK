@@ -337,8 +337,8 @@ export default function EnhancedNewCarrierButton({
 
               <div style={{ marginBottom: '12px' }}>
                 <input
-                  type="text""
-                  placeholder="Carrier Company Name *""
+                  type="text"
+                  placeholder="Carrier Company Name *"
                   value={quickInviteForm.carrierName}
                   onChange={(e) => setQuickInviteForm({...quickInviteForm, carrierName: e.target.value})}
                   style={{

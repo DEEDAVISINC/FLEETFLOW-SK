@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { FleetFlowAppVideo } from './FleetFlowAppVideo';
@@ -33,19 +33,19 @@ export default function FleetFlowLandingPageMobile() {
   // Handle FleetFlowDash click with authentication check
   const handleFleetFlowDashClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     // Check if user is authenticated
     if (status === 'loading') {
       // Still loading session, show loading state
       return;
     }
-    
+
     if (!session) {
       // User is not logged in, redirect to login
       router.push('/auth/signin');
       return;
     }
-    
+
     // User is authenticated, allow navigation
     router.push('/fleetflowdash');
   };
@@ -88,11 +88,15 @@ export default function FleetFlowLandingPageMobile() {
                 onClick={handleFleetFlowDashClick}
                 className={`rounded-lg px-4 py-2 text-sm font-semibold text-white transition-all ${
                   session
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 cursor-pointer'
-                    : 'bg-gradient-to-r from-gray-500 to-gray-600 cursor-not-allowed opacity-70'
+                    ? 'cursor-pointer bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900'
+                    : 'cursor-not-allowed bg-gradient-to-r from-gray-500 to-gray-600 opacity-70'
                 }`}
                 disabled={status === 'loading'}
-                title={!session ? 'Please login to access FleetFlowDash' : 'Access FleetFlowDash'}
+                title={
+                  !session
+                    ? 'Please login to access FleetFlowDash'
+                    : 'Access FleetFlowDash'
+                }
               >
                 {status === 'loading' ? '⏳ LOADING...' : 'FLEETFLOWDASH'}
               </button>
@@ -147,11 +151,15 @@ export default function FleetFlowLandingPageMobile() {
                 onClick={handleFleetFlowDashClick}
                 className={`w-full rounded-lg py-3 text-sm font-semibold text-white ${
                   session
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-800 cursor-pointer'
-                    : 'bg-gradient-to-r from-gray-500 to-gray-600 cursor-not-allowed opacity-70'
+                    ? 'cursor-pointer bg-gradient-to-r from-blue-600 to-blue-800'
+                    : 'cursor-not-allowed bg-gradient-to-r from-gray-500 to-gray-600 opacity-70'
                 }`}
                 disabled={status === 'loading'}
-                title={!session ? 'Please login to access FleetFlowDash' : 'Access FleetFlowDash'}
+                title={
+                  !session
+                    ? 'Please login to access FleetFlowDash'
+                    : 'Access FleetFlowDash'
+                }
               >
                 {status === 'loading' ? '⏳ LOADING...' : 'FLEETFLOWDASH'}
               </button>

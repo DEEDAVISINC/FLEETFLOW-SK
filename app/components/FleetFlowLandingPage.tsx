@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { FleetFlowAppVideo } from './FleetFlowAppVideo';
@@ -32,19 +32,19 @@ export default function FleetFlowLandingPage() {
   // Handle FleetFlowDash click with authentication check
   const handleFleetFlowDashClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    
+
     // Check if user is authenticated
     if (status === 'loading') {
       // Still loading session, show loading state
       return;
     }
-    
+
     if (!session) {
       // User is not logged in, redirect to login
       router.push('/auth/signin');
       return;
     }
-    
+
     // User is authenticated, allow navigation
     router.push('/fleetflowdash');
   };
@@ -183,7 +183,7 @@ export default function FleetFlowLandingPage() {
           <button
             onClick={handleFleetFlowDashClick}
             style={{
-              background: session 
+              background: session
                 ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
                 : 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
               color: 'white',
@@ -197,7 +197,11 @@ export default function FleetFlowLandingPage() {
               transition: 'all 0.3s ease',
             }}
             disabled={status === 'loading'}
-            title={!session ? 'Please login to access FleetFlowDash' : 'Access FleetFlowDash'}
+            title={
+              !session
+                ? 'Please login to access FleetFlowDash'
+                : 'Access FleetFlowDash'
+            }
           >
             {status === 'loading' ? '⏳ LOADING...' : 'FLEETFLOWDASH'}
           </button>{' '}
