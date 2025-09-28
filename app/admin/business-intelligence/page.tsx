@@ -1536,7 +1536,7 @@ export default function BusinessIntelligencePage() {
   };
 
   const generateCompletionTrends = (loads: Load[]) => {
-    const trends = [];
+    const trends: { date: string; completed: number; revenue: number }[] = [];
     const today = new Date();
 
     for (let i = 29; i >= 0; i--) {

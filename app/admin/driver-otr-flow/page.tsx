@@ -530,7 +530,7 @@ export default function AdminDriverOTRFlow() {
       ],
     }));
 
-    console.info('Load alert declined:', alert.load.id);
+    console.info('Load alert declined:', (alert as any).id);
   };
 
   const generateDemoAlert = () => {
@@ -1646,7 +1646,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           boxShadow: '0 0 0 0 rgba(16, 185, 129, 0.7)',
                           animation: 'pulse 2s infinite',
                         }}
-                       />
+                      />
                       <span
                         style={{
                           color: 'rgba(255, 255, 255, 0.9)',
@@ -2107,7 +2107,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
               ].map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => setSelectedTab(tab.key)}
+                  onClick={() => setSelectedTab(tab.key as any)}
                   style={{
                     flex: 1,
                     background:
@@ -2597,7 +2597,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           minHeight: '80px',
                           color: 'white',
                           background:
-                            load.loadType === 'ai_generated'
+                            (load as any).loadType === 'ai_generated'
                               ? 'rgba(139, 92, 246, 0.05)'
                               : 'transparent',
                           transition: 'all 0.3s ease',
@@ -2605,13 +2605,13 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         }}
                         onMouseOver={(e) => {
                           e.currentTarget.style.background =
-                            load.loadType === 'ai_generated'
+                            (load as any).loadType === 'ai_generated'
                               ? 'rgba(139, 92, 246, 0.1)'
                               : 'rgba(255, 255, 255, 0.05)';
                         }}
                         onMouseOut={(e) => {
                           e.currentTarget.style.background =
-                            load.loadType === 'ai_generated'
+                            (load as any).loadType === 'ai_generated'
                               ? 'rgba(139, 92, 246, 0.05)'
                               : 'transparent';
                         }}
@@ -2631,9 +2631,9 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           <span
                             style={{
                               background:
-                                load.priority === 'URGENT'
+                                (load as any).priority === 'URGENT'
                                   ? '#ef4444'
-                                  : load.priority === 'HIGH'
+                                  : (load as any).priority === 'HIGH'
                                     ? '#f59e0b'
                                     : '#34d399',
                               color: 'white',
@@ -2645,11 +2645,11 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               minWidth: '70px',
                             }}
                           >
-                            {load.priority}
+                            {(load as any).priority}
                           </span>
 
                           {/* AI Badge */}
-                          {load.loadType === 'ai_generated' && (
+                          {(load as any).loadType === 'ai_generated' && (
                             <span
                               style={{
                                 background: '#8b5cf6',
@@ -2665,17 +2665,17 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           )}
 
                           {/* Countdown Timer for AI Loads */}
-                          {load.loadType === 'ai_generated' &&
-                            load.bidDeadline && (
+                          {(load as any).loadType === 'ai_generated' &&
+                            (load as any).bidDeadline && (
                               <div
                                 style={{
                                   fontSize: '11px',
                                   fontWeight: '700',
                                   color:
-                                    new Date() > load.bidDeadline
+                                    new Date() > (load as any).bidDeadline
                                       ? '#ef4444'
                                       : formatTimeRemaining(
-                                            load.bidDeadline
+                                            (load as any).bidDeadline
                                           ).includes('h')
                                         ? '#22c55e'
                                         : '#fbbf24',
@@ -2686,7 +2686,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   minWidth: '50px',
                                 }}
                               >
-                                {formatTimeRemaining(load.bidDeadline)}
+                                {formatTimeRemaining((load as any).bidDeadline)}
                               </div>
                             )}
                         </div>
@@ -2717,11 +2717,11 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   fontSize: '16px',
                                 }}
                               >
-                                {load.id}
+                                {(load as any).id}
                               </span>
                               {/* AI Source Badge */}
-                              {load.loadType === 'ai_generated' &&
-                                load.aiSource && (
+                              {(load as any).loadType === 'ai_generated' &&
+                                (load as any).aiSource && (
                                   <span
                                     style={{
                                       fontSize: '10px',
@@ -2732,14 +2732,14 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                       borderRadius: '4px',
                                     }}
                                   >
-                                    {load.aiSource
+                                    {(load as any).aiSource
                                       .replace('_', ' ')
                                       .toUpperCase()}
                                   </span>
                                 )}
                               {/* Dedicated Lane Badge */}
-                              {load.loadType === 'ai_generated' &&
-                                load.dedicatedLane && (
+                              {(load as any).loadType === 'ai_generated' &&
+                                (load as any).dedicatedLane && (
                                   <span
                                     style={{
                                       fontSize: '10px',
@@ -2762,7 +2762,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 marginBottom: '2px',
                               }}
                             >
-                              {load.origin} → {load.destination}
+                              {(load as any).origin} →{' '}
+                              {(load as any).destination}
                             </div>
                             <div
                               style={{
@@ -2771,11 +2772,11 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 opacity: 0.7,
                               }}
                             >
-                              {load.commodity}
+                              {(load as any).commodity}
                             </div>
                             {/* Dedicated Lane Details */}
-                            {load.loadType === 'ai_generated' &&
-                              load.dedicatedLane && (
+                            {(load as any).loadType === 'ai_generated' &&
+                              (load as any).dedicatedLane && (
                                 <div
                                   style={{
                                     fontSize: '11px',
@@ -2784,8 +2785,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.dedicatedLane.laneName} •{' '}
-                                  {load.dedicatedLane.frequency}
+                                  {(load as any).dedicatedLane.laneName} •{' '}
+                                  {(load as any).dedicatedLane.frequency}
                                 </div>
                               )}
                           </div>
@@ -2811,7 +2812,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 opacity: 0.8,
                               }}
                             >
-                              {load.miles}
+                              {(load as any).miles}
                             </div>
                           </div>
 
@@ -2826,7 +2827,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 fontWeight: '600',
                               }}
                             >
-                              ${load.rate}/mi
+                              ${(load as any).rate}/mi
                             </div>
                           </div>
 
@@ -2841,7 +2842,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 fontWeight: '600',
                               }}
                             >
-                              {load.pickupDate}
+                              {(load as any).pickupDate}
                             </div>
                           </div>
                         </div>
@@ -2859,7 +2860,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             <button
                               onClick={() =>
                                 alert(
-                                  `✋ Express Interest submitted for ${load.id}!\n\nDispatcher ${load.dispatcherName} will be notified of your interest and will respond with approval or load availability status.`
+                                  `✋ Express Interest submitted for ${(load as any).id}!\n\nDispatcher ${load.dispatcherName} will be notified of your interest and will respond with approval or load availability status.`
                                 )
                               }
                               style={{
@@ -2941,8 +2942,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     load.minimumBid ||
                                     0;
                                   const isExpired =
-                                    load.bidDeadline &&
-                                    new Date() > load.bidDeadline;
+                                    (load as any).bidDeadline &&
+                                    new Date() > (load as any).bidDeadline;
 
                                   if (isExpired) {
                                     alert(
@@ -2952,17 +2953,17 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   }
 
                                   alert(
-                                    `🎯 Quick Bid Submitted!\n\nLoad: ${load.id}\nBid Amount: $${amount.toLocaleString()}\nCompeting against: ${load.competitorCount} other bidders\n\n✅ Your bid has been submitted to the AI evaluation system. Results will be announced when the 24-hour bidding period ends.`
+                                    `🎯 Quick Bid Submitted!\n\nLoad: ${(load as any).id}\nBid Amount: $${amount.toLocaleString()}\nCompeting against: ${load.competitorCount} other bidders\n\n✅ Your bid has been submitted to the AI evaluation system. Results will be announced when the 24-hour bidding period ends.`
                                   );
                                 }}
                                 disabled={
-                                  load.bidDeadline &&
-                                  new Date() > load.bidDeadline
+                                  (load as any).bidDeadline &&
+                                  new Date() > (load as any).bidDeadline
                                 }
                                 style={{
                                   background:
-                                    load.bidDeadline &&
-                                    new Date() > load.bidDeadline
+                                    (load as any).bidDeadline &&
+                                    new Date() > (load as any).bidDeadline
                                       ? '#6b7280'
                                       : '#f97316',
                                   color: 'white',
@@ -2972,14 +2973,14 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   fontSize: '14px',
                                   fontWeight: '700',
                                   cursor:
-                                    load.bidDeadline &&
-                                    new Date() > load.bidDeadline
+                                    (load as any).bidDeadline &&
+                                    new Date() > (load as any).bidDeadline
                                       ? 'not-allowed'
                                       : 'pointer',
                                   transition: 'all 0.3s ease',
                                   opacity:
-                                    load.bidDeadline &&
-                                    new Date() > load.bidDeadline
+                                    (load as any).bidDeadline &&
+                                    new Date() > (load as any).bidDeadline
                                       ? 0.6
                                       : 1,
                                   width: '140px',
@@ -2987,8 +2988,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 onMouseOver={(e) => {
                                   if (
                                     !(
-                                      load.bidDeadline &&
-                                      new Date() > load.bidDeadline
+                                      (load as any).bidDeadline &&
+                                      new Date() > (load as any).bidDeadline
                                     )
                                   ) {
                                     e.currentTarget.style.background =
@@ -3002,8 +3003,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 onMouseOut={(e) => {
                                   if (
                                     !(
-                                      load.bidDeadline &&
-                                      new Date() > load.bidDeadline
+                                      (load as any).bidDeadline &&
+                                      new Date() > (load as any).bidDeadline
                                     )
                                   ) {
                                     e.currentTarget.style.background =
@@ -3014,8 +3015,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   }
                                 }}
                               >
-                                {load.bidDeadline &&
-                                new Date() > load.bidDeadline
+                                {(load as any).bidDeadline &&
+                                new Date() > (load as any).bidDeadline
                                   ? '⏰ Expired'
                                   : '🎯 Quick Bid'}
                               </button>
@@ -5962,20 +5963,20 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                       {nearbyLoads.map((load) => {
                         const hasInterest = loadInterests.some(
                           (interest) =>
-                            interest.loadId === load.id &&
+                            interest.loadId === (load as any).id &&
                             interest.status === 'pending'
                         );
 
                         return (
                           <div
-                            key={load.id}
+                            key={(load as any).id}
                             style={{
                               background:
-                                load.priority === 'URGENT'
+                                (load as any).priority === 'URGENT'
                                   ? 'rgba(239, 68, 68, 0.1)'
                                   : 'rgba(59, 130, 246, 0.1)',
                               border: `2px solid ${
-                                load.priority === 'URGENT'
+                                (load as any).priority === 'URGENT'
                                   ? 'rgba(239, 68, 68, 0.3)'
                                   : 'rgba(59, 130, 246, 0.3)'
                               }`,
@@ -5986,7 +5987,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             }}
                           >
                             {/* Priority Badge */}
-                            {load.priority === 'URGENT' && (
+                            {(load as any).priority === 'URGENT' && (
                               <div
                                 style={{
                                   position: 'absolute',
@@ -6022,12 +6023,12 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     color: 'white',
                                   }}
                                 >
-                                  {load.id}
+                                  {(load as any).id}
                                 </h4>
                                 <span
                                   style={{
                                     background:
-                                      load.priority === 'HIGH'
+                                      (load as any).priority === 'HIGH'
                                         ? '#f59e0b'
                                         : '#6b7280',
                                     color: 'white',
@@ -6037,7 +6038,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.priority}
+                                  {(load as any).priority}
                                 </span>
                               </div>
 
@@ -6065,7 +6066,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     opacity: 0.8,
                                   }}
                                 >
-                                  {load.rate} • {load.miles}
+                                  {(load as any).rate} • {(load as any).miles}
                                 </div>
                                 <div
                                   style={{
@@ -6111,7 +6112,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.origin.city}, {load.origin.state}
+                                  {(load as any).origin.city},{' '}
+                                  {(load as any).origin.state}
                                 </div>
                                 <div
                                   style={{
@@ -6120,7 +6122,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     opacity: 0.8,
                                   }}
                                 >
-                                  {load.pickupDate}
+                                  {(load as any).pickupDate}
                                 </div>
                               </div>
 
@@ -6155,8 +6157,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.destination.city},{' '}
-                                  {load.destination.state}
+                                  {(load as any).destination.city},{' '}
+                                  {(load as any).destination.state}
                                 </div>
                                 <div
                                   style={{
@@ -6165,7 +6167,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     opacity: 0.8,
                                   }}
                                 >
-                                  {load.deliveryDate || 'TBD'}
+                                  {(load as any).deliveryDate || 'TBD'}
                                 </div>
                               </div>
                             </div>
@@ -6200,7 +6202,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.commodity}
+                                  {(load as any).commodity}
                                 </div>
                               </div>
                               <div>
@@ -6240,7 +6242,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.weight}
+                                  {(load as any).weight}
                                 </div>
                               </div>
                               <div>
@@ -6294,7 +6296,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   <button
                                     onClick={() => {
                                       const interest = loadInterests.find(
-                                        (i) => i.loadId === load.id
+                                        (i) => i.loadId === (load as any).id
                                       );
                                       if (interest)
                                         withdrawInterest(interest.id);
@@ -6315,7 +6317,9 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 </>
                               ) : (
                                 <button
-                                  onClick={() => expressInterest(load.id)}
+                                  onClick={() =>
+                                    expressInterest((load as any).id)
+                                  }
                                   style={{
                                     background: '#22c55e',
                                     color: 'white',
@@ -6429,7 +6433,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: 'white',
                             }}
                           >
-                            {load.origin} → {load.destination}
+                            {(load as any).origin} → {(load as any).destination}
                           </h4>
                           <p
                             style={{
@@ -6439,7 +6443,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: 'white',
                             }}
                           >
-                            Load ID: {load.id}
+                            Load ID: {(load as any).id}
                           </p>
                         </div>
                         <span
@@ -6505,7 +6509,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: 'white',
                             }}
                           >
-                            {load.miles}
+                            {(load as any).miles}
                           </div>
                         </div>
                         <div>
@@ -6525,7 +6529,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: 'white',
                             }}
                           >
-                            {load.deliveryDate}
+                            {(load as any).deliveryDate}
                           </div>
                         </div>
                       </div>
@@ -6731,17 +6735,18 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           >
                             <div>
                               <div style={{ fontWeight: '600' }}>
-                                {load.origin} → {load.destination}
+                                {(load as any).origin} →{' '}
+                                {(load as any).destination}
                               </div>
                               <div
                                 style={{ fontSize: '0.85rem', opacity: 0.8 }}
                               >
-                                {load.miles} miles
+                                {(load as any).miles} miles
                               </div>
                             </div>
                             <div>
                               <div style={{ fontWeight: '600' }}>
-                                {load.commodity}
+                                {(load as any).commodity}
                               </div>
                               <div
                                 style={{ fontSize: '0.85rem', opacity: 0.8 }}
@@ -6762,7 +6767,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               <div
                                 style={{ fontSize: '0.85rem', opacity: 0.8 }}
                               >
-                                {load.rate}/mile
+                                {(load as any).rate}/mile
                               </div>
                             </div>
                             <button
@@ -6788,7 +6793,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                       body: JSON.stringify({
                                         action: 'accept-load',
                                         driverId: 'driver-1',
-                                        loadId: load.id,
+                                        loadId: (load as any).id,
                                       }),
                                     }
                                   );
@@ -6796,11 +6801,13 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
 
                                   if (result.success) {
                                     alert(
-                                      `✅ Load ${load.id} accepted successfully!`
+                                      `✅ Load ${(load as any).id} accepted successfully!`
                                     );
                                     // Remove from instant loads
                                     setInstantLoads((prev) =>
-                                      prev.filter((l) => l.id !== load.id)
+                                      prev.filter(
+                                        (l) => l.id !== (load as any).id
+                                      )
                                     );
                                   } else {
                                     alert(
@@ -6837,17 +6844,19 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                       body: JSON.stringify({
                                         action: 'decline-load',
                                         driverId: 'driver-1',
-                                        loadId: load.id,
+                                        loadId: (load as any).id,
                                       }),
                                     }
                                   );
                                   const result = await response.json();
 
                                   if (result.success) {
-                                    alert(`Load ${load.id} declined`);
+                                    alert(`Load ${(load as any).id} declined`);
                                     // Remove from instant loads
                                     setInstantLoads((prev) =>
-                                      prev.filter((l) => l.id !== load.id)
+                                      prev.filter(
+                                        (l) => l.id !== (load as any).id
+                                      )
                                     );
                                   } else {
                                     alert(
@@ -6863,7 +6872,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             </button>
                           </div>
                           <div style={{ fontSize: '0.85rem', opacity: 0.7 }}>
-                            Pickup: {load.pickupDate} | Priority:{' '}
+                            Pickup: {(load as any).pickupDate} | Priority:{' '}
                             {load.priority || 'NORMAL'}
                           </div>
                         </div>
@@ -7446,17 +7455,17 @@ const LoadAlertRow: React.FC<{
 
       {/* Origin Column */}
       <div style={{ fontWeight: '600' }}>
-        <div>{alert.load.origin}</div>
+        <div>{(alert as any).load.origin}</div>
         <div style={{ fontSize: '12px', opacity: 0.8 }}>
-          {alert.load.equipment} • {alert.load.weight}
+          {(alert as any).load.equipment} • {(alert as any).load.weight}
         </div>
       </div>
 
       {/* Destination Column */}
       <div style={{ fontWeight: '600' }}>
-        <div>{alert.load.destination}</div>
+        <div>{(alert as any).load.destination}</div>
         <div style={{ fontSize: '12px', opacity: 0.8 }}>
-          {alert.load.commodity}
+          {(alert as any).load.commodity}
         </div>
       </div>
 
@@ -7469,17 +7478,17 @@ const LoadAlertRow: React.FC<{
           fontSize: '16px',
         }}
       >
-        {alert.load.pay}
+        {(alert as any).load.pay}
         <div style={{ fontSize: '12px', opacity: 0.8, color: 'white' }}>
-          {alert.load.rate}/mi
+          {(alert as any).load.rate}/mi
         </div>
       </div>
 
       {/* Details Column */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontWeight: '600' }}>{alert.load.miles}</div>
+        <div style={{ fontWeight: '600' }}>{(alert as any).load.miles}</div>
         <div style={{ fontSize: '12px', opacity: 0.8 }}>
-          {alert.load.pickupDate}
+          {(alert as any).load.pickupDate}
         </div>
       </div>
 

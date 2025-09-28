@@ -140,24 +140,11 @@ const nextConfig = {
     NEXT_PUBLIC_GTM_ID: process.env.NEXT_PUBLIC_GTM_ID,
   },
 
-  // PWA configuration for better mobile SEO
-  pwa: {
-    dest: 'public',
-    register: true,
-    skipWaiting: true,
-  },
-
   // Trailing slash configuration
   trailingSlash: false,
 
   // Generate static exports for faster loading
   output: 'standalone',
-
-  // Optimize fonts
-  optimizeFonts: true,
-
-  // Enable SWC minification
-  swcMinify: true,
 };
 
 module.exports = nextConfig;

@@ -65,12 +65,14 @@ Use this checklist to ensure your FleetFlow application is properly configured f
 
 - [ ] Custom domain configured (optional)
 
-### Option B: Vercel
+### Option B: DigitalOcean App Platform
 
-- [ ] Vercel CLI installed (`npm install -g vercel`)
-- [ ] Project deployed (`vercel`)
-- [ ] Environment variables set in Vercel dashboard
-- [ ] Custom domain configured (optional)
+- [ ] DigitalOcean App created from fleetflow-sk repository
+- [ ] Environment variables configured in DigitalOcean dashboard
+- [ ] Build command: `npm run build`
+- [ ] Run command: `npm start`
+- [ ] Custom domain configured: fleetflowapp.com
+- [ ] Auto-deploy from main branch enabled
 
 ### Option C: Self-Hosted
 
