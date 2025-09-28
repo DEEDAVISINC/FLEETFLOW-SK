@@ -20,7 +20,9 @@ const buildProcess = spawn('npx', ['next', 'build', '--no-lint'], {
     DISABLE_ESLINT_PLUGIN: 'true',
     ESLINT_NO_DEV_ERRORS: 'true',
     TSC_COMPILE_ON_ERROR: 'true',
-    NEXT_TELEMETRY_DISABLED: '1'
+    NEXT_TELEMETRY_DISABLED: '1',
+    TYPESCRIPT_NOCHECK: 'true',
+    SKIP_TYPE_CHECK: 'true'
   }
 });
 

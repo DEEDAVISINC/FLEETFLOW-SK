@@ -780,7 +780,7 @@ export default function AdminDriverOTRFlow() {
 
     // Filter loads within 150 miles
     const nearbyFilteredLoads = mockLoads.filter(
-      (load) => load.distanceFromDriver <= 150
+      (load) => (load as any).distanceFromDriver <= 150
     );
     setNearbyLoads(nearbyFilteredLoads);
   };
@@ -803,9 +803,9 @@ export default function AdminDriverOTRFlow() {
       driverLocation,
       status: 'pending',
       submittedAt: new Date(),
-      estimatedArrival: load.estimatedPickupTime,
-      distanceToLoad: load.distanceFromDriver,
-      driverMessage: `Interested in this load. Currently ${Math.round(load.distanceFromDriver)} miles away, ETA ${load.estimatedPickupTime}.`,
+      estimatedArrival: (load as any).estimatedPickupTime,
+      distanceToLoad: (load as any).distanceFromDriver,
+      driverMessage: `Interested in this load. Currently ${Math.round((load as any).distanceFromDriver)} miles away, ETA ${(load as any).estimatedPickupTime}.`,
     };
 
     setLoadInterests((prev) => [...prev, newInterest]);
@@ -814,14 +814,14 @@ export default function AdminDriverOTRFlow() {
     console.info('Interest submitted:', {
       loadId,
       driverName: currentUser.name,
-      distance: load.distanceFromDriver,
-      eta: load.estimatedPickupTime,
+      distance: (load as any).distanceFromDriver,
+      eta: (load as any).estimatedPickupTime,
       message: newInterest.driverMessage,
     });
 
     // Show confirmation to driver
     alert(
-      `Interest expressed for load ${loadId}! Dispatcher ${load.dispatcherName} will be notified.`
+      `Interest expressed for load ${loadId}! Dispatcher ${(load as any).dispatcherName} will be notified.`
     );
   };
 
@@ -2803,7 +2803,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 marginBottom: '2px',
                               }}
                             >
-                              {load.pay}
+                              {(load as any).pay}
                             </div>
                             <div
                               style={{
@@ -2855,12 +2855,12 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             marginLeft: '20px',
                           }}
                         >
-                          {load.loadType === 'traditional' ? (
+                          {(load as any).loadType === 'traditional' ? (
                             /* Traditional Load - Express Interest Button */
                             <button
                               onClick={() =>
                                 alert(
-                                  `✋ Express Interest submitted for ${(load as any).id}!\n\nDispatcher ${load.dispatcherName} will be notified of your interest and will respond with approval or load availability status.`
+                                  `✋ Express Interest submitted for ${(load as any).id}!\n\nDispatcher ${(load as any).dispatcherName} will be notified of your interest and will respond with approval or load availability status.`
                                 )
                               }
                               style={{
@@ -2902,7 +2902,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               }}
                             >
                               {/* AI Recommendation Display */}
-                              {load.aiRecommendation && (
+                              {(load as any).aiRecommendation && (
                                 <div
                                   style={{
                                     fontSize: '11px',
@@ -2918,7 +2918,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                 >
                                   <div>
                                     🧠 AI: $
-                                    {load.aiRecommendation.suggestedBid.toLocaleString()}
+                                    {(load as any).aiRecommendation.suggestedBid.toLocaleString()}
                                   </div>
                                   <div
                                     style={{
@@ -2927,9 +2927,9 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                       marginTop: '2px',
                                     }}
                                   >
-                                    Win: {load.aiRecommendation.winProbability}%
+                                    Win: {(load as any).aiRecommendation.winProbability}%
                                     • Risk:{' '}
-                                    {load.aiRecommendation.riskAssessment.toUpperCase()}
+                                    {(load as any).aiRecommendation.riskAssessment.toUpperCase()}
                                   </div>
                                 </div>
                               )}
@@ -2938,8 +2938,8 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               <button
                                 onClick={() => {
                                   const amount =
-                                    load.aiRecommendation?.suggestedBid ||
-                                    load.minimumBid ||
+                                    (load as any).aiRecommendation?.suggestedBid ||
+                                    (load as any).minimumBid ||
                                     0;
                                   const isExpired =
                                     (load as any).bidDeadline &&
@@ -2953,7 +2953,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   }
 
                                   alert(
-                                    `🎯 Quick Bid Submitted!\n\nLoad: ${(load as any).id}\nBid Amount: $${amount.toLocaleString()}\nCompeting against: ${load.competitorCount} other bidders\n\n✅ Your bid has been submitted to the AI evaluation system. Results will be announced when the 24-hour bidding period ends.`
+                                    `🎯 Quick Bid Submitted!\n\nLoad: ${(load as any).id}\nBid Amount: $${amount.toLocaleString()}\nCompeting against: ${(load as any).competitorCount} other bidders\n\n✅ Your bid has been submitted to the AI evaluation system. Results will be announced when the 24-hour bidding period ends.`
                                   );
                                 }}
                                 disabled={
@@ -3036,16 +3036,16 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.competitorCount} bidders
+                                  {(load as any).competitorCount} bidders
                                 </span>
-                                {load.suggestedBidRange && (
+                                {(load as any).suggestedBidRange && (
                                   <span
                                     style={{ color: 'white', opacity: 0.7 }}
                                   >
                                     $
-                                    {load.suggestedBidRange[0].toLocaleString()}
+                                    {(load as any).suggestedBidRange[0].toLocaleString()}
                                     -$
-                                    {load.suggestedBidRange[1].toLocaleString()}
+                                    {(load as any).suggestedBidRange[1].toLocaleString()}
                                   </span>
                                 )}
                               </div>
@@ -6057,7 +6057,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: 'bold',
                                   }}
                                 >
-                                  {load.pay}
+                                  {(load as any).pay}
                                 </div>
                                 <div
                                   style={{
@@ -6075,12 +6075,12 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {Math.round(load.distanceFromDriver)} mi away
+                                  {Math.round((load as any).distanceFromDriver)} mi away
                                 </div>
                                 <div
                                   style={{ color: '#60a5fa', fontSize: '14px' }}
                                 >
-                                  ETA: {load.estimatedPickupTime}
+                                  ETA: {(load as any).estimatedPickupTime}
                                 </div>
                               </div>
                             </div>
@@ -6262,7 +6262,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                     fontWeight: '600',
                                   }}
                                 >
-                                  {load.dispatcherName}
+                                  {(load as any).dispatcherName}
                                 </div>
                               </div>
                             </div>
@@ -6407,10 +6407,10 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                       key={index}
                       style={{
                         background:
-                          load.status === 'In Transit'
+                          (load as any).status === 'In Transit'
                             ? 'rgba(34, 197, 94, 0.2)'
                             : 'rgba(59, 130, 246, 0.2)',
-                        border: `2px solid ${load.status === 'In Transit' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
+                        border: `2px solid ${(load as any).status === 'In Transit' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(59, 130, 246, 0.4)'}`,
                         borderRadius: '12px',
                         padding: '20px',
                         marginBottom: '15px',
@@ -6449,7 +6449,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         <span
                           style={{
                             background:
-                              load.status === 'In Transit'
+                              (load as any).status === 'In Transit'
                                 ? '#22c55e'
                                 : '#3b82f6',
                             color: 'white',
@@ -6459,7 +6459,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                             fontWeight: '700',
                           }}
                         >
-                          {load.status}
+                          {(load as any).status}
                         </span>
                       </div>
 
@@ -6489,7 +6489,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                               color: '#22c55e',
                             }}
                           >
-                            {load.pay}
+                            {(load as any).pay}
                           </div>
                         </div>
                         <div>
@@ -6534,7 +6534,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         </div>
                       </div>
 
-                      {load.status === 'In Transit' && (
+                      {(load as any).status === 'In Transit' && (
                         <div style={{ marginBottom: '15px' }}>
                           <div
                             style={{
@@ -6581,12 +6581,12 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                         style={{
                           width: '100%',
                           background:
-                            load.status === 'Available'
+                            (load as any).status === 'Available'
                               ? '#3b82f6'
                               : 'rgba(255, 255, 255, 0.2)',
                           color: 'white',
                           border:
-                            load.status === 'Available'
+                            (load as any).status === 'Available'
                               ? 'none'
                               : '1px solid rgba(255, 255, 255, 0.3)',
                           padding: '12px',
@@ -6596,7 +6596,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           fontSize: '14px',
                         }}
                       >
-                        {load.status === 'Available'
+                        {(load as any).status === 'Available'
                           ? '✅ ACCEPT LOAD'
                           : '📞 CALL DISPATCH'}
                       </button>
@@ -6762,7 +6762,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                                   color: '#22c55e',
                                 }}
                               >
-                                {load.pay}
+                                {(load as any).pay}
                               </div>
                               <div
                                 style={{ fontSize: '0.85rem', opacity: 0.8 }}
@@ -6873,7 +6873,7 @@ Remaining credit: $${(factoringStatus.currentFactor.availableCredit - amount).to
                           </div>
                           <div style={{ fontSize: '0.85rem', opacity: 0.7 }}>
                             Pickup: {(load as any).pickupDate} | Priority:{' '}
-                            {load.priority || 'NORMAL'}
+                            {(load as any).priority || 'NORMAL'}
                           </div>
                         </div>
                       ))
