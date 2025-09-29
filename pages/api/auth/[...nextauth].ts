@@ -23,6 +23,7 @@ export const authOptions = {
       async authorize(credentials) {
         console.log('🔐 NextAuth authorize called with:', {
           email: credentials?.email,
+          passwordLength: credentials?.password?.length,
         });
         // For demo purposes - in production, verify against your Supabase database
         if (
@@ -111,6 +112,7 @@ export const authOptions = {
           credentials?.email === 'info@deedavis.biz' &&
           credentials?.password === 'depointe2024!'
         ) {
+          console.log('✅ DEPOINTE LOGIN SUCCESS:', credentials?.email);
           return {
             id: '8',
             email: 'info@deedavis.biz',
