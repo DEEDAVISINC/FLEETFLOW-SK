@@ -22,8 +22,8 @@ const buildProcess = spawn('npx', ['next', 'build', '--no-lint'], {
     TSC_COMPILE_ON_ERROR: 'true',
     NEXT_TELEMETRY_DISABLED: '1',
     TYPESCRIPT_NOCHECK: 'true',
-    SKIP_TYPE_CHECK: 'true'
-  }
+    SKIP_TYPE_CHECK: 'true',
+  },
 });
 
 buildProcess.on('close', (code) => {

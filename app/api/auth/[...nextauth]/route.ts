@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import UserIdentifierService from '../../../app/services/user-identifier-service';
+import UserIdentifierService from '../../../services/user-identifier-service';
 
 export const authOptions = {
   providers: [
@@ -198,4 +198,6 @@ export const authOptions = {
   },
 };
 
-export default NextAuth(authOptions);
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
