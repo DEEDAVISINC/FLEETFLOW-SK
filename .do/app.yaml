@@ -35,6 +35,8 @@ services:
         value: GQ1kaUpi+J8imscn1Xqt2vxrfb25F1y1aXE6yd9Uv4k=
       - key: NEXTAUTH_URL
         value: https://fleetflowapp.com
+      - key: NEXTAUTH_URL_INTERNAL
+        value: https://fleetflowapp.com
 
     # Routes
     routes:
@@ -64,5 +66,9 @@ static_sites:
 domains:
   - domain: fleetflowapp.com
     type: PRIMARY
+    wildcard: false
+    zone: fleetflowapp.com
+  - domain: www.fleetflowapp.com
+    type: ALIAS
     wildcard: false
     zone: fleetflowapp.com
