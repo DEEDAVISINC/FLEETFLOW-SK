@@ -31,6 +31,10 @@ services:
         value: "3000"
       - key: NEXT_PUBLIC_APP_URL
         value: ${APP_URL}
+      - key: NEXTAUTH_SECRET
+        value: GQ1kaUpi+J8imscn1Xqt2vxrfb25F1y1aXE6yd9Uv4k=
+      - key: NEXTAUTH_URL
+        value: https://fleetflowapp.com
 
     # Routes
     routes:
