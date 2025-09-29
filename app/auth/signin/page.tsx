@@ -198,10 +198,15 @@ export default function SignIn() {
                   <br />
                   admin@fleetflowapp.com / admin123
                 </div>
-                <div>
+                <div style={{ marginBottom: '8px' }}>
                   <strong style={{ color: '#f59e0b' }}>Dispatcher:</strong>
                   <br />
                   dispatch@fleetflowapp.com / dispatch123
+                </div>
+                <div>
+                  <strong style={{ color: '#8b5cf6' }}>DEPOINTE:</strong>
+                  <br />
+                  info@deedavis.biz / depointe2024!
                 </div>
               </div>
             </div>

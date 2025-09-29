@@ -106,6 +106,20 @@ export const authOptions = {
             companyId: 'TSL-204-085',
           };
         }
+        // DEPOINTE PLATFORM - Full Admin Access
+        if (
+          credentials?.email === 'info@deedavis.biz' &&
+          credentials?.password === 'depointe2024!'
+        ) {
+          return {
+            id: '8',
+            email: 'info@deedavis.biz',
+            name: 'DEPOINTE Platform',
+            role: 'admin',
+            companyId: 'DEPOINTE-PLATFORM',
+            isDepointe: true,
+          };
+        }
         return null;
       },
     }),
@@ -146,6 +160,7 @@ export const authOptions = {
           'vendor@abcmanufacturing.com': 'demo_vendor_001',
           'vendor@retaildist.com': 'demo_vendor_002',
           'vendor@techsolutions.com': 'demo_vendor_003',
+          'info@deedavis.biz': 'DEPOINTE-ADMIN-001', // DEPOINTE Platform
         };
         // Use centralized UserIdentifierService for consistent user ID mapping
         const userIdentifierService = UserIdentifierService.getInstance();
