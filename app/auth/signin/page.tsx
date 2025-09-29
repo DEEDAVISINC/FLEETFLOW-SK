@@ -44,23 +44,25 @@ export default function SignIn() {
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         padding: '20px',
-        paddingTop: '100px', // Reduced space for navigation bar
+        paddingTop: '120px', // Increased space for navigation bar
+        paddingBottom: '40px', // Added bottom padding
       }}
     >
       {/* Hero Header */}
       <div
         style={{
           textAlign: 'center',
-          padding: '30px 20px 20px',
-          position: 'absolute',
-          top: '80px', // Push below navigation bar
-          left: '0',
-          right: '0',
+          padding: '20px 20px 30px',
+          position: 'relative',
+          width: '100%',
+          marginBottom: '20px',
           background: 'rgba(255,255,255,0.02)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '12px',
+          border: '1px solid rgba(255,255,255,0.1)',
         }}
       >
         <h1
@@ -94,7 +96,7 @@ export default function SignIn() {
         style={{
           width: '100%',
           maxWidth: '600px',
-          marginTop: '60px',
+          marginTop: '20px', // Reduced from 60px to create better spacing
         }}
       >
         <div
