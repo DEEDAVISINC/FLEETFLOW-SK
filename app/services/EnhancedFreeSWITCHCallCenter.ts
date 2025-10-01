@@ -3,6 +3,7 @@ import FreightConversationAI, {
   ConversationResponse,
   FreightCallContext,
 } from './FreightConversationAI';
+import { salesCopilotAI } from './SalesCopilotAI';
 
 /**
  * Enhanced FreeSWITCH Call Center with Parade.ai CoDriver-level AI capabilities
@@ -230,11 +231,96 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
       // Provide context to human agent
       await this.provideContextToAgent(callId, session);
 
+      // Initialize SalesCopilotAI for real-time guidance
+      await this.initializeSalesCopilot(callId, session);
+
       // Update analytics
       this.callAnalytics.recordTransfer(callId, reason);
     } catch (error) {
       console.error(`Failed to transfer call ${callId}:`, error);
     }
+  }
+
+  /**
+   * Initialize SalesCopilotAI for human agent guidance
+   */
+  private async initializeSalesCopilot(
+    callId: string,
+    session: AICallSession
+  ): Promise<void> {
+    try {
+      // Extract prospect information from session
+      const prospectInfo = {
+        name: session.context.carrierInfo?.contactName,
+        company: session.context.carrierInfo?.companyName,
+        industry: 'transportation',
+        painPoints: this.extractPainPoints(session.conversationHistory),
+      };
+
+      // Start sales copilot guidance
+      await salesCopilotAI.startCallGuidance(
+        callId,
+        'human_agent', // Would be actual agent ID in production
+        prospectInfo
+      );
+
+      console.info(`🤖 SalesCopilotAI initialized for call ${callId}`);
+
+      // Set up real-time conversation monitoring
+      this.setupRealTimeMonitoring(callId);
+    } catch (error) {
+      console.error(
+        `Failed to initialize SalesCopilotAI for ${callId}:`,
+        error
+      );
+    }
+  }
+
+  /**
+   * Extract pain points from conversation history
+   */
+  private extractPainPoints(history: ConversationTurn[]): string[] {
+    const painPoints: string[] = [];
+
+    const painKeywords = [
+      'expensive',
+      'cost',
+      'price',
+      'rates',
+      'slow',
+      'delay',
+      'late',
+      'unreliable',
+      'complicated',
+      'difficult',
+      'hard',
+      'problem',
+      'issue',
+      'challenge',
+    ];
+
+    for (const turn of history) {
+      if (turn.speaker === 'carrier') {
+        const message = turn.message.toLowerCase();
+        for (const keyword of painKeywords) {
+          if (message.includes(keyword) && !painPoints.includes(keyword)) {
+            painPoints.push(keyword);
+          }
+        }
+      }
+    }
+
+    return painPoints;
+  }
+
+  /**
+   * Set up real-time conversation monitoring for sales copilot
+   */
+  private setupRealTimeMonitoring(callId: string): void {
+    // This would integrate with FreeSWITCH event system to monitor
+    // live conversation and feed it to SalesCopilotAI
+    // For now, we'll set up a placeholder for future implementation
+    console.info(`👂 Real-time monitoring enabled for call ${callId}`);
   }
 
   /**
@@ -337,6 +423,12 @@ export class EnhancedFreeSWITCHCallCenter extends FreeSWITCHCallCenter {
 
     // Record analytics
     this.callAnalytics.recordCallCompletion(callId, session);
+
+    // End SalesCopilotAI guidance
+    await salesCopilotAI.endCallGuidance(
+      callId,
+      outcome.result === 'load_booked' ? 'won' : 'lost'
+    );
 
     // Clean up session
     this.activeSessions.delete(callId);
@@ -524,7 +616,3 @@ class CallAnalytics {
 }
 
 export default EnhancedFreeSWITCHCallCenter;
-
-
-
-

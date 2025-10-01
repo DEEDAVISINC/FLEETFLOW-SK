@@ -1016,6 +1016,15 @@ const getDepartmentColor = (
             department: 'Management',
           }
         : '#9333ea';
+    case 'FF': // Freight Forwarder Client - teal
+      return returnObject
+        ? {
+            color: '#06d6a0',
+            background: 'rgba(6, 214, 160, 0.15)',
+            border: '1px solid rgba(6, 214, 160, 0.3)',
+            department: 'Freight Forwarder Client',
+          }
+        : '#06d6a0';
     default:
       return returnObject
         ? {

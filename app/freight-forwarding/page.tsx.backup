@@ -1,0 +1,3735 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import DeniedPartyScreeningUI from '../components/DeniedPartyScreeningUI';
+import FreightForwarderDashboardGuide from '../components/FreightForwarderDashboardGuide';
+import LiveTrackingMap from '../components/LiveTrackingMap';
+import ShipmentConsolidationDashboard from '../components/ShipmentConsolidationDashboard';
+import { useMultiTenantPayments } from '../hooks/useMultiTenantPayments';
+import btsService, {
+  PortPerformanceBenchmark,
+  WaterborneCommerceData,
+} from '../services/BTSService';
+import { currencyService } from '../services/CurrencyConversionService';
+import {
+  ScreeningParty,
+  ScreeningResult,
+  deniedPartyScreeningService,
+} from '../services/DeniedPartyScreeningService';
+import FreightForwarderIdentificationService from '../services/FreightForwarderIdentificationService';
+import { hsCodeService } from '../services/HSCodeService';
+import { UnifiedInvoiceRequest } from '../services/MultiTenantPaymentService';
+import {
+  NOAAPortConditions,
+  noaaPortsService,
+} from '../services/NOAAPortsService';
+import {
+  NOADVesselData,
+  PortIntelligence,
+  VesselSchedule,
+} from '../services/NOADService';
+import { portAuthorityService } from '../services/PortAuthorityService';
+import {
+  PortAuthorityOperations,
+  portAuthoritySystemsService,
+} from '../services/PortAuthoritySystemsService';
+import CanadaCrossBorderView from '../tracking/components/CanadaCrossBorderView';
+import MaritimeIntelligenceView from '../tracking/components/MaritimeIntelligenceView';
+import MexicoCrossBorderView from '../tracking/components/MexicoCrossBorderView';
+
+export default function FreightForwardingPage() {
+  const router = useRouter();
+  const tenantId = 'freight-forwarding-tenant';
+
+  const {
+    config: paymentConfig,
+    availableProviders,
+    activeProviders,
+    primaryProvider,
+    loading: paymentsLoading,
+    createInvoice,
+  } = useMultiTenantPayments(tenantId);
+
+  const [selectedTab, setSelectedTab] = useState('dashboard');
+  const [showAddAgentModal, setShowAddAgentModal] = useState(false);
+  const [clients, setClients] = useState<any[]>([]);
+  const [shipments, setShipments] = useState<any[]>([]);
+  const [quotes, setQuotes] = useState<any[]>([]);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [processingInvoice, setProcessingInvoice] = useState(false);
+  const [showTracking, setShowTracking] = useState<string | null>(null);
+
+  const [quoteForm, setQuoteForm] = useState({
+    customer: '',
+    customerEmail: '',
+    mode: 'ocean' as 'ocean' | 'air' | 'ground',
+    service: 'DDP' as 'DDP' | 'DDU' | 'FOB',
+    originPort: 'Shanghai, China',
+    destinationPort: 'Long Beach, USA',
+    containerType: '40HQ' as '20ft' | '40ft' | '40HQ' | '45ft',
+    quantity: 1,
+    weight: 1000,
+  });
+
+  const [customerForm, setCustomerForm] = useState({
+    companyName: '',
+    contactName: '',
+    email: '',
+    phone: '',
+    industry: 'Manufacturing',
+    monthlyVolume: 1,
+    fleetflowSource: false,
+  });
+
+  // Maritime Intelligence State
+  const [maritimeLoading, setMaritimeLoading] = useState(false);
+  const [maritimeData, setMaritimeData] = useState({
+    vessels: [] as NOADVesselData[],
+    ports: [] as PortIntelligence[],
+    schedules: [] as VesselSchedule[],
+    noaaConditions: [] as NOAAPortConditions[],
+    portOperations: [] as PortAuthorityOperations[],
+    commerceData: [] as WaterborneCommerceData[],
+    benchmarks: [] as PortPerformanceBenchmark[],
+  });
+
+  // Cross-border state
+  const [canadaShipments, setCanadaShipments] = useState<any[]>([]);
+  const [mexicoShipments, setMexicoShipments] = useState<any[]>([]);
+
+  // Load maritime intelligence data
+  const loadMaritimeData = async () => {
+    setMaritimeLoading(true);
+    try {
+      const [
+        vessels,
+        ports,
+        schedules,
+        conditions,
+        operations,
+        commerce,
+        benchmarks,
+      ] = await Promise.all([
+        portAuthorityService.getNOADVesselData(),
+        Promise.all([
+          portAuthorityService.getEnhancedPortIntelligence('USLAX'),
+          portAuthorityService.getEnhancedPortIntelligence('USNYK'),
+          portAuthorityService.getEnhancedPortIntelligence('USMIA'),
+          portAuthorityService.getEnhancedPortIntelligence('USSAV'),
+          portAuthorityService.getEnhancedPortIntelligence('USSEA'),
+        ]),
+        portAuthorityService.getVesselSchedules(),
+        noaaPortsService.getPortConditions(),
+        portAuthoritySystemsService.getPortOperations(),
+        btsService.getWaterborneCommerceData(),
+        btsService.getPortPerformanceBenchmarks(),
+      ]);
+
+      setMaritimeData({
+        vessels,
+        ports,
+        schedules,
+        noaaConditions: conditions,
+        portOperations: operations,
+        commerceData: commerce,
+        benchmarks,
+      });
+    } catch (error) {
+      console.error('Failed to load maritime data:', error);
+    } finally {
+      setMaritimeLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const mockClients = [
+      {
+        id: 'FF-CLIENT-001',
+        name: 'ABC Shipping Corporation',
+        email: 'john.smith@abcshipping.com',
+        contact: 'John Smith',
+        phone: '(555) 123-4567',
+        status: 'active',
+        joinDate: '2024-01-15',
+        shipmentsCount: 45,
+        lastActivity: '2024-01-20',
+        permissions: ['shipments', 'documents', 'communication'],
+      },
+      {
+        id: 'FF-CLIENT-002',
+        name: 'XYZ Logistics Inc',
+        email: 'sarah.jones@xyzlogistics.com',
+        contact: 'Sarah Jones',
+        phone: '(555) 987-6543',
+        status: 'active',
+        joinDate: '2024-01-10',
+        shipmentsCount: 32,
+        lastActivity: '2024-01-19',
+        permissions: ['shipments', 'documents'],
+      },
+    ];
+    setClients(mockClients);
+
+    // Load maritime data
+    loadMaritimeData();
+
+    // Load mock cross-border data
+    const mockCanadaShipments = [
+      {
+        id: 'CA-001',
+        status: 'in-transit',
+        origin: 'Detroit, MI',
+        destination: 'Windsor, ON',
+        carrier: 'CrossBorder Logistics',
+        progress: 65,
+        currentLocation: [-83.0458, 42.3314],
+        originCoords: [-83.0458, 42.3314],
+        destCoords: [-83.0286, 42.3149],
+        eta: '2024-01-25T14:30:00Z',
+        crossBorderInfo: {
+          borderCrossing: 'Ambassador Bridge',
+          crossingStatus: 'in-process',
+          manifestType: 'ACI',
+          aciManifestId: 'ACI-2024-001234',
+          estimatedCrossingTime: '2 hours',
+          actualCrossingTime: null,
+          delayReason: null,
+        },
+      },
+    ];
+
+    const mockMexicoShipments = [
+      {
+        id: 'MX-001',
+        status: 'in-transit',
+        origin: 'Laredo, TX',
+        destination: 'Nuevo Laredo, MX',
+        carrier: 'Border Express',
+        progress: 45,
+        currentLocation: [-99.5075, 27.5064],
+        originCoords: [-99.5075, 27.5064],
+        destCoords: [-99.515, 27.4814],
+        eta: '2024-01-25T16:00:00Z',
+        crossBorderInfo: {
+          borderCrossing: 'World Trade Bridge',
+          crossingStatus: 'pending',
+          manifestType: 'ACE',
+          aceManifestId: 'ACE-2024-005678',
+          estimatedCrossingTime: '3 hours',
+          actualCrossingTime: null,
+          delayReason: 'Customs inspection',
+        },
+      },
+    ];
+
+    setCanadaShipments(mockCanadaShipments);
+    setMexicoShipments(mockMexicoShipments);
+  }, []);
+
+  const stats = {
+    totalShipments: shipments.length,
+    activeShipments: shipments.filter((s: any) =>
+      ['booked', 'in_transit'].includes(s.status)
+    ).length,
+    pendingQuotes: quotes.filter((q: any) => q.status === 'sent').length,
+    monthlyRevenue: shipments
+      .filter((s: any) => s.paymentStatus === 'paid')
+      .reduce((sum: number, s: any) => sum + s.totalValue, 0),
+    customersServed: clients.length,
+    fleetflowLeads: clients.filter((c: any) => c.fleetflowSource).length,
+    fleetflowCommissionOwed: shipments
+      .filter((s: any) => s.fleetflowSource && s.status === 'delivered')
+      .reduce((sum: number, s: any) => sum + 500 * s.quantity, 0),
+    consolidatedShipments: shipments.filter((s: any) => s.consolidated).length,
+    containersSaved: Math.floor(
+      shipments.filter((s: any) => s.consolidated).length * 0.3
+    ),
+    costSavings: shipments
+      .filter((s: any) => s.consolidated)
+      .reduce((sum: number, s: any) => sum + s.totalValue * 0.15, 0),
+  };
+
+  const handleTabClick = (tabId: string, tab?: string) => {
+    if (tab) {
+      setSelectedTab(tab);
+    } else {
+      setSelectedTab(tabId);
+    }
+  };
+
+  const generateOceanQuote = () => {
+    if (!quoteForm.customer || !quoteForm.customerEmail) {
+      alert('Please enter customer name and email');
+      return;
+    }
+
+    const containerRates = {
+      '20ft': 2500,
+      '40ft': 4000,
+      '40HQ': 4500,
+      '45ft': 5000,
+    };
+    const baseRate =
+      containerRates[quoteForm.containerType] * quoteForm.quantity;
+    const fuelSurcharge = baseRate * 0.15;
+    const customsFees =
+      quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0;
+    const total = baseRate + fuelSurcharge + customsFees;
+
+    const newQuote = {
+      id: `Q-${Date.now()}`,
+      quoteNumber: `FF-Q-${Date.now().toString().slice(-6)}`,
+      customer: quoteForm.customer,
+      customerEmail: quoteForm.customerEmail,
+      origin: quoteForm.originPort,
+      destination: quoteForm.destinationPort,
+      mode: 'ocean',
+      service: quoteForm.service,
+      containerType: quoteForm.containerType,
+      quantity: quoteForm.quantity,
+      weight: 0,
+      volume: 0,
+      baseRate,
+      fuelSurcharge,
+      customsFees,
+      total,
+      validUntil: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+      status: 'sent',
+      createdAt: new Date(),
+      fleetflowSource: false,
+    };
+
+    setQuotes([newQuote, ...quotes]);
+    setShowQuoteModal(false);
+    alert(
+      `✅ Ocean Freight Quote Generated!\n\nQuote #: ${newQuote.quoteNumber}\nTotal: $${total.toLocaleString()}\n\nQuote sent to ${quoteForm.customerEmail}`
+    );
+  };
+
+  const generateAirQuote = () => {
+    if (!quoteForm.customer || !quoteForm.customerEmail) {
+      alert('Please enter customer name and email');
+      return;
+    }
+
+    const ratePerKg = 4.5;
+    const baseRate = quoteForm.weight * ratePerKg;
+    const fuelSurcharge = baseRate * 0.25;
+    const customsFees = quoteForm.service === 'DDP' ? 450 : 0;
+    const total = baseRate + fuelSurcharge + customsFees;
+
+    const newQuote = {
+      id: `Q-${Date.now()}`,
+      quoteNumber: `FF-Q-${Date.now().toString().slice(-6)}`,
+      customer: quoteForm.customer,
+      customerEmail: quoteForm.customerEmail,
+      origin: quoteForm.originPort,
+      destination: quoteForm.destinationPort,
+      mode: 'air',
+      service: quoteForm.service,
+      weight: quoteForm.weight,
+      volume: 0,
+      baseRate,
+      fuelSurcharge,
+      customsFees,
+      total,
+      validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      status: 'sent',
+      createdAt: new Date(),
+      fleetflowSource: false,
+    };
+
+    setQuotes([newQuote, ...quotes]);
+    setShowQuoteModal(false);
+    alert(
+      `✅ Air Freight Quote Generated!\n\nQuote #: ${newQuote.quoteNumber}\nTotal: $${total.toLocaleString()}\n\nQuote sent to ${quoteForm.customerEmail}`
+    );
+  };
+
+  const handleAddCustomer = () => {
+    if (!customerForm.companyName || !customerForm.email) {
+      alert('Please enter company name and email');
+      return;
+    }
+
+    const newCustomer = {
+      id: `C-${Date.now()}`,
+      companyName: customerForm.companyName,
+      contactName: customerForm.contactName,
+      email: customerForm.email,
+      phone: customerForm.phone,
+      industry: customerForm.industry,
+      monthlyVolume: customerForm.monthlyVolume,
+      totalRevenue: 0,
+      fleetflowSource: customerForm.fleetflowSource,
+      createdAt: new Date(),
+    };
+
+    setClients([newCustomer, ...clients]);
+    setShowCustomerModal(false);
+    alert(
+      `✅ Customer Added!\n\n${newCustomer.companyName} has been added to your database.${
+        customerForm.fleetflowSource
+          ? '\n\n🎯 FleetFlow Lead: $500 commission per container will be tracked.'
+          : ''
+      }`
+    );
+    setCustomerForm({
+      companyName: '',
+      contactName: '',
+      email: '',
+      phone: '',
+      industry: 'Manufacturing',
+      monthlyVolume: 1,
+      fleetflowSource: false,
+    });
+  };
+
+  const bookShipment = (quote: any) => {
+    const newShipment = {
+      id: `S-${Date.now()}`,
+      referenceNumber: `FF-SH-${Date.now().toString().slice(-6)}`,
+      customer: quote.customer,
+      origin: { country: 'China', city: 'Shanghai', port: quote.origin },
+      destination: {
+        country: 'USA',
+        city: 'Los Angeles',
+        port: quote.destination,
+      },
+      mode: quote.mode,
+      serviceType: quote.service,
+      containerType: quote.containerType || '40HQ',
+      quantity: quote.quantity || 1,
+      status: 'booked',
+      bookingDate: new Date(),
+      etd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      eta: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000),
+      totalValue: quote.total,
+      paymentStatus: 'pending',
+      fleetflowSource: quote.fleetflowSource,
+    };
+
+    setShipments([newShipment, ...shipments]);
+    setQuotes(
+      quotes.map((q: any) =>
+        q.id === quote.id ? { ...q, status: 'accepted' } : q
+      )
+    );
+    alert(
+      `✅ Shipment Booked!\n\nReference: ${newShipment.referenceNumber}\nETD: ${newShipment.etd.toLocaleDateString()}\nETA: ${newShipment.eta.toLocaleDateString()}\n\nYou can now track this container in real-time!`
+    );
+  };
+
+  const convertQuoteToInvoice = async (quote: any) => {
+    if (!primaryProvider) {
+      alert(
+        '⚠️ Please configure a primary payment provider (Square/Stripe/PayPal) in your billing settings to create invoices.'
+      );
+      return;
+    }
+
+    setProcessingInvoice(true);
+
+    const invoiceRequest: UnifiedInvoiceRequest = {
+      tenantId,
+      provider: primaryProvider as any,
+      customerName: quote.customer,
+      companyName: quote.customer,
+      email: quote.customerEmail,
+      title: `Freight Quote ${quote.quoteNumber} - ${quote.mode.toUpperCase()} ${quote.service}`,
+      description: `International freight services from ${quote.origin} to ${quote.destination}`,
+      lineItems: [
+        {
+          name: `${quote.mode.toUpperCase()} Freight (${quote.service})`,
+          description: `Container Type: ${quote.containerType || 'N/A'}, Quantity: ${quote.quantity || 'N/A'}, Weight: ${quote.weight || 'N/A'}kg`,
+          quantity: 1,
+          rate: quote.total,
+          amount: quote.total,
+        },
+      ],
+      dueDate: quote.validUntil.toISOString().split('T')[0],
+      customFields: [
+        { label: 'Quote Number', value: quote.quoteNumber },
+        { label: 'Shipment Mode', value: quote.mode },
+        { label: 'Service Type', value: quote.service },
+        {
+          label: 'FleetFlow Sourced',
+          value: quote.fleetflowSource ? 'Yes' : 'No',
+        },
+      ],
+    };
+
+    try {
+      const result = await createInvoice(invoiceRequest);
+      if (result.success) {
+        alert(
+          `✅ Invoice ${result.invoiceId} created successfully with ${primaryProvider}!\nInvoice Number: ${result.invoiceNumber}\nAmount: $${result.amount?.toLocaleString()}\nStatus: ${result.status}\nPublic URL: ${result.publicUrl}\n\nThe customer will receive the invoice via email.`
+        );
+        setQuotes((prevQuotes: any) =>
+          prevQuotes.map((q: any) =>
+            q.id === quote.id ? { ...q, status: 'invoiced' } : q
+          )
+        );
+      } else {
+        alert(
+          `❌ Failed to create invoice with ${primaryProvider}: ${result.error}`
+        );
+      }
+    } catch (error) {
+      alert(
+        `❌ Error creating invoice: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    } finally {
+      setProcessingInvoice(false);
+    }
+  };
+
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        padding: '30px',
+        paddingTop: '100px',
+        color: 'white',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      }}
+    >
+      <FreightForwarderDashboardGuide onStepClick={handleTabClick} />
+
+      {/* Header */}
+      <div
+        style={{
+          background: 'rgba(15, 23, 42, 0.8)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '20px',
+          padding: '32px',
+          marginBottom: '32px',
+          border: '1px solid rgba(6, 182, 212, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background:
+              'linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6, #06b6d4)',
+          }}
+        />
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px',
+            marginBottom: '16px',
+          }}
+        >
+          <div
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '28px',
+            }}
+          >
+            🚢
+          </div>
+          <div>
+            <h1
+              style={{
+                fontSize: '32px',
+                fontWeight: '800',
+                margin: '0 0 8px 0',
+                background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              Freight Forwarding Intelligence Center
+            </h1>
+            <p style={{ margin: '0', color: 'rgba(255,255,255,0.8)' }}>
+              Ocean & Air Freight • Customs Clearance • Global Logistics
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div
+        style={{
+          background: 'rgba(15, 23, 42, 0.8)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          padding: '24px',
+          marginBottom: '32px',
+          border: '1px solid rgba(6, 182, 212, 0.2)',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {[
+            { id: 'dashboard', label: '🏠 Dashboard', color: '#06b6d4' },
+            {
+              id: 'shipments',
+              label: '📦 Shipments & Quoting',
+              color: '#10b981',
+            },
+            {
+              id: 'consolidation',
+              label: '📦 Consolidation',
+              color: '#8b5cf6',
+            },
+            {
+              id: 'compliance',
+              label: '🛃 Compliance & Documents',
+              color: '#ef4444',
+            },
+            { id: 'clients', label: '👥 Clients & CRM', color: '#a855f7' },
+            { id: 'intelligence', label: '📊 Intelligence', color: '#3b82f6' },
+            { id: 'operations', label: '✅ Operations', color: '#f59e0b' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedTab(tab.id)}
+              style={{
+                padding: '14px 20px',
+                border: 'none',
+                background:
+                  selectedTab === tab.id
+                    ? tab.color
+                    : 'rgba(255, 255, 255, 0.1)',
+                color:
+                  selectedTab === tab.id ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                fontWeight: '600',
+                cursor: 'pointer',
+                borderRadius: '12px',
+                transition: 'all 0.2s',
+                border:
+                  selectedTab === tab.id
+                    ? `2px solid ${tab.color}`
+                    : '2px solid transparent',
+                boxShadow:
+                  selectedTab === tab.id ? `0 0 20px ${tab.color}40` : 'none',
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div
+        style={{
+          background: 'rgba(15, 23, 42, 0.8)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '20px',
+          padding: '32px',
+          border: '1px solid rgba(6, 182, 212, 0.2)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+          minHeight: '600px',
+        }}
+      >
+        {selectedTab === 'dashboard' && (
+          <OverviewTab
+            primaryProvider={primaryProvider}
+            stats={stats}
+            onNavigateToTab={setSelectedTab}
+            onNewQuote={() => setShowQuoteModal(true)}
+            onAddCustomer={() => setShowCustomerModal(true)}
+            recentQuotes={quotes}
+            recentShipments={shipments}
+          />
+        )}
+        {selectedTab === 'shipments' && <ShipmentsTab router={router} />}
+        {selectedTab === 'consolidation' && (
+          <ShipmentConsolidationDashboard tenantId={tenantId} />
+        )}
+        {selectedTab === 'compliance' && <ComplianceAndDocumentsTab />}
+        {selectedTab === 'clients' && (
+          <ClientsTab
+            clients={clients}
+            setClients={setClients}
+            showAddAgentModal={showAddAgentModal}
+            setShowAddAgentModal={setShowAddAgentModal}
+          />
+        )}
+        {selectedTab === 'intelligence' && <IntelligenceTab stats={stats} />}
+        {selectedTab === 'operations' && <OperationsTab />}
+        {selectedTab === 'crossborder' && (
+          <div style={{ display: 'grid', gap: '32px' }}>
+            <div>
+              <h2
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  margin: '0 0 8px 0',
+                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                🇨🇦🇲🇽 Cross-Border Intelligence
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
+                Canada ACI/PARS and Mexico ACE/SAAI manifest tracking
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '20px',
+              }}
+            >
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(220, 38, 38, 0.3)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    marginBottom: '16px',
+                    color: '#dc2626',
+                  }}
+                >
+                  🇨🇦 Canada Cross-Border
+                </h3>
+                <CanadaCrossBorderView shipments={canadaShipments} />
+              </div>
+
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(220, 38, 38, 0.3)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    marginBottom: '16px',
+                    color: '#dc2626',
+                  }}
+                >
+                  🇲🇽 Mexico Cross-Border
+                </h3>
+                <MexicoCrossBorderView shipments={mexicoShipments} />
+              </div>
+            </div>
+
+            {/* Currency Information Section */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  color: '#8b5cf6',
+                }}
+              >
+                💱 Currency Information
+              </h3>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(255,255,255,0.05)',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    USD/CAD
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    1.35
+                  </div>
+                  <div
+                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
+                  >
+                    Canadian Dollar
+                  </div>
+                </div>
+                <div
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(255,255,255,0.05)',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    USD/MXN
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    18.50
+                  </div>
+                  <div
+                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
+                  >
+                    Mexican Peso
+                  </div>
+                </div>
+                <div
+                  style={{
+                    padding: '16px',
+                    background: 'rgba(255,255,255,0.05)',
+                    borderRadius: '8px',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.7)',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    EUR/USD
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                    }}
+                  >
+                    1.08
+                  </div>
+                  <div
+                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
+                  >
+                    Euro to USD
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function OverviewTab({
+  primaryProvider,
+  stats,
+  onNavigateToTab,
+  onNewQuote,
+  onAddCustomer,
+  recentQuotes,
+  recentShipments,
+}: any) {
+  return (
+    <div style={{ display: 'grid', gap: '24px' }}>
+      {/* Quick Action Cards */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
+        }}
+      >
+        {/* New Quote Card */}
+        <button
+          onClick={onNewQuote}
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))',
+            border: '2px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow =
+              '0 8px 24px rgba(59, 130, 246, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>📝</div>
+          <div
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: '700',
+              marginBottom: '8px',
+            }}
+          >
+            Create New Quote
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+            Generate ocean or air freight quotes instantly
+          </div>
+        </button>
+
+        {/* View Quotes Card */}
+        <button
+          onClick={() => onNavigateToTab('quotes')}
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))',
+            border: '2px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow =
+              '0 8px 24px rgba(16, 185, 129, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>💰</div>
+          <div
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: '700',
+              marginBottom: '8px',
+            }}
+          >
+            Manage Quotes
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+            {stats.pendingQuotes} pending quotes • Convert to invoices
+          </div>
+        </button>
+
+        {/* Track Shipments Card */}
+        <button
+          onClick={() => onNavigateToTab('shipments')}
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))',
+            border: '2px solid rgba(139, 92, 246, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow =
+              '0 8px 24px rgba(139, 92, 246, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>🚢</div>
+          <div
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: '700',
+              marginBottom: '8px',
+            }}
+          >
+            Active Shipments
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+            {stats.activeShipments} in transit • Real-time tracking
+          </div>
+        </button>
+
+        {/* Customers Card */}
+        <button
+          onClick={() => onNavigateToTab('customers')}
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2))',
+            border: '2px solid rgba(245, 158, 11, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow =
+              '0 8px 24px rgba(245, 158, 11, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div style={{ fontSize: '32px', marginBottom: '12px' }}>👥</div>
+          <div
+            style={{
+              color: 'white',
+              fontSize: '18px',
+              fontWeight: '700',
+              marginBottom: '8px',
+            }}
+          >
+            Customer Base
+          </div>
+          <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+            {stats.customersServed} customers • {stats.fleetflowLeads} from
+            FleetFlow
+          </div>
+        </button>
+      </div>
+
+      {/* Recent Activity */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '20px',
+        }}
+      >
+        {/* Recent Quotes */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            <h4
+              style={{
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+              }}
+            >
+              📄 Recent Quotes
+            </h4>
+            <button
+              onClick={() => onNavigateToTab('quotes')}
+              style={{
+                background: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                color: '#60a5fa',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
+              View All →
+            </button>
+          </div>
+          {recentQuotes.length === 0 ? (
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.5)',
+                textAlign: 'center',
+                padding: '20px',
+              }}
+            >
+              No quotes yet. Create your first quote!
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {recentQuotes.slice(0, 3).map((quote: any) => (
+                <div
+                  key={quote.id}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {quote.quoteNumber} - {quote.customer}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    ${quote.total.toLocaleString()} • {quote.mode.toUpperCase()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Recent Shipments */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            <h4
+              style={{
+                color: 'white',
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+              }}
+            >
+              🚢 Active Shipments
+            </h4>
+            <button
+              onClick={() => onNavigateToTab('shipments')}
+              style={{
+                background: 'rgba(16, 185, 129, 0.2)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                color: '#10b981',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
+              View All →
+            </button>
+          </div>
+          {recentShipments.length === 0 ? (
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.5)',
+                textAlign: 'center',
+                padding: '20px',
+              }}
+            >
+              No active shipments
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {recentShipments.slice(0, 3).map((shipment: any) => (
+                <div
+                  key={shipment.id}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                  }}
+                >
+                  <div
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {shipment.referenceNumber}
+                  </div>
+                  <div
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontSize: '12px',
+                    }}
+                  >
+                    {shipment.origin.city} → {shipment.destination.city}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* FleetFlow Lead Generation */}
+      <div
+        style={{
+          background: 'rgba(139, 92, 246, 0.15)',
+          border: '1px solid rgba(139, 92, 246, 0.3)',
+          borderRadius: '16px',
+          padding: '25px',
+        }}
+      >
+        <h4
+          style={{
+            fontSize: '18px',
+            fontWeight: '700',
+            color: '#a78bfa',
+            marginBottom: '15px',
+          }}
+        >
+          💡 FleetFlow Lead Generation Program
+        </h4>
+        <p
+          style={{
+            fontSize: '14px',
+            color: 'rgba(255, 255, 255, 0.8)',
+            marginBottom: '15px',
+            lineHeight: '1.6',
+          }}
+        >
+          Earn <strong style={{ color: '#10b981' }}>$500 per container</strong>{' '}
+          when FleetFlow brings you qualified China-USA DDP customers. Track
+          your FleetFlow-sourced customers in the Customers tab.
+        </p>
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '10px',
+            padding: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '20px',
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+                marginBottom: '4px',
+              }}
+            >
+              Total Commission Earned:
+            </div>
+            <div
+              style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}
+            >
+              ${stats.fleetflowCommissionOwed.toLocaleString()}
+            </div>
+          </div>
+          <div>
+            <div
+              style={{
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+                marginBottom: '4px',
+              }}
+            >
+              FleetFlow Customers:
+            </div>
+            <div
+              style={{ fontSize: '24px', fontWeight: '700', color: '#a78bfa' }}
+            >
+              {stats.fleetflowLeads}
+            </div>
+          </div>
+          <div>
+            <button
+              style={{
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '10px 20px',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+              }}
+              onClick={() => onNavigateToTab('customers')}
+            >
+              View Customers 🎯
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Old ShipmentsTab function content completely removed
+
+// Quoting Tab - Direct Connection to Main Quoting Portal
+function QuotingTab({ router }: any) {
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2
+          style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 8px 0' }}
+        >
+          📦 Ocean/Air Freight Quoting Portal
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px' }}>
+          Access FleetFlow's comprehensive quoting engine for ocean and air
+          freight
+        </p>
+      </div>
+
+      {/* Direct Access Cards */}
+      <div
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}
+      >
+        {/* Ocean/Maritime Freight Card */}
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(8, 145, 178, 0.15))',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            padding: '40px',
+            border: '2px solid rgba(6, 182, 212, 0.3)',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+          }}
+          onClick={() => {
+            // Navigate to quoting page with Maritime tab
+            window.location.href = '/quoting?tab=Maritime';
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-8px)';
+            e.currentTarget.style.boxShadow =
+              '0 20px 60px rgba(6, 182, 212, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div
+            style={{
+              fontSize: '64px',
+              marginBottom: '24px',
+              textAlign: 'center',
+            }}
+          >
+            🚢
+          </div>
+          <h3
+            style={{
+              fontSize: '28px',
+              fontWeight: '800',
+              marginBottom: '16px',
+              color: '#06b6d4',
+              textAlign: 'center',
+            }}
+          >
+            Ocean Freight
+          </h3>
+          <p
+            style={{
+              color: 'rgba(255,255,255,0.8)',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              marginBottom: '24px',
+              textAlign: 'center',
+            }}
+          >
+            Container shipping • FCL/LCL quotes • Global maritime routes •
+            Port-to-port pricing
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gap: '12px',
+              marginBottom: '24px',
+              fontSize: '14px',
+              color: 'rgba(255,255,255,0.7)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#06b6d4' }}>✓</span> 20ft, 40ft, 40HQ,
+              Reefer containers
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#06b6d4' }}>✓</span> Real-time market rates
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#06b6d4' }}>✓</span> DDP/DDU/FOB service
+              options
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#06b6d4' }}>✓</span> Customs clearance
+              included
+            </div>
+          </div>
+          <button
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: '12px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+              color: 'white',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(6, 182, 212, 0.4)',
+            }}
+          >
+            Open Ocean Freight Portal →
+          </button>
+        </div>
+
+        {/* Air Freight Card */}
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(29, 78, 216, 0.15))',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '20px',
+            padding: '40px',
+            border: '2px solid rgba(59, 130, 246, 0.3)',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+          }}
+          onClick={() => {
+            // Navigate to quoting page with AirFreight tab
+            window.location.href = '/quoting?tab=AirFreight';
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-8px)';
+            e.currentTarget.style.boxShadow =
+              '0 20px 60px rgba(59, 130, 246, 0.4)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          <div
+            style={{
+              fontSize: '64px',
+              marginBottom: '24px',
+              textAlign: 'center',
+            }}
+          >
+            ✈️
+          </div>
+          <h3
+            style={{
+              fontSize: '28px',
+              fontWeight: '800',
+              marginBottom: '16px',
+              color: '#3b82f6',
+              textAlign: 'center',
+            }}
+          >
+            Air Freight
+          </h3>
+          <p
+            style={{
+              color: 'rgba(255,255,255,0.8)',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              marginBottom: '24px',
+              textAlign: 'center',
+            }}
+          >
+            Expedited air cargo • Express delivery • International air routes •
+            Premium speed
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gap: '12px',
+              marginBottom: '24px',
+              fontSize: '14px',
+              color: 'rgba(255,255,255,0.7)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#3b82f6' }}>✓</span> Standard, Express,
+              Charter options
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#3b82f6' }}>✓</span> Weight-based pricing
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#3b82f6' }}>✓</span> Fast transit times
+              (2-7 days)
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: '#3b82f6' }}>✓</span> Door-to-door service
+              available
+            </div>
+          </div>
+          <button
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: '12px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              color: 'white',
+              fontSize: '16px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              boxShadow: '0 4px 16px rgba(59, 130, 246, 0.4)',
+            }}
+          >
+            Open Air Freight Portal →
+          </button>
+        </div>
+      </div>
+
+      {/* Quick Info */}
+      <div
+        style={{
+          background: 'rgba(139, 92, 246, 0.1)',
+          padding: '24px',
+          borderRadius: '16px',
+          border: '1px solid rgba(139, 92, 246, 0.3)',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '18px',
+            fontWeight: '700',
+            marginBottom: '12px',
+            color: '#a78bfa',
+          }}
+        >
+          🎯 FleetFlow Advantage
+        </h3>
+        <p
+          style={{
+            color: 'rgba(255,255,255,0.8)',
+            fontSize: '14px',
+            lineHeight: '1.6',
+            margin: 0,
+          }}
+        >
+          <strong>Instant Multi-Carrier Quotes</strong> • Compare rates from 50+
+          carriers • Real-time pricing • Integrated customs clearance •
+          Door-to-door tracking • Dedicated freight forwarding support
+        </p>
+      </div>
+
+      {/* Recent Quotes Quick View */}
+      <div>
+        <h3
+          style={{
+            fontSize: '20px',
+            fontWeight: '700',
+            marginBottom: '16px',
+            color: 'white',
+          }}
+        >
+          Recent Quotes
+        </h3>
+        <div style={{ display: 'grid', gap: '12px' }}>
+          {/* Sample Ocean Quote */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              padding: '16px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'start',
+                marginBottom: '8px',
+              }}
+            >
+              <span
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                {FreightForwarderIdentificationService.generateQuoteNumber(
+                  'ocean'
+                )}
+              </span>
+              <span
+                style={{
+                  color: '#10b981',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                }}
+              >
+                Ocean - DDP
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.6)',
+              }}
+            >
+              <span>Shanghai → Los Angeles</span>
+              <span>$4,250 • 40ft HC</span>
+            </div>
+          </div>
+
+          {/* Sample Air Quote */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              padding: '16px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'start',
+                marginBottom: '8px',
+              }}
+            >
+              <span
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                {FreightForwarderIdentificationService.generateQuoteNumber(
+                  'air'
+                )}
+              </span>
+              <span
+                style={{
+                  color: '#3b82f6',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                }}
+              >
+                Air - Express
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.6)',
+              }}
+            >
+              <span>Hong Kong → New York</span>
+              <span>$12,800 • 2-3 days</span>
+            </div>
+          </div>
+
+          {/* Sample Ocean Quote 2 */}
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              padding: '16px',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'start',
+                marginBottom: '8px',
+              }}
+            >
+              <span
+                style={{
+                  color: 'rgba(255,255,255,0.9)',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                {FreightForwarderIdentificationService.generateQuoteNumber(
+                  'ocean'
+                )}
+              </span>
+              <span
+                style={{
+                  color: '#f59e0b',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                }}
+              >
+                Ocean - CIF
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.6)',
+              }}
+            >
+              <span>Singapore → Houston</span>
+              <span>$3,950 • 20ft STD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuotesTab({
+  quotes,
+  onBookShipment,
+  onCreateInvoice,
+  processingInvoice,
+}: {
+  quotes: any[];
+  onBookShipment: (quote: any) => void;
+  onCreateInvoice: (quote: any) => void;
+  processingInvoice: boolean;
+}) {
+  const handleScreening = async () => {
+    setLoading(true);
+    try {
+      const results =
+        await deniedPartyScreeningService.screenMultipleParties(
+          screeningParties
+        );
+      setScreeningResults(results);
+    } catch (error) {
+      console.error('Screening error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addParty = () => {
+    setScreeningParties([
+      ...screeningParties,
+      { name: '', address: '', country: '', type: 'shipper' },
+    ]);
+  };
+
+  const updateParty = (index: number, field: string, value: string) => {
+    const updated = [...screeningParties];
+    (updated[index] as any)[field] = value;
+    setScreeningParties(updated);
+  };
+
+  const removeParty = (index: number) => {
+    if (screeningParties.length > 1) {
+      setScreeningParties(screeningParties.filter((_, i) => i !== index));
+    }
+  };
+
+  const getRiskColor = (riskLevel: string) => {
+    switch (riskLevel) {
+      case 'critical':
+        return {
+          bg: 'rgba(239, 68, 68, 0.1)',
+          text: '#ef4444',
+          border: '#ef4444',
+        };
+      case 'high':
+        return {
+          bg: 'rgba(249, 115, 22, 0.1)',
+          text: '#f97316',
+          border: '#f97316',
+        };
+      case 'medium':
+        return {
+          bg: 'rgba(245, 158, 11, 0.1)',
+          text: '#f59e0b',
+          border: '#f59e0b',
+        };
+      case 'low':
+        return {
+          bg: 'rgba(59, 130, 246, 0.1)',
+          text: '#3b82f6',
+          border: '#3b82f6',
+        };
+      case 'clear':
+        return {
+          bg: 'rgba(16, 185, 129, 0.1)',
+          text: '#10b981',
+          border: '#10b981',
+        };
+      default:
+        return {
+          bg: 'rgba(107, 114, 128, 0.1)',
+          text: '#6b7280',
+          border: '#6b7280',
+        };
+    }
+  };
+
+  const handleCurrencyConversion = () => {
+    const converted = currencyService.convert(
+      parseFloat(amount),
+      fromCurrency,
+      toCurrency
+    );
+    setConvertedAmount(converted);
+  };
+
+  const currencies = [
+    'USD',
+    'EUR',
+    'GBP',
+    'JPY',
+    'CNY',
+    'CAD',
+    'AUD',
+    'CHF',
+    'HKD',
+    'SGD',
+    'SEK',
+    'KRW',
+    'NOK',
+    'NZD',
+    'INR',
+    'MXN',
+    'ZAR',
+    'BRL',
+    'RUB',
+    'TRY',
+    'DKK',
+    'PLN',
+    'THB',
+    'IDR',
+    'HUF',
+    'CZK',
+    'ILS',
+    'CLP',
+    'PHP',
+    'AED',
+    'SAR',
+  ];
+
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            margin: '0 0 8px 0',
+            background: 'linear-gradient(135deg, #059669, #10b981)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          💰 Freight Quotes Management
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
+          Ocean & Air freight quotes, pricing, and invoice generation
+        </p>
+      </div>
+
+      {quotes.length === 0 ? (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '2px dashed rgba(255, 255, 255, 0.2)',
+            borderRadius: '16px',
+            padding: '60px',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>💰</div>
+          <div
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              marginBottom: '10px',
+            }}
+          >
+            No quotes yet
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Click "New Quote" in the header to generate ocean or air freight
+            quotes
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '15px' }}>
+          {quotes.map((quote: any) => (
+            <div
+              key={quote.id}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '20px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {quote.quoteNumber} - {quote.customer}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    {quote.origin} → {quote.destination}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      color: 'rgba(255,255,255,0.6)',
+                      marginTop: '4px',
+                    }}
+                  >
+                    {quote.mode.toUpperCase()} Freight • {quote.service} • Valid
+                    until {quote.validUntil.toLocaleDateString()}
+                  </div>
+                  {quote.fleetflowSource && (
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: '#10b981',
+                        marginTop: '4px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      🎯 FleetFlow Lead (+$500/container commission)
+                    </div>
+                  )}
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      color: '#10b981',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    ${quote.total.toLocaleString()}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.6)',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    Status: {quote.status}
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '8px',
+                    }}
+                  >
+                    {quote.status !== 'accepted' &&
+                      quote.status !== 'invoiced' && (
+                        <button
+                          onClick={() => onBookShipment(quote)}
+                          style={{
+                            background:
+                              'linear-gradient(135deg, #10b981, #059669)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            color: 'white',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Book Shipment
+                        </button>
+                      )}
+                    {quote.status === 'accepted' &&
+                      quote.status !== 'invoiced' && (
+                        <button
+                          onClick={() => onCreateInvoice(quote)}
+                          disabled={processingInvoice}
+                          style={{
+                            background: processingInvoice
+                              ? 'rgba(100,100,100,0.3)'
+                              : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            color: 'white',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            cursor: processingInvoice
+                              ? 'not-allowed'
+                              : 'pointer',
+                          }}
+                        >
+                          {processingInvoice ? 'Creating...' : 'Create Invoice'}
+                        </button>
+                      )}
+                    {quote.status === 'invoiced' && (
+                      <div
+                        style={{
+                          background: 'rgba(16, 185, 129, 0.2)',
+                          border: '1px solid #10b981',
+                          borderRadius: '6px',
+                          padding: '6px 12px',
+                          color: '#10b981',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        ✓ Invoiced
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ClientsTab({
+  clients,
+  setClients,
+  showAddAgentModal,
+  setShowAddAgentModal,
+}: any) {
+  const [loading, setLoading] = useState(false);
+
+  const handleSaveClient = async (formData: any) => {
+    setLoading(true);
+    setTimeout(() => {
+      const newClient = {
+        id: `FF-CLIENT-${String(clients.length + 1).padStart(3, '0')}`,
+        name: formData.companyName,
+        email: formData.email,
+        contact: formData.contactName,
+        phone: formData.phone || 'N/A',
+        address: formData.address || 'N/A',
+        status: 'active',
+        joinDate: new Date().toISOString().split('T')[0],
+        shipmentsCount: 0,
+        lastActivity: new Date().toISOString().split('T')[0],
+        permissions: formData.permissions,
+      };
+      setClients([...clients, newClient]);
+      setShowAddAgentModal(false);
+      setLoading(false);
+    }, 1500);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return {
+          bg: 'rgba(16, 185, 129, 0.1)',
+          border: '#10b981',
+          text: '#10b981',
+        };
+      case 'pending':
+        return {
+          bg: 'rgba(245, 158, 11, 0.1)',
+          border: '#f59e0b',
+          text: '#f59e0b',
+        };
+      case 'inactive':
+        return {
+          bg: 'rgba(107, 114, 128, 0.1)',
+          border: '#6b7280',
+          text: '#6b7280',
+        };
+      default:
+        return { bg: 'rgba(255, 255, 255, 0.1)', border: '#fff', text: '#fff' };
+    }
+  };
+
+  return (
+    <>
+      <div style={{ display: 'grid', gap: '32px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: '700',
+                margin: '0 0 8px 0',
+              }}
+            >
+              👥 Customs Agents & Clients
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
+              Manage your clients and their access to the Customs Agent Portal
+            </p>
+          </div>
+          <button
+            onClick={() => setShowAddAgentModal(true)}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              transition: 'all 0.2s',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            + Add Customs Agent
+          </button>
+        </div>
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '16px',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              padding: '20px',
+              borderRadius: '12px',
+              textAlign: 'center',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <div
+              style={{ fontSize: '32px', fontWeight: '800', color: '#3b82f6' }}
+            >
+              {clients.length}
+            </div>
+            <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
+              Total Agents
+            </div>
+          </div>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              padding: '20px',
+              borderRadius: '12px',
+              textAlign: 'center',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+            }}
+          >
+            <div
+              style={{ fontSize: '32px', fontWeight: '800', color: '#10b981' }}
+            >
+              {clients.filter((c: any) => c.status === 'active').length}
+            </div>
+            <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
+              Active Agents
+            </div>
+          </div>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              padding: '20px',
+              borderRadius: '12px',
+              textAlign: 'center',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+            }}
+          >
+            <div
+              style={{ fontSize: '32px', fontWeight: '800', color: '#f59e0b' }}
+            >
+              {clients.reduce(
+                (sum: number, c: any) => sum + c.shipmentsCount,
+                0
+              )}
+            </div>
+            <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
+              Total Shipments
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              margin: '0 0 20px 0',
+            }}
+          >
+            Your Customs Agents
+          </h3>
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {clients.map((client: any) => {
+              const statusColor = getStatusColor(client.status);
+              return (
+                <div
+                  key={client.id}
+                  style={{
+                    padding: '20px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontWeight: '700',
+                            fontSize: '18px',
+                            color: 'white',
+                          }}
+                        >
+                          {client.name}
+                        </div>
+                        <span
+                          style={{
+                            padding: '4px 12px',
+                            backgroundColor: statusColor.bg,
+                            color: statusColor.text,
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            border: `1px solid ${statusColor.border}`,
+                          }}
+                        >
+                          {client.status.toUpperCase()}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255,255,255,0.7)',
+                        }}
+                      >
+                        {client.contact} • {client.email}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        style={{
+                          padding: '8px 16px',
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          color: '#3b82f6',
+                          border: '1px solid rgba(59, 130, 246, 0.3)',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Edit Access
+                      </button>
+                      <button
+                        style={{
+                          padding: '8px 16px',
+                          background: 'rgba(16, 185, 129, 0.1)',
+                          color: '#10b981',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        View Portal
+                      </button>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns:
+                        'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '16px',
+                      marginTop: '16px',
+                      paddingTop: '16px',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Phone
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'white',
+                          fontWeight: '500',
+                        }}
+                      >
+                        {client.phone}
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Shipments
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'white',
+                          fontWeight: '500',
+                        }}
+                      >
+                        {client.shipmentsCount} total
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Last Activity
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'white',
+                          fontWeight: '500',
+                        }}
+                      >
+                        {new Date(client.lastActivity).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        Permissions
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'white',
+                          fontWeight: '500',
+                        }}
+                      >
+                        {client.permissions.length} enabled
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {showAddAgentModal && (
+        <AddClientModal
+          onSave={handleSaveClient}
+          onCancel={() => setShowAddAgentModal(false)}
+          loading={loading}
+        />
+      )}
+    </>
+  );
+}
+
+function AddClientModal({
+  onSave,
+  onCancel,
+  loading,
+}: {
+  onSave: (data: any) => void;
+  onCancel: () => void;
+  loading: boolean;
+}) {
+  const [formData, setFormData] = useState({
+    companyName: '',
+    contactName: '',
+    email: '',
+    phone: '',
+    address: '',
+    permissions: ['shipments', 'documents', 'communication'],
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  const togglePermission = (permission: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      permissions: prev.permissions.includes(permission)
+        ? prev.permissions.filter((p) => p !== permission)
+        : [...prev.permissions, permission],
+    }));
+  };
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+      }}
+    >
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
+          borderRadius: '16px',
+          padding: '32px',
+          maxWidth: '600px',
+          width: '90%',
+          maxHeight: '80vh',
+          overflow: 'auto',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '24px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              margin: '0',
+              color: 'white',
+            }}
+          >
+            Add Customs Agent
+          </h3>
+          <button
+            onClick={onCancel}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgba(255,255,255,0.6)',
+              cursor: 'pointer',
+              fontSize: '24px',
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '16px',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '8px',
+                  color: 'white',
+                }}
+              >
+                Company Name *
+              </label>
+              <input
+                type='text'
+                value={formData.companyName}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    companyName: e.target.value,
+                  }))
+                }
+                placeholder='ABC Shipping Corporation'
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '8px',
+                  color: 'white',
+                }}
+              >
+                Contact Name *
+              </label>
+              <input
+                type='text'
+                value={formData.contactName}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    contactName: e.target.value,
+                  }))
+                }
+                placeholder='John Smith'
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '16px',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '8px',
+                  color: 'white',
+                }}
+              >
+                Email Address *
+              </label>
+              <input
+                type='email'
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
+                placeholder='john.smith@company.com'
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  marginBottom: '8px',
+                  color: 'white',
+                }}
+              >
+                Phone Number
+              </label>
+              <input
+                type='tel'
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, phone: e.target.value }))
+                }
+                placeholder='(555) 123-4567'
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '600',
+                marginBottom: '8px',
+                color: 'white',
+              }}
+            >
+              Business Address
+            </label>
+            <textarea
+              value={formData.address}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, address: e.target.value }))
+              }
+              placeholder='123 Business Ave, Suite 100, Los Angeles, CA 90210'
+              rows={3}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                fontSize: '14px',
+                resize: 'vertical',
+              }}
+            />
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '14px',
+                fontWeight: '600',
+                marginBottom: '12px',
+                color: 'white',
+              }}
+            >
+              Portal Access Permissions
+            </label>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                gap: '12px',
+              }}
+            >
+              {[
+                {
+                  id: 'shipments',
+                  label: '📦 View Shipments',
+                  desc: 'Track and monitor shipments',
+                },
+                {
+                  id: 'documents',
+                  label: '📄 Upload Documents',
+                  desc: 'Submit customs documentation',
+                },
+                {
+                  id: 'communication',
+                  label: '💬 Send Messages',
+                  desc: 'Contact freight forwarder',
+                },
+                {
+                  id: 'reports',
+                  label: '📊 View Reports',
+                  desc: 'Access analytics and reports',
+                },
+              ].map((perm) => (
+                <div
+                  key={perm.id}
+                  onClick={() => togglePermission(perm.id)}
+                  style={{
+                    padding: '12px',
+                    border: `2px solid ${
+                      formData.permissions.includes(perm.id)
+                        ? '#3b82f6'
+                        : 'rgba(255, 255, 255, 0.2)'
+                    }`,
+                    borderRadius: '8px',
+                    backgroundColor: formData.permissions.includes(perm.id)
+                      ? 'rgba(59, 130, 246, 0.1)'
+                      : 'rgba(255, 255, 255, 0.05)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: '600',
+                      fontSize: '14px',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {perm.label}
+                  </div>
+                  <div
+                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}
+                  >
+                    {perm.desc}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginTop: '24px',
+              padding: '16px',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '8px',
+            }}
+          >
+            <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>
+              <strong>What happens next?</strong>
+              <br />
+              • User account will be created with access to the Customs Agent
+              Portal
+              <br />
+              • Invitation email will be sent with login credentials
+              <br />• Agent can immediately start viewing shipments and
+              uploading documents
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              justifyContent: 'flex-end',
+              marginTop: '24px',
+            }}
+          >
+            <button
+              type='button'
+              onClick={onCancel}
+              disabled={loading}
+              style={{
+                padding: '12px 24px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '8px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type='submit'
+              disabled={
+                loading ||
+                !formData.companyName ||
+                !formData.contactName ||
+                !formData.email
+              }
+              style={{
+                padding: '12px 24px',
+                backgroundColor: loading ? '#6b7280' : '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+                fontWeight: '600',
+              }}
+            >
+              {loading ? 'Creating Account...' : 'Create Customs Agent Account'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// Helper component functions
+// Educational freight forwarding content embedded for AI adaptive learning:
+// - Container Types: 7 types (Standard/Dry, High Cube, Open Top, Flat Rack, Refrigerated/Reefer, Open Side, Tank)
+// - Shipping Schedules: POL/POD, ETD/ETA, Transit Time, Cut-off Date, Carrier/Vessel Name, Sailing Frequency, Direct vs Indirect, Free Time, B/L Fees
+// - Bill of Lading: Legal document with 4 key functions (Receipt, Contract, Title, Proof) and 6 types (Straight, Order, Bearer, Seaway, Clean, Foul/Dirty)
+// - Export Process: 12 steps from inspection to departure including customs clearance and B/L flow
+
+function ComplianceTab() {
+  const [complianceMode, setComplianceMode] = useState<
+    'screening' | 'hscode' | 'duty' | 'section301' | 'currency'
+  >('screening');
+  const [screeningResults, setScreeningResults] = useState<ScreeningResult[]>(
+    []
+  );
+  const [screeningParties, setScreeningParties] = useState<ScreeningParty[]>([
+    { name: '', address: '', country: '', type: 'shipper' },
+  ]);
+  const [loading, setLoading] = useState(false);
+  const [fromCurrency, setFromCurrency] = useState('USD');
+  const [toCurrency, setToCurrency] = useState('EUR');
+  const [amount, setAmount] = useState('1000');
+  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
+
+  const handleScreening = async () => {
+    setLoading(true);
+    try {
+      const results =
+        await deniedPartyScreeningService.screenMultipleParties(
+          screeningParties
+        );
+      setScreeningResults(results);
+    } catch (error) {
+      console.error('Screening error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addParty = () => {
+    setScreeningParties([
+      ...screeningParties,
+      { name: '', address: '', country: '', type: 'shipper' },
+    ]);
+  };
+
+  const updateParty = (index: number, field: string, value: string) => {
+    const updated = [...screeningParties];
+    (updated[index] as any)[field] = value;
+    setScreeningParties(updated);
+  };
+
+  const removeParty = (index: number) => {
+    if (screeningParties.length > 1) {
+      setScreeningParties(screeningParties.filter((_, i) => i !== index));
+    }
+  };
+
+  const getRiskColor = (riskLevel: string) => {
+    switch (riskLevel) {
+      case 'critical':
+        return {
+          bg: 'rgba(239, 68, 68, 0.1)',
+          text: '#ef4444',
+          border: '#ef4444',
+        };
+      case 'high':
+        return {
+          bg: 'rgba(249, 115, 22, 0.1)',
+          text: '#f97316',
+          border: '#f97316',
+        };
+      case 'medium':
+        return {
+          bg: 'rgba(245, 158, 11, 0.1)',
+          text: '#f59e0b',
+          border: '#f59e0b',
+        };
+      case 'low':
+        return {
+          bg: 'rgba(59, 130, 246, 0.1)',
+          text: '#3b82f6',
+          border: '#3b82f6',
+        };
+      case 'clear':
+        return {
+          bg: 'rgba(16, 185, 129, 0.1)',
+          text: '#10b981',
+          border: '#10b981',
+        };
+      default:
+        return {
+          bg: 'rgba(107, 114, 128, 0.1)',
+          text: '#6b7280',
+          border: '#6b7280',
+        };
+    }
+  };
+
+  const handleCurrencyConversion = () => {
+    const converted = currencyService.convert(
+      parseFloat(amount),
+      fromCurrency,
+      toCurrency
+    );
+    setConvertedAmount(converted);
+  };
+
+  const currencies = [
+    'USD',
+    'EUR',
+    'GBP',
+    'JPY',
+    'CNY',
+    'CAD',
+    'AUD',
+    'CHF',
+    'HKD',
+    'SGD',
+    'SEK',
+    'KRW',
+    'NOK',
+    'NZD',
+    'INR',
+    'MXN',
+    'ZAR',
+    'BRL',
+    'RUB',
+    'TRY',
+    'DKK',
+    'PLN',
+    'THB',
+    'IDR',
+    'HUF',
+    'CZK',
+    'ILS',
+    'CLP',
+    'PHP',
+    'AED',
+    'SAR',
+  ];
+
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2
+          style={{ fontSize: '24px', fontWeight: '700', margin: '0 0 8px 0' }}
+        >
+          🛃 Compliance & Customs Tools
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
+          Customs compliance, HS codes, duty calculator, and currency conversion
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+        {[
+          {
+            id: 'screening',
+            label: '🔍 Denied Party Screening',
+            color: '#ef4444',
+          },
+          {
+            id: 'hscode',
+            label: '📋 HS Code Classification',
+            color: '#3b82f6',
+          },
+          { id: 'duty', label: '💰 Duty Calculator', color: '#10b981' },
+          {
+            id: 'section301',
+            label: '⚠️ Section 301 Alerts',
+            color: '#f59e0b',
+          },
+          { id: 'currency', label: '💱 Currency Converter', color: '#8b5cf6' },
+        ].map((mode) => (
+          <button
+            key={mode.id}
+            onClick={() => setComplianceMode(mode.id as any)}
+            style={{
+              padding: '12px 20px',
+              background:
+                complianceMode === mode.id
+                  ? mode.color
+                  : 'rgba(255, 255, 255, 0.1)',
+              color:
+                complianceMode === mode.id
+                  ? 'white'
+                  : 'rgba(255, 255, 255, 0.7)',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              transition: 'all 0.2s',
+            }}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
+
+      {complianceMode === 'currency' && (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            padding: '24px',
+            borderRadius: '12px',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '20px',
+              fontWeight: '700',
+              margin: '0 0 16px 0',
+              color: '#8b5cf6',
+            }}
+          >
+            💱 Currency Converter
+          </h3>
+          <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '20px' }}>
+            Convert between 31 major currencies for international freight
+            transactions
+          </p>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '20px',
+              marginBottom: '20px',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontWeight: '600',
+                }}
+              >
+                From Currency
+              </label>
+              <select
+                value={fromCurrency}
+                onChange={(e) => setFromCurrency(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '16px',
+                }}
+              >
+                {currencies.map((curr) => (
+                  <option
+                    key={curr}
+                    value={curr}
+                    style={{ background: '#1e293b' }}
+                  >
+                    {curr}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '8px',
+                  fontWeight: '600',
+                }}
+              >
+                To Currency
+              </label>
+              <select
+                value={toCurrency}
+                onChange={(e) => setToCurrency(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '16px',
+                }}
+              >
+                {currencies.map((curr) => (
+                  <option
+                    key={curr}
+                    value={curr}
+                    style={{ background: '#1e293b' }}
+                  >
+                    {curr}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '20px' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontWeight: '600',
+              }}
+            >
+              Amount
+            </label>
+            <input
+              type='number'
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '8px',
+                color: 'white',
+                fontSize: '16px',
+              }}
+            />
+          </div>
+
+          <button
+            onClick={handleCurrencyConversion}
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: '#8b5cf6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: '600',
+              fontSize: '16px',
+            }}
+          >
+            Convert Currency
+          </button>
+
+          {convertedAmount !== null && (
+            <div
+              style={{
+                marginTop: '24px',
+                padding: '24px',
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: '12px',
+                textAlign: 'center',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255,255,255,0.7)',
+                  marginBottom: '8px',
+                }}
+              >
+                Converted Amount
+              </div>
+              <div
+                style={{
+                  fontSize: '36px',
+                  fontWeight: '800',
+                  color: '#8b5cf6',
+                }}
+              >
+                {convertedAmount.toFixed(2)} {toCurrency}
+              </div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255,255,255,0.6)',
+                  marginTop: '8px',
+                }}
+              >
+                {amount} {fromCurrency} = {convertedAmount.toFixed(2)}{' '}
+                {toCurrency}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {complianceMode === 'screening' && (
+        <DeniedPartyScreeningUI
+          screeningParties={screeningParties}
+          screeningResults={screeningResults}
+          loading={loading}
+          onAddParty={addParty}
+          onUpdateParty={updateParty}
+          onRemoveParty={removeParty}
+          onHandleScreening={handleScreening}
+          getRiskColor={getRiskColor}
+        />
+      )}
+
+      {complianceMode !== 'currency' && complianceMode !== 'screening' && (
+        <div
+          style={{
+            padding: '40px',
+            textAlign: 'center',
+            color: 'rgba(255,255,255,0.6)',
+          }}
+        >
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🚧</div>
+          <div style={{ fontSize: '18px' }}>
+            {complianceMode === 'hscode' &&
+              'HS Code Classification coming soon'}
+            {complianceMode === 'duty' && 'Duty Calculator coming soon'}
+            {complianceMode === 'section301' &&
+              'Section 301 Alerts coming soon'}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DocumentsTab() {
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            margin: '0 0 8px 0',
+            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          📄 Document Management
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
+          BOL, Invoices, Packing Lists, Customs Declarations
+        </p>
+      </div>
+
+      <div
+        style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          border: '2px dashed rgba(255, 255, 255, 0.2)',
+          borderRadius: '16px',
+          padding: '60px',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
+        <div
+          style={{
+            fontSize: '18px',
+            fontWeight: '600',
+            marginBottom: '10px',
+          }}
+        >
+          Document Management
+        </div>
+        <div style={{ color: 'rgba(255,255,255,0.6)' }}>
+          BOL, Invoices, Packing Lists, Customs Declarations coming soon
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FinancialsTab({ stats }: { stats: any }) {
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            margin: '0 0 8px 0',
+            background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          📈 Financial Reporting
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
+          Revenue tracking, profitability analysis, and financial insights
+        </p>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '12px',
+            padding: '24px',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+          }}
+        >
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>💰</div>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '8px',
+            }}
+          >
+            ${stats.monthlyRevenue.toLocaleString()}
+          </div>
+          <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+            Total Revenue This Month
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '12px',
+            padding: '24px',
+            border: '1px solid rgba(168, 85, 247, 0.3)',
+          }}
+        >
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🎯</div>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#a78bfa',
+              marginBottom: '8px',
+            }}
+          >
+            ${stats.fleetflowCommissionOwed.toLocaleString()}
+          </div>
+          <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+            FleetFlow Commission Owed
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Quote Modal */}
+    {showQuoteModal && (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+      }}
+      onClick={() => setShowQuoteModal(false)}
+    >
+      <div
+        style={{
+          background: 'rgba(15, 23, 42, 0.9)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '30px',
+          width: '90%',
+          maxWidth: '600px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            marginBottom: '20px',
+          }}
+        >
+          🚢 Generate Freight Quote
+        </h2>
+        <div style={{ display: 'grid', gap: '15px' }}>
+          <div>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '6px',
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+              }}
+            >
+              Customer Name
+            </label>
+            <input
+              type='text'
+              value={quoteForm.customer}
+              onChange={(e) =>
+                setQuoteForm({ ...quoteForm, customer: e.target.value })
+              }
+              style={{
+                width: '100%',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                padding: '10px 15px',
+                color: 'white',
+                fontSize: '14px',
+              }}
+              placeholder='Enter customer name'
+            />
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '6px',
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+              }}
+            >
+              Customer Email
+            </label>
+            <input
+              type='email'
+              value={quoteForm.customerEmail}
+              onChange={(e) =>
+                setQuoteForm({
+                  ...quoteForm,
+                  customerEmail: e.target.value,
+                })
+              }
+              style={{
+                width: '100%',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                padding: '10px 15px',
+                color: 'white',
+                fontSize: '14px',
+              }}
+              placeholder='customer@example.com'
+            />
+          </div>
+
+          <div>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '6px',
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+              }}
+            >
+              Mode
+            </label>
+            <select
+              value={quoteForm.mode}
+              onChange={(e) =>
+                setQuoteForm({ ...quoteForm, mode: e.target.value as any })
+              }
+              style={{
+                width: '100%',
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '8px',
+                padding: '10px 15px',
+                color: 'white',
+                fontSize: '14px',
+              }}
+            >
+              <option value='ocean'>🚢 Ocean Freight</option>
+              <option value='air'>✈️ Air Freight</option>
+            </select>
+          </div>
+
+          {quoteForm.mode === 'ocean' && (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '15px',
+              }}
+            >
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '6px',
+                    fontSize: '13px',
+                    color: 'rgba(255,255,255,0.7)',
+                  }}
+                >
+                  Container Type
+                </label>
+                <select
+                  value={quoteForm.containerType}
+                  onChange={(e) =>
+                    setQuoteForm({
+                      ...quoteForm,
+                      containerType: e.target.value as any,
+                    })
+                  }
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '8px',
+                    padding: '10px 15px',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                >
+                  <option value='20ft'>20ft Container</option>
+                  <option value='40ft'>40ft Container</option>
+                  <option value='40HQ'>40ft High Cube</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  style={{
+                    display: 'block',
+                    marginBottom: '6px',
+                    fontSize: '13px',
+                    color: 'rgba(255,255,255,0.7)',
+                  }}
+                >
+                  Quantity
+                </label>
+                <input
+                  type='number'
+                  value={quoteForm.quantity}
+                  onChange={(e) =>
+                    setQuoteForm({
+                      ...quoteForm,
+                      quantity: parseInt(e.target.value) || 1,
+                    })
+                  }
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    borderRadius: '8px',
+                    padding: '10px 15px',
+                    color: 'white',
+                    fontSize: '14px',
+                  }}
+                  min='1'
+                />
+              </div>
+            </div>
+          )}
+
+          {quoteForm.mode === 'air' && (
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '6px',
+                  fontSize: '13px',
+                  color: 'rgba(255,255,255,0.7)',
+                }}
+              >
+                Weight (kg)
+              </label>
+              <input
+                type='number'
+                value={quoteForm.weight}
+                onChange={(e) =>
+                  setQuoteForm({
+                    ...quoteForm,
+                    weight: parseFloat(e.target.value) || 0,
+                  })
+                }
+                style={{
+                  width: '100%',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  padding: '10px 15px',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+                placeholder='1000'
+              />
+            </div>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+          <button
+            onClick={
+              quoteForm.mode === 'ocean' ? generateOceanQuote : generateAirQuote
+            }
+            style={{
+              flex: 1,
+              background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '12px 20px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            Generate Quote
+          </button>
+          <button
+            onClick={() => setShowQuoteModal(false)}
+            style={{
+              flex: 1,
+              background: 'rgba(255, 255, 255, 0.1)',
+              color: 'rgba(255, 255, 255, 0.7)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '8px',
+              padding: '12px 20px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+    )}
+  );
+}

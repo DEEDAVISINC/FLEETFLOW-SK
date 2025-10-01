@@ -10,8 +10,6 @@
  * - Communication style evolution
  */
 
-'use client';
-
 export interface LearningInteraction {
   id: string;
   staffId: string;
@@ -589,39 +587,43 @@ export class DEPOINTEAdaptiveLearningService {
 
   private async persistLearningData(): Promise<void> {
     // In production, this would save to database
-    // For now, use localStorage for persistence
-    try {
-      const learningData = {
-        interactions: this.learningInteractions.slice(-1000), // Keep last 1000
-        patterns: this.learningPatterns,
-        staffProfiles: Array.from(this.staffProfiles.entries()),
-        userProfiles: Array.from(this.userProfiles.entries()),
-      };
+    // For now, use localStorage for client-side, skip for server-side
+    if (typeof window !== 'undefined') {
+      try {
+        const learningData = {
+          interactions: this.learningInteractions.slice(-1000), // Keep last 1000
+          patterns: this.learningPatterns,
+          staffProfiles: Array.from(this.staffProfiles.entries()),
+          userProfiles: Array.from(this.userProfiles.entries()),
+        };
 
-      localStorage.setItem(
-        'depointe-adaptive-learning',
-        JSON.stringify(learningData)
-      );
-      console.info('🧠 Adaptive learning data persisted');
-    } catch (error) {
-      console.warn('⚠️ Failed to persist learning data:', error);
+        localStorage.setItem(
+          'depointe-adaptive-learning',
+          JSON.stringify(learningData)
+        );
+        console.info('🧠 Adaptive learning data persisted');
+      } catch (error) {
+        console.warn('⚠️ Failed to persist learning data:', error);
+      }
     }
   }
 
   private async initializeLearningSystem(): Promise<void> {
-    // Load existing learning data
-    try {
-      const stored = localStorage.getItem('depointe-adaptive-learning');
-      if (stored) {
-        const data = JSON.parse(stored);
-        this.learningInteractions = data.interactions || [];
-        this.learningPatterns = data.patterns || [];
-        this.staffProfiles = new Map(data.staffProfiles || []);
-        this.userProfiles = new Map(data.userProfiles || []);
-        console.info('🧠 Existing learning data loaded');
+    // Load existing learning data (client-side only)
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('depointe-adaptive-learning');
+        if (stored) {
+          const data = JSON.parse(stored);
+          this.learningInteractions = data.interactions || [];
+          this.learningPatterns = data.patterns || [];
+          this.staffProfiles = new Map(data.staffProfiles || []);
+          this.userProfiles = new Map(data.userProfiles || []);
+          console.info('🧠 Existing learning data loaded');
+        }
+      } catch (error) {
+        console.warn('⚠️ Failed to load existing learning data:', error);
       }
-    } catch (error) {
-      console.warn('⚠️ Failed to load existing learning data:', error);
     }
   }
 

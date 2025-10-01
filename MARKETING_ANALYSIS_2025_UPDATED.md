@@ -52,8 +52,8 @@ representatives** and **strategic government contracting capabilities**.
 
 ### **AI-Enhanced TMS Market**
 
-**Total Addressable Market (TAM): $165 billion** (expanded with AI ecosystem and government
-contracting)
+**Total Addressable Market (TAM): $250 billion** (expanded with AI ecosystem, government
+contracting, and international freight forwarding)
 
 - **Core TMS Market**: $45B (traditional transportation management)
 - **AI Automation Market**: $15B (transportation-specific AI solutions)
@@ -61,6 +61,7 @@ contracting)
 - **AI Add-On Market**: $17.8B (modular AI add-on revenue potential)
 - **Government Contracting Market**: $45B (transportation services in federal procurement)
 - **Strategic Relationship Management**: $7.2B (CRM and government contracting tools)
+- **International Freight Forwarding Market**: $85B (ocean/air freight, customs, global logistics)
 
 **Market Growth Rate**: 12% CAGR for TMS + 25% CAGR for AI + 30% CAGR for AI workforce = **22%
 blended CAGR**

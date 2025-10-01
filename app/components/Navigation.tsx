@@ -402,6 +402,20 @@ export default function ProfessionalNavigation() {
                   </Link>
                 </div>
                 <Link
+                  href='/freight-forwarding'
+                  onClick={handleDropdownClose}
+                  style={{
+                    display: 'block',
+                    padding: '10px 20px',
+                    color: '#3b82f6',
+                    textDecoration: 'none',
+                    fontSize: '0.85rem',
+                    fontWeight: '500',
+                  }}
+                >
+                  🚢 Freight Forwarders
+                </Link>
+                <Link
                   href='/freightflow-rfx'
                   onClick={handleDropdownClose}
                   style={{

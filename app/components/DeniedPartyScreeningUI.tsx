@@ -1,0 +1,463 @@
+'use client';
+
+import React from 'react';
+
+interface ScreeningParty {
+  name: string;
+  country?: string;
+  address?: string;
+  type: string;
+}
+
+interface ScreeningMatch {
+  listName: string;
+  matchedName: string;
+  matchConfidence: number;
+  country?: string;
+  addresses?: string[];
+  programs?: string[];
+  source: string;
+  remarks?: string;
+}
+
+interface ScreeningResult {
+  partyName: string;
+  status: 'clear' | 'match_found' | 'potential_match' | 'error';
+  riskLevel: 'critical' | 'high' | 'medium' | 'low' | 'clear';
+  matches: ScreeningMatch[];
+  screenedAt: string;
+  screeningId: string;
+  recommendations: string[];
+}
+
+interface DeniedPartyScreeningUIProps {
+  screeningParties: ScreeningParty[];
+  screeningResults: ScreeningResult[];
+  loading: boolean;
+  onAddParty: () => void;
+  onUpdateParty: (index: number, field: string, value: string) => void;
+  onRemoveParty: (index: number) => void;
+  onHandleScreening: () => void;
+  getRiskColor: (riskLevel: string) => { bg: string; text: string; border: string };
+}
+
+export default function DeniedPartyScreeningUI({
+  screeningParties,
+  screeningResults,
+  loading,
+  onAddParty,
+  onUpdateParty,
+  onRemoveParty,
+  onHandleScreening,
+  getRiskColor,
+}: DeniedPartyScreeningUIProps) {
+  return (
+    <div
+      style={{
+        background: 'rgba(255, 255, 255, 0.05)',
+        padding: '24px',
+        borderRadius: '12px',
+        border: '1px solid rgba(239, 68, 68, 0.3)',
+      }}
+    >
+      <h3
+        style={{
+          fontSize: '20px',
+          fontWeight: '700',
+          margin: '0 0 16px 0',
+          color: '#ef4444',
+        }}
+      >
+        🔍 Denied Party Screening
+      </h3>
+      <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '20px' }}>
+        Screen shipment parties against U.S. Government Consolidated Screening
+        Lists (OFAC, BIS, State Dept)
+      </p>
+
+      {screeningParties.map((party, index) => (
+        <div
+          key={index}
+          style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            padding: '20px',
+            borderRadius: '12px',
+            marginBottom: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+            }}
+          >
+            <h4 style={{ margin: 0, color: 'white' }}>Party {index + 1}</h4>
+            {screeningParties.length > 1 && (
+              <button
+                onClick={() => onRemoveParty(index)}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.2)',
+                  color: '#ef4444',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '4px 12px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                }}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px',
+              marginBottom: '12px',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                Party Name *
+              </label>
+              <input
+                type="text"
+                value={party.name}
+                onChange={(e) => onUpdateParty(index, 'name', e.target.value)}
+                placeholder="ABC Shipping Inc"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                Party Type
+              </label>
+              <select
+                value={party.type}
+                onChange={(e) => onUpdateParty(index, 'type', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              >
+                <option value="shipper" style={{ background: '#1e293b' }}>
+                  Shipper
+                </option>
+                <option value="consignee" style={{ background: '#1e293b' }}>
+                  Consignee
+                </option>
+                <option value="carrier" style={{ background: '#1e293b' }}>
+                  Carrier
+                </option>
+                <option value="customs_broker" style={{ background: '#1e293b' }}>
+                  Customs Broker
+                </option>
+                <option value="freight_forwarder" style={{ background: '#1e293b' }}>
+                  Freight Forwarder
+                </option>
+                <option value="other" style={{ background: '#1e293b' }}>
+                  Other
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr',
+              gap: '12px',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                Address
+              </label>
+              <input
+                type="text"
+                value={party.address}
+                onChange={(e) => onUpdateParty(index, 'address', e.target.value)}
+                placeholder="123 Business St, City"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  marginBottom: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                }}
+              >
+                Country
+              </label>
+              <input
+                type="text"
+                value={party.country}
+                onChange={(e) => onUpdateParty(index, 'country', e.target.value)}
+                placeholder="CN"
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '6px',
+                  color: 'white',
+                  fontSize: '14px',
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <div
+        style={{
+          display: 'flex',
+          gap: '12px',
+          marginTop: '20px',
+        }}
+      >
+        <button
+          onClick={onAddParty}
+          style={{
+            padding: '12px 24px',
+            background: 'rgba(59, 130, 246, 0.2)',
+            color: '#3b82f6',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: '600',
+            fontSize: '14px',
+          }}
+        >
+          + Add Another Party
+        </button>
+
+        <button
+          onClick={onHandleScreening}
+          disabled={loading || !screeningParties.some((p) => p.name)}
+          style={{
+            padding: '12px 24px',
+            background: loading ? '#6b7280' : '#ef4444',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            fontWeight: '600',
+            fontSize: '14px',
+            flex: 1,
+          }}
+        >
+          {loading ? 'Screening...' : '🔍 Screen All Parties'}
+        </button>
+      </div>
+
+      {screeningResults.length > 0 && (
+        <div style={{ marginTop: '32px' }}>
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              margin: '0 0 16px 0',
+            }}
+          >
+            Screening Results
+          </h4>
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {screeningResults.map((result, index) => {
+              const riskColor = getRiskColor(result.riskLevel);
+              return (
+                <div
+                  key={index}
+                  style={{
+                    background: riskColor.bg,
+                    padding: '20px',
+                    borderRadius: '12px',
+                    border: `1px solid ${riskColor.border}`,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <h5
+                      style={{
+                        margin: 0,
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        color: 'white',
+                      }}
+                    >
+                      {result.partyName}
+                    </h5>
+                    <span
+                      style={{
+                        padding: '6px 16px',
+                        background: riskColor.bg,
+                        color: riskColor.text,
+                        borderRadius: '16px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        textTransform: 'uppercase',
+                        border: `2px solid ${riskColor.border}`,
+                      }}
+                    >
+                      {result.riskLevel}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.8)',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    Status:{' '}
+                    <strong>
+                      {result.status.replace('_', ' ').toUpperCase()}
+                    </strong>
+                  </div>
+
+                  {result.matches.length > 0 && (
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        paddingTop: '12px',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        ⚠️ {result.matches.length} Match(es) Found:
+                      </div>
+                      {result.matches.map((match, mIndex) => (
+                        <div
+                          key={mIndex}
+                          style={{
+                            background: 'rgba(0, 0, 0, 0.2)',
+                            padding: '12px',
+                            borderRadius: '6px',
+                            marginBottom: '8px',
+                            fontSize: '13px',
+                          }}
+                        >
+                          <div style={{ marginBottom: '4px' }}>
+                            <strong>List:</strong> {match.listName}
+                          </div>
+                          <div style={{ marginBottom: '4px' }}>
+                            <strong>Name:</strong> {match.matchedName}
+                          </div>
+                          <div style={{ marginBottom: '4px' }}>
+                            <strong>Confidence:</strong> {match.matchConfidence}%
+                          </div>
+                          {match.country && (
+                            <div style={{ marginBottom: '4px' }}>
+                              <strong>Country:</strong> {match.country}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {result.recommendations.length > 0 && (
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        paddingTop: '12px',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        📋 Recommendations:
+                      </div>
+                      <ul
+                        style={{
+                          margin: 0,
+                          paddingLeft: '20px',
+                          fontSize: '13px',
+                        }}
+                      >
+                        {result.recommendations.map((rec, rIndex) => (
+                          <li key={rIndex} style={{ marginBottom: '4px' }}>
+                            {rec}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -101,7 +101,7 @@ const DEPOINTEEmailTemplateSystem = () => {
     prospect_company: 'Acme Manufacturing',
     prospect_city: 'Chicago, IL',
     industry: 'Manufacturing',
-    meeting_booking_link: 'https://calendly.com/freight1stdirect/meeting',
+    meeting_booking_link: 'https://calendly.com/ddavis-freight1stdirect/30min',
     capacity_analysis_link: 'https://freight1stdirect.com/capacity-analysis',
     reliability_assessment_link:
       'https://freight1stdirect.com/reliability-assessment',

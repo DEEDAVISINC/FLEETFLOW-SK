@@ -19,6 +19,9 @@ Our **100% complete** multi-tenant SaaS solution serves carriers, brokers, and 3
 - **🎯 AI Load Optimization**: Monte Carlo simulation + Linear Programming
 - **🔄 Broker Agent Data Hierarchy**: Revolutionary multi-tier data integration
 - **🚛 Comprehensive TMS**: Full transportation management capabilities
+- **🚢 International Freight Forwarding**: Complete ocean/air freight management with ISO 6346
+  container tracking, IATA air waybills, 40+ shipping documents, customs clearance coordination,
+  maritime/cross-border intelligence, and 20 automated shipment milestone notifications
 - **🏛️ FreightFlow RFx**: Strategic government contracting relationship building system with "The
   power is in connecting before the bid drops" philosophy
 - **👥 DEPOINTE AI Company Dashboard**: Complete AI workforce with 18 specialized staff members
@@ -48,7 +51,9 @@ Our **100% complete** multi-tenant SaaS solution serves carriers, brokers, and 3
 4. **Broker Elite** - $149/month (Advanced brokerage with competitive intelligence)
 5. **AI Flow Professional** - $199/month (AI-powered operations and automation)
 6. **Professional Brokerage** - $289/month (Full brokerage platform)
-7. **Enterprise Professional** - $2,698/month (Complete enterprise platform with AI Flow
+7. **Freight Forwarder Professional** - $799/month (Ocean/air freight, customs, international
+   logistics)
+8. **Enterprise Professional** - $2,698/month (Complete enterprise platform with AI Flow
    Professional included)
 
 #### **AI Flow Add-On Modules:**

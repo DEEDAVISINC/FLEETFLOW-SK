@@ -13,6 +13,7 @@ import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
 import PowerUpsDashboard from '../components/PowerUpsDashboard';
+import { SalesCopilotPanel } from '../components/SalesCopilotPanel';
 import ShipperBatchDeployment, {
   ShipperTask,
 } from '../components/ShipperBatchDeployment';
@@ -38,7 +39,7 @@ export const getAIStrategyAccess = (staffId: string, strategyId: string) => {
   };
 };
 
-const depointeStaff = [
+export const depointeStaff = [
   {
     id: 'desiree-001',
     name: 'Desiree',
@@ -801,7 +802,10 @@ export default function DEPOINTEDashboard() {
     | 'scheduler'
     | 'powerups'
     | 'brain'
+    | 'sales-copilot'
+    | 'call-center'
     | 'email-signatures'
+    | 'china-usa-ddp'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
@@ -1740,6 +1744,13 @@ export default function DEPOINTEDashboard() {
           { key: 'email-signatures', label: '📧 Email Signatures', icon: '📧' },
           { key: 'powerups', label: '⚡ Power-Ups', icon: '⚡' },
           { key: 'brain', label: '🧠 Freight Brain AI', icon: '🧠' },
+          { key: 'sales-copilot', label: '🤖 Sales Copilot AI', icon: '🤖' },
+          { key: 'call-center', label: '📞 AI Call Center', icon: '📞' },
+          {
+            key: 'china-usa-ddp',
+            label: '🚢 China-USA DDP Service',
+            icon: '🚢',
+          },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -7719,6 +7730,474 @@ export default function DEPOINTEDashboard() {
           }}
         >
           <FreightBrainDashboard selectedStaff={selectedStaffMember} />
+        </div>
+      )}
+
+      {/* Sales Copilot AI Dashboard */}
+      {selectedMainView === 'sales-copilot' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <div style={{ marginBottom: '20px' }}>
+            <h2
+              style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#8b5cf6',
+                marginBottom: '10px',
+              }}
+            >
+              🤖 Sales Copilot AI
+            </h2>
+            <p style={{ color: '#94a3b8', marginBottom: '20px' }}>
+              Real-time sales guidance for human agents during live calls.
+              Provides undetectable, psychology-based sales assistance that
+              rivals yurp.ai.
+            </p>
+          </div>
+
+          {/* Import and use SalesCopilotPanel */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 300px',
+              gap: '20px',
+              alignItems: 'start',
+            }}
+          >
+            {/* Main Sales Copilot Panel */}
+            <div>
+              <SalesCopilotPanel
+                agentId='depointe_agent'
+                currentCallId={null} // Will be set when call starts
+              />
+            </div>
+
+            {/* Feature Overview */}
+            <div
+              style={{
+                background: 'rgba(30, 41, 59, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '8px',
+                padding: '16px',
+                height: 'fit-content',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#f8fafc',
+                  marginBottom: '12px',
+                }}
+              >
+                🎯 Core Capabilities
+              </h3>
+              <div style={{ spaceY: '8px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    🔍
+                  </span>
+                  <span style={{ color: '#cbd5e1', fontSize: '14px' }}>
+                    Discovery Question Generation
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    🛡️
+                  </span>
+                  <span style={{ color: '#cbd5e1', fontSize: '14px' }}>
+                    Objection Handling
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    💡
+                  </span>
+                  <span style={{ color: '#cbd5e1', fontSize: '14px' }}>
+                    Instant FAQ Answers
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ fontSize: '16px', marginRight: '8px' }}>
+                    🎯
+                  </span>
+                  <span style={{ color: '#cbd5e1', fontSize: '14px' }}>
+                    Deal Closing Scripts
+                  </span>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  marginTop: '16px',
+                  padding: '12px',
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                  borderRadius: '6px',
+                }}
+              >
+                <h4
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#8b5cf6',
+                    marginBottom: '4px',
+                  }}
+                >
+                  🤖 AI Staff Integration
+                </h4>
+                <p style={{ color: '#cbd5e1', fontSize: '12px' }}>
+                  Powered by Desiree, Cliff, and Gary - your specialized sales
+                  AI staff with expertise in resistance removal,
+                  psychology-based engagement, and lead generation.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Call Center */}
+      {selectedMainView === 'call-center' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <div style={{ marginBottom: '20px' }}>
+            <h2
+              style={{
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                marginBottom: '10px',
+              }}
+            >
+              📞 Enhanced AI Call Center
+            </h2>
+            <p
+              style={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginBottom: '20px',
+              }}
+            >
+              Automated carrier conversation handling with intelligent voice AI.
+              Parade.ai CoDriver-level capabilities for 24/7 freight operations.
+            </p>
+          </div>
+
+          {/* Call Center Stats */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '20px',
+              marginBottom: '30px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(34, 197, 94, 0.1)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                borderRadius: '8px',
+                padding: '16px',
+                textAlign: 'center',
+              }}
+            >
+              <h4 style={{ color: '#22c55e', marginBottom: '8px' }}>
+                Active Sessions
+              </h4>
+              <p
+                style={{
+                  color: 'white',
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                }}
+              >
+                --
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '8px',
+                padding: '16px',
+                textAlign: 'center',
+              }}
+            >
+              <h4 style={{ color: '#3b82f6', marginBottom: '8px' }}>
+                Calls Handled Today
+              </h4>
+              <p
+                style={{
+                  color: 'white',
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                }}
+              >
+                --
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: '8px',
+                padding: '16px',
+                textAlign: 'center',
+              }}
+            >
+              <h4 style={{ color: '#f59e0b', marginBottom: '8px' }}>
+                AI Confidence
+              </h4>
+              <p
+                style={{
+                  color: 'white',
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                }}
+              >
+                --%
+              </p>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: '8px',
+                padding: '16px',
+                textAlign: 'center',
+              }}
+            >
+              <h4 style={{ color: '#8b5cf6', marginBottom: '8px' }}>
+                Loads Booked
+              </h4>
+              <p
+                style={{
+                  color: 'white',
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                }}
+              >
+                --
+              </p>
+            </div>
+          </div>
+
+          {/* Call Center Controls */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '20px',
+            }}
+          >
+            {/* Configuration Panel */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px',
+                padding: '20px',
+              }}
+            >
+              <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                ⚙️ Call Center Configuration
+              </h4>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    display: 'block',
+                    marginBottom: '4px',
+                  }}
+                >
+                  FreeSWITCH Host:
+                </label>
+                <input
+                  type='text'
+                  defaultValue='localhost'
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '4px',
+                    color: 'white',
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    display: 'block',
+                    marginBottom: '4px',
+                  }}
+                >
+                  Port:
+                </label>
+                <input
+                  type='number'
+                  defaultValue='8021'
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '4px',
+                    color: 'white',
+                  }}
+                />
+              </div>
+
+              <button
+                style={{
+                  background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '10px 20px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  width: '100%',
+                }}
+              >
+                🚀 Start Call Center
+              </button>
+            </div>
+
+            {/* Active Sessions */}
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px',
+                padding: '20px',
+              }}
+            >
+              <h4 style={{ color: 'white', marginBottom: '16px' }}>
+                📞 Active Call Sessions
+              </h4>
+
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  textAlign: 'center',
+                  padding: '40px',
+                }}
+              >
+                No active sessions
+                <br />
+                <span style={{ fontSize: '0.8rem' }}>
+                  Sessions will appear here when carriers call in
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Features Overview */}
+          <div
+            style={{
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '8px',
+              padding: '20px',
+              marginTop: '20px',
+            }}
+          >
+            <h4 style={{ color: 'white', marginBottom: '16px' }}>
+              🎯 AI Call Center Features
+            </h4>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '16px',
+              }}
+            >
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '0.9rem',
+                }}
+              >
+                • 🤖 Automated carrier conversations
+                <br />
+                • 📝 Full call transcription
+                <br />
+                • 🎯 Intelligent load matching
+                <br />
+                • 💰 Automated quoting system
+                <br />• 📊 Real-time performance analytics
+              </div>
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontSize: '0.9rem',
+                }}
+              >
+                • 🚛 Capacity availability checking
+                <br />
+                • 📞 Seamless human handoff
+                <br />
+                • 🎪 Multi-carrier conversation handling
+                <br />
+                • 📈 Conversion rate optimization
+                <br />• 🔄 CRM integration
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* China-USA DDP Customer Acquisition Service */}
+      {selectedMainView === 'china-usa-ddp' && (
+        <div>
+          <ChinaUSADDPService />
         </div>
       )}
 

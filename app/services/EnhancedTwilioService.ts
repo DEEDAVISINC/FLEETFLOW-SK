@@ -650,6 +650,176 @@ export class EnhancedTwilioService {
 
     return recommendations;
   }
+
+  /**
+   * Create toll-free verification for messaging
+   */
+  async createTollfreeVerification(options: {
+    tollfreePhoneNumberSid: string;
+    businessName?: string;
+    businessWebsite?: string;
+    businessStreetAddress?: string;
+    businessStreetAddress2?: string;
+    businessCity?: string;
+    businessStateProvinceRegion?: string;
+    businessPostalCode?: string;
+    businessCountry?: string;
+    additionalInformation?: string;
+    customerProfileSid?: string;
+    externalReferenceId?: string;
+    messageVolume?: string;
+    notificationEmail?: string;
+    optInImageUrls?: string[];
+    optInType?: 'VERBAL' | 'WEB' | 'PAPER';
+    productionMessageSample?: string;
+    useCaseCategories?: string[];
+    useCaseSummary?: string;
+  }): Promise<{ success: boolean; data?: any; error?: string; sid?: string }> {
+    try {
+      if (!this.isConfigured || !this.client) {
+        return {
+          success: false,
+          error: 'Twilio service not configured',
+        };
+      }
+
+      // Use FleetFlow TMS LLC defaults if not provided
+      const verificationData = {
+        additionalInformation:
+          options.additionalInformation ||
+          'FleetFlow TMS LLC provides transportation management software solutions. See our privacy policy at https://fleetflowapp.com/privacy-policy',
+        businessName: options.businessName || 'FleetFlow TMS LLC',
+        businessWebsite: options.businessWebsite || 'https://fleetflowapp.com',
+        businessStreetAddress:
+          options.businessStreetAddress || '755 W. Big Beaver Rd',
+        businessStreetAddress2: options.businessStreetAddress2 || 'STE 2020',
+        businessCity: options.businessCity || 'Troy',
+        businessStateProvinceRegion:
+          options.businessStateProvinceRegion || 'MI',
+        businessPostalCode: options.businessPostalCode || '48084',
+        businessCountry: options.businessCountry || 'US',
+        customerProfileSid: options.customerProfileSid, // Required for approved profiles
+        externalReferenceId:
+          options.externalReferenceId || `fleetflow-${Date.now()}`,
+        messageVolume: options.messageVolume || '100', // Estimated monthly volume
+        notificationEmail:
+          options.notificationEmail || 'support@fleetflowapp.com',
+        optInImageUrls: options.optInImageUrls || [
+          'https://fleetflowapp.com/images/opt-in-1.jpg',
+          'https://fleetflowapp.com/images/opt-in-2.jpg',
+        ],
+        optInType: options.optInType || 'WEB', // Web-based opt-in for SaaS platform
+        productionMessageSample:
+          options.productionMessageSample ||
+          'Your FleetFlow shipment update: Package delivered successfully. Track: https://fleetflowapp.com/track/[tracking_id]',
+        tollfreePhoneNumberSid: options.tollfreePhoneNumberSid,
+        useCaseCategories: options.useCaseCategories || [
+          'MIXED', // Mixed use case for TMS platform
+          'CUSTOMER_CARE',
+          'DELIVERY_NOTIFICATION',
+        ],
+        useCaseSummary:
+          options.useCaseSummary ||
+          'FleetFlow TMS LLC uses this toll-free number to send shipment tracking updates, delivery notifications, and customer care communications to transportation industry clients and carriers.',
+      };
+
+      const tollfreeVerification =
+        await this.client.messaging.v1.tollfreeVerifications.create(
+          verificationData
+        );
+
+      console.log(
+        '✅ Toll-free verification created:',
+        tollfreeVerification.sid
+      );
+
+      return {
+        success: true,
+        data: tollfreeVerification,
+        sid: tollfreeVerification.sid,
+      };
+    } catch (error) {
+      console.error('❌ Toll-free verification error:', error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Unknown error occurred during toll-free verification',
+      };
+    }
+  }
+
+  /**
+   * Get toll-free verification status
+   */
+  async getTollfreeVerification(
+    verificationSid: string
+  ): Promise<{ success: boolean; data?: any; error?: string }> {
+    try {
+      if (!this.isConfigured || !this.client) {
+        return {
+          success: false,
+          error: 'Twilio service not configured',
+        };
+      }
+
+      const verification = await this.client.messaging.v1
+        .tollfreeVerifications(verificationSid)
+        .fetch();
+
+      return {
+        success: true,
+        data: verification,
+      };
+    } catch (error) {
+      console.error('❌ Get toll-free verification error:', error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to retrieve toll-free verification',
+      };
+    }
+  }
+
+  /**
+   * List toll-free verifications
+   */
+  async listTollfreeVerifications(options?: {
+    status?: string;
+    limit?: number;
+  }): Promise<{ success: boolean; data?: any[]; error?: string }> {
+    try {
+      if (!this.isConfigured || !this.client) {
+        return {
+          success: false,
+          error: 'Twilio service not configured',
+        };
+      }
+
+      const verifications =
+        await this.client.messaging.v1.tollfreeVerifications.list({
+          status: options?.status,
+          limit: options?.limit || 20,
+        });
+
+      return {
+        success: true,
+        data: verifications,
+      };
+    } catch (error) {
+      console.error('❌ List toll-free verifications error:', error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to list toll-free verifications',
+      };
+    }
+  }
 }
 
 // Export singleton instance

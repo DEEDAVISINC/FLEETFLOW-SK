@@ -313,15 +313,16 @@ optimization.
 
 ### **AI-Driven Revenue Growth Acceleration**
 
-#### **Revenue Trajectory with AI Add-Ons (2025-2028)**
+#### **Revenue Trajectory with AI Add-Ons & Freight Forwarding (2025-2028)**
 
-| **Revenue Component**   | **2025** | **2026**  | **2027**  | **2028**  | **4-Year Total**  |
-| ----------------------- | -------- | --------- | --------- | --------- | ----------------- |
-| **Core TMS Revenue**    | $45M     | $85M      | $165M     | $295M     | $590M             |
-| **AI Add-On Revenue**   | $12M     | $32M      | $68M      | $125M     | $237M             |
-| **DEPOINTE AI Revenue** | $8M      | $25M      | $55M      | $95M      | $183M             |
-| **Total Revenue**       | **$65M** | **$142M** | **$288M** | **$515M** | **$1.01B**        |
-| **Growth Rate**         | -        | 118%      | 103%      | 79%       | **Average: 100%** |
+| **Revenue Component**      | **2025** | **2026**  | **2027**  | **2028**  | **4-Year Total**  |
+| -------------------------- | -------- | --------- | --------- | --------- | ----------------- |
+| **Core TMS Revenue**       | $45M     | $85M      | $165M     | $295M     | $590M             |
+| **AI Add-On Revenue**      | $12M     | $32M      | $68M      | $125M     | $237M             |
+| **DEPOINTE AI Revenue**    | $8M      | $25M      | $55M      | $95M      | $183M             |
+| **Freight Forwarding Rev** | $8M      | $22M      | $48M      | $85M      | $163M             |
+| **Total Revenue**          | **$73M** | **$164M** | **$336M** | **$600M** | **$1.173B**       |
+| **Growth Rate**            | -        | 125%      | 105%      | 79%       | **Average: 103%** |
 
 #### **AI Marketing Efficiency Evolution**
 
