@@ -586,13 +586,48 @@ export default function FreightForwardingPage() {
               color: '#10b981',
             },
             {
+              id: 'consolidation',
+              label: '📦 Consolidation',
+              color: '#8b5cf6',
+            },
+            {
+              id: 'tracking',
+              label: '🚢 Tracking',
+              color: '#14b8a6',
+            },
+            {
               id: 'compliance',
               label: '🛃 Compliance & Documents',
               color: '#ef4444',
             },
+            {
+              id: 'documents',
+              label: '📄 Documents',
+              color: '#f59e0b',
+            },
             { id: 'clients', label: '👥 Clients & CRM', color: '#8b5cf6' },
             { id: 'intelligence', label: '📊 Intelligence', color: '#3b82f6' },
             { id: 'operations', label: '✅ Operations', color: '#f59e0b' },
+            {
+              id: 'financials',
+              label: '💰 Financials',
+              color: '#ec4899',
+            },
+            {
+              id: 'contracts',
+              label: '📋 Contracts',
+              color: '#7c3aed',
+            },
+            {
+              id: 'wms',
+              label: '🏭 WMS',
+              color: '#0891b2',
+            },
+            {
+              id: 'crossborder',
+              label: '🇨🇦🇲🇽 Cross-Border',
+              color: '#dc2626',
+            },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -648,7 +683,10 @@ export default function FreightForwardingPage() {
           />
         )}
         {selectedTab === 'shipments' && <ShipmentsTab router={router} />}
+        {selectedTab === 'consolidation' && <ShipmentConsolidationDashboard tenantId={tenantId} />}
+        {selectedTab === 'tracking' && <TrackingTab />}
         {selectedTab === 'compliance' && <ComplianceAndDocumentsTab />}
+        {selectedTab === 'documents' && <DocumentsTab />}
         {selectedTab === 'clients' && (
           <ClientsTab
             clients={clients}
