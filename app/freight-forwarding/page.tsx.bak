@@ -8,36 +8,36 @@ import FreightForwarderTracking from '../components/FreightForwarderTracking';
 import ShipmentConsolidationDashboard from '../components/ShipmentConsolidationDashboard';
 import { useMultiTenantPayments } from '../hooks/useMultiTenantPayments';
 import btsService, {
-  PortPerformanceBenchmark,
-  WaterborneCommerceData,
+    PortPerformanceBenchmark,
+    WaterborneCommerceData,
 } from '../services/BTSService';
 import { currencyService } from '../services/CurrencyConversionService';
 import {
-  ScreeningParty,
-  ScreeningResult,
-  deniedPartyScreeningService,
+    ScreeningParty,
+    ScreeningResult,
+    deniedPartyScreeningService,
 } from '../services/DeniedPartyScreeningService';
 import { ContractType } from '../services/FreightForwarderContractService';
 import { FreightForwarderContractTemplates } from '../services/FreightForwarderContractTemplates';
 import FreightForwarderIdentificationService from '../services/FreightForwarderIdentificationService';
 import {
-  RateContractsTab,
-  WarehouseManagementTab,
+    RateContractsTab,
+    WarehouseManagementTab,
 } from '../services/FreightForwardingCargoWiseComponents';
 import { UnifiedInvoiceRequest } from '../services/MultiTenantPaymentService';
 import {
-  NOAAPortConditions,
-  noaaPortsService,
+    NOAAPortConditions,
+    noaaPortsService,
 } from '../services/NOAAPortsService';
 import {
-  NOADVesselData,
-  PortIntelligence,
-  VesselSchedule,
+    NOADVesselData,
+    PortIntelligence,
+    VesselSchedule,
 } from '../services/NOADService';
 import { portAuthorityService } from '../services/PortAuthorityService';
 import {
-  PortAuthorityOperations,
-  portAuthoritySystemsService,
+    PortAuthorityOperations,
+    portAuthoritySystemsService,
 } from '../services/PortAuthoritySystemsService';
 import CanadaCrossBorderView from '../tracking/components/CanadaCrossBorderView';
 import MexicoCrossBorderView from '../tracking/components/MexicoCrossBorderView';
@@ -76,6 +76,14 @@ export default function FreightForwardingPage() {
     quantity: 1,
     weight: 1000,
   });
+
+  const [showCarrierComparison, setShowCarrierComparison] = useState(false);
+  const [selectedCarrier, setSelectedCarrier] = useState<string | null>(null);
+  const [carrierQuotes, setCarrierQuotes] = useState<any[]>([]);
+
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
 
   const [customerForm, setCustomerForm] = useState({
     companyName: '',
@@ -175,6 +183,112 @@ export default function FreightForwardingPage() {
       },
     ];
     setClients(mockClients);
+    // Mock Shipments Data
+    const mockShipments = [
+      {
+        id: 'FF-SHIP-001',
+        referenceNumber: 'SHNG-LA-240125-001',
+        customer: 'ABC Shipping Corporation',
+        mode: 'ocean',
+        status: 'in_transit',
+        origin: { city: 'Shanghai', country: 'China', port: 'CNSHA' },
+        destination: { city: 'Long Beach', country: 'USA', port: 'USLGB' },
+        containerType: '40HQ',
+        quantity: 2,
+        bookingDate: '2024-01-15',
+        etd: '2024-01-18',
+        eta: '2024-02-10',
+        totalValue: 12500,
+        paymentStatus: 'paid',
+        fleetflowSource: false,
+        consolidated: false,
+      },
+      {
+        id: 'FF-SHIP-002',
+        referenceNumber: 'SZHN-NYC-240120-002',
+        customer: 'XYZ Logistics Inc',
+        mode: 'air',
+        status: 'delivered',
+        origin: { city: 'Shenzhen', country: 'China', airport: 'SZX' },
+        destination: { city: 'New York', country: 'USA', airport: 'JFK' },
+        weight: 2500,
+        bookingDate: '2024-01-10',
+        etd: '2024-01-12',
+        eta: '2024-01-14',
+        totalValue: 8900,
+        paymentStatus: 'paid',
+        fleetflowSource: true,
+        consolidated: false,
+      },
+      {
+        id: 'FF-SHIP-003',
+        referenceNumber: 'CNQD-USSEA-240122-003',
+        customer: 'FleetFlow Lead - Tech Components Inc',
+        mode: 'ocean',
+        status: 'booked',
+        origin: { city: 'Qingdao', country: 'China', port: 'CNQING' },
+        destination: { city: 'Seattle', country: 'USA', port: 'USSEA' },
+        containerType: '20ft',
+        quantity: 1,
+        bookingDate: '2024-01-22',
+        etd: '2024-01-28',
+        eta: '2024-02-18',
+        totalValue: 6200,
+        paymentStatus: 'pending',
+        fleetflowSource: true,
+        consolidated: true,
+      },
+    ];
+    setShipments(mockShipments);
+
+    // Mock Quotes Data
+    const mockQuotes = [
+      {
+        id: 'FF-QT-001',
+        quoteNumber: 'QT-240125-001',
+        customer: 'Potential Client - Import Co',
+        customerEmail: 'contact@importco.com',
+        mode: 'ocean',
+        status: 'sent',
+        origin: { city: 'Shanghai', country: 'China' },
+        destination: { city: 'Los Angeles', country: 'USA' },
+        containerType: '40HQ',
+        quantity: 1,
+        total: 4500,
+        validUntil: '2024-02-10',
+        createdAt: '2024-01-25',
+      },
+      {
+        id: 'FF-QT-002',
+        quoteNumber: 'QT-240124-002',
+        customer: 'ABC Shipping Corporation',
+        customerEmail: 'john.smith@abcshipping.com',
+        mode: 'air',
+        status: 'accepted',
+        origin: { city: 'Hong Kong', country: 'China' },
+        destination: { city: 'Chicago', country: 'USA' },
+        weight: 1500,
+        total: 5800,
+        validUntil: '2024-02-08',
+        createdAt: '2024-01-24',
+      },
+      {
+        id: 'FF-QT-003',
+        quoteNumber: 'QT-240123-003',
+        customer: 'New Prospect - Electronics Ltd',
+        customerEmail: 'procurement@electronics.com',
+        mode: 'ocean',
+        status: 'sent',
+        origin: { city: 'Ningbo', country: 'China' },
+        destination: { city: 'New York', country: 'USA' },
+        containerType: '20ft',
+        quantity: 2,
+        total: 8400,
+        validUntil: '2024-02-07',
+        createdAt: '2024-01-23',
+      },
+    ];
+    setQuotes(mockQuotes);
 
     // Load maritime data
     loadMaritimeData();
@@ -345,6 +459,190 @@ export default function FreightForwardingPage() {
     );
   };
 
+  const generateMultiCarrierQuotes = () => {
+    if (quoteForm.mode === 'ocean') {
+      const containerRates: any = { '20ft': 2200, '40ft': 2800, '40HQ': 3200 };
+      const baseRate =
+        containerRates[quoteForm.containerType] * quoteForm.quantity;
+
+      const carriers = [
+        {
+          name: 'Maersk',
+          logo: '🚢',
+          transitTime: '18-22 days',
+          baseRate: baseRate,
+          fuelSurcharge: baseRate * 0.22,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 150,
+          insurance: baseRate * 0.015,
+          portHandling: 280 * quoteForm.quantity,
+          color: '#3b82f6',
+        },
+        {
+          name: 'MSC',
+          logo: '⚓',
+          transitTime: '20-24 days',
+          baseRate: baseRate * 0.92,
+          fuelSurcharge: baseRate * 0.92 * 0.25,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 125,
+          insurance: baseRate * 0.92 * 0.015,
+          portHandling: 260 * quoteForm.quantity,
+          color: '#10b981',
+        },
+        {
+          name: 'CMA CGM',
+          logo: '🛳️',
+          transitTime: '19-23 days',
+          baseRate: baseRate * 0.97,
+          fuelSurcharge: baseRate * 0.97 * 0.24,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 140,
+          insurance: baseRate * 0.97 * 0.015,
+          portHandling: 275 * quoteForm.quantity,
+          color: '#f59e0b',
+        },
+        {
+          name: 'COSCO',
+          logo: '🚢',
+          transitTime: '21-25 days',
+          baseRate: baseRate * 0.88,
+          fuelSurcharge: baseRate * 0.88 * 0.23,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 110,
+          insurance: baseRate * 0.88 * 0.015,
+          portHandling: 245 * quoteForm.quantity,
+          color: '#8b5cf6',
+        },
+      ];
+
+      const quotes = carriers.map((carrier) => ({
+        ...carrier,
+        total:
+          carrier.baseRate +
+          carrier.fuelSurcharge +
+          carrier.customsDuties +
+          carrier.documentation +
+          carrier.insurance +
+          carrier.portHandling,
+      }));
+
+      setCarrierQuotes(quotes);
+      setShowCarrierComparison(true);
+    } else {
+      // Air freight carriers
+      const ratePerKg = 4.5;
+      const baseRate = quoteForm.weight * ratePerKg;
+
+      const carriers = [
+        {
+          name: 'DHL Express',
+          logo: '✈️',
+          transitTime: '3-5 days',
+          baseRate: baseRate * 1.15,
+          fuelSurcharge: baseRate * 1.15 * 0.28,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 95,
+          insurance: baseRate * 1.15 * 0.02,
+          handling: 120,
+          color: '#ef4444',
+        },
+        {
+          name: 'FedEx',
+          logo: '📦',
+          transitTime: '4-6 days',
+          baseRate: baseRate * 1.1,
+          fuelSurcharge: baseRate * 1.1 * 0.26,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 85,
+          insurance: baseRate * 1.1 * 0.02,
+          handling: 110,
+          color: '#8b5cf6',
+        },
+        {
+          name: 'UPS',
+          logo: '📦',
+          transitTime: '4-6 days',
+          baseRate: baseRate * 1.08,
+          fuelSurcharge: baseRate * 1.08 * 0.25,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 90,
+          insurance: baseRate * 1.08 * 0.02,
+          handling: 115,
+          color: '#f59e0b',
+        },
+        {
+          name: 'China Airlines',
+          logo: '✈️',
+          transitTime: '5-7 days',
+          baseRate: baseRate * 0.92,
+          fuelSurcharge: baseRate * 0.92 * 0.24,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 75,
+          insurance: baseRate * 0.92 * 0.02,
+          handling: 95,
+          color: '#06b6d4',
+        },
+      ];
+
+      const quotes = carriers.map((carrier) => ({
+        ...carrier,
+        total:
+          carrier.baseRate +
+          carrier.fuelSurcharge +
+          carrier.customsDuties +
+          carrier.documentation +
+          carrier.insurance +
+          carrier.handling,
+      }));
+
+      setCarrierQuotes(quotes);
+      setShowCarrierComparison(true);
+    }
+  };
+
+  const selectCarrierAndGenerateQuote = (carrier: any) => {
+    const newQuote = {
+      id: `Q-${Date.now()}`,
+      quoteNumber: `FF-Q-${Date.now().toString().slice(-6)}`,
+      customer: quoteForm.customer,
+      customerEmail: quoteForm.customerEmail,
+      origin: quoteForm.originPort,
+      destination: quoteForm.destinationPort,
+      mode: quoteForm.mode,
+      service: quoteForm.service,
+      carrier: carrier.name,
+      transitTime: carrier.transitTime,
+      baseRate: carrier.baseRate,
+      fuelSurcharge: carrier.fuelSurcharge,
+      customsFees: carrier.customsDuties,
+      total: carrier.total,
+      validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      status: 'sent',
+      createdAt: new Date(),
+      fleetflowSource: false,
+      breakdown: {
+        base: carrier.baseRate,
+        fuel: carrier.fuelSurcharge,
+        customs: carrier.customsDuties,
+        docs: carrier.documentation,
+        insurance: carrier.insurance,
+        handling: carrier.portHandling || carrier.handling,
+      },
+    };
+
+    setQuotes([newQuote, ...quotes]);
+    setShowCarrierComparison(false);
+    setShowQuoteModal(false);
+    alert(
+      `✅ Quote Generated with ${carrier.name}!\n\nQuote #: ${newQuote.quoteNumber}\nCarrier: ${carrier.name}\nTransit: ${carrier.transitTime}\nTotal: $${carrier.total.toLocaleString()}\n\nQuote sent to ${quoteForm.customerEmail}`
+    );
+  };
+
   const handleAddCustomer = () => {
     if (!customerForm.companyName || !customerForm.email) {
       alert('Please enter company name and email');
@@ -416,6 +714,144 @@ export default function FreightForwardingPage() {
     );
     alert(
       `✅ Shipment Booked!\n\nReference: ${newShipment.referenceNumber}\nETD: ${newShipment.etd.toLocaleDateString()}\nETA: ${newShipment.eta.toLocaleDateString()}\n\nYou can now track this container in real-time!`
+    );
+  };
+
+  const generateInvoiceFromQuote = (quote: any) => {
+    setProcessingInvoice(true);
+
+    setTimeout(() => {
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 30); // Net 30 payment terms
+
+      const newInvoice = {
+        id: `INV-${Date.now()}`,
+        invoiceNumber: `FF-INV-${String(invoices.length + 1).padStart(4, '0')}`,
+        quoteId: quote.id,
+        quoteNumber: quote.quoteNumber,
+        customer: quote.customer,
+        customerEmail: quote.customerEmail,
+        origin: quote.origin,
+        destination: quote.destination,
+        mode: quote.mode,
+        service: quote.service,
+        carrier: quote.carrier || 'N/A',
+        transitTime: quote.transitTime || 'N/A',
+
+        // Line items
+        lineItems: [
+          {
+            description: `${quote.mode === 'ocean' ? 'Ocean' : 'Air'} Freight - ${quote.origin} to ${quote.destination}`,
+            quantity: quote.quantity || 1,
+            rate: quote.baseRate,
+            amount: quote.baseRate,
+          },
+          {
+            description: 'Fuel Surcharge',
+            quantity: 1,
+            rate: quote.fuelSurcharge,
+            amount: quote.fuelSurcharge,
+          },
+        ],
+
+        // Amounts
+        subtotal: quote.baseRate + quote.fuelSurcharge,
+        customsFees: quote.customsFees || 0,
+        total: quote.total,
+
+        // Breakdown (if available from carrier comparison)
+        breakdown: quote.breakdown || null,
+
+        // Payment details
+        status: 'sent',
+        paymentStatus: 'pending',
+        paymentMethod: null,
+        paidAmount: 0,
+        issueDate: new Date(),
+        dueDate: dueDate,
+        paidDate: null,
+
+        // Tracking
+        fleetflowSource: quote.fleetflowSource,
+        createdAt: new Date(),
+        lastUpdated: new Date(),
+      };
+
+      // Add customs/duties line item if applicable
+      if (quote.customsFees > 0) {
+        newInvoice.lineItems.push({
+          description: `Customs Clearance & Duties (${quote.service})`,
+          quantity: 1,
+          rate: quote.customsFees,
+          amount: quote.customsFees,
+        });
+      }
+
+      // Add breakdown line items if available
+      if (quote.breakdown) {
+        if (quote.breakdown.docs > 0) {
+          newInvoice.lineItems.push({
+            description: 'Documentation Fees',
+            quantity: 1,
+            rate: quote.breakdown.docs,
+            amount: quote.breakdown.docs,
+          });
+        }
+        if (quote.breakdown.insurance > 0) {
+          newInvoice.lineItems.push({
+            description: 'Cargo Insurance',
+            quantity: 1,
+            rate: quote.breakdown.insurance,
+            amount: quote.breakdown.insurance,
+          });
+        }
+        if (quote.breakdown.handling > 0) {
+          newInvoice.lineItems.push({
+            description:
+              quote.mode === 'ocean' ? 'Port Handling' : 'Handling Fees',
+            quantity: 1,
+            rate: quote.breakdown.handling,
+            amount: quote.breakdown.handling,
+          });
+        }
+      }
+
+      setInvoices([newInvoice, ...invoices]);
+      setQuotes(
+        quotes.map((q: any) =>
+          q.id === quote.id ? { ...q, status: 'invoiced' } : q
+        )
+      );
+      setProcessingInvoice(false);
+      setSelectedInvoice(newInvoice);
+      setShowInvoiceModal(true);
+    }, 800);
+  };
+
+  const updateInvoicePayment = (invoiceId: string, paymentData: any) => {
+    setInvoices(
+      invoices.map((inv) =>
+        inv.id === invoiceId
+          ? {
+              ...inv,
+              paymentStatus: paymentData.status,
+              paidAmount: paymentData.amount,
+              paidDate: paymentData.status === 'paid' ? new Date() : null,
+              paymentMethod: paymentData.method,
+              lastUpdated: new Date(),
+            }
+          : inv
+      )
+    );
+    setShowInvoiceModal(false);
+    alert(
+      `✅ Invoice ${paymentData.status === 'paid' ? 'Paid' : 'Updated'}!\n\nInvoice #: ${
+        invoices.find((i) => i.id === invoiceId)?.invoiceNumber
+      }\nAmount: $${paymentData.amount.toLocaleString()}\n${
+        paymentData.status === 'paid'
+          ? 'Payment recorded successfully!'
+          : 'Status updated.'
+      }`
     );
   };
 
@@ -586,13 +1022,48 @@ export default function FreightForwardingPage() {
               color: '#10b981',
             },
             {
+              id: 'consolidation',
+              label: '📦 Consolidation',
+              color: '#8b5cf6',
+            },
+            {
+              id: 'tracking',
+              label: '🚢 Tracking',
+              color: '#14b8a6',
+            },
+            {
               id: 'compliance',
               label: '🛃 Compliance & Documents',
               color: '#ef4444',
             },
+            {
+              id: 'documents',
+              label: '📄 Documents',
+              color: '#f59e0b',
+            },
             { id: 'clients', label: '👥 Clients & CRM', color: '#8b5cf6' },
             { id: 'intelligence', label: '📊 Intelligence', color: '#3b82f6' },
             { id: 'operations', label: '✅ Operations', color: '#f59e0b' },
+            {
+              id: 'financials',
+              label: '💰 Financials',
+              color: '#ec4899',
+            },
+            {
+              id: 'contracts',
+              label: '📋 Contracts',
+              color: '#7c3aed',
+            },
+            {
+              id: 'wms',
+              label: '🏭 WMS',
+              color: '#0891b2',
+            },
+            {
+              id: 'crossborder',
+              label: '🇨🇦🇲🇽 Cross-Border',
+              color: '#dc2626',
+            },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -648,7 +1119,12 @@ export default function FreightForwardingPage() {
           />
         )}
         {selectedTab === 'shipments' && <ShipmentsTab router={router} />}
+        {selectedTab === 'consolidation' && (
+          <ShipmentConsolidationDashboard tenantId={tenantId} />
+        )}
+        {selectedTab === 'tracking' && <TrackingTab />}
         {selectedTab === 'compliance' && <ComplianceAndDocumentsTab />}
+        {selectedTab === 'documents' && <DocumentsTab />}
         {selectedTab === 'clients' && (
           <ClientsTab
             clients={clients}
@@ -1222,6 +1698,186 @@ function OverviewTab({
               ))}
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Charts & Visualizations */}
+      <div
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}
+      >
+        {/* Revenue Trend Chart */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '20px',
+            }}
+          >
+            📈 Revenue Trend (Last 6 Months)
+          </h4>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '12px',
+              height: '200px',
+            }}
+          >
+            {[45, 52, 48, 65, 70, 82].map((value, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'linear-gradient(to top, #10b981, #059669)',
+                    width: '100%',
+                    height: `${value}%`,
+                    borderRadius: '8px 8px 0 0',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                  }}
+                  title={`$${value}K`}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '-25px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#10b981',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    ${value}K
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    marginTop: '8px',
+                  }}
+                >
+                  M{index - 5}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              marginTop: '16px',
+              textAlign: 'center',
+              fontSize: '13px',
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
+            📊 +27% growth vs last quarter
+          </div>
+        </div>
+
+        {/* Shipment Volume Chart */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#3b82f6',
+              marginBottom: '20px',
+            }}
+          >
+            📦 Shipment Volume (Last 6 Months)
+          </h4>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '12px',
+              height: '200px',
+            }}
+          >
+            {[32, 38, 41, 45, 52, 58].map((value, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'linear-gradient(to top, #3b82f6, #2563eb)',
+                    width: '100%',
+                    height: `${value}%`,
+                    borderRadius: '8px 8px 0 0',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                  }}
+                  title={`${value} shipments`}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '-25px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    {value}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    marginTop: '8px',
+                  }}
+                >
+                  M{index - 5}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              marginTop: '16px',
+              textAlign: 'center',
+              fontSize: '13px',
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
+            📊 +81% increase year-over-year
+          </div>
         </div>
       </div>
 
@@ -2173,6 +2829,188 @@ function ClientsTab({
           >
             + Add Customs Agent
           </button>
+        </div>
+
+        {/* Contact Type Filter */}
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '16px',
+              fontWeight: '700',
+              color: '#3b82f6',
+              marginBottom: '16px',
+            }}
+          >
+            📋 Contact Types (12 Categories)
+          </h4>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '12px',
+            }}
+          >
+            {[
+              { type: 'SHIPPER', icon: '📦', count: 8, color: '#3b82f6' },
+              { type: 'CONSIGNEE', icon: '🏭', count: 12, color: '#10b981' },
+              { type: 'CARRIER', icon: '🚢', count: 5, color: '#f59e0b' },
+              {
+                type: 'CUSTOMS_BROKER',
+                icon: '🛃',
+                count: 3,
+                color: '#8b5cf6',
+              },
+              { type: 'TRUCKER', icon: '🚛', count: 7, color: '#ef4444' },
+              { type: 'WAREHOUSE', icon: '🏭', count: 4, color: '#14b8a6' },
+              { type: 'PORT_AGENT', icon: '⚓', count: 6, color: '#06b6d4' },
+              {
+                type: 'FREIGHT_FORWARDER',
+                icon: '✈️',
+                count: 9,
+                color: '#ec4899',
+              },
+              { type: 'BANK', icon: '🏦', count: 2, color: '#a855f7' },
+              { type: 'INSURANCE', icon: '🛡️', count: 3, color: '#0891b2' },
+              { type: 'NOTIFY_PARTY', icon: '📧', count: 11, color: '#f59e0b' },
+              { type: 'VENDOR', icon: '🏪', count: 5, color: '#6366f1' },
+            ].map((contactType) => (
+              <div
+                key={contactType.type}
+                style={{
+                  background: `${contactType.color}10`,
+                  border: `1px solid ${contactType.color}40`,
+                  borderRadius: '8px',
+                  padding: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = `0 4px 12px ${contactType.color}40`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{ fontSize: '24px', marginBottom: '4px' }}>
+                  {contactType.icon}
+                </div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    color: contactType.color,
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {contactType.type.replace('_', ' ')}
+                </div>
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: contactType.color,
+                    marginTop: '4px',
+                  }}
+                >
+                  {contactType.count}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div
+            style={{
+              marginTop: '16px',
+              padding: '12px',
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '8px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+                margin: 0,
+              }}
+            >
+              💡 <strong>12 Contact Types:</strong> Manage all stakeholders in
+              your freight forwarding operations - from shippers and consignees
+              to carriers, customs brokers, truckers, warehouses, port agents,
+              banks, insurance providers, and vendors.
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Add Contacts */}
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '16px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '16px',
+            }}
+          >
+            ⚡ Quick Add New Contact
+          </h4>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: '10px',
+            }}
+          >
+            {[
+              { type: 'Shipper', icon: '📦', color: '#3b82f6' },
+              { type: 'Consignee', icon: '🏭', color: '#10b981' },
+              { type: 'Carrier', icon: '🚢', color: '#f59e0b' },
+              { type: 'Customs Broker', icon: '🛃', color: '#8b5cf6' },
+              { type: 'Trucker', icon: '🚛', color: '#ef4444' },
+              { type: 'Warehouse', icon: '🏭', color: '#14b8a6' },
+            ].map((type) => (
+              <button
+                key={type.type}
+                onClick={() =>
+                  alert(`Add new ${type.type} - Feature coming soon!`)
+                }
+                style={{
+                  padding: '12px',
+                  background: `${type.color}15`,
+                  border: `1px solid ${type.color}40`,
+                  borderRadius: '8px',
+                  color: type.color,
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>{type.icon}</span>
+                <span>{type.type}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div
@@ -3310,6 +4148,59 @@ function ComplianceTab() {
 }
 
 function DocumentsTab() {
+  const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+
+  const documents = [
+    {
+      id: 'bol',
+      name: 'Bill of Lading',
+      icon: '📜',
+      description: 'Ocean/Air freight BOL generator',
+      color: '#3b82f6',
+      template: 'International shipping document',
+    },
+    {
+      id: 'invoice',
+      name: 'Commercial Invoice',
+      icon: '💰',
+      description: 'Customs commercial invoice',
+      color: '#10b981',
+      template: 'Multi-currency invoice creator',
+    },
+    {
+      id: 'packing',
+      name: 'Packing List',
+      icon: '📦',
+      description: 'Detailed packing list',
+      color: '#f59e0b',
+      template: 'Cargo contents documentation',
+    },
+    {
+      id: 'coo',
+      name: 'Certificate of Origin',
+      icon: '🌍',
+      description: 'Country of origin certificate',
+      color: '#8b5cf6',
+      template: 'Trade preference certification',
+    },
+    {
+      id: 'sli',
+      name: "Shipper's Letter of Instruction",
+      icon: '📝',
+      description: 'Shipping instructions to forwarder',
+      color: '#ec4899',
+      template: 'Detailed shipping instructions',
+    },
+    {
+      id: 'isf',
+      name: 'ISF Filing',
+      icon: '🛃',
+      description: 'Importer Security Filing (10+2)',
+      color: '#06b6d4',
+      template: 'US Customs ISF requirement',
+    },
+  ];
+
   return (
     <div style={{ display: 'grid', gap: '32px' }}>
       <div>
@@ -3323,41 +4214,258 @@ function DocumentsTab() {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          📄 Document Management
+          📄 Document Generation & Management
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
-          BOL, Invoices, Packing Lists, Customs Declarations
+          Generate professional shipping documents instantly
         </p>
       </div>
 
+      {/* Document Templates Grid */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          border: '2px dashed rgba(255, 255, 255, 0.2)',
-          borderRadius: '16px',
-          padding: '60px',
-          textAlign: 'center',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '20px',
         }}
       >
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
+        {documents.map((doc) => (
+          <div
+            key={doc.id}
+            onClick={() => setSelectedDoc(doc.id)}
+            style={{
+              background: `linear-gradient(135deg, ${doc.color}15, ${doc.color}05)`,
+              border: `1px solid ${doc.color}40`,
+              borderRadius: '16px',
+              padding: '24px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.boxShadow = `0 8px 24px ${doc.color}40`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+              {doc.icon}
+            </div>
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                color: doc.color,
+                marginBottom: '8px',
+              }}
+            >
+              {doc.name}
+            </h3>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255,255,255,0.7)',
+                marginBottom: '12px',
+              }}
+            >
+              {doc.description}
+            </p>
+            <div
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.5)',
+                fontStyle: 'italic',
+              }}
+            >
+              {doc.template}
+            </div>
+            <button
+              style={{
+                marginTop: '16px',
+                width: '100%',
+                padding: '10px 20px',
+                border: `1px solid ${doc.color}`,
+                background: `${doc.color}20`,
+                borderRadius: '8px',
+                color: doc.color,
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
+              Generate Document →
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Document Stats */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '16px',
+        }}
+      >
         <div
           style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            marginBottom: '10px',
+            background: 'rgba(59, 130, 246, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            textAlign: 'center',
           }}
         >
-          Document Management
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#3b82f6' }}
+          >
+            24
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Documents Generated
+          </div>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.6)' }}>
-          BOL, Invoices, Packing Lists, Customs Declarations coming soon
+        <div
+          style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#10b981' }}
+          >
+            18
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Pending Signatures
+          </div>
+        </div>
+        <div
+          style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#f59e0b' }}
+          >
+            42
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Completed This Month
+          </div>
+        </div>
+        <div
+          style={{
+            background: 'rgba(139, 92, 246, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#8b5cf6' }}
+          >
+            156
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Total Documents
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div
+        style={{
+          background: 'rgba(6, 182, 212, 0.1)',
+          border: '1px solid rgba(6, 182, 212, 0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+        }}
+      >
+        <h4
+          style={{
+            fontSize: '16px',
+            fontWeight: '700',
+            color: '#06b6d4',
+            marginBottom: '12px',
+          }}
+        >
+          💡 Quick Actions
+        </h4>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '12px',
+          }}
+        >
+          <button
+            style={{
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              background: 'rgba(59, 130, 246, 0.1)',
+              color: '#3b82f6',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            📤 Bulk Export to PDF
+          </button>
+          <button
+            style={{
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              background: 'rgba(16, 185, 129, 0.1)',
+              color: '#10b981',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            ✉️ Send for E-Signature
+          </button>
+          <button
+            style={{
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              background: 'rgba(245, 158, 11, 0.1)',
+              color: '#f59e0b',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            📁 Upload Document
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function FinancialsTab({ stats }: { stats: any }) {
+function FinancialsTab({ stats, invoices, onViewInvoice }: { stats: any; invoices: any[]; onViewInvoice: (invoice: any) => void }) {
+  const [financeView, setFinanceView] = useState<'overview' | 'invoices' | 'pl'>('overview');
+
+  // Calculate financial metrics
+  const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.total, 0);
+  const totalPaid = invoices.filter(inv => inv.paymentStatus === 'paid').reduce((sum, inv) => sum + inv.paidAmount, 0);
+  const totalPending = invoices.filter(inv => inv.paymentStatus === 'pending').reduce((sum, inv) => sum + inv.total, 0);
+  const totalOverdue = invoices.filter(inv => inv.paymentStatus === 'overdue').reduce((sum, inv) => sum + inv.total, 0);
+
   return (
     <div style={{ display: 'grid', gap: '32px' }}>
       <div>
@@ -3371,80 +4479,379 @@ function FinancialsTab({ stats }: { stats: any }) {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          📈 Financial Reporting
+          📈 Financial Management
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
-          Revenue tracking, profitability analysis, and financial insights
+          Revenue tracking, invoice management, and profitability analysis
         </p>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
-        }}
-      >
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '12px',
-            padding: '24px',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-          }}
-        >
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>💰</div>
-          <div
+      {/* View Toggle */}
+      <div style={{ display: 'flex', gap: '12px' }}>
+        {[
+          { id: 'overview', label: '📊 Overview', color: '#f59e0b' },
+          { id: 'invoices', label: '💳 Invoices', color: '#3b82f6' },
+          { id: 'pl', label: '📈 P&L Statement', color: '#10b981' },
+        ].map((view) => (
+          <button
+            key={view.id}
+            onClick={() => setFinanceView(view.id as any)}
             style={{
-              fontSize: '32px',
-              fontWeight: '700',
-              color: '#10b981',
-              marginBottom: '8px',
+              flex: 1,
+              padding: '12px',
+              borderRadius: '10px',
+              border: financeView === view.id ? `2px solid ${view.color}` : '1px solid rgba(255, 255, 255, 0.1)',
+              background: financeView === view.id ? `${view.color}20` : 'rgba(255, 255, 255, 0.05)',
+              color: financeView === view.id ? view.color : 'rgba(255, 255, 255, 0.7)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
             }}
           >
-            ${stats.monthlyRevenue.toLocaleString()}
-          </div>
-          <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
-            Total Revenue This Month
-          </div>
-        </div>
+            {view.label}
+          </button>
+        ))}
+      </div>
 
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '12px',
-            padding: '24px',
-            border: '1px solid rgba(168, 85, 247, 0.3)',
-          }}
-        >
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🎯</div>
+      {/* Overview View */}
+      {financeView === 'overview' && (
+        <>
           <div
             style={{
-              fontSize: '32px',
-              fontWeight: '700',
-              color: '#a78bfa',
-              marginBottom: '8px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '20px',
             }}
           >
-            ${stats.fleetflowCommissionOwed.toLocaleString()}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>💰</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#10b981',
+                  marginBottom: '8px',
+                }}
+              >
+                ${stats.monthlyRevenue.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                Total Revenue This Month
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>💳</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#3b82f6',
+                  marginBottom: '8px',
+                }}
+              >
+                ${totalInvoiced.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                Total Invoiced ({invoices.length} invoices)
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(168, 85, 247, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>🎯</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#a78bfa',
+                  marginBottom: '8px',
+                }}
+              >
+                ${stats.fleetflowCommissionOwed.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                FleetFlow Commission Owed
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>⏰</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#f59e0b',
+                  marginBottom: '8px',
+                }}
+              >
+                ${totalPending.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                Pending Payments
+              </div>
+            </div>
           </div>
-          <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
-            FleetFlow Commission Owed
+
+          {/* Payment Status Breakdown */}
+          <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '20px' }}>
+              💳 Payment Status Overview
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+              <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '16px', borderRadius: '10px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981', marginBottom: '4px' }}>
+                  ${totalPaid.toLocaleString()}
+                </div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+                  Paid ({invoices.filter(i => i.paymentStatus === 'paid').length} invoices)
+                </div>
+              </div>
+              <div style={{ background: 'rgba(245, 158, 11, 0.1)', padding: '16px', borderRadius: '10px', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#f59e0b', marginBottom: '4px' }}>
+                  ${totalPending.toLocaleString()}
+                </div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+                  Pending ({invoices.filter(i => i.paymentStatus === 'pending').length} invoices)
+                </div>
+              </div>
+              <div style={{ background: 'rgba(239, 68, 68, 0.1)', padding: '16px', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#ef4444', marginBottom: '4px' }}>
+                  ${totalOverdue.toLocaleString()}
+                </div>
+                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+                  Overdue ({invoices.filter(i => i.paymentStatus === 'overdue').length} invoices)
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Invoices View */}
+      {financeView === 'invoices' && (
+        <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '20px' }}>
+            💳 All Invoices
+          </h3>
+          {invoices.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: 'rgba(255,255,255,0.5)' }}>
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>💳</div>
+              <p>No invoices generated yet. Create quotes and convert them to invoices.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {invoices.map((invoice) => (
+                <div
+                  key={invoice.id}
+                  onClick={() => onViewInvoice(invoice)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '10px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '6px' }}>
+                        {invoice.invoiceNumber} - {invoice.customer}
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>
+                        {invoice.origin} → {invoice.destination}
+                      </div>
+                      <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                        Issued: {invoice.issueDate.toLocaleDateString()} • Due: {invoice.dueDate.toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '20px', fontWeight: '700', color: '#10b981', marginBottom: '6px' }}>
+                        ${invoice.total.toLocaleString()}
+                      </div>
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          background:
+                            invoice.paymentStatus === 'paid'
+                              ? 'rgba(16, 185, 129, 0.2)'
+                              : invoice.paymentStatus === 'overdue'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : 'rgba(245, 158, 11, 0.2)',
+                          color:
+                            invoice.paymentStatus === 'paid'
+                              ? '#10b981'
+                              : invoice.paymentStatus === 'overdue'
+                              ? '#ef4444'
+                              : '#f59e0b',
+                        }}
+                      >
+                        {invoice.paymentStatus.toUpperCase()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* P&L Statement View */}
+      {financeView === 'pl' && (
+        <div style={{ background: 'rgba(255, 255, 255, 0.05)', borderRadius: '16px', padding: '24px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '20px' }}>
+            📈 Profit & Loss Statement (Month-to-Date)
+          </h3>
+          <div style={{ display: 'grid', gap: '20px' }}>
+            {/* Revenue Section */}
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#10b981', marginBottom: '12px', borderBottom: '2px solid rgba(16, 185, 129, 0.3)', paddingBottom: '8px' }}>
+                REVENUE
+              </div>
+              <div style={{ display: 'grid', gap: '8px', marginLeft: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>Freight Revenue</span>
+                  <span style={{ fontWeight: '600' }}>${stats.monthlyRevenue.toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>FleetFlow Commission</span>
+                  <span style={{ fontWeight: '600', color: '#a78bfa' }}>${stats.fleetflowCommissionOwed.toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                  <span style={{ fontWeight: '700' }}>Total Revenue</span>
+                  <span style={{ fontWeight: '700', color: '#10b981' }}>${(stats.monthlyRevenue + stats.fleetflowCommissionOwed).toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Cost of Services Section */}
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#ef4444', marginBottom: '12px', borderBottom: '2px solid rgba(239, 68, 68, 0.3)', paddingBottom: '8px' }}>
+                COST OF SERVICES
+              </div>
+              <div style={{ display: 'grid', gap: '8px', marginLeft: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>Carrier Costs</span>
+                  <span style={{ fontWeight: '600' }}>$0</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>Customs & Duties</span>
+                  <span style={{ fontWeight: '600' }}>$0</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                  <span style={{ fontWeight: '700' }}>Total Costs</span>
+                  <span style={{ fontWeight: '700', color: '#ef4444' }}>$0</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Net Profit */}
+            <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '20px', borderRadius: '12px', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>NET PROFIT</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                    Profit Margin: {stats.monthlyRevenue > 0 ? '100%' : '0%'}
+                  </div>
+                </div>
+                <div style={{ fontSize: '32px', fontWeight: '700', color: '#10b981' }}>
+                  ${(stats.monthlyRevenue + stats.fleetflowCommissionOwed).toLocaleString()}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
 
-        {/* Quote Modal */}
-        {showQuoteModal && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.7)',
-              display: 'flex',
-              alignItems: 'center',
+// AiIntelligenceTab properly defined below (removed duplicate)
+
+function AiIntelligenceTab({ stats }: { stats: any }) {
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2
+          style={{ fontSize: '24px', fontWeight: '700', margin: '0 0 8px 0' }}
+        >
+          🤖 AI Intelligence Engine
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px' }}>
+          AI-powered recommendations and insights
+        </p>
+      </div>
+      {/* Empty state or AI content goes here */}
+      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ fontSize: '64px', marginBottom: '16px' }}>🤖</div>
+        <p>AI Intelligence features coming soon</p>
+      </div>
+    </div>
+  );
+}
+
+// MarketIntelligenceTab and other tabs continue below
+
+function MarketIntelligenceTab({ stats }: { stats: any }) {
+  return (
+    <div style={{ display: 'grid', gap: '32px' }}>
+      <div>
+        <h2 style={{ fontSize: '24px', fontWeight: '700', margin: '0 0 8px 0' }}>
+          📈 Market Intelligence
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px' }}>
+          Real-time market data and trends
+        </p>
+      </div>
+      <div style={{ textAlign: 'center', padding: '60px 20px', color: 'rgba(255,255,255,0.5)' }}>
+        <div style={{ fontSize: '64px', marginBottom: '16px' }}>📈</div>
+        <p>Market Intelligence features coming soon</p>
+      </div>
+    </div>
+  );
+}
               justifyContent: 'center',
               zIndex: 1000,
             }}
@@ -3685,16 +5092,62 @@ function FinancialsTab({ stats }: { stats: any }) {
                 )}
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  marginTop: '20px',
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    onClick={
+                      quoteForm.mode === 'ocean'
+                        ? generateOceanQuote
+                        : generateAirQuote
+                    }
+                    style={{
+                      flex: 1,
+                      background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 20px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Generate Quote
+                  </button>
+                  <button
+                    onClick={() => setShowQuoteModal(false)}
+                    style={{
+                      flex: 1,
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px 20px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
                 <button
-                  onClick={
-                    quoteForm.mode === 'ocean'
-                      ? generateOceanQuote
-                      : generateAirQuote
-                  }
+                  onClick={() => {
+                    if (!quoteForm.customer || !quoteForm.customerEmail) {
+                      alert('Please enter customer name and email');
+                      return;
+                    }
+                    generateMultiCarrierQuotes();
+                  }}
                   style={{
-                    flex: 1,
-                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
                     color: 'white',
                     border: 'none',
                     borderRadius: '8px',
@@ -3704,25 +5157,306 @@ function FinancialsTab({ stats }: { stats: any }) {
                     cursor: 'pointer',
                   }}
                 >
-                  Generate Quote
-                </button>
-                <button
-                  onClick={() => setShowQuoteModal(false)}
-                  style={{
-                    flex: 1,
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    padding: '12px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Cancel
+                  🔄 Compare 4 Carriers
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Carrier Comparison Modal */}
+        {showCarrierComparison && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0, 0, 0, 0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1001,
+            }}
+            onClick={() => setShowCarrierComparison(false)}
+          >
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.95)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '40px',
+                width: '95%',
+                maxWidth: '1400px',
+                maxHeight: '90vh',
+                overflowY: 'auto',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ marginBottom: '30px' }}>
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    marginBottom: '8px',
+                    background: 'linear-gradient(135deg, #10b981, #06b6d4)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  🔄 Compare {carrierQuotes.length} Carriers
+                </h2>
+                <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
+                  Click on a carrier card to select and generate quote
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '20px',
+                }}
+              >
+                {carrierQuotes.map((carrier, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => selectCarrierAndGenerateQuote(carrier)}
+                    style={{
+                      background: `linear-gradient(135deg, ${carrier.color}15, ${carrier.color}08)`,
+                      border: `2px solid ${carrier.color}40`,
+                      borderRadius: '16px',
+                      padding: '24px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = `0 8px 24px ${carrier.color}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    {/* Carrier Header */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '36px' }}>{carrier.logo}</div>
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '700',
+                              color: 'white',
+                            }}
+                          >
+                            {carrier.name}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '13px',
+                              color: 'rgba(255,255,255,0.6)',
+                            }}
+                          >
+                            ⏱️ {carrier.transitTime}
+                          </div>
+                        </div>
+                      </div>
+                      {idx === 0 && (
+                        <div
+                          style={{
+                            background: '#10b981',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                          }}
+                        >
+                          BEST VALUE
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Total Cost */}
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        padding: '20px',
+                        borderRadius: '12px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Total Cost
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '32px',
+                          fontWeight: '700',
+                          color: carrier.color,
+                        }}
+                      >
+                        ${carrier.total.toLocaleString()}
+                      </div>
+                    </div>
+
+                    {/* Cost Breakdown */}
+                    <div style={{ display: 'grid', gap: '10px' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '13px',
+                        }}
+                      >
+                        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                          Base Rate
+                        </span>
+                        <span style={{ color: 'white', fontWeight: '600' }}>
+                          ${carrier.baseRate.toLocaleString()}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '13px',
+                        }}
+                      >
+                        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                          Fuel Surcharge
+                        </span>
+                        <span style={{ color: 'white', fontWeight: '600' }}>
+                          ${carrier.fuelSurcharge.toLocaleString()}
+                        </span>
+                      </div>
+                      {carrier.customsDuties > 0 && (
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            fontSize: '13px',
+                          }}
+                        >
+                          <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                            Customs & Duties
+                          </span>
+                          <span style={{ color: 'white', fontWeight: '600' }}>
+                            ${carrier.customsDuties.toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '13px',
+                        }}
+                      >
+                        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                          Documentation
+                        </span>
+                        <span style={{ color: 'white', fontWeight: '600' }}>
+                          ${carrier.documentation}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '13px',
+                        }}
+                      >
+                        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                          Insurance
+                        </span>
+                        <span style={{ color: 'white', fontWeight: '600' }}>
+                          ${carrier.insurance.toFixed(0)}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '13px',
+                        }}
+                      >
+                        <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                          {quoteForm.mode === 'ocean'
+                            ? 'Port Handling'
+                            : 'Handling'}
+                        </span>
+                        <span style={{ color: 'white', fontWeight: '600' }}>
+                          $
+                          {(
+                            carrier.portHandling || carrier.handling
+                          ).toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Select Button */}
+                    <button
+                      style={{
+                        width: '100%',
+                        marginTop: '20px',
+                        padding: '14px',
+                        background: carrier.color,
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Select {carrier.name} →
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setShowCarrierComparison(false)}
+                style={{
+                  marginTop: '30px',
+                  width: '100%',
+                  padding: '14px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         )}
@@ -4794,6 +6528,310 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
               </div>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>
                 USD/CNY at 3-month high - affects pricing
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Air Freight Rates */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#8b5cf6',
+              }}
+            >
+              ✈️ Air Freight Rates
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Updated hourly
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Shanghai → LA (per kg)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  $4.85/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>
+                  ↑ 12.3%
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Hong Kong → NY (per kg)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  $5.20/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 2.8%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Tokyo → Chicago (per kg)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  $6.15/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 5.4%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Fuel Surcharges */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#f59e0b',
+              }}
+            >
+              ⛽ Fuel Surcharges
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Weekly updates
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Ocean Carrier Average
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  18.5%
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 2.1%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Air Freight FSC
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  24.3%
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 1.2%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.1)',
+                padding: '12px',
+                borderRadius: '8px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: 'rgba(255,255,255,0.7)',
+                  lineHeight: '1.5',
+                }}
+              >
+                🛢️ <strong>Oil Price:</strong> $87.45/barrel (+3.2% this week)
+                <br />
+                📊 Expected to impact rates in next cycle
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Currency Exchange Rates */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(34, 197, 94, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#22c55e',
+              }}
+            >
+              💱 Currency Exchange Rates
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Real-time
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>USD → CNY</span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  ¥7.25
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 0.8%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>USD → EUR</span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  €0.92
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 0.3%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>USD → JPY</span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  ¥148.35
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 1.2%</div>
               </div>
             </div>
           </div>
@@ -6195,19 +8233,303 @@ function AnalyticsTab({ stats }: any) {
         />
       </div>
 
+      {/* Trade Lane Analysis */}
       <div
         style={{
-          color: 'rgba(255,255,255,0.5)',
-          textAlign: 'center',
-          padding: '60px 20px',
-          background: 'rgba(255, 255, 255, 0.03)',
+          background: 'rgba(15, 23, 42, 0.8)',
+          border: '1px solid rgba(6, 182, 212, 0.3)',
           borderRadius: '16px',
+          padding: '24px',
         }}
       >
-        <div style={{ fontSize: '64px', marginBottom: '16px' }}>📊</div>
-        <p style={{ fontSize: '16px' }}>
-          Start tracking shipments to see performance analytics
-        </p>
+        <h3
+          style={{
+            fontSize: '20px',
+            fontWeight: '700',
+            marginBottom: '20px',
+            color: 'white',
+          }}
+        >
+          🌎 Top Trade Lanes Performance
+        </h3>
+        <div style={{ display: 'grid', gap: '16px' }}>
+          {[
+            {
+              lane: 'Asia → North America',
+              shipments: 1248,
+              revenue: 3850000,
+              color: '#06b6d4',
+            },
+            {
+              lane: 'Europe → North America',
+              shipments: 845,
+              revenue: 2920000,
+              color: '#10b981',
+            },
+            {
+              lane: 'Latin America → North America',
+              shipments: 567,
+              revenue: 1680000,
+              color: '#8b5cf6',
+            },
+            {
+              lane: 'Asia → Europe',
+              shipments: 423,
+              revenue: 1340000,
+              color: '#f59e0b',
+            },
+            {
+              lane: 'Intra-Asia',
+              shipments: 312,
+              revenue: 890000,
+              color: '#ec4899',
+            },
+          ].map((lane, idx) => (
+            <div
+              key={idx}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                padding: '16px',
+                borderRadius: '12px',
+                border: `1px solid ${lane.color}30`,
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '12px',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {lane.lane}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '13px',
+                      color: 'rgba(255,255,255,0.6)',
+                    }}
+                  >
+                    {lane.shipments} shipments • $
+                    {(lane.revenue / 1000000).toFixed(2)}M revenue
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    color: lane.color,
+                  }}
+                >
+                  #{idx + 1}
+                </div>
+              </div>
+              {/* Progress Bar */}
+              <div
+                style={{
+                  height: '8px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${(lane.shipments / 1248) * 100}%`,
+                    background: `linear-gradient(90deg, ${lane.color}, ${lane.color}CC)`,
+                    transition: 'width 0.3s ease',
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Cost Breakdown Chart */}
+      <div
+        style={{
+          background: 'rgba(15, 23, 42, 0.8)',
+          border: '1px solid rgba(139, 92, 246, 0.3)',
+          borderRadius: '16px',
+          padding: '24px',
+        }}
+      >
+        <h3
+          style={{
+            fontSize: '20px',
+            fontWeight: '700',
+            marginBottom: '20px',
+            color: 'white',
+          }}
+        >
+          📊 Average Shipment Cost Breakdown
+        </h3>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '32px',
+            alignItems: 'center',
+          }}
+        >
+          {/* Pie Chart */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <svg width='280' height='280' viewBox='0 0 280 280'>
+              <circle cx='140' cy='140' r='100' fill='#0f172a' />
+              {/* Ocean Freight 45% */}
+              <path
+                d='M 140 40 A 100 100 0 0 1 235.36 105.36 L 140 140 Z'
+                fill='#06b6d4'
+                opacity='0.9'
+              />
+              {/* Fuel Surcharge 25% */}
+              <path
+                d='M 235.36 105.36 A 100 100 0 0 1 235.36 174.64 L 140 140 Z'
+                fill='#10b981'
+                opacity='0.9'
+              />
+              {/* Customs & Duties 18% */}
+              <path
+                d='M 235.36 174.64 A 100 100 0 0 1 140 240 L 140 140 Z'
+                fill='#8b5cf6'
+                opacity='0.9'
+              />
+              {/* Documentation 7% */}
+              <path
+                d='M 140 240 A 100 100 0 0 1 91.27 213.82 L 140 140 Z'
+                fill='#f59e0b'
+                opacity='0.9'
+              />
+              {/* Other 5% */}
+              <path
+                d='M 91.27 213.82 A 100 100 0 0 1 140 40 L 140 140 Z'
+                fill='#ec4899'
+                opacity='0.9'
+              />
+              <circle cx='140' cy='140' r='60' fill='#1e293b' />
+              <text
+                x='140'
+                y='135'
+                textAnchor='middle'
+                fill='white'
+                fontSize='20'
+                fontWeight='700'
+              >
+                Total Avg
+              </text>
+              <text
+                x='140'
+                y='155'
+                textAnchor='middle'
+                fill='#06b6d4'
+                fontSize='24'
+                fontWeight='700'
+              >
+                $8,450
+              </text>
+            </svg>
+          </div>
+
+          {/* Legend */}
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {[
+              {
+                label: 'Ocean Freight',
+                percent: '45%',
+                amount: '$3,803',
+                color: '#06b6d4',
+              },
+              {
+                label: 'Fuel Surcharge',
+                percent: '25%',
+                amount: '$2,113',
+                color: '#10b981',
+              },
+              {
+                label: 'Customs & Duties',
+                percent: '18%',
+                amount: '$1,521',
+                color: '#8b5cf6',
+              },
+              {
+                label: 'Documentation',
+                percent: '7%',
+                amount: '$592',
+                color: '#f59e0b',
+              },
+              {
+                label: 'Other Fees',
+                percent: '5%',
+                amount: '$421',
+                color: '#ec4899',
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '8px',
+                  border: `1px solid ${item.color}30`,
+                }}
+              >
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '4px',
+                      background: item.color,
+                    }}
+                  />
+                  <span
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <span
+                    style={{
+                      color: item.color,
+                      fontSize: '16px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {item.percent}
+                  </span>
+                  <span
+                    style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
+                  >
+                    {item.amount}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -106,7 +106,7 @@ export default function FreightForwarderDashboardGuide({
       label: '📦 Shipments & Quoting',
       icon: '📦',
       description:
-        'Ocean/Air quoting, shipment tracking, live vessel monitoring',
+        'Multi-carrier comparison (4 carriers), detailed cost breakdowns, ocean/air quoting, shipment tracking',
       tab: 'shipments',
     },
     {
@@ -308,9 +308,46 @@ export default function FreightForwarderDashboardGuide({
               ))}
             </div>
 
+            {/* NEW Feature Highlight */}
             <div
               style={{
                 marginTop: '20px',
+                padding: '12px',
+                background:
+                  'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))',
+                borderRadius: '8px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '11px',
+                  lineHeight: '1.5',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    marginBottom: '6px',
+                  }}
+                >
+                  <span style={{ fontSize: '14px' }}>✨</span>
+                  <strong style={{ color: '#10b981' }}>
+                    NEW: Multi-Carrier Comparison
+                  </strong>
+                </div>
+                Compare 4 carriers side-by-side with detailed cost breakdowns
+                (base rate, fuel, customs, docs, insurance, handling). Find the
+                best rates instantly!
+              </div>
+            </div>
+
+            <div
+              style={{
+                marginTop: '12px',
                 padding: '12px',
                 background: 'rgba(6, 182, 212, 0.1)',
                 borderRadius: '8px',

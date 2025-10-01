@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DeniedPartyScreeningUI from '../components/DeniedPartyScreeningUI';
 import FreightForwarderDashboardGuide from '../components/FreightForwarderDashboardGuide';
-import FreightForwarderTracking from '../components/FreightForwarderTracking';
 import ShipmentConsolidationDashboard from '../components/ShipmentConsolidationDashboard';
 import { useMultiTenantPayments } from '../hooks/useMultiTenantPayments';
 import btsService, {
@@ -76,6 +75,14 @@ export default function FreightForwardingPage() {
     quantity: 1,
     weight: 1000,
   });
+
+  const [showCarrierComparison, setShowCarrierComparison] = useState(false);
+  const [selectedCarrier, setSelectedCarrier] = useState<string | null>(null);
+  const [carrierQuotes, setCarrierQuotes] = useState<any[]>([]);
+
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
 
   const [customerForm, setCustomerForm] = useState({
     companyName: '',
@@ -282,7 +289,6 @@ export default function FreightForwardingPage() {
     ];
     setQuotes(mockQuotes);
 
-
     // Load maritime data
     loadMaritimeData();
 
@@ -452,6 +458,190 @@ export default function FreightForwardingPage() {
     );
   };
 
+  const generateMultiCarrierQuotes = () => {
+    if (quoteForm.mode === 'ocean') {
+      const containerRates: any = { '20ft': 2200, '40ft': 2800, '40HQ': 3200 };
+      const baseRate =
+        containerRates[quoteForm.containerType] * quoteForm.quantity;
+
+      const carriers = [
+        {
+          name: 'Maersk',
+          logo: '🚢',
+          transitTime: '18-22 days',
+          baseRate: baseRate,
+          fuelSurcharge: baseRate * 0.22,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 150,
+          insurance: baseRate * 0.015,
+          portHandling: 280 * quoteForm.quantity,
+          color: '#3b82f6',
+        },
+        {
+          name: 'MSC',
+          logo: '⚓',
+          transitTime: '20-24 days',
+          baseRate: baseRate * 0.92,
+          fuelSurcharge: baseRate * 0.92 * 0.25,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 125,
+          insurance: baseRate * 0.92 * 0.015,
+          portHandling: 260 * quoteForm.quantity,
+          color: '#10b981',
+        },
+        {
+          name: 'CMA CGM',
+          logo: '🛳️',
+          transitTime: '19-23 days',
+          baseRate: baseRate * 0.97,
+          fuelSurcharge: baseRate * 0.97 * 0.24,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 140,
+          insurance: baseRate * 0.97 * 0.015,
+          portHandling: 275 * quoteForm.quantity,
+          color: '#f59e0b',
+        },
+        {
+          name: 'COSCO',
+          logo: '🚢',
+          transitTime: '21-25 days',
+          baseRate: baseRate * 0.88,
+          fuelSurcharge: baseRate * 0.88 * 0.23,
+          customsDuties:
+            quoteForm.service === 'DDP' ? 850 * quoteForm.quantity : 0,
+          documentation: 110,
+          insurance: baseRate * 0.88 * 0.015,
+          portHandling: 245 * quoteForm.quantity,
+          color: '#8b5cf6',
+        },
+      ];
+
+      const quotes = carriers.map((carrier) => ({
+        ...carrier,
+        total:
+          carrier.baseRate +
+          carrier.fuelSurcharge +
+          carrier.customsDuties +
+          carrier.documentation +
+          carrier.insurance +
+          carrier.portHandling,
+      }));
+
+      setCarrierQuotes(quotes);
+      setShowCarrierComparison(true);
+    } else {
+      // Air freight carriers
+      const ratePerKg = 4.5;
+      const baseRate = quoteForm.weight * ratePerKg;
+
+      const carriers = [
+        {
+          name: 'DHL Express',
+          logo: '✈️',
+          transitTime: '3-5 days',
+          baseRate: baseRate * 1.15,
+          fuelSurcharge: baseRate * 1.15 * 0.28,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 95,
+          insurance: baseRate * 1.15 * 0.02,
+          handling: 120,
+          color: '#ef4444',
+        },
+        {
+          name: 'FedEx',
+          logo: '📦',
+          transitTime: '4-6 days',
+          baseRate: baseRate * 1.1,
+          fuelSurcharge: baseRate * 1.1 * 0.26,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 85,
+          insurance: baseRate * 1.1 * 0.02,
+          handling: 110,
+          color: '#8b5cf6',
+        },
+        {
+          name: 'UPS',
+          logo: '📦',
+          transitTime: '4-6 days',
+          baseRate: baseRate * 1.08,
+          fuelSurcharge: baseRate * 1.08 * 0.25,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 90,
+          insurance: baseRate * 1.08 * 0.02,
+          handling: 115,
+          color: '#f59e0b',
+        },
+        {
+          name: 'China Airlines',
+          logo: '✈️',
+          transitTime: '5-7 days',
+          baseRate: baseRate * 0.92,
+          fuelSurcharge: baseRate * 0.92 * 0.24,
+          customsDuties: quoteForm.service === 'DDP' ? 450 : 0,
+          documentation: 75,
+          insurance: baseRate * 0.92 * 0.02,
+          handling: 95,
+          color: '#06b6d4',
+        },
+      ];
+
+      const quotes = carriers.map((carrier) => ({
+        ...carrier,
+        total:
+          carrier.baseRate +
+          carrier.fuelSurcharge +
+          carrier.customsDuties +
+          carrier.documentation +
+          carrier.insurance +
+          carrier.handling,
+      }));
+
+      setCarrierQuotes(quotes);
+      setShowCarrierComparison(true);
+    }
+  };
+
+  const selectCarrierAndGenerateQuote = (carrier: any) => {
+    const newQuote = {
+      id: `Q-${Date.now()}`,
+      quoteNumber: `FF-Q-${Date.now().toString().slice(-6)}`,
+      customer: quoteForm.customer,
+      customerEmail: quoteForm.customerEmail,
+      origin: quoteForm.originPort,
+      destination: quoteForm.destinationPort,
+      mode: quoteForm.mode,
+      service: quoteForm.service,
+      carrier: carrier.name,
+      transitTime: carrier.transitTime,
+      baseRate: carrier.baseRate,
+      fuelSurcharge: carrier.fuelSurcharge,
+      customsFees: carrier.customsDuties,
+      total: carrier.total,
+      validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      status: 'sent',
+      createdAt: new Date(),
+      fleetflowSource: false,
+      breakdown: {
+        base: carrier.baseRate,
+        fuel: carrier.fuelSurcharge,
+        customs: carrier.customsDuties,
+        docs: carrier.documentation,
+        insurance: carrier.insurance,
+        handling: carrier.portHandling || carrier.handling,
+      },
+    };
+
+    setQuotes([newQuote, ...quotes]);
+    setShowCarrierComparison(false);
+    setShowQuoteModal(false);
+    alert(
+      `✅ Quote Generated with ${carrier.name}!\n\nQuote #: ${newQuote.quoteNumber}\nCarrier: ${carrier.name}\nTransit: ${carrier.transitTime}\nTotal: $${carrier.total.toLocaleString()}\n\nQuote sent to ${quoteForm.customerEmail}`
+    );
+  };
+
   const handleAddCustomer = () => {
     if (!customerForm.companyName || !customerForm.email) {
       alert('Please enter company name and email');
@@ -523,6 +713,144 @@ export default function FreightForwardingPage() {
     );
     alert(
       `✅ Shipment Booked!\n\nReference: ${newShipment.referenceNumber}\nETD: ${newShipment.etd.toLocaleDateString()}\nETA: ${newShipment.eta.toLocaleDateString()}\n\nYou can now track this container in real-time!`
+    );
+  };
+
+  const generateInvoiceFromQuote = (quote: any) => {
+    setProcessingInvoice(true);
+
+    setTimeout(() => {
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 30); // Net 30 payment terms
+
+      const newInvoice = {
+        id: `INV-${Date.now()}`,
+        invoiceNumber: `FF-INV-${String(invoices.length + 1).padStart(4, '0')}`,
+        quoteId: quote.id,
+        quoteNumber: quote.quoteNumber,
+        customer: quote.customer,
+        customerEmail: quote.customerEmail,
+        origin: quote.origin,
+        destination: quote.destination,
+        mode: quote.mode,
+        service: quote.service,
+        carrier: quote.carrier || 'N/A',
+        transitTime: quote.transitTime || 'N/A',
+
+        // Line items
+        lineItems: [
+          {
+            description: `${quote.mode === 'ocean' ? 'Ocean' : 'Air'} Freight - ${quote.origin} to ${quote.destination}`,
+            quantity: quote.quantity || 1,
+            rate: quote.baseRate,
+            amount: quote.baseRate,
+          },
+          {
+            description: 'Fuel Surcharge',
+            quantity: 1,
+            rate: quote.fuelSurcharge,
+            amount: quote.fuelSurcharge,
+          },
+        ],
+
+        // Amounts
+        subtotal: quote.baseRate + quote.fuelSurcharge,
+        customsFees: quote.customsFees || 0,
+        total: quote.total,
+
+        // Breakdown (if available from carrier comparison)
+        breakdown: quote.breakdown || null,
+
+        // Payment details
+        status: 'sent',
+        paymentStatus: 'pending',
+        paymentMethod: null,
+        paidAmount: 0,
+        issueDate: new Date(),
+        dueDate: dueDate,
+        paidDate: null,
+
+        // Tracking
+        fleetflowSource: quote.fleetflowSource,
+        createdAt: new Date(),
+        lastUpdated: new Date(),
+      };
+
+      // Add customs/duties line item if applicable
+      if (quote.customsFees > 0) {
+        newInvoice.lineItems.push({
+          description: `Customs Clearance & Duties (${quote.service})`,
+          quantity: 1,
+          rate: quote.customsFees,
+          amount: quote.customsFees,
+        });
+      }
+
+      // Add breakdown line items if available
+      if (quote.breakdown) {
+        if (quote.breakdown.docs > 0) {
+          newInvoice.lineItems.push({
+            description: 'Documentation Fees',
+            quantity: 1,
+            rate: quote.breakdown.docs,
+            amount: quote.breakdown.docs,
+          });
+        }
+        if (quote.breakdown.insurance > 0) {
+          newInvoice.lineItems.push({
+            description: 'Cargo Insurance',
+            quantity: 1,
+            rate: quote.breakdown.insurance,
+            amount: quote.breakdown.insurance,
+          });
+        }
+        if (quote.breakdown.handling > 0) {
+          newInvoice.lineItems.push({
+            description:
+              quote.mode === 'ocean' ? 'Port Handling' : 'Handling Fees',
+            quantity: 1,
+            rate: quote.breakdown.handling,
+            amount: quote.breakdown.handling,
+          });
+        }
+      }
+
+      setInvoices([newInvoice, ...invoices]);
+      setQuotes(
+        quotes.map((q: any) =>
+          q.id === quote.id ? { ...q, status: 'invoiced' } : q
+        )
+      );
+      setProcessingInvoice(false);
+      setSelectedInvoice(newInvoice);
+      setShowInvoiceModal(true);
+    }, 800);
+  };
+
+  const updateInvoicePayment = (invoiceId: string, paymentData: any) => {
+    setInvoices(
+      invoices.map((inv) =>
+        inv.id === invoiceId
+          ? {
+              ...inv,
+              paymentStatus: paymentData.status,
+              paidAmount: paymentData.amount,
+              paidDate: paymentData.status === 'paid' ? new Date() : null,
+              paymentMethod: paymentData.method,
+              lastUpdated: new Date(),
+            }
+          : inv
+      )
+    );
+    setShowInvoiceModal(false);
+    alert(
+      `✅ Invoice ${paymentData.status === 'paid' ? 'Paid' : 'Updated'}!\n\nInvoice #: ${
+        invoices.find((i) => i.id === invoiceId)?.invoiceNumber
+      }\nAmount: $${paymentData.amount.toLocaleString()}\n${
+        paymentData.status === 'paid'
+          ? 'Payment recorded successfully!'
+          : 'Status updated.'
+      }`
     );
   };
 
@@ -689,51 +1017,24 @@ export default function FreightForwardingPage() {
             { id: 'dashboard', label: '🏠 Dashboard', color: '#06b6d4' },
             {
               id: 'shipments',
-              label: '📦 Shipments & Quoting',
+              label: '📦 Shipments & Tracking',
               color: '#10b981',
             },
             {
-              id: 'consolidation',
-              label: '📦 Consolidation',
-              color: '#8b5cf6',
-            },
-            {
-              id: 'tracking',
-              label: '🚢 Tracking',
-              color: '#14b8a6',
-            },
-            {
               id: 'compliance',
-              label: '🛃 Compliance & Documents',
+              label: '🛃 Compliance & Docs',
               color: '#ef4444',
             },
-            {
-              id: 'documents',
-              label: '📄 Documents',
-              color: '#f59e0b',
-            },
             { id: 'clients', label: '👥 Clients & CRM', color: '#8b5cf6' },
-            { id: 'intelligence', label: '📊 Intelligence', color: '#3b82f6' },
-            { id: 'operations', label: '✅ Operations', color: '#f59e0b' },
             {
-              id: 'financials',
-              label: '💰 Financials',
-              color: '#ec4899',
+              id: 'intelligence',
+              label: '📊 Intelligence & Analytics',
+              color: '#3b82f6',
             },
             {
-              id: 'contracts',
-              label: '📋 Contracts',
-              color: '#7c3aed',
-            },
-            {
-              id: 'wms',
-              label: '🏭 WMS',
-              color: '#0891b2',
-            },
-            {
-              id: 'crossborder',
-              label: '🇨🇦🇲🇽 Cross-Border',
-              color: '#dc2626',
+              id: 'operations',
+              label: '✅ Operations & WMS',
+              color: '#f59e0b',
             },
           ].map((tab) => (
             <button
@@ -789,11 +1090,15 @@ export default function FreightForwardingPage() {
             recentShipments={shipments}
           />
         )}
-        {selectedTab === 'shipments' && <ShipmentsTab router={router} />}
-        {selectedTab === 'consolidation' && <ShipmentConsolidationDashboard tenantId={tenantId} />}
-        {selectedTab === 'tracking' && <TrackingTab />}
-        {selectedTab === 'compliance' && <ComplianceAndDocumentsTab />}
-        {selectedTab === 'documents' && <DocumentsTab />}
+        {/* Shipments & Tracking Tab - Consolidated */}
+        {selectedTab === 'shipments' && (
+          <ShipmentsTrackingTab router={router} tenantId={tenantId} />
+        )}
+
+        {/* Compliance & Docs Tab - Consolidated */}
+        {selectedTab === 'compliance' && <ComplianceDocsTab />}
+
+        {/* Clients & CRM Tab */}
         {selectedTab === 'clients' && (
           <ClientsTab
             clients={clients}
@@ -802,208 +1107,401 @@ export default function FreightForwardingPage() {
             setShowAddAgentModal={setShowAddAgentModal}
           />
         )}
-        {selectedTab === 'crossborder' && (
-          <div style={{ display: 'grid', gap: '32px' }}>
-            <div>
-              <h2
-                style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  margin: '0 0 8px 0',
-                  background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                🇨🇦🇲🇽 Cross-Border Intelligence
-              </h2>
-              <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
-                Canada ACI/PARS and Mexico ACE/SAAI manifest tracking
-              </p>
-            </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '20px',
-              }}
-            >
+        {/* Intelligence & Analytics Tab - Consolidated */}
+        {selectedTab === 'intelligence' && (
+          <IntelligenceAnalyticsTab
+            stats={stats}
+            invoices={invoices}
+            onViewInvoice={(invoice) => {
+              setSelectedInvoice(invoice);
+              setShowInvoiceModal(true);
+            }}
+          />
+        )}
+
+        {/* Operations & WMS Tab - Consolidated */}
+        {selectedTab === 'operations' && <OperationsWMSTab />}
+      </div>
+
+      {/* Invoice Modal */}
+      {showInvoiceModal && selectedInvoice && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '20px',
+          }}
+          onClick={() => setShowInvoiceModal(false)}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+              borderRadius: '20px',
+              border: '2px solid rgba(59, 130, 246, 0.3)',
+              padding: '40px',
+              width: '100%',
+              maxWidth: '800px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Invoice Header */}
+            <div style={{ marginBottom: '32px' }}>
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(220, 38, 38, 0.3)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  marginBottom: '24px',
                 }}
               >
-                <h3
+                <div>
+                  <h2
+                    style={{
+                      fontSize: '32px',
+                      fontWeight: '800',
+                      margin: '0 0 8px 0',
+                      background: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
+                      backgroundClip: 'text',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                    }}
+                  >
+                    💳 INVOICE
+                  </h2>
+                  <div
+                    style={{
+                      fontSize: '24px',
+                      fontWeight: '700',
+                      color: '#3b82f6',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    {selectedInvoice.invoiceNumber}
+                  </div>
+                  <div
+                    style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}
+                  >
+                    Quote: {selectedInvoice.quoteNumber}
+                  </div>
+                </div>
+                <div
                   style={{
-                    fontSize: '18px',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
                     fontWeight: '700',
-                    marginBottom: '16px',
-                    color: '#dc2626',
+                    background:
+                      selectedInvoice.paymentStatus === 'paid'
+                        ? 'rgba(16, 185, 129, 0.2)'
+                        : selectedInvoice.paymentStatus === 'overdue'
+                          ? 'rgba(239, 68, 68, 0.2)'
+                          : 'rgba(245, 158, 11, 0.2)',
+                    color:
+                      selectedInvoice.paymentStatus === 'paid'
+                        ? '#10b981'
+                        : selectedInvoice.paymentStatus === 'overdue'
+                          ? '#ef4444'
+                          : '#f59e0b',
+                    border: `2px solid ${selectedInvoice.paymentStatus === 'paid' ? '#10b981' : selectedInvoice.paymentStatus === 'overdue' ? '#ef4444' : '#f59e0b'}`,
                   }}
                 >
-                  🇨🇦 Canada Cross-Border
-                </h3>
-                <CanadaCrossBorderView shipments={canadaShipments} />
+                  {selectedInvoice.paymentStatus.toUpperCase()}
+                </div>
               </div>
 
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(220, 38, 38, 0.3)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '18px',
-                    fontWeight: '700',
-                    marginBottom: '16px',
-                    color: '#dc2626',
-                  }}
-                >
-                  🇲🇽 Mexico Cross-Border
-                </h3>
-                <MexicoCrossBorderView shipments={mexicoShipments} />
-              </div>
-            </div>
-
-            {/* Currency Information Section */}
-            <div
-              style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '12px',
-                padding: '24px',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  marginBottom: '16px',
-                  color: '#8b5cf6',
-                }}
-              >
-                💱 Currency Information
-              </h3>
+              {/* Customer & Dates */}
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '24px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  padding: '20px',
+                  borderRadius: '12px',
                 }}
               >
-                <div
-                  style={{
-                    padding: '16px',
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: '8px',
-                  }}
-                >
+                <div>
                   <div
                     style={{
-                      fontSize: '14px',
-                      color: 'rgba(255,255,255,0.7)',
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.5)',
                       marginBottom: '4px',
                     }}
                   >
-                    USD/CAD
+                    BILL TO
                   </div>
                   <div
                     style={{
-                      fontSize: '20px',
+                      fontSize: '16px',
                       fontWeight: '700',
-                      color: '#10b981',
+                      marginBottom: '4px',
                     }}
                   >
-                    1.35
+                    {selectedInvoice.customer}
                   </div>
                   <div
-                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
+                    style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}
                   >
-                    Canadian Dollar
+                    {selectedInvoice.customerEmail}
                   </div>
                 </div>
-                <div
-                  style={{
-                    padding: '16px',
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: '8px',
-                  }}
-                >
+                <div>
                   <div
                     style={{
-                      fontSize: '14px',
-                      color: 'rgba(255,255,255,0.7)',
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.5)',
                       marginBottom: '4px',
                     }}
                   >
-                    USD/MXN
+                    DATES
                   </div>
-                  <div
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: '700',
-                      color: '#10b981',
-                    }}
-                  >
-                    18.50
+                  <div style={{ fontSize: '14px', marginBottom: '4px' }}>
+                    Issued: {selectedInvoice.issueDate.toLocaleDateString()}
                   </div>
-                  <div
-                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
-                  >
-                    Mexican Peso
-                  </div>
-                </div>
-                <div
-                  style={{
-                    padding: '16px',
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: '8px',
-                  }}
-                >
                   <div
                     style={{
                       fontSize: '14px',
-                      color: 'rgba(255,255,255,0.7)',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    EUR/USD
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '20px',
                       fontWeight: '700',
-                      color: '#10b981',
+                      color:
+                        selectedInvoice.paymentStatus === 'overdue'
+                          ? '#ef4444'
+                          : '#f59e0b',
                     }}
                   >
-                    1.08
-                  </div>
-                  <div
-                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
-                  >
-                    Euro to USD
+                    Due: {selectedInvoice.dueDate.toLocaleDateString()}
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Shipment Details */}
+            <div
+              style={{
+                background: 'rgba(59, 130, 246, 0.1)',
+                padding: '16px',
+                borderRadius: '12px',
+                marginBottom: '24px',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: 'rgba(255,255,255,0.5)',
+                  marginBottom: '8px',
+                }}
+              >
+                SHIPMENT
+              </div>
+              <div
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  marginBottom: '4px',
+                }}
+              >
+                {selectedInvoice.origin} → {selectedInvoice.destination}
+              </div>
+              <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)' }}>
+                {selectedInvoice.mode === 'ocean'
+                  ? '🚢 Ocean Freight'
+                  : '✈️ Air Freight'}{' '}
+                • {selectedInvoice.service} • {selectedInvoice.carrier}
+              </div>
+            </div>
+
+            {/* Line Items */}
+            <div style={{ marginBottom: '24px' }}>
+              <div
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  paddingBottom: '8px',
+                  borderBottom: '2px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                LINE ITEMS
+              </div>
+              {selectedInvoice.lineItems.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '12px 0',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        marginBottom: '2px',
+                      }}
+                    >
+                      {item.description}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255,255,255,0.5)',
+                      }}
+                    >
+                      Qty: {item.quantity} × ${item.rate.toLocaleString()}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: '16px', fontWeight: '700' }}>
+                    ${item.amount.toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Totals */}
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                padding: '20px',
+                borderRadius: '12px',
+                marginBottom: '24px',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  marginBottom: '8px',
+                }}
+              >
+                <span style={{ color: 'rgba(255,255,255,0.7)' }}>Subtotal</span>
+                <span style={{ fontWeight: '600' }}>
+                  ${selectedInvoice.subtotal.toLocaleString()}
+                </span>
+              </div>
+              {selectedInvoice.customsFees > 0 && (
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: '8px',
+                  }}
+                >
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Customs & Fees
+                  </span>
+                  <span style={{ fontWeight: '600' }}>
+                    ${selectedInvoice.customsFees.toLocaleString()}
+                  </span>
+                </div>
+              )}
+              <div
+                style={{
+                  borderTop: '2px solid rgba(59, 130, 246, 0.3)',
+                  paddingTop: '12px',
+                  marginTop: '12px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span style={{ fontSize: '20px', fontWeight: '700' }}>
+                  TOTAL DUE
+                </span>
+                <span
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '800',
+                    color: '#3b82f6',
+                  }}
+                >
+                  ${selectedInvoice.total.toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                onClick={() => {
+                  updateInvoicePayment(selectedInvoice.id, 'paid');
+                  setShowInvoiceModal(false);
+                }}
+                disabled={selectedInvoice.paymentStatus === 'paid'}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background:
+                    selectedInvoice.paymentStatus === 'paid'
+                      ? 'rgba(255, 255, 255, 0.1)'
+                      : 'linear-gradient(135deg, #10b981, #059669)',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor:
+                    selectedInvoice.paymentStatus === 'paid'
+                      ? 'not-allowed'
+                      : 'pointer',
+                  opacity: selectedInvoice.paymentStatus === 'paid' ? 0.5 : 1,
+                }}
+              >
+                {selectedInvoice.paymentStatus === 'paid'
+                  ? '✅ Paid'
+                  : '💳 Mark as Paid'}
+              </button>
+              <button
+                onClick={() => {
+                  alert(
+                    `📧 Payment reminder sent to ${selectedInvoice.customerEmail}`
+                  );
+                }}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  borderRadius: '12px',
+                  border: '2px solid rgba(245, 158, 11, 0.5)',
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  color: '#f59e0b',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                }}
+              >
+                📧 Send Reminder
+              </button>
+              <button
+                onClick={() => setShowInvoiceModal(false)}
+                style={{
+                  padding: '14px 24px',
+                  borderRadius: '12px',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                }}
+              >
+                Close
+              </button>
+            </div>
           </div>
-        )}
-        {selectedTab === 'consolidation' && <ShipmentConsolidationDashboard />}
-        {selectedTab === 'compliance' && <ComplianceTab />}
-        {selectedTab === 'contracts' && <RateContractsTab />}
-        {selectedTab === 'wms' && <WarehouseManagementTab />}
-        {selectedTab === 'documents' && <DocumentsTab />}
-        {selectedTab === 'financials' && <FinancialsTab stats={stats} />}
-        {selectedTab === 'intelligence' && <IntelligenceTab stats={stats} />}
-        {selectedTab === 'operations' && <TaskManagementTab />}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1370,9 +1868,10 @@ function OverviewTab({
         </div>
       </div>
 
-
       {/* Charts & Visualizations */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      <div
+        style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}
+      >
         {/* Revenue Trend Chart */}
         <div
           style={{
@@ -1392,7 +1891,14 @@ function OverviewTab({
           >
             📈 Revenue Trend (Last 6 Months)
           </h4>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '200px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '12px',
+              height: '200px',
+            }}
+          >
             {[45, 52, 48, 65, 70, 82].map((value, index) => (
               <div
                 key={index}
@@ -1442,7 +1948,14 @@ function OverviewTab({
               </div>
             ))}
           </div>
-          <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)' }}>
+          <div
+            style={{
+              marginTop: '16px',
+              textAlign: 'center',
+              fontSize: '13px',
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
             📊 +27% growth vs last quarter
           </div>
         </div>
@@ -1466,7 +1979,14 @@ function OverviewTab({
           >
             📦 Shipment Volume (Last 6 Months)
           </h4>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '200px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '12px',
+              height: '200px',
+            }}
+          >
             {[32, 38, 41, 45, 52, 58].map((value, index) => (
               <div
                 key={index}
@@ -1515,7 +2035,14 @@ function OverviewTab({
               </div>
             ))}
           </div>
-          <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)' }}>
+          <div
+            style={{
+              marginTop: '16px',
+              textAlign: 'center',
+              fontSize: '13px',
+              color: 'rgba(255, 255, 255, 0.6)',
+            }}
+          >
             📊 +81% increase year-over-year
           </div>
         </div>
@@ -2472,25 +2999,50 @@ function ClientsTab({
         </div>
 
         {/* Contact Type Filter */}
-        <div style={{ 
-          background: 'rgba(59, 130, 246, 0.1)',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
-          borderRadius: '12px',
-          padding: '20px',
-        }}>
-          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#3b82f6', marginBottom: '16px' }}>
+        <div
+          style={{
+            background: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '16px',
+              fontWeight: '700',
+              color: '#3b82f6',
+              marginBottom: '16px',
+            }}
+          >
             📋 Contact Types (12 Categories)
           </h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '12px',
+            }}
+          >
             {[
               { type: 'SHIPPER', icon: '📦', count: 8, color: '#3b82f6' },
               { type: 'CONSIGNEE', icon: '🏭', count: 12, color: '#10b981' },
               { type: 'CARRIER', icon: '🚢', count: 5, color: '#f59e0b' },
-              { type: 'CUSTOMS_BROKER', icon: '🛃', count: 3, color: '#8b5cf6' },
+              {
+                type: 'CUSTOMS_BROKER',
+                icon: '🛃',
+                count: 3,
+                color: '#8b5cf6',
+              },
               { type: 'TRUCKER', icon: '🚛', count: 7, color: '#ef4444' },
               { type: 'WAREHOUSE', icon: '🏭', count: 4, color: '#14b8a6' },
               { type: 'PORT_AGENT', icon: '⚓', count: 6, color: '#06b6d4' },
-              { type: 'FREIGHT_FORWARDER', icon: '✈️', count: 9, color: '#ec4899' },
+              {
+                type: 'FREIGHT_FORWARDER',
+                icon: '✈️',
+                count: 9,
+                color: '#ec4899',
+              },
               { type: 'BANK', icon: '🏦', count: 2, color: '#a855f7' },
               { type: 'INSURANCE', icon: '🛡️', count: 3, color: '#0891b2' },
               { type: 'NOTIFY_PARTY', icon: '📧', count: 11, color: '#f59e0b' },
@@ -2516,36 +3068,82 @@ function ClientsTab({
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <div style={{ fontSize: '24px', marginBottom: '4px' }}>{contactType.icon}</div>
-                <div style={{ fontSize: '11px', fontWeight: '600', color: contactType.color, textTransform: 'capitalize' }}>
+                <div style={{ fontSize: '24px', marginBottom: '4px' }}>
+                  {contactType.icon}
+                </div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    color: contactType.color,
+                    textTransform: 'capitalize',
+                  }}
+                >
                   {contactType.type.replace('_', ' ')}
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: '700', color: contactType.color, marginTop: '4px' }}>
+                <div
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: contactType.color,
+                    marginTop: '4px',
+                  }}
+                >
                   {contactType.count}
                 </div>
               </div>
             ))}
           </div>
-          <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
-              💡 <strong>12 Contact Types:</strong> Manage all stakeholders in your freight forwarding operations - from shippers and consignees to carriers, customs brokers, truckers, warehouses, port agents, banks, insurance providers, and vendors.
+          <div
+            style={{
+              marginTop: '16px',
+              padding: '12px',
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '8px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.7)',
+                margin: 0,
+              }}
+            >
+              💡 <strong>12 Contact Types:</strong> Manage all stakeholders in
+              your freight forwarding operations - from shippers and consignees
+              to carriers, customs brokers, truckers, warehouses, port agents,
+              banks, insurance providers, and vendors.
             </p>
           </div>
         </div>
 
-
-
         {/* Quick Add Contacts */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          borderRadius: '12px',
-          padding: '20px',
-        }}>
-          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#10b981', marginBottom: '16px' }}>
+        <div
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '12px',
+            padding: '20px',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '16px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '16px',
+            }}
+          >
             ⚡ Quick Add New Contact
           </h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: '10px',
+            }}
+          >
             {[
               { type: 'Shipper', icon: '📦', color: '#3b82f6' },
               { type: 'Consignee', icon: '🏭', color: '#10b981' },
@@ -2556,7 +3154,9 @@ function ClientsTab({
             ].map((type) => (
               <button
                 key={type.type}
-                onClick={() => alert(`Add new ${type.type} - Feature coming soon!`)}
+                onClick={() =>
+                  alert(`Add new ${type.type} - Feature coming soon!`)
+                }
                 style={{
                   padding: '12px',
                   background: `${type.color}15`,
@@ -2579,7 +3179,6 @@ function ClientsTab({
             ))}
           </div>
         </div>
-
 
         <div
           style={{
@@ -3818,7 +4417,9 @@ function DocumentsTab() {
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>{doc.icon}</div>
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>
+              {doc.icon}
+            </div>
             <h3
               style={{
                 fontSize: '18px',
@@ -3884,7 +4485,9 @@ function DocumentsTab() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#3b82f6' }}>
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#3b82f6' }}
+          >
             24
           </div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
@@ -3900,7 +4503,9 @@ function DocumentsTab() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#10b981' }}>
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#10b981' }}
+          >
             18
           </div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
@@ -3916,7 +4521,9 @@ function DocumentsTab() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#f59e0b' }}>
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#f59e0b' }}
+          >
             42
           </div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
@@ -3932,7 +4539,9 @@ function DocumentsTab() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#8b5cf6' }}>
+          <div
+            style={{ fontSize: '32px', fontWeight: '700', color: '#8b5cf6' }}
+          >
             156
           </div>
           <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
@@ -3950,10 +4559,23 @@ function DocumentsTab() {
           padding: '20px',
         }}
       >
-        <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#06b6d4', marginBottom: '12px' }}>
+        <h4
+          style={{
+            fontSize: '16px',
+            fontWeight: '700',
+            color: '#06b6d4',
+            marginBottom: '12px',
+          }}
+        >
           💡 Quick Actions
         </h4>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: '12px',
+          }}
+        >
           <button
             style={{
               padding: '12px',
@@ -4002,7 +4624,31 @@ function DocumentsTab() {
   );
 }
 
-function FinancialsTab({ stats }: { stats: any }) {
+function FinancialsTab({
+  stats,
+  invoices,
+  onViewInvoice,
+}: {
+  stats: any;
+  invoices: any[];
+  onViewInvoice: (invoice: any) => void;
+}) {
+  const [financeView, setFinanceView] = useState<
+    'overview' | 'invoices' | 'pl'
+  >('overview');
+
+  // Calculate financial metrics
+  const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.total, 0);
+  const totalPaid = invoices
+    .filter((inv) => inv.paymentStatus === 'paid')
+    .reduce((sum, inv) => sum + inv.paidAmount, 0);
+  const totalPending = invoices
+    .filter((inv) => inv.paymentStatus === 'pending')
+    .reduce((sum, inv) => sum + inv.total, 0);
+  const totalOverdue = invoices
+    .filter((inv) => inv.paymentStatus === 'overdue')
+    .reduce((sum, inv) => sum + inv.total, 0);
+
   return (
     <div style={{ display: 'grid', gap: '32px' }}>
       <div>
@@ -4016,614 +4662,569 @@ function FinancialsTab({ stats }: { stats: any }) {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          📈 Financial Reporting
+          📈 Financial Management
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
-          Revenue tracking, profitability analysis, and financial insights
+          Revenue tracking, invoice management, and profitability analysis
         </p>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
-        }}
-      >
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '12px',
-            padding: '24px',
-            border: '1px solid rgba(16, 185, 129, 0.3)',
-          }}
-        >
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>💰</div>
-          <div
+      {/* View Toggle */}
+      <div style={{ display: 'flex', gap: '12px' }}>
+        {[
+          { id: 'overview', label: '📊 Overview', color: '#f59e0b' },
+          { id: 'invoices', label: '💳 Invoices', color: '#3b82f6' },
+          { id: 'pl', label: '📈 P&L Statement', color: '#10b981' },
+        ].map((view) => (
+          <button
+            key={view.id}
+            onClick={() => setFinanceView(view.id as any)}
             style={{
-              fontSize: '32px',
-              fontWeight: '700',
-              color: '#10b981',
-              marginBottom: '8px',
+              flex: 1,
+              padding: '12px',
+              borderRadius: '10px',
+              border:
+                financeView === view.id
+                  ? `2px solid ${view.color}`
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+              background:
+                financeView === view.id
+                  ? `${view.color}20`
+                  : 'rgba(255, 255, 255, 0.05)',
+              color:
+                financeView === view.id
+                  ? view.color
+                  : 'rgba(255, 255, 255, 0.7)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
             }}
           >
-            ${stats.monthlyRevenue.toLocaleString()}
-          </div>
-          <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
-            Total Revenue This Month
-          </div>
-        </div>
+            {view.label}
+          </button>
+        ))}
+      </div>
 
-        <div
-          style={{
-            background: 'rgba(255, 255, 255, 0.05)',
-            borderRadius: '12px',
-            padding: '24px',
-            border: '1px solid rgba(168, 85, 247, 0.3)',
-          }}
-        >
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🎯</div>
+      {/* Overview View */}
+      {financeView === 'overview' && (
+        <>
           <div
             style={{
-              fontSize: '32px',
-              fontWeight: '700',
-              color: '#a78bfa',
-              marginBottom: '8px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '20px',
             }}
-          >
-            ${stats.fleetflowCommissionOwed.toLocaleString()}
-          </div>
-          <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
-            FleetFlow Commission Owed
-          </div>
-        </div>
-
-        {/* Quote Modal */}
-        {showQuoteModal && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
-            }}
-            onClick={() => setShowQuoteModal(false)}
           >
             <div
               style={{
-                background: 'rgba(15, 23, 42, 0.9)',
-                backdropFilter: 'blur(20px)',
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '30px',
-                width: '90%',
-                maxWidth: '600px',
-                maxHeight: '90vh',
-                overflowY: 'auto',
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <h2
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>💰</div>
+              <div
                 style={{
-                  fontSize: '24px',
+                  fontSize: '32px',
                   fontWeight: '700',
-                  marginBottom: '20px',
+                  color: '#10b981',
+                  marginBottom: '8px',
                 }}
               >
-                🚢 Generate Freight Quote
-              </h2>
-              <div style={{ display: 'grid', gap: '15px' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Customer Name
-                  </label>
-                  <input
-                    type='text'
-                    value={quoteForm.customer}
-                    onChange={(e) =>
-                      setQuoteForm({ ...quoteForm, customer: e.target.value })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='Enter customer name'
-                  />
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Customer Email
-                  </label>
-                  <input
-                    type='email'
-                    value={quoteForm.customerEmail}
-                    onChange={(e) =>
-                      setQuoteForm({
-                        ...quoteForm,
-                        customerEmail: e.target.value,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='customer@example.com'
-                  />
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Mode
-                  </label>
-                  <select
-                    value={quoteForm.mode}
-                    onChange={(e) =>
-                      setQuoteForm({
-                        ...quoteForm,
-                        mode: e.target.value as any,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                  >
-                    <option value='ocean'>🚢 Ocean Freight</option>
-                    <option value='air'>✈️ Air Freight</option>
-                  </select>
-                </div>
-
-                {quoteForm.mode === 'ocean' && (
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '15px',
-                    }}
-                  >
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          marginBottom: '6px',
-                          fontSize: '13px',
-                          color: 'rgba(255,255,255,0.7)',
-                        }}
-                      >
-                        Container Type
-                      </label>
-                      <select
-                        value={quoteForm.containerType}
-                        onChange={(e) =>
-                          setQuoteForm({
-                            ...quoteForm,
-                            containerType: e.target.value as any,
-                          })
-                        }
-                        style={{
-                          width: '100%',
-                          background: 'rgba(255, 255, 255, 0.08)',
-                          border: '1px solid rgba(255, 255, 255, 0.15)',
-                          borderRadius: '8px',
-                          padding: '10px 15px',
-                          color: 'white',
-                          fontSize: '14px',
-                        }}
-                      >
-                        <option value='20ft'>20ft Container</option>
-                        <option value='40ft'>40ft Container</option>
-                        <option value='40HQ'>40ft High Cube</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label
-                        style={{
-                          display: 'block',
-                          marginBottom: '6px',
-                          fontSize: '13px',
-                          color: 'rgba(255,255,255,0.7)',
-                        }}
-                      >
-                        Quantity
-                      </label>
-                      <input
-                        type='number'
-                        value={quoteForm.quantity}
-                        onChange={(e) =>
-                          setQuoteForm({
-                            ...quoteForm,
-                            quantity: parseInt(e.target.value) || 1,
-                          })
-                        }
-                        style={{
-                          width: '100%',
-                          background: 'rgba(255, 255, 255, 0.08)',
-                          border: '1px solid rgba(255, 255, 255, 0.15)',
-                          borderRadius: '8px',
-                          padding: '10px 15px',
-                          color: 'white',
-                          fontSize: '14px',
-                        }}
-                        min='1'
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {quoteForm.mode === 'air' && (
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        marginBottom: '6px',
-                        fontSize: '13px',
-                        color: 'rgba(255,255,255,0.7)',
-                      }}
-                    >
-                      Weight (kg)
-                    </label>
-                    <input
-                      type='number'
-                      value={quoteForm.weight}
-                      onChange={(e) =>
-                        setQuoteForm({
-                          ...quoteForm,
-                          weight: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      style={{
-                        width: '100%',
-                        background: 'rgba(255, 255, 255, 0.08)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        borderRadius: '8px',
-                        padding: '10px 15px',
-                        color: 'white',
-                        fontSize: '14px',
-                      }}
-                      placeholder='1000'
-                    />
-                  </div>
-                )}
+                ${stats.monthlyRevenue.toLocaleString()}
               </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                Total Revenue This Month
+              </div>
+            </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-                <button
-                  onClick={
-                    quoteForm.mode === 'ocean'
-                      ? generateOceanQuote
-                      : generateAirQuote
-                  }
-                  style={{
-                    flex: 1,
-                    background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Generate Quote
-                </button>
-                <button
-                  onClick={() => setShowQuoteModal(false)}
-                  style={{
-                    flex: 1,
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    padding: '12px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Cancel
-                </button>
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>💳</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#3b82f6',
+                  marginBottom: '8px',
+                }}
+              >
+                ${totalInvoiced.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                Total Invoiced ({invoices.length} invoices)
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(168, 85, 247, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>🎯</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#a78bfa',
+                  marginBottom: '8px',
+                }}
+              >
+                ${stats.fleetflowCommissionOwed.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                FleetFlow Commission Owed
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>⏰</div>
+              <div
+                style={{
+                  fontSize: '32px',
+                  fontWeight: '700',
+                  color: '#f59e0b',
+                  marginBottom: '8px',
+                }}
+              >
+                ${totalPending.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.7)' }}>
+                Pending Payments
               </div>
             </div>
           </div>
-        )}
 
-        {/* Customer Modal */}
-        {showCustomerModal && (
+          {/* Payment Status Breakdown */}
           <div
             style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.7)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 1000,
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '16px',
+              padding: '24px',
             }}
-            onClick={() => setShowCustomerModal(false)}
           >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                marginBottom: '20px',
+              }}
+            >
+              💳 Payment Status Overview
+            </h3>
             <div
               style={{
-                background: 'rgba(15, 23, 42, 0.9)',
-                backdropFilter: 'blur(20px)',
-                borderRadius: '16px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '30px',
-                width: '90%',
-                maxWidth: '500px',
-                maxHeight: '90vh',
-                overflowY: 'auto',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '16px',
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <h2
+              <div
                 style={{
-                  fontSize: '24px',
-                  fontWeight: '700',
-                  marginBottom: '20px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  padding: '16px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
                 }}
               >
-                👥 Add New Customer
-              </h2>
-              <div style={{ display: 'grid', gap: '15px' }}>
-                <div>
-                  <label
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: '#10b981',
+                    marginBottom: '4px',
+                  }}
+                >
+                  ${totalPaid.toLocaleString()}
+                </div>
+                <div
+                  style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}
+                >
+                  Paid (
+                  {invoices.filter((i) => i.paymentStatus === 'paid').length}{' '}
+                  invoices)
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  padding: '16px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: '#f59e0b',
+                    marginBottom: '4px',
+                  }}
+                >
+                  ${totalPending.toLocaleString()}
+                </div>
+                <div
+                  style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}
+                >
+                  Pending (
+                  {invoices.filter((i) => i.paymentStatus === 'pending').length}{' '}
+                  invoices)
+                </div>
+              </div>
+              <div
+                style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  padding: '16px',
+                  borderRadius: '10px',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: '#ef4444',
+                    marginBottom: '4px',
+                  }}
+                >
+                  ${totalOverdue.toLocaleString()}
+                </div>
+                <div
+                  style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}
+                >
+                  Overdue (
+                  {invoices.filter((i) => i.paymentStatus === 'overdue').length}{' '}
+                  invoices)
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Invoices View */}
+      {financeView === 'invoices' && (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              marginBottom: '20px',
+            }}
+          >
+            💳 All Invoices
+          </h3>
+          {invoices.length === 0 ? (
+            <div
+              style={{
+                textAlign: 'center',
+                padding: '60px 20px',
+                color: 'rgba(255,255,255,0.5)',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '16px' }}>💳</div>
+              <p>
+                No invoices generated yet. Create quotes and convert them to
+                invoices.
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gap: '12px' }}>
+              {invoices.map((invoice) => (
+                <div
+                  key={invoice.id}
+                  onClick={() => onViewInvoice(invoice)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '10px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background =
+                      'rgba(255, 255, 255, 0.05)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                  }}
+                >
+                  <div
                     style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
                     }}
                   >
-                    Company Name
-                  </label>
-                  <input
-                    type='text'
-                    value={customerForm.companyName}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        companyName: e.target.value,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='ABC Logistics'
-                  />
+                    <div>
+                      <div
+                        style={{
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          marginBottom: '6px',
+                        }}
+                      >
+                        {invoice.invoiceNumber} - {invoice.customer}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'rgba(255,255,255,0.6)',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {invoice.origin} → {invoice.destination}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255,255,255,0.5)',
+                        }}
+                      >
+                        Issued: {invoice.issueDate.toLocaleDateString()} • Due:{' '}
+                        {invoice.dueDate.toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div
+                        style={{
+                          fontSize: '20px',
+                          fontWeight: '700',
+                          color: '#10b981',
+                          marginBottom: '6px',
+                        }}
+                      >
+                        ${invoice.total.toLocaleString()}
+                      </div>
+                      <div
+                        style={{
+                          display: 'inline-block',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          background:
+                            invoice.paymentStatus === 'paid'
+                              ? 'rgba(16, 185, 129, 0.2)'
+                              : invoice.paymentStatus === 'overdue'
+                                ? 'rgba(239, 68, 68, 0.2)'
+                                : 'rgba(245, 158, 11, 0.2)',
+                          color:
+                            invoice.paymentStatus === 'paid'
+                              ? '#10b981'
+                              : invoice.paymentStatus === 'overdue'
+                                ? '#ef4444'
+                                : '#f59e0b',
+                        }}
+                      >
+                        {invoice.paymentStatus.toUpperCase()}
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Contact Name
-                  </label>
-                  <input
-                    type='text'
-                    value={customerForm.contactName}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        contactName: e.target.value,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='John Doe'
-                  />
+      {/* P&L Statement View */}
+      {financeView === 'pl' && (
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.05)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <h3
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              marginBottom: '20px',
+            }}
+          >
+            📈 Profit & Loss Statement (Month-to-Date)
+          </h3>
+          <div style={{ display: 'grid', gap: '20px' }}>
+            {/* Revenue Section */}
+            <div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#10b981',
+                  marginBottom: '12px',
+                  borderBottom: '2px solid rgba(16, 185, 129, 0.3)',
+                  paddingBottom: '8px',
+                }}
+              >
+                REVENUE
+              </div>
+              <div style={{ display: 'grid', gap: '8px', marginLeft: '16px' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Freight Revenue
+                  </span>
+                  <span style={{ fontWeight: '600' }}>
+                    ${stats.monthlyRevenue.toLocaleString()}
+                  </span>
                 </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Email
-                  </label>
-                  <input
-                    type='email'
-                    value={customerForm.email}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        email: e.target.value,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='john.doe@example.com'
-                  />
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    FleetFlow Commission
+                  </span>
+                  <span style={{ fontWeight: '600', color: '#a78bfa' }}>
+                    ${stats.fleetflowCommissionOwed.toLocaleString()}
+                  </span>
                 </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      marginBottom: '6px',
-                      fontSize: '13px',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    Phone
-                  </label>
-                  <input
-                    type='tel'
-                    value={customerForm.phone}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        phone: e.target.value,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      borderRadius: '8px',
-                      padding: '10px 15px',
-                      color: 'white',
-                      fontSize: '14px',
-                    }}
-                    placeholder='+1 (555) 123-4567'
-                  />
-                </div>
-
                 <div
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    marginTop: '10px',
+                    justifyContent: 'space-between',
+                    paddingTop: '8px',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                   }}
                 >
-                  <input
-                    type='checkbox'
-                    id='fleetflowSource'
-                    checked={customerForm.fleetflowSource}
-                    onChange={(e) =>
-                      setCustomerForm({
-                        ...customerForm,
-                        fleetflowSource: e.target.checked,
-                      })
-                    }
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      accentColor: '#3b82f6',
-                    }}
-                  />
-                  <label
-                    htmlFor='fleetflowSource'
-                    style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}
-                  >
-                    Sourced by FleetFlow Lead Gen (+$500/container commission)
-                  </label>
+                  <span style={{ fontWeight: '700' }}>Total Revenue</span>
+                  <span style={{ fontWeight: '700', color: '#10b981' }}>
+                    $
+                    {(
+                      stats.monthlyRevenue + stats.fleetflowCommissionOwed
+                    ).toLocaleString()}
+                  </span>
                 </div>
               </div>
+            </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-                <button
-                  onClick={handleAddCustomer}
+            {/* Cost of Services Section */}
+            <div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#ef4444',
+                  marginBottom: '12px',
+                  borderBottom: '2px solid rgba(239, 68, 68, 0.3)',
+                  paddingBottom: '8px',
+                }}
+              >
+                COST OF SERVICES
+              </div>
+              <div style={{ display: 'grid', gap: '8px', marginLeft: '16px' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Carrier Costs
+                  </span>
+                  <span style={{ fontWeight: '600' }}>$0</span>
+                </div>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between' }}
+                >
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Customs & Duties
+                  </span>
+                  <span style={{ fontWeight: '600' }}>$0</span>
+                </div>
+                <div
                   style={{
-                    flex: 1,
-                    background: 'linear-gradient(135deg, #10b981, #059669)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    paddingTop: '8px',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.1)',
                   }}
                 >
-                  Add Customer
-                </button>
-                <button
-                  onClick={() => setShowCustomerModal(false)}
+                  <span style={{ fontWeight: '700' }}>Total Costs</span>
+                  <span style={{ fontWeight: '700', color: '#ef4444' }}>
+                    $0
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Net Profit */}
+            <div
+              style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                padding: '20px',
+                borderRadius: '12px',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      marginBottom: '4px',
+                    }}
+                  >
+                    NET PROFIT
+                  </div>
+                  <div
+                    style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}
+                  >
+                    Profit Margin: {stats.monthlyRevenue > 0 ? '100%' : '0%'}
+                  </div>
+                </div>
+                <div
                   style={{
-                    flex: 1,
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    padding: '12px 20px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
+                    fontSize: '32px',
+                    fontWeight: '700',
+                    color: '#10b981',
                   }}
                 >
-                  Cancel
-                </button>
+                  $
+                  {(
+                    stats.monthlyRevenue + stats.fleetflowCommissionOwed
+                  ).toLocaleString()}
+                </div>
               </div>
             </div>
           </div>
-        )}
-
-        {/* Tracking Modal */}
-        {showTracking && (
-          <FreightForwarderTracking
-            shipmentId={showTracking}
-            onClose={() => setShowTracking(null)}
-          />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -5496,7 +6097,9 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
                 >
                   $4.85/kg
                 </div>
-                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 12.3%</div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>
+                  ↑ 12.3%
+                </div>
               </div>
             </div>
             <div
@@ -5687,9 +6290,7 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
                 alignItems: 'center',
               }}
             >
-              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
-                USD → CNY
-              </span>
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>USD → CNY</span>
               <div style={{ textAlign: 'right' }}>
                 <div
                   style={{
@@ -5710,9 +6311,7 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
                 alignItems: 'center',
               }}
             >
-              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
-                USD → EUR
-              </span>
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>USD → EUR</span>
               <div style={{ textAlign: 'right' }}>
                 <div
                   style={{
@@ -5733,9 +6332,7 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
                 alignItems: 'center',
               }}
             >
-              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
-                USD → JPY
-              </span>
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>USD → JPY</span>
               <div style={{ textAlign: 'right' }}>
                 <div
                   style={{
@@ -7169,11 +7766,36 @@ function AnalyticsTab({ stats }: any) {
         </h3>
         <div style={{ display: 'grid', gap: '16px' }}>
           {[
-            { lane: 'Asia → North America', shipments: 1248, revenue: 3850000, color: '#06b6d4' },
-            { lane: 'Europe → North America', shipments: 845, revenue: 2920000, color: '#10b981' },
-            { lane: 'Latin America → North America', shipments: 567, revenue: 1680000, color: '#8b5cf6' },
-            { lane: 'Asia → Europe', shipments: 423, revenue: 1340000, color: '#f59e0b' },
-            { lane: 'Intra-Asia', shipments: 312, revenue: 890000, color: '#ec4899' },
+            {
+              lane: 'Asia → North America',
+              shipments: 1248,
+              revenue: 3850000,
+              color: '#06b6d4',
+            },
+            {
+              lane: 'Europe → North America',
+              shipments: 845,
+              revenue: 2920000,
+              color: '#10b981',
+            },
+            {
+              lane: 'Latin America → North America',
+              shipments: 567,
+              revenue: 1680000,
+              color: '#8b5cf6',
+            },
+            {
+              lane: 'Asia → Europe',
+              shipments: 423,
+              revenue: 1340000,
+              color: '#f59e0b',
+            },
+            {
+              lane: 'Intra-Asia',
+              shipments: 312,
+              revenue: 890000,
+              color: '#ec4899',
+            },
           ].map((lane, idx) => (
             <div
               key={idx}
@@ -7209,7 +7831,8 @@ function AnalyticsTab({ stats }: any) {
                       color: 'rgba(255,255,255,0.6)',
                     }}
                   >
-                    {lane.shipments} shipments • ${(lane.revenue / 1000000).toFixed(2)}M revenue
+                    {lane.shipments} shipments • $
+                    {(lane.revenue / 1000000).toFixed(2)}M revenue
                   </div>
                 </div>
                 <div
@@ -7274,56 +7897,56 @@ function AnalyticsTab({ stats }: any) {
         >
           {/* Pie Chart */}
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <svg width="280" height="280" viewBox="0 0 280 280">
-              <circle cx="140" cy="140" r="100" fill="#0f172a" />
+            <svg width='280' height='280' viewBox='0 0 280 280'>
+              <circle cx='140' cy='140' r='100' fill='#0f172a' />
               {/* Ocean Freight 45% */}
               <path
-                d="M 140 40 A 100 100 0 0 1 235.36 105.36 L 140 140 Z"
-                fill="#06b6d4"
-                opacity="0.9"
+                d='M 140 40 A 100 100 0 0 1 235.36 105.36 L 140 140 Z'
+                fill='#06b6d4'
+                opacity='0.9'
               />
               {/* Fuel Surcharge 25% */}
               <path
-                d="M 235.36 105.36 A 100 100 0 0 1 235.36 174.64 L 140 140 Z"
-                fill="#10b981"
-                opacity="0.9"
+                d='M 235.36 105.36 A 100 100 0 0 1 235.36 174.64 L 140 140 Z'
+                fill='#10b981'
+                opacity='0.9'
               />
               {/* Customs & Duties 18% */}
               <path
-                d="M 235.36 174.64 A 100 100 0 0 1 140 240 L 140 140 Z"
-                fill="#8b5cf6"
-                opacity="0.9"
+                d='M 235.36 174.64 A 100 100 0 0 1 140 240 L 140 140 Z'
+                fill='#8b5cf6'
+                opacity='0.9'
               />
               {/* Documentation 7% */}
               <path
-                d="M 140 240 A 100 100 0 0 1 91.27 213.82 L 140 140 Z"
-                fill="#f59e0b"
-                opacity="0.9"
+                d='M 140 240 A 100 100 0 0 1 91.27 213.82 L 140 140 Z'
+                fill='#f59e0b'
+                opacity='0.9'
               />
               {/* Other 5% */}
               <path
-                d="M 91.27 213.82 A 100 100 0 0 1 140 40 L 140 140 Z"
-                fill="#ec4899"
-                opacity="0.9"
+                d='M 91.27 213.82 A 100 100 0 0 1 140 40 L 140 140 Z'
+                fill='#ec4899'
+                opacity='0.9'
               />
-              <circle cx="140" cy="140" r="60" fill="#1e293b" />
+              <circle cx='140' cy='140' r='60' fill='#1e293b' />
               <text
-                x="140"
-                y="135"
-                textAnchor="middle"
-                fill="white"
-                fontSize="20"
-                fontWeight="700"
+                x='140'
+                y='135'
+                textAnchor='middle'
+                fill='white'
+                fontSize='20'
+                fontWeight='700'
               >
                 Total Avg
               </text>
               <text
-                x="140"
-                y="155"
-                textAnchor="middle"
-                fill="#06b6d4"
-                fontSize="24"
-                fontWeight="700"
+                x='140'
+                y='155'
+                textAnchor='middle'
+                fill='#06b6d4'
+                fontSize='24'
+                fontWeight='700'
               >
                 $8,450
               </text>
@@ -7333,11 +7956,36 @@ function AnalyticsTab({ stats }: any) {
           {/* Legend */}
           <div style={{ display: 'grid', gap: '12px' }}>
             {[
-              { label: 'Ocean Freight', percent: '45%', amount: '$3,803', color: '#06b6d4' },
-              { label: 'Fuel Surcharge', percent: '25%', amount: '$2,113', color: '#10b981' },
-              { label: 'Customs & Duties', percent: '18%', amount: '$1,521', color: '#8b5cf6' },
-              { label: 'Documentation', percent: '7%', amount: '$592', color: '#f59e0b' },
-              { label: 'Other Fees', percent: '5%', amount: '$421', color: '#ec4899' },
+              {
+                label: 'Ocean Freight',
+                percent: '45%',
+                amount: '$3,803',
+                color: '#06b6d4',
+              },
+              {
+                label: 'Fuel Surcharge',
+                percent: '25%',
+                amount: '$2,113',
+                color: '#10b981',
+              },
+              {
+                label: 'Customs & Duties',
+                percent: '18%',
+                amount: '$1,521',
+                color: '#8b5cf6',
+              },
+              {
+                label: 'Documentation',
+                percent: '7%',
+                amount: '$592',
+                color: '#f59e0b',
+              },
+              {
+                label: 'Other Fees',
+                percent: '5%',
+                amount: '$421',
+                color: '#ec4899',
+              },
             ].map((item, idx) => (
               <div
                 key={idx}
@@ -7351,7 +7999,9 @@ function AnalyticsTab({ stats }: any) {
                   border: `1px solid ${item.color}30`,
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
                   <div
                     style={{
                       width: '16px',
@@ -7360,15 +8010,31 @@ function AnalyticsTab({ stats }: any) {
                       background: item.color,
                     }}
                   />
-                  <span style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>
+                  <span
+                    style={{
+                      color: 'white',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    }}
+                  >
                     {item.label}
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ color: item.color, fontSize: '16px', fontWeight: '700' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
+                >
+                  <span
+                    style={{
+                      color: item.color,
+                      fontSize: '16px',
+                      fontWeight: '700',
+                    }}
+                  >
                     {item.percent}
                   </span>
-                  <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>
+                  <span
+                    style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}
+                  >
                     {item.amount}
                   </span>
                 </div>
@@ -9806,6 +10472,261 @@ function ComplianceAndDocumentsTab() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==================== CONSOLIDATED TAB COMPONENTS ====================
+
+// Shipments & Tracking - Consolidates: Shipments, Quoting, Consolidation, Tracking
+function ShipmentsTrackingTab({
+  router,
+  tenantId,
+}: {
+  router: any;
+  tenantId: string;
+}) {
+  const [subTab, setSubTab] = useState('shipments');
+
+  return (
+    <div style={{ display: 'grid', gap: '24px' }}>
+      {/* Sub-navigation */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'shipments', label: '📦 Shipments & Quoting' },
+          { id: 'consolidation', label: '📦 Consolidation' },
+          { id: 'tracking', label: '🚢 Live Tracking' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSubTab(tab.id)}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border:
+                subTab === tab.id
+                  ? '2px solid #10b981'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+              background:
+                subTab === tab.id
+                  ? 'rgba(16, 185, 129, 0.2)'
+                  : 'rgba(255, 255, 255, 0.05)',
+              color: subTab === tab.id ? '#10b981' : 'rgba(255, 255, 255, 0.7)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {subTab === 'shipments' && <ShipmentsTab router={router} />}
+      {subTab === 'consolidation' && (
+        <ShipmentConsolidationDashboard tenantId={tenantId} />
+      )}
+      {subTab === 'tracking' && <TrackingTab />}
+    </div>
+  );
+}
+
+// Compliance & Docs - Consolidates: Compliance, Documents, Contracts
+function ComplianceDocsTab() {
+  const [subTab, setSubTab] = useState('compliance');
+
+  return (
+    <div style={{ display: 'grid', gap: '24px' }}>
+      {/* Sub-navigation */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'compliance', label: '🛃 Compliance & Screening' },
+          { id: 'documents', label: '📄 Document Generation' },
+          { id: 'contracts', label: '📋 Legal Contracts' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSubTab(tab.id)}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border:
+                subTab === tab.id
+                  ? '2px solid #ef4444'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+              background:
+                subTab === tab.id
+                  ? 'rgba(239, 68, 68, 0.2)'
+                  : 'rgba(255, 255, 255, 0.05)',
+              color: subTab === tab.id ? '#ef4444' : 'rgba(255, 255, 255, 0.7)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {subTab === 'compliance' && <ComplianceAndDocumentsTab />}
+      {subTab === 'documents' && <DocumentsTab />}
+      {subTab === 'contracts' && <RateContractsTab />}
+    </div>
+  );
+}
+
+// Intelligence & Analytics - Consolidates: AI Intelligence, Market Intelligence, Financials, Analytics
+function IntelligenceAnalyticsTab({
+  stats,
+  invoices,
+  onViewInvoice,
+}: {
+  stats: any;
+  invoices: any[];
+  onViewInvoice: (invoice: any) => void;
+}) {
+  const [subTab, setSubTab] = useState('intelligence');
+
+  return (
+    <div style={{ display: 'grid', gap: '24px' }}>
+      {/* Sub-navigation */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'intelligence', label: '🤖 AI Intelligence' },
+          { id: 'financials', label: '💰 Financials & Invoices' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSubTab(tab.id)}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border:
+                subTab === tab.id
+                  ? '2px solid #3b82f6'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+              background:
+                subTab === tab.id
+                  ? 'rgba(59, 130, 246, 0.2)'
+                  : 'rgba(255, 255, 255, 0.05)',
+              color: subTab === tab.id ? '#3b82f6' : 'rgba(255, 255, 255, 0.7)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {subTab === 'intelligence' && <IntelligenceTab stats={stats} />}
+      {subTab === 'financials' && (
+        <FinancialsTab
+          stats={stats}
+          invoices={invoices}
+          onViewInvoice={onViewInvoice}
+        />
+      )}
+    </div>
+  );
+}
+
+// Operations & WMS - Consolidates: Task Management, WMS, Cross-Border
+function OperationsWMSTab() {
+  const [subTab, setSubTab] = useState('tasks');
+
+  return (
+    <div style={{ display: 'grid', gap: '24px' }}>
+      {/* Sub-navigation */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {[
+          { id: 'tasks', label: '✅ Task Management' },
+          { id: 'wms', label: '🏭 Warehouse Management' },
+          { id: 'crossborder', label: '🇨🇦🇲🇽 Cross-Border' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setSubTab(tab.id)}
+            style={{
+              padding: '10px 16px',
+              borderRadius: '8px',
+              border:
+                subTab === tab.id
+                  ? '2px solid #f59e0b'
+                  : '1px solid rgba(255, 255, 255, 0.1)',
+              background:
+                subTab === tab.id
+                  ? 'rgba(245, 158, 11, 0.2)'
+                  : 'rgba(255, 255, 255, 0.05)',
+              color: subTab === tab.id ? '#f59e0b' : 'rgba(255, 255, 255, 0.7)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600',
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {subTab === 'tasks' && <TaskManagementTab />}
+      {subTab === 'wms' && <WarehouseManagementTab />}
+      {subTab === 'crossborder' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '20px',
+          }}
+        >
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              padding: '24px',
+              border: '1px solid rgba(220, 38, 38, 0.3)',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                marginBottom: '16px',
+                color: '#dc2626',
+              }}
+            >
+              🇨🇦 Canada Cross-Border
+            </h3>
+            <CanadaCrossBorderView />
+          </div>
+          <div
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '12px',
+              padding: '24px',
+              border: '1px solid rgba(220, 38, 38, 0.3)',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                marginBottom: '16px',
+                color: '#dc2626',
+              }}
+            >
+              🇲🇽 Mexico Cross-Border
+            </h3>
+            <MexicoCrossBorderView />
           </div>
         </div>
       )}
