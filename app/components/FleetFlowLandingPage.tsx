@@ -1862,7 +1862,7 @@ export default function FleetFlowLandingPage() {
                   marginBottom: '20px',
                 }}
               >
-                🚢 Flow Forward™ - Freight Forwarding Intelligence
+                🛳️ Flow Forward™ - Freight Forwarding Intelligence
               </h2>
               <p
                 style={{
@@ -2218,7 +2218,7 @@ export default function FleetFlowLandingPage() {
                       '0 8px 32px rgba(6, 182, 212, 0.4)';
                   }}
                 >
-                  🚢 Explore Flow Forward Pricing
+                  🛳️ Explore Flow Forward Pricing
                 </button>
               </Link>
               <p
@@ -2228,7 +2228,8 @@ export default function FleetFlowLandingPage() {
                   marginTop: '15px',
                 }}
               >
-                Need more than 50 users? Contact us for custom Global Plan pricing
+                Need more than 50 users? Contact us for custom Global Plan
+                pricing
               </p>
             </div>
           </div>
