@@ -155,194 +155,22 @@ export default function FreightForwardingPage() {
   };
 
   useEffect(() => {
-    const mockClients = [
-      {
-        id: 'FF-CLIENT-001',
-        name: 'ABC Shipping Corporation',
-        email: 'john.smith@abcshipping.com',
-        contact: 'John Smith',
-        phone: '(555) 123-4567',
-        status: 'active',
-        joinDate: '2024-01-15',
-        shipmentsCount: 45,
-        lastActivity: '2024-01-20',
-        permissions: ['shipments', 'documents', 'communication'],
-      },
-      {
-        id: 'FF-CLIENT-002',
-        name: 'XYZ Logistics Inc',
-        email: 'sarah.jones@xyzlogistics.com',
-        contact: 'Sarah Jones',
-        phone: '(555) 987-6543',
-        status: 'active',
-        joinDate: '2024-01-10',
-        shipmentsCount: 32,
-        lastActivity: '2024-01-19',
-        permissions: ['shipments', 'documents'],
-      },
-    ];
-    setClients(mockClients);
-    // Mock Shipments Data
-    const mockShipments = [
-      {
-        id: 'FF-SHIP-001',
-        referenceNumber: 'SHNG-LA-240125-001',
-        customer: 'ABC Shipping Corporation',
-        mode: 'ocean',
-        status: 'in_transit',
-        origin: { city: 'Shanghai', country: 'China', port: 'CNSHA' },
-        destination: { city: 'Long Beach', country: 'USA', port: 'USLGB' },
-        containerType: '40HQ',
-        quantity: 2,
-        bookingDate: '2024-01-15',
-        etd: '2024-01-18',
-        eta: '2024-02-10',
-        totalValue: 12500,
-        paymentStatus: 'paid',
-        fleetflowSource: false,
-        consolidated: false,
-      },
-      {
-        id: 'FF-SHIP-002',
-        referenceNumber: 'SZHN-NYC-240120-002',
-        customer: 'XYZ Logistics Inc',
-        mode: 'air',
-        status: 'delivered',
-        origin: { city: 'Shenzhen', country: 'China', airport: 'SZX' },
-        destination: { city: 'New York', country: 'USA', airport: 'JFK' },
-        weight: 2500,
-        bookingDate: '2024-01-10',
-        etd: '2024-01-12',
-        eta: '2024-01-14',
-        totalValue: 8900,
-        paymentStatus: 'paid',
-        fleetflowSource: true,
-        consolidated: false,
-      },
-      {
-        id: 'FF-SHIP-003',
-        referenceNumber: 'CNQD-USSEA-240122-003',
-        customer: 'FleetFlow Lead - Tech Components Inc',
-        mode: 'ocean',
-        status: 'booked',
-        origin: { city: 'Qingdao', country: 'China', port: 'CNQING' },
-        destination: { city: 'Seattle', country: 'USA', port: 'USSEA' },
-        containerType: '20ft',
-        quantity: 1,
-        bookingDate: '2024-01-22',
-        etd: '2024-01-28',
-        eta: '2024-02-18',
-        totalValue: 6200,
-        paymentStatus: 'pending',
-        fleetflowSource: true,
-        consolidated: true,
-      },
-    ];
-    setShipments(mockShipments);
-
-    // Mock Quotes Data
-    const mockQuotes = [
-      {
-        id: 'FF-QT-001',
-        quoteNumber: 'QT-240125-001',
-        customer: 'Potential Client - Import Co',
-        customerEmail: 'contact@importco.com',
-        mode: 'ocean',
-        status: 'sent',
-        origin: { city: 'Shanghai', country: 'China' },
-        destination: { city: 'Los Angeles', country: 'USA' },
-        containerType: '40HQ',
-        quantity: 1,
-        total: 4500,
-        validUntil: '2024-02-10',
-        createdAt: '2024-01-25',
-      },
-      {
-        id: 'FF-QT-002',
-        quoteNumber: 'QT-240124-002',
-        customer: 'ABC Shipping Corporation',
-        customerEmail: 'john.smith@abcshipping.com',
-        mode: 'air',
-        status: 'accepted',
-        origin: { city: 'Hong Kong', country: 'China' },
-        destination: { city: 'Chicago', country: 'USA' },
-        weight: 1500,
-        total: 5800,
-        validUntil: '2024-02-08',
-        createdAt: '2024-01-24',
-      },
-      {
-        id: 'FF-QT-003',
-        quoteNumber: 'QT-240123-003',
-        customer: 'New Prospect - Electronics Ltd',
-        customerEmail: 'procurement@electronics.com',
-        mode: 'ocean',
-        status: 'sent',
-        origin: { city: 'Ningbo', country: 'China' },
-        destination: { city: 'New York', country: 'USA' },
-        containerType: '20ft',
-        quantity: 2,
-        total: 8400,
-        validUntil: '2024-02-07',
-        createdAt: '2024-01-23',
-      },
-    ];
-    setQuotes(mockQuotes);
-
+    // TODO: Replace with actual API calls to fetch real data
     // Load maritime data
     loadMaritimeData();
 
-    // Load mock cross-border data
-    const mockCanadaShipments = [
-      {
-        id: 'CA-001',
-        status: 'in-transit',
-        origin: 'Detroit, MI',
-        destination: 'Windsor, ON',
-        carrier: 'CrossBorder Logistics',
-        progress: 65,
-        currentLocation: [-83.0458, 42.3314],
-        originCoords: [-83.0458, 42.3314],
-        destCoords: [-83.0286, 42.3149],
-        eta: '2024-01-25T14:30:00Z',
-        crossBorderInfo: {
-          borderCrossing: 'Ambassador Bridge',
-          crossingStatus: 'in-process',
-          manifestType: 'ACI',
-          aciManifestId: 'ACI-2024-001234',
-          estimatedCrossingTime: '2 hours',
-          actualCrossingTime: null,
-          delayReason: null,
-        },
-      },
-    ];
-
-    const mockMexicoShipments = [
-      {
-        id: 'MX-001',
-        status: 'in-transit',
-        origin: 'Laredo, TX',
-        destination: 'Nuevo Laredo, MX',
-        carrier: 'Border Express',
-        progress: 45,
-        currentLocation: [-99.5075, 27.5064],
-        originCoords: [-99.5075, 27.5064],
-        destCoords: [-99.515, 27.4814],
-        eta: '2024-01-25T16:00:00Z',
-        crossBorderInfo: {
-          borderCrossing: 'World Trade Bridge',
-          crossingStatus: 'pending',
-          manifestType: 'ACE',
-          aceManifestId: 'ACE-2024-005678',
-          estimatedCrossingTime: '3 hours',
-          actualCrossingTime: null,
-          delayReason: 'Customs inspection',
-        },
-      },
-    ];
-
-    setCanadaShipments(mockCanadaShipments);
-    setMexicoShipments(mockMexicoShipments);
+    // TODO: Fetch clients from API
+    // Example: fetchClients().then(data => setClients(data));
+    
+    // TODO: Fetch shipments from API
+    // Example: fetchShipments().then(data => setShipments(data));
+    
+    // TODO: Fetch quotes from API
+    // Example: fetchQuotes().then(data => setQuotes(data));
+    
+    // TODO: Fetch cross-border shipments from API
+    // Example: fetchCanadaShipments().then(data => setCanadaShipments(data));
+    // Example: fetchMexicoShipments().then(data => setMexicoShipments(data));
   }, []);
 
   const stats = {
@@ -6310,81 +6138,8 @@ function TrackingTab() {
     },
   }));
 
-  // Generate sample shipments with real tracking numbers
-  const [sampleShipments, setSampleShipments] = useState<any[]>(() => {
-    const shipments: any[] = [];
-
-    // Generate maritime shipments
-    for (let i = 0; i < 3; i++) {
-      const shipment =
-        FreightForwarderIdentificationService.generateIdentifiers({
-          mode: 'OCEAN',
-          serviceType: 'DDP',
-          incoterms: 'DDP',
-          originPort: 'Shanghai (CNSHA)',
-          destinationPort: 'Los Angeles (USLAX)',
-          originCountry: 'China',
-          destinationCountry: 'USA',
-          containerType: 'STANDARD_DRY',
-          containerSize: '40ft',
-          containerQuantity: Math.floor(Math.random() * 3) + 1,
-          shipperName: `Sample Shipper ${i + 1}`,
-          shipperCode: `SHP${(i + 1).toString().padStart(3, '0')}`,
-          consigneeName: `Sample Consignee ${i + 1}`,
-          consigneeCode: `CNE${(i + 1).toString().padStart(3, '0')}`,
-          commodity: 'Electronics',
-          hsCode: '8517.62',
-          commodityValue: Math.floor(Math.random() * 50000) + 10000,
-          currency: 'USD',
-          bookingDate: new Date().toISOString().split('T')[0],
-          etd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          eta: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          forwarderInitials: 'DD',
-          forwarderBranch: 'LA',
-        });
-      shipments.push({ ...shipment, type: 'maritime' });
-    }
-
-    // Generate air shipments
-    for (let i = 0; i < 2; i++) {
-      const shipment =
-        FreightForwarderIdentificationService.generateIdentifiers({
-          mode: 'AIR',
-          serviceType: 'DDP',
-          incoterms: 'DDP',
-          originPort: 'Hong Kong (HKG)',
-          destinationPort: 'Los Angeles (LAX)',
-          originCountry: 'China',
-          destinationCountry: 'USA',
-          airWeight: Math.floor(Math.random() * 500) + 100,
-          volumetricWeight: Math.floor(Math.random() * 600) + 150,
-          shipperName: `Air Shipper ${i + 1}`,
-          shipperCode: `AIR${(i + 1).toString().padStart(3, '0')}`,
-          consigneeName: `Air Consignee ${i + 1}`,
-          consigneeCode: `CAC${(i + 1).toString().padStart(3, '0')}`,
-          commodity: 'Medical Equipment',
-          hsCode: '9018.90',
-          commodityValue: Math.floor(Math.random() * 30000) + 5000,
-          currency: 'USD',
-          bookingDate: new Date().toISOString().split('T')[0],
-          etd: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          eta: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
-          forwarderInitials: 'DD',
-          forwarderBranch: 'LA',
-        });
-      shipments.push({ ...shipment, type: 'air' });
-    }
-
-    return shipments;
-  });
+  // Tracking shipments state - TODO: Replace with API data
+  const [trackingShipments, setTrackingShipments] = useState<any[]>([]);
 
   return (
     <div style={{ display: 'grid', gap: '32px' }}>
@@ -6602,7 +6357,7 @@ function TrackingTab() {
               🌊 Recent Maritime Shipments
             </h3>
             <div style={{ display: 'grid', gap: '12px' }}>
-              {sampleShipments
+              {trackingShipments
                 .filter((s) => s.type === 'maritime')
                 .slice(0, 3)
                 .map((shipment, idx) => (
