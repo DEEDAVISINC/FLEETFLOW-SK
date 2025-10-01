@@ -55,7 +55,52 @@ export default function FreightForwardingPage() {
     createInvoice,
   } = useMultiTenantPayments(tenantId);
 
+  const [mounted, setMounted] = useState(false);
   const [selectedTab, setSelectedTab] = useState('dashboard');
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            padding: '40px',
+            borderRadius: '20px',
+            textAlign: 'center',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <div
+            style={{
+              width: '60px',
+              height: '60px',
+              border: '4px solid rgba(255, 255, 255, 0.3)',
+              borderTop: '4px solid white',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 20px',
+            }}
+          />
+          <p style={{ color: 'white', fontSize: '18px', fontWeight: '600' }}>
+            Loading Freight Forwarding Dashboard...
+          </p>
+        </div>
+      </div>
+    );
+  }
   const [showAddAgentModal, setShowAddAgentModal] = useState(false);
   const [clients, setClients] = useState<any[]>([]);
   const [shipments, setShipments] = useState<any[]>([]);
