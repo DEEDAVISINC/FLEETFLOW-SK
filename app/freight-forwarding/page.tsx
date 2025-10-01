@@ -5123,11 +5123,320 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
                 >
                   $2,780
                 </div>
-                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 1.5%</div>
+
+          </div>
+        </div>
+
+        {/* Air Freight Rates */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#8b5cf6',
+              }}
+            >
+              ✈️ Air Freight Rates (per kg)
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Live Data
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                HKG → LAX (General)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#8b5cf6',
+                  }}
+                >
+                  $5.20/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 4.8%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                PVG → ORD (Express)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#8b5cf6',
+                  }}
+                >
+                  $6.80/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 2.3%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                CAN → JFK (Priority)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#8b5cf6',
+                  }}
+                >
+                  $7.50/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 6.2%</div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Container Availability */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#10b981',
+              }}
+            >
+              📦 Container Availability
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Real-time
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {[
+              { port: 'Shanghai', availability: 'High', count: 1247, color: '#10b981', status: '✅' },
+              { port: 'Ningbo', availability: 'Medium', count: 623, color: '#f59e0b', status: '⚠️' },
+              { port: 'Yantian', availability: 'Low', count: 187, color: '#ef4444', status: '🔴' },
+            ].map((item) => (
+              <div
+                key={item.port}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '12px',
+                  background: `${item.color}10`,
+                  borderRadius: '8px',
+                  border: `1px solid ${item.color}30`,
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', color: 'white' }}>
+                    {item.status} {item.port}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginTop: '2px' }}>
+                    {item.count} containers
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: item.color,
+                  }}
+                >
+                  {item.availability}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Fuel Surcharges */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#f59e0b',
+              }}
+            >
+              ⛽ Fuel Surcharges (BAF)
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              This Week
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {[
+              { carrier: 'Maersk', rate: '18.5%', change: '↑ 1.2%', color: '#ef4444' },
+              { carrier: 'MSC', rate: '17.8%', change: '↑ 0.9%', color: '#ef4444' },
+              { carrier: 'CMA CGM', rate: '19.2%', change: '↓ 0.5%', color: '#22c55e' },
+              { carrier: 'COSCO', rate: '16.9%', change: '→ 0.0%', color: '#6b7280' },
+            ].map((item) => (
+              <div
+                key={item.carrier}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>
+                  {item.carrier}
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    {item.rate}
+                  </span>
+                  <span style={{ fontSize: '12px', color: item.color, minWidth: '60px' }}>
+                    {item.change}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Currency Exchange Rates */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#3b82f6',
+              }}
+            >
+              💱 Exchange Rates (USD)
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Live
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {[
+              { currency: 'CNY (Yuan)', rate: '7.24', change: '↑ 0.3%', color: '#ef4444' },
+              { currency: 'EUR (Euro)', rate: '0.92', change: '↓ 0.1%', color: '#22c55e' },
+              { currency: 'GBP (Pound)', rate: '0.79', change: '→ 0.0%', color: '#6b7280' },
+              { currency: 'JPY (Yen)', rate: '149.82', change: '↑ 0.8%', color: '#ef4444' },
+            ].map((item) => (
+              <div
+                key={item.currency}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>
+                  {item.currency}
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    {item.rate}
+                  </span>
+                  <span style={{ fontSize: '12px', color: item.color, minWidth: '60px' }}>
+                    {item.change}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
 
         {/* Port Congestion */}
         <div
