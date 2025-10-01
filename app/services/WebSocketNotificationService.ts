@@ -62,6 +62,15 @@ export class WebSocketNotificationService {
     try {
       // Determine WebSocket URL from environment or fallback
       const wsUrl = this.getWebSocketUrl();
+
+      // Skip initialization if WebSocket is disabled (empty URL)
+      if (!wsUrl) {
+        console.info(
+          '🔇 WebSocket connection skipped (disabled in this environment)'
+        );
+        return;
+      }
+
       this.connectionStatus.websocketUrl = wsUrl;
 
       console.info(`🔌 Attempting WebSocket connection to: ${wsUrl}`);
@@ -78,15 +87,24 @@ export class WebSocketNotificationService {
   private getWebSocketUrl(): string {
     // Check environment variables for WebSocket configuration
     if (typeof window !== 'undefined') {
-      // Client-side - use environment variable or construct from location
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.hostname;
-      const port = process.env.NEXT_PUBLIC_WEBSOCKET_PORT || '3001';
+      // Client-side - disable WebSocket in development when running on same port
+      const isDevMode = process.env.NODE_ENV === 'development';
 
       // Try environment variable first
       if (process.env.NEXT_PUBLIC_WEBSOCKET_URL) {
         return process.env.NEXT_PUBLIC_WEBSOCKET_URL;
       }
+
+      // In development on port 3001, disable WebSocket or use alternative port
+      if (isDevMode && window.location.port === '3001') {
+        console.info('🔇 WebSocket disabled in development (same port as app)');
+        return ''; // Return empty to prevent connection attempts
+      }
+
+      // Client-side - use environment variable or construct from location
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.hostname;
+      const port = process.env.NEXT_PUBLIC_WEBSOCKET_PORT || '3001';
 
       // Construct WebSocket URL
       return `${protocol}//${host}:${port}/notifications`;

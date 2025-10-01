@@ -416,3 +416,5 @@ INSERT INTO ff_client_users (
     'MANAGER',
     '[{"resource": "shipments", "action": "read", "scope": "all"}, {"resource": "documents", "action": "write", "scope": "assigned"}]'
 );
+
+

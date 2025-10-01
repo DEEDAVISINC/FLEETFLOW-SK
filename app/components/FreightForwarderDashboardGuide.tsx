@@ -113,7 +113,8 @@ export default function FreightForwarderDashboardGuide({
       id: 'compliance',
       label: '🛃 Compliance & Documents',
       icon: '🛃',
-      description: 'Denied party screening, HS codes, customs documentation',
+      description:
+        'Customs bond management, SuretyCloud manual integration (forms, emails, checklists), denied party screening, HS codes, duty calculator, Section 301 alerts',
       tab: 'compliance',
     },
     {
@@ -342,6 +343,44 @@ export default function FreightForwarderDashboardGuide({
                 Compare 4 carriers side-by-side with detailed cost breakdowns
                 (base rate, fuel, customs, docs, insurance, handling). Find the
                 best rates instantly!
+              </div>
+            </div>
+
+            {/* SuretyCloud Manual Integration Highlight */}
+            <div
+              style={{
+                marginTop: '12px',
+                padding: '12px',
+                background:
+                  'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15))',
+                borderRadius: '8px',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+              }}
+            >
+              <div
+                style={{
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '11px',
+                  lineHeight: '1.5',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    marginBottom: '6px',
+                  }}
+                >
+                  <span style={{ fontSize: '14px' }}>🔗</span>
+                  <strong style={{ color: '#f59e0b' }}>
+                    NEW: SuretyCloud Manual Integration
+                  </strong>
+                </div>
+                Generate complete bond application packages for SuretyCloud
+                submission. Download HTML forms, email templates, document
+                checklists, and step-by-step instructions. Track status manually
+                when SuretyCloud responds.
               </div>
             </div>
 

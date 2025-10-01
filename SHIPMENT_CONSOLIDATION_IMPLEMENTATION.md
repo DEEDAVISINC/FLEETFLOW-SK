@@ -619,3 +619,5 @@ export class ConsolidationAnalytics {
 
 _Shipment consolidation will be FleetFlow's most powerful competitive advantage, delivering
 CargoWise-level cost optimization at a fraction of the cost._
+
+

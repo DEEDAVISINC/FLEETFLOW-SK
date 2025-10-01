@@ -1,4 +1,5 @@
 # 🚢 FleetFlow Freight Forwarder Complete System
+
 ## Enterprise-Grade Freight Forwarding Business Intelligence Platform
 
 **FleetFlow TMS LLC** • Troy, Michigan • **WOSB Certified**
@@ -10,24 +11,28 @@
 You now have a **COMPREHENSIVE, ENTERPRISE-GRADE** freight forwarding platform with:
 
 ### ✅ **1. Contract Management System** (IRONCLAD)
+
 - **FreightForwarderContractService.ts** (677 lines)
 - **FreightForwarderContractTemplates.ts** (1,431 lines)
 - **10 Contract Types**
 - **Complete Legal Protection**
 
 ### ✅ **2. CRM System** (12 Contact Types)
+
 - **FreightForwarderCRMService.ts** (467 lines)
 - **Complete Relationship Management**
 - **Activity Tracking**
 - **Performance Metrics**
 
 ### ✅ **3. Automation & Notification System**
+
 - **FreightForwarderAutomationService.ts** (677 lines)
 - **20 Shipment Milestones**
 - **Automatic Stakeholder Notifications**
 - **SLA Compliance Monitoring**
 
 ### ✅ **4. Tracking & Identification System**
+
 - **FreightForwarderIdentificationService.ts**
 - **ISO 6346 Container Numbers**
 - **IATA Air Waybill Numbers**
@@ -35,6 +40,7 @@ You now have a **COMPREHENSIVE, ENTERPRISE-GRADE** freight forwarding platform w
 - **40+ Shipping Documents**
 
 ### ✅ **5. Comprehensive Documentation**
+
 - **FREIGHT_FORWARDER_TRACKING_GUIDE.md**
 - **FREIGHT_FORWARDER_CRM_CONTRACTS_GUIDE.md**
 - **Complete Usage Examples**
@@ -46,22 +52,23 @@ You now have a **COMPREHENSIVE, ENTERPRISE-GRADE** freight forwarding platform w
 
 ### **10 Contract Types Available:**
 
-| Contract Type | Code | Purpose | Key Features |
-|--------------|------|---------|--------------|
-| **Client Service Agreement** | CSA | Master freight forwarding agreement | COGSA, Montreal Convention, Unlimited indemnity |
-| **Carrier Rate Agreement** | CRA | Ocean/Air freight rates | Volume discounts, Equipment guarantees |
-| **Customs Broker Agreement** | CBA | Customs clearance services | Bond requirements, Penalty protection |
-| **Trucking Contract** | TRC | Drayage and delivery | Carmack Amendment, Liability limits |
-| **Warehouse Agreement** | WHA | Storage and handling | Bailment terms, Inventory control |
-| **Insurance Contract** | INS | Cargo insurance placement | Coverage limits, Claims procedures |
-| **Volume Commitment** | VOL | Minimum volume agreements | Tiered discounts, Shortfall penalties |
-| **SLA Agreement** | SLA | Service level guarantees | Transit times, Penalty clauses |
-| **Agency Agreement** | AGY | Port/destination agents | Commission structure, Territory rights |
-| **NVOCC Agreement** | NVO | Non-vessel operating carrier | FMC tariffs, House B/L terms |
+| Contract Type                | Code | Purpose                             | Key Features                                    |
+| ---------------------------- | ---- | ----------------------------------- | ----------------------------------------------- |
+| **Client Service Agreement** | CSA  | Master freight forwarding agreement | COGSA, Montreal Convention, Unlimited indemnity |
+| **Carrier Rate Agreement**   | CRA  | Ocean/Air freight rates             | Volume discounts, Equipment guarantees          |
+| **Customs Broker Agreement** | CBA  | Customs clearance services          | Bond requirements, Penalty protection           |
+| **Trucking Contract**        | TRC  | Drayage and delivery                | Carmack Amendment, Liability limits             |
+| **Warehouse Agreement**      | WHA  | Storage and handling                | Bailment terms, Inventory control               |
+| **Insurance Contract**       | INS  | Cargo insurance placement           | Coverage limits, Claims procedures              |
+| **Volume Commitment**        | VOL  | Minimum volume agreements           | Tiered discounts, Shortfall penalties           |
+| **SLA Agreement**            | SLA  | Service level guarantees            | Transit times, Penalty clauses                  |
+| **Agency Agreement**         | AGY  | Port/destination agents             | Commission structure, Territory rights          |
+| **NVOCC Agreement**          | NVO  | Non-vessel operating carrier        | FMC tariffs, House B/L terms                    |
 
 ### **Legal Protection Highlights:**
 
 #### **LIABILITY LIMITATIONS:**
+
 ```
 CLIENT SERVICE AGREEMENT:
 ✓ Forwarder: $0.50/lb OR $50/shipment (whichever LESS)
@@ -78,6 +85,7 @@ CARRIER RATE AGREEMENT:
 ```
 
 #### **INDEMNIFICATION (Unlimited):**
+
 ```
 CLIENT MUST INDEMNIFY FOR:
 • Inaccurate cargo descriptions
@@ -91,6 +99,7 @@ CLIENT MUST INDEMNIFY FOR:
 ```
 
 #### **PAYMENT PROTECTION:**
+
 ```
 • NET 30 days (adjustable)
 • 1.5% monthly late fee (18% APR)
@@ -101,6 +110,7 @@ CLIENT MUST INDEMNIFY FOR:
 ```
 
 #### **FORCE MAJEURE (Complete Protection):**
+
 ```
 NO LIABILITY FOR:
 • Acts of God, natural disasters
@@ -114,6 +124,7 @@ NO LIABILITY FOR:
 ```
 
 #### **DISPUTE RESOLUTION:**
+
 ```
 • Governing Law: State of Michigan
 • Venue: Oakland County, Michigan
@@ -130,24 +141,25 @@ NO LIABILITY FOR:
 
 ### **Contact Management:**
 
-| Type | Prefix | Key Information | Use Case |
-|------|--------|-----------------|----------|
-| **SHIPPER** | SHP | Export licenses, VAT, product categories | Exporters, manufacturers, sellers |
-| **CONSIGNEE** | CNE | Import licenses, credit limit, payment terms | Importers, buyers, clients |
-| **CARRIER** | CAR | SCAC code, IATA, vessel names, routes | Shipping lines, airlines |
-| **CUSTOMS_BROKER** | CUS | License #, bond #, ports served | Customs clearance agents |
-| **TRUCKER** | TRK | MC#, DOT#, service area | Drayage companies |
-| **WAREHOUSE** | WHS | Location, capacity, temp control | Storage providers |
-| **PORT_AGENT** | PRT | Port codes, services | Port handling agents |
-| **FREIGHT_FORWARDER** | FFW | Service areas, specializations | Partner forwarders |
-| **BANK** | BNK | SWIFT code, LC services | Financial institutions |
-| **INSURANCE** | INS | Coverage types, premium rates | Cargo insurance providers |
-| **NOTIFY_PARTY** | NTY | Relationship to shipment | Notification contacts |
-| **VENDOR** | VND | Service type | General vendors |
+| Type                  | Prefix | Key Information                                                | Use Case                          |
+| --------------------- | ------ | -------------------------------------------------------------- | --------------------------------- |
+| **SHIPPER**           | SHP    | Export licenses, VAT, product categories                       | Exporters, manufacturers, sellers |
+| **CONSIGNEE**         | CNE    | Import licenses, credit limit, payment terms                   | Importers, buyers, clients        |
+| **CARRIER**           | CAR    | SCAC code, IATA, vessel names, routes                          | Shipping lines, airlines          |
+| **CUSTOMS_BROKER**    | CUS    | License #, bond management, ports served, utilization tracking | Customs clearance agents          |
+| **TRUCKER**           | TRK    | MC#, DOT#, service area                                        | Drayage companies                 |
+| **WAREHOUSE**         | WHS    | Location, capacity, temp control                               | Storage providers                 |
+| **PORT_AGENT**        | PRT    | Port codes, services                                           | Port handling agents              |
+| **FREIGHT_FORWARDER** | FFW    | Service areas, specializations                                 | Partner forwarders                |
+| **BANK**              | BNK    | SWIFT code, LC services                                        | Financial institutions            |
+| **INSURANCE**         | INS    | Coverage types, premium rates                                  | Cargo insurance providers         |
+| **NOTIFY_PARTY**      | NTY    | Relationship to shipment                                       | Notification contacts             |
+| **VENDOR**            | VND    | Service type                                                   | General vendors                   |
 
 ### **CRM Features:**
 
 ✅ **Complete Contact Profiles**
+
 - Company information and legal details
 - Multiple addresses (office, warehouse, billing)
 - Multiple contact persons per company
@@ -156,6 +168,7 @@ NO LIABILITY FOR:
 - Tags and custom fields
 
 ✅ **Financial Tracking**
+
 - Credit limits and usage
 - Payment terms and history
 - Total revenue per contact
@@ -163,6 +176,7 @@ NO LIABILITY FOR:
 - Invoicing and collections
 
 ✅ **Performance Metrics**
+
 - Total shipments completed
 - On-time delivery rate
 - Average transit times
@@ -170,6 +184,7 @@ NO LIABILITY FOR:
 - Customer satisfaction scores
 
 ✅ **Activity Tracking**
+
 - Shipments, quotes, payments
 - Calls, emails, meetings
 - Notes and interactions
@@ -281,6 +296,7 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
     - Documents: Delivery Receipt, Cargo Photos
 
 **BONUS:** **POD_RECEIVED** 📸
+
 - Notify: Shipper, Forwarder
 - Documents: Signed POD, Delivery Photos
 - **SHIPMENT COMPLETE**
@@ -292,6 +308,7 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 ### **Automatic Notifications Include:**
 
 ✅ **Email Notifications**
+
 - Professionally formatted HTML emails
 - Detailed shipment information
 - Document attachments
@@ -299,18 +316,21 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 - Next milestone expectations
 
 ✅ **SMS Notifications** (Optional)
+
 - Critical milestone alerts
 - Customs clearance updates
 - Delivery confirmations
 - ETA changes
 
 ✅ **In-App Notifications**
+
 - Real-time dashboard updates
 - Push notifications
 - Activity timeline
 - Document status
 
 ✅ **Priority Levels:**
+
 - **URGENT**: Red alerts (customs clearance, B/L issued, arrival)
 - **HIGH**: Orange alerts (container stuffing, departure)
 - **MEDIUM**: Yellow alerts (booking, packaging)
@@ -319,18 +339,21 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 ### **Smart Notification Rules:**
 
 ✅ **Party-Specific Routing**
+
 - Each milestone notifies ONLY relevant parties
 - No spam to uninvolved stakeholders
 - Customizable notification preferences
 - Opt-in/opt-out controls
 
 ✅ **Document Requirements**
+
 - Auto-remind parties of required documents
 - Track document submission status
 - Flag missing critical documents
 - Automated document chase emails
 
 ✅ **SLA Monitoring**
+
 - Auto-check contract SLA commitments
 - Alert if behind schedule
 - Calculate performance metrics
@@ -342,20 +365,20 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 
 ### **Generated Identifiers:**
 
-| Identifier Type | Format | Example | Standard |
-|----------------|---------|---------|----------|
-| **Shipment ID** | FF-{MODE}-{YEAR}-{SEQ} | FF-OCN-2025-0001 | FleetFlow |
-| **Quote Number** | FF-QT-{DATE}-{ROUTE}-{SEQ} | FF-QT-250130-SHALOS-892 | FleetFlow |
-| **Booking Number** | BK{INIT}{DATE}{ROUTE}-{HASH} | BKDD25015CNUS-4A3B | FleetFlow |
-| **Bill of Lading** | BL{YYYYMMDD}{HASH} | BL20250115A3B2C1 | Industry Standard |
-| **Container Number** | {OWNER}{SERIAL}{CHECK} | MSCU4567890 | ISO 6346 |
-| **Seal Number** | SEL{YY}{SEQUENCE} | SEL25123456 | Industry Standard |
-| **Air Waybill** | {AIRLINE}-{SERIAL} | 180-12345678 | IATA |
-| **Voyage Number** | V{YYMM}{SEQ} | V2501234 | Industry Standard |
-| **Customs Entry** | CE{YEAR}{HASH}{SEQ} | CE2025A3B21234 | US Customs |
-| **PARS Number** | PARS{SCAC}{YY}{SEQ} | PARSA3B225123456 | Canada |
-| **PAPS Number** | PAPS{YY}{SEQUENCE} | PAPS25123456 | Canada |
-| **Pedimento** | {YY}{OFFICE}{SEQ}{CHK} | 25101234567 | Mexico |
+| Identifier Type      | Format                       | Example                 | Standard          |
+| -------------------- | ---------------------------- | ----------------------- | ----------------- |
+| **Shipment ID**      | FF-{MODE}-{YEAR}-{SEQ}       | FF-OCN-2025-0001        | FleetFlow         |
+| **Quote Number**     | FF-QT-{DATE}-{ROUTE}-{SEQ}   | FF-QT-250130-SHALOS-892 | FleetFlow         |
+| **Booking Number**   | BK{INIT}{DATE}{ROUTE}-{HASH} | BKDD25015CNUS-4A3B      | FleetFlow         |
+| **Bill of Lading**   | BL{YYYYMMDD}{HASH}           | BL20250115A3B2C1        | Industry Standard |
+| **Container Number** | {OWNER}{SERIAL}{CHECK}       | MSCU4567890             | ISO 6346          |
+| **Seal Number**      | SEL{YY}{SEQUENCE}            | SEL25123456             | Industry Standard |
+| **Air Waybill**      | {AIRLINE}-{SERIAL}           | 180-12345678            | IATA              |
+| **Voyage Number**    | V{YYMM}{SEQ}                 | V2501234                | Industry Standard |
+| **Customs Entry**    | CE{YEAR}{HASH}{SEQ}          | CE2025A3B21234          | US Customs        |
+| **PARS Number**      | PARS{SCAC}{YY}{SEQ}          | PARSA3B225123456        | Canada            |
+| **PAPS Number**      | PAPS{YY}{SEQUENCE}           | PAPS25123456            | Canada            |
+| **Pedimento**        | {YY}{OFFICE}{SEQ}{CHK}       | 25101234567             | Mexico            |
 
 ### **7 Container Types Supported:**
 
@@ -370,6 +393,7 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 ### **40+ Shipping Documents Tracked:**
 
 #### Export Documents (5):
+
 - Commercial Invoice
 - Packing List
 - Certificate of Origin
@@ -377,12 +401,14 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 - Shipper's Letter of Instruction
 
 #### Import Documents (4):
+
 - Import License
 - Customs Declaration
 - Delivery Order
 - Proof of Delivery
 
 #### Transportation Documents (6):
+
 - Bill of Lading (Ocean)
 - Air Waybill (Air)
 - Sea Waybill
@@ -391,18 +417,21 @@ Based on the **12-Step Export Process** and **Bill of Lading Workflow:**
 - Weight Certificate
 
 #### Financial Documents (4):
+
 - Letter of Credit
 - Bill of Exchange
 - Insurance Certificate
 - Inspection Certificate
 
 #### Specialized Documents (4):
+
 - Dangerous Goods Declaration
 - Fumigation Certificate
 - Health Certificate
 - Phytosanitary Certificate
 
 #### Cross-Border Documents (7):
+
 - PARS (Canada)
 - PAPS (Canada)
 - Pedimento (Mexico)
@@ -748,30 +777,35 @@ CREATE TABLE ff_notifications (
 ## 🚀 NEXT STEPS - DEPLOYMENT
 
 ### **1. Review with Legal Counsel**
+
 - Have attorney review contract templates
 - Customize for your specific business needs
 - Add state-specific requirements
 - Adjust liability limits as needed
 
 ### **2. Integrate with Email/SMS**
+
 - Connect to SendGrid, AWS SES, or similar
 - Set up Twilio for SMS notifications
 - Configure email templates
 - Test notification delivery
 
 ### **3. Database Setup**
+
 - Implement PostgreSQL schema
 - Set up data migrations
 - Configure backups
 - Implement data retention policies
 
 ### **4. User Interface**
+
 - Add CRM management screens
 - Build contract creation wizards
 - Implement shipment tracking dashboard
 - Create notification preferences UI
 
 ### **5. Testing**
+
 - Test all contract templates
 - Verify notification delivery
 - Test milestone progression
@@ -782,13 +816,9 @@ CREATE TABLE ff_notifications (
 
 ## 📞 SUPPORT & CONTACT
 
-**FleetFlow TMS LLC**  
-755 W. Big Beaver Rd STE 2020  
-Troy, MI 48084  
+**FleetFlow TMS LLC** 755 W. Big Beaver Rd STE 2020 Troy, MI 48084
 
-**Phone**: (833) 386-3509  
-**Email**: support@fleetflowapp.com  
-**Website**: fleetflowapp.com
+**Phone**: (833) 386-3509 **Email**: support@fleetflowapp.com **Website**: fleetflowapp.com
 
 **WOSB Certified** • **Enterprise Transportation Intelligence**
 
@@ -796,7 +826,8 @@ Troy, MI 48084
 
 ## ⚖️ LEGAL DISCLAIMER
 
-**IMPORTANT:** These contract templates and systems are provided for informational purposes and should be reviewed by qualified legal counsel before use. FleetFlow TMS LLC recommends:
+**IMPORTANT:** These contract templates and systems are provided for informational purposes and
+should be reviewed by qualified legal counsel before use. FleetFlow TMS LLC recommends:
 
 1. Consultation with maritime law attorney
 2. Review by corporate counsel
@@ -808,8 +839,6 @@ Troy, MI 48084
 
 ---
 
-*Your complete business intelligence platform for freight forwarding operations.*
+_Your complete business intelligence platform for freight forwarding operations._
 
-**Built by:** Dieasha Davis, FleetFlow TMS LLC  
-**Version:** 1.0.0  
-**Date:** January 30, 2025
+**Built by:** Dieasha Davis, FleetFlow TMS LLC **Version:** 1.0.0 **Date:** January 30, 2025

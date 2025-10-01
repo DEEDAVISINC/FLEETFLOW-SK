@@ -260,3 +260,5 @@ Flow Forward Global: $12,499/month (NEW enterprise tier)
 
 **The $123K investment in CargoWise parity becomes the foundation for a $50M+ annual revenue
 business.** 🚀💰🌟
+
+

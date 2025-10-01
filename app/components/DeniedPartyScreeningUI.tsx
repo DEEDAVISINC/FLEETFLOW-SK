@@ -1,34 +1,9 @@
 'use client';
 
-import React from 'react';
-
-interface ScreeningParty {
-  name: string;
-  country?: string;
-  address?: string;
-  type: string;
-}
-
-interface ScreeningMatch {
-  listName: string;
-  matchedName: string;
-  matchConfidence: number;
-  country?: string;
-  addresses?: string[];
-  programs?: string[];
-  source: string;
-  remarks?: string;
-}
-
-interface ScreeningResult {
-  partyName: string;
-  status: 'clear' | 'match_found' | 'potential_match' | 'error';
-  riskLevel: 'critical' | 'high' | 'medium' | 'low' | 'clear';
-  matches: ScreeningMatch[];
-  screenedAt: string;
-  screeningId: string;
-  recommendations: string[];
-}
+import {
+  ScreeningParty,
+  ScreeningResult,
+} from '../services/DeniedPartyScreeningService';
 
 interface DeniedPartyScreeningUIProps {
   screeningParties: ScreeningParty[];
@@ -38,7 +13,11 @@ interface DeniedPartyScreeningUIProps {
   onUpdateParty: (index: number, field: string, value: string) => void;
   onRemoveParty: (index: number) => void;
   onHandleScreening: () => void;
-  getRiskColor: (riskLevel: string) => { bg: string; text: string; border: string };
+  getRiskColor: (riskLevel: string) => {
+    bg: string;
+    text: string;
+    border: string;
+  };
 }
 
 export default function DeniedPartyScreeningUI({
@@ -132,10 +111,10 @@ export default function DeniedPartyScreeningUI({
                 Party Name *
               </label>
               <input
-                type="text"
+                type='text'
                 value={party.name}
                 onChange={(e) => onUpdateParty(index, 'name', e.target.value)}
-                placeholder="ABC Shipping Inc"
+                placeholder='ABC Shipping Inc'
                 style={{
                   width: '100%',
                   padding: '10px',
@@ -172,22 +151,28 @@ export default function DeniedPartyScreeningUI({
                   fontSize: '14px',
                 }}
               >
-                <option value="shipper" style={{ background: '#1e293b' }}>
+                <option value='shipper' style={{ background: '#1e293b' }}>
                   Shipper
                 </option>
-                <option value="consignee" style={{ background: '#1e293b' }}>
+                <option value='consignee' style={{ background: '#1e293b' }}>
                   Consignee
                 </option>
-                <option value="carrier" style={{ background: '#1e293b' }}>
+                <option value='carrier' style={{ background: '#1e293b' }}>
                   Carrier
                 </option>
-                <option value="customs_broker" style={{ background: '#1e293b' }}>
+                <option
+                  value='customs_broker'
+                  style={{ background: '#1e293b' }}
+                >
                   Customs Broker
                 </option>
-                <option value="freight_forwarder" style={{ background: '#1e293b' }}>
+                <option
+                  value='freight_forwarder'
+                  style={{ background: '#1e293b' }}
+                >
                   Freight Forwarder
                 </option>
-                <option value="other" style={{ background: '#1e293b' }}>
+                <option value='other' style={{ background: '#1e293b' }}>
                   Other
                 </option>
               </select>
@@ -213,10 +198,12 @@ export default function DeniedPartyScreeningUI({
                 Address
               </label>
               <input
-                type="text"
+                type='text'
                 value={party.address}
-                onChange={(e) => onUpdateParty(index, 'address', e.target.value)}
-                placeholder="123 Business St, City"
+                onChange={(e) =>
+                  onUpdateParty(index, 'address', e.target.value)
+                }
+                placeholder='123 Business St, City'
                 style={{
                   width: '100%',
                   padding: '10px',
@@ -241,10 +228,12 @@ export default function DeniedPartyScreeningUI({
                 Country
               </label>
               <input
-                type="text"
+                type='text'
                 value={party.country}
-                onChange={(e) => onUpdateParty(index, 'country', e.target.value)}
-                placeholder="CN"
+                onChange={(e) =>
+                  onUpdateParty(index, 'country', e.target.value)
+                }
+                placeholder='CN'
                 style={{
                   width: '100%',
                   padding: '10px',
@@ -315,7 +304,7 @@ export default function DeniedPartyScreeningUI({
           </h4>
           <div style={{ display: 'grid', gap: '16px' }}>
             {screeningResults.map((result, index) => {
-              const riskColor = getRiskColor(result.riskLevel);
+              const riskColor = getRiskColor(result.riskLevel.toLowerCase());
               return (
                 <div
                   key={index}
@@ -368,12 +357,12 @@ export default function DeniedPartyScreeningUI({
                     }}
                   >
                     Status:{' '}
-                    <strong>
-                      {result.status.replace('_', ' ').toUpperCase()}
-                    </strong>
+                    <strong>{result.passed ? 'CLEAR' : 'MATCH FOUND'}</strong>
+                    {' • '}
+                    Matches: <strong>{result.matchCount}</strong>
                   </div>
 
-                  {result.matches.length > 0 && (
+                  {result.matchCount > 0 && (
                     <div
                       style={{
                         marginTop: '12px',
@@ -388,7 +377,7 @@ export default function DeniedPartyScreeningUI({
                           marginBottom: '8px',
                         }}
                       >
-                        ⚠️ {result.matches.length} Match(es) Found:
+                        ⚠️ {result.matchCount} Match(es) Found:
                       </div>
                       {result.matches.map((match, mIndex) => (
                         <div
@@ -405,14 +394,16 @@ export default function DeniedPartyScreeningUI({
                             <strong>List:</strong> {match.listName}
                           </div>
                           <div style={{ marginBottom: '4px' }}>
-                            <strong>Name:</strong> {match.matchedName}
+                            <strong>Programs:</strong>{' '}
+                            {match.programs.join(', ')}
                           </div>
                           <div style={{ marginBottom: '4px' }}>
-                            <strong>Confidence:</strong> {match.matchConfidence}%
+                            <strong>Action Required:</strong>{' '}
+                            {match.actionRequired.replace(/_/g, ' ')}
                           </div>
-                          {match.country && (
+                          {match.remarks && (
                             <div style={{ marginBottom: '4px' }}>
-                              <strong>Country:</strong> {match.country}
+                              <strong>Remarks:</strong> {match.remarks}
                             </div>
                           )}
                         </div>
@@ -420,7 +411,7 @@ export default function DeniedPartyScreeningUI({
                     </div>
                   )}
 
-                  {result.recommendations.length > 0 && (
+                  {result.recommendation && (
                     <div
                       style={{
                         marginTop: '12px',
@@ -435,21 +426,16 @@ export default function DeniedPartyScreeningUI({
                           marginBottom: '8px',
                         }}
                       >
-                        📋 Recommendations:
+                        💡 Recommendation:
                       </div>
-                      <ul
+                      <div
                         style={{
-                          margin: 0,
-                          paddingLeft: '20px',
                           fontSize: '13px',
+                          color: 'rgba(255,255,255,0.9)',
                         }}
                       >
-                        {result.recommendations.map((rec, rIndex) => (
-                          <li key={rIndex} style={{ marginBottom: '4px' }}>
-                            {rec}
-                          </li>
-                        ))}
-                      </ul>
+                        {result.recommendation}
+                      </div>
                     </div>
                   )}
                 </div>

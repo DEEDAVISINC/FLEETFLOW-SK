@@ -895,3 +895,5 @@ export class ContractAnalytics {
 
 _Contract rate management will transform FleetFlow from a spot market player to an enterprise
 contract negotiator, delivering CargoWise-level profitability._
+
+

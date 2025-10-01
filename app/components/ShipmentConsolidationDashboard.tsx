@@ -1007,3 +1007,5 @@ const ShipmentConsolidationDashboard: React.FC<ConsolidationDashboardProps> = ({
 };
 
 export default ShipmentConsolidationDashboard;
+
+

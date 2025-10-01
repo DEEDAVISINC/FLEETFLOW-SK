@@ -155,13 +155,14 @@ to $25-50M government warehousing contracts
 - HS code classification
 - Duty calculator
 - Section 301 alerts
+- Customs bond management ✅ (NEWLY IMPLEMENTED)
+- SuretyCloud manual integration ✅ (NEWLY IMPLEMENTED)
 
 **FleetFlow Missing:**
 
 - AES filing system
 - ISF filing (Importer Security Filing)
 - Advanced screening (BIS, OFAC, Denied Persons List)
-- Customs bond management
 - Drawback claim processing
 - Customs audit support
 - Complex compliance workflows
