@@ -18,7 +18,6 @@ import {
 } from '../services/DeniedPartyScreeningService';
 import { ContractType } from '../services/FreightForwarderContractService';
 import { FreightForwarderContractTemplates } from '../services/FreightForwarderContractTemplates';
-import FreightForwarderIdentificationService from '../services/FreightForwarderIdentificationService';
 import {
   RateContractsTab,
   WarehouseManagementTab,
@@ -161,13 +160,13 @@ export default function FreightForwardingPage() {
 
     // TODO: Fetch clients from API
     // Example: fetchClients().then(data => setClients(data));
-    
+
     // TODO: Fetch shipments from API
     // Example: fetchShipments().then(data => setShipments(data));
-    
+
     // TODO: Fetch quotes from API
     // Example: fetchQuotes().then(data => setQuotes(data));
-    
+
     // TODO: Fetch cross-border shipments from API
     // Example: fetchCanadaShipments().then(data => setCanadaShipments(data));
     // Example: fetchMexicoShipments().then(data => setMexicoShipments(data));
