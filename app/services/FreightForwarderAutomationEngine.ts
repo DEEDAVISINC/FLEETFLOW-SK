@@ -1,7 +1,7 @@
 /**
  * FLEETFLOW™ FREIGHT FORWARDING AUTOMATION ENGINE
  * Comprehensive automation system for freight forwarding operations
- * 
+ *
  * Features:
  * - Automated quote follow-ups
  * - Payment collection automation
@@ -607,4 +607,3 @@ export class FreightForwarderAutomationEngine {
 }
 
 export default FreightForwarderAutomationEngine;
-

@@ -10746,23 +10746,97 @@ function OperationsWMSTab() {
 
 function AutomationHubTab() {
   const [activeAutomations, setActiveAutomations] = useState([
-    { id: 'quote_followup', name: 'Quote Follow-up', enabled: true, emailsSent: 47, conversionRate: 32 },
-    { id: 'payment_collection', name: 'Payment Collection', enabled: true, remindersSent: 23, collected: '$12,450' },
-    { id: 'milestone_notifications', name: 'Milestone Notifications', enabled: true, notificationsSent: 156, satisfaction: 98 },
-    { id: 'rate_shopping', name: 'Smart Rate Shopping', enabled: true, quotesShopped: 34, savingsGenerated: '$8,920' },
-    { id: 'container_tracking', name: 'Container Tracking', enabled: true, containersTracked: 89, etaUpdates: 234 },
-    { id: 'document_generation', name: 'Document Auto-Generation', enabled: true, documentsCreated: 156, timeSaved: '12.3hrs' },
-    { id: 'compliance_screening', name: 'Compliance Screening', enabled: true, partiesScreened: 67, flagged: 2 },
-    { id: 'consolidation_alerts', name: 'Consolidation Alerts', enabled: true, opportunities: 8, savings: '$15,670' },
-    { id: 'contract_renewal', name: 'Contract Renewal Monitoring', enabled: true, renewalsSent: 5, renewed: 4 },
-    { id: 'dynamic_pricing', name: 'Dynamic Pricing', enabled: true, adjustments: 234, revenueImpact: '+$4,230' },
-    { id: 'sla_monitoring', name: 'SLA Monitoring', enabled: true, violations: 0, compliance: '100%' },
-    { id: 'customer_portal', name: 'Customer Portal Auto-Provision', enabled: true, portalsCreated: 12, logins: 89 },
+    {
+      id: 'quote_followup',
+      name: 'Quote Follow-up',
+      enabled: true,
+      emailsSent: 47,
+      conversionRate: 32,
+    },
+    {
+      id: 'payment_collection',
+      name: 'Payment Collection',
+      enabled: true,
+      remindersSent: 23,
+      collected: '$12,450',
+    },
+    {
+      id: 'milestone_notifications',
+      name: 'Milestone Notifications',
+      enabled: true,
+      notificationsSent: 156,
+      satisfaction: 98,
+    },
+    {
+      id: 'rate_shopping',
+      name: 'Smart Rate Shopping',
+      enabled: true,
+      quotesShopped: 34,
+      savingsGenerated: '$8,920',
+    },
+    {
+      id: 'container_tracking',
+      name: 'Container Tracking',
+      enabled: true,
+      containersTracked: 89,
+      etaUpdates: 234,
+    },
+    {
+      id: 'document_generation',
+      name: 'Document Auto-Generation',
+      enabled: true,
+      documentsCreated: 156,
+      timeSaved: '12.3hrs',
+    },
+    {
+      id: 'compliance_screening',
+      name: 'Compliance Screening',
+      enabled: true,
+      partiesScreened: 67,
+      flagged: 2,
+    },
+    {
+      id: 'consolidation_alerts',
+      name: 'Consolidation Alerts',
+      enabled: true,
+      opportunities: 8,
+      savings: '$15,670',
+    },
+    {
+      id: 'contract_renewal',
+      name: 'Contract Renewal Monitoring',
+      enabled: true,
+      renewalsSent: 5,
+      renewed: 4,
+    },
+    {
+      id: 'dynamic_pricing',
+      name: 'Dynamic Pricing',
+      enabled: true,
+      adjustments: 234,
+      revenueImpact: '+$4,230',
+    },
+    {
+      id: 'sla_monitoring',
+      name: 'SLA Monitoring',
+      enabled: true,
+      violations: 0,
+      compliance: '100%',
+    },
+    {
+      id: 'customer_portal',
+      name: 'Customer Portal Auto-Provision',
+      enabled: true,
+      portalsCreated: 12,
+      logins: 89,
+    },
   ]);
 
   const toggleAutomation = (id: string) => {
     setActiveAutomations((prev) =>
-      prev.map((auto) => (auto.id === id ? { ...auto, enabled: !auto.enabled } : auto))
+      prev.map((auto) =>
+        auto.id === id ? { ...auto, enabled: !auto.enabled } : auto
+      )
     );
   };
 
@@ -10794,78 +10868,172 @@ function AutomationHubTab() {
         >
           🤖 Automation Hub - Command Center
         </h2>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px', margin: 0 }}>
-          Monitor, configure, and optimize all freight forwarding automations from one dashboard
+        <p
+          style={{
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: '16px',
+            margin: 0,
+          }}
+        >
+          Monitor, configure, and optimize all freight forwarding automations
+          from one dashboard
         </p>
       </div>
 
       {/* Automation Stats Overview */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '16px',
+        }}
+      >
         <div
           style={{
-            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(244, 63, 94, 0.2))',
+            background:
+              'linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(244, 63, 94, 0.2))',
             border: '2px solid rgba(236, 72, 153, 0.3)',
             borderRadius: '16px',
             padding: '20px',
           }}
         >
-          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '4px' }}>Total Emails Sent</div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#ec4899', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.7)',
+              marginBottom: '4px',
+            }}
+          >
+            Total Emails Sent
+          </div>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#ec4899',
+              marginBottom: '8px',
+            }}
+          >
             {automationStats.totalEmailsSent}
           </div>
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>📧 Last 30 days</div>
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+            📧 Last 30 days
+          </div>
         </div>
 
         <div
           style={{
-            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))',
+            background:
+              'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))',
             border: '2px solid rgba(16, 185, 129, 0.3)',
             borderRadius: '16px',
             padding: '20px',
           }}
         >
-          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '4px' }}>Time Saved</div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#10b981', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.7)',
+              marginBottom: '4px',
+            }}
+          >
+            Time Saved
+          </div>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '8px',
+            }}
+          >
             {automationStats.timeSaved}
           </div>
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>⏱️ Per day average</div>
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+            ⏱️ Per day average
+          </div>
         </div>
 
         <div
           style={{
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))',
+            background:
+              'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))',
             border: '2px solid rgba(59, 130, 246, 0.3)',
             borderRadius: '16px',
             padding: '20px',
           }}
         >
-          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '4px' }}>Cost Saved</div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#3b82f6', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.7)',
+              marginBottom: '4px',
+            }}
+          >
+            Cost Saved
+          </div>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#3b82f6',
+              marginBottom: '8px',
+            }}
+          >
             {automationStats.costSaved}
           </div>
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>💰 Monthly savings</div>
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+            💰 Monthly savings
+          </div>
         </div>
 
         <div
           style={{
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))',
+            background:
+              'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2))',
             border: '2px solid rgba(139, 92, 246, 0.3)',
             borderRadius: '16px',
             padding: '20px',
           }}
         >
-          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '4px' }}>Revenue Increase</div>
-          <div style={{ fontSize: '32px', fontWeight: '700', color: '#8b5cf6', marginBottom: '8px' }}>
+          <div
+            style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.7)',
+              marginBottom: '4px',
+            }}
+          >
+            Revenue Increase
+          </div>
+          <div
+            style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#8b5cf6',
+              marginBottom: '8px',
+            }}
+          >
             {automationStats.revenueIncrease}
           </div>
-          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>📈 From automation</div>
+          <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+            📈 From automation
+          </div>
         </div>
       </div>
 
       {/* Active Automations List */}
       <div>
-        <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '20px', color: 'white' }}>
-          Active Automations ({activeAutomations.filter((a) => a.enabled).length}/{activeAutomations.length})
+        <h3
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            marginBottom: '20px',
+            color: 'white',
+          }}
+        >
+          Active Automations (
+          {activeAutomations.filter((a) => a.enabled).length}/
+          {activeAutomations.length})
         </h3>
 
         <div style={{ display: 'grid', gap: '16px' }}>
@@ -10873,7 +11041,9 @@ function AutomationHubTab() {
             <div
               key={automation.id}
               style={{
-                background: automation.enabled ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.03)',
+                background: automation.enabled
+                  ? 'rgba(255, 255, 255, 0.08)'
+                  : 'rgba(255, 255, 255, 0.03)',
                 borderRadius: '16px',
                 padding: '24px',
                 border: `2px solid ${automation.enabled ? 'rgba(236, 72, 153, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
@@ -10915,68 +11085,89 @@ function AutomationHubTab() {
 
               {/* Automation Info */}
               <div style={{ flex: 1 }}>
-                <h4 style={{ fontSize: '18px', fontWeight: '700', margin: '0 0 8px 0', color: 'white' }}>
+                <h4
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    margin: '0 0 8px 0',
+                    color: 'white',
+                  }}
+                >
                   {automation.name}
                 </h4>
-                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>
+                <div
+                  style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}
+                >
                   {automation.id === 'quote_followup' && (
                     <>
-                      📧 {automation.emailsSent} emails sent • {automation.conversionRate}% conversion rate
+                      📧 {automation.emailsSent} emails sent •{' '}
+                      {automation.conversionRate}% conversion rate
                     </>
                   )}
                   {automation.id === 'payment_collection' && (
                     <>
-                      💸 {automation.remindersSent} reminders sent • {automation.collected} collected
+                      💸 {automation.remindersSent} reminders sent •{' '}
+                      {automation.collected} collected
                     </>
                   )}
                   {automation.id === 'milestone_notifications' && (
                     <>
-                      📬 {automation.notificationsSent} notifications • {automation.satisfaction}% satisfaction
+                      📬 {automation.notificationsSent} notifications •{' '}
+                      {automation.satisfaction}% satisfaction
                     </>
                   )}
                   {automation.id === 'rate_shopping' && (
                     <>
-                      🔍 {automation.quotesShopped} quotes shopped • {automation.savingsGenerated} saved
+                      🔍 {automation.quotesShopped} quotes shopped •{' '}
+                      {automation.savingsGenerated} saved
                     </>
                   )}
                   {automation.id === 'container_tracking' && (
                     <>
-                      📍 {automation.containersTracked} containers • {automation.etaUpdates} ETA updates
+                      📍 {automation.containersTracked} containers •{' '}
+                      {automation.etaUpdates} ETA updates
                     </>
                   )}
                   {automation.id === 'document_generation' && (
                     <>
-                      📄 {automation.documentsCreated} documents • {automation.timeSaved} saved
+                      📄 {automation.documentsCreated} documents •{' '}
+                      {automation.timeSaved} saved
                     </>
                   )}
                   {automation.id === 'compliance_screening' && (
                     <>
-                      🛡️ {automation.partiesScreened} parties screened • {automation.flagged} flagged
+                      🛡️ {automation.partiesScreened} parties screened •{' '}
+                      {automation.flagged} flagged
                     </>
                   )}
                   {automation.id === 'consolidation_alerts' && (
                     <>
-                      📦 {automation.opportunities} opportunities • {automation.savings} potential savings
+                      📦 {automation.opportunities} opportunities •{' '}
+                      {automation.savings} potential savings
                     </>
                   )}
                   {automation.id === 'contract_renewal' && (
                     <>
-                      📋 {automation.renewalsSent} notices sent • {automation.renewed} renewed
+                      📋 {automation.renewalsSent} notices sent •{' '}
+                      {automation.renewed} renewed
                     </>
                   )}
                   {automation.id === 'dynamic_pricing' && (
                     <>
-                      💰 {automation.adjustments} adjustments • {automation.revenueImpact} revenue impact
+                      💰 {automation.adjustments} adjustments •{' '}
+                      {automation.revenueImpact} revenue impact
                     </>
                   )}
                   {automation.id === 'sla_monitoring' && (
                     <>
-                      ⏱️ {automation.violations} violations • {automation.compliance} compliance
+                      ⏱️ {automation.violations} violations •{' '}
+                      {automation.compliance} compliance
                     </>
                   )}
                   {automation.id === 'customer_portal' && (
                     <>
-                      👥 {automation.portalsCreated} portals created • {automation.logins} logins
+                      👥 {automation.portalsCreated} portals created •{' '}
+                      {automation.logins} logins
                     </>
                   )}
                 </div>
@@ -11011,11 +11202,24 @@ function AutomationHubTab() {
 
       {/* Automation Performance */}
       <div>
-        <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '20px', color: 'white' }}>
+        <h3
+          style={{
+            fontSize: '24px',
+            fontWeight: '700',
+            marginBottom: '20px',
+            color: 'white',
+          }}
+        >
           Automation Performance
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '20px',
+          }}
+        >
           <div
             style={{
               background: 'rgba(255, 255, 255, 0.05)',
@@ -11024,7 +11228,14 @@ function AutomationHubTab() {
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: '#10b981' }}>
+            <h4
+              style={{
+                fontSize: '16px',
+                fontWeight: '700',
+                marginBottom: '16px',
+                color: '#10b981',
+              }}
+            >
               ✅ Top Performing Automations
             </h4>
             <div style={{ display: 'grid', gap: '12px' }}>
@@ -11048,7 +11259,14 @@ function AutomationHubTab() {
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: '#3b82f6' }}>
+            <h4
+              style={{
+                fontSize: '16px',
+                fontWeight: '700',
+                marginBottom: '16px',
+                color: '#3b82f6',
+              }}
+            >
               💡 Optimization Opportunities
             </h4>
             <div style={{ display: 'grid', gap: '12px' }}>
@@ -11072,7 +11290,14 @@ function AutomationHubTab() {
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
-            <h4 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: '#ec4899' }}>
+            <h4
+              style={{
+                fontSize: '16px',
+                fontWeight: '700',
+                marginBottom: '16px',
+                color: '#ec4899',
+              }}
+            >
               📊 This Month's Impact
             </h4>
             <div style={{ display: 'grid', gap: '12px' }}>
