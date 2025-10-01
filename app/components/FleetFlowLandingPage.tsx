@@ -1856,9 +1856,7 @@ export default function FleetFlowLandingPage() {
                 style={{
                   fontSize: '2.8rem',
                   fontWeight: '900',
-                  background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#06b6d4',
                   marginBottom: '20px',
                 }}
               >
