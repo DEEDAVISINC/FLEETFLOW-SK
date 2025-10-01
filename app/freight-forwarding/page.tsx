@@ -1370,6 +1370,157 @@ function OverviewTab({
         </div>
       </div>
 
+
+      {/* Charts & Visualizations */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        {/* Revenue Trend Chart */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '20px',
+            }}
+          >
+            📈 Revenue Trend (Last 6 Months)
+          </h4>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '200px' }}>
+            {[45, 52, 48, 65, 70, 82].map((value, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'linear-gradient(to top, #10b981, #059669)',
+                    width: '100%',
+                    height: `${value}%`,
+                    borderRadius: '8px 8px 0 0',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                  }}
+                  title={`$${value}K`}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '-25px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#10b981',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    ${value}K
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    marginTop: '8px',
+                  }}
+                >
+                  M{index - 5}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)' }}>
+            📊 +27% growth vs last quarter
+          </div>
+        </div>
+
+        {/* Shipment Volume Chart */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#3b82f6',
+              marginBottom: '20px',
+            }}
+          >
+            📦 Shipment Volume (Last 6 Months)
+          </h4>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '200px' }}>
+            {[32, 38, 41, 45, 52, 58].map((value, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <div
+                  style={{
+                    background: 'linear-gradient(to top, #3b82f6, #2563eb)',
+                    width: '100%',
+                    height: `${value}%`,
+                    borderRadius: '8px 8px 0 0',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                  }}
+                  title={`${value} shipments`}
+                >
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '-25px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#3b82f6',
+                    }}
+                  >
+                    {value}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    marginTop: '8px',
+                  }}
+                >
+                  M{index - 5}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: '16px', textAlign: 'center', fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)' }}>
+            📊 +81% increase year-over-year
+          </div>
+        </div>
+      </div>
+
       {/* FleetFlow Lead Generation */}
       <div
         style={{
