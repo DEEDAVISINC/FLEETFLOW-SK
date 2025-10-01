@@ -11,7 +11,6 @@ import {
   ScreeningResult,
   deniedPartyScreeningService,
 } from '../services/DeniedPartyScreeningService';
-import FreightForwarderIdentificationService from '../services/FreightForwarderIdentificationService';
 
 export default function FreightForwardersPage() {
   const router = useRouter();
