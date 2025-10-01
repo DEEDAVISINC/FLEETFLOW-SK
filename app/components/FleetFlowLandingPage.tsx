@@ -1873,7 +1873,8 @@ export default function FleetFlowLandingPage() {
                   fontWeight: '600',
                 }}
               >
-                Enterprise freight forwarding software with AI-powered intelligence
+                Enterprise freight forwarding software with AI-powered
+                intelligence
               </p>
               <p
                 style={{
@@ -1883,7 +1884,8 @@ export default function FleetFlowLandingPage() {
                   marginBottom: '10px',
                 }}
               >
-                Complete ocean/air freight management • Real-time tracking • Customs compliance • Market intelligence
+                Complete ocean/air freight management • Real-time tracking •
+                Customs compliance • Market intelligence
               </p>
               <p
                 style={{
@@ -1904,7 +1906,7 @@ export default function FleetFlowLandingPage() {
                 marginBottom: '40px',
               }}
             >
-              {/* Solo Plan */}
+              {/* Professional Plan */}
               <div
                 style={{
                   background: 'rgba(6, 182, 212, 0.1)',
@@ -1925,7 +1927,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  Solo
+                  Professional
                 </h3>
                 <div
                   style={{
@@ -1935,7 +1937,7 @@ export default function FleetFlowLandingPage() {
                     marginBottom: '15px',
                   }}
                 >
-                  $299
+                  $1,299
                   <span style={{ fontSize: '1rem', fontWeight: '500' }}>
                     /month
                   </span>
@@ -1945,7 +1947,7 @@ export default function FleetFlowLandingPage() {
                       color: 'rgba(255,255,255,0.7)',
                     }}
                   >
-                    (1 user included)
+                    (1-5 users included)
                   </div>
                 </div>
                 <ul
@@ -1958,17 +1960,18 @@ export default function FleetFlowLandingPage() {
                     textAlign: 'left',
                   }}
                 >
-                  <li>✓ Ocean & air freight quoting</li>
-                  <li>✓ Real-time shipment tracking</li>
-                  <li>✓ Document generation</li>
-                  <li>✓ Basic compliance screening</li>
-                  <li>✓ Client portal access</li>
-                  <li>✓ Quote management</li>
-                  <li>✓ Email support</li>
+                  <li>✓ Complete CargoWise parity</li>
+                  <li>✓ Multi-currency support (31)</li>
+                  <li>✓ CRM & contract management</li>
+                  <li>✓ Automation & notifications</li>
+                  <li>✓ Basic consolidation tools</li>
+                  <li>✓ Customs compliance suite</li>
+                  <li>✓ Financial reporting</li>
+                  <li>✓ Mobile access</li>
                 </ul>
               </div>
 
-              {/* Professional Plan - MOST POPULAR */}
+              {/* Business Plan - MOST POPULAR */}
               <div
                 style={{
                   background: 'rgba(16, 185, 129, 0.1)',
@@ -2010,73 +2013,7 @@ export default function FleetFlowLandingPage() {
                     fontWeight: '700',
                   }}
                 >
-                  Professional
-                </h3>
-                <div
-                  style={{
-                    fontSize: '2.2rem',
-                    color: 'white',
-                    fontWeight: '800',
-                    marginBottom: '15px',
-                  }}
-                >
-                  $1,299
-                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
-                    /month
-                  </span>
-                  <div
-                    style={{
-                      fontSize: '0.9rem',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    (2-5 users, $249 per additional user)
-                  </div>
-                </div>
-                <ul
-                  style={{
-                    color: 'rgba(255,255,255,0.9)',
-                    fontSize: '0.9rem',
-                    listStyle: 'none',
-                    padding: 0,
-                    lineHeight: '1.8',
-                    textAlign: 'left',
-                  }}
-                >
-                  <li>✓ Everything in Solo</li>
-                  <li>✓ AI intelligence & recommendations</li>
-                  <li>✓ Market intelligence dashboard</li>
-                  <li>✓ Advanced customs compliance</li>
-                  <li>✓ Container consolidation alerts</li>
-                  <li>✓ Multi-currency pricing</li>
-                  <li>✓ Contract management (10 types)</li>
-                  <li>✓ Automation hub (12 automations)</li>
-                  <li>✓ Priority support</li>
-                </ul>
-              </div>
-
-              {/* Elite Plan */}
-              <div
-                style={{
-                  background: 'rgba(139, 92, 246, 0.1)',
-                  borderRadius: '16px',
-                  padding: '25px',
-                  border: '2px solid rgba(139, 92, 246, 0.3)',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
-                  🏆
-                </div>
-                <h3
-                  style={{
-                    fontSize: '1.3rem',
-                    color: '#8b5cf6',
-                    marginBottom: '10px',
-                    fontWeight: '700',
-                  }}
-                >
-                  Elite
+                  Business
                 </h3>
                 <div
                   style={{
@@ -2096,7 +2033,7 @@ export default function FleetFlowLandingPage() {
                       color: 'rgba(255,255,255,0.7)',
                     }}
                   >
-                    (6-10 users, $399 per additional user)
+                    (6-15 users included)
                   </div>
                 </div>
                 <ul
@@ -2110,34 +2047,34 @@ export default function FleetFlowLandingPage() {
                   }}
                 >
                   <li>✓ Everything in Professional</li>
-                  <li>✓ Dedicated account manager</li>
-                  <li>✓ White-label client portals</li>
-                  <li>✓ Custom workflow automation</li>
-                  <li>✓ API access & integrations</li>
-                  <li>✓ Warehouse management</li>
-                  <li>✓ Advanced analytics & forecasting</li>
-                  <li>✓ 24/7 priority support</li>
-                  <li>✓ Custom training sessions</li>
+                  <li>✓ Advanced shipment consolidation</li>
+                  <li>✓ Contract rate management</li>
+                  <li>✓ EDI integration network</li>
+                  <li>✓ Advanced BI dashboards</li>
+                  <li>✓ Sales pipeline management</li>
+                  <li>✓ Priority support</li>
+                  <li>✓ API access</li>
+                  <li>✓ Custom integrations</li>
                 </ul>
               </div>
 
               {/* Enterprise Plan */}
               <div
                 style={{
-                  background: 'rgba(245, 158, 11, 0.1)',
+                  background: 'rgba(139, 92, 246, 0.1)',
                   borderRadius: '16px',
                   padding: '25px',
-                  border: '2px solid rgba(245, 158, 11, 0.3)',
+                  border: '2px solid rgba(139, 92, 246, 0.3)',
                   textAlign: 'center',
                 }}
               >
                 <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
-                  🌐
+                  🏆
                 </div>
                 <h3
                   style={{
                     fontSize: '1.3rem',
-                    color: '#f59e0b',
+                    color: '#8b5cf6',
                     marginBottom: '10px',
                     fontWeight: '700',
                   }}
@@ -2162,7 +2099,7 @@ export default function FleetFlowLandingPage() {
                       color: 'rgba(255,255,255,0.7)',
                     }}
                   >
-                    (11-25 users, $499 per additional user)
+                    (16-50 users included)
                   </div>
                 </div>
                 <ul
@@ -2175,15 +2112,81 @@ export default function FleetFlowLandingPage() {
                     textAlign: 'left',
                   }}
                 >
-                  <li>✓ Everything in Elite</li>
-                  <li>✓ On-premise deployment option</li>
-                  <li>✓ Multi-location management</li>
-                  <li>✓ Custom development & features</li>
-                  <li>✓ Enterprise SSO/SAML</li>
-                  <li>✓ Advanced compliance automation</li>
-                  <li>✓ Dedicated infrastructure</li>
-                  <li>✓ 24/7 phone & on-site support</li>
-                  <li>✓ Quarterly business reviews</li>
+                  <li>✓ Everything in Business</li>
+                  <li>✓ Comprehensive WMS integration</li>
+                  <li>✓ Unlimited EDI trading partners</li>
+                  <li>✓ Advanced analytics & forecasting</li>
+                  <li>✓ White-label options</li>
+                  <li>✓ Dedicated account manager</li>
+                  <li>✓ Custom development</li>
+                  <li>✓ 24/7 premium support</li>
+                  <li>✓ Multi-entity management</li>
+                </ul>
+              </div>
+
+              {/* Global Plan */}
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(245, 158, 11, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🌐
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#f59e0b',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Global
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $6,999
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (51+ users included)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                  }}
+                >
+                  <li>✓ Everything in Enterprise</li>
+                  <li>✓ Global network integration</li>
+                  <li>✓ Advanced risk management</li>
+                  <li>✓ Predictive analytics</li>
+                  <li>✓ Custom AI models</li>
+                  <li>✓ Strategic consulting</li>
+                  <li>✓ Executive reporting</li>
+                  <li>✓ VIP support line</li>
+                  <li>✓ Unlimited everything</li>
                 </ul>
               </div>
             </div>
@@ -2225,7 +2228,7 @@ export default function FleetFlowLandingPage() {
                   marginTop: '15px',
                 }}
               >
-                Need more than 25 users? Contact us for Global Plan pricing
+                Need more than 50 users? Contact us for custom Global Plan pricing
               </p>
             </div>
           </div>
