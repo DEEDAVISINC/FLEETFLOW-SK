@@ -1837,6 +1837,400 @@ export default function FleetFlowLandingPage() {
           </div>
         </div>
 
+        {/* FLOW FORWARD - Freight Forwarding Plans Section */}
+        <div style={{ marginTop: '60px', marginBottom: '60px' }}>
+          <div
+            style={{
+              background: 'rgba(6, 182, 212, 0.05)',
+              backdropFilter: 'blur(15px)',
+              borderRadius: '20px',
+              border: '2px solid rgba(6, 182, 212, 0.3)',
+              padding: '40px',
+              maxWidth: '1200px',
+              margin: '0 auto',
+              boxShadow: '0 8px 32px rgba(6, 182, 212, 0.2)',
+            }}
+          >
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <h2
+                style={{
+                  fontSize: '2.8rem',
+                  fontWeight: '900',
+                  background: 'linear-gradient(135deg, #06b6d4, #3b82f6)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  marginBottom: '20px',
+                }}
+              >
+                🚢 Flow Forward™ - Freight Forwarding Intelligence
+              </h2>
+              <p
+                style={{
+                  fontSize: '1.4rem',
+                  color: 'rgba(255,255,255,0.9)',
+                  lineHeight: '1.6',
+                  marginBottom: '15px',
+                  fontWeight: '600',
+                }}
+              >
+                Enterprise freight forwarding software with AI-powered intelligence
+              </p>
+              <p
+                style={{
+                  fontSize: '1.1rem',
+                  color: 'rgba(255,255,255,0.8)',
+                  lineHeight: '1.5',
+                  marginBottom: '10px',
+                }}
+              >
+                Complete ocean/air freight management • Real-time tracking • Customs compliance • Market intelligence
+              </p>
+              <p
+                style={{
+                  fontSize: '0.9rem',
+                  color: '#10b981',
+                  fontWeight: '700',
+                }}
+              >
+                14-day free trial • No credit card required • Cancel anytime
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '25px',
+                marginBottom: '40px',
+              }}
+            >
+              {/* Solo Plan */}
+              <div
+                style={{
+                  background: 'rgba(6, 182, 212, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(6, 182, 212, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🎯
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#06b6d4',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Solo
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $299
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (1 user included)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                  }}
+                >
+                  <li>✓ Ocean & air freight quoting</li>
+                  <li>✓ Real-time shipment tracking</li>
+                  <li>✓ Document generation</li>
+                  <li>✓ Basic compliance screening</li>
+                  <li>✓ Client portal access</li>
+                  <li>✓ Quote management</li>
+                  <li>✓ Email support</li>
+                </ul>
+              </div>
+
+              {/* Professional Plan - MOST POPULAR */}
+              <div
+                style={{
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '3px solid #10b981',
+                  textAlign: 'center',
+                  position: 'relative',
+                  boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                {/* MOST POPULAR Badge */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '-15px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                    color: 'white',
+                    padding: '6px 20px',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: '800',
+                    letterSpacing: '0.5px',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  MOST POPULAR
+                </div>
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  ⚡
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#10b981',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Professional
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $1,299
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (2-5 users, $249 per additional user)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                  }}
+                >
+                  <li>✓ Everything in Solo</li>
+                  <li>✓ AI intelligence & recommendations</li>
+                  <li>✓ Market intelligence dashboard</li>
+                  <li>✓ Advanced customs compliance</li>
+                  <li>✓ Container consolidation alerts</li>
+                  <li>✓ Multi-currency pricing</li>
+                  <li>✓ Contract management (10 types)</li>
+                  <li>✓ Automation hub (12 automations)</li>
+                  <li>✓ Priority support</li>
+                </ul>
+              </div>
+
+              {/* Elite Plan */}
+              <div
+                style={{
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(139, 92, 246, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🏆
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#8b5cf6',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Elite
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $2,599
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (6-10 users, $399 per additional user)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                  }}
+                >
+                  <li>✓ Everything in Professional</li>
+                  <li>✓ Dedicated account manager</li>
+                  <li>✓ White-label client portals</li>
+                  <li>✓ Custom workflow automation</li>
+                  <li>✓ API access & integrations</li>
+                  <li>✓ Warehouse management</li>
+                  <li>✓ Advanced analytics & forecasting</li>
+                  <li>✓ 24/7 priority support</li>
+                  <li>✓ Custom training sessions</li>
+                </ul>
+              </div>
+
+              {/* Enterprise Plan */}
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  border: '2px solid rgba(245, 158, 11, 0.3)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+                  🌐
+                </div>
+                <h3
+                  style={{
+                    fontSize: '1.3rem',
+                    color: '#f59e0b',
+                    marginBottom: '10px',
+                    fontWeight: '700',
+                  }}
+                >
+                  Enterprise
+                </h3>
+                <div
+                  style={{
+                    fontSize: '2.2rem',
+                    color: 'white',
+                    fontWeight: '800',
+                    marginBottom: '15px',
+                  }}
+                >
+                  $3,999
+                  <span style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    /month
+                  </span>
+                  <div
+                    style={{
+                      fontSize: '0.9rem',
+                      color: 'rgba(255,255,255,0.7)',
+                    }}
+                  >
+                    (11-25 users, $499 per additional user)
+                  </div>
+                </div>
+                <ul
+                  style={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.9rem',
+                    listStyle: 'none',
+                    padding: 0,
+                    lineHeight: '1.8',
+                    textAlign: 'left',
+                  }}
+                >
+                  <li>✓ Everything in Elite</li>
+                  <li>✓ On-premise deployment option</li>
+                  <li>✓ Multi-location management</li>
+                  <li>✓ Custom development & features</li>
+                  <li>✓ Enterprise SSO/SAML</li>
+                  <li>✓ Advanced compliance automation</li>
+                  <li>✓ Dedicated infrastructure</li>
+                  <li>✓ 24/7 phone & on-site support</li>
+                  <li>✓ Quarterly business reviews</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div style={{ textAlign: 'center', marginTop: '30px' }}>
+              <Link href='/flow-forward-pricing'>
+                <button
+                  style={{
+                    background: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '18px 50px',
+                    borderRadius: '12px',
+                    fontSize: '1.3rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 32px rgba(6, 182, 212, 0.4)',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-3px)';
+                    e.currentTarget.style.boxShadow =
+                      '0 12px 40px rgba(6, 182, 212, 0.5)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow =
+                      '0 8px 32px rgba(6, 182, 212, 0.4)';
+                  }}
+                >
+                  🚢 Explore Flow Forward Pricing
+                </button>
+              </Link>
+              <p
+                style={{
+                  fontSize: '0.9rem',
+                  color: 'rgba(255,255,255,0.6)',
+                  marginTop: '15px',
+                }}
+              >
+                Need more than 25 users? Contact us for Global Plan pricing
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* DEPOINTE AI Company Dashboard Section */}
         <div style={{ marginTop: '60px', marginBottom: '60px' }}>
           <div
