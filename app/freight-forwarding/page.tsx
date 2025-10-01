@@ -1521,6 +1521,217 @@ function OverviewTab({
         </div>
       </div>
 
+
+      {/* Trade Lane Analysis & Cost Breakdown */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        {/* Top Trade Lanes */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(139, 92, 246, 0.2)',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#8b5cf6',
+              marginBottom: '20px',
+            }}
+          >
+            🌏 Top 5 Trade Lanes
+          </h4>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {[
+              { route: 'Shanghai → LA', shipments: 18, revenue: 45200, color: '#8b5cf6' },
+              { route: 'Ningbo → NY', shipments: 12, revenue: 32100, color: '#6366f1' },
+              { route: 'Yantian → Seattle', shipments: 9, revenue: 24800, color: '#7c3aed' },
+              { route: 'Qingdao → Houston', shipments: 7, revenue: 18500, color: '#a855f7' },
+              { route: 'HK → Chicago', shipments: 5, revenue: 15300, color: '#c084fc' },
+            ].map((lane, index) => (
+              <div
+                key={index}
+                style={{
+                  background: `${lane.color}10`,
+                  padding: '16px',
+                  borderRadius: '10px',
+                  border: `1px solid ${lane.color}30`,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
+                      {lane.route}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                      {lane.shipments} shipments
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '16px', fontWeight: '700', color: lane.color }}>
+                      ${(lane.revenue / 1000).toFixed(1)}K
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    marginTop: '8px',
+                    height: '4px',
+                    background: 'rgba(255,255,255,0.1)',
+                    borderRadius: '2px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      height: '100%',
+                      width: `${(lane.revenue / 45200) * 100}%`,
+                      background: lane.color,
+                      borderRadius: '2px',
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Cost Breakdown Pie Chart */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            borderRadius: '16px',
+            padding: '24px',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+          }}
+        >
+          <h4
+            style={{
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '20px',
+            }}
+          >
+            💰 Average Shipment Cost Breakdown
+          </h4>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            {/* Simple Pie Chart with CSS */}
+            <div style={{ position: 'relative', width: '180px', height: '180px' }}>
+              <svg width="180" height="180" viewBox="0 0 180 180">
+                {/* Ocean Freight 45% */}
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="70"
+                  fill="none"
+                  stroke="#10b981"
+                  strokeWidth="40"
+                  strokeDasharray="197 440"
+                  transform="rotate(-90 90 90)"
+                />
+                {/* Fuel Surcharge 25% */}
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="70"
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="40"
+                  strokeDasharray="110 440"
+                  strokeDashoffset="-197"
+                  transform="rotate(-90 90 90)"
+                />
+                {/* Customs 18% */}
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="70"
+                  fill="none"
+                  stroke="#f59e0b"
+                  strokeWidth="40"
+                  strokeDasharray="79 440"
+                  strokeDashoffset="-307"
+                  transform="rotate(-90 90 90)"
+                />
+                {/* Documentation 7% */}
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="70"
+                  fill="none"
+                  stroke="#8b5cf6"
+                  strokeWidth="40"
+                  strokeDasharray="31 440"
+                  strokeDashoffset="-386"
+                  transform="rotate(-90 90 90)"
+                />
+                {/* Other 5% */}
+                <circle
+                  cx="90"
+                  cy="90"
+                  r="70"
+                  fill="none"
+                  stroke="#6b7280"
+                  strokeWidth="40"
+                  strokeDasharray="22 440"
+                  strokeDashoffset="-417"
+                  transform="rotate(-90 90 90)"
+                />
+              </svg>
+            </div>
+            {/* Legend */}
+            <div style={{ flex: 1, display: 'grid', gap: '10px' }}>
+              {[
+                { label: 'Ocean Freight', percent: '45%', color: '#10b981', amount: '$2,025' },
+                { label: 'Fuel Surcharge', percent: '25%', color: '#3b82f6', amount: '$1,125' },
+                { label: 'Customs/Duties', percent: '18%', color: '#f59e0b', amount: '$810' },
+                { label: 'Documentation', percent: '7%', color: '#8b5cf6', amount: '$315' },
+                { label: 'Other Fees', percent: '5%', color: '#6b7280', amount: '$225' },
+              ].map((item, index) => (
+                <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div
+                    style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '2px',
+                      background: item.color,
+                    }}
+                  />
+                  <div style={{ flex: 1, fontSize: '13px', color: 'rgba(255,255,255,0.8)' }}>
+                    {item.label}
+                  </div>
+                  <div style={{ fontSize: '13px', fontWeight: '600', color: item.color }}>
+                    {item.percent}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', minWidth: '60px', textAlign: 'right' }}>
+                    {item.amount}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div
+            style={{
+              marginTop: '16px',
+              padding: '12px',
+              background: 'rgba(16, 185, 129, 0.1)',
+              borderRadius: '8px',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', marginBottom: '4px' }}>
+              Average Total Cost
+            </div>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#10b981' }}>
+              $4,500
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* FleetFlow Lead Generation */}
       <div
         style={{
