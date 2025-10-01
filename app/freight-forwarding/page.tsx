@@ -3606,6 +3606,59 @@ function ComplianceTab() {
 }
 
 function DocumentsTab() {
+  const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+
+  const documents = [
+    {
+      id: 'bol',
+      name: 'Bill of Lading',
+      icon: '📜',
+      description: 'Ocean/Air freight BOL generator',
+      color: '#3b82f6',
+      template: 'International shipping document',
+    },
+    {
+      id: 'invoice',
+      name: 'Commercial Invoice',
+      icon: '💰',
+      description: 'Customs commercial invoice',
+      color: '#10b981',
+      template: 'Multi-currency invoice creator',
+    },
+    {
+      id: 'packing',
+      name: 'Packing List',
+      icon: '📦',
+      description: 'Detailed packing list',
+      color: '#f59e0b',
+      template: 'Cargo contents documentation',
+    },
+    {
+      id: 'coo',
+      name: 'Certificate of Origin',
+      icon: '🌍',
+      description: 'Country of origin certificate',
+      color: '#8b5cf6',
+      template: 'Trade preference certification',
+    },
+    {
+      id: 'sli',
+      name: "Shipper's Letter of Instruction",
+      icon: '📝',
+      description: 'Shipping instructions to forwarder',
+      color: '#ec4899',
+      template: 'Detailed shipping instructions',
+    },
+    {
+      id: 'isf',
+      name: 'ISF Filing',
+      icon: '🛃',
+      description: 'Importer Security Filing (10+2)',
+      color: '#06b6d4',
+      template: 'US Customs ISF requirement',
+    },
+  ];
+
   return (
     <div style={{ display: 'grid', gap: '32px' }}>
       <div>
@@ -3619,34 +3672,220 @@ function DocumentsTab() {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          📄 Document Management
+          📄 Document Generation & Management
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.7)', margin: '0' }}>
-          BOL, Invoices, Packing Lists, Customs Declarations
+          Generate professional shipping documents instantly
         </p>
       </div>
 
+      {/* Document Templates Grid */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.05)',
-          border: '2px dashed rgba(255, 255, 255, 0.2)',
-          borderRadius: '16px',
-          padding: '60px',
-          textAlign: 'center',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '20px',
         }}
       >
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
+        {documents.map((doc) => (
+          <div
+            key={doc.id}
+            onClick={() => setSelectedDoc(doc.id)}
+            style={{
+              background: `linear-gradient(135deg, ${doc.color}15, ${doc.color}05)`,
+              border: `1px solid ${doc.color}40`,
+              borderRadius: '16px',
+              padding: '24px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px)';
+              e.currentTarget.style.boxShadow = `0 8px 24px ${doc.color}40`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>{doc.icon}</div>
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                color: doc.color,
+                marginBottom: '8px',
+              }}
+            >
+              {doc.name}
+            </h3>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255,255,255,0.7)',
+                marginBottom: '12px',
+              }}
+            >
+              {doc.description}
+            </p>
+            <div
+              style={{
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.5)',
+                fontStyle: 'italic',
+              }}
+            >
+              {doc.template}
+            </div>
+            <button
+              style={{
+                marginTop: '16px',
+                width: '100%',
+                padding: '10px 20px',
+                border: `1px solid ${doc.color}`,
+                background: `${doc.color}20`,
+                borderRadius: '8px',
+                color: doc.color,
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
+              Generate Document →
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Document Stats */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '16px',
+        }}
+      >
         <div
           style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            marginBottom: '10px',
+            background: 'rgba(59, 130, 246, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(59, 130, 246, 0.3)',
+            textAlign: 'center',
           }}
         >
-          Document Management
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#3b82f6' }}>
+            24
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Documents Generated
+          </div>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.6)' }}>
-          BOL, Invoices, Packing Lists, Customs Declarations coming soon
+        <div
+          style={{
+            background: 'rgba(16, 185, 129, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(16, 185, 129, 0.3)',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#10b981' }}>
+            18
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Pending Signatures
+          </div>
+        </div>
+        <div
+          style={{
+            background: 'rgba(245, 158, 11, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#f59e0b' }}>
+            42
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Completed This Month
+          </div>
+        </div>
+        <div
+          style={{
+            background: 'rgba(139, 92, 246, 0.1)',
+            padding: '20px',
+            borderRadius: '12px',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: '32px', fontWeight: '700', color: '#8b5cf6' }}>
+            156
+          </div>
+          <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+            Total Documents
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div
+        style={{
+          background: 'rgba(6, 182, 212, 0.1)',
+          border: '1px solid rgba(6, 182, 212, 0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+        }}
+      >
+        <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#06b6d4', marginBottom: '12px' }}>
+          💡 Quick Actions
+        </h4>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+          <button
+            style={{
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              background: 'rgba(59, 130, 246, 0.1)',
+              color: '#3b82f6',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            📤 Bulk Export to PDF
+          </button>
+          <button
+            style={{
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              background: 'rgba(16, 185, 129, 0.1)',
+              color: '#10b981',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            ✉️ Send for E-Signature
+          </button>
+          <button
+            style={{
+              padding: '12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(245, 158, 11, 0.3)',
+              background: 'rgba(245, 158, 11, 0.1)',
+              color: '#f59e0b',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+            }}
+          >
+            📁 Upload Document
+          </button>
         </div>
       </div>
     </div>
