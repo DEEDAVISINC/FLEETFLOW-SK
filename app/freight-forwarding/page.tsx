@@ -2471,6 +2471,116 @@ function ClientsTab({
           </button>
         </div>
 
+        {/* Contact Type Filter */}
+        <div style={{ 
+          background: 'rgba(59, 130, 246, 0.1)',
+          border: '1px solid rgba(59, 130, 246, 0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+        }}>
+          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#3b82f6', marginBottom: '16px' }}>
+            📋 Contact Types (12 Categories)
+          </h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
+            {[
+              { type: 'SHIPPER', icon: '📦', count: 8, color: '#3b82f6' },
+              { type: 'CONSIGNEE', icon: '🏭', count: 12, color: '#10b981' },
+              { type: 'CARRIER', icon: '🚢', count: 5, color: '#f59e0b' },
+              { type: 'CUSTOMS_BROKER', icon: '🛃', count: 3, color: '#8b5cf6' },
+              { type: 'TRUCKER', icon: '🚛', count: 7, color: '#ef4444' },
+              { type: 'WAREHOUSE', icon: '🏭', count: 4, color: '#14b8a6' },
+              { type: 'PORT_AGENT', icon: '⚓', count: 6, color: '#06b6d4' },
+              { type: 'FREIGHT_FORWARDER', icon: '✈️', count: 9, color: '#ec4899' },
+              { type: 'BANK', icon: '🏦', count: 2, color: '#a855f7' },
+              { type: 'INSURANCE', icon: '🛡️', count: 3, color: '#0891b2' },
+              { type: 'NOTIFY_PARTY', icon: '📧', count: 11, color: '#f59e0b' },
+              { type: 'VENDOR', icon: '🏪', count: 5, color: '#6366f1' },
+            ].map((contactType) => (
+              <div
+                key={contactType.type}
+                style={{
+                  background: `${contactType.color}10`,
+                  border: `1px solid ${contactType.color}40`,
+                  borderRadius: '8px',
+                  padding: '12px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'center',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = `0 4px 12px ${contactType.color}40`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                <div style={{ fontSize: '24px', marginBottom: '4px' }}>{contactType.icon}</div>
+                <div style={{ fontSize: '11px', fontWeight: '600', color: contactType.color, textTransform: 'capitalize' }}>
+                  {contactType.type.replace('_', ' ')}
+                </div>
+                <div style={{ fontSize: '18px', fontWeight: '700', color: contactType.color, marginTop: '4px' }}>
+                  {contactType.count}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+              💡 <strong>12 Contact Types:</strong> Manage all stakeholders in your freight forwarding operations - from shippers and consignees to carriers, customs brokers, truckers, warehouses, port agents, banks, insurance providers, and vendors.
+            </p>
+          </div>
+        </div>
+
+
+
+        {/* Quick Add Contacts */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))',
+          border: '1px solid rgba(16, 185, 129, 0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+        }}>
+          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#10b981', marginBottom: '16px' }}>
+            ⚡ Quick Add New Contact
+          </h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
+            {[
+              { type: 'Shipper', icon: '📦', color: '#3b82f6' },
+              { type: 'Consignee', icon: '🏭', color: '#10b981' },
+              { type: 'Carrier', icon: '🚢', color: '#f59e0b' },
+              { type: 'Customs Broker', icon: '🛃', color: '#8b5cf6' },
+              { type: 'Trucker', icon: '🚛', color: '#ef4444' },
+              { type: 'Warehouse', icon: '🏭', color: '#14b8a6' },
+            ].map((type) => (
+              <button
+                key={type.type}
+                onClick={() => alert(`Add new ${type.type} - Feature coming soon!`)}
+                style={{
+                  padding: '12px',
+                  background: `${type.color}15`,
+                  border: `1px solid ${type.color}40`,
+                  borderRadius: '8px',
+                  color: type.color,
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span style={{ fontSize: '16px' }}>{type.icon}</span>
+                <span>{type.type}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+
         <div
           style={{
             display: 'grid',
