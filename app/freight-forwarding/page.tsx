@@ -5443,6 +5443,314 @@ function MarketIntelligenceTab({ stats }: { stats: any }) {
             </div>
           </div>
         </div>
+
+        {/* Air Freight Rates */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(139, 92, 246, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#8b5cf6',
+              }}
+            >
+              ✈️ Air Freight Rates
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Updated hourly
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Shanghai → LA (per kg)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  $4.85/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 12.3%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Hong Kong → NY (per kg)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  $5.20/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 2.8%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Tokyo → Chicago (per kg)
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  $6.15/kg
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 5.4%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Fuel Surcharges */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(245, 158, 11, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#f59e0b',
+              }}
+            >
+              ⛽ Fuel Surcharges
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Weekly updates
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Ocean Carrier Average
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  18.5%
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 2.1%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                Air Freight FSC
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  24.3%
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 1.2%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                background: 'rgba(245, 158, 11, 0.1)',
+                padding: '12px',
+                borderRadius: '8px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: 'rgba(255,255,255,0.7)',
+                  lineHeight: '1.5',
+                }}
+              >
+                🛢️ <strong>Oil Price:</strong> $87.45/barrel (+3.2% this week)
+                <br />
+                📊 Expected to impact rates in next cycle
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Currency Exchange Rates */}
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(34, 197, 94, 0.3)',
+            borderRadius: '16px',
+            padding: '24px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                margin: 0,
+                color: '#22c55e',
+              }}
+            >
+              💱 Currency Exchange Rates
+            </h3>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+              Real-time
+            </div>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                USD → CNY
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  ¥7.25
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 0.8%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                USD → EUR
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  €0.92
+                </div>
+                <div style={{ fontSize: '12px', color: '#22c55e' }}>↓ 0.3%</div>
+              </div>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ color: 'rgba(255,255,255,0.8)' }}>
+                USD → JPY
+              </span>
+              <div style={{ textAlign: 'right' }}>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#10b981',
+                  }}
+                >
+                  ¥148.35
+                </div>
+                <div style={{ fontSize: '12px', color: '#ef4444' }}>↑ 1.2%</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
