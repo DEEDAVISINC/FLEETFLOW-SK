@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "FleetFlow ImportYeti Scraper",
+  "version": "1.0.0",
+  "description": "Automatically scrape ImportYeti data and sync to FleetFlow DDP Lead Generation",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://www.importyeti.com/*", "http://localhost:3001/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.importyeti.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

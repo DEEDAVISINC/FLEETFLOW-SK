@@ -100,9 +100,12 @@ export function SalesCopilotPanel({
   };
 
   return (
-    <div className={`rounded-lg border bg-white shadow-sm ${className}`}>
+    <div
+      className={`rounded-lg border border-slate-700 shadow-sm ${className}`}
+      style={{ background: 'rgba(30, 41, 59, 0.8)' }}
+    >
       {/* Header */}
-      <div className='border-b border-gray-200 px-4 py-3'>
+      <div className='border-b border-slate-700 px-4 py-3'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center space-x-2'>
             <div
@@ -110,17 +113,20 @@ export function SalesCopilotPanel({
                 isConnected ? 'bg-green-500' : 'bg-red-500'
               }`}
             />
-            <h3 className='text-lg font-semibold text-gray-900'>
+            <h3 className='text-lg font-semibold text-slate-100'>
               Sales Copilot AI
             </h3>
           </div>
-          <div className='text-sm text-gray-500'>{connectionStatus}</div>
+          <div className='text-sm text-slate-400'>{connectionStatus}</div>
         </div>
 
         {/* Call Context */}
         {callContext && (
-          <div className='mt-2 rounded bg-gray-50 p-2 text-sm'>
-            <div className='flex items-center justify-between'>
+          <div
+            className='mt-2 rounded p-2 text-sm'
+            style={{ background: 'rgba(15, 23, 42, 0.6)' }}
+          >
+            <div className='flex items-center justify-between text-slate-300'>
               <span>
                 <strong>Stage:</strong> {callContext.conversationStage}
               </span>
@@ -130,7 +136,7 @@ export function SalesCopilotPanel({
               </span>
             </div>
             {callContext.prospectInfo?.name && (
-              <div className='mt-1'>
+              <div className='mt-1 text-slate-300'>
                 <strong>Prospect:</strong> {callContext.prospectInfo.name}
                 {callContext.prospectInfo.company &&
                   ` (${callContext.prospectInfo.company})`}
@@ -143,7 +149,7 @@ export function SalesCopilotPanel({
       {/* Current Guidance */}
       <div className='max-h-96 overflow-y-auto px-4 py-3'>
         {currentGuidance.length === 0 ? (
-          <div className='py-8 text-center text-gray-500'>
+          <div className='py-8 text-center text-slate-400'>
             <div className='mb-2 text-2xl'>🎯</div>
             <p>No active guidance</p>
             <p className='text-sm'>Guidance will appear here during calls</p>
@@ -218,8 +224,11 @@ export function SalesCopilotPanel({
 
       {/* Conversation Input (for testing/development) */}
       {process.env.NODE_ENV === 'development' && callContext && (
-        <div className='border-t border-gray-200 bg-gray-50 px-4 py-3'>
-          <div className='mb-2 text-sm font-medium text-gray-700'>
+        <div
+          className='border-t border-slate-700 px-4 py-3'
+          style={{ background: 'rgba(15, 23, 42, 0.6)' }}
+        >
+          <div className='mb-2 text-sm font-medium text-slate-300'>
             Process Conversation (Dev Mode)
           </div>
           <div className='space-y-2'>
@@ -228,21 +237,21 @@ export function SalesCopilotPanel({
               placeholder='What did the prospect say?'
               value={prospectMessage}
               onChange={(e) => setProspectMessage(e.target.value)}
-              className='w-full rounded border border-gray-300 px-3 py-2 text-sm'
+              className='w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500'
             />
             <input
               type='text'
               placeholder='What did you say?'
               value={agentResponse}
               onChange={(e) => setAgentResponse(e.target.value)}
-              className='w-full rounded border border-gray-300 px-3 py-2 text-sm'
+              className='w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500'
             />
             <button
               onClick={handleProcessConversation}
               disabled={
                 !prospectMessage.trim() || !agentResponse.trim() || isProcessing
               }
-              className='w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-400'
+              className='w-full rounded bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-500'
             >
               {isProcessing ? 'Processing...' : 'Process Conversation'}
             </button>
@@ -252,10 +261,13 @@ export function SalesCopilotPanel({
 
       {/* Loading indicator */}
       {isProcessing && (
-        <div className='border-t border-blue-200 bg-blue-50 px-4 py-2'>
+        <div
+          className='border-t border-slate-700 px-4 py-2'
+          style={{ background: 'rgba(59, 130, 246, 0.1)' }}
+        >
           <div className='flex items-center space-x-2'>
-            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-blue-600'></div>
-            <span className='text-sm text-blue-700'>
+            <div className='h-4 w-4 animate-spin rounded-full border-b-2 border-blue-500'></div>
+            <span className='text-sm text-blue-400'>
               Analyzing conversation...
             </span>
           </div>
@@ -264,5 +276,3 @@ export function SalesCopilotPanel({
     </div>
   );
 }
-
-

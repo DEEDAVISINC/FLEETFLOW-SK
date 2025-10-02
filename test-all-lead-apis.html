@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>FleetFlow Lead Generation API Tester</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        color: #f1f5f9;
+        padding: 40px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        color: #94a3b8;
+        margin-bottom: 40px;
+      }
+
+      .api-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .api-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.5);
+        border-radius: 12px;
+        padding: 24px;
+      }
+
+      .api-card h2 {
+        font-size: 20px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .api-card .description {
+        color: #94a3b8;
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      .api-card .status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+
+      .status.ready {
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #10b981;
+      }
+
+      .status.needs-creds {
+        background: rgba(251, 191, 36, 0.2);
+        border: 1px solid rgba(251, 191, 36, 0.3);
+        color: #fbbf24;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 8px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .results {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(71, 85, 105, 0.5);
+        border-radius: 12px;
+        padding: 24px;
+      }
+
+      .results h2 {
+        margin-bottom: 16px;
+      }
+
+      pre {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .success {
+        color: #10b981;
+      }
+
+      .error {
+        color: #ef4444;
+      }
+
+      .loading {
+        color: #fbbf24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎯 FleetFlow Lead Generation API Tester</h1>
+      <div class="subtitle">Test all your lead generation systems</div>
+
+      <div class="api-grid">
+        <!-- ThomasNet API -->
+        <div class="api-card">
+          <h2>🏭 ThomasNet Web Scraping</h2>
+          <div class="description">
+            Scrapes manufacturer data with Puppeteer. AI-scored leads (70-100).
+          </div>
+          <span class="status ready">✅ Ready</span>
+          <button onclick="testThomasNet()">Test ThomasNet API</button>
+          <div id="thomasnet-result"></div>
+        </div>
+
+        <!-- General AI Lead Gen -->
+        <div class="api-card">
+          <h2>🤖 AI Lead Generation</h2>
+          <div class="description">
+            7 data sources: FMCSA, Weather, Economic, Trade, TruckingPlanet,
+            etc.
+          </div>
+          <span class="status ready">✅ Ready</span>
+          <button onclick="testAILeadGen()">Test AI Lead Gen</button>
+          <div id="aileadgen-result"></div>
+        </div>
+
+        <!-- Unified Leads API -->
+        <div class="api-card">
+          <h2>📊 Unified Leads API</h2>
+          <div class="description">
+            Combines TruckingPlanet + ThomasNet with deduplication.
+          </div>
+          <span class="status ready">✅ Ready</span>
+          <button onclick="testUnifiedLeads()">Test Unified Leads</button>
+          <div id="unified-result"></div>
+        </div>
+
+        <!-- LinkedIn API -->
+        <div class="api-card">
+          <h2>🔗 LinkedIn Lead Sync</h2>
+          <div class="description">
+            Real-time LinkedIn Lead Gen Forms sync. Auto-scores leads.
+          </div>
+          <span class="status needs-creds">⚠️ Needs Credentials</span>
+          <button onclick="testLinkedIn()" disabled>
+            Test LinkedIn (Add Credentials First)
+          </button>
+          <div id="linkedin-result"></div>
+        </div>
+
+        <!-- Chrome Extension -->
+        <div class="api-card">
+          <h2>🌐 Chrome Extension</h2>
+          <div class="description">
+            ImportYeti scraper. One-click lead capture from customs data.
+          </div>
+          <span class="status ready">✅ Ready</span>
+          <button onclick="checkExtension()">Check Extension Status</button>
+          <div id="extension-result"></div>
+        </div>
+
+        <!-- CSV Upload -->
+        <div class="api-card">
+          <h2>📤 CSV Upload</h2>
+          <div class="description">
+            Upload any lead list. Auto-parsing and Marcus Chen processing.
+          </div>
+          <span class="status ready">✅ Live</span>
+          <button
+            onclick="window.open('http://localhost:3001/depointe-dashboard', '_blank')"
+          >
+            Open Dashboard
+          </button>
+        </div>
+      </div>
+
+      <div class="results">
+        <h2>📊 Test Results</h2>
+        <pre id="results">Click any "Test" button above to see results...</pre>
+      </div>
+    </div>
+
+    <script>
+      function log(message, type = 'info') {
+        const results = document.getElementById('results');
+        const timestamp = new Date().toLocaleTimeString();
+        const color =
+          type === 'success'
+            ? 'success'
+            : type === 'error'
+              ? 'error'
+              : 'loading';
+        results.innerHTML += `\n<span class="${color}">[${timestamp}] ${message}</span>`;
+        results.scrollTop = results.scrollHeight;
+      }
+
+      async function testThomasNet() {
+        log('🏭 Testing ThomasNet API...', 'loading');
+        try {
+          const response = await fetch('http://localhost:3001/api/thomas-net', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'freight_focused_search',
+              location: 'Texas',
+              limit: 3,
+            }),
+          });
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const data = await response.json();
+          log(
+            `✅ ThomasNet: Found ${data.results?.length || 0} manufacturers`,
+            'success'
+          );
+          log(JSON.stringify(data, null, 2));
+        } catch (error) {
+          log(`❌ ThomasNet Error: ${error.message}`, 'error');
+        }
+      }
+
+      async function testAILeadGen() {
+        log('🤖 Testing AI Lead Generation API...', 'loading');
+        try {
+          const response = await fetch(
+            'http://localhost:3001/api/lead-generation?action=generate&industry=steel&state=TX&freightNeed=high'
+          );
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const data = await response.json();
+          log(
+            `✅ AI Lead Gen: Generated ${data.data?.totalLeads || 0} leads`,
+            'success'
+          );
+          log(
+            `   High-value leads: ${data.data?.aiInsights?.highValueLeads || 0}`
+          );
+          log(
+            `   Avg confidence: ${data.data?.aiInsights?.averageConfidence || 0}%`
+          );
+          log(JSON.stringify(data.data?.topProspects?.[0], null, 2));
+        } catch (error) {
+          log(`❌ AI Lead Gen Error: ${error.message}`, 'error');
+        }
+      }
+
+      async function testUnifiedLeads() {
+        log('📊 Testing Unified Leads API...', 'loading');
+        try {
+          const response = await fetch(
+            'http://localhost:3001/api/unified-leads',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                filters: {
+                  industry: ['automotive', 'steel'],
+                  location: { state: 'MI' },
+                },
+                options: {
+                  includeThomasNet: true,
+                  includeTruckingPlanet: true,
+                  maxLeadsPerSource: 5,
+                },
+              }),
+            }
+          );
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const data = await response.json();
+          log(
+            `✅ Unified Leads: Found ${data.leads?.length || 0} total leads`,
+            'success'
+          );
+          log(
+            `   TruckingPlanet: ${data.sourceBreakdown?.truckingPlanet || 0}`
+          );
+          log(`   ThomasNet: ${data.sourceBreakdown?.thomasNet || 0}`);
+          log(JSON.stringify(data.leads?.[0], null, 2));
+        } catch (error) {
+          log(`❌ Unified Leads Error: ${error.message}`, 'error');
+        }
+      }
+
+      async function testLinkedIn() {
+        log('🔗 Testing LinkedIn API...', 'loading');
+        log('⚠️ LinkedIn API requires credentials in .env.local', 'loading');
+        log('   LINKEDIN_LEAD_SYNC_CLIENT_ID=050345000006513');
+        log('   LINKEDIN_LEAD_SYNC_CLIENT_SECRET=your_secret');
+        log('   LINKEDIN_LEAD_SYNC_ACCESS_TOKEN=your_token');
+        log('   Get from: https://www.linkedin.com/developers/');
+      }
+
+      async function checkExtension() {
+        log('🌐 Checking Chrome Extension...', 'loading');
+        try {
+          const response = await fetch('http://localhost:3001/api/health');
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const data = await response.json();
+          log(`✅ FleetFlow API: ${data.service} - ${data.status}`, 'success');
+          log('   Extension can connect! Install from chrome://extensions/');
+          log('   Location: /Users/deedavis/FLEETFLOW/chrome-extension');
+        } catch (error) {
+          log(`❌ FleetFlow API Error: ${error.message}`, 'error');
+          log('   Make sure npm run dev is running!');
+        }
+      }
+
+      // Auto-test on load
+      window.addEventListener('load', () => {
+        log('🚀 FleetFlow Lead Generation API Tester Ready');
+        log('   Click buttons above to test each API');
+        log('   Make sure FleetFlow is running: npm run dev\n');
+      });
+    </script>
+  </body>
+</html>

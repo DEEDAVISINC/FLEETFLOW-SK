@@ -5,6 +5,7 @@ import InternalAdaptiveLearning from '../components/InternalAdaptiveLearning';
 import { useEffect, useState } from 'react';
 import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
+import ChinaUSADDPService from '../components/ChinaUSADDPService';
 import DesperateProspectsBatchDeployment, {
   DesperateProspectsTask,
 } from '../components/DesperateProspectsBatchDeployment';
@@ -12,8 +13,8 @@ import FreightBrainDashboard from '../components/FreightBrainDashboard';
 import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
-import NEMTHealthcareCampaigns from '../components/NEMTHealthcareCampaigns';
 import HybridNEMTSystem from '../components/HybridNEMTSystem';
+import NEMTHealthcareCampaigns from '../components/NEMTHealthcareCampaigns';
 import PowerUpsDashboard from '../components/PowerUpsDashboard';
 import { SalesCopilotPanel } from '../components/SalesCopilotPanel';
 import ShipperBatchDeployment, {
@@ -778,6 +779,68 @@ export const depointeStaff = [
       'Real-time dashboard creation',
       'Performance metrics tracking',
     ],
+  },
+  {
+    id: 'freight-specialist-028',
+    name: 'Marcus Chen',
+    role: 'International Freight & Customs Specialist',
+    department: 'Logistics & International Trade',
+    avatar: '🚢',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    expertise: 'China-USA DDP Service Management',
+    learningAbilities: [
+      'International freight forwarding operations',
+      'Customs clearance automation',
+      'HTS code classification and tariff analysis',
+      'DDP (Delivered Duty Paid) service coordination',
+      'Big 5 data collection automation',
+      'China pickup and USA delivery coordination',
+      'Container type optimization (40HQ/40ft/20ft)',
+      'Steel/Metal/Aluminum import specialization',
+      '95% tariff product expertise',
+      'Multi-modal logistics planning',
+      'Automated quote generation for DDP services',
+      'Payment terms management (prepay/net30/net60)',
+      'Real-time shipment tracking',
+      'Customer communication in Chinese and English',
+      'Import compliance and documentation',
+    ],
+    marketingMastery: {
+      primaryStrategies: [
+        'ddp-service',
+        'high-tariff-solutions',
+        'customer-automation',
+      ],
+      expertiseLevel: 'Expert',
+      coreCompetencies: [
+        'China-USA Trade Lane Optimization',
+        'Automated Big 5 Data Collection',
+        'High-Tariff Product Import Solutions',
+        'DDP Service Value Communication',
+      ],
+      aiApplications: [
+        'Automated customer data collection workflows',
+        'Real-time quote generation algorithms',
+        'Payment reminder automation',
+        'Shipment status monitoring and alerts',
+        'HTS code validation and tariff calculation',
+      ],
+      successPatterns: [
+        'Complete Big 5 collection within 48 hours',
+        'Generate accurate DDP quotes in under 2 hours',
+        '100% payment collection for prepay customers',
+        'Maintain 95%+ on-time delivery rate',
+      ],
+      improvementAreas: [
+        'Multi-language communication enhancement',
+        'Predictive delivery time optimization',
+        'Advanced customs clearance automation',
+      ],
+    },
   },
 ];
 
@@ -1738,6 +1801,8 @@ export default function DEPOINTEDashboard() {
           borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
           paddingBottom: '15px',
           marginBottom: '30px',
+          overflowX: 'auto',
+          overflowY: 'hidden',
         }}
       >
         {[
@@ -1784,6 +1849,8 @@ export default function DEPOINTEDashboard() {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
+              flexShrink: 0,
+              whiteSpace: 'nowrap',
             }}
             onMouseEnter={(e) => {
               if (selectedMainView !== tab.key) {
@@ -3213,7 +3280,7 @@ export default function DEPOINTEDashboard() {
                           >
                             Key Deliverables:
                           </div>
-                          {task.deliverables
+                          {(task.deliverables || [])
                             .slice(0, 3)
                             .map((deliverable, index) => (
                               <div
@@ -3619,7 +3686,7 @@ export default function DEPOINTEDashboard() {
                               >
                                 Emergency Deliverables:
                               </div>
-                              {task.deliverables
+                              {(task.deliverables || [])
                                 .slice(0, 3)
                                 .map((deliverable, index) => (
                                   <div

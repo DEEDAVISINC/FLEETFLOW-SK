@@ -102,7 +102,7 @@ export function useSalesCopilot(agentId: string): SalesCopilotHookReturn {
       }
     };
 
-    webSocketNotificationService.addMessageHandler(
+    const unsubscribeSalesCopilot = webSocketNotificationService.onMessage(
       'sales-copilot',
       messageHandler
     );
@@ -113,20 +113,14 @@ export function useSalesCopilot(agentId: string): SalesCopilotHookReturn {
       setConnectionStatus(status.connected ? 'connected' : 'disconnected');
     };
 
-    webSocketNotificationService.addMessageHandler(
+    const unsubscribeStatus = webSocketNotificationService.onMessage(
       'connection_status',
       statusHandler
     );
 
     return () => {
-      webSocketNotificationService.removeMessageHandler(
-        'sales-copilot',
-        messageHandler
-      );
-      webSocketNotificationService.removeMessageHandler(
-        'connection_status',
-        statusHandler
-      );
+      unsubscribeSalesCopilot();
+      unsubscribeStatus();
     };
   }, [agentId]);
 
@@ -223,5 +217,3 @@ export function useSalesCopilot(agentId: string): SalesCopilotHookReturn {
     markGuidanceUsed,
   };
 }
-
-
