@@ -12,6 +12,8 @@ import FreightBrainDashboard from '../components/FreightBrainDashboard';
 import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
+import NEMTHealthcareCampaigns from '../components/NEMTHealthcareCampaigns';
+import HybridNEMTSystem from '../components/HybridNEMTSystem';
 import PowerUpsDashboard from '../components/PowerUpsDashboard';
 import { SalesCopilotPanel } from '../components/SalesCopilotPanel';
 import ShipperBatchDeployment, {
@@ -806,11 +808,15 @@ export default function DEPOINTEDashboard() {
     | 'call-center'
     | 'email-signatures'
     | 'china-usa-ddp'
+    | 'nemt-operations'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
   const [liveActivities, setLiveActivities] = useState<any[]>([]);
   const [staffData, setStaffData] = useState(depointeStaff);
+  const [campaignView, setCampaignView] = useState<
+    'templates' | 'nemt-healthcare'
+  >('templates');
   const [expandedHealthcareCampaign, setExpandedHealthcareCampaign] =
     useState(false);
   const [expandedShipperCampaign, setExpandedShipperCampaign] = useState(false);
@@ -1740,6 +1746,7 @@ export default function DEPOINTEDashboard() {
           { key: 'leads', label: '🎯 Lead Generation', icon: '🎯' },
           { key: 'analytics', label: '📈 Analytics', icon: '📈' },
           { key: 'campaigns', label: '🚀 Campaign Center', icon: '🚀' },
+          { key: 'nemt-operations', label: '🏥 NEMT Operations', icon: '🏥' },
           { key: 'scheduler', label: '📅 AI Staff Scheduler', icon: '📅' },
           { key: 'email-signatures', label: '📧 Email Signatures', icon: '📧' },
           { key: 'powerups', label: '⚡ Power-Ups', icon: '⚡' },
@@ -7331,17 +7338,105 @@ export default function DEPOINTEDashboard() {
             </p>
           </div>
 
-          {/* Campaign Templates Container */}
+          {/* Campaign Sub-Navigation */}
           <div
             style={{
-              background: 'rgba(0, 0, 0, 0.2)',
-              borderRadius: '8px',
-              padding: '16px',
-              border: '1px solid rgba(148, 163, 184, 0.1)',
+              display: 'flex',
+              gap: '12px',
+              marginBottom: '20px',
+              flexWrap: 'wrap',
             }}
           >
-            <CampaignTemplates />
+            <button
+              onClick={() => setCampaignView('templates')}
+              style={{
+                background:
+                  campaignView === 'templates'
+                    ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  campaignView === 'templates'
+                    ? 'none'
+                    : '1px solid rgba(148, 163, 184, 0.3)',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                color: 'white',
+                fontSize: '0.95rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              🚀 Campaign Templates
+            </button>
+            <button
+              onClick={() => setCampaignView('nemt-healthcare')}
+              style={{
+                background:
+                  campaignView === 'nemt-healthcare'
+                    ? 'linear-gradient(135deg, #8b5cf6, #7c3aed)'
+                    : 'rgba(255, 255, 255, 0.1)',
+                border:
+                  campaignView === 'nemt-healthcare'
+                    ? 'none'
+                    : '1px solid rgba(148, 163, 184, 0.3)',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                color: 'white',
+                fontSize: '0.95rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+            >
+              🏥 NEMT Healthcare
+            </button>
           </div>
+
+          {/* Campaign Templates Container */}
+          {campaignView === 'templates' && (
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px',
+                padding: '16px',
+                border: '1px solid rgba(148, 163, 184, 0.1)',
+              }}
+            >
+              <CampaignTemplates />
+            </div>
+          )}
+
+          {/* NEMT Healthcare Campaigns */}
+          {campaignView === 'nemt-healthcare' && (
+            <div
+              style={{
+                background: 'rgba(0, 0, 0, 0.2)',
+                borderRadius: '8px',
+                padding: '16px',
+                border: '1px solid rgba(148, 163, 184, 0.1)',
+              }}
+            >
+              <NEMTHealthcareCampaigns />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* NEMT OPERATIONS VIEW */}
+      {selectedMainView === 'nemt-operations' && (
+        <div
+          style={{
+            background: 'rgba(15, 23, 42, 0.8)',
+            border: '1px solid rgba(148, 163, 184, 0.2)',
+            borderRadius: '12px',
+            padding: '20px',
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+            margin: '20px',
+          }}
+        >
+          <HybridNEMTSystem />
         </div>
       )}
 
