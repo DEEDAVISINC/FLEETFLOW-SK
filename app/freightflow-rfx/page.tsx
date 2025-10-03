@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent build-time prerendering issues
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import RFxTaskPrioritizationPanel from '../components/RFxTaskPrioritizationPanel';
@@ -81,6 +84,9 @@ interface CarrierQualificationResult {
 }
 
 function FreightFlowRFxContent() {
+  // Client-side hydration protection
+  const [isMounted, setIsMounted] = useState(false);
+
   const [activeTab, setActiveTab] = useState('active');
   const [showAIBidAssistant, setShowAIBidAssistant] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState<File | null>(null);
@@ -314,9 +320,15 @@ function FreightFlowRFxContent() {
   };
 
   // Load RFX requests on component mount
+  // Mount protection to prevent hydration issues
   useEffect(() => {
-    fetchRfxRequests();
+    setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    fetchRfxRequests();
+  }, [isMounted]);
 
   const [myBids, setMyBids] = useState<any[]>([]);
   const [loadingMyBids, setLoadingMyBids] = useState(true);
@@ -2004,6 +2016,26 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
     setShowBidResponse(true);
     setActiveTab('active');
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#1a1b2e',
+        }}
+      >
+        <div style={{ textAlign: 'center', color: '#ffffff' }}>
+          <div style={{ fontSize: '24px', marginBottom: '10px' }}>📋</div>
+          <div>Loading RFx Opportunities...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

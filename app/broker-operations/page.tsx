@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent build-time prerendering issues
+export const dynamic = 'force-dynamic';
+
 import React, { useEffect, useState } from 'react';
 import BrokerOperationsGettingStarted from '../components/BrokerOperationsGettingStarted';
 import { BrokerQuoteInterface } from '../components/BrokerQuoteInterface';
@@ -55,6 +58,9 @@ interface Dispatcher {
 }
 
 const BrokerOperationsPage: React.FC = () => {
+  // Client-side hydration protection
+  const [isMounted, setIsMounted] = useState(false);
+
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'rfx'
@@ -92,15 +98,22 @@ const BrokerOperationsPage: React.FC = () => {
     recentActivity: [],
   });
 
+  // Mount protection to prevent hydration issues
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Initialize production-ready data (cleared for production)
   useEffect(() => {
+    if (!isMounted) return;
+
     const mockDispatchers: Dispatcher[] = [];
 
     const mockLoads: LoadPosting[] = [];
 
     setDispatchers(mockDispatchers);
     setLoads(mockLoads);
-  }, []);
+  }, [isMounted]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -220,6 +233,25 @@ const BrokerOperationsPage: React.FC = () => {
       alert('Error assigning dispatcher. Please try again.');
     }
   };
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '24px', marginBottom: '10px' }}>🚛</div>
+          <div>Loading Broker Operations...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
