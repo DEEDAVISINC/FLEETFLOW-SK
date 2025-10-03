@@ -677,5 +677,3 @@ class CurrencyConversionService {
 // Export singleton instance
 export const currencyService = CurrencyConversionService.getInstance();
 export default currencyService;
-
-

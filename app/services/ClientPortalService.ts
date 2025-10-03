@@ -587,5 +587,3 @@ ${params.message}
 // Export singleton instance
 export const clientPortalService = ClientPortalService.getInstance();
 export default clientPortalService;
-
-

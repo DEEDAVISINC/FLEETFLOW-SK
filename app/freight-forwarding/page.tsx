@@ -3,7 +3,9 @@
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import DeniedPartyScreeningUI from '../components/DeniedPartyScreeningUI';
+import DocumentManagementPanel from '../components/DocumentManagementPanel';
 import FreightForwarderDashboardGuide from '../components/FreightForwarderDashboardGuide';
+import NotificationPanel from '../components/NotificationPanel';
 import ShipmentConsolidationDashboard from '../components/ShipmentConsolidationDashboard';
 import { useMultiTenantPayments } from '../hooks/useMultiTenantPayments';
 import btsService, {
@@ -854,6 +856,11 @@ export default function FreightForwardingPage() {
             },
             { id: 'clients', label: '👥 Clients & CRM', color: '#8b5cf6' },
             {
+              id: 'notifications',
+              label: '🔔 Notifications',
+              color: '#f59e0b',
+            },
+            {
               id: 'intelligence',
               label: '📊 Intelligence & Analytics',
               color: '#3b82f6',
@@ -866,7 +873,7 @@ export default function FreightForwardingPage() {
             {
               id: 'operations',
               label: '✅ Operations & WMS',
-              color: '#f59e0b',
+              color: '#10b981',
             },
           ].map((tab) => (
             <button
@@ -937,6 +944,11 @@ export default function FreightForwardingPage() {
             showAddAgentModal={showAddAgentModal}
             setShowAddAgentModal={setShowAddAgentModal}
           />
+        )}
+
+        {/* Notifications Tab */}
+        {selectedTab === 'notifications' && (
+          <NotificationPanel userId='freight-forwarder-user' />
         )}
 
         {/* Intelligence & Analytics Tab - Consolidated */}
@@ -11611,6 +11623,7 @@ function ComplianceDocsTab() {
         {[
           { id: 'compliance', label: '🛃 Compliance & Screening' },
           { id: 'documents', label: '📄 Document Generation' },
+          { id: 'document-management', label: '📁 Document Management' },
           { id: 'contracts', label: '📋 Legal Contracts' },
         ].map((tab) => (
           <button
@@ -11641,6 +11654,13 @@ function ComplianceDocsTab() {
       {/* Content */}
       {subTab === 'compliance' && <ComplianceAndDocumentsTab />}
       {subTab === 'documents' && <DocumentsTab />}
+      {subTab === 'document-management' && (
+        <DocumentManagementPanel
+          clientId='FF-001'
+          userId='freight-forwarder-user'
+          userRole='FREIGHT_FORWARDER'
+        />
+      )}
       {subTab === 'contracts' && <RateContractsTab />}
     </div>
   );
