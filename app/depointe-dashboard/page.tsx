@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent build-time prerendering issues
+export const dynamic = 'force-dynamic';
+
 import InternalAdaptiveLearning from '../components/InternalAdaptiveLearning';
 
 import { useEffect, useState } from 'react';
@@ -845,6 +848,9 @@ export const depointeStaff = [
 ];
 
 export default function DEPOINTEDashboard() {
+  // Client-side hydration protection
+  const [isMounted, setIsMounted] = useState(false);
+  
   const [isTaskCreationOpen, setIsTaskCreationOpen] = useState(false);
   const [isHealthcareTaskOpen, setIsHealthcareTaskOpen] = useState(false);
   const [isShipperTaskOpen, setIsShipperTaskOpen] = useState(false);
@@ -901,6 +907,11 @@ export default function DEPOINTEDashboard() {
     'overview' | 'tasks' | 'crm' | 'performance'
   >('overview');
 
+  // Mount protection to prevent hydration issues
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Debug staff directory state changes
   useEffect(() => {
     console.log(
@@ -911,6 +922,8 @@ export default function DEPOINTEDashboard() {
 
   // Load saved healthcare tasks and activity feed on page load
   useEffect(() => {
+    if (!isMounted) return;
+    
     // Load healthcare tasks from localStorage
     const savedHealthcareTasks = localStorage.getItem(
       'depointe-healthcare-tasks'
@@ -1088,7 +1101,7 @@ export default function DEPOINTEDashboard() {
         console.error('Error loading follow-up tasks:', error);
       }
     }
-  }, []);
+  }, [isMounted]);
 
   // Department structure and organization
   const departments = {
@@ -1668,6 +1681,26 @@ export default function DEPOINTEDashboard() {
       ))}
     </div>
   );
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+        }}
+      >
+        <div style={{ textAlign: 'center', color: '#ffffff' }}>
+          <div style={{ fontSize: '24px', marginBottom: '10px' }}>🎯</div>
+          <div>Loading DEPOINTE Dashboard...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
