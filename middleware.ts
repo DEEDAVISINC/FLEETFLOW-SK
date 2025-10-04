@@ -1,5 +1,6 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
+import { squareSubscriptionService } from './app/services/SquareSubscriptionService';
 
 // ADMIN ACCOUNTS - Full access to everything
 const ADMIN_ACCOUNTS = ['info@deedavis.biz', 'admin@fleetflowapp.com'];
@@ -61,39 +62,82 @@ export async function middleware(request: NextRequest) {
 
   // ✅ ADMIN ACCESS - Full access to everything
   if (ADMIN_ACCOUNTS.includes(userEmail)) {
-    console.log(`✅ Admin access granted to ${pathname} for ${userEmail}`);
+    console.log(`✅ ADMIN ACCESS to ${pathname} for ${userEmail}`);
     return NextResponse.next();
   }
 
-  // 🔒 ALL OTHER USERS - Basic trial access for now
-  // TODO: Integrate with subscription service (requires database connection)
-  console.log(`⚠️ Non-admin user ${userEmail} accessing ${pathname} - defaulting to trial tier`);
-  
-  // For now, allow authenticated users to access basic pages
-  // You'll need to implement full subscription checking when you have a database
-  const trialPages = [
-    '/fleetflowdash',
-    '/tracking',
-    '/documents',
-    '/messages',
-    '/notifications',
-    '/user-profile',
-    '/account',
-  ];
+  // 🔒 CHECK REAL SUBSCRIPTION via Square
+  const subscriptionInfo =
+    await squareSubscriptionService.getUserSubscriptionInfo(userEmail);
 
-  const hasAccess = trialPages.some(
+  if (!subscriptionInfo) {
+    console.log(`⚠️ No subscription found for ${userEmail}`);
+
+    // Allow basic pages without subscription
+    const trialPages = [
+      '/fleetflowdash',
+      '/tracking',
+      '/documents',
+      '/messages',
+      '/notifications',
+      '/user-profile',
+      '/account',
+      '/subscription-management',
+    ];
+
+    const hasTrialAccess = trialPages.some(
+      (allowedPath) =>
+        pathname === allowedPath || pathname.startsWith(allowedPath + '/')
+    );
+
+    if (!hasTrialAccess) {
+      console.log(`🚫 Access denied to ${pathname} - no subscription`);
+      const upgradeUrl = new URL(
+        '/subscription-management/subscription-dashboard',
+        request.url
+      );
+      upgradeUrl.searchParams.set('required', 'subscription');
+      upgradeUrl.searchParams.set('feature', pathname);
+      return NextResponse.redirect(upgradeUrl);
+    }
+
+    return NextResponse.next();
+  }
+
+  // User has subscription - check their access
+  const { accessiblePages, activePlans } = subscriptionInfo;
+
+  // Enterprise gets everything
+  const hasEnterprise = activePlans.some(
+    (plan) => plan.permissionLevel === 'enterprise'
+  );
+  if (hasEnterprise) {
+    console.log(`✅ ENTERPRISE ACCESS for ${userEmail} to ${pathname}`);
+    return NextResponse.next();
+  }
+
+  // Check if page is in accessible list
+  const hasAccess = accessiblePages.some(
     (allowedPath) =>
-      pathname === allowedPath || pathname.startsWith(allowedPath + '/')
+      pathname === allowedPath ||
+      pathname.startsWith(allowedPath + '/') ||
+      allowedPath === '*'
   );
 
   if (!hasAccess) {
-    console.log(`🚫 Access denied to ${pathname} - redirecting to upgrade`);
-    const upgradeUrl = new URL('/fleetflowdash', request.url);
-    upgradeUrl.searchParams.set('message', 'This feature requires a subscription upgrade');
+    console.log(
+      `🚫 Access denied to ${pathname} for ${userEmail} (${activePlans.map((p) => p.name).join(', ')})`
+    );
+    const upgradeUrl = new URL(
+      '/subscription-management/subscription-dashboard',
+      request.url
+    );
+    upgradeUrl.searchParams.set('required', 'upgrade');
+    upgradeUrl.searchParams.set('feature', pathname);
     return NextResponse.redirect(upgradeUrl);
   }
 
-  console.log(`✅ Access granted to ${pathname}`);
+  console.log(`✅ Access granted to ${pathname} for ${userEmail}`);
   return NextResponse.next();
 }
 

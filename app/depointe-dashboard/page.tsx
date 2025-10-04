@@ -13,6 +13,7 @@ import DesperateProspectsBatchDeployment, {
   DesperateProspectsTask,
 } from '../components/DesperateProspectsBatchDeployment';
 import FreightBrainDashboard from '../components/FreightBrainDashboard';
+import GrantAcquisitionBatchDeployment from '../components/GrantAcquisitionBatchDeployment';
 import HealthcareBatchDeployment, {
   HealthcareTask,
 } from '../components/HealthcareBatchDeployment';
@@ -856,6 +857,7 @@ export default function DEPOINTEDashboard() {
   const [isShipperTaskOpen, setIsShipperTaskOpen] = useState(false);
   const [isDesperateProspectsTaskOpen, setIsDesperateProspectsTaskOpen] =
     useState(false);
+  const [isGrantAcquisitionOpen, setIsGrantAcquisitionOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [healthcareTasks, setHealthcareTasks] = useState<HealthcareTask[]>([]);
   const [shipperTasks, setShipperTasks] = useState<ShipperTask[]>([]);
@@ -1800,6 +1802,27 @@ export default function DEPOINTEDashboard() {
                 Desperate Prospects
               </button>
             )}
+            <button
+              onClick={() => setIsGrantAcquisitionOpen(true)}
+              style={{
+                background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '16px 24px',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                boxShadow: '0 8px 20px -4px rgba(139, 92, 246, 0.4)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>🎯</span>
+              Grant Acquisition
+            </button>
             <button
               onClick={() => setIsTaskCreationOpen(true)}
               style={{
@@ -8426,6 +8449,63 @@ export default function DEPOINTEDashboard() {
           onClose={() => setIsDesperateProspectsTaskOpen(false)}
           onBatchDeploy={handleDesperateProspectsBatchDeploy}
         />
+      )}
+
+      {/* Grant Acquisition Campaign Modal */}
+      {isGrantAcquisitionOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            padding: '20px',
+          }}
+          onClick={() => setIsGrantAcquisitionOpen(false)}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '16px',
+              maxWidth: '1400px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsGrantAcquisitionOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                border: 'none',
+                backgroundColor: '#f3f4f6',
+                color: '#374151',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10001,
+              }}
+            >
+              ×
+            </button>
+            <GrantAcquisitionBatchDeployment />
+          </div>
+        </div>
       )}
     </div>
   );

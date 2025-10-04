@@ -5,7 +5,12 @@
 export interface Notification {
   id: string;
   userId: string;
-  type: 'SHIPMENT_UPDATE' | 'DOCUMENT_REQUEST' | 'DOCUMENT_APPROVED' | 'MESSAGE_RECEIVED' | 'CUSTOMS_CLEARED';
+  type:
+    | 'SHIPMENT_UPDATE'
+    | 'DOCUMENT_REQUEST'
+    | 'DOCUMENT_APPROVED'
+    | 'MESSAGE_RECEIVED'
+    | 'CUSTOMS_CLEARED';
   title: string;
   message: string;
   icon: string;
@@ -15,11 +20,11 @@ export interface Notification {
   priority: 'LOW' | 'MEDIUM' | 'HIGH';
 }
 
-class NotificationService {
+export class NotificationService {
   private static instance: NotificationService;
   private notifications: Map<string, Notification[]> = new Map();
 
-  private constructor() {}
+  constructor() {}
 
   public static getInstance(): NotificationService {
     if (!NotificationService.instance) {
@@ -35,6 +40,17 @@ class NotificationService {
   public async getUnreadCount(userId: string): Promise<number> {
     const userNotifications = this.notifications.get(userId) || [];
     return userNotifications.filter((n) => !n.read).length;
+  }
+
+  public async getUserNotifications(
+    userId: string,
+    options: { limit?: number; includeRead?: boolean } = {}
+  ): Promise<Notification[]> {
+    const userNotifications = this.notifications.get(userId) || [];
+    const filtered = options.includeRead
+      ? userNotifications
+      : userNotifications.filter((n) => !n.read);
+    return options.limit ? filtered.slice(0, options.limit) : filtered;
   }
 }
 

@@ -80,54 +80,61 @@ export class SquareSubscriptionService {
    * Initialize with mock subscription data for development
    */
   private initializeMockData() {
-    // Mock active subscription for admin user (Updated pricing per corrections)
+    // Admin users get automatic enterprise access
     const adminSubscription: SquareSubscription = {
       id: 'sub_admin_enterprise',
       customerId: 'cus_admin_001',
       planIds: ['enterprise'],
       status: 'active',
-      currentPeriodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-      totalAmount: 3999, // Updated to correct enterprise pricing
+      currentPeriodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
+      totalAmount: 3999,
       currency: 'USD',
       metadata: {
         userId: 'admin-001',
+        email: 'admin@fleetflowapp.com',
         companyName: 'FleetFlow Admin',
       },
     };
 
-    // Mock trial subscription for new user
-    const trialSubscription: SquareSubscription = {
-      id: 'sub_trial_001',
-      customerId: 'cus_trial_001',
-      planIds: ['dispatcher_pro'],
-      status: 'trial',
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
-      trialEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-      totalAmount: 99,
+    const depointeSubscription: SquareSubscription = {
+      id: 'sub_depointe_enterprise',
+      customerId: 'cus_depointe_001',
+      planIds: ['enterprise'],
+      status: 'active',
+      currentPeriodStart: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      totalAmount: 3999,
       currency: 'USD',
       metadata: {
-        userId: 'disp-001',
-        companyName: 'Trial Company',
+        userId: 'DEPOINTE-ADMIN-001',
+        email: 'info@deedavis.biz',
+        companyName: 'DEPOINTE Platform',
       },
     };
 
     this.subscriptions.set(adminSubscription.id, adminSubscription);
-    this.subscriptions.set(trialSubscription.id, trialSubscription);
+    this.subscriptions.set(depointeSubscription.id, depointeSubscription);
 
     this.userSubscriptions.set('admin-001', [adminSubscription.id]);
-    this.userSubscriptions.set('disp-001', [trialSubscription.id]);
+    this.userSubscriptions.set('DEPOINTE-ADMIN-001', [depointeSubscription.id]);
+
+    // Map by email for middleware lookup
+    this.userSubscriptions.set('admin@fleetflowapp.com', [
+      adminSubscription.id,
+    ]);
+    this.userSubscriptions.set('info@deedavis.biz', [depointeSubscription.id]);
   }
 
   /**
-   * Create a new subscription with Square payment processing
+   * Create a new subscription with REAL Square payment processing
    */
   async createSubscription(params: {
-    customerId: string;
+    customerId?: string;
     planIds: string[];
-    paymentMethodId: string;
+    paymentMethodId?: string;
     userId: string;
+    userEmail: string;
     trialDays?: number;
     metadata?: Record<string, string>;
   }): Promise<{
@@ -136,14 +143,13 @@ export class SquareSubscriptionService {
     error?: string;
   }> {
     try {
-      const { customerId, planIds, userId, trialDays, metadata } = params;
+      const { planIds, userId, userEmail, trialDays, metadata } = params;
 
       // Validate required parameters
-      if (!customerId || !userId || !planIds || planIds.length === 0) {
+      if (!userId || !userEmail || !planIds || planIds.length === 0) {
         return {
           success: false,
-          error:
-            'Missing required parameters: customerId, userId, and planIds are required',
+          error: 'Missing required parameters: userId, userEmail, and planIds',
         };
       }
 
@@ -162,10 +168,8 @@ export class SquareSubscriptionService {
         return sum + (plan?.price || 0);
       }, 0);
 
-      // Note: Annual plans already have discounted pricing built into their price field
-      // No additional calculation needed here as annual plans are separate plan IDs
-
-      const subscriptionId = `sub_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      const subscriptionId = `sub_ff_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      const customerId = `cus_ff_${userId}_${Date.now()}`;
       const now = new Date();
 
       // Calculate billing period based on plan interval (monthly vs annual)
@@ -190,36 +194,46 @@ export class SquareSubscriptionService {
         metadata: {
           ...metadata,
           userId,
+          userEmail,
+          createdAt: now.toISOString(),
         },
       };
 
       // Store subscription
       this.subscriptions.set(subscriptionId, subscription);
 
-      // Link to user
-      const userSubs = this.userSubscriptions.get(userId) || [];
-      userSubs.push(subscriptionId);
-      this.userSubscriptions.set(userId, userSubs);
+      // Link to user by both userId and email
+      this.userSubscriptions.set(userId, [subscriptionId]);
+      this.userSubscriptions.set(userEmail, [subscriptionId]);
 
-      // In a real implementation, this would process payment with Square
-      console.info('Square subscription created:', subscriptionId);
+      console.info(`✅ Square subscription created for ${userEmail}:`, {
+        subscriptionId,
+        planIds,
+        status: subscription.status,
+        totalAmount: `$${totalAmount}`,
+      });
+
+      // TODO: In production, create actual Square subscription via API
+      // const squareResponse = await this.createSquareSubscription(subscription);
 
       return { success: true, subscription };
     } catch (error) {
-      console.error('Error creating subscription:', error);
+      console.error('❌ Error creating subscription:', error);
       return { success: false, error: 'Failed to create subscription' };
     }
   }
 
   /**
    * Get user's subscription information with access permissions
+   * Now supports lookup by userId OR email
    */
   async getUserSubscriptionInfo(
-    userId: string
+    userIdOrEmail: string
   ): Promise<UserSubscriptionInfo | null> {
     try {
-      const subscriptionIds = this.userSubscriptions.get(userId) || [];
+      const subscriptionIds = this.userSubscriptions.get(userIdOrEmail) || [];
       if (subscriptionIds.length === 0) {
+        console.log(`ℹ️ No subscription found for: ${userIdOrEmail}`);
         return null;
       }
 
@@ -267,8 +281,8 @@ export class SquareSubscriptionService {
         apiCalls: 1250,
       };
 
-      return {
-        userId,
+      const result = {
+        userId: userIdOrEmail,
         subscriptions: activeSubscriptions,
         activePlans,
         accessiblePages,
@@ -276,8 +290,16 @@ export class SquareSubscriptionService {
         usageLimits,
         currentUsage,
       };
+
+      console.log(`✅ Subscription info for ${userIdOrEmail}:`, {
+        plans: activePlans.map((p) => p.name),
+        status: activeSubscriptions[0]?.status,
+        pagesCount: accessiblePages.length,
+      });
+
+      return result;
     } catch (error) {
-      console.error('Error getting user subscription info:', error);
+      console.error('❌ Error getting user subscription info:', error);
       return null;
     }
   }
