@@ -51,6 +51,7 @@ export default function SubscriptionBasedRouter({
 
       // Map demo accounts to user IDs (same as in SquareSubscriptionService)
       const userIdMap: Record<string, string> = {
+        'info@deedavis.biz': 'DEPOINTE-ADMIN-001',
         'admin@fleetflowapp.com': 'admin-001',
         'dispatch@fleetflowapp.com': 'disp-001',
       };
@@ -119,6 +120,17 @@ export default function SubscriptionBasedRouter({
     userEmail: string,
     subscriptionInfo: any
   ): UserRouting => {
+    // DEPOINTE Admin - full access
+    if (userEmail === 'info@deedavis.biz' || userId === 'DEPOINTE-ADMIN-001') {
+      return {
+        userId,
+        subscriptionTier: 'admin',
+        accessLevel: 'admin',
+        redirectTo: '/fleetflowdash', // Admin dashboard
+        permissions: ['*'], // Full permissions
+      };
+    }
+
     // Admin user - full access
     if (userEmail === 'admin@fleetflowapp.com' || userId === 'admin-001') {
       return {
@@ -263,6 +275,16 @@ export const useUserRouting = () => {
       userIdMap[userEmail] || userEmail.replace('@', '-').replace('.', '-');
 
     // Return basic routing info without redirecting
+    if (userEmail === 'info@deedavis.biz') {
+      return {
+        userId,
+        subscriptionTier: 'admin',
+        accessLevel: 'admin',
+        redirectTo: '/fleetflowdash',
+        permissions: ['*'],
+      };
+    }
+
     if (userEmail === 'admin@fleetflowapp.com') {
       return {
         userId,
@@ -294,9 +316,3 @@ export const useUserRouting = () => {
 
   return { getCurrentUserRouting };
 };
-
-
-
-
-
-

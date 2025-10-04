@@ -15,6 +15,8 @@ export default function SignIn() {
     setIsLoading(true);
     setError('');
 
+    console.log('🔐 Starting login attempt for:', credentials.email);
+
     try {
       const result = await signIn('credentials', {
         email: credentials.email,
@@ -22,13 +24,21 @@ export default function SignIn() {
         redirect: false,
       });
 
+      console.log('🔑 SignIn result:', result);
+
       if (result?.error) {
+        console.error('❌ Login error:', result.error);
         setError('Invalid credentials');
-      } else {
+      } else if (result?.ok) {
+        console.log('✅ Login successful! Redirecting...');
         // Redirect to subscription-based routing instead of homepage
         router.push('/auth/dashboard-router');
+      } else {
+        console.warn('⚠️ Unexpected result:', result);
+        setError('An unexpected error occurred');
       }
     } catch (error) {
+      console.error('❌ Exception during sign in:', error);
       setError('An error occurred during sign in');
     } finally {
       setIsLoading(false);
