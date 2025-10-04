@@ -1,20 +1,6 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Edge runtime configuration for middleware
-export const config = {
-  matcher: [
-    /*
-     * Match all request paths except:
-     * - api routes (handled separately)
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - favicon.ico, images, etc (files with extensions)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
-};
-
 // ADMIN ACCOUNTS - Full access to everything
 const ADMIN_ACCOUNTS = ['info@deedavis.biz', 'admin@fleetflowapp.com'];
 
@@ -110,3 +96,17 @@ export async function middleware(request: NextRequest) {
   console.log(`✅ Access granted to ${pathname}`);
   return NextResponse.next();
 }
+
+// Config at bottom per Next.js convention
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - api routes (handled separately)
+     * - _next/static (static files)
+     * - _next/image (image optimization)
+     * - favicon.ico, images, etc (files with extensions)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
+};
