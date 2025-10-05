@@ -117,8 +117,139 @@ export const getAdaptiveSuggestions = (staffId: string) => {
 export const getStaffLearningAnalytics = (staffId: string) => {
   try {
     const service = getLearningService();
-    return service.getStaffAnalytics(staffId);
+    return service.getStaffLearningAnalytics(staffId);
   } catch (error) {
     return null;
   }
 };
+
+/**
+ * Get lead nurturing strategies for a specific scenario
+ */
+export const getLeadNurturingGuidance = (
+  staffId: string,
+  scenario?: {
+    leadSource?: string;
+    fleetSize?: string;
+    urgency?: string;
+    serviceInterest?: string;
+  }
+) => {
+  try {
+    const service = getLearningService();
+    return service.getLeadNurturingStrategies(staffId, scenario);
+  } catch (error) {
+    console.log('Lead nurturing guidance unavailable:', error);
+    return {
+      strategies: [],
+      talkingPoints: [],
+      expectedOutcome: '',
+    };
+  }
+};
+
+/**
+ * Get database engagement strategies for contact management
+ */
+export const getDatabaseEngagementGuidance = (
+  staffId: string,
+  contactContext?: {
+    lastActivityDays?: number;
+    engagementScore?: number;
+    fleetSize?: number;
+    recentActions?: string[];
+  }
+) => {
+  try {
+    const service = getLearningService();
+    return service.getDatabaseEngagementStrategies(staffId, contactContext);
+  } catch (error) {
+    console.log('Database engagement guidance unavailable:', error);
+    return {
+      segment: null,
+      strategies: [],
+      behavioralSignals: [],
+      recommendations: [],
+    };
+  }
+};
+
+/**
+ * Get pipeline management and forecasting guidance for deal reviews
+ */
+export const getPipelineManagementGuidance = (
+  staffId: string,
+  dealContext?: {
+    account?: string;
+    arr?: number;
+    stage?: string;
+    closeDate?: Date;
+    exitCriteriaMet?: number;
+    totalExitCriteria?: number;
+    hasTimeline?: boolean;
+    hasBusinessInitiative?: boolean;
+  }
+) => {
+  try {
+    const service = getLearningService();
+    return service.getPipelineManagementGuidance(staffId, dealContext);
+  } catch (error) {
+    console.log('Pipeline management guidance unavailable:', error);
+    return {
+      stageDetails: null,
+      riskAssessment: null,
+      dealReviewScript: [],
+      nextSteps: null,
+    };
+  }
+};
+
+/**
+ * Get acquisition guidance for converting prospects (Shipper & Carrier)
+ * Includes industry-specific strategies, role-based approaches, objection handling, and nurture sequences
+ */
+export const getAcquisitionGuidance = (
+  staffId: string,
+  context?: {
+    acquisitionType?: 'shipper' | 'carrier';
+    industry?: string;
+    decisionMakerRole?: string;
+    leadStage?: string;
+    painPoint?: string;
+    objectionType?: string;
+    priority?: string;
+    qualificationData?: {
+      industry?: string;
+      volume?: number;
+      budget?: boolean;
+      authority?: boolean;
+      need?: boolean;
+      timeline?: boolean;
+      freightType?: string;
+      technology?: boolean;
+      growth?: boolean;
+    };
+  }
+) => {
+  try {
+    const service = getLearningService();
+    return service.getAcquisitionGuidance(staffId, context);
+  } catch (error) {
+    console.log('Acquisition guidance unavailable:', error);
+    return {
+      industryGuidance: null,
+      roleInsights: null,
+      objectionHandling: null,
+      valueProposition: null,
+      nurtureSequence: null,
+      qualificationScore: null,
+      recommendedActions: [],
+      trainingInsights: undefined,
+    };
+  }
+};
+
+/**
+ * Legacy alias for backward compatibility
+ */
+export const getShipperAcquisitionGuidance = getAcquisitionGuidance;
