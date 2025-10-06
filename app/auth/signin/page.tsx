@@ -170,61 +170,8 @@ export default function SignIn() {
             </p>
           </div>
 
-          {/* Main Content - Horizontal Layout */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '24px',
-              alignItems: 'flex-start',
-            }}
-          >
-            {/* Demo Credentials - Left Side */}
-            <div
-              style={{
-                flex: '1',
-                borderRadius: '16px',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                background: 'rgba(59, 130, 246, 0.1)',
-                padding: '20px',
-              }}
-            >
-              <h3
-                style={{
-                  marginBottom: '12px',
-                  fontWeight: '600',
-                  color: '#3b82f6',
-                  fontSize: '16px',
-                }}
-              >
-                🚀 Demo Accounts:
-              </h3>
-              <div
-                style={{
-                  fontSize: '13px',
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  lineHeight: '1.4',
-                }}
-              >
-                <div style={{ marginBottom: '8px' }}>
-                  <strong style={{ color: '#10b981' }}>Admin:</strong>
-                  <br />
-                  admin@fleetflowapp.com / admin123
-                </div>
-                <div style={{ marginBottom: '8px' }}>
-                  <strong style={{ color: '#f59e0b' }}>Dispatcher:</strong>
-                  <br />
-                  dispatch@fleetflowapp.com / dispatch123
-                </div>
-                <div>
-                  <strong style={{ color: '#8b5cf6' }}>DEPOINTE:</strong>
-                  <br />
-                  info@deedavis.biz / depointe2024!
-                </div>
-              </div>
-            </div>
-
-            {/* Sign In Form - Right Side */}
-            <div style={{ flex: '1' }}>
+          {/* Sign In Form */}
+          <div>
               {error && (
                 <div
                   style={{
@@ -406,7 +353,6 @@ export default function SignIn() {
                   )}
                 </button>
               </form>
-            </div>
           </div>
 
           <div style={{ marginTop: '32px' }}>
