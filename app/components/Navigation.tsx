@@ -262,6 +262,7 @@ export default function ProfessionalNavigation() {
         right: 0,
         zIndex: 1000,
         boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        minHeight: '80px',
       }}
     >
       <div

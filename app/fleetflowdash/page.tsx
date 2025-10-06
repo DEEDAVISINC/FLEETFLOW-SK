@@ -373,7 +373,7 @@ export default function HomePage() {
     <div
       style={{
         padding: '40px',
-        paddingTop: '100px',
+        paddingTop: '0px',
         background: `
         linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
         radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
@@ -768,7 +768,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#22c55e', fontSize: '28px', fontWeight: '700' }}
-             />
+            />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -784,7 +784,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-             />
+            />
           </div>
           <div
             style={{
@@ -798,7 +798,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#3b82f6', fontSize: '28px', fontWeight: '700' }}
-             />
+            />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -814,7 +814,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-             />
+            />
           </div>
           <div
             style={{
@@ -828,7 +828,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#f59e0b', fontSize: '28px', fontWeight: '700' }}
-             />
+            />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -844,7 +844,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-             />
+            />
           </div>
           <div
             style={{
@@ -858,7 +858,7 @@ export default function HomePage() {
           >
             <div
               style={{ color: '#10b981', fontSize: '28px', fontWeight: '700' }}
-             />
+            />
             <div
               style={{
                 color: 'rgba(255, 255, 255, 0.9)',
@@ -874,7 +874,7 @@ export default function HomePage() {
                 fontSize: '10px',
                 marginTop: '4px',
               }}
-             />
+            />
           </div>
         </div>
 
@@ -1004,7 +1004,7 @@ export default function HomePage() {
                     textAlign: 'center',
                     color: 'rgba(255, 255, 255, 0.6)',
                   }}
-                 />
+                />
               )}
             </div>
           </div>
@@ -1152,7 +1152,7 @@ export default function HomePage() {
                     textAlign: 'center',
                     color: 'rgba(255, 255, 255, 0.6)',
                   }}
-                 />
+                />
               )}
             </div>
           </div>
@@ -1231,7 +1231,7 @@ export default function HomePage() {
                             ? '#f59e0b'
                             : '#3b82f6',
                     }}
-                   />
+                  />
                 </div>
               ))
             ) : (
@@ -1242,7 +1242,7 @@ export default function HomePage() {
                   color: 'rgba(255, 255, 255, 0.6)',
                   fontSize: '14px',
                 }}
-               />
+              />
             )}
           </div>
         </div>
@@ -1434,7 +1434,7 @@ export default function HomePage() {
                 fontWeight: '700',
                 marginBottom: '5px',
               }}
-             />
+            />
             <div
               style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}
             >
@@ -1720,7 +1720,7 @@ export default function HomePage() {
                 fontWeight: '700',
                 marginBottom: '5px',
               }}
-             />
+            />
             <div
               style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)' }}
             >

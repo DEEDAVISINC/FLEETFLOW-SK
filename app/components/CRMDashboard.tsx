@@ -88,7 +88,17 @@ interface AIInsights {
 // MAIN CRM DASHBOARD COMPONENT
 // ============================================================================
 
-export default function CRMDashboard() {
+interface CRMDashboardProps {
+  tenantId?: string;
+  action?: string;
+  leadId?: string;
+}
+
+export default function CRMDashboard({
+  tenantId = 'depointe',
+  action,
+  leadId,
+}: CRMDashboardProps) {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
@@ -193,11 +203,20 @@ export default function CRMDashboard() {
   useEffect(() => {
     fetchDashboardMetrics();
     loadCurrentUser();
+    loadTenantCRMData();
+
+    // Handle action from URL params (e.g., from notification "Take Action" button)
+    if (action === 'review_lead' && leadId) {
+      // Switch to contacts tab and highlight the lead
+      setActiveTab('contacts');
+      // Could add highlighting logic here for the specific lead
+      console.info(`🎯 Reviewing lead: ${leadId}`);
+    }
 
     // Auto-refresh every 5 minutes
     const interval = setInterval(fetchDashboardMetrics, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [tenantId, action, leadId]);
 
   const loadCurrentUser = async () => {
     try {
@@ -208,6 +227,139 @@ export default function CRMDashboard() {
       setCurrentUser(demoUser);
     } catch (error) {
       console.error('Failed to load current user:', error);
+    }
+  };
+
+  const loadTenantCRMData = async () => {
+    // Map organization ID to localStorage key (for backward compatibility)
+    const storageKey =
+      tenantId === 'org-depointe-001' || tenantId === 'depointe'
+        ? 'depointe-crm-leads'
+        : `${tenantId}-crm-leads`;
+
+    try {
+      // Load tenant's CRM data from localStorage
+      const savedCrmLeads = localStorage.getItem(storageKey);
+      if (savedCrmLeads) {
+        const depointeLeads = JSON.parse(savedCrmLeads);
+
+        // Convert depointe leads to CRM contact format
+        const crmContacts: Contact[] = depointeLeads.map((lead: any) => ({
+          id: lead.id || `contact-${Date.now()}-${Math.random()}`,
+          first_name: lead.name?.split(' ')[0] || 'Unknown',
+          last_name: lead.name?.split(' ').slice(1).join(' ') || 'Contact',
+          email: lead.email || '',
+          phone: lead.phone || '',
+          contact_type: lead.type || 'prospect',
+          company_name: lead.company || '',
+          status: lead.status || 'prospect',
+          lead_score: lead.score || 0,
+          created_at: lead.createdAt || new Date().toISOString(),
+        }));
+
+        setContacts(crmContacts);
+
+        // Update dashboard metrics based on depointe data
+        const newMetrics: DashboardMetrics = {
+          total_contacts: crmContacts.length,
+          total_opportunities: crmContacts.filter(
+            (c) => c.status === 'prospect'
+          ).length,
+          total_activities: crmContacts.length * 2, // Estimate activities
+          pipeline_value: crmContacts.reduce(
+            (sum, c) => sum + c.lead_score * 1000,
+            0
+          ),
+          won_opportunities: crmContacts.filter((c) => c.status === 'active')
+            .length,
+          conversion_rate:
+            crmContacts.length > 0
+              ? (crmContacts.filter((c) => c.status === 'active').length /
+                  crmContacts.length) *
+                100
+              : 0,
+          recent_activities: crmContacts.slice(0, 5).map((c) => ({
+            id: `activity-${c.id}`,
+            activity_type: 'call' as const,
+            subject: `Contact created for ${c.first_name} ${c.last_name}`,
+            activity_date: c.created_at,
+            status: 'completed' as const,
+            contact_name: `${c.first_name} ${c.last_name}`,
+            company_name: c.company_name || '',
+            priority: 'normal' as const,
+          })),
+          top_opportunities: crmContacts
+            .filter((c) => c.lead_score > 50)
+            .slice(0, 5)
+            .map((c) => ({
+              id: c.id,
+              opportunity_name: `${c.first_name} ${c.last_name} - ${c.company_name}`,
+              stage: c.status === 'active' ? 'Closed Won' : 'Prospecting',
+              value: c.lead_score * 1000,
+              probability: c.status === 'active' ? 100 : c.lead_score,
+              expected_close_date: new Date(
+                Date.now() + 30 * 24 * 60 * 60 * 1000
+              )
+                .toISOString()
+                .split('T')[0],
+              contact_name: `${c.first_name} ${c.last_name}`,
+              company_name: c.company_name || '',
+              status: c.status === 'active' ? 'won' : 'open',
+              origin_city: '',
+              destination_city: '',
+            })),
+          lead_sources: [
+            {
+              source: 'DEPOINTE Campaigns',
+              count: crmContacts.filter((c) => c.contact_type === 'customer')
+                .length,
+            },
+            {
+              source: 'Direct Outreach',
+              count: Math.floor(crmContacts.length * 0.3),
+            },
+            {
+              source: 'Referrals',
+              count: Math.floor(crmContacts.length * 0.2),
+            },
+          ],
+          contact_types: [
+            {
+              type: 'driver',
+              count: crmContacts.filter((c) => c.contact_type === 'driver')
+                .length,
+            },
+            {
+              type: 'shipper',
+              count: crmContacts.filter((c) => c.contact_type === 'shipper')
+                .length,
+            },
+            {
+              type: 'carrier',
+              count: crmContacts.filter((c) => c.contact_type === 'carrier')
+                .length,
+            },
+            {
+              type: 'customer',
+              count: crmContacts.filter((c) => c.contact_type === 'customer')
+                .length,
+            },
+          ],
+          monthly_revenue: Array.from({ length: 12 }, (_, i) => ({
+            month: new Date(2024, i, 1).toLocaleDateString('en-US', {
+              month: 'short',
+            }),
+            revenue: Math.floor(Math.random() * 50000) + 10000,
+          })),
+        };
+
+        setDashboardMetrics(newMetrics);
+        console.info(
+          `🧹 Loaded ${crmContacts.length} contacts from tenant ${tenantId} CRM data`
+        );
+      }
+    } catch (error) {
+      console.error(`Failed to load tenant ${tenantId} CRM data:`, error);
     }
   };
 
@@ -3064,6 +3216,7 @@ export default function CRMDashboard() {
           maxWidth: '1400px',
           margin: '0 auto',
           padding: '0 24px 32px',
+          marginTop: '120px', // Space for navigation bar
         }}
       >
         <div

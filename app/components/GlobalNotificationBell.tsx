@@ -80,155 +80,15 @@ export default function GlobalNotificationBell({
     setMounted(true);
   }, []);
 
-  // Generate onboarding progress notifications based on role (SSR-safe)
+  // Fetch real onboarding progress notifications from API (SSR-safe)
   const generateOnboardingNotifications = (): IntraofficeNotification[] => {
     if (!mounted) return []; // Return empty during SSR
 
-    const onboardingNotifications: IntraofficeNotification[] = [];
+    // TODO: Implement real API call to fetch onboarding notifications
+    // Example: const response = await fetch(`/api/notifications/onboarding?department=${department}`);
 
-    // Role-based onboarding notifications
-    if (department === 'admin') {
-      onboardingNotifications.push(
-        {
-          id: 'ONBOARD-001',
-          type: 'onboarding_stuck',
-          priority: 'urgent',
-          title: '🚨 Onboarding Alert: Global Freight Inc',
-          message:
-            'Carrier onboarding stuck at Document Upload step for 5 days - requires attention',
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-          read: false,
-          fromDepartment: 'system',
-          toDepartment: 'admin',
-          fromUser: 'Onboarding System',
-          toUser: 'Admin Team',
-          requiresResponse: true,
-          metadata: {
-            onboardingId: 'ONB-2024-001',
-            step: 'document_upload',
-            progress: 45,
-            action: 'review_documents',
-          },
-        },
-        {
-          id: 'ONBOARD-002',
-          type: 'onboarding_pending',
-          priority: 'normal',
-          title: '⏳ Pending Review: TechTrans Solutions',
-          message:
-            'Factoring setup completed - waiting for final agreement approval',
-          timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-          read: false,
-          fromDepartment: 'system',
-          toDepartment: 'admin',
-          fromUser: 'Onboarding System',
-          toUser: 'Admin Team',
-          requiresResponse: false,
-          metadata: {
-            onboardingId: 'ONB-2024-002',
-            step: 'factoring_approval',
-            progress: 85,
-            action: 'approve_factoring',
-          },
-        }
-      );
-    }
-
-    if (department === 'dispatcher') {
-      onboardingNotifications.push({
-        id: 'ONBOARD-003',
-        type: 'onboarding_completed',
-        priority: 'low',
-        title: '✅ New Driver Ready: Carlos Rodriguez',
-        message:
-          'Driver onboarding completed successfully - portal access activated',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-        read: false,
-        fromDepartment: 'system',
-        toDepartment: 'dispatcher',
-        fromUser: 'Onboarding System',
-        toUser: 'Dispatch Team',
-        requiresResponse: false,
-        metadata: {
-          onboardingId: 'ONB-2024-003',
-          step: 'completed',
-          progress: 100,
-          action: 'assign_loads',
-        },
-      });
-    }
-
-    if (department === 'carrier' || department === 'broker') {
-      onboardingNotifications.push({
-        id: 'ONBOARD-004',
-        type: 'onboarding_upcoming',
-        priority: 'normal',
-        title: '📅 Scheduled Onboarding: Maria Garcia',
-        message: 'Driver onboarding scheduled for tomorrow at 9:00 AM',
-        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-        read: false,
-        fromDepartment: 'system',
-        toDepartment: department,
-        fromUser: 'Onboarding System',
-        toUser: 'Operations Team',
-        requiresResponse: false,
-        metadata: {
-          onboardingId: 'ONB-2024-004',
-          step: 'scheduled',
-          progress: 0,
-          action: 'prepare_session',
-        },
-      });
-    }
-
-    if (department === 'driver') {
-      // Driver-specific onboarding notifications
-      onboardingNotifications.push(
-        {
-          id: 'ONBOARD-DRIVER-001',
-          type: 'onboarding_active',
-          priority: 'high',
-          title: '📋 Complete Your Onboarding',
-          message:
-            'Your onboarding is 66% complete - please upload your insurance certificate',
-          timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-          read: false,
-          fromDepartment: 'system',
-          toDepartment: 'driver',
-          fromUser: 'Onboarding System',
-          toUser: 'Driver',
-          requiresResponse: true,
-          metadata: {
-            onboardingId: 'ONB-DRIVER-001',
-            step: 'insurance_upload',
-            progress: 66,
-            action: 'upload_insurance',
-          },
-        },
-        {
-          id: 'ONBOARD-DRIVER-002',
-          type: 'onboarding_pending',
-          priority: 'normal',
-          title: '🔄 Complete Your Profile Setup',
-          message: 'Please complete your driver profile - 2 steps remaining',
-          timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
-          read: false,
-          fromDepartment: 'system',
-          toDepartment: 'driver',
-          fromUser: 'Onboarding System',
-          toUser: 'Driver',
-          requiresResponse: true,
-          metadata: {
-            onboardingId: 'ONB-DRIVER-002',
-            step: 'profile_completion',
-            progress: 80,
-            action: 'complete_profile',
-          },
-        }
-      );
-    }
-
-    return onboardingNotifications;
+    // Return empty array - no mock data in production
+    return [];
   };
 
   // No mock notifications - will use real service data (SSR-safe)
@@ -241,8 +101,11 @@ export default function GlobalNotificationBell({
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
+      // Get tenant ID from session
+      const tenantId = user?.organizationId || 'org-depointe-001';
+
       const response = await fetch(
-        '/api/ai-flow/lead-conversion?tenantId=tenant-demo-123&limit=5',
+        `/api/ai-flow/lead-conversion?tenantId=${tenantId}&limit=5`,
         {
           signal: controller.signal,
           headers: {
@@ -346,8 +209,24 @@ export default function GlobalNotificationBell({
     const loadNotifications = async () => {
       const allNotifications = await fetchLeadConversions();
 
+      // Filter out any mock/sample notifications
+      const realNotifications = allNotifications.filter(
+        (n) =>
+          !n.title?.toLowerCase().includes('sample') &&
+          !n.title?.toLowerCase().includes('welcome') &&
+          !n.title?.toLowerCase().includes('demo') &&
+          !n.title?.toLowerCase().includes('test') &&
+          !n.message?.toLowerCase().includes('sample') &&
+          !n.message?.toLowerCase().includes('welcome') &&
+          !n.message?.toLowerCase().includes('demo') &&
+          !n.message?.toLowerCase().includes('test') &&
+          !n.title?.includes('🎯') &&
+          !n.title?.includes('🚛') &&
+          !n.title?.includes('📦')
+      );
+
       // Filter notifications based on department
-      const departmentNotifications = allNotifications.filter(
+      const departmentNotifications = realNotifications.filter(
         (n) =>
           n.toDepartment === department ||
           n.toDepartment === 'all' ||
@@ -760,7 +639,7 @@ export default function GlobalNotificationBell({
                       {notification.metadata?.action && (
                         <div style={{ marginTop: '8px' }}>
                           <Link
-                            href={`/admin?action=${notification.metadata.action}&id=${notification.metadata.leadId || notification.id}`}
+                            href={`/crm?action=${notification.metadata.action}&id=${notification.metadata.leadId || notification.id}`}
                             style={{
                               background: 'rgba(59, 130, 246, 0.2)',
                               border: '1px solid rgba(59, 130, 246, 0.3)',

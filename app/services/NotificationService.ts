@@ -52,6 +52,26 @@ export class NotificationService {
       : userNotifications.filter((n) => !n.read);
     return options.limit ? filtered.slice(0, options.limit) : filtered;
   }
+
+  public async clearSampleNotifications(userId: string): Promise<void> {
+    const userNotifications = this.notifications.get(userId) || [];
+    const realNotifications = userNotifications.filter(
+      (n) =>
+        !n.title?.toLowerCase().includes('sample') &&
+        !n.title?.toLowerCase().includes('welcome') &&
+        !n.title?.toLowerCase().includes('demo') &&
+        !n.title?.toLowerCase().includes('test') &&
+        !n.message?.toLowerCase().includes('sample') &&
+        !n.message?.toLowerCase().includes('welcome') &&
+        !n.message?.toLowerCase().includes('demo') &&
+        !n.message?.toLowerCase().includes('test') &&
+        !n.title?.includes('🎯') &&
+        !n.title?.includes('🚛') &&
+        !n.title?.includes('📦')
+    );
+
+    this.notifications.set(userId, realNotifications);
+  }
 }
 
 export const notificationService = NotificationService.getInstance();

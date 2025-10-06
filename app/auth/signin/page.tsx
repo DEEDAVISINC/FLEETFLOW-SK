@@ -31,8 +31,8 @@ export default function SignIn() {
         setError('Invalid credentials');
       } else if (result?.ok) {
         console.log('✅ Login successful! Redirecting...');
-        // Redirect to subscription-based routing instead of homepage
-        router.push('/auth/dashboard-router');
+        // Direct redirect to dashboard - bypass router to avoid session timing issues
+        router.push('/fleetflowdash');
       } else {
         console.warn('⚠️ Unexpected result:', result);
         setError('An unexpected error occurred');
@@ -172,187 +172,187 @@ export default function SignIn() {
 
           {/* Sign In Form */}
           <div>
-              {error && (
-                <div
+            {error && (
+              <div
+                style={{
+                  marginBottom: '20px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  padding: '16px',
+                }}
+              >
+                <p
                   style={{
-                    marginBottom: '20px',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    padding: '16px',
+                    fontSize: '14px',
+                    color: '#ef4444',
+                    margin: '0',
                   }}
                 >
-                  <p
-                    style={{
-                      fontSize: '14px',
-                      color: '#ef4444',
-                      margin: '0',
-                    }}
-                  >
-                    ⚠️ {error}
-                  </p>
-                </div>
-              )}
+                  ⚠️ {error}
+                </p>
+              </div>
+            )}
 
-              <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '20px' }}>
-                  <label
-                    htmlFor='email'
-                    style={{
-                      display: 'block',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    id='email'
-                    type='email'
-                    required
-                    value={credentials.email}
-                    onChange={(e) =>
-                      setCredentials((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                    style={{
-                      width: '100%',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      padding: '14px 16px',
-                      fontSize: '16px',
-                      color: 'white',
-                      transition: 'all 0.3s',
-                      outline: 'none',
-                    }}
-                    placeholder='your@email.com'
-                    onFocus={(e) => {
-                      e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
-                      e.target.style.boxShadow =
-                        '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
-
-                <div style={{ marginBottom: '24px' }}>
-                  <label
-                    htmlFor='password'
-                    style={{
-                      display: 'block',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Password
-                  </label>
-                  <input
-                    id='password'
-                    type='password'
-                    required
-                    value={credentials.password}
-                    onChange={(e) =>
-                      setCredentials((prev) => ({
-                        ...prev,
-                        password: e.target.value,
-                      }))
-                    }
-                    style={{
-                      width: '100%',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      padding: '14px 16px',
-                      fontSize: '16px',
-                      color: 'white',
-                      transition: 'all 0.3s',
-                      outline: 'none',
-                    }}
-                    placeholder='••••••••'
-                    onFocus={(e) => {
-                      e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
-                      e.target.style.boxShadow =
-                        '0 0 0 3px rgba(59, 130, 246, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
-
-                <button
-                  type='submit'
-                  disabled={isLoading}
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: '20px' }}>
+                <label
+                  htmlFor='email'
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Email Address
+                </label>
+                <input
+                  id='email'
+                  type='email'
+                  required
+                  value={credentials.email}
+                  onChange={(e) =>
+                    setCredentials((prev) => ({
+                      ...prev,
+                      email: e.target.value,
+                    }))
+                  }
                   style={{
                     width: '100%',
-                    borderRadius: '16px',
-                    border: 'none',
-                    background: isLoading
-                      ? 'rgba(255, 255, 255, 0.1)'
-                      : 'linear-gradient(135deg, #3b82f6 0%, #10b981 50%, #f59e0b 100%)',
-                    padding: '16px 24px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '14px 16px',
                     fontSize: '16px',
-                    fontWeight: '600',
                     color: 'white',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
                     transition: 'all 0.3s',
-                    boxShadow: isLoading
-                      ? 'none'
-                      : '0 10px 25px rgba(59, 130, 246, 0.3)',
-                    opacity: isLoading ? 0.6 : 1,
+                    outline: 'none',
                   }}
-                  onMouseOver={(e) => {
-                    if (!isLoading) {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow =
-                        '0 15px 35px rgba(59, 130, 246, 0.4)';
-                    }
+                  placeholder='your@email.com'
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                    e.target.style.boxShadow =
+                      '0 0 0 3px rgba(59, 130, 246, 0.1)';
                   }}
-                  onMouseOut={(e) => {
-                    if (!isLoading) {
-                      e.target.style.transform = 'translateY(0px)';
-                      e.target.style.boxShadow =
-                        '0 10px 25px rgba(59, 130, 246, 0.3)';
-                    }
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label
+                  htmlFor='password'
+                  style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    marginBottom: '8px',
                   }}
                 >
-                  {isLoading ? (
-                    <span
+                  Password
+                </label>
+                <input
+                  id='password'
+                  type='password'
+                  required
+                  value={credentials.password}
+                  onChange={(e) =>
+                    setCredentials((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
+                  style={{
+                    width: '100%',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    color: 'white',
+                    transition: 'all 0.3s',
+                    outline: 'none',
+                  }}
+                  placeholder='••••••••'
+                  onFocus={(e) => {
+                    e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                    e.target.style.boxShadow =
+                      '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <button
+                type='submit'
+                disabled={isLoading}
+                style={{
+                  width: '100%',
+                  borderRadius: '16px',
+                  border: 'none',
+                  background: isLoading
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'linear-gradient(135deg, #3b82f6 0%, #10b981 50%, #f59e0b 100%)',
+                  padding: '16px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  cursor: isLoading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s',
+                  boxShadow: isLoading
+                    ? 'none'
+                    : '0 10px 25px rgba(59, 130, 246, 0.3)',
+                  opacity: isLoading ? 0.6 : 1,
+                }}
+                onMouseOver={(e) => {
+                  if (!isLoading) {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow =
+                      '0 15px 35px rgba(59, 130, 246, 0.4)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!isLoading) {
+                    e.target.style.transform = 'translateY(0px)';
+                    e.target.style.boxShadow =
+                      '0 10px 25px rgba(59, 130, 246, 0.3)';
+                  }
+                }}
+              >
+                {isLoading ? (
+                  <span
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
+                        width: '20px',
+                        height: '20px',
+                        border: '2px solid rgba(255, 255, 255, 0.3)',
+                        borderTop: '2px solid white',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite',
                       }}
-                    >
-                      <div
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          border: '2px solid rgba(255, 255, 255, 0.3)',
-                          borderTop: '2px solid white',
-                          borderRadius: '50%',
-                          animation: 'spin 1s linear infinite',
-                        }}
-                      />
-                      Signing in...
-                    </span>
-                  ) : (
-                    '🚀 Sign In to FleetFlow'
-                  )}
-                </button>
-              </form>
+                    />
+                    Signing in...
+                  </span>
+                ) : (
+                  '🚀 Sign In to FleetFlow'
+                )}
+              </button>
+            </form>
           </div>
 
           <div style={{ marginTop: '32px' }}>

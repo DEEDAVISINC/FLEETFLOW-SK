@@ -139,46 +139,42 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     }
   }, [isHydrated]);
 
-  // Generate sample notifications for the current user
+  // Clear any existing sample data on app load (one-time cleanup)
   useEffect(() => {
-    if (!isHydrated) return; // Wait for hydration
+    if (!isHydrated || !user?.id) return; // Wait for hydration and user
 
-    const generateSampleData = async () => {
-      // Only generate once per session and if user is available
-      const hasGeneratedSamples = sessionStorage.getItem(
-        'fleetflow-sample-data-generated'
-      );
-      if (hasGeneratedSamples || !user?.id) return;
-
+    const clearSampleData = async () => {
       try {
-        // Generate sample notifications
+        // Clear the sessionStorage flag to prevent sample data generation
+        sessionStorage.removeItem('fleetflow-sample-data-generated');
+        console.info('🧹 Cleared sample data generation flag');
+
+        // Clear any potential sample data from localStorage
+        const sampleKeys = Object.keys(localStorage).filter(
+          (key) =>
+            key.includes('sample') ||
+            key.includes('demo') ||
+            key.includes('mock')
+        );
+        sampleKeys.forEach((key) => localStorage.removeItem(key));
+
+        // Clear any notification data that might contain sample content
         const { notificationService } = await import(
           '../services/NotificationService'
         );
-        await notificationService.generateSampleNotifications(
-          user.id,
-          'default'
-        );
-        console.info('🎯 Sample notifications generated for user:', user.id);
 
-        // Generate sample messages
-        const { messageService } = await import('../services/MessageService');
-        await messageService.generateSampleMessages(
-          user.id,
-          user.name || 'Current User',
-          user.role || 'employee',
-          'default'
+        // Use the new clearSampleNotifications method
+        await notificationService.clearSampleNotifications(user.id);
+        console.info(
+          '🧹 Cleared sample notifications from NotificationService'
         );
-        console.info('📬 Sample messages generated for user:', user.id);
-
-        sessionStorage.setItem('fleetflow-sample-data-generated', 'true');
       } catch (error) {
-        console.error('❌ Failed to generate sample data:', error);
+        console.error('❌ Error clearing sample data:', error);
       }
     };
 
-    generateSampleData();
-  }, [user?.id, isHydrated]); // Run when user is available and hydrated
+    clearSampleData();
+  }, [isHydrated, user?.id]);
 
   // Check if user has phone dialer enabled (from user profile settings)
   useEffect(() => {
@@ -497,10 +493,14 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                     ? (isPublicPage && !isLocalhostAccess) ||
                       pathname === '/carrier-landing'
                       ? '0px'
-                      : '70px'
+                      : pathname === '/depointe-dashboard'
+                        ? '0px'
+                        : '0px'
                     : pathname === '/carrier-landing'
                       ? '0px'
-                      : '70px', // Default to 70px for server render consistency, 0px for carrier-landing
+                      : pathname === '/depointe-dashboard'
+                        ? '150px' // Special padding for depointe dashboard
+                        : '0px', // No padding - individual pages handle their own spacing
                   minHeight: '100vh',
                   background:
                     'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

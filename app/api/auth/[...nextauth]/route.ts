@@ -121,6 +121,7 @@ export const authOptions = {
             name: 'DEPOINTE Platform',
             role: 'admin',
             companyId: 'DEPOINTE-PLATFORM',
+            organizationId: 'org-depointe-001', // Add organization ID
             isDepointe: true,
           };
         }
@@ -155,6 +156,8 @@ export const authOptions = {
       });
       if (user) {
         token.role = user.role;
+        token.organizationId = user.organizationId; // Add organization to token
+        token.companyId = user.companyId;
         // Map email to FleetFlow user ID for UserDataService integration
         const userIdMap: Record<string, string> = {
           'admin@fleetflowapp.com': 'FM-MGR-20230115-1', // Frank Miller
@@ -172,6 +175,7 @@ export const authOptions = {
         console.log('✅ JWT token created for:', {
           email: user.email,
           role: user.role,
+          organizationId: token.organizationId,
           fleetflowUserId: token.fleetflowUserId,
         });
       }
@@ -185,10 +189,13 @@ export const authOptions = {
       if (token) {
         session.user.id = token.sub;
         session.user.role = token.role;
+        session.user.organizationId = token.organizationId; // Add organization to session
+        session.user.companyId = token.companyId;
         session.user.fleetflowUserId = token.fleetflowUserId;
         console.log('✅ Session created for:', {
           email: session.user.email,
           role: session.user.role,
+          organizationId: session.user.organizationId,
         });
       }
       return session;

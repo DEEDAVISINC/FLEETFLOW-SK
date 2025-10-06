@@ -13,6 +13,7 @@ import DesperateProspectsBatchDeployment, {
   DesperateProspectsTask,
 } from '../components/DesperateProspectsBatchDeployment';
 import FreightBrainDashboard from '../components/FreightBrainDashboard';
+import GlobalNotificationBell from '../components/GlobalNotificationBell';
 import GrantAcquisitionBatchDeployment from '../components/GrantAcquisitionBatchDeployment';
 import HealthcareBatchDeployment, {
   HealthcareTask,
@@ -25,6 +26,7 @@ import ShipperBatchDeployment, {
   ShipperTask,
 } from '../components/ShipperBatchDeployment';
 import TaskCreationInterface from '../components/TaskCreationInterface';
+import { taskExecutionService } from '../services/DEPOINTETaskExecutionService';
 
 // DEPOINTE AI Staff with Human Names (all 18 members) - No mock data
 // Helper function for AI staff to access their marketing mastery
@@ -962,6 +964,16 @@ export default function DEPOINTEDashboard() {
   // Mount protection to prevent hydration issues
   useEffect(() => {
     setIsMounted(true);
+
+    // Start the backend task execution service
+    console.log('🚀 Starting DEPOINTE Task Execution Service...');
+    taskExecutionService.start();
+
+    // Cleanup on unmount
+    return () => {
+      console.log('🛑 Stopping DEPOINTE Task Execution Service...');
+      taskExecutionService.stop();
+    };
   }, []);
 
   // Debug staff directory state changes
@@ -1761,16 +1773,17 @@ export default function DEPOINTEDashboard() {
         background:
           'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
         padding: '20px',
-        paddingTop: '90px',
+        paddingTop: '20px', // Standard padding, layout handles navigation spacing
         color: 'white',
         fontFamily:
           'Inter, system-ui, -apple-system, BlinkMacSystemFont, ""Segue UI"", Roboto, sans-serif',
+        minHeight: '100vh',
       }}
     >
       {/* Internal Adaptive Learning - No UI, just automatic learning */}
       <InternalAdaptiveLearning />
       {/* Header */}
-      <div style={{ marginBottom: '30px' }}>
+      <div style={{ marginBottom: '30px', marginTop: '120px' }}>
         <div
           style={{
             display: 'flex',
@@ -1806,7 +1819,17 @@ export default function DEPOINTEDashboard() {
               Direct
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+            }}
+          >
+            {/* Notification Bell */}
+            <GlobalNotificationBell department='admin' position='navigation' />
+
             {shipperTasks.length === 0 && (
               <button
                 onClick={() => setIsShipperTaskOpen(true)}
@@ -5042,10 +5065,13 @@ export default function DEPOINTEDashboard() {
                                 Task History & Current Work
                               </h3>
                               <button
-                                onClick={() => setIsTaskCreationOpen(true)}
+                                onClick={() =>
+                                  setIsTaskCreationOpen(!isTaskCreationOpen)
+                                }
                                 style={{
-                                  background:
-                                    'linear-gradient(135deg, #8b5cf6, #7c3aed)',
+                                  background: isTaskCreationOpen
+                                    ? 'linear-gradient(135deg, #dc2626, #b91c1c)'
+                                    : 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
                                   border: 'none',
                                   borderRadius: '8px',
                                   padding: '10px 20px',
@@ -5053,11 +5079,26 @@ export default function DEPOINTEDashboard() {
                                   fontSize: '0.9rem',
                                   fontWeight: '600',
                                   cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
                                 }}
                               >
-                                ➕ Assign New Task
+                                {isTaskCreationOpen
+                                  ? '✕ Close'
+                                  : '➕ Assign New Task'}
                               </button>
                             </div>
+
+                            {/* Inline Task Creation Form */}
+                            {isTaskCreationOpen && (
+                              <div style={{ marginBottom: '24px' }}>
+                                <TaskCreationInterface
+                                  isOpen={true}
+                                  onClose={() => setIsTaskCreationOpen(false)}
+                                  onTaskCreate={handleTaskCreate}
+                                  availableStaff={availableStaff}
+                                />
+                              </div>
+                            )}
 
                             {staffDetails.taskHistory.map((task) => (
                               <div

@@ -435,26 +435,104 @@ export default function TaskCreationInterface({
   if (!isOpen) return null;
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'>
-      <div className='max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-slate-700 bg-slate-900 shadow-2xl'>
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'rgba(0, 0, 0, 0.75)',
+        backdropFilter: 'blur(10px)',
+      }}
+    >
+      <div
+        style={{
+          maxHeight: '90vh',
+          width: '100%',
+          maxWidth: '1000px',
+          overflowY: 'auto',
+          borderRadius: '24px',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          background:
+            'linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(30, 64, 175, 0.95) 50%, rgba(59, 130, 246, 0.9) 100%)',
+          boxShadow:
+            '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+        }}
+      >
         {/* Header */}
-        <div className='flex items-center justify-between border-b border-slate-700 p-6'>
-          <div className='flex items-center gap-3'>
-            <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600'>
-              <Plus className='h-5 w-5 text-white' />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '24px 32px',
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)',
+              }}
+            >
+              <Plus style={{ width: '24px', height: '24px', color: 'white' }} />
             </div>
             <div>
-              <h2 className='text-xl font-bold text-white'>Create New Task</h2>
-              <p className='text-sm text-slate-400'>
+              <h2
+                style={{
+                  fontSize: '24px',
+                  fontWeight: '700',
+                  color: 'white',
+                  margin: 0,
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                Create New Task
+              </h2>
+              <p
+                style={{
+                  fontSize: '14px',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: 0,
+                }}
+              >
                 Assign work to your AI staff
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className='flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 transition-colors hover:bg-slate-700'
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+            }}
           >
-            <X className='h-5 w-5 text-slate-400' />
+            <X style={{ width: '20px', height: '20px', color: 'white' }} />
           </button>
         </div>
 
@@ -588,14 +666,38 @@ export default function TaskCreationInterface({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className='space-y-6 p-6'>
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            padding: '32px',
+            background: 'rgba(255, 255, 255, 0.05)',
+          }}
+        >
           {/* Smart Templates */}
-          <div className='mb-6'>
-            <h3 className='mb-3 flex items-center gap-2 text-sm font-medium text-white'>
-              <Lightbulb className='h-4 w-4 text-yellow-400' />
+          <div style={{ marginBottom: '32px' }}>
+            <h3
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                color: 'white',
+                marginBottom: '16px',
+              }}
+            >
+              <Lightbulb
+                style={{ width: '20px', height: '20px', color: '#fbbf24' }}
+              />
               Quick Start Templates
             </h3>
-            <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '16px',
+              }}
+            >
               <button
                 type='button'
                 onClick={() => {
@@ -631,11 +733,39 @@ export default function TaskCreationInterface({
                       'Focus on companies showing signs of desperation - safety issues, cash flow problems, or urgent needs',
                   });
                 }}
-                className='rounded-lg bg-gradient-to-br from-red-600 to-orange-600 p-4 text-left text-white hover:from-red-700 hover:to-orange-700'
+                style={{
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #dc2626, #f97316)',
+                  padding: '20px',
+                  textAlign: 'left',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 24px rgba(220, 38, 38, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(220, 38, 38, 0.3)';
+                }}
               >
-                <div className='mb-2 text-lg'>🎯</div>
-                <div className='font-semibold'>Desperate Shippers</div>
-                <div className='text-xs opacity-80'>
+                <div style={{ marginBottom: '12px', fontSize: '24px' }}>🎯</div>
+                <div
+                  style={{
+                    fontWeight: '600',
+                    fontSize: '16px',
+                    marginBottom: '4px',
+                  }}
+                >
+                  Desperate Shippers
+                </div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>
                   High-urgency prospects, M/W/F
                 </div>
               </button>
@@ -685,11 +815,39 @@ export default function TaskCreationInterface({
                       'Focus on building long-term relationships and sustainable growth',
                   });
                 }}
-                className='rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 p-4 text-left text-white hover:from-blue-700 hover:to-purple-700'
+                style={{
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                  padding: '20px',
+                  textAlign: 'left',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 24px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(59, 130, 246, 0.3)';
+                }}
               >
-                <div className='mb-2 text-lg'>📈</div>
-                <div className='font-semibold'>Growth Focus</div>
-                <div className='text-xs opacity-80'>
+                <div style={{ marginBottom: '12px', fontSize: '24px' }}>📈</div>
+                <div
+                  style={{
+                    fontWeight: '600',
+                    fontSize: '16px',
+                    marginBottom: '4px',
+                  }}
+                >
+                  Growth Focus
+                </div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>
                   Volume-based lead gen, daily
                 </div>
               </button>
@@ -733,11 +891,39 @@ export default function TaskCreationInterface({
                       'Target drivers looking for better rates, consistent loads, and reliable payments',
                   });
                 }}
-                className='rounded-lg bg-gradient-to-br from-green-600 to-teal-600 p-4 text-left text-white hover:from-green-700 hover:to-teal-700'
+                style={{
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, #059669, #14b8a6)',
+                  padding: '20px',
+                  textAlign: 'left',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(5, 150, 105, 0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow =
+                    '0 8px 24px rgba(5, 150, 105, 0.4)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow =
+                    '0 4px 12px rgba(5, 150, 105, 0.3)';
+                }}
               >
-                <div className='mb-2 text-lg'>🚛</div>
-                <div className='font-semibold'>Carrier Recruitment</div>
-                <div className='text-xs opacity-80'>
+                <div style={{ marginBottom: '12px', fontSize: '24px' }}>🚛</div>
+                <div
+                  style={{
+                    fontWeight: '600',
+                    fontSize: '16px',
+                    marginBottom: '4px',
+                  }}
+                >
+                  Carrier Recruitment
+                </div>
+                <div style={{ fontSize: '13px', opacity: 0.9 }}>
                   Driver & carrier focus, Tue/Thu
                 </div>
               </button>
