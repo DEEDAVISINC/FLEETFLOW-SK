@@ -1188,7 +1188,7 @@ export const shipperAcquisitionKB = {
 
   // Get industry-specific pain points and value props
   getIndustryGuidance: (industry: string) => {
-    const normalizedIndustry = industry.toLowerCase().replace(/[^a-z]/g, '');
+    const normalizedIndustry = industry.toLowerCase().replace(/[^a-z]/g, ');
     const industryKey = Object.keys(INDUSTRY_SPECIFIC_PAIN_POINTS).find(
       key => normalizedIndustry.includes(key) || key.includes(normalizedIndustry)
     );
@@ -1256,7 +1256,7 @@ export const shipperAcquisitionKB = {
       industryTalkingPoints: industryGuidance?.talkingPoints || [],
       decisionMakerPriorities: roleInsights?.priorities || [],
       decisionMakerPainPoints: roleInsights?.painPoints || [],
-      recommendedApproach: roleInsights?.bestApproach || '',
+      recommendedApproach: roleInsights?.bestApproach || ',
       nurtureSequence: campaign?.touchpoints || [],
       nextBestAction: campaign?.touchpoints?.[0] || null
     };

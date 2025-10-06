@@ -55,7 +55,13 @@ export interface AutomationTrigger {
 }
 
 export interface AutomationAction {
-  type: 'email' | 'sms' | 'notification' | 'api_call' | 'status_update' | 'document_create';
+  type:
+    | 'email'
+    | 'sms'
+    | 'notification'
+    | 'api_call'
+    | 'status_update'
+    | 'document_create';
   target: string;
   template?: string;
   data?: any;
@@ -133,7 +139,8 @@ export class FreightForwarderAutomationEngine {
 
   public static getInstance(): FreightForwarderAutomationEngine {
     if (!FreightForwarderAutomationEngine.instance) {
-      FreightForwarderAutomationEngine.instance = new FreightForwarderAutomationEngine();
+      FreightForwarderAutomationEngine.instance =
+        new FreightForwarderAutomationEngine();
     }
     return FreightForwarderAutomationEngine.instance;
   }
@@ -167,7 +174,11 @@ export class FreightForwarderAutomationEngine {
     console.log('✅ Quote follow-up automation enabled');
   }
 
-  public async triggerQuoteFollowUp(quoteId: string, customerEmail: string, hoursSinceCreated: number): Promise<void> {
+  public async triggerQuoteFollowUp(
+    quoteId: string,
+    customerEmail: string,
+    hoursSinceCreated: number
+  ): Promise<void> {
     const templates = {
       24: {
         subject: '💡 Quick Follow-up on Your Freight Quote',
@@ -183,15 +194,21 @@ export class FreightForwarderAutomationEngine {
       },
     };
 
-    const template = templates[hoursSinceCreated as keyof typeof templates] || templates[24];
+    const template =
+      templates[hoursSinceCreated as keyof typeof templates] || templates[24];
 
-    console.log(`📧 Sending quote follow-up to ${customerEmail}:`, template.subject);
+    console.log(
+      `📧 Sending quote follow-up to ${customerEmail}:`,
+      template.subject
+    );
     // In production: Send via email service
   }
 
   // ==================== PAYMENT COLLECTION AUTOMATION ====================
 
-  public async enablePaymentCollection(config: PaymentCollectionConfig): Promise<void> {
+  public async enablePaymentCollection(
+    config: PaymentCollectionConfig
+  ): Promise<void> {
     const rule: AutomationRule = {
       id: 'payment_collection_auto',
       name: 'Automated Payment Collection',
@@ -252,13 +269,21 @@ export class FreightForwarderAutomationEngine {
       };
     } else {
       template = {
-        subject: '🚨 URGENT: Invoice #' + invoiceId + ' - ' + Math.abs(daysUntilDue) + ' Days Overdue',
+        subject:
+          '🚨 URGENT: Invoice #' +
+          invoiceId +
+          ' - ' +
+          Math.abs(daysUntilDue) +
+          ' Days Overdue',
         body: `Your invoice for $${amount} is seriously overdue. Services will be suspended if payment is not received within 48 hours.`,
         tone: 'final_warning',
       };
     }
 
-    console.log(`💸 Sending payment reminder to ${customerEmail}:`, template.subject);
+    console.log(
+      `💸 Sending payment reminder to ${customerEmail}:`,
+      template.subject
+    );
     // In production: Send via email/SMS service
   }
 
@@ -283,8 +308,10 @@ export class FreightForwarderAutomationEngine {
     // Calculate scores based on criteria weights
     const scoredCarriers = carriers.map((carrier) => {
       const priceScore = (1 - carrier.rate / 3000) * config.criteria.price;
-      const timeScore = (1 - carrier.transitDays / 25) * config.criteria.transitTime;
-      const reliabilityScore = carrier.reliability * config.criteria.reliability;
+      const timeScore =
+        (1 - carrier.transitDays / 25) * config.criteria.transitTime;
+      const reliabilityScore =
+        carrier.reliability * config.criteria.reliability;
 
       const totalScore = priceScore + timeScore + reliabilityScore;
 
@@ -297,18 +324,24 @@ export class FreightForwarderAutomationEngine {
     // Sort by score
     scoredCarriers.sort((a, b) => b.score - a.score);
 
-    console.log('✅ Rate shopping complete. Best carrier:', scoredCarriers[0].name);
+    console.log(
+      '✅ Rate shopping complete. Best carrier:',
+      scoredCarriers[0].name
+    );
 
     return {
       carriers: scoredCarriers,
       recommended: scoredCarriers[0],
-      potentialSavings: Math.max(...carriers.map((c) => c.rate)) - scoredCarriers[0].rate,
+      potentialSavings:
+        Math.max(...carriers.map((c) => c.rate)) - scoredCarriers[0].rate,
     };
   }
 
   // ==================== CONTAINER TRACKING AUTOMATION ====================
 
-  public async enableContainerTracking(config: ContainerTrackingConfig): Promise<void> {
+  public async enableContainerTracking(
+    config: ContainerTrackingConfig
+  ): Promise<void> {
     const rule: AutomationRule = {
       id: 'container_tracking_auto',
       name: 'Automated Container Tracking',
@@ -340,7 +373,10 @@ export class FreightForwarderAutomationEngine {
     console.log('✅ Container tracking automation enabled');
   }
 
-  public async trackContainer(containerNumber: string, config: ContainerTrackingConfig): Promise<any> {
+  public async trackContainer(
+    containerNumber: string,
+    config: ContainerTrackingConfig
+  ): Promise<any> {
     console.log(`📍 Tracking container: ${containerNumber}`);
 
     // Simulate tracking data
@@ -356,13 +392,25 @@ export class FreightForwarderAutomationEngine {
       eta: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       progress: 65,
       events: [
-        { timestamp: new Date(), location: 'Shanghai Port', event: 'Container loaded' },
-        { timestamp: new Date(), location: 'At Sea', event: 'Departed origin port' },
+        {
+          timestamp: new Date(),
+          location: 'Shanghai Port',
+          event: 'Container loaded',
+        },
+        {
+          timestamp: new Date(),
+          location: 'At Sea',
+          event: 'Departed origin port',
+        },
       ],
     };
 
     if (config.includeWeather) {
-      tracking['weather'] = { condition: 'Clear', windSpeed: 12, waves: 'Light' };
+      tracking['weather'] = {
+        condition: 'Clear',
+        windSpeed: 12,
+        waves: 'Light',
+      };
     }
 
     if (config.includePortCongestion) {
@@ -396,7 +444,8 @@ export class FreightForwarderAutomationEngine {
     grouped.forEach((group, destination) => {
       if (group.length >= config.minShipments) {
         const totalCost = group.reduce((sum, s) => sum + s.cost, 0);
-        const consolidatedCost = totalCost * (1 - config.minSavingsPercent / 100);
+        const consolidatedCost =
+          totalCost * (1 - config.minSavingsPercent / 100);
         const savings = totalCost - consolidatedCost;
 
         opportunities.push({
@@ -418,7 +467,10 @@ export class FreightForwarderAutomationEngine {
 
   // ==================== DOCUMENT AUTO-GENERATION ====================
 
-  public async autoGenerateDocuments(shipmentId: string, milestone: string): Promise<string[]> {
+  public async autoGenerateDocuments(
+    shipmentId: string,
+    milestone: string
+  ): Promise<string[]> {
     console.log(`📄 Auto-generating documents for milestone: ${milestone}`);
 
     const documentsToGenerate: string[] = [];
@@ -428,13 +480,20 @@ export class FreightForwarderAutomationEngine {
         documentsToGenerate.push('Bill of Lading', 'Booking Confirmation');
         break;
       case 'shipment_booked':
-        documentsToGenerate.push('Commercial Invoice', 'Packing List', 'Certificate of Origin');
+        documentsToGenerate.push(
+          'Commercial Invoice',
+          'Packing List',
+          'Certificate of Origin'
+        );
         break;
       case 'container_loaded':
         documentsToGenerate.push('Container Seal Report', 'Loading Photos');
         break;
       case 'departed':
-        documentsToGenerate.push('Shipper's Letter of Instruction', 'ISF Filing');
+        documentsToGenerate.push(
+          "Shipper's Letter of Instruction",
+          'ISF Filing'
+        );
         break;
       case 'arrived':
         documentsToGenerate.push('Arrival Notice', 'Delivery Order');
@@ -470,7 +529,9 @@ export class FreightForwarderAutomationEngine {
     // Send renewal notices
     expiringContracts.forEach((contract) => {
       if (contract.expiresIn <= 30) {
-        console.log(`📧 Sending renewal notice for ${contract.id} (expires in ${contract.expiresIn} days)`);
+        console.log(
+          `📧 Sending renewal notice for ${contract.id} (expires in ${contract.expiresIn} days)`
+        );
       }
     });
 
@@ -550,7 +611,10 @@ export class FreightForwarderAutomationEngine {
       }
 
       // Check response time
-      if (sla.maxResponseHours && shipment.lastResponseHours > sla.maxResponseHours) {
+      if (
+        sla.maxResponseHours &&
+        shipment.lastResponseHours > sla.maxResponseHours
+      ) {
         violations.push({
           shipmentId: shipment.id,
           type: 'response_time_exceeded',
@@ -575,7 +639,9 @@ export class FreightForwarderAutomationEngine {
   public getAutomationStats(): any {
     return {
       totalAutomations: this.activeAutomations.size,
-      enabled: Array.from(this.activeAutomations.values()).filter((a) => a.enabled).length,
+      enabled: Array.from(this.activeAutomations.values()).filter(
+        (a) => a.enabled
+      ).length,
       emailsSentToday: 127,
       smsSentToday: 43,
       documentsGenerated: 89,
@@ -597,7 +663,9 @@ export class FreightForwarderAutomationEngine {
     if (automation) {
       automation.enabled = enabled;
       automation.updatedAt = new Date();
-      console.log(`${enabled ? '✅ Enabled' : '⏸️ Disabled'} automation: ${automation.name}`);
+      console.log(
+        `${enabled ? '✅ Enabled' : '⏸️ Disabled'} automation: ${automation.name}`
+      );
     }
   }
 

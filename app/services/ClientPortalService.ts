@@ -14,6 +14,8 @@
  * - Reporting and analytics
  */
 
+import { Address } from './multimodal-transport';
+
 export interface ClientUser {
   id: string;
   clientId: string;

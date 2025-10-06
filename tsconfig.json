@@ -9,6 +9,7 @@
     "noImplicitReturns": false,
     "noImplicitThis": false,
     "suppressImplicitAnyIndexErrors": true,
+    "ignoreDeprecations": "5.0",
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -65,6 +66,19 @@
     "**/*_broken.*",
     "**/*_old.*",
     "**/*_corrupted.*",
-    "app-production"
+    "**/*_new.*",
+    "**/*-new.*",
+    "**/*-test.*",
+    "**/*-working.*",
+    "**/*-fixed.*",
+    "**/*-simple.*",
+    "**/*-clean.*",
+    "**/*-backup.*",
+    "**/*_backup.*",
+    "**/*-final.*",
+    "**/*-complete.*",
+    "**/*-COMPLETE-*",
+    "app-production",
+    "app/archive"
   ]
 }
