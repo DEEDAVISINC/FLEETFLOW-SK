@@ -166,13 +166,29 @@ export class DEPOINTEAdaptiveLearningService {
     // Adapt based on outcomes
     await this.adaptFromOutcome(learningInteraction);
 
-    // Process acquisition training insights (shipper & carrier)
+    // Process acquisition training insights (shipper & carrier & reputation & fundraising)
     if (
       interaction.interactionType === 'sales' ||
+      interaction.staffId === 'rebecca-004' ||
       interaction.content.input.toLowerCase().includes('shipper') ||
       interaction.content.input.toLowerCase().includes('carrier') ||
       interaction.content.input.toLowerCase().includes('prospect') ||
-      interaction.content.input.toLowerCase().includes('lead')
+      interaction.content.input.toLowerCase().includes('lead') ||
+      interaction.content.input.toLowerCase().includes('review') ||
+      interaction.content.input.toLowerCase().includes('rating') ||
+      interaction.content.input.toLowerCase().includes('reputation') ||
+      interaction.content.input.toLowerCase().includes('5-star') ||
+      interaction.content.input.toLowerCase().includes('fundraising') ||
+      interaction.content.input.toLowerCase().includes('investor') ||
+      interaction.content.input.toLowerCase().includes('funding') ||
+      interaction.content.input.toLowerCase().includes('raise') ||
+      interaction.content.input.toLowerCase().includes('capital') ||
+      interaction.content.input.toLowerCase().includes('accounting') ||
+      interaction.content.input.toLowerCase().includes('financial') ||
+      interaction.content.input.toLowerCase().includes('ai') ||
+      interaction.content.input.toLowerCase().includes('automation') ||
+      interaction.content.input.toLowerCase().includes('erp') ||
+      interaction.content.input.toLowerCase().includes('roi')
     ) {
       this.processAcquisitionTraining(interaction.staffId, learningInteraction);
     }
@@ -3705,6 +3721,702 @@ export class DEPOINTEAdaptiveLearningService {
         'Accurate strength and limitation identification',
         'Strategic value maximization approaches',
         'Transparency maintenance strategies',
+      ],
+      acquisitionType: 'carrier',
+    },
+
+    // ==========================================
+    // REPUTATION MANAGEMENT SPECIALIST (215-235)
+    // ==========================================
+    {
+      id: 215,
+      category: 'Reputation Management',
+      title: '5-Star Review Generation Strategy',
+      prompt: `Design a comprehensive strategy for generating 5-star reviews from satisfied customers. Include timing, messaging, platforms, and follow-up sequences.`,
+      expectedSkills: [
+        'review generation system design',
+        'customer satisfaction timing',
+        'multi-platform review orchestration',
+        'follow-up sequence optimization',
+      ],
+      knowledgeBaseIntegration: [
+        'REVIEW_GENERATION_FRAMEWORKS',
+        'CUSTOMER_SATISFACTION_TIMING',
+        'MULTI_PLATFORM_REVIEW_STRATEGIES',
+      ],
+      difficulty: 'expert',
+      prerequisites: [124, 162],
+      assessmentCriteria: [
+        'Comprehensive review generation strategy',
+        'Optimal timing for review requests',
+        'Multi-platform coverage and coordination',
+        'Follow-up sequences for maximum response rate',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 216,
+      category: 'Reputation Management',
+      title: 'Online Reputation Crisis Management',
+      prompt: `A negative review has been posted about a carrier experience. Develop a 5-step crisis management response strategy that addresses the issue while protecting brand reputation.`,
+      expectedSkills: [
+        'reputation crisis management',
+        'negative review response strategy',
+        'brand protection techniques',
+        'customer issue resolution',
+      ],
+      knowledgeBaseIntegration: [
+        'REPUTATION_CRISIS_FRAMEWORKS',
+        'NEGATIVE_REVIEW_RESPONSE_STRATEGIES',
+        'BRAND_PROTECTION_METHODS',
+      ],
+      difficulty: 'expert',
+      prerequisites: [124, 167],
+      assessmentCriteria: [
+        'Comprehensive crisis management strategy',
+        'Empathetic yet professional response approach',
+        'Brand reputation protection measures',
+        'Issue resolution and follow-up planning',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 217,
+      category: 'Reputation Management',
+      title: 'Review Response Automation',
+      prompt: `Create automated response templates for different types of reviews (5-star, 3-star, 1-star) that maintain brand voice while addressing specific customer feedback.`,
+      expectedSkills: [
+        'automated review response systems',
+        'brand voice consistency',
+        'customer feedback categorization',
+        'personalized response generation',
+      ],
+      knowledgeBaseIntegration: [
+        'REVIEW_RESPONSE_AUTOMATION',
+        'BRAND_VOICE_FRAMEWORKS',
+        'CUSTOMER_FEEDBACK_CATEGORIZATION',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [121, 124],
+      assessmentCriteria: [
+        'Comprehensive response templates for all review types',
+        'Consistent brand voice maintenance',
+        'Specific feedback addressing',
+        'Personalization and authenticity',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 218,
+      category: 'Reputation Management',
+      title: 'Social Proof Enhancement Strategy',
+      prompt: `Develop a strategy to enhance social proof across all customer touchpoints, including testimonials, case studies, and third-party validations.`,
+      expectedSkills: [
+        'social proof optimization',
+        'testimonial collection systems',
+        'case study development',
+        'third-party validation strategies',
+      ],
+      knowledgeBaseIntegration: [
+        'SOCIAL_PROOF_FRAMEWORKS',
+        'TESTIMONIAL_COLLECTION_STRATEGIES',
+        'CASE_STUDY_DEVELOPMENT',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [162, 212],
+      assessmentCriteria: [
+        'Comprehensive social proof strategy',
+        'Multi-touchpoint coverage',
+        'Testimonial collection methodology',
+        'Third-party validation approaches',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 219,
+      category: 'Reputation Management',
+      title: 'Customer Feedback Analysis System',
+      prompt: `Design a system for analyzing customer feedback across all channels (reviews, surveys, support tickets) to identify patterns and improvement opportunities.`,
+      expectedSkills: [
+        'customer feedback analysis',
+        'sentiment pattern recognition',
+        'improvement opportunity identification',
+        'multi-channel feedback integration',
+      ],
+      knowledgeBaseIntegration: [
+        'CUSTOMER_FEEDBACK_ANALYSIS_FRAMEWORKS',
+        'SENTIMENT_PATTERN_RECOGNITION',
+        'MULTI_CHANNEL_FEEDBACK_INTEGRATION',
+      ],
+      difficulty: 'expert',
+      prerequisites: [207, 211],
+      assessmentCriteria: [
+        'Comprehensive feedback analysis system',
+        'Pattern recognition methodology',
+        'Actionable improvement identification',
+        'Multi-channel integration approach',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 220,
+      category: 'Reputation Management',
+      title: 'Review Platform Optimization',
+      prompt: `Create a strategy for optimizing presence and performance across major review platforms (Google, Yelp, Transport Reviews) including SEO and engagement tactics.`,
+      expectedSkills: [
+        'review platform optimization',
+        'online reputation SEO',
+        'platform-specific engagement strategies',
+        'reputation monitoring systems',
+      ],
+      knowledgeBaseIntegration: [
+        'REVIEW_PLATFORM_OPTIMIZATION',
+        'REPUTATION_SEO_STRATEGIES',
+        'PLATFORM_ENGAGEMENT_FRAMEWORKS',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [121, 162],
+      assessmentCriteria: [
+        'Platform-specific optimization strategies',
+        'SEO and discoverability enhancement',
+        'Engagement and response tactics',
+        'Performance monitoring and improvement',
+      ],
+      acquisitionType: 'carrier',
+    },
+
+    // ==========================================
+    // FINANCIAL TECHNOLOGY & AI IMPLEMENTATION (233-270)
+    // ==========================================
+    {
+      id: 233,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation AI Accounting Platform Selection',
+      prompt: `Evaluate transportation-focused AI accounting platforms (Oracle NetSuite, Sage Intacct, Microsoft Dynamics 365, SAP S/4HANA) for FleetFlow, considering load-based revenue recognition, carrier payment terms, fuel surcharge tracking, and equipment financing needs.`,
+      expectedSkills: [
+        'transportation accounting platform evaluation',
+        'carrier payment cycle analysis',
+        'fuel and equipment cost optimization',
+        'TMS-financial system integration assessment',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_ACCOUNTING_FRAMEWORKS',
+        'CARRIER_PAYMENT_OPTIMIZATION',
+        'FUEL_SURCHARGE_AUTOMATION',
+        'EQUIPMENT_FINANCING_TRACKING',
+      ],
+      difficulty: 'expert',
+      prerequisites: [162, 212],
+      assessmentCriteria: [
+        'Transportation-specific feature evaluation',
+        'Carrier payment and settlement optimization',
+        'Fuel cost and surcharge automation',
+        'TMS integration capabilities assessment',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 234,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation FP&A Implementation Strategy',
+      prompt: `Design a transportation-focused FP&A implementation strategy for FleetFlow using seasonal freight forecasting, carrier capacity modeling, and fuel price scenario planning to optimize network profitability and capacity utilization.`,
+      expectedSkills: [
+        'transportation FP&A implementation',
+        'seasonal demand forecasting deployment',
+        'carrier capacity optimization',
+        'fuel price scenario planning',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_FP&A_FRAMEWORKS',
+        'SEASONAL_DEMAND_FORECASTING',
+        'CARRIER_CAPACITY_MODELING',
+        'FUEL_PRICE_SCENARIO_PLANNING',
+      ],
+      difficulty: 'expert',
+      prerequisites: [207, 211],
+      assessmentCriteria: [
+        'Transportation-specific forecasting models',
+        'Carrier capacity utilization optimization',
+        'Fuel price impact scenario analysis',
+        'Network profitability enhancement metrics',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 235,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation Financial Close Automation',
+      prompt: `Design transportation-focused financial close automation for FleetFlow using weekly carrier settlements, load-based accruals, fuel surcharge calculations, and detention/demurrage tracking to reduce close time from 15 days to 3 days.`,
+      expectedSkills: [
+        'transportation close automation',
+        'carrier settlement optimization',
+        'load-based revenue recognition',
+        'fuel surcharge close processing',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_CLOSE_AUTOMATION',
+        'CARRIER_SETTLEMENT_OPTIMIZATION',
+        'LOAD_BASED_ACCRUALS',
+        'FUEL_SURCHARGE_PROCESSING',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [162, 212],
+      assessmentCriteria: [
+        'Weekly carrier settlement automation',
+        'Load-based revenue recognition accuracy',
+        'Fuel surcharge calculation efficiency',
+        'Detention/demurrage tracking integration',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 236,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation AP Automation Strategy',
+      prompt: `Design transportation-focused AP automation for FleetFlow handling carrier settlements, fuel card invoices, maintenance bills, and insurance premiums with 3-way matching for load confirmations, fuel purchases, and equipment repairs.`,
+      expectedSkills: [
+        'transportation AP automation',
+        'carrier settlement processing',
+        'fuel card and maintenance invoice handling',
+        '3-way matching for transportation expenses',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_AP_AUTOMATION',
+        'CARRIER_SETTLEMENT_PROCESSING',
+        'FUEL_MAINTENANCE_INVOICE_HANDLING',
+        'TRANSPORTATION_3WAY_MATCHING',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [121, 162],
+      assessmentCriteria: [
+        'Carrier settlement automation efficiency',
+        'Fuel and maintenance expense processing',
+        'Insurance premium tracking integration',
+        'Load confirmation matching accuracy',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 237,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation AR Optimization Strategy',
+      prompt: `Design transportation AR optimization for FleetFlow focusing on shipper payment collections, factoring arrangements, detention claims, and carrier payment acceleration to reduce DSO from 45 to 30 days.`,
+      expectedSkills: [
+        'transportation AR optimization',
+        'shipper payment collection strategies',
+        'factoring and detention claim management',
+        'carrier payment acceleration techniques',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_AR_OPTIMIZATION',
+        'SHIPPER_PAYMENT_COLLECTIONS',
+        'FACTORING_DETENTION_CLAIMS',
+        'CARRIER_PAYMENT_ACCELERATION',
+      ],
+      difficulty: 'expert',
+      prerequisites: [207, 211],
+      assessmentCriteria: [
+        'Shipper payment collection efficiency',
+        'Factoring arrangement optimization',
+        'Detention claim processing automation',
+        'Carrier payment cycle acceleration',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 238,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation Expense Management Strategy',
+      prompt: `Design transportation expense management for FleetFlow covering fuel cards, driver advances, tolls, maintenance, insurance, and ELD compliance costs with automated reconciliation and spend control policies.`,
+      expectedSkills: [
+        'transportation expense management',
+        'fuel card and driver advance tracking',
+        'maintenance and compliance cost control',
+        'automated expense reconciliation',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_EXPENSE_MANAGEMENT',
+        'FUEL_DRIVER_ADVANCE_TRACKING',
+        'MAINTENANCE_COMPLIANCE_COSTS',
+        'EXPENSE_RECONCILIATION_AUTOMATION',
+      ],
+      difficulty: 'expert',
+      prerequisites: [162, 212],
+      assessmentCriteria: [
+        'Fuel expense tracking and optimization',
+        'Driver advance reconciliation accuracy',
+        'Maintenance cost control effectiveness',
+        'ELD and compliance expense management',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 239,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation Financial Technology ROI',
+      prompt: `Calculate ROI for FleetFlow's AI financial systems investment focusing on carrier settlement automation savings ($15-25 per invoice), 15-30% DSO reduction, and 75% manual processing elimination across transportation operations.`,
+      expectedSkills: [
+        'transportation financial ROI calculation',
+        'carrier settlement cost analysis',
+        'DSO reduction impact assessment',
+        'manual processing elimination metrics',
+      ],
+      knowledgeBaseIntegration: [
+        'TRANSPORTATION_FINANCIAL_ROI_FRAMEWORKS',
+        'CARRIER_SETTLEMENT_COST_ANALYSIS',
+        'DSO_REDUCTION_IMPACT',
+        'MANUAL_PROCESSING_ELIMINATION',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [207, 211],
+      assessmentCriteria: [
+        'Carrier settlement automation savings',
+        'DSO reduction financial impact',
+        'Manual processing cost elimination',
+        'Transportation-specific ROI metrics',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 240,
+      category: 'Financial Technology & AI Implementation',
+      title: 'Transportation Financial Systems Integration',
+      prompt: `Design TMS-financial system integration for FleetFlow connecting load data, carrier settlements, fuel tracking, and maintenance costs with real-time synchronization and automated reconciliation.`,
+      expectedSkills: [
+        'TMS-financial system integration',
+        'load data and settlement synchronization',
+        'fuel and maintenance cost tracking',
+        'automated reconciliation frameworks',
+      ],
+      knowledgeBaseIntegration: [
+        'TMS_FINANCIAL_INTEGRATION_FRAMEWORKS',
+        'LOAD_SETTLEMENT_SYNCHRONIZATION',
+        'FUEL_MAINTENANCE_TRACKING',
+        'AUTOMATED_RECONCILIATION_SYSTEMS',
+      ],
+      difficulty: 'expert',
+      prerequisites: [207, 211],
+      assessmentCriteria: [
+        'TMS-financial data synchronization',
+        'Load-based settlement automation',
+        'Fuel and maintenance cost integration',
+        'Real-time reconciliation accuracy',
+      ],
+      acquisitionType: 'carrier',
+    },
+
+    // ==========================================
+    // AI BUSINESS APPLICATIONS (241-255)
+    // ==========================================
+    {
+      id: 241,
+      category: 'AI Business Applications',
+      title: 'AI-Powered Competitor CAC Analysis',
+      prompt: `Using AI tools, generate 3 specific strategies competitors might be using to lower their customer acquisition costs in the transportation industry right now.`,
+      expectedSkills: [
+        'ai-powered competitor analysis',
+        'customer acquisition cost optimization',
+        'market trend identification',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_COMPETITOR_ANALYSIS_FRAMEWORKS',
+        'TRANSPORTATION_CAC_STRATEGIES',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [116, 192],
+      assessmentCriteria: [
+        'Effective use of AI for competitor intelligence',
+        'Industry-specific CAC reduction strategies',
+        'Market trend awareness and application',
+        'Strategic recommendations for carrier acquisition',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 242,
+      category: 'AI Business Applications',
+      title: 'AI-Structured Carrier Negotiation Strategy',
+      prompt: `A carrier is demanding better payment terms. Use AI to develop 5 non-obvious negotiation strategies that could convince them to accept current terms while maintaining the relationship.`,
+      expectedSkills: [
+        'ai-structured strategic problem solving',
+        'carrier negotiation strategy development',
+        'creative solution generation',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_NEGOTIATION_FRAMEWORKS',
+        'CARRIER_PAYMENT_STRATEGIES',
+      ],
+      difficulty: 'expert',
+      prerequisites: [147, 209],
+      assessmentCriteria: [
+        'Structured approach to carrier negotiations',
+        'Non-obvious, relationship-preserving strategies',
+        'AI-enhanced problem-solving methodology',
+        'Practical implementation considerations',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 204,
+      category: 'AI Business Applications',
+      title: 'AI-Powered Carrier Strategy Review',
+      prompt: `Review a carrier acquisition strategy document using AI. Identify 3 emerging transportation industry trends that should be incorporated and challenge 2 key assumptions.`,
+      expectedSkills: [
+        'ai-powered strategic plan analysis',
+        'transportation industry trend identification',
+        'assumption challenging',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_STRATEGIC_ANALYSIS_FRAMEWORKS',
+        'TRANSPORTATION_TREND_ANALYSIS',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [103, 192],
+      assessmentCriteria: [
+        'Systematic strategic plan review',
+        'Relevant transportation industry trends',
+        'Effective assumption challenging',
+        'Actionable improvement recommendations',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 243,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Pricing Architecture Design',
+      prompt: `Design the technical architecture for a dynamic carrier pricing system that adjusts rates based on load volume, carrier performance, and market conditions.`,
+      expectedSkills: [
+        'ai-assisted technical architecture design',
+        'dynamic carrier pricing system',
+        'performance-based pricing implementation',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_TECHNICAL_ARCHITECTURE_FRAMEWORKS',
+        'DYNAMIC_CARRIER_PRICING',
+      ],
+      difficulty: 'expert',
+      prerequisites: [170, 177],
+      assessmentCriteria: [
+        'Comprehensive pricing architecture design',
+        'AI-enhanced system planning',
+        'Scalable carrier pricing implementation',
+        'Integration and data flow considerations',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 244,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Churn Analysis',
+      prompt: `Analyze carrier performance data using AI to identify the most likely causes of carrier churn and generate 2 retention strategies to implement immediately.`,
+      expectedSkills: [
+        'ai-powered carrier data analysis',
+        'carrier churn pattern identification',
+        'retention strategy development',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_DATA_ANALYSIS_FRAMEWORKS',
+        'CARRIER_CHURN_PREVENTION',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [167, 179],
+      assessmentCriteria: [
+        'Effective AI data analysis methodology',
+        'Accurate carrier churn cause identification',
+        'Actionable retention strategies',
+        'Testing and measurement approaches',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 245,
+      category: 'AI Business Applications',
+      title: 'AI Cross-Border Carrier Expansion',
+      prompt: `Research regulatory and operational differences for expanding carrier acquisition into Canada using AI, identifying key compliance requirements and market opportunities.`,
+      expectedSkills: [
+        'ai-powered regulatory research',
+        'cross-border carrier expansion',
+        'canadian transportation compliance',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_REGULATORY_RESEARCH_FRAMEWORKS',
+        'CROSS_BORDER_CARRIER_EXPANSION',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [187, 194],
+      assessmentCriteria: [
+        'Comprehensive regulatory research',
+        'Key compliance differences identified',
+        'Market opportunity assessment',
+        'Strategic expansion recommendations',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 246,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Contract Negotiation',
+      prompt: `Develop leverage points for renegotiating carrier contract terms using AI to analyze typical transportation industry contract clauses and common concessions.`,
+      expectedSkills: [
+        'ai-powered carrier negotiation strategy',
+        'transportation contract analysis',
+        'industry leverage identification',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_NEGOTIATION_FRAMEWORKS',
+        'TRANSPORTATION_CONTRACT_STRATEGIES',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [141, 147],
+      assessmentCriteria: [
+        'Strategic leverage point identification',
+        'Transportation industry contract analysis',
+        'Negotiation position strengthening',
+        'Practical carrier relationship application',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 247,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Acquisition Manager Role',
+      prompt: `Create an optimized job description for a Carrier Acquisition Manager using AI, including specific KPIs for carrier onboarding, retention, and network expansion.`,
+      expectedSkills: [
+        'ai-powered job description creation',
+        'carrier acquisition role definition',
+        'performance metric establishment',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_JOB_DESCRIPTION_FRAMEWORKS',
+        'CARRIER_ACQUISITION_PERFORMANCE_METRICS',
+      ],
+      difficulty: 'intermediate',
+      prerequisites: [101, 134],
+      assessmentCriteria: [
+        'Comprehensive carrier acquisition job description',
+        'Clear KPI and success metrics',
+        'Role-specific transportation industry requirements',
+        'Candidate attraction optimization',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 248,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Performance Communication',
+      prompt: `Generate a professional communication script for addressing performance issues with a carrier, balancing clarity with relationship preservation.`,
+      expectedSkills: [
+        'ai-powered carrier communication scripting',
+        'difficult conversation management',
+        'performance issue communication',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_COMMUNICATION_SCRIPTING',
+        'CARRIER_PERFORMANCE_MANAGEMENT',
+      ],
+      difficulty: 'intermediate',
+      prerequisites: [124, 167],
+      assessmentCriteria: [
+        'Professional and compassionate tone',
+        'Clear communication of performance issues',
+        'Actionable improvement steps',
+        'Relationship preservation focus',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 249,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Acquisition Positioning',
+      prompt: `Develop a brand positioning strategy that differentiates FleetFlow's carrier acquisition approach from competitors, highlighting unique advantages in the transportation industry.`,
+      expectedSkills: [
+        'ai-powered carrier brand positioning',
+        'competitive differentiation analysis',
+        'transportation industry positioning',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_BRAND_POSITIONING_FRAMEWORKS',
+        'CARRIER_ACQUISITION_DIFFERENTIATION',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [125, 192],
+      assessmentCriteria: [
+        'Clear competitive differentiation in carrier acquisition',
+        'Compelling value proposition for carriers',
+        'Transportation industry resonance',
+        'Strategic positioning implementation',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 250,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Strategy Presentation',
+      prompt: `Design a carrier acquisition strategy presentation using AI tools, covering market opportunity, competitive advantages, carrier onboarding process, and success metrics.`,
+      expectedSkills: [
+        'ai-powered presentation design',
+        'carrier acquisition strategy communication',
+        'transportation industry presentation',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_PRESENTATION_FRAMEWORKS',
+        'CARRIER_STRATEGY_PRESENTATION',
+      ],
+      difficulty: 'intermediate',
+      prerequisites: [103, 162],
+      assessmentCriteria: [
+        'Logical carrier acquisition presentation structure',
+        'Compelling transportation industry narrative',
+        'Key strategy points effectively communicated',
+        'Stakeholder engagement optimization',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 251,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Outreach Optimization',
+      prompt: `Analyze the current carrier outreach workflow using AI to identify bottlenecks, then generate 3 optimization strategies for improving acquisition efficiency.`,
+      expectedSkills: [
+        'ai-powered carrier workflow analysis',
+        'outreach process optimization',
+        'carrier acquisition efficiency',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_WORKFLOW_OPTIMIZATION',
+        'CARRIER_OUTREACH_EFFICIENCY',
+      ],
+      difficulty: 'advanced',
+      prerequisites: [121, 195],
+      assessmentCriteria: [
+        'Accurate carrier outreach bottleneck identification',
+        'Effective optimization strategies',
+        'Measurable efficiency improvements',
+        'Practical carrier acquisition implementation',
+      ],
+      acquisitionType: 'carrier',
+    },
+    {
+      id: 252,
+      category: 'AI Business Applications',
+      title: 'AI Carrier Market Expansion',
+      prompt: `Use AI to analyze expansion opportunities into new geographic regions for carrier acquisition, identifying regulatory requirements, market size, and competitive landscape.`,
+      expectedSkills: [
+        'ai-powered carrier market expansion analysis',
+        'geographic opportunity assessment',
+        'regional carrier network planning',
+      ],
+      knowledgeBaseIntegration: [
+        'AI_MARKET_EXPANSION_FRAMEWORKS',
+        'REGIONAL_CARRIER_ACQUISITION_STRATEGIES',
+      ],
+      difficulty: 'expert',
+      prerequisites: [157, 194],
+      assessmentCriteria: [
+        'Comprehensive geographic expansion analysis',
+        'Regulatory and market opportunity assessment',
+        'Strategic carrier acquisition recommendations',
+        'Risk and implementation considerations',
       ],
       acquisitionType: 'carrier',
     },

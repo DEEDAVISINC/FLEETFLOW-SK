@@ -767,3 +767,4 @@ export class PipelineManagementKnowledgeBase {
 // Export singleton
 export const pipelineManagement = PipelineManagementKnowledgeBase;
 export default pipelineManagement;
+

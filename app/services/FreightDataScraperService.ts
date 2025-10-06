@@ -340,3 +340,4 @@ export class FreightDataScraperService {
 
 // Export singleton instance
 export const freightDataScraper = new FreightDataScraperService();
+

@@ -553,3 +553,4 @@ export class FuelPriceScraperService {
 
 // Export singleton instance
 export const fuelPriceScraper = new FuelPriceScraperService();
+

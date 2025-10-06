@@ -175,6 +175,128 @@ export default function GrantAcquisitionBatchDeployment() {
         notes:
           'Storytelling focused - highlight personal journey and community impact',
       },
+      {
+        id: 'grant-4',
+        name: 'Hey Helen Microgrant',
+        provider: 'Visionaries',
+        amount: '$10,000',
+        deadline: new Date('2025-12-30'),
+        status: 'Not Started',
+        priority: 'High',
+        assignedTo: [],
+        completionPercentage: 0,
+        documents: [
+          {
+            id: 'doc-4-1',
+            name: 'Business Overview & Impact Statement',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-10-20'),
+          },
+          {
+            id: 'doc-4-2',
+            name: 'Founder Profile & Women Entrepreneurship Story',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-10-25'),
+          },
+          {
+            id: 'doc-4-3',
+            name: 'Business Operations & Growth Plan',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-01'),
+          },
+          {
+            id: 'doc-4-4',
+            name: 'Impact-Driven Business Model Documentation',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-10'),
+          },
+        ],
+        notes:
+          'Women-owned, impact-driven business focus. Unrestricted cash award for operations, growth, marketing, hiring, or infrastructure.',
+      },
+      {
+        id: 'grant-5',
+        name: 'Verizon Small Business Digital Ready Grant',
+        provider: 'Verizon',
+        amount: '$10,000',
+        deadline: new Date('2025-12-10'),
+        status: 'Not Started',
+        priority: 'High',
+        assignedTo: [],
+        completionPercentage: 0,
+        documents: [
+          {
+            id: 'doc-5-1',
+            name: 'Complete 2 Online Courses/Events (Required)',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-01'),
+          },
+          {
+            id: 'doc-5-2',
+            name: 'Grant Application Form',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-15'),
+          },
+          {
+            id: 'doc-5-3',
+            name: 'Business Digital Strategy Overview',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-20'),
+          },
+          {
+            id: 'doc-5-4',
+            name: 'Financial Needs Assessment',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-25'),
+          },
+        ],
+        notes:
+          'TIME SENSITIVE: Must complete 2 courses between July 1 - Dec 10, 2025 to qualify. Application closes 11:59pm PT Dec 10.',
+      },
+      {
+        id: 'grant-6',
+        name: 'Awesome Foundation Grant',
+        provider: 'Awesome Foundation',
+        amount: '$1,000',
+        deadline: new Date('2025-11-30'),
+        status: 'Not Started',
+        priority: 'Medium',
+        assignedTo: [],
+        completionPercentage: 0,
+        documents: [
+          {
+            id: 'doc-6-1',
+            name: 'Project/Idea Description',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-10-20'),
+          },
+          {
+            id: 'doc-6-2',
+            name: 'Innovation & Impact Narrative',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-10-25'),
+          },
+          {
+            id: 'doc-6-3',
+            name: 'Project Budget & Use of Funds',
+            status: 'Pending',
+            assignedTo: '',
+            dueDate: new Date('2025-11-01'),
+          },
+        ],
+        notes:
+          'Rolling basis monthly grants. No strings attached. Quick application process. Can reapply monthly for different projects.',
+      },
     ];
 
     setGrants(initialGrants);

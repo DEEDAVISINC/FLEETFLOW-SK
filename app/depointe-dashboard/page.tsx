@@ -195,7 +195,56 @@ export const depointeStaff = [
     },
   },
   {
-    id: 'will-004',
+    id: 'rebecca-004',
+    name: 'Rebecca',
+    role: 'Reputation Management Specialist',
+    department: 'Customer Experience',
+    avatar: '⭐',
+    status: 'active',
+    currentTask: 'Ready for assignment',
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 0,
+    learningAbilities: [
+      '5-star review generation expert',
+      'Online reputation management',
+      'Customer feedback optimization',
+      'Review response automation',
+      'Social proof enhancement',
+      'Customer satisfaction maximization',
+      'Brand reputation protection',
+      'Testimonial collection and curation',
+    ],
+    marketingMastery: {
+      primaryStrategies: ['client-value', 'referrals', 'follow-up'],
+      expertiseLevel: 'Expert',
+      coreCompetencies: [
+        'Review Generation Systems',
+        'Reputation Management',
+        'Customer Feedback Analysis',
+        'Social Proof Optimization',
+      ],
+      aiApplications: [
+        'Automated review request systems',
+        'Sentiment analysis for reputation monitoring',
+        'Predictive review generation algorithms',
+        'Real-time reputation crisis management',
+      ],
+      successPatterns: [
+        'Generate 95% 5-star review response rate',
+        'Maintain 4.9+ average rating across all platforms',
+        'Convert 80% of satisfied customers to reviews',
+        'Respond to all reviews within 1 hour',
+      ],
+      improvementAreas: [
+        'Advanced sentiment analysis for nuanced feedback',
+        'Predictive review timing optimization',
+        'Multi-platform reputation orchestration',
+      ],
+    },
+  },
+  {
+    id: 'will-005',
     name: 'Will',
     role: 'Sales Operations Specialist',
     department: 'Freight Operations',
@@ -851,7 +900,7 @@ export const depointeStaff = [
 export default function DEPOINTEDashboard() {
   // Client-side hydration protection
   const [isMounted, setIsMounted] = useState(false);
-  
+
   const [isTaskCreationOpen, setIsTaskCreationOpen] = useState(false);
   const [isHealthcareTaskOpen, setIsHealthcareTaskOpen] = useState(false);
   const [isShipperTaskOpen, setIsShipperTaskOpen] = useState(false);
@@ -900,6 +949,7 @@ export default function DEPOINTEDashboard() {
   const [expandedDepartments, setExpandedDepartments] = useState<string[]>([
     'FREIGHT_OPERATIONS',
     'BUSINESS_DEVELOPMENT',
+    'SUPPORT_SERVICE',
   ]); // Start with key departments expanded
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [selectedStaffMember, setSelectedStaffMember] = useState<string | null>(
@@ -925,7 +975,7 @@ export default function DEPOINTEDashboard() {
   // Load saved healthcare tasks and activity feed on page load
   useEffect(() => {
     if (!isMounted) return;
-    
+
     // Load healthcare tasks from localStorage
     const savedHealthcareTasks = localStorage.getItem(
       'depointe-healthcare-tasks'
@@ -1693,7 +1743,8 @@ export default function DEPOINTEDashboard() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
+          background:
+            'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)',
         }}
       >
         <div style={{ textAlign: 'center', color: '#ffffff' }}>
