@@ -9,6 +9,7 @@ import AITemplateEngine, {
   AITemplate,
   TemplateContext,
 } from './AITemplateEngine';
+import { unifiedLeadEnrichmentService } from './UnifiedLeadEnrichmentService';
 
 // Import existing FleetFlow services
 // import { FMCSAService } from './FMCSAService';
@@ -487,29 +488,51 @@ export class AIAgentOrchestrator {
    * Enrich lead data using FleetFlow APIs
    */
   private static async enrichLeadData(leadData: any): Promise<any> {
-    const enriched = { ...leadData };
-
     try {
-      // Company information enrichment via FMCSA (if applicable)
-      if (leadData.company) {
-        // const fmcsaData = await FMCSAService.searchCompany(leadData.company);
-        // enriched.fmcsaData = fmcsaData;
-      }
+      // Use the new Unified Lead Enrichment Service
+      // This integrates email validation, LinkedIn scraping, company data, and AI analysis
+      const enrichedLead = await unifiedLeadEnrichmentService.enrichLead(
+        {
+          name: leadData.name,
+          email: leadData.email,
+          phone: leadData.phone,
+          company: leadData.company,
+          title: leadData.title,
+          location: leadData.location,
+          source: leadData.source,
+          tenantId: leadData.tenantId || 'unknown',
+        },
+        {
+          validateEmail: true,
+          enrichLinkedIn: true,
+          enrichCompany: true,
+          enrichFreightData: true,
+          runAIAnalysis: true,
+          useCache: true,
+        }
+      );
 
-      // Geographic and weather data
-      if (leadData.location) {
-        // const weatherData = await WeatherService.getCurrentWeather(leadData.location);
-        // enriched.weatherData = weatherData;
-      }
+      console.info(
+        `✅ Lead enriched: ${enrichedLead.contact.fullName} ` +
+        `(score: ${enrichedLead.intelligence.leadScore}, ` +
+        `priority: ${enrichedLead.intelligence.priority})`
+      );
 
-      // Economic data context
-      // const economicData = await ExchangeRateService.getCurrentRates();
-      // enriched.economicContext = economicData;
+      // Return enriched data in the format expected by the rest of the system
+      return {
+        ...leadData,
+        enrichedData: enrichedLead,
+        leadScore: enrichedLead.intelligence.leadScore,
+        priority: enrichedLead.intelligence.priority,
+        recommendedAction: enrichedLead.intelligence.recommendedAction,
+        insights: enrichedLead.intelligence.insights,
+        tags: enrichedLead.intelligence.tags,
+      };
     } catch (error) {
-      console.error('Error enriching lead data:', error);
+      console.error('❌ Error enriching lead data:', error);
+      // Return original data if enrichment fails
+      return { ...leadData };
     }
-
-    return enriched;
   }
 
   /**
