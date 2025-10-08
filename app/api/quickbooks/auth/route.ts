@@ -2,7 +2,7 @@
 // QuickBooks OAuth Authentication Route
 
 import { NextRequest, NextResponse } from 'next/server';
-import { quickBooksService } from '@/app/services/quickbooksService';
+import { quickBooksService } from '@/services/quickbooksService';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

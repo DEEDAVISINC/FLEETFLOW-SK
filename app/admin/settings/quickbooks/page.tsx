@@ -2,7 +2,7 @@
 // Admin QuickBooks Integration Settings Page
 
 'use client';
-import { quickBooksService } from '@/app/services/quickbooksService';
+import { quickBooksService } from '@/services/quickbooksService';
 import { useEffect, useState } from 'react';
 
 interface QuickBooksSettings {

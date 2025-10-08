@@ -1,12 +1,12 @@
 'use client';
 
-import { Badge } from '@/app/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/app/components/ui/card';
+} from '@/components/ui/card';
 import {
   Award,
   BarChart3,
