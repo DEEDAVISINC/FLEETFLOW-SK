@@ -339,51 +339,239 @@ business intelligence:
 
 ## 🏥 NEMT Healthcare Go-to-Market Strategy
 
-### **Phase 1: Michigan + Maryland Foundation (2026)**
+### **Phase 1: Michigan + Maryland Foundation (Q1-Q2 2026)**
 
 **Timeline**: 6 months **Investment**: $500K **Target**: 500-1,200 patients, $9.5M ARR
 
 **Key Activities:**
 
-1. Michigan Medicaid provider enrollment (NPI: 1538939111)
-2. ModivCare NEMT broker contracting
-3. Maryland Medicaid provider enrollment
-4. MCO contracting (Meridian, Molina, UnitedHealthcare, Amerigroup)
-5. Uber Health partnership and API integration
-6. First 100-patient soft launch with intensive monitoring
+1. Michigan Medicaid provider enrollment (NPI: 1538939111) - Complete Q1 2026
+2. ModivCare NEMT broker contracting - Negotiate Q1, Launch Q2 2026
+3. Maryland Medicaid provider enrollment - Parallel application Q1 2026
+4. MCO contracting (Meridian, Molina, UnitedHealthcare, Amerigroup) - Q2 2026
+5. Uber Health partnership and API integration - Technical integration Q1 2026
+6. First 100-patient soft launch with intensive monitoring - Q2 2026
+
+**Success Metrics:**
+
+- 100 active patients by Month 3
+- 500 active patients by Month 6
+- 95%+ ride completion rate
+- 4.5+ patient satisfaction score
+- $50K+ monthly revenue by Month 6
 
 ### **Phase 2: Regional Expansion (2027)**
 
-**Timeline**: 12 months **Investment**: $1M **Target**: 2,000-5,000 patients, $39.6M ARR
+**Timeline**: 12 months **Investment**: $1.5M **Target**: 2,000-5,000 patients, $39.6M ARR
 
-**Target States**: Ohio, Indiana, Illinois, Pennsylvania (adjacent to Michigan) **Rationale**:
-Similar Medicaid structures, operational synergies, existing freight broker presence
+**Target States**: Ohio, Indiana, Illinois, Pennsylvania (adjacent to Michigan)
+
+**Rationale**:
+
+- Similar Medicaid structures and reimbursement rates
+- Operational synergies with existing freight broker presence
+- Adjacent geography reduces operational complexity
+- Combined Medicaid population: 8.5M beneficiaries
+
+**Expansion Timeline:**
+
+- **Q1 2027**: Ohio launch (2.8M Medicaid beneficiaries)
+- **Q2 2027**: Indiana launch (1.6M Medicaid beneficiaries)
+- **Q3 2027**: Illinois launch (3.2M Medicaid beneficiaries)
+- **Q4 2027**: Pennsylvania launch (2.9M Medicaid beneficiaries)
+
+**Success Metrics:**
+
+- 1,000+ patients per state by end of Q4 2027
+- $3M+ monthly revenue by end of 2027
+- 90%+ patient retention rate
+- 50+ healthcare provider partnerships per state
 
 ### **Phase 3: National Scaling (2028+)**
 
-**Timeline**: 18-24 months **Investment**: $3M **Target**: 10,000-15,000 patients, $118.8M ARR
+**Timeline**: 18-24 months **Investment**: $4M **Target**: 10,000-15,000 patients, $118.8M ARR
 
-**Target**: 10-15 states by end of 2027, 25-30 states by end of 2028 **Strategy**: Systematic
-replication using proven MI/MD playbook
+**Target**: 10-15 states by end of 2028, 25-30 states by end of 2029
+
+**Priority State Expansion (2028):**
+
+1. **Texas** (5.4M Medicaid) - Q1 2028 - Largest market opportunity
+2. **Florida** (4.8M Medicaid) - Q2 2028 - High NEMT demand
+3. **New York** (7.3M Medicaid) - Q2 2028 - Premium reimbursement rates
+4. **California** (14.2M Medicaid) - Q3 2028 - Largest state market
+5. **North Carolina** (2.4M Medicaid) - Q3 2028 - Growing market
+6. **Georgia** (2.3M Medicaid) - Q4 2028 - Strategic Southeast presence
+
+**Strategy**: Systematic replication using proven MI/MD playbook with state-specific customization
+
+**Success Metrics:**
+
+- 15,000+ active patients by end of 2028
+- $10M+ monthly revenue by end of 2028
+- 100+ healthcare provider partnerships nationally
+- 85%+ patient retention rate
+- 4.7+ patient satisfaction score
 
 ### **NEMT Marketing Strategy**
 
-**New Channels (+$2M annual budget):**
+**Comprehensive Multi-Channel Approach (+$3.5M annual budget):**
 
-1. **Healthcare Provider Outreach** ($600K): Direct relationships with dialysis centers, hospitals,
-   cancer treatment facilities - Expected ROI: 10:1 ($6M revenue)
-2. **MCO Partnerships** ($400K): Co-marketing with Medicaid MCOs, preferred provider status -
-   Expected ROI: 15:1 ($6M revenue)
-3. **Healthcare Conferences** ($300K): HIMSS, NATP, state Medicaid director conferences - Expected
-   ROI: 8:1 ($2.4M revenue)
-4. **Government Relations** ($300K): State Medicaid office partnerships, CMS pilot programs -
-   Expected ROI: 20:1 ($6M revenue)
-5. **Healthcare PR & Thought Leadership** ($200K): Healthcare IT News, Modern Healthcare, HIMSS
-   Insights - Expected ROI: 5:1 ($1M revenue)
-6. **Healthcare Digital Marketing** ($200K): SEO, PPC, content for healthcare vertical - Expected
-   ROI: 12:1 ($2.4M revenue)
+#### **1. Healthcare Provider Outreach** ($800K annually)
 
-**Total NEMT Marketing ROI**: 12:1 ($24M revenue from $2M investment)
+**Target Audiences:**
+
+- Dialysis centers (7,500+ facilities nationally)
+- Cancer treatment centers (1,500+ facilities)
+- Physical therapy clinics (38,000+ locations)
+- Hospitals and medical centers (6,000+ facilities)
+
+**Tactics:**
+
+- Direct sales team (5 healthcare account executives)
+- Provider partnership program with co-marketing
+- Educational webinars on NEMT compliance
+- White-label NEMT coordination for provider networks
+
+**Expected ROI**: 12:1 ($9.6M revenue from $800K investment)
+
+#### **2. MCO Partnerships** ($600K annually)
+
+**Target Audiences:**
+
+- Medicaid Managed Care Organizations (200+ nationally)
+- State Medicaid offices (50 states + DC)
+- NEMT brokers (ModivCare, MTM, Veyo, etc.)
+
+**Tactics:**
+
+- Preferred provider status negotiations
+- Co-marketing campaigns with MCOs
+- Performance-based contracts with quality guarantees
+- State Medicaid director relationship building
+
+**Expected ROI**: 18:1 ($10.8M revenue from $600K investment)
+
+#### **3. Healthcare Conferences & Events** ($400K annually)
+
+**Target Events:**
+
+- HIMSS Global Health Conference (40,000+ attendees)
+- NATP Annual Conference (NEMT industry)
+- State Medicaid Director conferences (50 states)
+- Healthcare IT conferences (CHIME, HLTH, ViVE)
+
+**Tactics:**
+
+- Booth presence with live platform demonstrations
+- Speaking engagements on AI in healthcare logistics
+- Networking events with MCO executives
+- Sponsorship of state Medicaid associations
+
+**Expected ROI**: 10:1 ($4M revenue from $400K investment)
+
+#### **4. Government Relations & Advocacy** ($500K annually)
+
+**Target Audiences:**
+
+- CMS (Centers for Medicare & Medicaid Services)
+- State Medicaid offices and directors
+- Healthcare policy organizations
+- Legislative healthcare committees
+
+**Tactics:**
+
+- CMS pilot program participation
+- State Medicaid innovation demonstrations
+- Policy white papers on AI in NEMT
+- Legislative testimony on healthcare transportation
+
+**Expected ROI**: 25:1 ($12.5M revenue from $500K investment)
+
+#### **5. Healthcare PR & Thought Leadership** ($350K annually)
+
+**Target Publications:**
+
+- Healthcare IT News
+- Modern Healthcare
+- HIMSS Insights
+- Health Affairs
+- Becker's Hospital Review
+
+**Tactics:**
+
+- Press releases on AI automation achievements
+- Executive bylines on healthcare logistics
+- Case studies with healthcare provider partners
+- Industry awards and recognition programs
+
+**Expected ROI**: 8:1 ($2.8M revenue from $350K investment)
+
+#### **6. Healthcare Digital Marketing** ($450K annually)
+
+**Channels:**
+
+- Healthcare SEO (NEMT, Medicaid transportation, healthcare logistics)
+- PPC campaigns targeting healthcare providers
+- LinkedIn advertising to healthcare executives
+- Content marketing (blog, whitepapers, case studies)
+- Email marketing to healthcare provider lists
+
+**Tactics:**
+
+- Landing pages for each state Medicaid program
+- ROI calculators for healthcare providers
+- Video testimonials from patients and providers
+- Retargeting campaigns for website visitors
+
+**Expected ROI**: 15:1 ($6.75M revenue from $450K investment)
+
+#### **7. Patient & Community Outreach** ($400K annually)
+
+**Target Audiences:**
+
+- Medicaid beneficiaries requiring NEMT
+- Patient advocacy groups
+- Community health organizations
+- Senior centers and disability services
+
+**Tactics:**
+
+- Community health fairs and events
+- Patient education materials (multilingual)
+- Partnership with disability advocacy groups
+- Social media campaigns highlighting patient stories
+
+**Expected ROI**: 6:1 ($2.4M revenue from $400K investment)
+
+**Total NEMT Marketing Investment**: $3.5M annually **Total NEMT Marketing Revenue**: $48.85M
+annually **Overall NEMT Marketing ROI**: 14:1
+
+### **NEMT Sales Strategy**
+
+**Sales Team Structure:**
+
+1. **VP Healthcare Sales** (1) - $180K base + commission
+2. **Regional Healthcare Sales Directors** (4) - $140K base + commission
+3. **Healthcare Account Executives** (12) - $100K base + commission
+4. **Inside Sales Representatives** (8) - $60K base + commission
+5. **Customer Success Managers** (6) - $80K base + retention bonuses
+
+**Total Sales Team Investment**: $2.8M annually
+
+**Sales Targets:**
+
+- **Year 1 (2026)**: 1,200 patients, $9.5M ARR
+- **Year 2 (2027)**: 5,000 patients, $39.6M ARR
+- **Year 3 (2028)**: 15,000 patients, $118.8M ARR
+
+**Sales Process:**
+
+1. **Lead Generation** (Marketing + Outbound)
+2. **Qualification** (Medicaid eligibility, ride frequency)
+3. **Provider Partnership** (Healthcare facility relationships)
+4. **MCO Contracting** (Medicaid managed care agreements)
+5. **Patient Onboarding** (App setup, ride scheduling training)
+6. **Ongoing Support** (Customer success, ride coordination)
 
 ### **NEMT Competitive Landscape**
 
@@ -402,6 +590,18 @@ replication using proven MI/MD playbook
 - Zero development cost (existing AI infrastructure)
 - 90-day launch vs 12-18 months for competitors
 - $500K launch investment vs $5M+ traditional NEMT startup
+
+---
+
+## 🚛 Freight Business Go-to-Market Strategy
+
+### **Comprehensive Freight Marketing & Sales Plan**
+
+**Total Freight Marketing Investment**: $8.5M annually **Target Freight Revenue**: $295M (Year 1) →
+$719M (Year 3) **Overall Freight Marketing ROI**: 35:1
+
+_[See detailed freight marketing strategy in MARKETING_PLAN.md for complete channel breakdown,
+tactics, and ROI projections]_
 
 ---
 

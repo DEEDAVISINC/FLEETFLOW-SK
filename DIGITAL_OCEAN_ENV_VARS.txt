@@ -110,3 +110,4 @@ ENABLE_EMAIL_NOTIFICATIONS=true
 # 4. All REQUIRED variables must be set for the app to work
 # 5. Keep this file secure and never commit it to git
 #
+

@@ -5,7 +5,6 @@ import UserIdentifierService from '../../../services/user-identifier-service';
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
-  debug: true,
   providers: [
     // Only include GoogleProvider if credentials are available
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET

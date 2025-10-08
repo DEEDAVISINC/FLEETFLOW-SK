@@ -145,3 +145,4 @@ AI staff will automatically receive fundraising training when engaging with:
 The system continuously learns and improves fundraising capabilities through real-world application
 and outcomes.
 
+

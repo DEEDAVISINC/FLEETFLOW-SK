@@ -86,3 +86,4 @@ echo "🚀 Your app will automatically redeploy with the new variables"
 echo ""
 echo "Monitor deployment at:"
 echo "https://cloud.digitalocean.com/apps/$APP_ID"
+

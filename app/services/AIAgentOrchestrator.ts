@@ -514,8 +514,8 @@ export class AIAgentOrchestrator {
 
       console.info(
         `✅ Lead enriched: ${enrichedLead.contact.fullName} ` +
-        `(score: ${enrichedLead.intelligence.leadScore}, ` +
-        `priority: ${enrichedLead.intelligence.priority})`
+          `(score: ${enrichedLead.intelligence.leadScore}, ` +
+          `priority: ${enrichedLead.intelligence.priority})`
       );
 
       // Return enriched data in the format expected by the rest of the system

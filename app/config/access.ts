@@ -2031,7 +2031,21 @@ export const getCurrentUser = (): {
   user: User;
   permissions: PageSectionPermissions;
 } => {
-  // User will be loaded from authentication system (no mock data)
+  // Try to get user from localStorage (set during login)
+  if (typeof window !== 'undefined') {
+    try {
+      const storedUser = localStorage.getItem('fleetflow-current-user');
+      if (storedUser) {
+        const user: User = JSON.parse(storedUser);
+        const permissions = getSectionPermissions(user);
+        return { user, permissions };
+      }
+    } catch (error) {
+      console.error('Error loading user from localStorage:', error);
+    }
+  }
+
+  // Fallback to default admin user if no user is stored
   const user: User = {
     id: 'admin-user-123',
     name: 'Admin User',

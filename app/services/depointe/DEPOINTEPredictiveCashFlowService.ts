@@ -523,3 +523,4 @@ export class DEPOINTEPredictiveCashFlowService {
 // Export singleton instance
 export const depointePredictiveCashFlow =
   DEPOINTEPredictiveCashFlowService.getInstance();
+

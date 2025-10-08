@@ -369,3 +369,4 @@ forecasting** (30-90 days with AI) ✅ **Advanced AR management** (collections, 
 **The CFO's Guide information has been successfully adapted for transportation, freight, and
 logistics operations, and DEPOINTE AI now has the capabilities to deliver these services at scale.**
 🚀
+

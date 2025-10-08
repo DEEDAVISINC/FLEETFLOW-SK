@@ -347,3 +347,4 @@ export const taskExecutionService = new DEPOINTETaskExecutionService();
 if (typeof window !== 'undefined') {
   console.log('🎯 DEPOINTE Task Execution Service initialized');
 }
+

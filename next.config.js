@@ -150,8 +150,8 @@ const nextConfig = {
   // Trailing slash configuration
   trailingSlash: false,
 
-  // Generate static exports for faster loading
-  output: 'standalone',
+  // Generate static exports for faster loading (disabled in dev)
+  // output: 'standalone',
 };
 
 module.exports = nextConfig;

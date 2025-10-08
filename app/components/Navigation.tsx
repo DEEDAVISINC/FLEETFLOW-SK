@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
+import { DEPOINTEUserService } from '../services/DEPOINTEUserService';
 import { ManagerAccessControlService } from '../services/ManagerAccessControlService';
 import GlobalNotificationBell from './GlobalNotificationBell';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -1495,16 +1496,23 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.canEditLoads
-                            ? '#10b981'
-                            : '#ef4444',
+                          color:
+                            user?.role === 'admin' ||
+                            DEPOINTEUserService.isLoggedIn()
+                              ? '#10b981'
+                              : (permissions as any)?.canEditLoads
+                                ? '#10b981'
+                                : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.canEditLoads
+                        {user?.role === 'admin' ||
+                        DEPOINTEUserService.isLoggedIn()
                           ? '✓ Full'
-                          : '✗ Limited'}
+                          : (permissions as any)?.canEditLoads
+                            ? '✓ Full'
+                            : '✗ Limited'}
                       </span>
                     </div>
                     <div
@@ -1519,16 +1527,23 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.canViewAllLoads
-                            ? '#10b981'
-                            : '#ef4444',
+                          color:
+                            user?.role === 'admin' ||
+                            DEPOINTEUserService.isLoggedIn()
+                              ? '#10b981'
+                              : (permissions as any)?.canViewAllLoads
+                                ? '#10b981'
+                                : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.canViewAllLoads
+                        {user?.role === 'admin' ||
+                        DEPOINTEUserService.isLoggedIn()
                           ? '✓ Full'
-                          : '✗ Limited'}
+                          : (permissions as any)?.canViewAllLoads
+                            ? '✓ Full'
+                            : '✗ Limited'}
                       </span>
                     </div>
                     <div
@@ -1543,16 +1558,23 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.hasManagementAccess
-                            ? '#10b981'
-                            : '#ef4444',
+                          color:
+                            user?.role === 'admin' ||
+                            DEPOINTEUserService.isLoggedIn()
+                              ? '#10b981'
+                              : (permissions as any)?.hasManagementAccess
+                                ? '#10b981'
+                                : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.hasManagementAccess
-                          ? '✓ Admin'
-                          : '✗ No Access'}
+                        {user?.role === 'admin' ||
+                        DEPOINTEUserService.isLoggedIn()
+                          ? '✓ Full Access'
+                          : (permissions as any)?.hasManagementAccess
+                            ? '✓ Admin'
+                            : '✗ No Access'}
                       </span>
                     </div>
                     <div
@@ -1567,16 +1589,23 @@ export default function ProfessionalNavigation() {
                       </span>
                       <span
                         style={{
-                          color: (permissions as any)?.canViewFinancials
-                            ? '#10b981'
-                            : '#ef4444',
+                          color:
+                            user?.role === 'admin' ||
+                            DEPOINTEUserService.isLoggedIn()
+                              ? '#10b981'
+                              : (permissions as any)?.canViewFinancials
+                                ? '#10b981'
+                                : '#ef4444',
                           fontSize: '12px',
                           fontWeight: '600',
                         }}
                       >
-                        {(permissions as any)?.canViewFinancials
-                          ? '✓ Manager'
-                          : '✗ No Access'}
+                        {user?.role === 'admin' ||
+                        DEPOINTEUserService.isLoggedIn()
+                          ? '✓ Full'
+                          : (permissions as any)?.canViewFinancials
+                            ? '✓ Manager'
+                            : '✗ No Access'}
                       </span>
                     </div>
                   </div>
@@ -1602,6 +1631,18 @@ export default function ProfessionalNavigation() {
                     Session Info
                   </div>
                   <div style={{ display: 'grid', gap: '4px' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <span style={{ color: '#6b7280' }}>Organization:</span>
+                      <span style={{ color: '#374151', fontWeight: '500' }}>
+                        {DEPOINTEUserService.getUserDisplayInfo().organization}
+                      </span>
+                    </div>
                     <div
                       style={{
                         display: 'flex',

@@ -694,3 +694,4 @@ Deal Review Script:
 Your AI staff now have Mark Kosoglow's legendary framework that scaled Outreach from $0-250M+. They
 can guide reps through deal reviews, assess forecast risk accurately, and never miss quota again.
 
+

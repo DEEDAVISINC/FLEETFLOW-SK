@@ -4736,36 +4736,42 @@ export default function CampaignTemplates() {
 
     // FUNDRAISING CAMPAIGNS
     {
-      id: 'fleetflow_series_seed_intelligence',
-      name: 'FleetFlow Series Seed Intelligence Campaign - STRATEGIC FUNDING RAISE',
+      id: 'fleetflow_series_a_intelligence',
+      name: 'FleetFlow Series A Intelligence Campaign - $25M STRATEGIC FUNDING RAISE',
       description:
-        'PREMIUM WOSB-CERTIFIED seed funding campaign targeting VCs, impact investors, government-focused funds, and strategic partners to raise $2M-5M Series Seed for FleetFlow platform expansion. COMPETITIVE ADVANTAGES: Women-Owned Small Business certification, government contracting access ($500B market), founder-market fit with industry experience, dual revenue model (SaaS + Gov contracts), and ESG compliance. Features multi-phase investor intelligence, warm introduction mapping, and systematic fundraising execution with all 27 AI staff coordinating outreach across logistics VCs, impact investment firms, government contracting specialists, and diversity-focused institutional investors.',
+        'PREMIUM WOSB/MBE/SUPPLIER GATEWAY-CERTIFIED Series A funding campaign targeting top-tier VCs, impact investors, government-focused funds, and strategic acquirers (Microsoft, Salesforce, Google) to raise $25M at $75M pre-money valuation for FleetFlow™ platform scale. COMPETITIVE ADVANTAGES: Triple diversity certification (WOSB + MBE + Supplier Gateway), FMCSA MC-1647572 active freight broker, NEMT NPI-1538939111 healthcare provider, government contracting access ($650B market), 100% complete platform with 18 AI agents, $3.255T TAM, healthcare premium positioning (70-85% margins), and proven multi-vertical capability. Features comprehensive 12-slide investor pitch deck, ironclad financial projections ($73M-$719M ARR), strategic exit positioning ($75-125B acquisition value), and systematic fundraising execution with all 27 AI staff coordinating outreach across logistics VCs, healthcare investors, impact investment firms, government contracting specialists, ESG-compliant institutional investors, and strategic corporate development teams.',
       category: 'fundraising',
       targetAudience:
-        'ENHANCED TARGET AUDIENCE: Logistics/Supply Chain VCs (Bessemer, Dynamo), Impact Investment Firms (diversity-focused), Women-Led Investment Funds (All Raise, Female Founders Fund), Government/Defense Tech VCs, ESG-Compliant Institutional Investors, Strategic Corporate VCs (C.H. Robinson, Schneider ventures), Angel Investors (freight industry veterans), Government Innovation Programs (SBIR, DOT grants, WOSB programs), GovTech Accelerators, Transportation-focused Strategic Partners',
+        'STRATEGIC TARGET AUDIENCE: Top-Tier Logistics VCs (Bessemer Venture Partners, Insight Partners, General Catalyst), Healthcare/NEMT Investors, Impact Investment Firms (diversity-focused), Women-Led Investment Funds (All Raise, Female Founders Fund, Backstage Capital), Government/Defense Tech VCs (Andreessen Horowitz American Dynamism, 8VC, Lux Capital), ESG-Compliant Institutional Investors, Strategic Corporate VCs (Microsoft Ventures, Salesforce Ventures, Google Ventures, Oracle Ventures), Fortune 500 Supplier Diversity Programs, Angel Investors (freight + healthcare industry veterans), Government Innovation Programs (SBIR, DOT grants, WOSB set-asides), GovTech Accelerators, Strategic Acquirer Corporate Development Teams (Microsoft Azure, Salesforce Industry Cloud, Google Cloud)',
       expectedResults: {
-        leads: 200, // Qualified investors identified
-        conversions: 50, // Investor meetings secured
+        leads: 300, // Qualified investors identified (increased for Series A)
+        conversions: 75, // Investor meetings secured (higher bar for Series A)
         dailyRevenue: 0, // Fundraising doesn\'t generate daily revenue
         monthlyRevenue: 0, // Monthly milestones instead
-        totalRevenue: 3500000, // Target $3.5M raise (mid-range of $2M-5M)
+        totalRevenue: 25000000, // Target $25M Series A raise at $75M pre-money
       },
-      duration: '90 days',
-      difficulty: 'hard', // High complexity fundraising process
-      aiStaff: ['All 27 AI Staff - Specialized Assignments'],
+      duration: '120 days', // Extended for Series A complexity
+      difficulty: 'expert', // Highest complexity Series A fundraising
+      aiStaff: [
+        'All 27 AI Staff - Specialized Assignments + Founder Dieasha Davis',
+      ],
       channels: [
-        'WOSB-Focused Investor Outreach',
-        'Impact Investment Fund Targeting',
-        'ESG-Compliant VC Database',
-        'Women-Led Fund Engagement',
-        'Government Contracting Networks',
-        'LinkedIn Investor Engagement',
+        'Top-Tier VC Direct Outreach (Bessemer, Insight, General Catalyst)',
+        'Healthcare/NEMT Investor Targeting',
+        'WOSB/MBE/Supplier Gateway-Focused Investor Outreach',
+        'Impact Investment Fund Targeting (ESG-focused)',
+        'Women-Led Fund Engagement (All Raise, Female Founders Fund)',
+        'Strategic Corporate VC (Microsoft, Salesforce, Google Ventures)',
+        'Government/Defense Tech VCs (a16z, 8VC, Lux Capital)',
+        'Fortune 500 Supplier Diversity Programs',
+        'LinkedIn Investor Engagement (warm intros)',
         'Diversity & Inclusion Conferences',
         'SBA/WOSB Networking Events',
         'GovTech Investor Meetings',
-        'Strategic Corporate Partnership',
-        'Angel Network Platforms',
-        'Government Grant Portals (SBIR/DOT)',
+        'Strategic Acquirer Corp Dev Teams (Microsoft Azure, Salesforce, Google Cloud)',
+        'Angel Network Platforms (AngelList, Gust)',
+        'Government Grant Portals (SBIR/DOT/WOSB set-asides)',
+        'Pitch Competitions & Demo Days',
       ],
       icon: '💰',
       color: 'bg-green-600',
@@ -4781,10 +4787,10 @@ export default function CampaignTemplates() {
           automationLevel: 'semi',
         },
         {
-          id: 'wosb_advantage_positioning',
-          name: 'WOSB Certification & Government Contracting Strategy',
+          id: 'triple_certification_positioning',
+          name: 'WOSB/MBE/Supplier Gateway Triple Certification Strategy',
           description:
-            'Develop comprehensive WOSB advantage messaging, government contracting revenue projections, impact investment positioning, and ESG compliance documentation for diversity-focused investors',
+            'Develop comprehensive triple diversity certification advantage messaging (WOSB + MBE + Supplier Gateway), government contracting revenue projections ($650B market access), Fortune 500 supplier diversity positioning, impact investment ESG compliance, healthcare premium valuation (70-85% margins), and multi-vertical platform validation for diversity-focused and strategic investors',
           timing: 'Days 2-8',
           channel: 'Strategic Positioning',
           aiStaff: 'Monica, Rae, Deeva, Preston',
@@ -4794,7 +4800,7 @@ export default function CampaignTemplates() {
           id: 'financial_modeling_projections',
           name: 'Financial Modeling & Revenue Projections',
           description:
-            'Develop detailed financial models, revenue projections, unit economics, and growth forecasts for investor presentations',
+            'Develop detailed financial models with 5 diversified revenue streams (Main Subscriptions, AI Add-Ons, DEPOINTE AI, Pallet Scanning, NEMT Healthcare), unit economics (72:1 LTV:CAC, 81% gross margins), growth projections ($73M-$719M ARR), path to profitability (Q4 2026), and healthcare premium positioning for investor presentations',
           timing: 'Days 3-12',
           channel: 'Financial Analysis',
           aiStaff: 'Resse A. Bell, Preston, Cal',
@@ -4802,19 +4808,19 @@ export default function CampaignTemplates() {
         },
         {
           id: 'pitch_deck_development',
-          name: 'Investor Pitch Deck & Materials Creation',
+          name: 'Series A Investor Pitch Deck & Materials Creation (COMPLETE)',
           description:
-            'Create compelling pitch deck, executive summary, product demo, and all investor presentation materials',
-          timing: 'Days 5-20',
+            'COMPLETED: 12-slide investor pitch deck (FleetFlow_Investor_Pitch_Deck.md) with ironclad positioning, $75-125B exit valuation, comprehensive financial projections, 10 insurmountable competitive advantages, triple diversity certification messaging, healthcare premium positioning, strategic acquirer analysis (Microsoft/Salesforce/Google), executive summary, product demo materials, and complete investor presentation package ready for meetings',
+          timing: 'Days 5-20 (COMPLETE)',
           channel: 'Content Development',
           aiStaff: 'Drew, Alexis, Riley, Dell',
-          automationLevel: 'semi',
+          automationLevel: 'complete',
         },
         {
           id: 'investor_database_building',
           name: 'Comprehensive Investor Database Development',
           description:
-            'Build detailed database of 200+ qualified investors including VCs, angels, strategics, and government programs with contact information and investment thesis',
+            'Build detailed database of 300+ qualified Series A investors including top-tier logistics VCs (Bessemer, Insight, General Catalyst), healthcare/NEMT investors, impact investment firms, women-led funds (All Raise, Female Founders Fund), government/defense tech VCs (a16z, 8VC, Lux Capital), strategic corporate VCs (Microsoft Ventures, Salesforce Ventures, Google Ventures), Fortune 500 supplier diversity programs, angels, and government programs with contact information, investment thesis, diversity focus, and warm introduction paths',
           timing: 'Days 10-25',
           channel: 'Database Development',
           aiStaff: 'Desiree, Cliff, Gary, Shanell',
@@ -4892,22 +4898,26 @@ export default function CampaignTemplates() {
         },
       ],
       successMetrics: [
-        '200+ qualified investors identified (including 50+ impact/ESG funds)',
-        '150+ personalized investor outreach messages sent',
-        '100+ WOSB advantage presentations delivered',
-        '75+ warm introductions secured through network',
-        '60+ investor meetings scheduled and completed',
-        '40+ government contracting opportunity briefings',
-        '25+ product demos delivered to investors',
-        '20+ impact investment fund meetings secured',
+        '300+ qualified Series A investors identified (including 75+ impact/ESG funds)',
+        '250+ personalized investor outreach messages sent',
+        '150+ triple certification (WOSB/MBE/Supplier Gateway) advantage presentations',
+        '100+ warm introductions secured through network',
+        '75+ investor meetings scheduled and completed',
+        '50+ healthcare/NEMT investor briefings',
+        '40+ strategic corporate VC meetings (Microsoft, Salesforce, Google Ventures)',
+        '35+ product demos delivered to investors',
+        '30+ impact investment fund meetings secured',
+        '25+ government/defense tech VC meetings (a16z, 8VC, Lux Capital)',
+        '20+ Fortune 500 supplier diversity program presentations',
         '15+ accelerator applications submitted (including diversity-focused)',
         '12+ government grant/WOSB program applications filed',
-        '10+ ESG-compliant institutional investor meetings',
+        '10+ strategic acquirer corp dev discussions (Microsoft Azure, Salesforce, Google Cloud)',
         '8+ serious investor follow-ups with term sheet interest',
-        '5+ term sheets or LOIs received',
-        '3+ strategic partnership discussions with gov contractors',
-        '$3.5M+ funding target achieved with WOSB premium valuation',
+        '5+ term sheets or LOIs received at $75M+ pre-money valuation',
+        '3+ strategic partnership discussions with potential acquirers',
+        '$25M+ Series A funding target achieved with healthcare premium valuation',
         '95% investor meeting completion rate',
+        '750x-1,250x ROI positioning for investors (18-month exit)',
       ],
     },
   ];

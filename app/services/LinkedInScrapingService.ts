@@ -1,9 +1,9 @@
 /**
  * 🔗 LINKEDIN SCRAPING SERVICE
- * 
+ *
  * Professional data enrichment from LinkedIn
  * Integrates with multiple providers for reliability
- * 
+ *
  * Providers:
  * - Proxycurl (primary) - $29/mo for 3,000 credits
  * - PhantomBuster (backup) - $30/mo for 20 hours
@@ -79,7 +79,8 @@ export class LinkedInScrapingService {
   private proxycurlApiKey: string;
   private phantomBusterApiKey: string;
   private scrapingBeeApiKey: string;
-  private cache: Map<string, LinkedInProfile | LinkedInCompanyProfile> = new Map();
+  private cache: Map<string, LinkedInProfile | LinkedInCompanyProfile> =
+    new Map();
   private cacheExpiry: number = 30 * 24 * 60 * 60 * 1000; // 30 days
 
   private constructor() {
@@ -87,7 +88,7 @@ export class LinkedInScrapingService {
     this.proxycurlApiKey = process.env.PROXYCURL_API_KEY || '';
     this.phantomBusterApiKey = process.env.PHANTOMBUSTER_API_KEY || '';
     this.scrapingBeeApiKey = process.env.SCRAPINGBEE_API_KEY || '';
-    
+
     console.info('🔗 LinkedIn Scraping Service initialized');
   }
 
@@ -125,7 +126,6 @@ export class LinkedInScrapingService {
 
       // Get full profile data
       return await this.getProfileByUrl(profileUrl);
-
     } catch (error) {
       console.error(`❌ LinkedIn enrichment error for ${name}:`, error);
       return null;
@@ -135,7 +135,9 @@ export class LinkedInScrapingService {
   /**
    * Get LinkedIn profile by URL
    */
-  public async getProfileByUrl(linkedinUrl: string): Promise<LinkedInProfile | null> {
+  public async getProfileByUrl(
+    linkedinUrl: string
+  ): Promise<LinkedInProfile | null> {
     // Check cache first
     const cached = this.cache.get(linkedinUrl);
     if (cached && 'fullName' in cached) {
@@ -167,7 +169,6 @@ export class LinkedInScrapingService {
 
       console.warn('⚠️ No LinkedIn scraping API keys configured');
       return null;
-
     } catch (error) {
       console.error(`❌ LinkedIn profile scraping error:`, error);
       return null;
@@ -177,7 +178,9 @@ export class LinkedInScrapingService {
   /**
    * Get company profile from LinkedIn
    */
-  public async getCompanyProfile(companyName: string): Promise<LinkedInCompanyProfile | null> {
+  public async getCompanyProfile(
+    companyName: string
+  ): Promise<LinkedInCompanyProfile | null> {
     const cacheKey = `company:${companyName.toLowerCase()}`;
     const cached = this.cache.get(cacheKey);
     if (cached && 'employees' in cached) {
@@ -196,7 +199,6 @@ export class LinkedInScrapingService {
 
       console.warn('⚠️ No LinkedIn scraping API keys configured');
       return null;
-
     } catch (error) {
       console.error(`❌ LinkedIn company scraping error:`, error);
       return null;
@@ -227,7 +229,6 @@ export class LinkedInScrapingService {
         totalResults: 0,
         searchQuery: JSON.stringify(filters),
       };
-
     } catch (error) {
       console.error('❌ LinkedIn search error:', error);
       return {
@@ -249,7 +250,7 @@ export class LinkedInScrapingService {
         `https://nubela.co/proxycurl/api/contact-api/personal-email?email=${encodeURIComponent(email)}`,
         {
           headers: {
-            'Authorization': `Bearer ${this.proxycurlApiKey}`,
+            Authorization: `Bearer ${this.proxycurlApiKey}`,
           },
         }
       );
@@ -258,7 +259,6 @@ export class LinkedInScrapingService {
 
       const data = await response.json();
       return data.linkedin_profile_url || null;
-
     } catch (error) {
       console.error('❌ Email to LinkedIn lookup error:', error);
       return null;
@@ -268,18 +268,21 @@ export class LinkedInScrapingService {
   /**
    * Find profile by name and company
    */
-  private async findProfileByNameAndCompany(name: string, company: string): Promise<string | null> {
+  private async findProfileByNameAndCompany(
+    name: string,
+    company: string
+  ): Promise<string | null> {
     if (!this.proxycurlApiKey) return null;
 
     try {
       const response = await fetch(
         `https://nubela.co/proxycurl/api/linkedin/profile/resolve?` +
-        `first_name=${encodeURIComponent(name.split(' ')[0])}&` +
-        `last_name=${encodeURIComponent(name.split(' ').slice(1).join(' '))}&` +
-        `company_domain=${encodeURIComponent(company)}`,
+          `first_name=${encodeURIComponent(name.split(' ')[0])}&` +
+          `last_name=${encodeURIComponent(name.split(' ').slice(1).join(' '))}&` +
+          `company_domain=${encodeURIComponent(company)}`,
         {
           headers: {
-            'Authorization': `Bearer ${this.proxycurlApiKey}`,
+            Authorization: `Bearer ${this.proxycurlApiKey}`,
           },
         }
       );
@@ -288,7 +291,6 @@ export class LinkedInScrapingService {
 
       const data = await response.json();
       return data.linkedin_profile_url || null;
-
     } catch (error) {
       console.error('❌ Name/Company to LinkedIn lookup error:', error);
       return null;
@@ -298,12 +300,14 @@ export class LinkedInScrapingService {
   /**
    * Proxycurl profile scraping (primary provider)
    */
-  private async getProfileWithProxycurl(linkedinUrl: string): Promise<LinkedInProfile> {
+  private async getProfileWithProxycurl(
+    linkedinUrl: string
+  ): Promise<LinkedInProfile> {
     const response = await fetch(
       `https://nubela.co/proxycurl/api/v2/linkedin?url=${encodeURIComponent(linkedinUrl)}&skills=include`,
       {
         headers: {
-          'Authorization': `Bearer ${this.proxycurlApiKey}`,
+          Authorization: `Bearer ${this.proxycurlApiKey}`,
         },
       }
     );
@@ -323,19 +327,26 @@ export class LinkedInScrapingService {
       profileUrl: linkedinUrl,
       photoUrl: data.profile_pic_url,
       summary: data.summary,
-      currentCompany: data.experiences?.[0] ? {
-        name: data.experiences[0].company,
-        title: data.experiences[0].title,
-        startDate: data.experiences[0].starts_at ? 
-          `${data.experiences[0].starts_at.year}-${data.experiences[0].starts_at.month || 1}` : undefined,
-        location: data.experiences[0].location,
-        description: data.experiences[0].description,
-      } : undefined,
+      currentCompany: data.experiences?.[0]
+        ? {
+            name: data.experiences[0].company,
+            title: data.experiences[0].title,
+            startDate: data.experiences[0].starts_at
+              ? `${data.experiences[0].starts_at.year}-${data.experiences[0].starts_at.month || 1}`
+              : undefined,
+            location: data.experiences[0].location,
+            description: data.experiences[0].description,
+          }
+        : undefined,
       experience: (data.experiences || []).map((exp: any) => ({
         company: exp.company,
         title: exp.title,
-        startDate: exp.starts_at ? `${exp.starts_at.year}-${exp.starts_at.month || 1}` : undefined,
-        endDate: exp.ends_at ? `${exp.ends_at.year}-${exp.ends_at.month || 1}` : undefined,
+        startDate: exp.starts_at
+          ? `${exp.starts_at.year}-${exp.starts_at.month || 1}`
+          : undefined,
+        endDate: exp.ends_at
+          ? `${exp.ends_at.year}-${exp.ends_at.month || 1}`
+          : undefined,
         location: exp.location,
         description: exp.description,
       })),
@@ -362,7 +373,9 @@ export class LinkedInScrapingService {
   /**
    * PhantomBuster profile scraping (backup provider)
    */
-  private async getProfileWithPhantomBuster(linkedinUrl: string): Promise<LinkedInProfile> {
+  private async getProfileWithPhantomBuster(
+    linkedinUrl: string
+  ): Promise<LinkedInProfile> {
     // PhantomBuster requires launching a phantom and waiting for results
     // This is a simplified implementation
     const response = await fetch(
@@ -385,7 +398,7 @@ export class LinkedInScrapingService {
     }
 
     const data = await response.json();
-    
+
     // Note: In production, you'd need to poll for results
     // This is a placeholder structure
     return {
@@ -408,7 +421,9 @@ export class LinkedInScrapingService {
   /**
    * ScrapingBee profile scraping (fallback provider)
    */
-  private async getProfileWithScrapingBee(linkedinUrl: string): Promise<LinkedInProfile> {
+  private async getProfileWithScrapingBee(
+    linkedinUrl: string
+  ): Promise<LinkedInProfile> {
     const response = await fetch(
       `https://app.scrapingbee.com/api/v1/?api_key=${this.scrapingBeeApiKey}&url=${encodeURIComponent(linkedinUrl)}&render_js=true`
     );
@@ -418,7 +433,7 @@ export class LinkedInScrapingService {
     }
 
     const html = await response.text();
-    
+
     // Basic HTML parsing (in production, use a proper HTML parser)
     // This is a simplified placeholder
     return {
@@ -439,14 +454,16 @@ export class LinkedInScrapingService {
   /**
    * Get company profile with Proxycurl
    */
-  private async getCompanyWithProxycurl(companyName: string): Promise<LinkedInCompanyProfile | null> {
+  private async getCompanyWithProxycurl(
+    companyName: string
+  ): Promise<LinkedInCompanyProfile | null> {
     try {
       // First, resolve company name to LinkedIn URL
       const searchResponse = await fetch(
         `https://nubela.co/proxycurl/api/linkedin/company/resolve?company_name=${encodeURIComponent(companyName)}`,
         {
           headers: {
-            'Authorization': `Bearer ${this.proxycurlApiKey}`,
+            Authorization: `Bearer ${this.proxycurlApiKey}`,
           },
         }
       );
@@ -463,7 +480,7 @@ export class LinkedInScrapingService {
         `https://nubela.co/proxycurl/api/linkedin/company?url=${encodeURIComponent(companyUrl)}`,
         {
           headers: {
-            'Authorization': `Bearer ${this.proxycurlApiKey}`,
+            Authorization: `Bearer ${this.proxycurlApiKey}`,
           },
         }
       );
@@ -477,7 +494,9 @@ export class LinkedInScrapingService {
         website: data.website,
         industry: data.industry,
         companySize: data.company_size_on_linkedin,
-        headquarters: data.hq ? `${data.hq.city}, ${data.hq.country}` : undefined,
+        headquarters: data.hq
+          ? `${data.hq.city}, ${data.hq.country}`
+          : undefined,
         founded: data.founded_year,
         specialties: data.specialities || [],
         description: data.description,
@@ -486,7 +505,6 @@ export class LinkedInScrapingService {
         logo: data.logo_url,
         type: data.company_type,
       };
-
     } catch (error) {
       console.error('❌ Company profile error:', error);
       return null;
@@ -518,7 +536,7 @@ export class LinkedInScrapingService {
       `https://nubela.co/proxycurl/api/search/person?${params.toString()}`,
       {
         headers: {
-          'Authorization': `Bearer ${this.proxycurlApiKey}`,
+          Authorization: `Bearer ${this.proxycurlApiKey}`,
         },
       }
     );
@@ -532,19 +550,21 @@ export class LinkedInScrapingService {
     const profiles: LinkedInProfile[] = await Promise.all(
       (data.results || []).slice(0, limit).map(async (result: any) => {
         if (result.linkedin_profile_url) {
-          return await this.getProfileByUrl(result.linkedin_profile_url) || {
-            fullName: result.name || '',
-            firstName: '',
-            lastName: '',
-            headline: result.headline || '',
-            location: result.location || '',
-            profileUrl: result.linkedin_profile_url,
-            experience: [],
-            education: [],
-            skills: [],
-            industries: [],
-            languages: [],
-          };
+          return (
+            (await this.getProfileByUrl(result.linkedin_profile_url)) || {
+              fullName: result.name || '',
+              firstName: '',
+              lastName: '',
+              headline: result.headline || '',
+              location: result.location || '',
+              profileUrl: result.linkedin_profile_url,
+              experience: [],
+              education: [],
+              skills: [],
+              industries: [],
+              languages: [],
+            }
+          );
         }
         return {
           fullName: result.name || '',
@@ -590,3 +610,4 @@ export class LinkedInScrapingService {
 
 // Export singleton instance
 export const linkedInScrapingService = LinkedInScrapingService.getInstance();
+

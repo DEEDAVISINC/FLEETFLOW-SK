@@ -2,7 +2,8 @@
 
 ## Overview
 
-FleetFlow now has a **complete lead enrichment system** that rivals and exceeds Warmer.ai, specifically optimized for the freight and logistics industry.
+FleetFlow now has a **complete lead enrichment system** that rivals and exceeds Warmer.ai,
+specifically optimized for the freight and logistics industry.
 
 ### What We Added (The Missing Pieces from Warmer.ai)
 
@@ -29,12 +30,14 @@ FleetFlow now has a **complete lead enrichment system** that rivals and exceeds 
 Start with these two services (total: **$78/month**):
 
 #### 1. Hunter.io (Email Validation) - $49/mo
+
 - Sign up: https://hunter.io/users/sign_up
 - Get API key: https://hunter.io/api-keys
 - Plan: 5,000 email verifications/month
 - Features: 98% accuracy, SMTP verification, typo detection
 
 #### 2. Proxycurl (LinkedIn Scraping) - $29/mo
+
 - Sign up: https://nubela.co/proxycurl/
 - Get API key: https://nubela.co/proxycurl/dashboard
 - Plan: 3,000 credits/month
@@ -92,6 +95,7 @@ Enriched Lead Ready!
 ### What Gets Enriched
 
 **Contact Data:**
+
 - ✅ Email validation (deliverable, valid, score)
 - ✅ Email correction (if typo detected)
 - ✅ Phone number (from LinkedIn)
@@ -99,6 +103,7 @@ Enriched Lead Ready!
 - ✅ Location
 
 **LinkedIn Profile:**
+
 - ✅ Full profile URL
 - ✅ Professional headline
 - ✅ Work experience history
@@ -108,6 +113,7 @@ Enriched Lead Ready!
 - ✅ Contact information
 
 **Company Information:**
+
 - ✅ Company size (employees)
 - ✅ Industry and specialties
 - ✅ Headquarters location
@@ -116,6 +122,7 @@ Enriched Lead Ready!
 - ✅ LinkedIn company page
 
 **Freight-Specific Data:**
+
 - ✅ MC/DOT numbers (if applicable)
 - ✅ FMCSA safety ratings
 - ✅ Fleet size and equipment
@@ -123,6 +130,7 @@ Enriched Lead Ready!
 - ✅ Service specializations
 
 **AI Intelligence:**
+
 - ✅ Lead Score (0-100)
 - ✅ Fit Score (how well they match your ICP)
 - ✅ Intent Score (likelihood of interest)
@@ -154,18 +162,21 @@ Enriched Lead Ready!
 ### Scaling Strategy
 
 **Starter (Current Recommendation):**
+
 - Hunter.io: $49/mo (5K emails)
 - Proxycurl: $29/mo (3K credits)
 - **Total: $78/mo**
 - **Capacity: ~3,000 leads/month**
 
 **Growth (When You Hit Limits):**
+
 - Add ZeroBounce: +$16/mo (2K more emails)
 - Upgrade Proxycurl: $99/mo (10K credits)
 - **Total: $164/mo**
 - **Capacity: ~10,000 leads/month**
 
 **Enterprise (High Volume):**
+
 - Hunter.io Pro: $149/mo (20K emails)
 - Proxycurl Pro: $299/mo (40K credits)
 - PhantomBuster: +$30/mo (backup)
@@ -181,16 +192,20 @@ Enriched Lead Ready!
 #### Email Validation Backups
 
 **ZeroBounce** (Backup) - $16/mo
+
 ```bash
 ZEROBOUNCE_API_KEY=your_key_here
 ```
+
 - Sign up: https://www.zerobounce.net/members/register/
 - Good value, 2,000 verifications/month
 
 **Abstract API** (Free Tier) - $0/mo
+
 ```bash
 ABSTRACT_API_KEY=your_key_here
 ```
+
 - Sign up: https://app.abstractapi.com/users/signup
 - Free tier: 100 validations/month
 - Good for testing
@@ -198,16 +213,20 @@ ABSTRACT_API_KEY=your_key_here
 #### LinkedIn Scraping Backups
 
 **PhantomBuster** (Backup) - $30/mo
+
 ```bash
 PHANTOMBUSTER_API_KEY=your_key_here
 ```
+
 - Sign up: https://phantombuster.com/signup
 - Time-based pricing (20 hours/month)
 
 **ScrapingBee** (Fallback) - $49/mo
+
 ```bash
 SCRAPINGBEE_API_KEY=your_key_here
 ```
+
 - Sign up: https://www.scrapingbee.com/register/
 - Generic scraper, 150K API calls/month
 
@@ -218,6 +237,7 @@ SCRAPINGBEE_API_KEY=your_key_here
 ### Check Your Usage
 
 The system automatically tracks:
+
 - API calls per service
 - Cache hit rates
 - Enrichment success rates
@@ -350,36 +370,42 @@ console.log(profile.connections); // 500+
 ### Email Validation Not Working
 
 **Check:**
+
 1. Is `HUNTER_API_KEY` set in `.env.local`?
 2. Have you restarted the server after adding the key?
 3. Check API key is valid: https://hunter.io/api-keys
 4. Check your Hunter.io quota hasn't been exceeded
 
 **Fallback:**
+
 - System automatically falls back to basic validation if API fails
 - Check console for error messages
 
 ### LinkedIn Scraping Not Working
 
 **Check:**
+
 1. Is `PROXYCURL_API_KEY` set in `.env.local`?
 2. Is the LinkedIn profile URL valid?
 3. Check your Proxycurl credit balance
 4. Some profiles may be private/unavailable
 
 **Fallback:**
+
 - System gracefully handles missing LinkedIn data
 - Lead enrichment continues with available data
 
 ### Low Lead Scores
 
 **Possible reasons:**
+
 - Missing email (can't validate)
 - No LinkedIn profile found
 - Small/unknown company
 - Incomplete contact information
 
 **Solutions:**
+
 - Gather more initial data before enrichment
 - Use multiple lead sources
 - Manual research for high-value prospects
@@ -416,12 +442,14 @@ POST /api/webhooks/enrich-lead
 ## 🎓 Training Resources
 
 ### Video Tutorials (Create These)
+
 1. Setting up API keys
 2. Understanding lead scores
 3. Interpreting enrichment data
 4. Cost optimization strategies
 
 ### Documentation Links
+
 - Hunter.io API: https://hunter.io/api-documentation
 - Proxycurl API: https://nubela.co/proxycurl/docs
 - FleetFlow API: (your internal docs)
@@ -455,4 +483,6 @@ POST /api/webhooks/enrich-lead
 6. ✅ Monitor enrichment quality
 7. ✅ Scale up as needed
 
-**Your lead enrichment system is now MORE powerful than Warmer.ai and specifically optimized for freight/logistics! 🚀**
+**Your lead enrichment system is now MORE powerful than Warmer.ai and specifically optimized for
+freight/logistics! 🚀**
+

@@ -14,3 +14,4 @@ with open('app/services/ShipperAcquisitionKnowledgeBase.ts', 'w', encoding='utf-
     f.write(content)
 
 print('✅ Fixed smart quotes in ShipperAcquisitionKnowledgeBase.ts')
+

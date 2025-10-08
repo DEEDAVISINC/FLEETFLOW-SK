@@ -567,3 +567,4 @@ export class DEPOINTEAdvancedARService {
 
 // Export singleton instance
 export const depointeAdvancedAR = DEPOINTEAdvancedARService.getInstance();
+

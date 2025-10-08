@@ -9105,6 +9105,155 @@ export default function AboutUsPage() {
                       📧 Email go@fleetflowapp.com
                     </div>
                   </div>
+
+                  {/* Social Media Links */}
+                  <div
+                    style={{
+                      marginTop: '32px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: 'white',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      Connect With Us
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '16px',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <a
+                        href='https://www.linkedin.com/company/fleetflowbusinessintelligence'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '12px 20px',
+                          background: 'rgba(10, 102, 194, 0.3)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(10, 102, 194, 0.5)',
+                          color: 'white',
+                          textDecoration: 'none',
+                          fontWeight: '500',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(10, 102, 194, 0.5)';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(10, 102, 194, 0.3)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        💼 LinkedIn
+                      </a>
+                      <a
+                        href='https://www.facebook.com/FleetFlow'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '12px 20px',
+                          background: 'rgba(24, 119, 242, 0.3)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(24, 119, 242, 0.5)',
+                          color: 'white',
+                          textDecoration: 'none',
+                          fontWeight: '500',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(24, 119, 242, 0.5)';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(24, 119, 242, 0.3)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        📘 Facebook
+                      </a>
+                      <a
+                        href='https://www.instagram.com/Fleetflowapp_official'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '12px 20px',
+                          background:
+                            'linear-gradient(45deg, rgba(131, 58, 180, 0.3), rgba(193, 53, 132, 0.3), rgba(253, 29, 29, 0.3), rgba(252, 176, 69, 0.3))',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(193, 53, 132, 0.5)',
+                          color: 'white',
+                          textDecoration: 'none',
+                          fontWeight: '500',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'linear-gradient(45deg, rgba(131, 58, 180, 0.5), rgba(193, 53, 132, 0.5), rgba(253, 29, 29, 0.5), rgba(252, 176, 69, 0.5))';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'linear-gradient(45deg, rgba(131, 58, 180, 0.3), rgba(193, 53, 132, 0.3), rgba(253, 29, 29, 0.3), rgba(252, 176, 69, 0.3))';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        📷 Instagram
+                      </a>
+                      <a
+                        href='https://www.youtube.com/FleetFlow'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '12px 20px',
+                          background: 'rgba(255, 0, 0, 0.3)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255, 0, 0, 0.5)',
+                          color: 'white',
+                          textDecoration: 'none',
+                          fontWeight: '500',
+                          transition: 'all 0.2s ease',
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(255, 0, 0, 0.5)';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background =
+                            'rgba(255, 0, 0, 0.3)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        📺 YouTube
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

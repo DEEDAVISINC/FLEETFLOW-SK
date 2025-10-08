@@ -1,9 +1,9 @@
 /**
  * 📧 EMAIL VALIDATION SERVICE
- * 
+ *
  * Cost-effective email validation and verification
  * Integrates with multiple providers for reliability
- * 
+ *
  * Providers:
  * - Hunter.io (primary) - $49/mo for 5,000 verifications
  * - ZeroBounce (backup) - $16/mo for 2,000 verifications
@@ -49,7 +49,7 @@ export class EmailValidationService {
     this.hunterApiKey = process.env.HUNTER_API_KEY || '';
     this.zeroBounceApiKey = process.env.ZEROBOUNCE_API_KEY || '';
     this.abstractApiKey = process.env.ABSTRACT_API_KEY || '';
-    
+
     console.info('📧 Email Validation Service initialized');
   }
 
@@ -94,9 +94,10 @@ export class EmailValidationService {
       }
 
       // No API keys configured - use basic validation
-      console.warn('⚠️ No email validation API keys configured, using basic validation');
+      console.warn(
+        '⚠️ No email validation API keys configured, using basic validation'
+      );
       return this.basicValidation(email);
-
     } catch (error) {
       console.error(`❌ Email validation error for ${email}:`, error);
       return this.basicValidation(email);
@@ -108,7 +109,7 @@ export class EmailValidationService {
    */
   public async validateBulk(emails: string[]): Promise<BulkValidationResult> {
     console.info(`📧 Bulk validating ${emails.length} emails`);
-    
+
     const results: EmailValidationResult[] = [];
     let valid = 0;
     let invalid = 0;
@@ -119,13 +120,13 @@ export class EmailValidationService {
     for (let i = 0; i < emails.length; i += batchSize) {
       const batch = emails.slice(i, i + batchSize);
       const batchResults = await Promise.all(
-        batch.map(email => this.validateEmail(email))
+        batch.map((email) => this.validateEmail(email))
       );
-      
+
       results.push(...batchResults);
-      
+
       // Count results
-      batchResults.forEach(result => {
+      batchResults.forEach((result) => {
         if (result.isValid && result.isDeliverable) valid++;
         else if (!result.isValid) invalid++;
         else risky++;
@@ -133,7 +134,7 @@ export class EmailValidationService {
 
       // Rate limiting delay
       if (i + batchSize < emails.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
@@ -142,14 +143,16 @@ export class EmailValidationService {
       valid,
       invalid,
       risky,
-      results
+      results,
     };
   }
 
   /**
    * Hunter.io validation (primary provider)
    */
-  private async validateWithHunter(email: string): Promise<EmailValidationResult> {
+  private async validateWithHunter(
+    email: string
+  ): Promise<EmailValidationResult> {
     const response = await fetch(
       `https://api.hunter.io/v2/email-verifier?email=${encodeURIComponent(email)}&api_key=${this.hunterApiKey}`
     );
@@ -164,7 +167,9 @@ export class EmailValidationService {
     return {
       email,
       isValid: verification.status === 'valid',
-      isDeliverable: verification.status === 'valid' && verification.result !== 'undeliverable',
+      isDeliverable:
+        verification.status === 'valid' &&
+        verification.result !== 'undeliverable',
       isCatchAll: verification.accept_all || false,
       isDisposable: verification.disposable || false,
       isFreeProvider: verification.webmail || false,
@@ -183,7 +188,9 @@ export class EmailValidationService {
   /**
    * ZeroBounce validation (backup provider)
    */
-  private async validateWithZeroBounce(email: string): Promise<EmailValidationResult> {
+  private async validateWithZeroBounce(
+    email: string
+  ): Promise<EmailValidationResult> {
     const response = await fetch(
       `https://api.zerobounce.net/v2/validate?api_key=${this.zeroBounceApiKey}&email=${encodeURIComponent(email)}`
     );
@@ -197,7 +204,8 @@ export class EmailValidationService {
     return {
       email,
       isValid: data.status === 'valid',
-      isDeliverable: data.status === 'valid' && data.sub_status !== 'no_dns_entries',
+      isDeliverable:
+        data.status === 'valid' && data.sub_status !== 'no_dns_entries',
       isCatchAll: data.status === 'catch-all',
       isDisposable: data.status === 'disposable',
       isFreeProvider: data.free_email || false,
@@ -216,7 +224,9 @@ export class EmailValidationService {
   /**
    * Abstract API validation (fallback provider)
    */
-  private async validateWithAbstractAPI(email: string): Promise<EmailValidationResult> {
+  private async validateWithAbstractAPI(
+    email: string
+  ): Promise<EmailValidationResult> {
     const response = await fetch(
       `https://emailvalidation.abstractapi.com/v1/?api_key=${this.abstractApiKey}&email=${encodeURIComponent(email)}`
     );
@@ -229,7 +239,8 @@ export class EmailValidationService {
 
     return {
       email,
-      isValid: data.is_valid_format.value && data.deliverability === 'DELIVERABLE',
+      isValid:
+        data.is_valid_format.value && data.deliverability === 'DELIVERABLE',
       isDeliverable: data.deliverability === 'DELIVERABLE',
       isCatchAll: data.is_catchall_email.value || false,
       isDisposable: data.is_disposable_email.value || false,
@@ -252,19 +263,28 @@ export class EmailValidationService {
   private basicValidation(email: string): EmailValidationResult {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(email);
-    
+
     // Check for common disposable domains
     const disposableDomains = [
-      'tempmail.com', 'guerrillamail.com', '10minutemail.com',
-      'throwaway.email', 'mailinator.com', 'trashmail.com'
+      'tempmail.com',
+      'guerrillamail.com',
+      '10minutemail.com',
+      'throwaway.email',
+      'mailinator.com',
+      'trashmail.com',
     ];
     const domain = email.split('@')[1]?.toLowerCase() || '';
-    const isDisposable = disposableDomains.some(d => domain.includes(d));
+    const isDisposable = disposableDomains.some((d) => domain.includes(d));
 
     // Check for free providers
     const freeProviders = [
-      'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
-      'aol.com', 'icloud.com', 'protonmail.com'
+      'gmail.com',
+      'yahoo.com',
+      'hotmail.com',
+      'outlook.com',
+      'aol.com',
+      'icloud.com',
+      'protonmail.com',
     ];
     const isFreeProvider = freeProviders.includes(domain);
 
@@ -307,3 +327,4 @@ export class EmailValidationService {
 
 // Export singleton instance
 export const emailValidationService = EmailValidationService.getInstance();
+

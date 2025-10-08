@@ -1,9 +1,9 @@
 /**
  * 🎯 UNIFIED LEAD ENRICHMENT SERVICE
- * 
+ *
  * Orchestrates all lead enrichment services into a single, powerful pipeline
  * Combines FleetFlow's existing services with new email validation and LinkedIn scraping
- * 
+ *
  * This service integrates:
  * - Email Validation (Hunter.io, ZeroBounce, Abstract API)
  * - LinkedIn Scraping (Proxycurl, PhantomBuster, ScrapingBee)
@@ -14,8 +14,8 @@
  */
 
 import { emailValidationService } from './EmailValidationService';
-import { linkedInScrapingService } from './LinkedInScrapingService';
 import { LeadGenerationService } from './LeadGenerationService';
+import { linkedInScrapingService } from './LinkedInScrapingService';
 
 interface EnrichmentInput {
   // Basic lead data
@@ -26,13 +26,13 @@ interface EnrichmentInput {
   phone?: string;
   company?: string;
   title?: string;
-  
+
   // Optional context
   source?: string;
   industry?: string;
   location?: string;
   website?: string;
-  
+
   // Tenant context
   tenantId: string;
 }
@@ -40,7 +40,7 @@ interface EnrichmentInput {
 interface EnrichedLead {
   // Original data
   original: EnrichmentInput;
-  
+
   // Enriched contact data
   contact: {
     fullName: string;
@@ -57,7 +57,7 @@ interface EnrichedLead {
     title?: string;
     location?: string;
   };
-  
+
   // Company data
   company?: {
     name: string;
@@ -70,7 +70,7 @@ interface EnrichedLead {
     linkedinUrl?: string;
     employees?: number;
   };
-  
+
   // LinkedIn profile data
   linkedIn?: {
     profileUrl: string;
@@ -93,7 +93,7 @@ interface EnrichedLead {
     skills: string[];
     connections?: number;
   };
-  
+
   // AI-powered insights
   intelligence: {
     leadScore: number; // 0-100
@@ -104,7 +104,7 @@ interface EnrichedLead {
     insights: string[];
     tags: string[];
   };
-  
+
   // Freight-specific data (if applicable)
   freight?: {
     mcNumber?: string;
@@ -115,7 +115,7 @@ interface EnrichedLead {
     operatingRadius?: string;
     specializations?: string[];
   };
-  
+
   // Enrichment metadata
   metadata: {
     enrichedAt: string;
@@ -133,11 +133,11 @@ interface EnrichmentOptions {
   enrichCompany?: boolean;
   enrichFreightData?: boolean;
   runAIAnalysis?: boolean;
-  
+
   // Performance options
   timeout?: number; // ms
   useCache?: boolean;
-  
+
   // Quality thresholds
   minEmailScore?: number;
   minLeadScore?: number;
@@ -155,7 +155,8 @@ export class UnifiedLeadEnrichmentService {
 
   public static getInstance(): UnifiedLeadEnrichmentService {
     if (!UnifiedLeadEnrichmentService.instance) {
-      UnifiedLeadEnrichmentService.instance = new UnifiedLeadEnrichmentService();
+      UnifiedLeadEnrichmentService.instance =
+        new UnifiedLeadEnrichmentService();
     }
     return UnifiedLeadEnrichmentService.instance;
   }
@@ -170,7 +171,9 @@ export class UnifiedLeadEnrichmentService {
     const startTime = Date.now();
     const enrichmentSources: string[] = ['base'];
 
-    console.info(`🎯 Starting enrichment for ${input.name || input.email || 'unknown lead'}`);
+    console.info(
+      `🎯 Starting enrichment for ${input.name || input.email || 'unknown lead'}`
+    );
 
     try {
       // Check cache first
@@ -178,7 +181,9 @@ export class UnifiedLeadEnrichmentService {
       if (options.useCache !== false) {
         const cached = this.enrichmentCache.get(cacheKey);
         if (cached) {
-          console.info(`✅ Using cached enrichment for ${input.name || input.email}`);
+          console.info(
+            `✅ Using cached enrichment for ${input.name || input.email}`
+          );
           return cached;
         }
       }
@@ -187,9 +192,12 @@ export class UnifiedLeadEnrichmentService {
       const enrichedLead: EnrichedLead = {
         original: input,
         contact: {
-          fullName: input.name || `${input.firstName || ''} ${input.lastName || ''}`.trim(),
+          fullName:
+            input.name ||
+            `${input.firstName || ''} ${input.lastName || ''}`.trim(),
           firstName: input.firstName || input.name?.split(' ')[0] || '',
-          lastName: input.lastName || input.name?.split(' ').slice(1).join(' ') || '',
+          lastName:
+            input.lastName || input.name?.split(' ').slice(1).join(' ') || '',
           email: input.email || '',
           phone: input.phone,
           title: input.title,
@@ -226,7 +234,10 @@ export class UnifiedLeadEnrichmentService {
       }
 
       // 2. LinkedIn Enrichment (if name/company provided)
-      if ((input.name || (input.firstName && input.lastName)) && options.enrichLinkedIn !== false) {
+      if (
+        (input.name || (input.firstName && input.lastName)) &&
+        options.enrichLinkedIn !== false
+      ) {
         enrichmentPromises.push(
           this.enrichWithLinkedIn(enrichedLead, input).then(() => {
             enrichmentSources.push('linkedin');
@@ -256,10 +267,10 @@ export class UnifiedLeadEnrichmentService {
       const timeout = options.timeout || 15000;
       await Promise.race([
         Promise.all(enrichmentPromises),
-        new Promise((_, reject) => 
+        new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Enrichment timeout')), timeout)
         ),
-      ]).catch(error => {
+      ]).catch((error) => {
         console.warn('⚠️ Some enrichment services timed out:', error);
       });
 
@@ -280,12 +291,11 @@ export class UnifiedLeadEnrichmentService {
       const duration = Date.now() - startTime;
       console.info(
         `✅ Enrichment complete for ${enrichedLead.contact.fullName} ` +
-        `(${duration}ms, ${enrichmentSources.length} sources, ` +
-        `score: ${enrichedLead.intelligence.leadScore})`
+          `(${duration}ms, ${enrichmentSources.length} sources, ` +
+          `score: ${enrichedLead.intelligence.leadScore})`
       );
 
       return enrichedLead;
-
     } catch (error) {
       console.error('❌ Lead enrichment error:', error);
       throw error;
@@ -308,17 +318,19 @@ export class UnifiedLeadEnrichmentService {
     for (let i = 0; i < inputs.length; i += batchSize) {
       const batch = inputs.slice(i, i + batchSize);
       const batchResults = await Promise.all(
-        batch.map(input => this.enrichLead(input, options))
+        batch.map((input) => this.enrichLead(input, options))
       );
       results.push(...batchResults);
 
       // Rate limiting delay between batches
       if (i + batchSize < inputs.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
-    console.info(`✅ Bulk enrichment complete: ${results.length} leads processed`);
+    console.info(
+      `✅ Bulk enrichment complete: ${results.length} leads processed`
+    );
     return results;
   }
 
@@ -331,7 +343,7 @@ export class UnifiedLeadEnrichmentService {
   ): Promise<void> {
     try {
       const validation = await emailValidationService.validateEmail(email);
-      
+
       enrichedLead.contact.emailValidation = {
         isValid: validation.isValid,
         isDeliverable: validation.isDeliverable,
@@ -349,15 +361,18 @@ export class UnifiedLeadEnrichmentService {
 
       // Add insights based on validation
       if (!validation.isDeliverable) {
-        enrichedLead.intelligence.insights.push('⚠️ Email may not be deliverable');
+        enrichedLead.intelligence.insights.push(
+          '⚠️ Email may not be deliverable'
+        );
       }
       if (validation.isDisposable) {
         enrichedLead.intelligence.insights.push('⚠️ Disposable email detected');
       }
       if (validation.isCatchAll) {
-        enrichedLead.intelligence.insights.push('ℹ️ Company uses catch-all email');
+        enrichedLead.intelligence.insights.push(
+          'ℹ️ Company uses catch-all email'
+        );
       }
-
     } catch (error) {
       console.error('❌ Email validation enrichment error:', error);
     }
@@ -383,14 +398,17 @@ export class UnifiedLeadEnrichmentService {
           headline: profile.headline,
           summary: profile.summary,
           currentCompany: profile.currentCompany,
-          experience: profile.experience.map(exp => ({
+          experience: profile.experience.map((exp) => ({
             company: exp.company,
             title: exp.title,
-            duration: exp.startDate && exp.endDate ? 
-              `${exp.startDate} - ${exp.endDate}` : 
-              exp.startDate ? `${exp.startDate} - Present` : undefined,
+            duration:
+              exp.startDate && exp.endDate
+                ? `${exp.startDate} - ${exp.endDate}`
+                : exp.startDate
+                  ? `${exp.startDate} - Present`
+                  : undefined,
           })),
-          education: profile.education.map(edu => ({
+          education: profile.education.map((edu) => ({
             school: edu.school,
             degree: edu.degree,
           })),
@@ -413,12 +431,11 @@ export class UnifiedLeadEnrichmentService {
         enrichedLead.intelligence.insights.push(
           `LinkedIn profile found with ${profile.connections || 0} connections`
         );
-        
+
         if (profile.skills.length > 0) {
           enrichedLead.intelligence.tags.push(...profile.skills.slice(0, 5));
         }
       }
-
     } catch (error) {
       console.error('❌ LinkedIn enrichment error:', error);
     }
@@ -432,7 +449,8 @@ export class UnifiedLeadEnrichmentService {
     companyName: string
   ): Promise<void> {
     try {
-      const companyProfile = await linkedInScrapingService.getCompanyProfile(companyName);
+      const companyProfile =
+        await linkedInScrapingService.getCompanyProfile(companyName);
 
       if (companyProfile) {
         enrichedLead.company = {
@@ -449,19 +467,23 @@ export class UnifiedLeadEnrichmentService {
 
         // Add insights
         if (companyProfile.employees) {
-          const sizeCategory = 
-            companyProfile.employees > 1000 ? 'Enterprise' :
-            companyProfile.employees > 100 ? 'Mid-Market' : 'SMB';
+          const sizeCategory =
+            companyProfile.employees > 1000
+              ? 'Enterprise'
+              : companyProfile.employees > 100
+                ? 'Mid-Market'
+                : 'SMB';
           enrichedLead.intelligence.insights.push(
             `Company size: ${sizeCategory} (${companyProfile.employees} employees)`
           );
         }
 
         if (companyProfile.specialties.length > 0) {
-          enrichedLead.intelligence.tags.push(...companyProfile.specialties.slice(0, 3));
+          enrichedLead.intelligence.tags.push(
+            ...companyProfile.specialties.slice(0, 3)
+          );
         }
       }
-
     } catch (error) {
       console.error('❌ Company enrichment error:', error);
     }
@@ -477,18 +499,25 @@ export class UnifiedLeadEnrichmentService {
     try {
       // Use existing LeadGenerationService to get FMCSA data
       // This is a placeholder - integrate with your existing freight data services
-      
+
       if (input.company) {
         // Check if company is in freight/logistics industry
         const freightKeywords = [
-          'trucking', 'logistics', 'freight', 'transportation',
-          'carrier', 'shipping', 'delivery', 'warehouse'
+          'trucking',
+          'logistics',
+          'freight',
+          'transportation',
+          'carrier',
+          'shipping',
+          'delivery',
+          'warehouse',
         ];
-        
-        const isFreightRelated = freightKeywords.some(keyword =>
-          input.company?.toLowerCase().includes(keyword) ||
-          input.industry?.toLowerCase().includes(keyword) ||
-          enrichedLead.company?.industry?.toLowerCase().includes(keyword)
+
+        const isFreightRelated = freightKeywords.some(
+          (keyword) =>
+            input.company?.toLowerCase().includes(keyword) ||
+            input.industry?.toLowerCase().includes(keyword) ||
+            enrichedLead.company?.industry?.toLowerCase().includes(keyword)
         );
 
         if (isFreightRelated) {
@@ -496,12 +525,13 @@ export class UnifiedLeadEnrichmentService {
             // Placeholder - integrate with FMCSA API
             specializations: [],
           };
-          
+
           enrichedLead.intelligence.tags.push('freight-industry');
-          enrichedLead.intelligence.insights.push('Company operates in freight/logistics industry');
+          enrichedLead.intelligence.insights.push(
+            'Company operates in freight/logistics industry'
+          );
         }
       }
-
     } catch (error) {
       console.error('❌ Freight data enrichment error:', error);
     }
@@ -528,7 +558,10 @@ export class UnifiedLeadEnrichmentService {
       // LinkedIn presence (0-25 points)
       if (enrichedLead.linkedIn) {
         leadScore += 15;
-        if (enrichedLead.linkedIn.connections && enrichedLead.linkedIn.connections > 500) {
+        if (
+          enrichedLead.linkedIn.connections &&
+          enrichedLead.linkedIn.connections > 500
+        ) {
           leadScore += 10;
         }
       }
@@ -536,7 +569,10 @@ export class UnifiedLeadEnrichmentService {
       // Company data (0-25 points)
       if (enrichedLead.company) {
         leadScore += 10;
-        if (enrichedLead.company.employees && enrichedLead.company.employees > 50) {
+        if (
+          enrichedLead.company.employees &&
+          enrichedLead.company.employees > 50
+        ) {
           leadScore += 10;
         }
         if (enrichedLead.company.website) {
@@ -548,7 +584,9 @@ export class UnifiedLeadEnrichmentService {
       const hasPhone = !!enrichedLead.contact.phone;
       const hasTitle = !!enrichedLead.contact.title;
       const hasLocation = !!enrichedLead.contact.location;
-      const completeness = [hasPhone, hasTitle, hasLocation].filter(Boolean).length;
+      const completeness = [hasPhone, hasTitle, hasLocation].filter(
+        Boolean
+      ).length;
       leadScore += (completeness / 3) * 25;
 
       enrichedLead.intelligence.leadScore = Math.round(leadScore);
@@ -556,21 +594,23 @@ export class UnifiedLeadEnrichmentService {
       // Determine priority
       if (leadScore >= 75) {
         enrichedLead.intelligence.priority = 'hot';
-        enrichedLead.intelligence.recommendedAction = 'Contact immediately - high-quality lead';
+        enrichedLead.intelligence.recommendedAction =
+          'Contact immediately - high-quality lead';
       } else if (leadScore >= 50) {
         enrichedLead.intelligence.priority = 'warm';
         enrichedLead.intelligence.recommendedAction = 'Add to nurture campaign';
       } else {
         enrichedLead.intelligence.priority = 'cold';
-        enrichedLead.intelligence.recommendedAction = 'Gather more information before outreach';
+        enrichedLead.intelligence.recommendedAction =
+          'Gather more information before outreach';
       }
 
       // Fit score (how well they match your ideal customer profile)
       enrichedLead.intelligence.fitScore = this.calculateFitScore(enrichedLead);
 
       // Intent score (likelihood of being interested)
-      enrichedLead.intelligence.intentScore = this.calculateIntentScore(enrichedLead);
-
+      enrichedLead.intelligence.intentScore =
+        this.calculateIntentScore(enrichedLead);
     } catch (error) {
       console.error('❌ AI analysis error:', error);
     }
@@ -584,20 +624,34 @@ export class UnifiedLeadEnrichmentService {
 
     // Company size fit
     if (enrichedLead.company?.employees) {
-      if (enrichedLead.company.employees >= 50 && enrichedLead.company.employees <= 500) {
+      if (
+        enrichedLead.company.employees >= 50 &&
+        enrichedLead.company.employees <= 500
+      ) {
         fitScore += 20; // Sweet spot for FleetFlow
       }
     }
 
     // Industry fit
-    if (enrichedLead.freight || enrichedLead.intelligence.tags.includes('freight-industry')) {
+    if (
+      enrichedLead.freight ||
+      enrichedLead.intelligence.tags.includes('freight-industry')
+    ) {
       fitScore += 30; // Perfect fit for FleetFlow
     }
 
     // Title fit (decision maker)
-    const decisionMakerTitles = ['ceo', 'coo', 'owner', 'president', 'director', 'vp', 'manager'];
+    const decisionMakerTitles = [
+      'ceo',
+      'coo',
+      'owner',
+      'president',
+      'director',
+      'vp',
+      'manager',
+    ];
     if (enrichedLead.contact.title) {
-      const hasDecisionMakerTitle = decisionMakerTitles.some(title =>
+      const hasDecisionMakerTitle = decisionMakerTitles.some((title) =>
         enrichedLead.contact.title?.toLowerCase().includes(title)
       );
       if (hasDecisionMakerTitle) {
@@ -616,8 +670,11 @@ export class UnifiedLeadEnrichmentService {
 
     // Recent job change (indicates openness to new solutions)
     if (enrichedLead.linkedIn?.currentCompany?.startDate) {
-      const startDate = new Date(enrichedLead.linkedIn.currentCompany.startDate);
-      const monthsInRole = (Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30);
+      const startDate = new Date(
+        enrichedLead.linkedIn.currentCompany.startDate
+      );
+      const monthsInRole =
+        (Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30);
       if (monthsInRole < 6) {
         intentScore += 30; // New in role, likely evaluating solutions
       }
@@ -625,7 +682,8 @@ export class UnifiedLeadEnrichmentService {
 
     // Company growth indicators
     if (enrichedLead.company?.founded) {
-      const yearsInBusiness = new Date().getFullYear() - enrichedLead.company.founded;
+      const yearsInBusiness =
+        new Date().getFullYear() - enrichedLead.company.founded;
       if (yearsInBusiness >= 2 && yearsInBusiness <= 10) {
         intentScore += 20; // Growth phase companies
       }
@@ -651,16 +709,17 @@ export class UnifiedLeadEnrichmentService {
       enrichedLead.linkedIn,
       enrichedLead.freight,
     ];
-    const completeness = (dataPoints.filter(Boolean).length / dataPoints.length) * 100;
+    const completeness =
+      (dataPoints.filter(Boolean).length / dataPoints.length) * 100;
     enrichedLead.metadata.completeness = Math.round(completeness);
 
     // Calculate confidence (how reliable the data is)
     let confidence = 50; // Start at neutral
-    
+
     if (enrichedLead.contact.emailValidation?.isValid) confidence += 20;
     if (enrichedLead.linkedIn) confidence += 20;
     if (enrichedLead.company) confidence += 10;
-    
+
     enrichedLead.metadata.confidence = Math.min(100, confidence);
   }
 
@@ -698,4 +757,6 @@ export class UnifiedLeadEnrichmentService {
 }
 
 // Export singleton instance
-export const unifiedLeadEnrichmentService = UnifiedLeadEnrichmentService.getInstance();
+export const unifiedLeadEnrichmentService =
+  UnifiedLeadEnrichmentService.getInstance();
+
