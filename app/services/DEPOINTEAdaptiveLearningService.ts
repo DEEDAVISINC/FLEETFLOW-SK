@@ -1077,13 +1077,23 @@ export class DEPOINTEAdaptiveLearningService {
     qualificationScore: any;
     recommendedActions: string[];
   } {
+    // TODO: Re-implement when ShipperAcquisitionKnowledgeBase is created
+    // Temporarily return mock data to prevent build failures
+    return {
+      industryGuidance: null,
+      roleInsights: null,
+      objectionHandling: null,
+      valueProposition: null,
+      nurtureSequence: null,
+      qualificationScore: null,
+      recommendedActions: ['Shipper acquisition guidance temporarily unavailable'],
+    };
+
+    /* ORIGINAL CODE - Re-enable when ShipperAcquisitionKnowledgeBase exists
     try {
-      // Import shipper acquisition knowledge base
-      // TODO: Re-enable when ShipperAcquisitionKnowledgeBase is created
-      // const {
-      //   shipperAcquisitionKB,
-      // } = require('./ShipperAcquisitionKnowledgeBase');
-      const shipperAcquisitionKB = null; // Temporary fallback
+      const {
+        shipperAcquisitionKB,
+      } = require('./ShipperAcquisitionKnowledgeBase');
 
       // Get staff profile to understand their role
       const profile = this.staffProfiles.get(staffId);
@@ -1194,6 +1204,7 @@ export class DEPOINTEAdaptiveLearningService {
         ],
       };
     }
+    */
   }
 
   /**
@@ -6968,23 +6979,37 @@ export class DEPOINTEAdaptiveLearningService {
       improvementSuggestions: string[];
     };
   } {
+    // TODO: Re-implement when ShipperAcquisitionKnowledgeBase is created
+    // Temporarily return mock data to prevent build failures
+    return {
+      industryGuidance: null,
+      roleInsights: null,
+      objectionHandling: null,
+      valueProposition: null,
+      nurtureSequence: null,
+      qualificationScore: null,
+      recommendedActions: ['Acquisition training temporarily unavailable'],
+      trainingInsights: {
+        relevantPrompts: [],
+        skillGaps: [],
+        improvementSuggestions: [],
+      },
+    };
+
+    /* ORIGINAL CODE - Re-enable when knowledge bases exist
     try {
       const acquisitionType = context?.acquisitionType || 'shipper';
 
       // Import appropriate knowledge base based on acquisition type
       let knowledgeBase: any;
       if (acquisitionType === 'shipper') {
-        // TODO: Re-enable when ShipperAcquisitionKnowledgeBase is created
-        // const {
-        //   shipperAcquisitionKB,
-        // } = require('./ShipperAcquisitionKnowledgeBase');
-        const shipperAcquisitionKB = null; // Temporary fallback
+        const {
+          shipperAcquisitionKB,
+        } = require('./ShipperAcquisitionKnowledgeBase');
         knowledgeBase = shipperAcquisitionKB;
       } else if (acquisitionType === 'carrier') {
-        // TODO: Import carrier knowledge base when created
-        // const { carrierAcquisitionKB } = require('./CarrierAcquisitionKnowledgeBase');
-        // knowledgeBase = carrierAcquisitionKB;
-        knowledgeBase = null; // Placeholder until carrier KB is implemented
+        const { carrierAcquisitionKB } = require('./CarrierAcquisitionKnowledgeBase');
+        knowledgeBase = carrierAcquisitionKB;
       }
 
       // Get staff profile to understand their role and learning history
@@ -7117,6 +7142,7 @@ export class DEPOINTEAdaptiveLearningService {
         trainingInsights: undefined,
       };
     }
+    */
   }
 
   /**
