@@ -13,7 +13,9 @@ process.env.GENERATE_SOURCEMAP = 'false';
 process.env.NEXT_TELEMETRY_DISABLED = '1';
 
 // Run next build with all checks disabled and skip type checking
-const buildProcess = spawn('npx', ['next', 'build', '--no-lint'], {
+// Use require.resolve to find next binary location
+const nextBin = require.resolve('next/dist/bin/next');
+const buildProcess = spawn('node', [nextBin, 'build', '--no-lint'], {
   stdio: 'inherit',
   env: {
     ...process.env,
