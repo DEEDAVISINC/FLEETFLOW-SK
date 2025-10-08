@@ -1,0 +1,74 @@
+HOW TO TAKE A SCREENSHOT FOR TWILIO
+====================================
+
+OPTION 1: Full Page Screenshot (BEST)
+--------------------------------------
+Use a browser extension to capture the entire page:
+
+Chrome/Edge:
+1. Install "GoFullPage" extension (free)
+2. Go to https://fleetflowapp.com/sms-consent
+3. Click the extension icon
+4. It will capture the full scrollable page
+5. Save as PNG
+
+Firefox:
+1. Press Shift+F2 to open developer toolbar
+2. Type: screenshot --fullpage
+3. Press Enter
+4. Saves automatically to Downloads
+
+OPTION 2: Multiple Screenshots (GOOD)
+--------------------------------------
+Mac:
+1. Open https://fleetflowapp.com/sms-consent
+2. Press Cmd+Shift+4, then press Space
+3. Click on the browser window
+4. Repeat for each section as you scroll down
+5. Combine images or send multiple
+
+Windows:
+1. Open https://fleetflowapp.com/sms-consent
+2. Press Windows+Shift+S
+3. Select area to capture
+4. Repeat for each section
+5. Combine or send multiple
+
+OPTION 3: Browser Built-in (OK)
+--------------------------------
+1. Right-click on page → Inspect
+2. Press Cmd+Shift+P (Mac) or Ctrl+Shift+P (Windows)
+3. Type "screenshot"
+4. Select "Capture full size screenshot"
+5. Saves to Downloads
+
+WHAT TWILIO NEEDS TO SEE:
+--------------------------
+✅ The registration checkbox example with opt-in text
+✅ The section showing how users consent
+✅ The opt-out instructions (STOP keyword)
+✅ Message types and frequency
+✅ Contact information
+
+IMPORTANT:
+----------
+- Make sure the page is FULLY LOADED before taking screenshot
+- Capture in good resolution (not blurry)
+- Include the full URL in browser address bar if possible
+- Save as PNG or JPG (not PDF)
+- File size should be under 5MB for email attachment
+
+FILE NAMING:
+------------
+Good names:
+- fleetflow-sms-consent-page.png
+- fleetflow-opt-in-consent-screenshot.png
+- sms-consent-verification-page.png
+
+AFTER TAKING SCREENSHOT:
+------------------------
+1. Review it - make sure it's clear and readable
+2. Attach to your email reply to Uzi
+3. Send the email
+
+That's it!

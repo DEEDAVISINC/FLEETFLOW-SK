@@ -42,6 +42,13 @@ const CompleteRegistrationSchema = z.object({
   theme: z.enum(['light', 'dark']),
   emailNotifications: z.boolean(),
   smsNotifications: z.boolean(),
+  smsConsent: z
+    .boolean()
+    .refine(
+      (val) => val === true,
+      'You must consent to receive SMS messages to enable SMS notifications'
+    )
+    .optional(),
   loadAlerts: z.boolean(),
   bio: z.string().optional(),
 });
@@ -208,6 +215,14 @@ export async function POST(request: NextRequest) {
           maintenanceReminders: true,
           systemUpdates: false,
         },
+      },
+
+      // SMS Consent (required for Twilio compliance)
+      smsConsent: {
+        granted: data.smsConsent || false,
+        grantedAt: data.smsConsent ? new Date().toISOString() : null,
+        ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
+        userAgent: request.headers.get('user-agent') || 'unknown',
       },
 
       // Subscription Information

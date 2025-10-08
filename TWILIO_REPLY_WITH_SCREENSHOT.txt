@@ -1,0 +1,47 @@
+Subject: Re: Toll-Free Verification - SMS Consent Page Now Live + Screenshot
+
+Hi Uzi,
+
+Thank you for the quick follow-up!
+
+I apologize for the confusion - I was in the process of deploying the consent page when I sent my previous email. The page is now live and accessible at:
+
+https://fleetflowapp.com/sms-consent
+
+There are no geo-blockers or VPN blockers on our website. The page should be publicly accessible from anywhere in the world without any restrictions.
+
+I've attached a screenshot of the consent page showing:
+- How users opt-in during registration (checkbox with explicit consent language)
+- Types of SMS messages we send
+- Message frequency information
+- Opt-out instructions (STOP keyword)
+- All required disclosures and contact information
+
+KEY DETAILS FROM THE CONSENT PAGE:
+
+Opt-In Language:
+"I agree to receive SMS text messages from FleetFlow regarding load alerts, shipment updates, dispatch notifications, payment reminders, and service updates. Message frequency varies based on your activity and preferences. Message and data rates may apply. You can opt-out at any time by replying STOP to any message. Reply HELP for assistance."
+
+How Users Consent:
+1. Registration: Users must actively check the consent checkbox (not pre-checked)
+2. Account Settings: Users can enable SMS notifications after reviewing consent
+
+Opt-Out Methods:
+1. Reply STOP (or UNSUBSCRIBE, CANCEL, END, QUIT) to any message
+2. Disable SMS in account settings
+
+We have implemented automated webhook processing for all STOP/HELP/START keywords, and we record consent with timestamp, IP address, and user agent for compliance auditing.
+
+Please let me know if you need any additional information or if you're still experiencing issues accessing the page.
+
+Thank you for your patience!
+
+Best regards,
+Dee Davis
+FleetFlow
+support@fleetflowapp.com
+
+---
+
+REMEMBER TO ATTACH: Screenshot of the consent page
+File name suggestion: fleetflow-sms-consent-page.png

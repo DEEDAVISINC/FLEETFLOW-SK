@@ -1,0 +1,46 @@
+Subject: Re: Toll-Free Verification - Updated Submission with SMS Consent Documentation
+
+Hi Uzi,
+
+Thank you for your feedback regarding our toll-free verification submission. I appreciate you taking the time to review and identify the missing consent documentation.
+
+I have addressed all the issues you mentioned and am ready to resubmit our toll-free verification with the correct opt-in information.
+
+SMS CONSENT PAGE (NOW LIVE):
+https://fleetflowapp.com/sms-consent
+
+This page clearly demonstrates how users consent to receive SMS messages from FleetFlow.
+
+HOW USERS OPT-IN:
+
+During registration, users must check a consent checkbox that reads:
+
+"I agree to receive SMS text messages from FleetFlow regarding load alerts, shipment updates, dispatch notifications, payment reminders, and service updates. Message frequency varies based on your activity and preferences. Message and data rates may apply. You can opt-out at any time by replying STOP to any message. Reply HELP for assistance."
+
+This checkbox is not pre-checked and requires active user consent. We record the timestamp, IP address, user agent, and exact opt-in text shown to the user.
+
+OPT-OUT PROCESS:
+
+Users can opt-out by replying STOP (or UNSUBSCRIBE, CANCEL, END, QUIT) to any message. We have implemented an automated webhook that immediately processes opt-out requests, revokes consent in our database, and blocks all future SMS.
+
+SAMPLE MESSAGES:
+
+1. "New load available: Chicago, IL → Dallas, TX | Dry Van | 45,000 lbs | $2,850 | Pickup: 10/15"
+2. "Shipment #FF-2025-0042 delivered successfully at 2:30 PM. POD uploaded."
+3. "Payment reminder: Invoice #INV-2025-0125 ($3,200) due in 3 days"
+
+MESSAGE FREQUENCY: 5-20 messages per week for active users (varies by activity)
+
+ADDITIONAL INFORMATION:
+- Business: FleetFlow (Logistics Management SaaS)
+- Website: https://fleetflowapp.com
+- Contact: support@fleetflowapp.com | 1-800-FLEETFLOW
+
+I am resubmitting our toll-free verification now with this updated information. Please let me know if you need any additional documentation or clarification.
+
+Thank you for your assistance!
+
+Best regards,
+Dee Davis
+FleetFlow
+support@fleetflowapp.com

@@ -1,0 +1,34 @@
+URGENT: DEPLOY BEFORE REPLYING TO TWILIO
+==========================================
+
+The SMS consent page doesn't exist in production yet - you need to deploy first!
+
+STEP 1: COMMIT AND PUSH
+------------------------
+cd /Users/deedavis/FLEETFLOW
+git add .
+git commit -m "Add SMS consent page and tracking for Twilio compliance"
+git push origin main
+
+STEP 2: DEPLOY TO DIGITAL OCEAN
+---------------------------------
+Use your existing deployment process to push to production.
+
+STEP 3: VERIFY IT'S LIVE
+-------------------------
+Open in browser: https://fleetflowapp.com/sms-consent
+Should load WITHOUT requiring login.
+
+If it redirects to login, the middleware update didn't deploy properly.
+
+STEP 4: TAKE SCREENSHOT
+------------------------
+1. Open https://fleetflowapp.com/sms-consent in your browser
+2. Take a full-page screenshot (Cmd+Shift+3 on Mac, or use browser extension)
+3. Save as "fleetflow-sms-consent-page.png"
+
+STEP 5: REPLY TO TWILIO
+------------------------
+Use the email below and attach the screenshot.
+
+ONLY AFTER ALL ABOVE STEPS ARE COMPLETE!

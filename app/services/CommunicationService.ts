@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { Twilio } from 'twilio';
+import { smsConsentService } from './SMSConsentService';
 
 // Communication interfaces
 export interface EmailMessage {
@@ -185,11 +186,33 @@ export class CommunicationService {
   async sendSMS(
     message: SMSMessage,
     tenantId: string,
-    agentId: string
+    agentId: string,
+    userId?: string
   ): Promise<CommunicationResult> {
     try {
       if (!this.twilioClient) {
         throw new Error('Twilio SMS service not configured');
+      }
+
+      // CHECK SMS CONSENT BEFORE SENDING (TWILIO COMPLIANCE)
+      const consentCheck = await smsConsentService.canSendSMS({
+        userId: userId,
+        phoneNumber: message.to,
+      });
+
+      if (!consentCheck.allowed) {
+        console.warn('⚠️ SMS blocked - no consent:', {
+          phone: message.to.slice(-4),
+          reason: consentCheck.reason,
+        });
+
+        return {
+          success: false,
+          error: `SMS not sent: ${consentCheck.reason}`,
+          timestamp: new Date(),
+          channel: 'sms',
+          recipientCount: 0,
+        };
       }
 
       // Check rate limits

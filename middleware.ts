@@ -18,6 +18,7 @@ const PUBLIC_PAGES = [
   '/contact',
   '/privacy-policy',
   '/terms-of-service',
+  '/sms-consent', // Required for Twilio toll-free verification
 ];
 
 export async function middleware(request: NextRequest) {

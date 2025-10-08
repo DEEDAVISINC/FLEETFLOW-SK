@@ -74,3 +74,10 @@ firebase.json
 firebase-debug.log
 firebase-debug.*.log
 .vercel
+
+# Sensitive credentials - DO NOT COMMIT
+FLEETFLOW_SOCIAL_MEDIA_CREDENTIALS.md
+social-media-credentials.txt
+DIGITAL_OCEAN_ENV_VARS.txt
+PRODUCTION_CONFIG.md
+API_KEYS_SERVICES_SETUP.md

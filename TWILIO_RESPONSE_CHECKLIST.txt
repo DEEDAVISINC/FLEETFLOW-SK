@@ -1,0 +1,64 @@
+TWILIO RESPONSE CHECKLIST
+=========================
+
+Follow these steps IN ORDER before replying to Uzi:
+
+[ ] STEP 1: COMMIT YOUR CODE
+    cd /Users/deedavis/FLEETFLOW
+    git add .
+    git commit -m "Add SMS consent page for Twilio compliance"
+    git push origin main
+
+[ ] STEP 2: DEPLOY TO DIGITAL OCEAN
+    Deploy using your normal deployment process
+    (Wait for deployment to complete - usually 2-5 minutes)
+
+[ ] STEP 3: VERIFY PAGE IS LIVE
+    Open browser: https://fleetflowapp.com/sms-consent
+    ✓ Page loads without login redirect
+    ✓ Shows "FleetFlow SMS Messaging & Consent" title
+    ✓ Shows opt-in checkbox example
+    ✓ Shows opt-out instructions
+
+[ ] STEP 4: TAKE SCREENSHOT
+    Use browser extension or built-in tool
+    Capture the full page (see HOW_TO_TAKE_SCREENSHOT_FOR_TWILIO.txt)
+    Save as: fleetflow-sms-consent-page.png
+
+[ ] STEP 5: REVIEW SCREENSHOT
+    ✓ Clear and readable
+    ✓ Shows opt-in language
+    ✓ Shows STOP instructions
+    ✓ Shows contact info
+    ✓ File size under 5MB
+
+[ ] STEP 6: SEND EMAIL
+    Open: TWILIO_REPLY_WITH_SCREENSHOT.txt
+    Copy the email content
+    Paste into email to Uzi
+    ATTACH the screenshot
+    Send!
+
+TROUBLESHOOTING:
+================
+
+If page redirects to login:
+→ Middleware didn't deploy properly
+→ Check Digital Ocean deployment logs
+→ Verify middleware.ts includes '/sms-consent' in PUBLIC_PAGES
+
+If screenshot is too large:
+→ Use image compression tool
+→ Or use lower quality setting
+→ Keep under 5MB for email
+
+If Twilio still can't access:
+→ Check Digital Ocean firewall settings
+→ Verify domain DNS is pointing correctly
+→ Try accessing from different network to confirm
+
+READY TO GO?
+============
+Once ALL checkboxes are checked above, send the email!
+
+Estimated time: 10-15 minutes total
