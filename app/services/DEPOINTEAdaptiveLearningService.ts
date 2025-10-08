@@ -1079,9 +1079,11 @@ export class DEPOINTEAdaptiveLearningService {
   } {
     try {
       // Import shipper acquisition knowledge base
-      const {
-        shipperAcquisitionKB,
-      } = require('./ShipperAcquisitionKnowledgeBase');
+      // TODO: Re-enable when ShipperAcquisitionKnowledgeBase is created
+      // const {
+      //   shipperAcquisitionKB,
+      // } = require('./ShipperAcquisitionKnowledgeBase');
+      const shipperAcquisitionKB = null; // Temporary fallback
 
       // Get staff profile to understand their role
       const profile = this.staffProfiles.get(staffId);
@@ -6972,9 +6974,11 @@ export class DEPOINTEAdaptiveLearningService {
       // Import appropriate knowledge base based on acquisition type
       let knowledgeBase: any;
       if (acquisitionType === 'shipper') {
-        const {
-          shipperAcquisitionKB,
-        } = require('./ShipperAcquisitionKnowledgeBase');
+        // TODO: Re-enable when ShipperAcquisitionKnowledgeBase is created
+        // const {
+        //   shipperAcquisitionKB,
+        // } = require('./ShipperAcquisitionKnowledgeBase');
+        const shipperAcquisitionKB = null; // Temporary fallback
         knowledgeBase = shipperAcquisitionKB;
       } else if (acquisitionType === 'carrier') {
         // TODO: Import carrier knowledge base when created
