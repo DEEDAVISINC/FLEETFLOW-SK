@@ -1,74 +1,21 @@
-# DigitalOcean App Platform Configuration
-# FleetFlow Business Intelligence Application
-name: fleetflow-business-intelligence
+name: fleetflow-sk
 region: nyc
-
 services:
-  - name: web
-    source_dir: /
+  - name: fleetflow-sk
+    run_command: npm start
+    build_command: npm install && npm run build
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
     github:
-      repo: fleetflow-sk
+      repo: DEEDAVISINC/FLEETFLOW-SK
       branch: main
       deploy_on_push: true
-
-    run_command: npm start
-    build_command: npm run build
-
     environment_slug: node-js
-    instance_count: 1
-    instance_size_slug: basic-xxs
-
-    http_port: 3000
-
-    health_check:
-      http_path: /
-
-    # Environment Variables
     envs:
       - key: NODE_ENV
         value: production
+        scope: RUN_AND_BUILD_TIME
       - key: PORT
         value: "3000"
-      - key: NEXT_PUBLIC_APP_URL
-        value: ${APP_URL}
-      - key: NEXTAUTH_SECRET
-        value: GQ1kaUpi+J8imscn1Xqt2vxrfb25F1y1aXE6yd9Uv4k=
-      - key: NEXTAUTH_URL
-        value: https://fleetflowapp.com
-      - key: NEXTAUTH_URL_INTERNAL
-        value: https://fleetflowapp.com
-
-    # Routes
-    routes:
-      - path: /
-      - path: /depointe-dashboard
-      - path: /api
-
-# Database (if needed)
-databases:
-  - name: fleetflow-db
-    engine: PG
-    version: "14"
-    size: db-s-dev-database
-
-# Static Sites (if needed)
-static_sites:
-  - name: fleetflow-assets
-    source_dir: public
-    github:
-      repo: fleetflow-sk
-      branch: main
-      deploy_on_push: true
-    routes:
-      - path: /assets
-
-# Domain Configuration
-domains:
-  - domain: fleetflowapp.com
-    type: PRIMARY
-    wildcard: false
-    zone: fleetflowapp.com
-  - domain: www.fleetflowapp.com
-    type: ALIAS
-    wildcard: false
-    zone: fleetflowapp.com
+        scope: RUN_AND_BUILD_TIME
