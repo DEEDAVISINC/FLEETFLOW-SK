@@ -3,6 +3,9 @@ import Script from 'next/script';
 import ClientLayoutWrapper from './components/ClientLayoutWrapper';
 import './globals.css';
 
+// Force dynamic rendering to prevent build issues
+export const dynamic = 'force-dynamic';
+
 // Enhanced SEO metadata for FleetFlow with WOSB certification
 export const metadata: Metadata = {
   title: {

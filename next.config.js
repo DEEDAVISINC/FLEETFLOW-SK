@@ -10,8 +10,11 @@ const nextConfig = {
   // Performance optimizations
   experimental: {
     optimizePackageImports: ['@heroicons/react', 'lucide-react'],
-    serverComponentsExternalPackages: [],
   },
+
+  // Disable static generation to prevent API route issues
+  // output: 'export',
+  trailingSlash: false,
 
   // Image optimization for better SEO
   images: {

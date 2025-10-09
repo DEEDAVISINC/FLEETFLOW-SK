@@ -84,8 +84,9 @@ export class AICommunicationIntegrationService {
       },
     };
 
-    this.initializeServices();
-    this.setupAIStaff();
+    // Delay initialization until first use to prevent build issues
+    // this.initializeServices();
+    // this.setupAIStaff();
   }
 
   private async initializeServices() {
@@ -175,8 +176,19 @@ export class AICommunicationIntegrationService {
     }
   }
 
+  private async ensureInitialized() {
+    if (!this.emailTransporter) {
+      await this.initializeServices();
+    }
+    if (this.aiStaff.size === 0) {
+      this.setupAIStaff();
+    }
+  }
+
   // Email Management Methods
   async activateEmailMonitoring(staffId: string): Promise<boolean> {
+    await this.ensureInitialized();
+
     const staff = this.aiStaff.get(staffId);
     if (!staff || !staff.capabilities.email) {
       throw new Error(`Staff member ${staffId} not found or email not enabled`);
@@ -184,7 +196,7 @@ export class AICommunicationIntegrationService {
 
     try {
       // Test email connection
-      await this.emailTransporter.verify();
+      await this.emailTransporter!.verify();
 
       // Update staff status
       staff.activeConnections.emailConnected = true;
@@ -220,6 +232,8 @@ export class AICommunicationIntegrationService {
     body: string,
     htmlBody?: string
   ): Promise<boolean> {
+    await this.ensureInitialized();
+
     const staff = this.aiStaff.get(staffId);
     if (!staff || !staff.activeConnections.emailConnected) {
       throw new Error(`Staff member ${staffId} email not connected`);
@@ -234,7 +248,7 @@ export class AICommunicationIntegrationService {
         html: htmlBody || body,
       };
 
-      await this.emailTransporter.sendMail(mailOptions);
+      await this.emailTransporter!.sendMail(mailOptions);
       console.log(
         `📧 Email sent by ${staff.name} from ddavis@freight1stdirect.com to ${to.join(', ')}`
       );
@@ -522,10 +536,12 @@ DEPOINTE AI Company Dashboard: fleetflowapp.com/depointe-dashboard`;
   }
 
   async getStaffStatus(staffId: string): Promise<AIStaffCommunication | null> {
+    await this.ensureInitialized();
     return this.aiStaff.get(staffId) || null;
   }
 
   async getAllStaffStatus(): Promise<AIStaffCommunication[]> {
+    await this.ensureInitialized();
     return Array.from(this.aiStaff.values());
   }
 
@@ -580,8 +596,10 @@ DEPOINTE AI Company Dashboard: fleetflowapp.com/depointe-dashboard`;
 
   // Test Email Connection
   async testEmailConnection(): Promise<boolean> {
+    await this.ensureInitialized();
+
     try {
-      await this.emailTransporter.verify();
+      await this.emailTransporter!.verify();
       console.log(
         '✅ Email connection test successful for ddavis@freight1stdirect.com'
       );
