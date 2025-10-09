@@ -84,9 +84,12 @@ export class AICommunicationIntegrationService {
       },
     };
 
-    // Delay initialization until first use to prevent build issues
-    // this.initializeServices();
-    // this.setupAIStaff();
+    // Skip complex initialization during build to prevent deployment issues
+    if (process.env.DISABLE_COMPLEX_SERVICES !== '1') {
+      // Delay initialization until first use to prevent build issues
+      // this.initializeServices();
+      // this.setupAIStaff();
+    }
   }
 
   private async initializeServices() {
