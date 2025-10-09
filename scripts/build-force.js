@@ -41,33 +41,43 @@ buildProcess.on('close', (code) => {
     console.log('💡 Trying fallback approach...');
 
     // Fallback: try direct node_modules path
-    const fallbackProcess = spawn('node', ['node_modules/.bin/next', 'build', '--no-lint'], {
-      stdio: 'inherit',
-      env: {
-        ...process.env,
-        DISABLE_ESLINT_PLUGIN: 'true',
-        ESLINT_NO_DEV_ERRORS: 'true',
-        TSC_COMPILE_ON_ERROR: 'true',
-        NEXT_TELEMETRY_DISABLED: '1',
-        TYPESCRIPT_NOCHECK: 'true',
-        SKIP_TYPE_CHECK: 'true',
-        SKIP_ENV_VALIDATION: 'true',
-      },
-    });
+    const fallbackProcess = spawn(
+      'node',
+      ['node_modules/.bin/next', 'build', '--no-lint'],
+      {
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          DISABLE_ESLINT_PLUGIN: 'true',
+          ESLINT_NO_DEV_ERRORS: 'true',
+          TSC_COMPILE_ON_ERROR: 'true',
+          NEXT_TELEMETRY_DISABLED: '1',
+          TYPESCRIPT_NOCHECK: 'true',
+          SKIP_TYPE_CHECK: 'true',
+          SKIP_ENV_VALIDATION: 'true',
+        },
+      }
+    );
 
     fallbackProcess.on('close', (fallbackCode) => {
       if (fallbackCode === 0) {
         console.log('✅ FORCE BUILD: Fallback build completed successfully!');
         process.exit(0);
       } else {
-        console.log('❌ FORCE BUILD: Fallback build also failed with code', fallbackCode);
+        console.log(
+          '❌ FORCE BUILD: Fallback build also failed with code',
+          fallbackCode
+        );
         console.log('💡 Final suggestion: Use "npm run build:simple" instead');
         process.exit(fallbackCode);
       }
     });
 
     fallbackProcess.on('error', (error) => {
-      console.error('❌ FORCE BUILD: Fallback process failed to start:', error.message);
+      console.error(
+        '❌ FORCE BUILD: Fallback process failed to start:',
+        error.message
+      );
       console.log('💡 Try: npm run build:simple');
       process.exit(1);
     });
@@ -79,26 +89,33 @@ buildProcess.on('error', (error) => {
   console.log('💡 Trying fallback approach...');
 
   // Immediate fallback if npx fails to start
-  const fallbackProcess = spawn('node', ['node_modules/.bin/next', 'build', '--no-lint'], {
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      DISABLE_ESLINT_PLUGIN: 'true',
-      ESLINT_NO_DEV_ERRORS: 'true',
-      TSC_COMPILE_ON_ERROR: 'true',
-      NEXT_TELEMETRY_DISABLED: '1',
-      TYPESCRIPT_NOCHECK: 'true',
-      SKIP_TYPE_CHECK: 'true',
-      SKIP_ENV_VALIDATION: 'true',
-    },
-  });
+  const fallbackProcess = spawn(
+    'node',
+    ['node_modules/.bin/next', 'build', '--no-lint'],
+    {
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        DISABLE_ESLINT_PLUGIN: 'true',
+        ESLINT_NO_DEV_ERRORS: 'true',
+        TSC_COMPILE_ON_ERROR: 'true',
+        NEXT_TELEMETRY_DISABLED: '1',
+        TYPESCRIPT_NOCHECK: 'true',
+        SKIP_TYPE_CHECK: 'true',
+        SKIP_ENV_VALIDATION: 'true',
+      },
+    }
+  );
 
   fallbackProcess.on('close', (fallbackCode) => {
     if (fallbackCode === 0) {
       console.log('✅ FORCE BUILD: Fallback build completed successfully!');
       process.exit(0);
     } else {
-      console.log('❌ FORCE BUILD: Fallback build also failed with code', fallbackCode);
+      console.log(
+        '❌ FORCE BUILD: Fallback build also failed with code',
+        fallbackCode
+      );
       process.exit(fallbackCode);
     }
   });
