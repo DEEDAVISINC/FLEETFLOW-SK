@@ -39,7 +39,7 @@ Region: New York (NYC3)
 ```
 Name: web
 Source Directory: /
-Build Command: npm ci && npm run build
+Build Command: npm ci && npm run build:simple
 Run Command: npm start
 HTTP Port: 3000
 Instance Size: Basic (or Professional-XS recommended)
