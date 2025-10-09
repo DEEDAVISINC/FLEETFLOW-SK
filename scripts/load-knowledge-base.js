@@ -196,3 +196,4 @@ module.exports = FleetFlowKnowledgeBase;
 if (require.main === module) {
   main();
 }
+

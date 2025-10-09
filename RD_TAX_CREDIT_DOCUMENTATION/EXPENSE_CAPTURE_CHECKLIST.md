@@ -335,3 +335,4 @@ _Checklist Created: October 8, 2025_ _Purpose: Capture every qualified expense f
 credit_ _Target: Find $50K-$150K in additional expenses_ _Potential Impact: +$8,950-$26,850 in tax
 credits_
 
+

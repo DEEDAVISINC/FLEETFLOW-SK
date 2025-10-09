@@ -324,3 +324,4 @@ You have everything you need to claim $30,931 in R&D tax credits for 2025.
 _Quick Start Guide Created: October 8, 2025_ _Next Action: Set monthly reminder for Nov 5, 2025_
 _Questions? Review README.md or consult with R&D tax credit specialist_
 
+

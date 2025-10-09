@@ -380,3 +380,4 @@ _Last Updated: October 8, 2025_ _System Status: COMPLETE & READY FOR TAX FILING_
 November 5, 2025 (October actuals)_ _Questions? Review the FAQ or consult with R&D tax credit
 specialist_
 
+

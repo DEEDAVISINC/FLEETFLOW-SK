@@ -311,3 +311,4 @@ All receipts and invoices are stored in:
 _Last Updated: October 8, 2025_ _Next Update: November 5, 2025 (October actuals)_ _Tax Filing: April
 15, 2026_ _CPA Review: February 2026_
 
+
