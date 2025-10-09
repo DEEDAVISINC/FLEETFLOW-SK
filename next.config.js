@@ -10,6 +10,7 @@ const nextConfig = {
   // Performance optimizations
   experimental: {
     optimizePackageImports: ['@heroicons/react', 'lucide-react'],
+    serverComponentsExternalPackages: [],
   },
 
   // Image optimization for better SEO
