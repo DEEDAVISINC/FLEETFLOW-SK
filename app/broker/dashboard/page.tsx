@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BrokerDashboardGettingStarted from '../../components/BrokerDashboardGettingStarted';
+import ProtectedRoute from '../../components/ProtectedRoute';
 import { BrokerPerformanceMetrics } from '../../services/BrokerAnalyticsService';
 
 // Full Quoting Portal Component - Embedded directly in broker dashboard
@@ -1870,807 +1871,566 @@ export default function BrokerDashboard() {
       ];
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundImage:
-          'linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4338ca 50%, #312e81 75%, #1e1b4b 100%), radial-gradient(circle at 20% 20%, rgba(147, 51, 234, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(196, 181, 253, 0.06) 0%, transparent 50%), radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.04) 0%, transparent 50%)',
-        backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
-        backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
-        backgroundRepeat: 'no-repeat',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        padding: '20px',
-      }}
-    >
-      {/* Header */}
+    <ProtectedRoute organizationRequired={false} redirectTo='/auth/signin'>
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '24px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          minHeight: '100vh',
+          backgroundImage:
+            'linear-gradient(135deg, #1e1b4b 0%, #312e81 25%, #4338ca 50%, #312e81 75%, #1e1b4b 100%), radial-gradient(circle at 20% 20%, rgba(147, 51, 234, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(196, 181, 253, 0.06) 0%, transparent 50%), radial-gradient(circle at 40% 60%, rgba(139, 92, 246, 0.04) 0%, transparent 50%)',
+          backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
+          backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
+          backgroundRepeat: 'no-repeat',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          padding: '20px',
         }}
       >
-        <div>
-          <h1
-            style={{
-              color: 'white',
-              margin: 0,
-              fontSize: '2rem',
-              fontWeight: '700',
-              background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              marginBottom: '8px',
-            }}
-          >
-            🏢 Brokerage Dashboard
-          </h1>
-          <p
-            style={{
-              color: 'rgba(255, 255, 255, 0.9)',
-              margin: '4px 0 0 0',
-              fontSize: '1rem',
-              fontWeight: '500',
-            }}
-          >
-            Professional Sales Management • Load Optimization • Customer
-            Relations
-          </p>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              marginTop: '8px',
-            }}
-          >
-            <span
+        {/* Header */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div>
+            <h1
               style={{
-                background: 'rgba(16, 185, 129, 0.2)',
-                color: '#10b981',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: 'white',
+                margin: 0,
+                fontSize: '2rem',
+                fontWeight: '700',
+                background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                marginBottom: '8px',
               }}
             >
-              ✅ Broker Active
-            </span>
-            <span
+              🏢 Brokerage Dashboard
+            </h1>
+            <p
               style={{
-                background: 'rgba(59, 130, 246, 0.2)',
-                color: '#3b82f6',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
+                color: 'rgba(255, 255, 255, 0.9)',
+                margin: '4px 0 0 0',
+                fontSize: '1rem',
+                fontWeight: '500',
               }}
             >
-              🆔 Connected
-            </span>
-            <span
-              style={{
-                background: 'rgba(139, 92, 246, 0.2)',
-                color: '#8b5cf6',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '0.85rem',
-                fontWeight: '600',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-              }}
-            >
-              📊 Brokerage
-            </span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <div
-            style={{
-              textAlign: 'right',
-              color: 'rgba(255, 255, 255, 0.9)',
-            }}
-          >
-            <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
-              Last Activity
-            </div>
-            <div style={{ fontSize: '0.8rem' }}>
-              {new Date().toLocaleTimeString()}
-            </div>
-          </div>
-          <button
-            onClick={() => router.push('/broker')}
-            style={{
-              background: 'rgba(239, 68, 68, 0.2)',
-              color: '#fca5a5',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-            }}
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* KPI Dashboard */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
-          marginBottom: '24px',
-        }}
-      >
-        {agentKPIs.map((kpi, index) => (
-          <div
-            key={index}
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '16px',
-              padding: '20px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-4px)';
-              e.currentTarget.style.boxShadow = `0 8px 25px ${kpi.background}`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
-          >
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                width: '60px',
-                height: '60px',
-                background: kpi.background,
-                borderRadius: '0 0 0 60px',
-                opacity: 0.3,
-              }}
-            />
+              Professional Sales Management • Load Optimization • Customer
+              Relations
+            </p>
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '12px',
+                alignItems: 'center',
+                gap: '16px',
+                marginTop: '8px',
               }}
             >
-              <h3
-                style={{
-                  color: 'white',
-                  margin: 0,
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  opacity: 0.9,
-                }}
-              >
-                {kpi.title}
-              </h3>
               <span
                 style={{
-                  background: kpi.background,
-                  color: kpi.color,
-                  padding: '4px 8px',
-                  borderRadius: '12px',
-                  fontSize: '0.75rem',
-                  fontWeight: '700',
-                  border: `1px solid ${kpi.border}`,
+                  background: 'rgba(16, 185, 129, 0.2)',
+                  color: '#10b981',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
                 }}
               >
-                {kpi.change}
+                ✅ Broker Active
+              </span>
+              <span
+                style={{
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  color: '#3b82f6',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  border: '1px solid rgba(59, 130, 246, 0.3)',
+                }}
+              >
+                🆔 Connected
+              </span>
+              <span
+                style={{
+                  background: 'rgba(139, 92, 246, 0.2)',
+                  color: '#8b5cf6',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                }}
+              >
+                📊 Brokerage
               </span>
             </div>
+          </div>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div
               style={{
-                fontSize: '2rem',
-                fontWeight: '700',
-                color: kpi.color,
-                marginBottom: '8px',
-                textShadow: `0 0 20px ${kpi.color}33`,
+                textAlign: 'right',
+                color: 'rgba(255, 255, 255, 0.9)',
               }}
             >
-              {kpi.value}
-              {kpi.unit}
+              <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>
+                Last Activity
+              </div>
+              <div style={{ fontSize: '0.8rem' }}>
+                {new Date().toLocaleTimeString()}
+              </div>
             </div>
-            <p
+            <button
+              onClick={() => router.push('/broker')}
               style={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                margin: 0,
-                fontSize: '0.8rem',
-                lineHeight: 1.4,
+                background: 'rgba(239, 68, 68, 0.2)',
+                color: '#fca5a5',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
               }}
             >
-              {kpi.description}
-            </p>
+              Logout
+            </button>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Navigation Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-        }}
-      >
-        {[
-          {
-            id: 'quotes-workflow',
-            label: 'Quotes & Workflow',
-            icon: '💼',
-            color: '#8b5cf6',
-          },
-          {
-            id: 'loads-bids',
-            label: 'Loads & Bidding',
-            icon: '📦',
-            color: '#06b6d4',
-          },
-          {
-            id: 'ai-intelligence',
-            label: 'AI Intelligence',
-            icon: '🤖',
-            color: '#ec4899',
-          },
-          {
-            id: 'market-intelligence',
-            label: 'Market Intelligence',
-            icon: '📈',
-            color: '#10b981',
-          },
-          { id: 'analytics', label: 'Analytics', icon: '📊', color: '#f59e0b' },
-          {
-            id: 'tasks',
-            label: 'Task Management',
-            icon: '📋',
-            color: '#ef4444',
-          },
-          {
-            id: 'agent-portal',
-            label: 'Agent Portal',
-            icon: '👥',
-            color: '#6366f1',
-          },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setSelectedTab(tab.id)}
-            style={{
-              padding: '12px 20px',
-              borderRadius: '10px',
-              fontSize: '14px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              background:
-                selectedTab === tab.id
-                  ? `linear-gradient(135deg, ${tab.color}88, ${tab.color}66)`
-                  : 'rgba(255, 255, 255, 0.1)',
-              color:
-                selectedTab === tab.id ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(10px)',
-              border:
-                selectedTab === tab.id
-                  ? `2px solid ${tab.color}`
-                  : '1px solid rgba(255, 255, 255, 0.2)',
-              transform:
-                selectedTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
-              boxShadow:
-                selectedTab === tab.id ? `0 8px 25px ${tab.color}40` : 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <span>{tab.icon}</span>
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Getting Started Workflow */}
-      <BrokerDashboardGettingStarted
-        onStepClick={(stepId, tab) => {
-          if (tab) {
-            setSelectedTab(tab);
-            // Scroll to the relevant section
-            setTimeout(() => {
-              const element = document.getElementById(`tab-${tab}`);
-              if (element) {
-                element.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'start',
-                });
-              }
-            }, 100);
-          }
-        }}
-      />
-
-      {/* Content Area */}
-      <div
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          padding: '32px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          minHeight: '400px',
-        }}
-      >
-        {/* Tab Content */}
-        {selectedTab === 'quotes-workflow' && (
-          <div id='tab-quotes-workflow'>
-            <QuotingPortal />
-          </div>
-        )}
-
-        {selectedTab === 'loads-bids' && (
-          <div id='tab-loads-bids' style={{ color: 'white' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <h2
+        {/* KPI Dashboard */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '20px',
+            marginBottom: '24px',
+          }}
+        >
+          {agentKPIs.map((kpi, index) => (
+            <div
+              key={index}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                borderRadius: '16px',
+                padding: '20px',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = `0 8px 25px ${kpi.background}`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div
                 style={{
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  margin: '0',
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  width: '60px',
+                  height: '60px',
+                  background: kpi.background,
+                  borderRadius: '0 0 0 60px',
+                  opacity: 0.3,
+                }}
+              />
+              <div
+                style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '12px',
                 }}
               >
-                📦 Loads & Bidding Management
-              </h2>
+                <h3
+                  style={{
+                    color: 'white',
+                    margin: 0,
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    opacity: 0.9,
+                  }}
+                >
+                  {kpi.title}
+                </h3>
+                <span
+                  style={{
+                    background: kpi.background,
+                    color: kpi.color,
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    border: `1px solid ${kpi.border}`,
+                  }}
+                >
+                  {kpi.change}
+                </span>
+              </div>
+              <div
+                style={{
+                  fontSize: '2rem',
+                  fontWeight: '700',
+                  color: kpi.color,
+                  marginBottom: '8px',
+                  textShadow: `0 0 20px ${kpi.color}33`,
+                }}
+              >
+                {kpi.value}
+                {kpi.unit}
+              </div>
               <p
                 style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  lineHeight: '1.6',
-                  marginTop: '8px',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  margin: 0,
+                  fontSize: '0.8rem',
+                  lineHeight: 1.4,
                 }}
               >
-                Track active loads, manage bids, and optimize your bidding
-                strategy
+                {kpi.description}
               </p>
             </div>
+          ))}
+        </div>
 
-            <div
+        {/* Navigation Tabs */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            marginBottom: '24px',
+            flexWrap: 'wrap',
+          }}
+        >
+          {[
+            {
+              id: 'quotes-workflow',
+              label: 'Quotes & Workflow',
+              icon: '💼',
+              color: '#8b5cf6',
+            },
+            {
+              id: 'loads-bids',
+              label: 'Loads & Bidding',
+              icon: '📦',
+              color: '#06b6d4',
+            },
+            {
+              id: 'ai-intelligence',
+              label: 'AI Intelligence',
+              icon: '🤖',
+              color: '#ec4899',
+            },
+            {
+              id: 'market-intelligence',
+              label: 'Market Intelligence',
+              icon: '📈',
+              color: '#10b981',
+            },
+            {
+              id: 'analytics',
+              label: 'Analytics',
+              icon: '📊',
+              color: '#f59e0b',
+            },
+            {
+              id: 'tasks',
+              label: 'Task Management',
+              icon: '📋',
+              color: '#ef4444',
+            },
+            {
+              id: 'agent-portal',
+              label: 'Agent Portal',
+              icon: '👥',
+              color: '#6366f1',
+            },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedTab(tab.id)}
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px',
+                padding: '12px 20px',
+                borderRadius: '10px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                background:
+                  selectedTab === tab.id
+                    ? `linear-gradient(135deg, ${tab.color}88, ${tab.color}66)`
+                    : 'rgba(255, 255, 255, 0.1)',
+                color:
+                  selectedTab === tab.id
+                    ? '#ffffff'
+                    : 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(10px)',
+                border:
+                  selectedTab === tab.id
+                    ? `2px solid ${tab.color}`
+                    : '1px solid rgba(255, 255, 255, 0.2)',
+                transform:
+                  selectedTab === tab.id ? 'translateY(-2px)' : 'translateY(0)',
+                boxShadow:
+                  selectedTab === tab.id ? `0 8px 25px ${tab.color}40` : 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
               }}
             >
-              {/* Active Loads */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  Active Loads
-                </h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'start',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            color: '#10b981',
-                          }}
-                        >
-                          Your Bid: --
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Status
-                        </div>
-                        <div
-                          style={{
-                            background: 'rgba(59, 130, 246, 0.2)',
-                            color: '#3b82f6',
-                            padding: '4px 8px',
-                            borderRadius: '12px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                          }}
-                        >
-                          Winning
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <span>{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-              {/* Bidding Opportunities */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  New Opportunities
-                </h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'start',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.7)',
-                          }}
-                        >
-                          Current low: --
-                        </div>
-                      </div>
-                      <button
-                        style={{
-                          background:
-                            'linear-gradient(135deg, #10b981, #059669)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          padding: '8px 16px',
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Bid Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* Getting Started Workflow */}
+        <BrokerDashboardGettingStarted
+          onStepClick={(stepId, tab) => {
+            if (tab) {
+              setSelectedTab(tab);
+              // Scroll to the relevant section
+              setTimeout(() => {
+                const element = document.getElementById(`tab-${tab}`);
+                if (element) {
+                  element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                  });
+                }
+              }, 100);
+            }
+          }}
+        />
+
+        {/* Content Area */}
+        <div
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '16px',
+            padding: '32px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+            minHeight: '400px',
+          }}
+        >
+          {/* Tab Content */}
+          {selectedTab === 'quotes-workflow' && (
+            <div id='tab-quotes-workflow'>
+              <QuotingPortal />
             </div>
+          )}
 
-            {/* Bidding Strategy */}
-            <div
-              style={{
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderRadius: '12px',
-                padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: '20px',
-                  fontWeight: '600',
-                  color: 'white',
-                  marginBottom: '16px',
-                }}
-              >
-                Bidding Strategy
-              </h3>
+          {selectedTab === 'loads-bids' && (
+            <div id='tab-loads-bids' style={{ color: 'white' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    margin: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  📦 Loads & Bidding Management
+                </h2>
+                <p
+                  style={{
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.6',
+                    marginTop: '8px',
+                  }}
+                >
+                  Track active loads, manage bids, and optimize your bidding
+                  strategy
+                </p>
+              </div>
+
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
                 }}
               >
+                {/* Active Loads */}
                 <div
                   style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                   }}
                 >
-                  <div
+                  <h3
                     style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
                     }}
                   >
-                    Win Rate
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#3b82f6',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Last 30 days
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(245, 158, 11, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Avg Margin
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#f59e0b',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Target: 15%
-                  </div>
-                </div>
-                <div
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(16, 185, 129, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Active Bids
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#10b981',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    8 winning
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {selectedTab === 'ai-intelligence' && (
-          <div id='tab-ai-intelligence' style={{ color: 'white' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  margin: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                }}
-              >
-                🤖 AI-Powered Intelligence
-              </h2>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  lineHeight: '1.6',
-                  marginTop: '8px',
-                }}
-              >
-                Advanced predictive analytics, smart recommendations, and market
-                insights powered by AI
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px',
-              }}
-            >
-              {/* AI Recommendations */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  Smart Recommendations
-                </h3>
-                <div style={{ display: 'grid', gap: '16px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(16, 185, 129, 0.2)',
-                    }}
-                  >
+                    Active Loads
+                  </h3>
+                  <div style={{ display: 'grid', gap: '12px' }}>
                     <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'start',
-                        gap: '12px',
+                        background: 'rgba(0, 0, 0, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
                       }}
                     >
-                      <div style={{ fontSize: '24px' }}>🎯</div>
-                      <div style={{ flex: 1 }}>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Bid Opportunity Alert
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'start',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: '#10b981',
+                            }}
+                          >
+                            Your Bid: --
+                          </div>
                         </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          --
+                        <div style={{ textAlign: 'right' }}>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Status
+                          </div>
+                          <div
+                            style={{
+                              background: 'rgba(59, 130, 246, 0.2)',
+                              color: '#3b82f6',
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '11px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Winning
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bidding Opportunities */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    New Opportunities
+                  </h3>
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'start',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                            }}
+                          >
+                            Current low: --
+                          </div>
                         </div>
                         <button
                           style={{
@@ -2679,69 +2439,21 @@ export default function BrokerDashboard() {
                             color: 'white',
                             border: 'none',
                             borderRadius: '6px',
-                            padding: '6px 12px',
+                            padding: '8px 16px',
                             fontSize: '12px',
                             fontWeight: '600',
                             cursor: 'pointer',
                           }}
                         >
-                          View Details
+                          Bid Now
                         </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(245, 158, 11, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'start',
-                        gap: '12px',
-                      }}
-                    >
-                      <div style={{ fontSize: '24px' }}>📈</div>
-                      <div style={{ flex: 1 }}>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Price Optimization
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255, 255, 255, 0.8)',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          --
-                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Predictive Analytics */}
+              {/* Bidding Strategy */}
               <div
                 style={{
                   background: 'rgba(0, 0, 0, 0.2)',
@@ -2758,9 +2470,15 @@ export default function BrokerDashboard() {
                     marginBottom: '16px',
                   }}
                 >
-                  Predictive Insights
+                  Bidding Strategy
                 </h3>
-                <div style={{ display: 'grid', gap: '16px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
                   <div
                     style={{
                       background: 'rgba(59, 130, 246, 0.1)',
@@ -2776,7 +2494,7 @@ export default function BrokerDashboard() {
                         marginBottom: '8px',
                       }}
                     >
-                      Tomorrow's Volume
+                      Win Rate
                     </div>
                     <div
                       style={{
@@ -2793,406 +2511,9 @@ export default function BrokerDashboard() {
                         color: 'rgba(255, 255, 255, 0.6)',
                       }}
                     >
-                      Above average activity expected
+                      Last 30 days
                     </div>
                   </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(236, 72, 153, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(236, 72, 153, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      Fuel Price Impact
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '24px',
-                        fontWeight: '700',
-                        color: '#ec4899',
-                      }}
-                    >
-                      --
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        color: 'rgba(255, 255, 255, 0.6)',
-                      }}
-                    >
-                      Expected price increase next week
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Performance Metrics */}
-            <div
-              style={{
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderRadius: '12px',
-                padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: '20px',
-                  fontWeight: '600',
-                  color: 'white',
-                  marginBottom: '16px',
-                }}
-              >
-                AI Performance
-              </h3>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '16px',
-                }}
-              >
-                <div
-                  style={{
-                    background: 'rgba(139, 92, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Recommendation Accuracy
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#8b5cf6',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Last 30 days
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(16, 185, 129, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Revenue Impact
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#10b981',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    From AI recommendations
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Processing Time
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#3b82f6',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Average response time
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {selectedTab === 'market-intelligence' && (
-          <div id='tab-market-intelligence' style={{ color: 'white' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  margin: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                }}
-              >
-                📈 Market Intelligence
-              </h2>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  lineHeight: '1.6',
-                  marginTop: '8px',
-                }}
-              >
-                Real-time market trends, pricing data, and competitive analysis
-                for informed decision making
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px',
-              }}
-            >
-              {/* Market Trends */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  Market Trends
-                </h3>
-                <div style={{ display: 'grid', gap: '16px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(16, 185, 129, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Midwest Region
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          --
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '20px', color: '#10b981' }}>
-                        📈
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(239, 68, 68, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            color: 'white',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Northeast Corridor
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          --
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '20px', color: '#ef4444' }}>
-                        ⚠️
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Pricing Analysis */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  Competitive Pricing
-                </h3>
-                <div style={{ display: 'grid', gap: '16px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(59, 130, 246, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      Chicago → New York
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: 'white',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          Your rate
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '14px', color: '#10b981' }}>
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          Market: --
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
                   <div
                     style={{
                       background: 'rgba(245, 158, 11, 0.1)',
@@ -3208,423 +2529,7 @@ export default function BrokerDashboard() {
                         marginBottom: '8px',
                       }}
                     >
-                      Los Angeles → Seattle
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '18px',
-                            fontWeight: '600',
-                            color: 'white',
-                          }}
-                        >
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          Your rate
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '14px', color: '#ef4444' }}>
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '12px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          Market: --
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Market Dashboard */}
-            <div
-              style={{
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderRadius: '12px',
-                padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: '20px',
-                  fontWeight: '600',
-                  color: 'white',
-                  marginBottom: '16px',
-                }}
-              >
-                Market Dashboard
-              </h3>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '16px',
-                }}
-              >
-                <div
-                  style={{
-                    background: 'rgba(139, 92, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    National Spot Rate
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#8b5cf6',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Week over week
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(16, 185, 129, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Capacity Utilization
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#10b981',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Industry average
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Fuel Price Index
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#3b82f6',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Per gallon
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(245, 158, 11, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Seasonal Factor
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '24px',
-                      fontWeight: '700',
-                      color: '#f59e0b',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.6)',
-                    }}
-                  >
-                    Peak season pricing
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {selectedTab === 'analytics' && (
-          <div id='tab-analytics' style={{ color: 'white' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  margin: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                }}
-              >
-                📊 Advanced Analytics
-              </h2>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  lineHeight: '1.6',
-                  marginTop: '8px',
-                }}
-              >
-                Comprehensive performance metrics, trends, and actionable
-                insights for your brokerage operations
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px',
-              }}
-            >
-              {/* Performance Overview */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  Performance Overview
-                </h3>
-                <div style={{ display: 'grid', gap: '16px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(16, 185, 129, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(16, 185, 129, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Monthly Revenue
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '20px',
-                            fontWeight: '700',
-                            color: '#10b981',
-                          }}
-                        >
-                          --
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', color: '#10b981' }}>
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '10px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          vs last month
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(59, 130, 246, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            fontSize: '14px',
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Load Volume
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '20px',
-                            fontWeight: '700',
-                            color: '#3b82f6',
-                          }}
-                        >
-                          --
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '12px', color: '#10b981' }}>
-                          --
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '10px',
-                            color: 'rgba(255, 255, 255, 0.6)',
-                          }}
-                        >
-                          loads completed
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Key Metrics */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
-                  style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
-                    marginBottom: '16px',
-                  }}
-                >
-                  Key Metrics
-                </h3>
-                <div style={{ display: 'grid', gap: '16px' }}>
-                  <div
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      border: '1px solid rgba(245, 158, 11, 0.2)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      Average Margin
+                      Avg Margin
                     </div>
                     <div
                       style={{
@@ -3644,13 +2549,12 @@ export default function BrokerDashboard() {
                       Target: 15%
                     </div>
                   </div>
-
                   <div
                     style={{
-                      background: 'rgba(139, 92, 246, 0.1)',
+                      background: 'rgba(16, 185, 129, 0.1)',
                       borderRadius: '8px',
                       padding: '16px',
-                      border: '1px solid rgba(139, 92, 246, 0.2)',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
                     }}
                   >
                     <div
@@ -3660,13 +2564,13 @@ export default function BrokerDashboard() {
                         marginBottom: '8px',
                       }}
                     >
-                      On-Time Delivery
+                      Active Bids
                     </div>
                     <div
                       style={{
                         fontSize: '24px',
                         fontWeight: '700',
-                        color: '#8b5cf6',
+                        color: '#10b981',
                       }}
                     >
                       --
@@ -3677,199 +2581,271 @@ export default function BrokerDashboard() {
                         color: 'rgba(255, 255, 255, 0.6)',
                       }}
                     >
-                      Industry avg: 92%
+                      8 winning
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          )}
 
-            {/* Analytics Dashboard */}
-            <div
-              style={{
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderRadius: '12px',
-                padding: '24px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: '20px',
-                  fontWeight: '600',
-                  color: 'white',
-                  marginBottom: '16px',
-                }}
-              >
-                Trends & Insights
-              </h3>
+          {selectedTab === 'ai-intelligence' && (
+            <div id='tab-ai-intelligence' style={{ color: 'white' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    margin: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  🤖 AI-Powered Intelligence
+                </h2>
+                <p
+                  style={{
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.6',
+                    marginTop: '8px',
+                  }}
+                >
+                  Advanced predictive analytics, smart recommendations, and
+                  market insights powered by AI
+                </p>
+              </div>
+
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                  gap: '16px',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
                 }}
               >
+                {/* AI Recommendations */}
                 <div
                   style={{
-                    background: 'rgba(16, 185, 129, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(16, 185, 129, 0.2)',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                   }}
                 >
-                  <div
+                  <h3
                     style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Top Performing Route
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
+                      fontSize: '20px',
                       fontWeight: '600',
                       color: 'white',
-                      marginBottom: '4px',
+                      marginBottom: '16px',
                     }}
                   >
-                    --
+                    Smart Recommendations
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'start',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '24px' }}>🎯</div>
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Bid Opportunity Alert
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <button
+                            style={{
+                              background:
+                                'linear-gradient(135deg, #10b981, #059669)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              padding: '6px 12px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            View Details
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(245, 158, 11, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'start',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '24px' }}>📈</div>
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Price Optimization
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              marginBottom: '8px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            --
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#10b981' }}>--</div>
                 </div>
 
+                {/* Predictive Analytics */}
                 <div
                   style={{
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                   }}
                 >
-                  <div
+                  <h3
                     style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Customer Concentration
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
+                      fontSize: '20px',
                       fontWeight: '600',
                       color: 'white',
-                      marginBottom: '4px',
+                      marginBottom: '16px',
                     }}
                   >
-                    --
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#ef4444' }}>--</div>
-                </div>
+                    Predictive Insights
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Tomorrow's Volume
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#3b82f6',
+                        }}
+                      >
+                        --
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
+                        Above average activity expected
+                      </div>
+                    </div>
 
-                <div
-                  style={{
-                    background: 'rgba(59, 130, 246, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Seasonal Pattern
+                    <div
+                      style={{
+                        background: 'rgba(236, 72, 153, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(236, 72, 153, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Fuel Price Impact
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#ec4899',
+                        }}
+                      >
+                        --
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
+                        Expected price increase next week
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      color: 'white',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#3b82f6' }}>--</div>
-                </div>
-
-                <div
-                  style={{
-                    background: 'rgba(245, 158, 11, 0.1)',
-                    borderRadius: '8px',
-                    padding: '16px',
-                    border: '1px solid rgba(245, 158, 11, 0.2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: '14px',
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '8px',
-                    }}
-                  >
-                    Operational Efficiency
-                  </div>
-                  <div
-                    style={{
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      color: 'white',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    --
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#f59e0b' }}>--</div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
 
-        {selectedTab === 'tasks' && (
-          <div id='tab-tasks' style={{ color: 'white' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: '700',
-                  margin: '0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                }}
-              >
-                📋 Task Management
-              </h2>
-              <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  lineHeight: '1.6',
-                  marginTop: '8px',
-                }}
-              >
-                Organize, prioritize, and track all your brokerage tasks and
-                deadlines
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                gap: '24px',
-              }}
-            >
-              {/* Urgent Tasks */}
+              {/* AI Performance Metrics */}
               <div
                 style={{
                   background: 'rgba(0, 0, 0, 0.2)',
@@ -3886,9 +2862,893 @@ export default function BrokerDashboard() {
                     marginBottom: '16px',
                   }}
                 >
-                  🔥 Urgent Tasks
+                  AI Performance
                 </h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(139, 92, 246, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Recommendation Accuracy
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#8b5cf6',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Last 30 days
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Revenue Impact
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#10b981',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      From AI recommendations
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Processing Time
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#3b82f6',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Average response time
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'market-intelligence' && (
+            <div id='tab-market-intelligence' style={{ color: 'white' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    margin: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  📈 Market Intelligence
+                </h2>
+                <p
+                  style={{
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.6',
+                    marginTop: '8px',
+                  }}
+                >
+                  Real-time market trends, pricing data, and competitive
+                  analysis for informed decision making
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
+                }}
+              >
+                {/* Market Trends */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Market Trends
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Midwest Region
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            --
+                          </div>
+                        </div>
+                        <div style={{ fontSize: '20px', color: '#10b981' }}>
+                          📈
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Northeast Corridor
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            --
+                          </div>
+                        </div>
+                        <div style={{ fontSize: '20px', color: '#ef4444' }}>
+                          ⚠️
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing Analysis */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Competitive Pricing
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Chicago → New York
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            Your rate
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '14px', color: '#10b981' }}>
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            Market: --
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(245, 158, 11, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Los Angeles → Seattle
+                      </div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: 'white',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            Your rate
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '14px', color: '#ef4444' }}>
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            Market: --
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Dashboard */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Market Dashboard
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(139, 92, 246, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      National Spot Rate
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#8b5cf6',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Week over week
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Capacity Utilization
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#10b981',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Industry average
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Fuel Price Index
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#3b82f6',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Per gallon
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Seasonal Factor
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '24px',
+                        fontWeight: '700',
+                        color: '#f59e0b',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '12px',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                      }}
+                    >
+                      Peak season pricing
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'analytics' && (
+            <div id='tab-analytics' style={{ color: 'white' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    margin: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  📊 Advanced Analytics
+                </h2>
+                <p
+                  style={{
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.6',
+                    marginTop: '8px',
+                  }}
+                >
+                  Comprehensive performance metrics, trends, and actionable
+                  insights for your brokerage operations
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
+                }}
+              >
+                {/* Performance Overview */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Performance Overview
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(16, 185, 129, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(16, 185, 129, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Monthly Revenue
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: '700',
+                              color: '#10b981',
+                            }}
+                          >
+                            --
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '12px', color: '#10b981' }}>
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '10px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            vs last month
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              fontSize: '14px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            Load Volume
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: '700',
+                              color: '#3b82f6',
+                            }}
+                          >
+                            --
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '12px', color: '#10b981' }}>
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '10px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            loads completed
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Metrics */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Key Metrics
+                  </h3>
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(245, 158, 11, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(245, 158, 11, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        Average Margin
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#f59e0b',
+                        }}
+                      >
+                        --
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
+                        Target: 15%
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(139, 92, 246, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '14px',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        On-Time Delivery
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '24px',
+                          fontWeight: '700',
+                          color: '#8b5cf6',
+                        }}
+                      >
+                        --
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '12px',
+                          color: 'rgba(255, 255, 255, 0.6)',
+                        }}
+                      >
+                        Industry avg: 92%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analytics Dashboard */}
+              <div
+                style={{
+                  background: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: '600',
+                    color: 'white',
+                    marginBottom: '16px',
+                  }}
+                >
+                  Trends & Insights
+                </h3>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Top Performing Route
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#10b981' }}>--</div>
+                  </div>
+
                   <div
                     style={{
                       background: 'rgba(239, 68, 68, 0.1)',
@@ -3899,13 +3759,218 @@ export default function BrokerDashboard() {
                   >
                     <div
                       style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Customer Concentration
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#ef4444' }}>--</div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Seasonal Pattern
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#3b82f6' }}>--</div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      Operational Efficiency
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '18px',
+                        fontWeight: '600',
+                        color: 'white',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      --
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#f59e0b' }}>--</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {selectedTab === 'tasks' && (
+            <div id='tab-tasks' style={{ color: 'white' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: '700',
+                    margin: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  📋 Task Management
+                </h2>
+                <p
+                  style={{
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    lineHeight: '1.6',
+                    marginTop: '8px',
+                  }}
+                >
+                  Organize, prioritize, and track all your brokerage tasks and
+                  deadlines
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                  gap: '24px',
+                }}
+              >
+                {/* Urgent Tasks */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    🔥 Urgent Tasks
+                  </h3>
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    <div
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'start',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ fontSize: '20px' }}>🚨</div>
+                        <div style={{ flex: 1 }}>
+                          <div
+                            style={{
+                              fontSize: '16px',
+                              fontWeight: '600',
+                              color: 'white',
+                              marginBottom: '4px',
+                            }}
+                          >
+                            --
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.6)',
+                            }}
+                          >
+                            --
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Today's Tasks */}
+                <div
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.2)',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontSize: '20px',
+                      fontWeight: '600',
+                      color: 'white',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    Today's Tasks
+                  </h3>
+                  <div style={{ display: 'grid', gap: '12px' }}>
+                    <div
+                      style={{
                         display: 'flex',
-                        alignItems: 'start',
+                        alignItems: 'center',
                         gap: '12px',
                       }}
                     >
-                      <div style={{ fontSize: '20px' }}>🚨</div>
-                      <div style={{ flex: 1 }}>
+                      <input
+                        type='checkbox'
+                        style={{ transform: 'scale(1.2)' }}
+                      />
+                      <div>
                         <div
                           style={{
                             fontSize: '16px',
@@ -3929,290 +3994,239 @@ export default function BrokerDashboard() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
 
-              {/* Today's Tasks */}
-              <div
-                style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '24px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                }}
-              >
-                <h3
+          {selectedTab === 'agent-portal' && (
+            <div id='tab-agent-portal' style={{ color: 'white' }}>
+              <div style={{ marginBottom: '32px' }}>
+                <h2
                   style={{
-                    fontSize: '20px',
-                    fontWeight: '600',
-                    color: 'white',
+                    fontSize: '28px',
+                    fontWeight: 'bold',
                     marginBottom: '16px',
+                    background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  Today's Tasks
-                </h3>
-                <div style={{ display: 'grid', gap: '12px' }}>
-                  <div
+                  👥 Agent Portal
+                </h2>
+                <p
+                  style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: 0 }}
+                >
+                  Manage broker agents, assignments, and performance tracking
+                </p>
+              </div>
+
+              {/* Quick agent overview cards */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '24px',
+                  marginBottom: '32px',
+                }}
+              >
+                {/* Active Agents */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(99, 102, 241, 0.3)',
+                  }}
+                >
+                  <h4
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
+                      color: '#6366f1',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
                     }}
                   >
-                    <input
-                      type='checkbox'
-                      style={{ transform: 'scale(1.2)' }}
-                    />
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '16px',
-                          fontWeight: '600',
-                          color: 'white',
-                          marginBottom: '4px',
-                        }}
-                      >
-                        --
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '12px',
-                          color: 'rgba(255, 255, 255, 0.6)',
-                        }}
-                      >
-                        --
-                      </div>
-                    </div>
+                    👤 Active Agents
+                  </h4>
+                  <div
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 'bold',
+                      color: '#6366f1',
+                    }}
+                  >
+                    12
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    Agents currently online and working
+                  </div>
+                </div>
+
+                {/* Today's Assignments */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#10b981',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    📋 Today's Assignments
+                  </h4>
+                  <div
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 'bold',
+                      color: '#10b981',
+                    }}
+                  >
+                    47
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    Load assignments distributed today
+                  </div>
+                </div>
+
+                {/* Performance Summary */}
+                <div
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    padding: '24px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  <h4
+                    style={{
+                      color: '#f59e0b',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      marginBottom: '16px',
+                    }}
+                  >
+                    📊 Team Performance
+                  </h4>
+                  <div
+                    style={{
+                      fontSize: '36px',
+                      fontWeight: 'bold',
+                      color: '#f59e0b',
+                    }}
+                  >
+                    94%
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      color: 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    Average completion rate this week
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
 
-        {selectedTab === 'agent-portal' && (
-          <div id='tab-agent-portal' style={{ color: 'white' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: 'bold',
-                  marginBottom: '16px',
-                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                👥 Agent Portal
-              </h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.8)', marginBottom: 0 }}>
-                Manage broker agents, assignments, and performance tracking
-              </p>
-            </div>
-
-            {/* Quick agent overview cards */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-                gap: '24px',
-                marginBottom: '32px',
-              }}
-            >
-              {/* Active Agents */}
+              {/* Direct link to full agent portal */}
               <div
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
+                  background: 'rgba(99, 102, 241, 0.1)',
                   padding: '24px',
                   borderRadius: '12px',
                   border: '1px solid rgba(99, 102, 241, 0.3)',
+                  textAlign: 'center',
                 }}
               >
-                <h4
+                <div style={{ fontSize: '48px', marginBottom: '16px' }}>👥</div>
+                <h3
                   style={{
-                    color: '#6366f1',
-                    fontSize: '18px',
+                    fontSize: '24px',
                     fontWeight: 'bold',
                     marginBottom: '16px',
-                  }}
-                >
-                  👤 Active Agents
-                </h4>
-                <div
-                  style={{
-                    fontSize: '36px',
-                    fontWeight: 'bold',
                     color: '#6366f1',
                   }}
                 >
-                  12
-                </div>
-                <div
+                  Full Agent Portal
+                </h3>
+                <p
                   style={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '16px',
+                    color: 'rgba(255, 255, 255, 0.8)',
+                    marginBottom: '24px',
+                    lineHeight: 1.6,
                   }}
                 >
-                  Agents currently online and working
-                </div>
-              </div>
-
-              {/* Today's Assignments */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '24px',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                }}
-              >
-                <h4
+                  Access the complete Agent Portal with full functionality and
+                  features.
+                </p>
+                <button
+                  onClick={() => window.open('/broker/agent-portal', '_blank')}
                   style={{
-                    color: '#10b981',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    marginBottom: '16px',
+                    background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'transform 0.3s ease',
                   }}
+                  onMouseOver={(e) =>
+                    (e.currentTarget.style.transform = 'translateY(-2px)')
+                  }
+                  onMouseOut={(e) =>
+                    (e.currentTarget.style.transform = 'translateY(0)')
+                  }
                 >
-                  📋 Today's Assignments
-                </h4>
-                <div
-                  style={{
-                    fontSize: '36px',
-                    fontWeight: 'bold',
-                    color: '#10b981',
-                  }}
-                >
-                  47
-                </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                  }}
-                >
-                  Load assignments distributed today
-                </div>
-              </div>
-
-              {/* Performance Summary */}
-              <div
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  padding: '24px',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                }}
-              >
-                <h4
-                  style={{
-                    color: '#f59e0b',
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    marginBottom: '16px',
-                  }}
-                >
-                  📊 Team Performance
-                </h4>
-                <div
-                  style={{
-                    fontSize: '36px',
-                    fontWeight: 'bold',
-                    color: '#f59e0b',
-                  }}
-                >
-                  94%
-                </div>
-                <div
-                  style={{
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.7)',
-                  }}
-                >
-                  Average completion rate this week
-                </div>
+                  🚀 Open Full Agent Portal
+                </button>
               </div>
             </div>
+          )}
 
-            {/* Direct link to full agent portal */}
-            <div
-              style={{
-                background: 'rgba(99, 102, 241, 0.1)',
-                padding: '24px',
-                borderRadius: '12px',
-                border: '1px solid rgba(99, 102, 241, 0.3)',
-                textAlign: 'center',
-              }}
-            >
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>👥</div>
-              <h3
+          {/* Default Welcome Screen */}
+          {!selectedTab && (
+            <div style={{ textAlign: 'center', color: 'white' }}>
+              <div
+                style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
+              >
+                🚛
+              </div>
+              <h2
                 style={{
                   fontSize: '24px',
                   fontWeight: 'bold',
-                  marginBottom: '16px',
-                  color: '#6366f1',
+                  marginBottom: '8px',
                 }}
               >
-                Full Agent Portal
-              </h3>
+                Welcome to Your Broker Dashboard
+              </h2>
               <p
-                style={{
-                  fontSize: '16px',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  marginBottom: '24px',
-                  lineHeight: 1.6,
-                }}
+                style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}
               >
-                Access the complete Agent Portal with full functionality and
-                features.
+                Your superior freight brokerage management platform
               </p>
-              <button
-                onClick={() => window.open('/broker/agent-portal', '_blank')}
-                style={{
-                  background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'transform 0.3s ease',
-                }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.transform = 'translateY(-2px)')
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.transform = 'translateY(0)')
-                }
-              >
-                🚀 Open Full Agent Portal
-              </button>
             </div>
-          </div>
-        )}
-
-        {/* Default Welcome Screen */}
-        {!selectedTab && (
-          <div style={{ textAlign: 'center', color: 'white' }}>
-            <div
-              style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.7 }}
-            >
-              🚛
-            </div>
-            <h2
-              style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                marginBottom: '8px',
-              }}
-            >
-              Welcome to Your Broker Dashboard
-            </h2>
-            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '16px' }}>
-              Your superior freight brokerage management platform
-            </p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

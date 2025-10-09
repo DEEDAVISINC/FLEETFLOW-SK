@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ProtectedRoute from '../../components/ProtectedRoute';
 import { DriverWorkflowService } from '../../services/driver-workflow';
 
 // Workflow Step Modal Component
@@ -38,8 +39,12 @@ const WorkflowStepModal = ({
   };
 
   return (
-    <div>
-      <h1>Drivers Dashboard</h1>
-    </div>
+    <ProtectedRoute organizationRequired={false} redirectTo='/auth/signin'>
+      <div>
+        <h1>Drivers Dashboard</h1>
+      </div>
+    </ProtectedRoute>
   );
 };
+
+export default WorkflowStepModal;

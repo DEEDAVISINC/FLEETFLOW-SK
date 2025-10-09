@@ -76,7 +76,6 @@ export async function middleware(request: NextRequest) {
 
     // Allow basic pages without subscription
     const trialPages = [
-      '/fleetflowdash',
       '/tracking',
       '/documents',
       '/messages',
