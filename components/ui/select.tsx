@@ -25,18 +25,35 @@ interface SelectItemProps {
 }
 
 export const Select: React.FC<SelectProps> = ({ value, onValueChange, children }) => {
+  return (
+    <div className="relative">
+      {React.Children.map(children, (child) => {
+        if (React.isValidElement(child) && child.type === SelectTrigger) {
+          return React.cloneElement(child, { value, onValueChange });
+        }
+        return child;
+      })}
+    </div>
+  );
+};
+
+export const SelectTrigger: React.FC<SelectTriggerProps & { value?: string; onValueChange?: (value: string) => void }> = ({ 
+  className = '', 
+  children, 
+  value, 
+  onValueChange 
+}) => {
   const [isOpen, setIsOpen] = React.useState(false);
   
   return (
     <div className="relative">
-      <div onClick={() => setIsOpen(!isOpen)}>
-        {React.Children.map(children, (child) => {
-          if (React.isValidElement(child) && child.type === SelectTrigger) {
-            return React.cloneElement(child, { isOpen });
-          }
-          return null;
-        })}
-      </div>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full px-3 py-2 text-left border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white ${className}`}
+      >
+        {children}
+      </button>
       {isOpen && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
           {React.Children.map(children, (child) => {
@@ -53,29 +70,6 @@ export const Select: React.FC<SelectProps> = ({ value, onValueChange, children }
         </div>
       )}
     </div>
-  );
-};
-
-export const SelectTrigger: React.FC<SelectTriggerProps & { isOpen?: boolean }> = ({ 
-  className = '', 
-  children,
-  isOpen
-}) => {
-  return (
-    <button
-      type="button"
-      className={`w-full px-3 py-2 text-left border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white ${className}`}
-    >
-      {children}
-      <svg 
-        className={`w-4 h-4 ml-auto transition-transform ${isOpen ? 'rotate-180' : ''}`}
-        fill="none" 
-        stroke="currentColor" 
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-      </svg>
-    </button>
   );
 };
 
