@@ -126,7 +126,7 @@ export class AICommunicationIntegrationService {
       currentTasks: [],
     });
 
-    // Configure Alexis Best (AI Executive Assistant)
+    // Configure Alexis Best (AI Executive Assistant) with Embedded Learning Profile
     this.aiStaff.set('alexis-executive-023', {
       staffId: 'alexis-executive-023',
       name: 'Alexis Best',
@@ -141,7 +141,38 @@ export class AICommunicationIntegrationService {
         phoneConnected: false,
       },
       currentTasks: [],
+      // Load embedded executive assistant training and knowledge
+      executiveProfile: this.loadAlexisExecutiveProfile(),
     });
+  }
+
+  // Load Alexis Best's embedded executive assistant profile with all training and capabilities
+  private loadAlexisExecutiveProfile() {
+    try {
+      // Import and load the comprehensive executive assistant profile
+      const {
+        alexisExecutiveAssistantProfile,
+      } = require('./ai-learning/AlexisExecutiveAssistantProfile');
+      console.log(
+        '✅ Alexis Best: Executive Assistant Profile loaded with embedded learning'
+      );
+      console.log(
+        `   - ${Object.keys(alexisExecutiveAssistantProfile.coreCapabilities).length} core capabilities embedded`
+      );
+      console.log(
+        `   - ${alexisExecutiveAssistantProfile.aiWorkforceCoordination.totalAIStaff} AI staff coordination protocols`
+      );
+      console.log(
+        `   - ${Object.keys(alexisExecutiveAssistantProfile.businessKnowledge).length} business entities knowledge`
+      );
+      return alexisExecutiveAssistantProfile;
+    } catch (error) {
+      console.error(
+        '❌ Failed to load Alexis executive assistant profile:',
+        error
+      );
+      return null;
+    }
   }
 
   // Email Management Methods

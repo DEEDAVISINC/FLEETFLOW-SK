@@ -1,0 +1,85 @@
+==========================================================
+FLEETFLOW - DIGITALOCEAN ENVIRONMENT VARIABLES
+Copy and paste these into DigitalOcean App Platform
+==========================================================
+
+Go to: https://cloud.digitalocean.com/apps
+Select your FleetFlow app → Settings → Environment Variables
+Click "Bulk Editor" and paste the REQUIRED section below:
+
+==========================================================
+REQUIRED VARIABLES (Copy everything below this line)
+==========================================================
+
+NODE_ENV=production
+PORT=3000
+NEXTAUTH_SECRET=kPW2rGwLljJyGd2RK72wJvUPqK9BpiAcubHlMwjAKCY=
+NEXTAUTH_URL=https://fleetflowapp.com
+SQUARE_ACCESS_TOKEN=EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb
+NEXT_PUBLIC_SQUARE_APPLICATION_ID=sq0idp-5GklzNdvq_BqP1gSCYAudA
+SQUARE_ENVIRONMENT=sandbox
+SQUARE_LOCATION_ID=MAIN
+TWILIO_ACCOUNT_SID=AC2e547d7c5d39dc8735c7bdb5546ded25
+TWILIO_AUTH_TOKEN=4cda06498e86cc8f150d81e4e48b2aed
+TWILIO_PHONE_NUMBER=+18333863509
+FMCSA_API_KEY=7de24c4a0eade12f34685829289e0446daf7880e
+
+==========================================================
+OPTIONAL - Add These Later When You Have The Keys
+==========================================================
+
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_key_here
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+BILLCOM_API_KEY=01ICBWLWIERUAFTN2157
+BILLCOM_USERNAME=notary@deedavis.biz
+BILLCOM_PASSWORD=D13@sha1$
+BILLCOM_ORG_ID=0297208089826008
+BILLCOM_ENVIRONMENT=sandbox
+
+==========================================================
+QUICK START STEPS
+==========================================================
+
+1. Go to: https://cloud.digitalocean.com/apps
+2. Click "Create App"
+3. Connect GitHub: DEEDAVISINC/FLEETFLOW-SK
+4. Branch: main
+5. Build Command: npm ci && npm run build
+6. Run Command: npm start
+7. Port: 3000
+8. Click "Environment Variables"
+9. Click "Bulk Editor"
+10. Paste the REQUIRED VARIABLES section above
+11. Click "Add Domain" → Enter: fleetflowapp.com
+12. Click "Create Resources"
+13. Wait 5-10 minutes for deployment
+
+==========================================================
+VERIFY DEPLOYMENT
+==========================================================
+
+After deployment, test these URLs:
+
+✓ https://fleetflowapp.com
+✓ https://fleetflowapp.com/depointe-dashboard
+✓ https://fleetflowapp.com/auth/signin
+
+Login Credentials:
+Email: info@deedavis.biz
+Password: depointe2024!
+
+==========================================================
+NEED HELP?
+==========================================================
+
+See: DIGITALOCEAN_SETUP_COMPLETE.md (in this directory)
+Or contact DigitalOcean support at:
+https://cloud.digitalocean.com/support/tickets
+
+==========================================================

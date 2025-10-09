@@ -75,10 +75,44 @@ SMTP_USER=apikey
 SMTP_PASS=your-sendgrid-api-key
 
 # Social Media APIs
-FACEBOOK_ACCESS_TOKEN=your-facebook-page-token
-LINKEDIN_ACCESS_TOKEN=your-linkedin-access-token
-INSTAGRAM_ACCESS_TOKEN=your-instagram-access-token
-INSTAGRAM_ACCOUNT_ID=your-instagram-account-id
+# YouTube (Google OAuth) - PRIMARY
+YOUTUBE_CLIENT_ID=your-youtube-client-id
+YOUTUBE_CLIENT_SECRET=your-youtube-client-secret
+YOUTUBE_REDIRECT_URI=https://fleetflowapp.com/api/auth/youtube/callback
+YOUTUBE_API_KEY=your-youtube-data-api-key
+
+# YouTube (Google OAuth) - BACKUP
+YOUTUBE_CLIENT_ID_BACKUP=your-youtube-backup-client-id
+YOUTUBE_CLIENT_SECRET_BACKUP=your-youtube-backup-client-secret
+YOUTUBE_REDIRECT_URI_BACKUP=https://fleetflowapp.com/api/auth/youtube/callback/backup
+
+# LinkedIn
+LINKEDIN_CLIENT_ID=86p6kq8n0j9ydq
+LINKEDIN_CLIENT_SECRET=your-linkedin-client-secret
+LINKEDIN_REDIRECT_URI=https://fleetflowapp.com/api/auth/linkedin/callback
+
+# Facebook/Instagram/Threads (Meta Graph API)
+FACEBOOK_APP_ID=1248526630620464
+FACEBOOK_APP_SECRET=252adb13cdaea9a8ed0b6613a65e3c0c
+FACEBOOK_REDIRECT_URI=https://fleetflowapp.com/api/auth/facebook/callback
+FACEBOOK_PAGE_ID=829755813550482
+INSTAGRAM_ACCOUNT_ID=1141502797929986
+
+# Threads (uses Facebook/Instagram credentials)
+THREADS_APP_ID=1899999933902995
+THREADS_APP_SECRET=880b2f188333377527204c9735127668
+
+# Twitter/X (RESTRICTED - App violation)
+# TWITTER_API_KEY=restricted
+# TWITTER_API_SECRET=restricted
+# TWITTER_REDIRECT_URI=https://fleetflowapp.com/api/auth/twitter/callback
+# TWITTER_BEARER_TOKEN=restricted
+# Note: Twitter/X access currently restricted. Consider appeal or new developer account.
+
+# TikTok (Optional - can add later if needed)
+TIKTOK_CLIENT_KEY=your-tiktok-client-key
+TIKTOK_CLIENT_SECRET=your-tiktok-client-secret
+TIKTOK_REDIRECT_URI=https://fleetflowapp.com/api/auth/tiktok/callback
 ```
 
 ### Billing & Payment

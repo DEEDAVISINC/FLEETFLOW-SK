@@ -1,0 +1,382 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2025-10-08",
+    "purpose": "Complete knowledge base for AI executive assistant working on FleetFlow operations",
+    "targetAudience": "DEPOINTE AI Company Dashboard operators",
+    "totalSections": 15,
+    "totalLines": 727
+  },
+  "company": {
+    "name": "FleetFlow",
+    "tagline": "Salesforce of Transportation",
+    "mission": "Comprehensive Business Intelligence platform that transforms logistics data into strategic competitive advantage through AI-powered automation and predictive analytics",
+    "domain": "fleetflowapp.com",
+    "foundingCredentials": {
+      "fmsca": "MC-1647572",
+      "npi": "1538939111"
+    }
+  },
+  "financials": {
+    "currentARR": "31000000",
+    "currentMRR": "2600000",
+    "growthRate": "135",
+    "grossMargins": "81",
+    "customerCount": "2500",
+    "valuationScenarios": {
+      "conservative": "75000000000",
+      "realistic": "100000000000",
+      "aggressive": "125000000000"
+    },
+    "unitEconomics": {
+      "ltvCacRatio": "72",
+      "paybackPeriod": "3",
+      "retentionRate": "125"
+    }
+  },
+  "aiCapabilities": {
+    "automationRate": "94",
+    "aiStaffCount": 18,
+    "aiStaff": {
+      "businessDevelopment": [
+        {
+          "name": "Desiree",
+          "role": "Desperate Prospects Specialist",
+          "expertise": ["Resistance Removal Sales System", "Psychology-based prospect engagement"],
+          "successRate": "75%"
+        },
+        {
+          "name": "Marcus",
+          "role": "Strategic Partnerships Director",
+          "expertise": ["Government contracting", "RFx intelligence"]
+        },
+        {
+          "name": "Victoria",
+          "role": "Healthcare NEMT Coordinator",
+          "expertise": ["Medicaid transportation", "Healthcare compliance"]
+        }
+      ],
+      "operations": [
+        {
+          "name": "Brook",
+          "role": "Ride Booking Specialist",
+          "expertise": ["NEMT transportation booking"],
+          "speed": "25 seconds"
+        },
+        {
+          "name": "Kameelah",
+          "role": "Healthcare Eligibility Specialist",
+          "expertise": ["Medicaid verification"],
+          "speed": "30 seconds"
+        },
+        {
+          "name": "Regina",
+          "role": "NEMT Coordination Manager",
+          "expertise": ["Multi-party coordination", "Route optimization"]
+        },
+        {
+          "name": "Will",
+          "role": "Claims Processing Specialist",
+          "expertise": ["EDI 837P claim generation"],
+          "accuracy": "99%"
+        }
+      ],
+      "marketingSales": [
+        {
+          "name": "Alex",
+          "role": "Content Marketing Director",
+          "expertise": ["Video content production"],
+          "achievements": ["23 videos", "67K views"]
+        },
+        {
+          "name": "Jordan",
+          "role": "Brand Strategy Manager",
+          "expertise": ["Go With the Flow messaging"],
+          "consistency": "92%"
+        },
+        {
+          "name": "Taylor",
+          "role": "Performance Analytics Manager",
+          "expertise": ["Q1 shipper acquisition analysis"],
+          "growth": "+34.5%"
+        }
+      ],
+      "technicalCompliance": [
+        {
+          "name": "Riley",
+          "role": "AI Learning Integration Specialist",
+          "expertise": ["Embedded learning systems", "Continuous improvement"]
+        },
+        {
+          "name": "Morgan",
+          "role": "Compliance Automation Manager",
+          "expertise": ["DOT/FMCSA compliance", "Automated documentation"]
+        },
+        {
+          "name": "Casey",
+          "role": "Data Intelligence Director",
+          "expertise": ["Predictive analytics", "Strategic decision support"]
+        }
+      ],
+      "customerSuccess": [
+        {
+          "name": "Avery",
+          "role": "Customer Onboarding Specialist",
+          "expertise": ["New customer setup automation"]
+        },
+        {
+          "name": "Quinn",
+          "role": "Account Management Director",
+          "expertise": ["Customer retention", "Expansion opportunities"]
+        }
+      ],
+      "executiveSupport": [
+        {
+          "name": "Skyler",
+          "role": "Executive Operations Manager",
+          "expertise": ["Strategic planning", "Performance monitoring"]
+        },
+        {
+          "name": "Reese",
+          "role": "Financial Intelligence Director",
+          "expertise": ["Revenue optimization", "Financial forecasting"]
+        },
+        {
+          "name": "Dakota",
+          "role": "Innovation Lab Director",
+          "expertise": ["Emerging technology evaluation", "Product development"]
+        }
+      ]
+    }
+  },
+  "businessModel": {
+    "primarySegments": [
+      "Freight Brokerage",
+      "Transportation Management",
+      "Business Intelligence",
+      "Healthcare Logistics"
+    ],
+    "revenueStreams": [
+      "Platform Subscriptions",
+      "Transaction Fees",
+      "AI Services",
+      "Healthcare NEMT",
+      "Government Contracting"
+    ],
+    "pricingTiers": {
+      "marketplace": {
+        "freeFlow": { "price": "0", "loads": "5", "target": "Individual drivers" },
+        "proFlow": { "price": "249", "loads": "25", "target": "Small carriers" },
+        "flowOnTheGo": { "price": "699", "loads": "100", "target": "Large carriers" }
+      },
+      "platform": {
+        "university": { "price": "49", "features": "Training & Certification" },
+        "dispatcher": { "price": "79", "features": "Basic dispatch with BI" },
+        "rfx": { "price": "119", "features": "Government contracting" },
+        "brokerElite": { "price": "149", "features": "Advanced brokerage" },
+        "aiFlow": { "price": "199", "features": "AI-powered operations" },
+        "professional": { "price": "289", "features": "Full brokerage platform" },
+        "freightForwarder": { "price": "799", "features": "Ocean/air freight" },
+        "enterprise": { "price": "2698", "features": "Complete BI platform" }
+      },
+      "addOns": {
+        "aiFlowStarter": { "price": "59", "features": "Basic AI automation" },
+        "aiFlowProfessional": { "price": "129", "features": "Advanced workflows" },
+        "aiFlowEnterprise": { "price": "249", "features": "Unlimited automation" },
+        "aiFlowUsage": { "price": "0.10", "unit": "per 1,000 AI operations" }
+      },
+      "premium": {
+        "aiCompanyDashboard": { "price": "4999", "features": "18 AI staff members" },
+        "enterpriseCustom": { "price": "7999", "features": "Everything included" }
+      }
+    }
+  },
+  "healthcareDivision": {
+    "name": "NEMT Healthcare Division",
+    "marketSize": "5200000000",
+    "beneficiaries": "71000000",
+    "requiringTransport": "17750000",
+    "activeStates": ["Michigan", "Maryland"],
+    "targetStates": "10-15",
+    "margins": "70-85",
+    "aiStaff": ["Brook", "Kameelah", "Regina", "Will"],
+    "advantages": [
+      "94% AI Automation",
+      "Zero Development Cost",
+      "Platform Validation",
+      "Healthcare Premium",
+      "Infinite Scalability"
+    ]
+  },
+  "governmentContracting": {
+    "marketSize": "650000000000",
+    "transportationSegment": "45000000000",
+    "strategy": "Power is in connecting before the bid drops",
+    "features": [
+      "Relationship Mapping",
+      "RFx Prediction",
+      "Strategic Positioning",
+      "Bid Optimization",
+      "Compliance Automation"
+    ]
+  },
+  "competitiveAdvantages": [
+    {
+      "id": 1,
+      "title": "Technology Leadership",
+      "description": "24-month lead, 94% automation vs industry <5%"
+    },
+    {
+      "id": 2,
+      "title": "Unique Market Position",
+      "description": "Business Intelligence platform, multi-vertical capability"
+    },
+    {
+      "id": 3,
+      "title": "Economic Moat",
+      "description": "Zero marginal cost scaling, 72:1 LTV:CAC"
+    },
+    {
+      "id": 4,
+      "title": "Healthcare Premium",
+      "description": "NEMT Division adds $10-15B to valuation"
+    },
+    {
+      "id": 5,
+      "title": "Data Network Effects",
+      "description": "Anonymous intelligence sharing, compounding advantage"
+    },
+    {
+      "id": 6,
+      "title": "Government Relationships",
+      "description": "Years to build RFx system and partnerships"
+    },
+    {
+      "id": 7,
+      "title": "Platform Strategy",
+      "description": "Ecosystem lock-in through add-ons and integrations"
+    },
+    {
+      "id": 8,
+      "title": "Embedded Learning",
+      "description": "Revolutionary AI learning methodology"
+    },
+    {
+      "id": 9,
+      "title": "First-Mover Advantage",
+      "description": "2,500+ customers, market education"
+    },
+    {
+      "id": 10,
+      "title": "Financial Strength",
+      "description": "$31M ARR achieved, 135% growth"
+    }
+  ],
+  "technicalStack": {
+    "frontend": "Next.js 15.3.3, React 18.3.1, TypeScript 5.8.3",
+    "backend": "Node.js 18+, PostgreSQL, Supabase",
+    "ai": "OpenAI GPT-4, Anthropic Claude, custom ML models",
+    "infrastructure": "DigitalOcean App Platform",
+    "payments": "Square, Stripe",
+    "communications": "Twilio SMS/Voice",
+    "mapping": "Google Maps API",
+    "analytics": "Chart.js, D3.js"
+  },
+  "marketPositioning": {
+    "tam": "3255000000000",
+    "targetCustomers": {
+      "companySize": "10-500 trucks",
+      "revenue": "5000000-50000000",
+      "technologyMaturity": "Outgrowing basic systems"
+    },
+    "geographicFocus": {
+      "primary": "United States (all 50 states)",
+      "nemt": "Michigan, Maryland (expanding to 10-15 states)",
+      "international": "Global shipping capabilities"
+    }
+  },
+  "growthStrategy": {
+    "phases": [
+      {
+        "name": "Market Validation",
+        "timeline": "Months 1-6",
+        "goals": { "customers": "100", "arr": "1000000" },
+        "focus": "Platform stabilization"
+      },
+      {
+        "name": "Market Expansion",
+        "timeline": "Months 7-18",
+        "goals": { "customers": "500", "arr": "5000000" },
+        "focus": "Healthcare division"
+      },
+      {
+        "name": "Market Leadership",
+        "timeline": "Months 19-36",
+        "goals": { "customers": "1500", "arr": "20000000" },
+        "focus": "Strategic acquisitions"
+      }
+    ],
+    "exitStrategy": {
+      "targets": ["Microsoft", "Salesforce", "Google"],
+      "timeline": "12-18 months from $100M ARR",
+      "valuation": "75000000000-125000000000"
+    }
+  },
+  "riskAssessment": {
+    "marketRisks": { "level": "LOW", "mitigation": "Unique positioning, proven demand" },
+    "technologyRisks": { "level": "VERY LOW", "mitigation": "100% complete platform" },
+    "executionRisks": { "level": "LOW", "mitigation": "94% AI automation" },
+    "financialRisks": { "level": "VERY LOW", "mitigation": "72:1 LTV:CAC ratio" },
+    "exitRisks": { "level": "VERY LOW", "mitigation": "Multiple strategic acquirers" }
+  },
+  "kpis": {
+    "financial": {
+      "mrr": { "current": "2600000", "target": "20000000" },
+      "arr": { "current": "31000000", "target": "719000000" },
+      "ltvCac": "72",
+      "margins": "81",
+      "retention": "125"
+    },
+    "operational": {
+      "automationRate": "94",
+      "customerSatisfaction": "95",
+      "uptime": "99.9"
+    },
+    "growth": {
+      "activeUsers": { "current": "2500", "target": "10000" },
+      "marketShare": "15"
+    }
+  },
+  "operations": {
+    "daily": {
+      "leadProcessing": "Desiree",
+      "bookingCoordination": "Brook",
+      "complianceMonitoring": "Morgan",
+      "customerCommunications": "Multiple AI staff"
+    },
+    "weekly": {
+      "strategyReview": "Casey",
+      "customerSuccess": "Quinn",
+      "contentCreation": "Alex"
+    },
+    "monthly": {
+      "businessDevelopment": "Marcus",
+      "healthcareExpansion": "Victoria",
+      "innovationReview": "Dakota"
+    }
+  },
+  "accessCredentials": {
+    "production": {
+      "website": "https://fleetflowapp.com",
+      "dashboard": "https://fleetflowapp.com/depointe-dashboard",
+      "auth": "https://fleetflowapp.com/auth/signin",
+      "email": "info@deedavis.biz",
+      "password": "depointe2024!"
+    },
+    "support": {
+      "hosting": "DigitalOcean App Platform",
+      "database": "Supabase",
+      "domain": "fleetflowapp.com"
+    }
+  }
+}

@@ -230,6 +230,108 @@ curl http://localhost:3000/api/billing/test
 
 ---
 
+## 📱 **SOCIAL MEDIA API SETUP:**
+
+### **YouTube (Google OAuth)**
+
+```
+✅ Status: PRODUCTION CONFIGURED
+🎯 Credentials: PRIMARY + BACKUP configured
+🌐 Setup: Google Cloud Console (https://console.cloud.google.com)
+💰 Cost: Free tier (10,000 quota units/day)
+🎯 Purpose: Video uploads, analytics, channel management
+📋 Integration: Strategic Sales Campaigns, Content Marketing
+
+Primary Credentials:
+- Client ID: your-youtube-client-id
+- Client Secret: your-youtube-client-secret
+- Redirect URI: https://fleetflowapp.com/api/auth/youtube/callback
+
+Backup Credentials (Failover):
+- Client ID: your-youtube-backup-client-id
+- Client Secret: your-youtube-backup-client-secret
+- Redirect URI: https://fleetflowapp.com/api/auth/youtube/callback/backup
+```
+
+### **LinkedIn**
+
+```
+✅ Status: PRODUCTION CONFIGURED
+🎯 Credentials: COMPLETE (Lead Sync + Social Media)
+🌐 Setup: LinkedIn Developers (https://www.linkedin.com/developers/)
+💰 Cost: Free
+🎯 Purpose: B2B networking, professional content, company pages
+📋 Integration: Strategic Sales Campaigns, Lead Generation, Lead Sync
+
+Credentials:
+- Client ID: 86p6kq8n0j9ydq
+- Client Secret: your-linkedin-client-secret
+- Redirect URI: https://fleetflowapp.com/api/auth/linkedin/callback
+```
+
+### **Facebook/Instagram/Threads (Meta Graph API)**
+
+```
+✅ Status: PRODUCTION CONFIGURED
+🎯 Credentials: COMPLETE (Facebook + Instagram + Threads)
+🌐 Setup: Meta for Developers (https://developers.facebook.com)
+💰 Cost: Free
+🎯 Purpose: Facebook posts, Instagram content (@fleetflow_official), Threads engagement
+📋 Integration: Strategic Sales Campaigns, Social Media Marketing
+
+Facebook/Instagram Credentials:
+- App ID: 1248526630620464
+- App Secret: 252adb13cdaea9a8ed0b6613a65e3c0c
+- Redirect URI: https://fleetflowapp.com/api/auth/facebook/callback
+- Facebook Page ID: 829755813550482 (FleetFlow - Software Company)
+- Instagram Account ID: 1141502797929986 (@fleetflow_official)
+
+Threads Credentials:
+- App ID: 1899999933902995
+- App Secret: 880b2f188333377527204c9735127668
+- Note: Threads uses Instagram connection for posting
+```
+
+### **Twitter/X**
+
+```
+⚠️ Status: RESTRICTED (App Violation)
+🎯 Required: TWITTER_API_KEY, TWITTER_API_SECRET, TWITTER_BEARER_TOKEN
+🌐 Setup: Twitter Developer Portal (https://developer.twitter.com)
+💰 Cost: Free tier (1,500 tweets/month), Basic ($100/month), Pro ($5,000/month)
+🎯 Purpose: Real-time updates, engagement, trending topics
+📋 Integration: Strategic Sales Campaigns, Real-time Marketing
+
+Current Status:
+- FleetFlow app is currently restricted for app violation
+- Options:
+  1. Appeal the restriction through Twitter Developer Portal
+  2. Create new developer account with established Twitter account
+  3. Skip Twitter/X and focus on higher-value B2B platforms (LinkedIn, YouTube)
+- Recommendation: Skip Twitter for now due to cost ($100+/month) and restrictions
+```
+
+### **TikTok**
+
+```
+🔄 Status: NEED SETUP
+🎯 Required: TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET
+🌐 Setup: TikTok for Developers (https://developers.tiktok.com)
+💰 Cost: Free
+🎯 Purpose: Short-form video content, viral marketing
+📋 Integration: Video Marketing, Brand Awareness
+
+Setup Steps:
+1. Go to TikTok for Developers
+2. Register developer account
+3. Create new app
+4. Request permissions: user.info.basic, video.upload, video.list
+5. Configure redirect URIs
+6. Copy Client Key and Client Secret
+```
+
+---
+
 ## 📊 **DEPLOYMENT READINESS CHECKLIST:**
 
 ```
@@ -241,6 +343,15 @@ curl http://localhost:3000/api/billing/test
 ✅ BUSINESS APIS (Important):
 ☐ Square Payments (ACCESS_TOKEN) - Payment processing
 ☐ SAM.gov API (SAMGOV_API_KEY) - Government contracts
+
+✅ SOCIAL MEDIA APIS (Marketing & Campaigns):
+☑️ YouTube (YOUTUBE_CLIENT_ID/SECRET) - Video marketing (PRIMARY + BACKUP)
+☑️ LinkedIn (LINKEDIN_CLIENT_ID/SECRET) - B2B networking
+☑️ Facebook/Instagram (FACEBOOK_APP_ID/SECRET) - Social campaigns
+☑️ Instagram (@fleetflow_official) - Visual content
+☑️ Threads (THREADS_APP_ID/SECRET) - Text-based engagement
+⚠️ Twitter/X (RESTRICTED) - Skip for now
+☐ TikTok (TIKTOK_CLIENT_KEY/SECRET) - Optional (can add later)
 
 ✅ ALREADY CONFIGURED (Production Active):
 ☑️ FMCSA SAFER API - Carrier verification
@@ -276,4 +387,3 @@ curl http://localhost:3000/api/billing/test
 - Alternative API sources when possible
 
 **Next Step**: Continue with Platform AI System deployment and testing!
-
