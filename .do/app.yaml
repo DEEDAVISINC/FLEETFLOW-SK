@@ -22,3 +22,46 @@ services:
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
         scope: BUILD_TIME
+      - key: NEXTAUTH_URL
+        value: https://fleetflowapp.com
+        scope: RUN_AND_BUILD_TIME
+      - key: NEXTAUTH_SECRET
+        value: kPW2rGwLljJyGd2RK72wJvUPqK9BpiAcubHlMwjAKCY=
+        scope: RUN_AND_BUILD_TIME
+      - key: SQUARE_APPLICATION_ID
+        value: sq0idp-5GklzNdvq_BqP1gSCYAudA
+        scope: RUN_TIME
+      - key: SQUARE_ACCESS_TOKEN
+        value: EAAAlwP5R9qoFiXV1dNd-4oNmMLVEb5Zw0-OPFd0fvMdAzOVbDL3LSe1aQq2Rmqb
+        scope: RUN_AND_BUILD_TIME
+      - key: SQUARE_ENVIRONMENT
+        value: sandbox
+        scope: RUN_AND_BUILD_TIME
+      - key: SQUARE_LOCATION_ID
+        value: MAIN
+        scope: RUN_AND_BUILD_TIME
+      - key: NEXT_PUBLIC_SQUARE_APPLICATION_ID
+        value: sq0idp-5GklzNdvq_BqP1gSCYAudA
+        scope: RUN_AND_BUILD_TIME
+      - key: TWILIO_ACCOUNT_SID
+        value: AC2e547d7c5d39dc8735c7bdb5546ded25
+        scope: RUN_AND_BUILD_TIME
+      - key: TWILIO_AUTH_TOKEN
+        value: 4cda06498e86cc8f150d81e4e48b2aed
+        scope: RUN_AND_BUILD_TIME
+      - key: TWILIO_PHONE_NUMBER
+        value: "+18333863509"
+        scope: RUN_AND_BUILD_TIME
+      - key: FMCSA_API_KEY
+        value: 7de24c4a0eade12f34685829289e0446daf7880e
+        scope: RUN_AND_BUILD_TIME
+ingress:
+  rules:
+    - match:
+        path:
+          prefix: /
+      component:
+        name: fleetflow-sk
+domains:
+  - domain: www.fleetflowapp.com
+    type: PRIMARY
