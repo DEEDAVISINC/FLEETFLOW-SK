@@ -1,9 +1,9 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import NotificationBell from './NotificationBell';
 import SearchBar from './SearchBar';
