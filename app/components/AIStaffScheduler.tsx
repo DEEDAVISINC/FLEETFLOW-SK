@@ -2,7 +2,7 @@
 
 import { Activity, TrendingUp, Zap } from 'lucide-react';
 import React, { useState } from 'react';
-import { depointeStaffRoster, DEPOINTEStaffMember } from './DEPOINTEStaffRoster';
+import { depointeStaffRoster } from './DEPOINTEStaffRoster';
 
 interface AIStaffMember {
   id: string;
@@ -76,13 +76,13 @@ export default function AIStaffScheduler(): JSX.Element {
   const allStaff: AIStaffMember[] = depointeStaffRoster.map((staff) => {
     // Map department to scheduler department types
     const departmentMap: Record<string, AIStaffMember['department']> = {
-      'Accounting': 'analytics',
+      Accounting: 'analytics',
       'IT Support': 'support',
-      'Logistics': 'operations',
-      'Dispatch': 'operations',
+      Logistics: 'operations',
+      Dispatch: 'operations',
       'Freight Brokerage': 'operations',
-      'Sales': 'sales',
-      'Recruiting': 'sales',
+      Sales: 'sales',
+      Recruiting: 'sales',
       'Brokerage Operations': 'operations',
       'Carrier Relations': 'operations',
       'Safety & Compliance': 'operations',
@@ -521,137 +521,56 @@ export default function AIStaffScheduler(): JSX.Element {
             'Select a staff member to configure their schedule'
           ),
 
-          // Staff Selection Cards
+          // Staff Selection Dropdown
           React.createElement(
             'div',
             {
               style: {
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '16px',
                 marginBottom: '24px',
               },
             },
-            allStaff.map((staff) =>
-              React.createElement(
-                'div',
-                {
-                  key: staff.id,
-                  onClick: () => setSelectedStaff(staff.id),
-                  style: {
-                    background:
-                      selectedStaff === staff.id
-                        ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3))'
-                        : 'rgba(0, 0, 0, 0.3)',
-                    border:
-                      selectedStaff === staff.id
-                        ? '2px solid #8b5cf6'
-                        : '1px solid rgba(148, 163, 184, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                  },
-                  onMouseEnter: (e: any) => {
-                    if (selectedStaff !== staff.id) {
-                      e.currentTarget.style.background =
-                        'rgba(139, 92, 246, 0.1)';
-                      e.currentTarget.style.borderColor = '#8b5cf6';
-                    }
-                  },
-                  onMouseLeave: (e: any) => {
-                    if (selectedStaff !== staff.id) {
-                      e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                      e.currentTarget.style.borderColor =
-                        'rgba(148, 163, 184, 0.2)';
-                    }
-                  },
+            React.createElement(
+              'label',
+              {
+                style: {
+                  display: 'block',
+                  color: 'white',
+                  marginBottom: '12px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
                 },
+              },
+              '👥 Select AI Staff Member'
+            ),
+            React.createElement(
+              'select',
+              {
+                value: selectedStaff || '',
+                onChange: (e: any) => setSelectedStaff(e.target.value || null),
+                style: {
+                  width: '100%',
+                  padding: '14px',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '2px solid rgba(139, 92, 246, 0.5)',
+                  borderRadius: '12px',
+                  color: 'white',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                },
+              },
+              React.createElement(
+                'option',
+                { value: '', disabled: true },
+                '-- Select a staff member --'
+              ),
+              allStaff.map((staff) =>
                 React.createElement(
-                  'div',
-                  {
-                    style: {
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginBottom: '12px',
-                    },
-                  },
-                  React.createElement(
-                    'div',
-                    {
-                      style: {
-                        fontSize: '2rem',
-                      },
-                    },
-                    staff.avatar
-                  ),
-                  React.createElement(
-                    'div',
-                    { style: { flex: 1 } },
-                    React.createElement(
-                      'h4',
-                      {
-                        style: {
-                          color: 'white',
-                          margin: 0,
-                          fontSize: '1.1rem',
-                          fontWeight: '700',
-                        },
-                      },
-                      staff.name
-                    ),
-                    React.createElement(
-                      'p',
-                      {
-                        style: {
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          margin: 0,
-                          fontSize: '0.85rem',
-                        },
-                      },
-                      staff.role
-                    )
-                  ),
-                  React.createElement('div', {
-                    style: {
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      background:
-                        staff.status === 'active' ? '#22c55e' : '#6b7280',
-                    },
-                  })
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '0.85rem',
-                    },
-                  },
-                  `🕐 ${staff.schedule.workHours}`,
-                  React.createElement('br'),
-                  `📊 ${staff.efficiency}% efficiency`
-                ),
-                selectedStaff === staff.id &&
-                  React.createElement(
-                    'div',
-                    {
-                      style: {
-                        marginTop: '12px',
-                        padding: '8px',
-                        background: 'rgba(139, 92, 246, 0.2)',
-                        borderRadius: '6px',
-                        color: '#8b5cf6',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                        textAlign: 'center',
-                      },
-                    },
-                    '✓ SELECTED'
-                  )
+                  'option',
+                  { key: staff.id, value: staff.id },
+                  `${staff.avatar} ${staff.name} - ${staff.role}`
+                )
               )
             )
           ),
@@ -1219,124 +1138,56 @@ export default function AIStaffScheduler(): JSX.Element {
             'Select a staff member, then assign tasks to them'
           ),
 
-          // Staff Selection for Task Assignment
+          // Staff Selection Dropdown for Task Assignment
           React.createElement(
             'div',
             {
               style: {
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '16px',
                 marginBottom: '24px',
               },
             },
-            allStaff.map((staff) =>
-              React.createElement(
-                'div',
-                {
-                  key: staff.id,
-                  onClick: () => setSelectedStaff(staff.id),
-                  style: {
-                    background:
-                      selectedStaff === staff.id
-                        ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.3))'
-                        : 'rgba(0, 0, 0, 0.3)',
-                    border:
-                      selectedStaff === staff.id
-                        ? '2px solid #22c55e'
-                        : '1px solid rgba(148, 163, 184, 0.2)',
-                    borderRadius: '12px',
-                    padding: '16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                  },
-                  onMouseEnter: (e: any) => {
-                    if (selectedStaff !== staff.id) {
-                      e.currentTarget.style.background =
-                        'rgba(34, 197, 94, 0.1)';
-                      e.currentTarget.style.borderColor = '#22c55e';
-                    }
-                  },
-                  onMouseLeave: (e: any) => {
-                    if (selectedStaff !== staff.id) {
-                      e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                      e.currentTarget.style.borderColor =
-                        'rgba(148, 163, 184, 0.2)';
-                    }
-                  },
+            React.createElement(
+              'label',
+              {
+                style: {
+                  display: 'block',
+                  color: 'white',
+                  marginBottom: '12px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
                 },
+              },
+              '👥 Select AI Staff Member'
+            ),
+            React.createElement(
+              'select',
+              {
+                value: selectedStaff || '',
+                onChange: (e: any) => setSelectedStaff(e.target.value || null),
+                style: {
+                  width: '100%',
+                  padding: '14px',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '2px solid rgba(34, 197, 94, 0.5)',
+                  borderRadius: '12px',
+                  color: 'white',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                },
+              },
+              React.createElement(
+                'option',
+                { value: '', disabled: true },
+                '-- Select a staff member --'
+              ),
+              allStaff.map((staff) =>
                 React.createElement(
-                  'div',
-                  {
-                    style: {
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      marginBottom: '12px',
-                    },
-                  },
-                  React.createElement(
-                    'div',
-                    { style: { fontSize: '2rem' } },
-                    staff.avatar
-                  ),
-                  React.createElement(
-                    'div',
-                    { style: { flex: 1 } },
-                    React.createElement(
-                      'h4',
-                      {
-                        style: {
-                          color: 'white',
-                          margin: 0,
-                          fontSize: '1.1rem',
-                          fontWeight: '700',
-                        },
-                      },
-                      staff.name
-                    ),
-                    React.createElement(
-                      'p',
-                      {
-                        style: {
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          margin: 0,
-                          fontSize: '0.85rem',
-                        },
-                      },
-                      staff.role
-                    )
-                  )
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: '0.85rem',
-                    },
-                  },
-                  `📋 ${staffTasks[staff.id]?.length || 0} tasks assigned`,
-                  React.createElement('br'),
-                  `✓ ${staff.tasksCompleted} completed`
-                ),
-                selectedStaff === staff.id &&
-                  React.createElement(
-                    'div',
-                    {
-                      style: {
-                        marginTop: '12px',
-                        padding: '8px',
-                        background: 'rgba(34, 197, 94, 0.2)',
-                        borderRadius: '6px',
-                        color: '#22c55e',
-                        fontSize: '0.8rem',
-                        fontWeight: '600',
-                        textAlign: 'center',
-                      },
-                    },
-                    '✓ SELECTED'
-                  )
+                  'option',
+                  { key: staff.id, value: staff.id },
+                  `${staff.avatar} ${staff.name} - ${staff.role} (${staffTasks[staff.id]?.length || 0} tasks)`
+                )
               )
             )
           ),
