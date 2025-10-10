@@ -1258,6 +1258,59 @@ export default function AIStaffScheduler(): JSX.Element {
                         fontSize: '0.9rem',
                       },
                     },
+                    // Executive Assistant Tasks (for Alexis)
+                    React.createElement(
+                      'option',
+                      { value: 'calendar_management' },
+                      '📅 Calendar & Scheduling Management'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'email_management' },
+                      '📧 Email & Communication Management'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'meeting_preparation' },
+                      '📋 Meeting Preparation & Support'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'business_intelligence' },
+                      '📊 Business Intelligence & Reporting'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'travel_arrangements' },
+                      '✈️ Travel Arrangements'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'document_preparation' },
+                      '📄 Document Preparation'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'executive_communication' },
+                      '💼 Executive Communication'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'financial_management' },
+                      '💰 Financial Management Support'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'task_prioritization' },
+                      '⚡ Task Prioritization & Planning'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'strategic_planning' },
+                      '🎯 Strategic Planning Support'
+                    ),
+                    
+                    // General Business Tasks
                     React.createElement(
                       'option',
                       { value: 'lead_generation' },
@@ -1266,7 +1319,7 @@ export default function AIStaffScheduler(): JSX.Element {
                     React.createElement(
                       'option',
                       { value: 'email_campaign' },
-                      '📧 Email Campaign'
+                      '📨 Email Campaign'
                     ),
                     React.createElement(
                       'option',
@@ -1286,7 +1339,7 @@ export default function AIStaffScheduler(): JSX.Element {
                     React.createElement(
                       'option',
                       { value: 'analytics' },
-                      '📊 Analytics Report'
+                      '📈 Analytics Report'
                     ),
                     React.createElement(
                       'option',
@@ -1297,6 +1350,21 @@ export default function AIStaffScheduler(): JSX.Element {
                       'option',
                       { value: 'recruiting' },
                       '👥 Recruiting'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'dispatch_coordination' },
+                      '🚛 Dispatch Coordination'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'carrier_relations' },
+                      '🤝 Carrier Relations'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'compliance_safety' },
+                      '⚖️ Compliance & Safety'
                     )
                   )
                 ),
@@ -1321,7 +1389,7 @@ export default function AIStaffScheduler(): JSX.Element {
                   React.createElement('input', {
                     type: 'text',
                     id: 'taskName',
-                    placeholder: 'e.g., Healthcare leads - urgent prospects',
+                    placeholder: 'e.g., Schedule investor meetings, Prepare weekly reports, Manage travel to conference',
                     style: {
                       width: '100%',
                       padding: '10px',
