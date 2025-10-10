@@ -3,15 +3,19 @@ import { NextResponse } from 'next/server';
 
 // Initialize Supabase client
 function getSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nleqplwwothhxgrovnjw.supabase.co';
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZXFwbHd3b3RoaHhncm92bmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNzczODcsImV4cCI6MjA2Nzk1MzM4N30.SewQx-DIRXaKLtPHbxnmRWvdx96_VtMu5sjoKpaBWjg';
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    'https://nleqplwwothhxgrovnjw.supabase.co';
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5sZXFwbHd3b3RoaHhncm92bmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzNzczODcsImV4cCI6MjA2Nzk1MzM4N30.SewQx-DIRXaKLtPHbxnmRWvdx96_VtMu5sjoKpaBWjg';
   return createClient(supabaseUrl, supabaseKey);
 }
 
 export async function GET() {
   try {
     const supabase = getSupabaseClient();
-    
+
     // Fetch campaigns from database
     const { data: campaigns, error } = await supabase
       .from('marketing_campaigns')
@@ -40,12 +44,13 @@ export async function GET() {
           totalTraffic: 0,
           totalConversions: 0,
         },
-        message: 'Run scripts/campaigns-table.sql in Supabase to enable campaigns',
+        message:
+          'Run scripts/campaigns-table.sql in Supabase to enable campaigns',
       });
     }
 
     // Transform database format to API format
-    const formattedCampaigns = (campaigns || []).map(c => ({
+    const formattedCampaigns = (campaigns || []).map((c) => ({
       id: c.campaign_id,
       name: c.name,
       type: c.type,
@@ -73,7 +78,8 @@ export async function GET() {
       seoMetrics,
       summary: {
         totalCampaigns: formattedCampaigns.length,
-        activeCampaigns: formattedCampaigns.filter((c) => c.status === 'active').length,
+        activeCampaigns: formattedCampaigns.filter((c) => c.status === 'active')
+          .length,
         totalBudget: formattedCampaigns.reduce((sum, c) => {
           const budget = parseFloat(c.budget.replace(/[$,]/g, ''));
           return sum + budget;
@@ -82,17 +88,20 @@ export async function GET() {
           const spent = parseFloat(c.spent.replace(/[$,]/g, ''));
           return sum + spent;
         }, 0),
-        averageROI: formattedCampaigns.length > 0
-          ? formattedCampaigns.reduce((sum, c) => {
-              const roi = parseFloat(c.roi.replace('%', ''));
-              return sum + roi;
-            }, 0) / formattedCampaigns.length
-          : 0,
+        averageROI:
+          formattedCampaigns.length > 0
+            ? formattedCampaigns.reduce((sum, c) => {
+                const roi = parseFloat(c.roi.replace('%', ''));
+                return sum + roi;
+              }, 0) / formattedCampaigns.length
+            : 0,
         totalFollowers: socialMetrics.reduce((sum, m) => sum + m.followers, 0),
         totalContent: content.length,
-        publishedContent: content.filter((c) => c.status === 'published').length,
+        publishedContent: content.filter((c) => c.status === 'published')
+          .length,
         averagePosition:
-          seoMetrics.reduce((sum, m) => sum + m.position, 0) / seoMetrics.length,
+          seoMetrics.reduce((sum, m) => sum + m.position, 0) /
+          seoMetrics.length,
         totalTraffic: seoMetrics.reduce((sum, m) => sum + m.traffic, 0),
         totalConversions: seoMetrics.reduce((sum, m) => sum + m.conversions, 0),
       },
@@ -122,29 +131,40 @@ export async function POST(request: Request) {
         const campaignId = `campaign-${Date.now()}`;
         const { data: newCampaign, error: insertError } = await supabase
           .from('marketing_campaigns')
-          .insert([{
-            campaign_id: campaignId,
-            name: data.name || 'Untitled Campaign',
-            type: data.type || 'Brand Awareness',
-            status: data.status || 'draft',
-            budget: parseFloat(data.budget) || 0,
-            spent: 0,
-            reach: 0,
-            engagement: '0%',
-            conversions: 0,
-            roi: '0%',
-            start_date: data.startDate || new Date().toISOString().split('T')[0],
-            end_date: data.endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            platforms: data.platforms || [],
-          }])
+          .insert([
+            {
+              campaign_id: campaignId,
+              name: data.name || 'Untitled Campaign',
+              type: data.type || 'Brand Awareness',
+              status: data.status || 'draft',
+              budget: parseFloat(data.budget) || 0,
+              spent: 0,
+              reach: 0,
+              engagement: '0%',
+              conversions: 0,
+              roi: '0%',
+              start_date:
+                data.startDate || new Date().toISOString().split('T')[0],
+              end_date:
+                data.endDate ||
+                new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                  .toISOString()
+                  .split('T')[0],
+              platforms: data.platforms || [],
+            },
+          ])
           .select();
 
         if (insertError) {
           console.error('Error creating campaign:', insertError);
-          return NextResponse.json({
-            success: false,
-            error: 'Failed to create campaign. Make sure to run scripts/campaigns-table.sql',
-          }, { status: 500 });
+          return NextResponse.json(
+            {
+              success: false,
+              error:
+                'Failed to create campaign. Make sure to run scripts/campaigns-table.sql',
+            },
+            { status: 500 }
+          );
         }
 
         return NextResponse.json({
@@ -178,10 +198,13 @@ export async function POST(request: Request) {
 
         if (updateError) {
           console.error('Error updating campaign:', updateError);
-          return NextResponse.json({
-            success: false,
-            error: 'Failed to update campaign',
-          }, { status: 500 });
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Failed to update campaign',
+            },
+            { status: 500 }
+          );
         }
 
         return NextResponse.json({
