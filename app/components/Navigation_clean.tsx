@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { checkPermission, getCurrentUser } from '../config/access';
 import NotificationBell from './NotificationBell';
 import SearchBar from './SearchBar';
 
 const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isFleetDropdownOpen, setIsFleetDropdownOpen] = useState(false);
   const [isManagementDropdownOpen, setIsManagementDropdownOpen] =
@@ -20,6 +22,11 @@ const Navigation = ({ showLogo = true }: { showLogo?: boolean }) => {
   const hiddenPaths = ['/drivers/dashboard', '/dispatch', '/driver-portal'];
 
   if (pathname && hiddenPaths.includes(pathname)) {
+    return null;
+  }
+
+  // Don't show navigation if not authenticated
+  if (!session) {
     return null;
   }
 

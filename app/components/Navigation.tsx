@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../config/access';
 import { DEPOINTEUserService } from '../services/DEPOINTEUserService';
@@ -11,6 +12,7 @@ import Logo from './Logo';
 
 // Professional Navigation Component with Nested Dropdowns
 export default function ProfessionalNavigation() {
+  const { data: session, status } = useSession();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(
     null
@@ -22,6 +24,11 @@ export default function ProfessionalNavigation() {
   const [permissions, setPermissions] = useState<any>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Don't show navigation if not authenticated
+  if (!session) {
+    return null;
+  }
 
   // Ensure hydration consistency and get user data after hydration
   useEffect(() => {
