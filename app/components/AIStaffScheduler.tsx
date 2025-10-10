@@ -2,6 +2,7 @@
 
 import { Activity, TrendingUp, Zap } from 'lucide-react';
 import React, { useState } from 'react';
+import { depointeStaffRoster, DEPOINTEStaffMember } from './DEPOINTEStaffRoster';
 
 interface AIStaffMember {
   id: string;
@@ -71,14 +72,36 @@ export default function AIStaffScheduler(): JSX.Element {
   const [staffSchedules, setStaffSchedules] = useState<Record<string, any>>({});
   const [staffTasks, setStaffTasks] = useState<Record<string, any[]>>({});
 
-  // All AI Staff Members
-  const allStaff: AIStaffMember[] = [
-    {
-      id: 'alexis-executive-023',
-      name: 'Alexis Best',
-      role: 'AI Executive Assistant',
-      department: 'executive_operations',
-      avatar: '👔',
+  // Map DEPOINTE Staff Roster to AI Staff Scheduler format (all 26 staff members)
+  const allStaff: AIStaffMember[] = depointeStaffRoster.map((staff) => {
+    // Map department to scheduler department types
+    const departmentMap: Record<string, AIStaffMember['department']> = {
+      'Accounting': 'analytics',
+      'IT Support': 'support',
+      'Logistics': 'operations',
+      'Dispatch': 'operations',
+      'Freight Brokerage': 'operations',
+      'Sales': 'sales',
+      'Recruiting': 'sales',
+      'Brokerage Operations': 'operations',
+      'Carrier Relations': 'operations',
+      'Safety & Compliance': 'operations',
+      'Customer Service': 'support',
+      'Lead Generation': 'lead_generation',
+      'Data Analytics': 'analytics',
+      'Material Procurement': 'procurement',
+      'Government Contracting': 'government_contracting',
+      'Front Office': 'front_office',
+      'Executive Operations': 'executive_operations',
+      'Executive Leadership': 'executive_leadership',
+    };
+
+    return {
+      id: staff.id,
+      name: staff.fullName,
+      role: staff.internalRole,
+      department: departmentMap[staff.department] || 'operations',
+      avatar: staff.avatar,
       status: 'active',
       currentTask: 'Ready for assignment',
       tasksCompleted: 0,
@@ -86,82 +109,28 @@ export default function AIStaffScheduler(): JSX.Element {
       efficiency: 100,
       lastActivity: 'Just now',
       schedule: {
-        shift: '24/7',
-        workHours: '24/7 Executive Support',
-        breakTime: 'None',
-        weeklyHours: 168,
+        shift: 'morning',
+        workHours: '9AM - 5PM',
+        breakTime: '12PM - 1PM',
+        weeklyHours: 40,
         overtime: 0,
       },
       performance: {
-        weeklyGoal: 50,
-        monthlyGoal: 200,
-        completionRate: 98,
-        qualityScore: 99,
-        responseTime: '<5 minutes',
+        weeklyGoal: 100,
+        monthlyGoal: 400,
+        completionRate: 95,
+        qualityScore: 92,
+        responseTime: '<15 minutes',
       },
-      specializations: ['Executive Support', 'Calendar Management', 'Email Management'],
-    },
-    {
-      id: 'desiree-001',
-      name: 'Desiree',
-      role: 'Freight Broker Specialist',
-      department: 'sales',
-      avatar: '🎯',
-      status: 'active',
-      currentTask: 'Processing leads',
-      tasksCompleted: 89,
-      revenue: 127500,
-      efficiency: 94,
-      lastActivity: '2 min ago',
-      schedule: {
-        shift: 'morning',
-        workHours: '6:00 AM - 2:00 PM',
-        breakTime: '12:00 PM - 12:30 PM',
-        weeklyHours: 40,
-        overtime: 5,
-      },
-      performance: {
-        weeklyGoal: 30,
-        monthlyGoal: 120,
-        completionRate: 92,
-        qualityScore: 95,
-        responseTime: '15 minutes',
-      },
-      specializations: ['Lead Generation', 'Desperate Prospects', 'Sales'],
-    },
-    {
-      id: 'hunter-002',
-      name: 'Hunter',
-      role: 'Recruiting Specialist',
-      department: 'operations',
-      avatar: '🎯',
-      status: 'active',
-      currentTask: 'Driver recruitment',
-      tasksCompleted: 45,
-      revenue: 85000,
-      efficiency: 88,
-      lastActivity: '5 min ago',
-      schedule: {
-        shift: 'afternoon',
-        workHours: '1:00 PM - 9:00 PM',
-        breakTime: '5:00 PM - 5:30 PM',
-        weeklyHours: 40,
-        overtime: 2,
-      },
-      performance: {
-        weeklyGoal: 25,
-        monthlyGoal: 100,
-        completionRate: 85,
-        qualityScore: 90,
-        responseTime: '20 minutes',
-      },
-      specializations: ['Recruiting', 'Onboarding', 'HR'],
-    },
-  ];
+      specializations: staff.specializations,
+    };
+  });
 
   const handleScheduleUpdate = (staffId: string, schedule: any) => {
     setStaffSchedules((prev) => ({ ...prev, [staffId]: schedule }));
-    alert(`✅ Schedule updated for ${allStaff.find((s) => s.id === staffId)?.name}`);
+    alert(
+      `✅ Schedule updated for ${allStaff.find((s) => s.id === staffId)?.name}`
+    );
   };
 
   const handleTaskAssignment = (staffId: string, task: any) => {
@@ -169,7 +138,9 @@ export default function AIStaffScheduler(): JSX.Element {
       ...prev,
       [staffId]: [...(prev[staffId] || []), task],
     }));
-    alert(`✅ Task assigned to ${allStaff.find((s) => s.id === staffId)?.name}`);
+    alert(
+      `✅ Task assigned to ${allStaff.find((s) => s.id === staffId)?.name}`
+    );
   };
 
   const selectedStaffData = selectedStaff
@@ -583,14 +554,16 @@ export default function AIStaffScheduler(): JSX.Element {
                   },
                   onMouseEnter: (e: any) => {
                     if (selectedStaff !== staff.id) {
-                      e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)';
+                      e.currentTarget.style.background =
+                        'rgba(139, 92, 246, 0.1)';
                       e.currentTarget.style.borderColor = '#8b5cf6';
                     }
                   },
                   onMouseLeave: (e: any) => {
                     if (selectedStaff !== staff.id) {
                       e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                      e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)';
+                      e.currentTarget.style.borderColor =
+                        'rgba(148, 163, 184, 0.2)';
                     }
                   },
                 },
@@ -640,17 +613,15 @@ export default function AIStaffScheduler(): JSX.Element {
                       staff.role
                     )
                   ),
-                  React.createElement(
-                    'div',
-                    {
-                      style: {
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '50%',
-                        background: staff.status === 'active' ? '#22c55e' : '#6b7280',
-                      },
-                    }
-                  )
+                  React.createElement('div', {
+                    style: {
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      background:
+                        staff.status === 'active' ? '#22c55e' : '#6b7280',
+                    },
+                  })
                 ),
                 React.createElement(
                   'div',
@@ -752,10 +723,26 @@ export default function AIStaffScheduler(): JSX.Element {
                         fontSize: '0.9rem',
                       },
                     },
-                    React.createElement('option', { value: 'morning' }, '🌅 Morning (6AM - 2PM)'),
-                    React.createElement('option', { value: 'afternoon' }, '🌇 Afternoon (2PM - 10PM)'),
-                    React.createElement('option', { value: 'evening' }, '🌙 Evening (10PM - 6AM)'),
-                    React.createElement('option', { value: '24/7' }, '⚡ 24/7 Always On')
+                    React.createElement(
+                      'option',
+                      { value: 'morning' },
+                      '🌅 Morning (6AM - 2PM)'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'afternoon' },
+                      '🌇 Afternoon (2PM - 10PM)'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'evening' },
+                      '🌙 Evening (10PM - 6AM)'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: '24/7' },
+                      '⚡ 24/7 Always On'
+                    )
                   )
                 ),
 
@@ -831,7 +818,10 @@ export default function AIStaffScheduler(): JSX.Element {
                 'button',
                 {
                   onClick: () =>
-                    handleScheduleUpdate(selectedStaffData.id, selectedStaffData.schedule),
+                    handleScheduleUpdate(
+                      selectedStaffData.id,
+                      selectedStaffData.schedule
+                    ),
                   style: {
                     width: '100%',
                     padding: '12px',
@@ -1262,14 +1252,16 @@ export default function AIStaffScheduler(): JSX.Element {
                   },
                   onMouseEnter: (e: any) => {
                     if (selectedStaff !== staff.id) {
-                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.1)';
+                      e.currentTarget.style.background =
+                        'rgba(34, 197, 94, 0.1)';
                       e.currentTarget.style.borderColor = '#22c55e';
                     }
                   },
                   onMouseLeave: (e: any) => {
                     if (selectedStaff !== staff.id) {
                       e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
-                      e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)';
+                      e.currentTarget.style.borderColor =
+                        'rgba(148, 163, 184, 0.2)';
                     }
                   },
                 },
@@ -1415,14 +1407,46 @@ export default function AIStaffScheduler(): JSX.Element {
                         fontSize: '0.9rem',
                       },
                     },
-                    React.createElement('option', { value: 'lead_generation' }, '🎯 Lead Generation'),
-                    React.createElement('option', { value: 'email_campaign' }, '📧 Email Campaign'),
-                    React.createElement('option', { value: 'cold_calling' }, '📞 Cold Calling'),
-                    React.createElement('option', { value: 'follow_up' }, '🔄 Follow-up'),
-                    React.createElement('option', { value: 'data_mining' }, '⛏️ Data Mining'),
-                    React.createElement('option', { value: 'analytics' }, '📊 Analytics Report'),
-                    React.createElement('option', { value: 'customer_service' }, '🎧 Customer Service'),
-                    React.createElement('option', { value: 'recruiting' }, '👥 Recruiting')
+                    React.createElement(
+                      'option',
+                      { value: 'lead_generation' },
+                      '🎯 Lead Generation'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'email_campaign' },
+                      '📧 Email Campaign'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'cold_calling' },
+                      '📞 Cold Calling'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'follow_up' },
+                      '🔄 Follow-up'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'data_mining' },
+                      '⛏️ Data Mining'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'analytics' },
+                      '📊 Analytics Report'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'customer_service' },
+                      '🎧 Customer Service'
+                    ),
+                    React.createElement(
+                      'option',
+                      { value: 'recruiting' },
+                      '👥 Recruiting'
+                    )
                   )
                 ),
 
@@ -1478,7 +1502,8 @@ export default function AIStaffScheduler(): JSX.Element {
                   ),
                   React.createElement('textarea', {
                     id: 'taskDescription',
-                    placeholder: 'Describe the task details, targets, and expected outcomes...',
+                    placeholder:
+                      'Describe the task details, targets, and expected outcomes...',
                     rows: 3,
                     style: {
                       width: '100%',
@@ -1526,9 +1551,17 @@ export default function AIStaffScheduler(): JSX.Element {
                       },
                     },
                     React.createElement('option', { value: 'low' }, '🟢 Low'),
-                    React.createElement('option', { value: 'medium' }, '🟡 Medium'),
+                    React.createElement(
+                      'option',
+                      { value: 'medium' },
+                      '🟡 Medium'
+                    ),
                     React.createElement('option', { value: 'high' }, '🟠 High'),
-                    React.createElement('option', { value: 'urgent' }, '🔴 Urgent')
+                    React.createElement(
+                      'option',
+                      { value: 'urgent' },
+                      '🔴 Urgent'
+                    )
                   )
                 )
               ),
@@ -1537,10 +1570,22 @@ export default function AIStaffScheduler(): JSX.Element {
                 'button',
                 {
                   onClick: () => {
-                    const taskType = (document.getElementById('taskType') as HTMLSelectElement)?.value;
-                    const taskName = (document.getElementById('taskName') as HTMLInputElement)?.value;
-                    const taskDescription = (document.getElementById('taskDescription') as HTMLTextAreaElement)?.value;
-                    const taskPriority = (document.getElementById('taskPriority') as HTMLSelectElement)?.value;
+                    const taskType = (
+                      document.getElementById('taskType') as HTMLSelectElement
+                    )?.value;
+                    const taskName = (
+                      document.getElementById('taskName') as HTMLInputElement
+                    )?.value;
+                    const taskDescription = (
+                      document.getElementById(
+                        'taskDescription'
+                      ) as HTMLTextAreaElement
+                    )?.value;
+                    const taskPriority = (
+                      document.getElementById(
+                        'taskPriority'
+                      ) as HTMLSelectElement
+                    )?.value;
 
                     if (!taskName) {
                       alert('❌ Please enter a task name');
@@ -1560,8 +1605,14 @@ export default function AIStaffScheduler(): JSX.Element {
                     handleTaskAssignment(selectedStaffData.id, newTask);
 
                     // Clear form
-                    (document.getElementById('taskName') as HTMLInputElement).value = '';
-                    (document.getElementById('taskDescription') as HTMLTextAreaElement).value = '';
+                    (
+                      document.getElementById('taskName') as HTMLInputElement
+                    ).value = '';
+                    (
+                      document.getElementById(
+                        'taskDescription'
+                      ) as HTMLTextAreaElement
+                    ).value = '';
                   },
                   style: {
                     width: '100%',
@@ -1580,7 +1631,8 @@ export default function AIStaffScheduler(): JSX.Element {
               ),
 
               // Show assigned tasks
-              staffTasks[selectedStaffData.id] && staffTasks[selectedStaffData.id].length > 0 &&
+              staffTasks[selectedStaffData.id] &&
+                staffTasks[selectedStaffData.id].length > 0 &&
                 React.createElement(
                   'div',
                   {
@@ -1646,18 +1698,18 @@ export default function AIStaffScheduler(): JSX.Element {
                                 task.priority === 'urgent'
                                   ? 'rgba(239, 68, 68, 0.2)'
                                   : task.priority === 'high'
-                                  ? 'rgba(251, 146, 60, 0.2)'
-                                  : task.priority === 'medium'
-                                  ? 'rgba(234, 179, 8, 0.2)'
-                                  : 'rgba(34, 197, 94, 0.2)',
+                                    ? 'rgba(251, 146, 60, 0.2)'
+                                    : task.priority === 'medium'
+                                      ? 'rgba(234, 179, 8, 0.2)'
+                                      : 'rgba(34, 197, 94, 0.2)',
                               color:
                                 task.priority === 'urgent'
                                   ? '#ef4444'
                                   : task.priority === 'high'
-                                  ? '#fb923c'
-                                  : task.priority === 'medium'
-                                  ? '#eab308'
-                                  : '#22c55e',
+                                    ? '#fb923c'
+                                    : task.priority === 'medium'
+                                      ? '#eab308'
+                                      : '#22c55e',
                               borderRadius: '4px',
                               fontSize: '0.75rem',
                               fontWeight: '600',
