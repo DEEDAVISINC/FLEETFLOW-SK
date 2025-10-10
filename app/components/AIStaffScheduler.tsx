@@ -67,6 +67,114 @@ interface ScheduleTemplate {
 
 export default function AIStaffScheduler(): JSX.Element {
   const [activeTab, setActiveTab] = useState<string>('overview');
+  const [selectedStaff, setSelectedStaff] = useState<string | null>(null);
+  const [staffSchedules, setStaffSchedules] = useState<Record<string, any>>({});
+  const [staffTasks, setStaffTasks] = useState<Record<string, any[]>>({});
+
+  // All AI Staff Members
+  const allStaff: AIStaffMember[] = [
+    {
+      id: 'alexis-executive-023',
+      name: 'Alexis Best',
+      role: 'AI Executive Assistant',
+      department: 'executive_operations',
+      avatar: '👔',
+      status: 'active',
+      currentTask: 'Ready for assignment',
+      tasksCompleted: 0,
+      revenue: 0,
+      efficiency: 100,
+      lastActivity: 'Just now',
+      schedule: {
+        shift: '24/7',
+        workHours: '24/7 Executive Support',
+        breakTime: 'None',
+        weeklyHours: 168,
+        overtime: 0,
+      },
+      performance: {
+        weeklyGoal: 50,
+        monthlyGoal: 200,
+        completionRate: 98,
+        qualityScore: 99,
+        responseTime: '<5 minutes',
+      },
+      specializations: ['Executive Support', 'Calendar Management', 'Email Management'],
+    },
+    {
+      id: 'desiree-001',
+      name: 'Desiree',
+      role: 'Freight Broker Specialist',
+      department: 'sales',
+      avatar: '🎯',
+      status: 'active',
+      currentTask: 'Processing leads',
+      tasksCompleted: 89,
+      revenue: 127500,
+      efficiency: 94,
+      lastActivity: '2 min ago',
+      schedule: {
+        shift: 'morning',
+        workHours: '6:00 AM - 2:00 PM',
+        breakTime: '12:00 PM - 12:30 PM',
+        weeklyHours: 40,
+        overtime: 5,
+      },
+      performance: {
+        weeklyGoal: 30,
+        monthlyGoal: 120,
+        completionRate: 92,
+        qualityScore: 95,
+        responseTime: '15 minutes',
+      },
+      specializations: ['Lead Generation', 'Desperate Prospects', 'Sales'],
+    },
+    {
+      id: 'hunter-002',
+      name: 'Hunter',
+      role: 'Recruiting Specialist',
+      department: 'operations',
+      avatar: '🎯',
+      status: 'active',
+      currentTask: 'Driver recruitment',
+      tasksCompleted: 45,
+      revenue: 85000,
+      efficiency: 88,
+      lastActivity: '5 min ago',
+      schedule: {
+        shift: 'afternoon',
+        workHours: '1:00 PM - 9:00 PM',
+        breakTime: '5:00 PM - 5:30 PM',
+        weeklyHours: 40,
+        overtime: 2,
+      },
+      performance: {
+        weeklyGoal: 25,
+        monthlyGoal: 100,
+        completionRate: 85,
+        qualityScore: 90,
+        responseTime: '20 minutes',
+      },
+      specializations: ['Recruiting', 'Onboarding', 'HR'],
+    },
+  ];
+
+  const handleScheduleUpdate = (staffId: string, schedule: any) => {
+    setStaffSchedules((prev) => ({ ...prev, [staffId]: schedule }));
+    alert(`✅ Schedule updated for ${allStaff.find((s) => s.id === staffId)?.name}`);
+  };
+
+  const handleTaskAssignment = (staffId: string, task: any) => {
+    setStaffTasks((prev) => ({
+      ...prev,
+      [staffId]: [...(prev[staffId] || []), task],
+    }));
+    alert(`✅ Task assigned to ${allStaff.find((s) => s.id === staffId)?.name}`);
+  };
+
+  const selectedStaffData = selectedStaff
+    ? allStaff.find((s) => s.id === selectedStaff)
+    : null;
 
   return React.createElement(
     'div',
@@ -439,8 +547,307 @@ export default function AIStaffScheduler(): JSX.Element {
                 marginBottom: '20px',
               },
             },
-            'Comprehensive AI staff scheduling with automated optimization, conflict resolution, and performance tracking.'
+            'Select a staff member to configure their schedule'
           ),
+
+          // Staff Selection Cards
+          React.createElement(
+            'div',
+            {
+              style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '16px',
+                marginBottom: '24px',
+              },
+            },
+            allStaff.map((staff) =>
+              React.createElement(
+                'div',
+                {
+                  key: staff.id,
+                  onClick: () => setSelectedStaff(staff.id),
+                  style: {
+                    background:
+                      selectedStaff === staff.id
+                        ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3))'
+                        : 'rgba(0, 0, 0, 0.3)',
+                    border:
+                      selectedStaff === staff.id
+                        ? '2px solid #8b5cf6'
+                        : '1px solid rgba(148, 163, 184, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  },
+                  onMouseEnter: (e: any) => {
+                    if (selectedStaff !== staff.id) {
+                      e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)';
+                      e.currentTarget.style.borderColor = '#8b5cf6';
+                    }
+                  },
+                  onMouseLeave: (e: any) => {
+                    if (selectedStaff !== staff.id) {
+                      e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                      e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)';
+                    }
+                  },
+                },
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '12px',
+                    },
+                  },
+                  React.createElement(
+                    'div',
+                    {
+                      style: {
+                        fontSize: '2rem',
+                      },
+                    },
+                    staff.avatar
+                  ),
+                  React.createElement(
+                    'div',
+                    { style: { flex: 1 } },
+                    React.createElement(
+                      'h4',
+                      {
+                        style: {
+                          color: 'white',
+                          margin: 0,
+                          fontSize: '1.1rem',
+                          fontWeight: '700',
+                        },
+                      },
+                      staff.name
+                    ),
+                    React.createElement(
+                      'p',
+                      {
+                        style: {
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          margin: 0,
+                          fontSize: '0.85rem',
+                        },
+                      },
+                      staff.role
+                    )
+                  ),
+                  React.createElement(
+                    'div',
+                    {
+                      style: {
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: staff.status === 'active' ? '#22c55e' : '#6b7280',
+                      },
+                    }
+                  )
+                ),
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.85rem',
+                    },
+                  },
+                  `🕐 ${staff.schedule.workHours}`,
+                  React.createElement('br'),
+                  `📊 ${staff.efficiency}% efficiency`
+                ),
+                selectedStaff === staff.id &&
+                  React.createElement(
+                    'div',
+                    {
+                      style: {
+                        marginTop: '12px',
+                        padding: '8px',
+                        background: 'rgba(139, 92, 246, 0.2)',
+                        borderRadius: '6px',
+                        color: '#8b5cf6',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                      },
+                    },
+                    '✓ SELECTED'
+                  )
+              )
+            )
+          ),
+
+          // Schedule Configuration Panel (shows when staff is selected)
+          selectedStaffData &&
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  border: '2px solid #8b5cf6',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginTop: '24px',
+                },
+              },
+              React.createElement(
+                'h4',
+                {
+                  style: {
+                    color: '#8b5cf6',
+                    marginBottom: '20px',
+                    fontSize: '1.2rem',
+                  },
+                },
+                `⚙️ Configure Schedule for ${selectedStaffData.name}`
+              ),
+
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  },
+                },
+
+                // Shift Selection
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '⏰ Shift'
+                  ),
+                  React.createElement(
+                    'select',
+                    {
+                      defaultValue: selectedStaffData.schedule.shift,
+                      style: {
+                        width: '100%',
+                        padding: '10px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(148, 163, 184, 0.3)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      },
+                    },
+                    React.createElement('option', { value: 'morning' }, '🌅 Morning (6AM - 2PM)'),
+                    React.createElement('option', { value: 'afternoon' }, '🌇 Afternoon (2PM - 10PM)'),
+                    React.createElement('option', { value: 'evening' }, '🌙 Evening (10PM - 6AM)'),
+                    React.createElement('option', { value: '24/7' }, '⚡ 24/7 Always On')
+                  )
+                ),
+
+                // Work Hours
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '🕐 Work Hours'
+                  ),
+                  React.createElement('input', {
+                    type: 'text',
+                    defaultValue: selectedStaffData.schedule.workHours,
+                    placeholder: 'e.g., 9:00 AM - 5:00 PM',
+                    style: {
+                      width: '100%',
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(148, 163, 184, 0.3)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '0.9rem',
+                    },
+                  })
+                ),
+
+                // Weekly Hours
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '📊 Weekly Hours'
+                  ),
+                  React.createElement('input', {
+                    type: 'number',
+                    defaultValue: selectedStaffData.schedule.weeklyHours,
+                    min: 0,
+                    max: 168,
+                    style: {
+                      width: '100%',
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(148, 163, 184, 0.3)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '0.9rem',
+                    },
+                  })
+                )
+              ),
+
+              React.createElement(
+                'button',
+                {
+                  onClick: () =>
+                    handleScheduleUpdate(selectedStaffData.id, selectedStaffData.schedule),
+                  style: {
+                    width: '100%',
+                    padding: '12px',
+                    background: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '1rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    marginTop: '16px',
+                  },
+                },
+                '💾 Save Schedule'
+              )
+            ),
 
           // Schedule Controls
           React.createElement(
@@ -816,11 +1223,464 @@ export default function AIStaffScheduler(): JSX.Element {
             {
               style: {
                 color: 'rgba(255, 255, 255, 0.7)',
-                marginBottom: '16px',
+                marginBottom: '20px',
               },
             },
-            'Assign specific tasks and campaigns to your AI staff members.'
+            'Select a staff member, then assign tasks to them'
           ),
+
+          // Staff Selection for Task Assignment
+          React.createElement(
+            'div',
+            {
+              style: {
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '16px',
+                marginBottom: '24px',
+              },
+            },
+            allStaff.map((staff) =>
+              React.createElement(
+                'div',
+                {
+                  key: staff.id,
+                  onClick: () => setSelectedStaff(staff.id),
+                  style: {
+                    background:
+                      selectedStaff === staff.id
+                        ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.3))'
+                        : 'rgba(0, 0, 0, 0.3)',
+                    border:
+                      selectedStaff === staff.id
+                        ? '2px solid #22c55e'
+                        : '1px solid rgba(148, 163, 184, 0.2)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  },
+                  onMouseEnter: (e: any) => {
+                    if (selectedStaff !== staff.id) {
+                      e.currentTarget.style.background = 'rgba(34, 197, 94, 0.1)';
+                      e.currentTarget.style.borderColor = '#22c55e';
+                    }
+                  },
+                  onMouseLeave: (e: any) => {
+                    if (selectedStaff !== staff.id) {
+                      e.currentTarget.style.background = 'rgba(0, 0, 0, 0.3)';
+                      e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.2)';
+                    }
+                  },
+                },
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      marginBottom: '12px',
+                    },
+                  },
+                  React.createElement(
+                    'div',
+                    { style: { fontSize: '2rem' } },
+                    staff.avatar
+                  ),
+                  React.createElement(
+                    'div',
+                    { style: { flex: 1 } },
+                    React.createElement(
+                      'h4',
+                      {
+                        style: {
+                          color: 'white',
+                          margin: 0,
+                          fontSize: '1.1rem',
+                          fontWeight: '700',
+                        },
+                      },
+                      staff.name
+                    ),
+                    React.createElement(
+                      'p',
+                      {
+                        style: {
+                          color: 'rgba(255, 255, 255, 0.6)',
+                          margin: 0,
+                          fontSize: '0.85rem',
+                        },
+                      },
+                      staff.role
+                    )
+                  )
+                ),
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '0.85rem',
+                    },
+                  },
+                  `📋 ${staffTasks[staff.id]?.length || 0} tasks assigned`,
+                  React.createElement('br'),
+                  `✓ ${staff.tasksCompleted} completed`
+                ),
+                selectedStaff === staff.id &&
+                  React.createElement(
+                    'div',
+                    {
+                      style: {
+                        marginTop: '12px',
+                        padding: '8px',
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        borderRadius: '6px',
+                        color: '#22c55e',
+                        fontSize: '0.8rem',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                      },
+                    },
+                    '✓ SELECTED'
+                  )
+              )
+            )
+          ),
+
+          // Task Assignment Panel (shows when staff is selected)
+          selectedStaffData &&
+            React.createElement(
+              'div',
+              {
+                style: {
+                  background: 'rgba(34, 197, 94, 0.1)',
+                  border: '2px solid #22c55e',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  marginTop: '24px',
+                },
+              },
+              React.createElement(
+                'h4',
+                {
+                  style: {
+                    color: '#22c55e',
+                    marginBottom: '20px',
+                    fontSize: '1.2rem',
+                  },
+                },
+                `📋 Assign Task to ${selectedStaffData.name}`
+              ),
+
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    display: 'grid',
+                    gap: '16px',
+                    marginBottom: '20px',
+                  },
+                },
+
+                // Task Type Selection
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '📌 Task Type'
+                  ),
+                  React.createElement(
+                    'select',
+                    {
+                      id: 'taskType',
+                      style: {
+                        width: '100%',
+                        padding: '10px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(148, 163, 184, 0.3)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      },
+                    },
+                    React.createElement('option', { value: 'lead_generation' }, '🎯 Lead Generation'),
+                    React.createElement('option', { value: 'email_campaign' }, '📧 Email Campaign'),
+                    React.createElement('option', { value: 'cold_calling' }, '📞 Cold Calling'),
+                    React.createElement('option', { value: 'follow_up' }, '🔄 Follow-up'),
+                    React.createElement('option', { value: 'data_mining' }, '⛏️ Data Mining'),
+                    React.createElement('option', { value: 'analytics' }, '📊 Analytics Report'),
+                    React.createElement('option', { value: 'customer_service' }, '🎧 Customer Service'),
+                    React.createElement('option', { value: 'recruiting' }, '👥 Recruiting')
+                  )
+                ),
+
+                // Task Name
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '✏️ Task Name'
+                  ),
+                  React.createElement('input', {
+                    type: 'text',
+                    id: 'taskName',
+                    placeholder: 'e.g., Healthcare leads - urgent prospects',
+                    style: {
+                      width: '100%',
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(148, 163, 184, 0.3)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '0.9rem',
+                    },
+                  })
+                ),
+
+                // Task Description
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '📝 Description'
+                  ),
+                  React.createElement('textarea', {
+                    id: 'taskDescription',
+                    placeholder: 'Describe the task details, targets, and expected outcomes...',
+                    rows: 3,
+                    style: {
+                      width: '100%',
+                      padding: '10px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(148, 163, 184, 0.3)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      resize: 'vertical',
+                      fontFamily: 'inherit',
+                    },
+                  })
+                ),
+
+                // Priority
+                React.createElement(
+                  'div',
+                  null,
+                  React.createElement(
+                    'label',
+                    {
+                      style: {
+                        display: 'block',
+                        color: 'white',
+                        marginBottom: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: '600',
+                      },
+                    },
+                    '⚡ Priority'
+                  ),
+                  React.createElement(
+                    'select',
+                    {
+                      id: 'taskPriority',
+                      style: {
+                        width: '100%',
+                        padding: '10px',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        border: '1px solid rgba(148, 163, 184, 0.3)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '0.9rem',
+                      },
+                    },
+                    React.createElement('option', { value: 'low' }, '🟢 Low'),
+                    React.createElement('option', { value: 'medium' }, '🟡 Medium'),
+                    React.createElement('option', { value: 'high' }, '🟠 High'),
+                    React.createElement('option', { value: 'urgent' }, '🔴 Urgent')
+                  )
+                )
+              ),
+
+              React.createElement(
+                'button',
+                {
+                  onClick: () => {
+                    const taskType = (document.getElementById('taskType') as HTMLSelectElement)?.value;
+                    const taskName = (document.getElementById('taskName') as HTMLInputElement)?.value;
+                    const taskDescription = (document.getElementById('taskDescription') as HTMLTextAreaElement)?.value;
+                    const taskPriority = (document.getElementById('taskPriority') as HTMLSelectElement)?.value;
+
+                    if (!taskName) {
+                      alert('❌ Please enter a task name');
+                      return;
+                    }
+
+                    const newTask = {
+                      id: `task-${Date.now()}`,
+                      type: taskType,
+                      name: taskName,
+                      description: taskDescription,
+                      priority: taskPriority,
+                      assignedAt: new Date().toISOString(),
+                      status: 'assigned',
+                    };
+
+                    handleTaskAssignment(selectedStaffData.id, newTask);
+
+                    // Clear form
+                    (document.getElementById('taskName') as HTMLInputElement).value = '';
+                    (document.getElementById('taskDescription') as HTMLTextAreaElement).value = '';
+                  },
+                  style: {
+                    width: '100%',
+                    padding: '12px',
+                    background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '1rem',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    marginTop: '16px',
+                  },
+                },
+                '✅ Assign Task'
+              ),
+
+              // Show assigned tasks
+              staffTasks[selectedStaffData.id] && staffTasks[selectedStaffData.id].length > 0 &&
+                React.createElement(
+                  'div',
+                  {
+                    style: {
+                      marginTop: '24px',
+                      padding: '16px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      borderRadius: '8px',
+                    },
+                  },
+                  React.createElement(
+                    'h5',
+                    {
+                      style: {
+                        color: 'white',
+                        marginBottom: '12px',
+                        fontSize: '1rem',
+                      },
+                    },
+                    `📋 Current Tasks (${staffTasks[selectedStaffData.id].length})`
+                  ),
+                  ...staffTasks[selectedStaffData.id].map((task: any) =>
+                    React.createElement(
+                      'div',
+                      {
+                        key: task.id,
+                        style: {
+                          padding: '12px',
+                          background: 'rgba(34, 197, 94, 0.1)',
+                          border: '1px solid rgba(34, 197, 94, 0.3)',
+                          borderRadius: '6px',
+                          marginBottom: '8px',
+                        },
+                      },
+                      React.createElement(
+                        'div',
+                        {
+                          style: {
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'start',
+                            marginBottom: '8px',
+                          },
+                        },
+                        React.createElement(
+                          'h6',
+                          {
+                            style: {
+                              color: 'white',
+                              margin: 0,
+                              fontSize: '0.95rem',
+                              fontWeight: '600',
+                            },
+                          },
+                          task.name
+                        ),
+                        React.createElement(
+                          'span',
+                          {
+                            style: {
+                              padding: '4px 8px',
+                              background:
+                                task.priority === 'urgent'
+                                  ? 'rgba(239, 68, 68, 0.2)'
+                                  : task.priority === 'high'
+                                  ? 'rgba(251, 146, 60, 0.2)'
+                                  : task.priority === 'medium'
+                                  ? 'rgba(234, 179, 8, 0.2)'
+                                  : 'rgba(34, 197, 94, 0.2)',
+                              color:
+                                task.priority === 'urgent'
+                                  ? '#ef4444'
+                                  : task.priority === 'high'
+                                  ? '#fb923c'
+                                  : task.priority === 'medium'
+                                  ? '#eab308'
+                                  : '#22c55e',
+                              borderRadius: '4px',
+                              fontSize: '0.75rem',
+                              fontWeight: '600',
+                            },
+                          },
+                          task.priority.toUpperCase()
+                        )
+                      ),
+                      React.createElement(
+                        'p',
+                        {
+                          style: {
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            margin: 0,
+                            fontSize: '0.85rem',
+                          },
+                        },
+                        task.description || 'No description provided'
+                      )
+                    )
+                  )
+                )
+            ),
           React.createElement(
             'div',
             {
