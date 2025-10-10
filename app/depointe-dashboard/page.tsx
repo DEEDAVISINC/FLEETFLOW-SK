@@ -957,6 +957,7 @@ export default function DEPOINTEDashboard() {
   ]); // Start with key departments expanded
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [warmupStatus, setWarmupStatus] = useState<any>(null);
+  const [showWarmupWidget, setShowWarmupWidget] = useState(false);
   const [selectedStaffMember, setSelectedStaffMember] = useState<string | null>(
     null
   );
@@ -1804,6 +1805,288 @@ export default function DEPOINTEDashboard() {
     >
       {/* Internal Adaptive Learning - No UI, just automatic learning */}
       <InternalAdaptiveLearning />
+
+      {/* Email Warm-up Widget - Small Floating Icon */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '100px',
+          right: '30px',
+          zIndex: 1000,
+        }}
+      >
+        {/* Small Widget Icon */}
+        <div
+          onClick={() => setShowWarmupWidget(!showWarmupWidget)}
+          style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            background: warmupStatus?.isActive
+              ? 'linear-gradient(135deg, #22c55e, #16a34a)'
+              : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+            border: '3px solid rgba(255, 255, 255, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '28px',
+            cursor: 'pointer',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 0, 0, 0.5)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.4)';
+          }}
+          title="Email Warm-up Status"
+        >
+          📧
+        </div>
+
+        {/* Expandable Widget Panel */}
+        {showWarmupWidget && (
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '70px',
+              right: '0',
+              width: '360px',
+              maxHeight: '500px',
+              overflowY: 'auto',
+              background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(51, 65, 85, 0.98))',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '16px',
+              padding: '20px',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6)',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '16px',
+                paddingBottom: '12px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <h3
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  margin: 0,
+                }}
+              >
+                📧 Email Warm-up
+              </h3>
+              {warmupStatus?.isActive && (
+                <span
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                    borderRadius: '12px',
+                    padding: '4px 10px',
+                    color: 'rgba(34, 197, 94, 1)',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  ACTIVE
+                </span>
+              )}
+            </div>
+
+            {warmupStatus?.isActive ? (
+              <>
+                {/* Compact Metrics */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '10px',
+                    marginBottom: '14px',
+                  }}
+                >
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      border: '1px solid rgba(148, 163, 184, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '0.7rem',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Day
+                    </div>
+                    <div
+                      style={{
+                        color: 'white',
+                        fontSize: '1.4rem',
+                        fontWeight: '700',
+                      }}
+                    >
+                      {warmupStatus.currentDay}/30
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: 'rgba(0, 0, 0, 0.2)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      border: '1px solid rgba(148, 163, 184, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        fontSize: '0.7rem',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Deliverability
+                    </div>
+                    <div
+                      style={{
+                        color:
+                          warmupStatus.overallStats.deliverability >= 95
+                            ? 'rgba(34, 197, 94, 1)'
+                            : warmupStatus.overallStats.deliverability >= 90
+                              ? 'rgba(251, 191, 36, 1)'
+                              : 'rgba(239, 68, 68, 1)',
+                        fontSize: '1.4rem',
+                        fontWeight: '700',
+                      }}
+                    >
+                      {warmupStatus.overallStats.deliverability}%
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div style={{ marginBottom: '12px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '6px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      Progress
+                    </span>
+                    <span
+                      style={{
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                      }}
+                    >
+                      {warmupStatus.overallStats.progress}%
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '8px',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${warmupStatus.overallStats.progress}%`,
+                        height: '100%',
+                        background: 'linear-gradient(90deg, #22c55e, #16a34a)',
+                        transition: 'width 0.3s ease',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Status Message */}
+                <div
+                  style={{
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    color: 'rgba(34, 197, 94, 1)',
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  ✅ {30 - warmupStatus.currentDay} days remaining
+                </div>
+              </>
+            ) : (
+              <>
+                <p
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    marginBottom: '12px',
+                    fontSize: '0.85rem',
+                    lineHeight: '1.4',
+                  }}
+                >
+                  30-day warm-up required before launching Strategic Sales campaigns.
+                </p>
+
+                <button
+                  onClick={async () => {
+                    try {
+                      const started = await emailWarmupService.startWarmup();
+                      if (started) {
+                        const status = emailWarmupService.getWarmupStatus();
+                        setWarmupStatus(status);
+                        alert('✅ Email warm-up started!');
+                      } else {
+                        alert('⚠️ Already in progress or failed');
+                      }
+                    } catch (error) {
+                      console.error('Error starting warmup:', error);
+                      alert('❌ Error starting warm-up');
+                    }
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    color: 'white',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    width: '100%',
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                  }}
+                >
+                  🚀 Start Warm-up
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Header */}
       <div style={{ marginBottom: '30px', marginTop: '120px' }}>
         <div
@@ -2028,409 +2311,6 @@ export default function DEPOINTEDashboard() {
         <div>
           {/* Move all existing dashboard content here */}
 
-          {/* Email Warm-up Status Widget */}
-          <div style={{ marginBottom: '30px' }}>
-            <div
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1))',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                borderRadius: '12px',
-                padding: '24px',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginBottom: '20px',
-                }}
-              >
-                <h3
-                  style={{
-                    color: 'white',
-                    fontSize: '1.5rem',
-                    fontWeight: '700',
-                    margin: 0,
-                  }}
-                >
-                  📧 Email Warm-up Status
-                </h3>
-                {warmupStatus?.isActive && (
-                  <span
-                    style={{
-                      background: 'rgba(34, 197, 94, 0.2)',
-                      border: '1px solid rgba(34, 197, 94, 0.4)',
-                      borderRadius: '20px',
-                      padding: '6px 16px',
-                      color: 'rgba(34, 197, 94, 1)',
-                      fontSize: '0.9rem',
-                      fontWeight: '600',
-                    }}
-                  >
-                    ✅ ACTIVE
-                  </span>
-                )}
-              </div>
-
-              {warmupStatus?.isActive ? (
-                <>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(200px, 1fr))',
-                      gap: '16px',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontSize: '0.85rem',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        Progress
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '2rem',
-                          fontWeight: '700',
-                        }}
-                      >
-                        {warmupStatus.currentDay} / 30
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        Day {warmupStatus.currentDay} of warm-up
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontSize: '0.85rem',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        Deliverability
-                      </div>
-                      <div
-                        style={{
-                          color:
-                            warmupStatus.overallStats.deliverability >= 95
-                              ? 'rgba(34, 197, 94, 1)'
-                              : warmupStatus.overallStats.deliverability >= 90
-                                ? 'rgba(251, 191, 36, 1)'
-                                : 'rgba(239, 68, 68, 1)',
-                          fontSize: '2rem',
-                          fontWeight: '700',
-                        }}
-                      >
-                        {warmupStatus.overallStats.deliverability}%
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        Target: 95%+
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontSize: '0.85rem',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        Engagement
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '2rem',
-                          fontWeight: '700',
-                        }}
-                      >
-                        {warmupStatus.overallStats.engagement}%
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        Opens & clicks
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.6)',
-                          fontSize: '0.85rem',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        Daily Volume
-                      </div>
-                      <div
-                        style={{
-                          color: 'white',
-                          fontSize: '2rem',
-                          fontWeight: '700',
-                        }}
-                      >
-                        {warmupStatus.schedule.dailyVolume}
-                      </div>
-                      <div
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.5)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        emails/day
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: 'rgba(255, 255, 255, 0.7)',
-                          fontSize: '0.9rem',
-                        }}
-                      >
-                        Overall Progress
-                      </span>
-                      <span
-                        style={{
-                          color: 'white',
-                          fontSize: '0.9rem',
-                          fontWeight: '600',
-                        }}
-                      >
-                        {warmupStatus.overallStats.progress}%
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '12px',
-                        background: 'rgba(255, 255, 255, 0.1)',
-                        borderRadius: '6px',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: `${warmupStatus.overallStats.progress}%`,
-                          height: '100%',
-                          background:
-                            'linear-gradient(90deg, #3b82f6, #2563eb)',
-                          transition: 'width 0.3s ease',
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Status Message */}
-                  <div
-                    style={{
-                      background: 'rgba(34, 197, 94, 0.1)',
-                      border: '1px solid rgba(34, 197, 94, 0.3)',
-                      borderRadius: '8px',
-                      padding: '12px 16px',
-                      color: 'rgba(34, 197, 94, 1)',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    ✅ Warm-up in progress. Continue for{' '}
-                    {30 - warmupStatus.currentDay} more days before launching
-                    Strategic Sales campaigns.
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      marginBottom: '20px',
-                      fontSize: '1rem',
-                      lineHeight: '1.6',
-                    }}
-                  >
-                    Email warm-up is <strong>required</strong> before launching
-                    Strategic Sales campaigns. This 30-day process builds your
-                    domain's sending reputation and ensures 95%+ deliverability.
-                  </p>
-
-                  <div
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: 'rgba(239, 68, 68, 1)',
-                        fontSize: '0.95rem',
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      ⚠️ WARNING: Do not skip warm-up!
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
-                      }}
-                    >
-                      Sending 200+ emails/day without warm-up will:
-                      <br />• Flag your domain as spam
-                      <br />• Tank your domain reputation
-                      <br />• Burn through fleetflowapp.com
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      border: '1px solid rgba(59, 130, 246, 0.3)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      marginBottom: '20px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        color: 'rgba(59, 130, 246, 1)',
-                        fontSize: '0.95rem',
-                        fontWeight: '600',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      📅 30-Day Warm-up Schedule:
-                    </div>
-                    <div
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.9rem',
-                      }}
-                    >
-                      • Week 1: 5-20 emails/day (internal accounts)
-                      <br />• Week 2: 20-50 emails/day (friendly partners)
-                      <br />• Week 3: 50-100 emails/day (mixed audience)
-                      <br />• Week 4+: 100-200 emails/day (ready for campaigns!)
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={async () => {
-                      try {
-                        const started = await emailWarmupService.startWarmup();
-                        if (started) {
-                          const status = emailWarmupService.getWarmupStatus();
-                          setWarmupStatus(status);
-                          alert(
-                            '✅ Email warm-up started! Check the dashboard for daily progress.'
-                          );
-                        } else {
-                          alert(
-                            '⚠️ Warm-up already in progress or failed to start'
-                          );
-                        }
-                      } catch (error) {
-                        console.error('Error starting warmup:', error);
-                        alert(
-                          '❌ Error starting warm-up. Check console for details.'
-                        );
-                      }
-                    }}
-                    style={{
-                      background: 'linear-gradient(135deg, #3b82f6, #2563eb)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '14px 28px',
-                      color: 'white',
-                      fontSize: '1.05rem',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow =
-                        '0 6px 16px rgba(59, 130, 246, 0.4)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow =
-                        '0 4px 12px rgba(59, 130, 246, 0.3)';
-                    }}
-                  >
-                    🚀 Start 30-Day Email Warm-up
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
 
           {/* AI Staff Directory Reference */}
           <div style={{ marginBottom: '30px' }}>
