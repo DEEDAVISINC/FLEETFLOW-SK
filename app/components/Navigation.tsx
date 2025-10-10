@@ -251,9 +251,48 @@ export default function ProfessionalNavigation() {
     );
   }
 
-  // Don't show navigation if not authenticated
+  // Navigation is only shown on authenticated pages (middleware handles this)
+  // Don't render if no session (user will be redirected by middleware)
   if (!session) {
-    return null;
+    return (
+      <nav
+        style={{
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+          padding: '12px 20px',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            maxWidth: '1400px',
+            margin: '0 auto',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '1.8rem',
+              fontWeight: 'bold',
+              background: 'linear-gradient(45deg, #3b82f6, #06b6d4)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            🚛 FleetFlow
+          </div>
+        </div>
+      </nav>
+    );
   }
 
   return (
