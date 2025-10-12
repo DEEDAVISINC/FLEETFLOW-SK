@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+  <head>
+    <title>DEPOINTE Lead Checker</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: white;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .lead-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+      }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .status-new {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+      }
+      .status-contacted {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+      }
+      .status-qualified {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+      }
+      .stat-box {
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #8b5cf6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔍 DEPOINTE Lead Diagnostic Tool</h1>
+
+      <div class="stat-box">
+        <div class="stat-number" id="totalLeads">0</div>
+        <div>Total Leads in CRM</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-number" id="activeProspects">0</div>
+        <div>Active Prospects (Contacted or Qualified)</div>
+      </div>
+
+      <h2>📋 All Leads:</h2>
+      <div id="leadsList"></div>
+
+      <h2>🔧 Raw Data:</h2>
+      <pre
+        id="rawData"
+        style="
+          background: rgba(0, 0, 0, 0.3);
+          padding: 15px;
+          border-radius: 8px;
+          overflow-x: auto;
+        "
+      ></pre>
+    </div>
+
+    <script>
+      // Read from localStorage
+      const leadsData = localStorage.getItem('depointe-crm-leads');
+      const leads = leadsData ? JSON.parse(leadsData) : [];
+
+      // Calculate stats
+      const totalLeads = leads.length;
+      const activeProspects = leads.filter(
+        (lead) => lead.status === 'contacted' || lead.status === 'qualified'
+      ).length;
+
+      // Display stats
+      document.getElementById('totalLeads').textContent = totalLeads;
+      document.getElementById('activeProspects').textContent = activeProspects;
+
+      // Display leads
+      const leadsList = document.getElementById('leadsList');
+      if (leads.length === 0) {
+        leadsList.innerHTML =
+          '<p style="color: #f59e0b;">⚠️ No leads found in localStorage. Have you deployed a campaign yet?</p>';
+      } else {
+        leads.forEach((lead) => {
+          const statusClass = `status-${lead.status}`;
+          const card = document.createElement('div');
+          card.className = 'lead-card';
+          card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h3 style="margin: 0 0 8px 0;">${lead.company}</h3>
+                            <p style="margin: 0; color: rgba(255,255,255,0.7);">👤 ${lead.contactName}</p>
+                            <p style="margin: 4px 0 0 0; color: rgba(255,255,255,0.6); font-size: 0.9rem;">📞 ${lead.phone || lead.contactPhone || 'N/A'}</p>
+                            <p style="margin: 4px 0 0 0; color: rgba(255,255,255,0.6); font-size: 0.9rem;">📧 ${lead.email || 'N/A'}</p>
+                        </div>
+                        <span class="status-badge ${statusClass}">${lead.status}</span>
+                    </div>
+                    <div style="margin-top: 12px; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                        <p style="margin: 4px 0;">💰 Potential Value: $${(lead.potentialValue || 0).toLocaleString()}</p>
+                        <p style="margin: 4px 0;">🎯 Priority: ${lead.priority}</p>
+                        <p style="margin: 4px 0;">📊 Source: ${lead.source}</p>
+                        <p style="margin: 4px 0;">👤 Assigned: ${lead.assignedTo}</p>
+                    </div>
+                `;
+          leadsList.appendChild(card);
+        });
+      }
+
+      // Display raw data
+      document.getElementById('rawData').textContent = JSON.stringify(
+        leads,
+        null,
+        2
+      );
+
+      console.log('📊 Lead Statistics:');
+      console.log('Total Leads:', totalLeads);
+      console.log('Active Prospects:', activeProspects);
+      console.log(
+        'Leads by Status:',
+        leads.reduce((acc, lead) => {
+          acc[lead.status] = (acc[lead.status] || 0) + 1;
+          return acc;
+        }, {})
+      );
+    </script>
+  </body>
+</html>

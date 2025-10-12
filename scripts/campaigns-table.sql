@@ -19,11 +19,11 @@ CREATE TABLE IF NOT EXISTS marketing_campaigns (
     start_date DATE,
     end_date DATE,
     platforms JSONB DEFAULT '[]'::jsonb,
-    
+
     -- Organization/User tracking
     organization_id UUID,
     created_by UUID,
-    
+
     -- Metadata
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

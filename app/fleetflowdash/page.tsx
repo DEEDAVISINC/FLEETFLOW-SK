@@ -375,7 +375,6 @@ export default function HomePage() {
       <div
         style={{
           padding: '40px',
-          paddingTop: '0px',
           background: `
         linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #1e293b 75%, #0f172a 100%),
         radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
@@ -384,7 +383,7 @@ export default function HomePage() {
       `,
           backgroundSize: '100% 100%, 800px 800px, 600px 600px, 400px 400px',
           backgroundPosition: '0 0, 0 0, 100% 100%, 50% 50%',
-          minHeight: '100vh',
+          minHeight: 'calc(100vh - 120px)',
           color: '#ffffff',
           position: 'relative',
           fontFamily:

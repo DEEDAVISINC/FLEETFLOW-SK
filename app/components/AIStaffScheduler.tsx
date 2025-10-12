@@ -1309,7 +1309,7 @@ export default function AIStaffScheduler(): JSX.Element {
                       { value: 'strategic_planning' },
                       '🎯 Strategic Planning Support'
                     ),
-                    
+
                     // General Business Tasks
                     React.createElement(
                       'option',
@@ -1389,7 +1389,8 @@ export default function AIStaffScheduler(): JSX.Element {
                   React.createElement('input', {
                     type: 'text',
                     id: 'taskName',
-                    placeholder: 'e.g., Schedule investor meetings, Prepare weekly reports, Manage travel to conference',
+                    placeholder:
+                      'e.g., Schedule investor meetings, Prepare weekly reports, Manage travel to conference',
                     style: {
                       width: '100%',
                       padding: '10px',

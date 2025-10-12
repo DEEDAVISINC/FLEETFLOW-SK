@@ -969,6 +969,69 @@ export default function DEPOINTEDashboard() {
   useEffect(() => {
     setIsMounted(true);
 
+    // ONE-TIME CLEANUP: Clear old mock data from previous versions
+    const hasCleanedOldData = localStorage.getItem(
+      'depointe-cleaned-mock-data-v3'
+    );
+    if (!hasCleanedOldData) {
+      console.log(
+        '🧹 One-time cleanup: Removing ALL old mock data from previous version...'
+      );
+
+      // Clean up mock LEADS
+      const existingLeads = localStorage.getItem('depointe-crm-leads');
+      if (existingLeads) {
+        try {
+          const leads = JSON.parse(existingLeads);
+          // Check if any leads have "Mock Company" or similar mock indicators
+          const hasMockData = leads.some(
+            (lead: any) =>
+              lead.company?.includes('Mock Company') ||
+              lead.company?.includes('Express Carriers Group') ||
+              lead.company?.includes('Prime Haulers LLC') ||
+              lead.company?.includes('Rapid Delivery Systems')
+          );
+
+          if (hasMockData) {
+            console.log('🗑️ Removing old mock leads...');
+            localStorage.removeItem('depointe-crm-leads');
+          }
+        } catch (e) {
+          console.warn('Could not parse leads for cleanup');
+        }
+      }
+
+      // Clean up mock ACTIVITY FEED
+      const existingActivity = localStorage.getItem('depointe-activity-feed');
+      if (existingActivity) {
+        try {
+          const activities = JSON.parse(existingActivity);
+          // Check if activities reference mock data
+          const hasMockActivity = activities.some(
+            (activity: any) =>
+              activity.details?.includes('Mock Company') ||
+              activity.details?.includes('Express Carriers Group') ||
+              activity.details?.includes('Prime Haulers LLC') ||
+              activity.details?.includes('Rapid Delivery Systems') ||
+              activity.action?.includes('Generated 5 mock leads')
+          );
+
+          if (hasMockActivity) {
+            console.log('🗑️ Removing old mock activity feed...');
+            localStorage.removeItem('depointe-activity-feed');
+          }
+        } catch (e) {
+          console.warn('Could not parse activity for cleanup');
+        }
+      }
+
+      // Mark cleanup as complete
+      localStorage.setItem('depointe-cleaned-mock-data-v3', 'true');
+      console.log(
+        '✅ Old data cleanup complete. Ready for multi-source lead generation!'
+      );
+    }
+
     // Start the backend task execution service
     console.log('🚀 Starting DEPOINTE Task Execution Service...');
     taskExecutionService.start();
@@ -1370,10 +1433,23 @@ export default function DEPOINTEDashboard() {
     // Update healthcare tasks state
     setHealthcareTasks(healthcareTasksData);
 
-    // Save to localStorage for persistence
+    // Convert campaign tasks to execution service format
+    const executionTasks = healthcareTasksData.map((task) => ({
+      ...task,
+      type: 'healthcare-logistics',
+      status: 'pending' as const,
+      targetQuantity: 25, // Default target: 25 leads per task
+      progress: 0,
+      estimatedRevenue:
+        parseFloat(task.revenueTarget?.replace(/[$,K]/g, '') || '0') * 1000,
+      actualRevenue: 0,
+      createdAt: new Date().toISOString(),
+    }));
+
+    // Save execution-ready tasks to localStorage
     localStorage.setItem(
       'depointe-healthcare-tasks',
-      JSON.stringify(healthcareTasksData)
+      JSON.stringify(executionTasks)
     );
 
     // Update staff members with their assigned tasks
@@ -1468,10 +1544,23 @@ export default function DEPOINTEDashboard() {
     // Update shipper tasks state
     setShipperTasks(shipperTasksData);
 
-    // Save to localStorage for persistence
+    // Convert campaign tasks to execution service format
+    const executionTasks = shipperTasksData.map((task) => ({
+      ...task,
+      type: 'shipper-expansion',
+      status: 'pending' as const,
+      targetQuantity: 30, // Default target: 30 leads per task
+      progress: 0,
+      estimatedRevenue:
+        parseFloat(task.revenueTarget?.replace(/[$,K]/g, '') || '0') * 1000,
+      actualRevenue: 0,
+      createdAt: new Date().toISOString(),
+    }));
+
+    // Save execution-ready tasks to localStorage
     localStorage.setItem(
       'depointe-shipper-tasks',
-      JSON.stringify(shipperTasksData)
+      JSON.stringify(executionTasks)
     );
 
     // Update staff members with their assigned tasks
@@ -1573,10 +1662,23 @@ export default function DEPOINTEDashboard() {
     // Update desperate prospects tasks state
     setDesperateProspectsTasks(desperateProspectsTasksData);
 
-    // Save to localStorage for persistence
+    // Convert campaign tasks to execution service format
+    const executionTasks = desperateProspectsTasksData.map((task) => ({
+      ...task,
+      type: 'desperate-prospects',
+      status: 'pending' as const,
+      targetQuantity: 20, // Default target: 20 leads per task
+      progress: 0,
+      estimatedRevenue:
+        parseFloat(task.revenueTarget?.replace(/[$,K]/g, '') || '0') * 1000,
+      actualRevenue: 0,
+      createdAt: new Date().toISOString(),
+    }));
+
+    // Save execution-ready tasks to localStorage
     localStorage.setItem(
       'depointe-desperate-prospects-tasks',
-      JSON.stringify(desperateProspectsTasksData)
+      JSON.stringify(executionTasks)
     );
 
     // Update staff members with their assigned tasks
@@ -1842,7 +1944,7 @@ export default function DEPOINTEDashboard() {
             e.currentTarget.style.transform = 'scale(1)';
             e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.4)';
           }}
-          title="Email Warm-up Status"
+          title='Email Warm-up Status'
         >
           📧
         </div>
@@ -1857,7 +1959,8 @@ export default function DEPOINTEDashboard() {
               width: '360px',
               maxHeight: '500px',
               overflowY: 'auto',
-              background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(51, 65, 85, 0.98))',
+              background:
+                'linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(51, 65, 85, 0.98))',
               border: '1px solid rgba(59, 130, 246, 0.3)',
               borderRadius: '16px',
               padding: '20px',
@@ -2047,7 +2150,8 @@ export default function DEPOINTEDashboard() {
                     lineHeight: '1.4',
                   }}
                 >
-                  30-day warm-up required before launching Strategic Sales campaigns.
+                  30-day warm-up required before launching Strategic Sales
+                  campaigns.
                 </p>
 
                 <button
@@ -2310,7 +2414,6 @@ export default function DEPOINTEDashboard() {
       {selectedMainView === 'overview' && (
         <div>
           {/* Move all existing dashboard content here */}
-
 
           {/* AI Staff Directory Reference */}
           <div style={{ marginBottom: '30px' }}>
@@ -3344,396 +3447,418 @@ export default function DEPOINTEDashboard() {
                 </div>
               </h3>
 
-              {/* Ultra-Compact Campaign Card */}
-              <div
-                onClick={() =>
-                  setExpandedHealthcareCampaign(!expandedHealthcareCampaign)
-                }
-                style={{
-                  background: 'rgba(34, 197, 94, 0.1)',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
-                  borderRadius: '12px',
-                  padding: '16px 20px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  minHeight: '60px',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(34, 197, 94, 0.15)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(34, 197, 94, 0.1)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                {/* Left side - Campaign info */}
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
-                >
+              {/* Healthcare Campaign Card */}
+              {healthcareTasks.length > 0 && (
+                <div>
+                  {/* Ultra-Compact Campaign Card */}
                   <div
+                    onClick={() =>
+                      setExpandedHealthcareCampaign(!expandedHealthcareCampaign)
+                    }
                     style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                      background: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)',
+                      borderRadius: '12px',
+                      padding: '16px 20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '18px',
+                      justifyContent: 'space-between',
+                      minHeight: '60px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(34, 197, 94, 0.15)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background =
+                        'rgba(34, 197, 94, 0.1)';
+                      e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    🏥
-                  </div>
-                  <div>
-                    <h4
-                      style={{
-                        color: 'white',
-                        fontSize: '1rem',
-                        fontWeight: '700',
-                        margin: 0,
-                      }}
-                    >
-                      Healthcare Logistics Campaign
-                    </h4>
+                    {/* Left side - Campaign info */}
                     <div
                       style={{
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        fontSize: '0.85rem',
-                        marginTop: '2px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px',
                       }}
                     >
-                      {healthcareTasks.length} tasks,{' '}
-                      {
-                        [
-                          ...new Set(
-                            healthcareTasks.flatMap((task) => task.assignedTo)
-                          ),
-                        ].length
-                      }{' '}
-                      staff, $1,250K+ target,{' '}
-                      {
-                        healthcareTasks.filter(
-                          (task) => task.priority === 'CRITICAL'
-                        ).length
-                      }{' '}
-                      critical
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right side - Staff avatars and actions */}
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
-                >
-                  {/* Staff avatars */}
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    {[
-                      ...new Set(
-                        healthcareTasks.flatMap((task) => task.assignedTo)
-                      ),
-                    ]
-                      .slice(0, 3)
-                      .map((staffId) => {
-                        const staff = staffData.find((s) => s.id === staffId);
-                        return staff ? (
-                          <div
-                            key={staffId}
-                            style={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '50%',
-                              background:
-                                'linear-gradient(135deg, #22c55e, #16a34a)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '10px',
-                              border: '1px solid rgba(34, 197, 94, 0.5)',
-                            }}
-                            title={staff.name}
-                          >
-                            {staff.avatar}
-                          </div>
-                        ) : null;
-                      })}
-                    {[
-                      ...new Set(
-                        healthcareTasks.flatMap((task) => task.assignedTo)
-                      ),
-                    ].length > 3 && (
                       <div
                         style={{
-                          width: '24px',
-                          height: '24px',
+                          width: '40px',
+                          height: '40px',
                           borderRadius: '50%',
-                          background: 'rgba(255, 255, 255, 0.1)',
+                          background:
+                            'linear-gradient(135deg, #22c55e, #16a34a)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '10px',
-                          color: 'rgba(255, 255, 255, 0.7)',
+                          fontSize: '18px',
                         }}
                       >
-                        +
+                        🏥
+                      </div>
+                      <div>
+                        <h4
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '700',
+                            margin: 0,
+                          }}
+                        >
+                          Healthcare Logistics Campaign
+                        </h4>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.85rem',
+                            marginTop: '2px',
+                          }}
+                        >
+                          {healthcareTasks.length} tasks,{' '}
+                          {
+                            [
+                              ...new Set(
+                                healthcareTasks.flatMap(
+                                  (task) => task.assignedTo
+                                )
+                              ),
+                            ].length
+                          }{' '}
+                          staff, $1,250K+ target,{' '}
+                          {
+                            healthcareTasks.filter(
+                              (task) => task.priority === 'CRITICAL'
+                            ).length
+                          }{' '}
+                          critical
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right side - Staff avatars and actions */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px',
+                      }}
+                    >
+                      {/* Staff avatars */}
+                      <div style={{ display: 'flex', gap: '4px' }}>
                         {[
                           ...new Set(
                             healthcareTasks.flatMap((task) => task.assignedTo)
                           ),
-                        ].length - 3}
+                        ]
+                          .slice(0, 3)
+                          .map((staffId) => {
+                            const staff = staffData.find(
+                              (s) => s.id === staffId
+                            );
+                            return staff ? (
+                              <div
+                                key={staffId}
+                                style={{
+                                  width: '24px',
+                                  height: '24px',
+                                  borderRadius: '50%',
+                                  background:
+                                    'linear-gradient(135deg, #22c55e, #16a34a)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '10px',
+                                  border: '1px solid rgba(34, 197, 94, 0.5)',
+                                }}
+                                title={staff.name}
+                              >
+                                {staff.avatar}
+                              </div>
+                            ) : null;
+                          })}
+                        {[
+                          ...new Set(
+                            healthcareTasks.flatMap((task) => task.assignedTo)
+                          ),
+                        ].length > 3 && (
+                          <div
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '10px',
+                              color: 'rgba(255, 255, 255, 0.7)',
+                            }}
+                          >
+                            +
+                            {[
+                              ...new Set(
+                                healthcareTasks.flatMap(
+                                  (task) => task.assignedTo
+                                )
+                              ),
+                            ].length - 3}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Clear button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent campaign click
-                      setHealthcareTasks([]);
-                      setLiveActivities([]);
-                      localStorage.removeItem('depointe-healthcare-tasks');
-                      localStorage.removeItem('depointe-activity-feed');
-                      setStaffData((prevStaff) =>
-                        prevStaff.map((staff) => ({
-                          ...staff,
-                          status: 'available',
-                          currentTask: 'Ready for task assignment',
-                          revenue: 0,
-                          efficiency: 0,
-                          tasksCompleted: 0,
-                        }))
-                      );
-                    }}
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.2)',
-                      border: '1px solid rgba(239, 68, 68, 0.3)',
-                      borderRadius: '6px',
-                      padding: '6px 12px',
-                      color: '#ef4444',
-                      fontSize: '0.75rem',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    Clear
-                  </button>
-
-                  {/* Expand indicator */}
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      fontSize: '12px',
-                      transform: expandedHealthcareCampaign
-                        ? 'rotate(90deg)'
-                        : 'rotate(0deg)',
-                      transition: 'transform 0.3s ease',
-                    }}
-                  >
-                    ▶
-                  </div>
-                </div>
-              </div>
-
-              {/* Expanded Healthcare Campaign Details */}
-              {expandedHealthcareCampaign && (
-                <div
-                  style={{
-                    marginTop: '15px',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    border: '1px solid rgba(34, 197, 94, 0.3)',
-                    borderRadius: '12px',
-                    padding: '20px',
-                  }}
-                >
-                  <h4
-                    style={{
-                      color: 'white',
-                      fontSize: '1.3rem',
-                      fontWeight: '700',
-                      marginBottom: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                    }}
-                  >
-                    🏥 Healthcare Logistics Campaign Details
-                  </h4>
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns:
-                        'repeat(auto-fit, minmax(350px, 1fr))',
-                      gap: '15px',
-                    }}
-                  >
-                    {healthcareTasks.map((task) => (
-                      <div
-                        key={task.id}
+                      {/* Clear button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent campaign click
+                          setHealthcareTasks([]);
+                          setLiveActivities([]);
+                          localStorage.removeItem('depointe-healthcare-tasks');
+                          localStorage.removeItem('depointe-activity-feed');
+                          setStaffData((prevStaff) =>
+                            prevStaff.map((staff) => ({
+                              ...staff,
+                              status: 'available',
+                              currentTask: 'Ready for task assignment',
+                              revenue: 0,
+                              efficiency: 0,
+                              tasksCompleted: 0,
+                            }))
+                          );
+                        }}
                         style={{
-                          background: 'rgba(34, 197, 94, 0.1)',
-                          border: '1px solid rgba(34, 197, 94, 0.3)',
-                          borderRadius: '10px',
-                          padding: '15px',
+                          background: 'rgba(239, 68, 68, 0.2)',
+                          border: '1px solid rgba(239, 68, 68, 0.3)',
+                          borderRadius: '6px',
+                          padding: '6px 12px',
+                          color: '#ef4444',
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
                         }}
                       >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'flex-start',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <h5
-                            style={{
-                              color: 'white',
-                              fontSize: '1.1rem',
-                              fontWeight: '700',
-                              margin: 0,
-                            }}
-                          >
-                            {task.title}
-                          </h5>
-                          <span
-                            style={{
-                              background:
-                                task.priority === 'CRITICAL'
-                                  ? 'rgba(239, 68, 68, 0.2)'
-                                  : task.priority === 'HIGH'
-                                    ? 'rgba(245, 158, 11, 0.2)'
-                                    : task.priority === 'MEDIUM'
-                                      ? 'rgba(34, 197, 94, 0.2)'
-                                      : 'rgba(148, 163, 184, 0.2)',
-                              color:
-                                task.priority === 'CRITICAL'
-                                  ? '#ef4444'
-                                  : task.priority === 'HIGH'
-                                    ? '#f59e0b'
-                                    : task.priority === 'MEDIUM'
-                                      ? '#22c55e'
-                                      : '#94a3b8',
-                              padding: '3px 8px',
-                              borderRadius: '6px',
-                              fontSize: '0.7rem',
-                              fontWeight: '600',
-                            }}
-                          >
-                            {task.priority}
-                          </span>
-                        </div>
-                        <p
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            fontSize: '0.9rem',
-                            lineHeight: '1.4',
-                            margin: '0 0 12px 0',
-                          }}
-                        >
-                          {task.description}
-                        </p>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '15px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: '#22c55e',
-                              fontSize: '0.8rem',
-                              fontWeight: '600',
-                            }}
-                          >
-                            📅 {task.timeline}
-                          </span>
-                          <span
-                            style={{
-                              color: '#22c55e',
-                              fontSize: '0.8rem',
-                              fontWeight: '600',
-                            }}
-                          >
-                            💰 {task.revenueTarget}
-                          </span>
-                        </div>
-                        <div style={{ marginTop: '12px' }}>
+                        Clear
+                      </button>
+
+                      {/* Expand indicator */}
+                      <div
+                        style={{
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          fontSize: '12px',
+                          transform: expandedHealthcareCampaign
+                            ? 'rotate(90deg)'
+                            : 'rotate(0deg)',
+                          transition: 'transform 0.3s ease',
+                        }}
+                      >
+                        ▶
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Expanded Healthcare Campaign Details */}
+                  {expandedHealthcareCampaign && (
+                    <div
+                      style={{
+                        marginTop: '15px',
+                        background: 'rgba(15, 23, 42, 0.8)',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          color: 'white',
+                          fontSize: '1.3rem',
+                          fontWeight: '700',
+                          marginBottom: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        🏥 Healthcare Logistics Campaign Details
+                      </h4>
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns:
+                            'repeat(auto-fit, minmax(350px, 1fr))',
+                          gap: '15px',
+                        }}
+                      >
+                        {healthcareTasks.map((task) => (
                           <div
+                            key={task.id}
                             style={{
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              fontSize: '0.8rem',
-                              fontWeight: '600',
-                              marginBottom: '8px',
+                              background: 'rgba(34, 197, 94, 0.1)',
+                              border: '1px solid rgba(34, 197, 94, 0.3)',
+                              borderRadius: '10px',
+                              padding: '15px',
                             }}
                           >
-                            Assigned Staff:
-                          </div>
-                          <div
-                            style={{
-                              display: 'flex',
-                              gap: '6px',
-                              flexWrap: 'wrap',
-                            }}
-                          >
-                            {task.assignedTo.map((staffId) => {
-                              const staff = staffData.find(
-                                (s) => s.id === staffId
-                              );
-                              return staff ? (
-                                <div
-                                  key={staffId}
-                                  style={{
-                                    background: 'rgba(34, 197, 94, 0.3)',
-                                    color: 'white',
-                                    padding: '4px 8px',
-                                    borderRadius: '6px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '600',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                  }}
-                                >
-                                  <span>{staff.avatar}</span>
-                                  {staff.name}
-                                </div>
-                              ) : null;
-                            })}
-                          </div>
-                        </div>
-                        <div style={{ marginTop: '12px' }}>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              fontSize: '0.8rem',
-                              fontWeight: '600',
-                              marginBottom: '8px',
-                            }}
-                          >
-                            Key Deliverables:
-                          </div>
-                          {(task.deliverables || [])
-                            .slice(0, 3)
-                            .map((deliverable, index) => (
-                              <div
-                                key={index}
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'flex-start',
+                                marginBottom: '10px',
+                              }}
+                            >
+                              <h5
                                 style={{
-                                  color: 'rgba(255, 255, 255, 0.7)',
-                                  fontSize: '0.8rem',
-                                  padding: '2px 0',
+                                  color: 'white',
+                                  fontSize: '1.1rem',
+                                  fontWeight: '700',
+                                  margin: 0,
                                 }}
                               >
-                                • {deliverable}
+                                {task.title}
+                              </h5>
+                              <span
+                                style={{
+                                  background:
+                                    task.priority === 'CRITICAL'
+                                      ? 'rgba(239, 68, 68, 0.2)'
+                                      : task.priority === 'HIGH'
+                                        ? 'rgba(245, 158, 11, 0.2)'
+                                        : task.priority === 'MEDIUM'
+                                          ? 'rgba(34, 197, 94, 0.2)'
+                                          : 'rgba(148, 163, 184, 0.2)',
+                                  color:
+                                    task.priority === 'CRITICAL'
+                                      ? '#ef4444'
+                                      : task.priority === 'HIGH'
+                                        ? '#f59e0b'
+                                        : task.priority === 'MEDIUM'
+                                          ? '#22c55e'
+                                          : '#94a3b8',
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '0.7rem',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {task.priority}
+                              </span>
+                            </div>
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '0.9rem',
+                                lineHeight: '1.4',
+                                margin: '0 0 12px 0',
+                              }}
+                            >
+                              {task.description}
+                            </p>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '15px',
+                                marginBottom: '10px',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  color: '#22c55e',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                📅 {task.timeline}
+                              </span>
+                              <span
+                                style={{
+                                  color: '#22c55e',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                💰 {task.revenueTarget}
+                              </span>
+                            </div>
+                            <div style={{ marginTop: '12px' }}>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.8)',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '600',
+                                  marginBottom: '8px',
+                                }}
+                              >
+                                Assigned Staff:
                               </div>
-                            ))}
-                        </div>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  gap: '6px',
+                                  flexWrap: 'wrap',
+                                }}
+                              >
+                                {task.assignedTo.map((staffId) => {
+                                  const staff = staffData.find(
+                                    (s) => s.id === staffId
+                                  );
+                                  return staff ? (
+                                    <div
+                                      key={staffId}
+                                      style={{
+                                        background: 'rgba(34, 197, 94, 0.3)',
+                                        color: 'white',
+                                        padding: '4px 8px',
+                                        borderRadius: '6px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '600',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                      }}
+                                    >
+                                      <span>{staff.avatar}</span>
+                                      {staff.name}
+                                    </div>
+                                  ) : null;
+                                })}
+                              </div>
+                            </div>
+                            <div style={{ marginTop: '12px' }}>
+                              <div
+                                style={{
+                                  color: 'rgba(255, 255, 255, 0.8)',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '600',
+                                  marginBottom: '8px',
+                                }}
+                              >
+                                Key Deliverables:
+                              </div>
+                              {(task.deliverables || [])
+                                .slice(0, 3)
+                                .map((deliverable, index) => (
+                                  <div
+                                    key={index}
+                                    style={{
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      fontSize: '0.8rem',
+                                      padding: '2px 0',
+                                    }}
+                                  >
+                                    • {deliverable}
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
               )}
 

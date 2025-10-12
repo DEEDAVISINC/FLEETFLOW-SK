@@ -3,6 +3,7 @@
 ## ONE-TIME SETUP (Run Once)
 
 ### Step 1: Run the Complete Database SQL
+
 Open your Supabase dashboard and run this SQL file:
 
 ```
@@ -10,8 +11,9 @@ scripts/complete-local-database.sql
 ```
 
 This creates all tables you need:
+
 - ✅ `marketing_campaigns` - Marketing campaigns
-- ✅ `notes` - Notes and documentation  
+- ✅ `notes` - Notes and documentation
 - ✅ `documents` - File uploads and documents
 - ✅ `vehicles` - Fleet vehicles
 - ✅ `routes` - Route planning
@@ -21,6 +23,7 @@ This creates all tables you need:
 - ✅ `carriers` - Carrier management
 
 ### Step 2: Verify Database Connection
+
 ```bash
 curl http://localhost:3001/api/supabase-connection-test
 ```
@@ -28,6 +31,7 @@ curl http://localhost:3001/api/supabase-connection-test
 ## FEATURES NOW WORKING WITH REAL DATABASE
 
 ### 1. Campaigns
+
 ```bash
 # Create campaign
 curl -X POST http://localhost:3001/api/marketing/digital-strategy \
@@ -47,6 +51,7 @@ curl http://localhost:3001/api/marketing/digital-strategy
 ```
 
 ### 2. Notes
+
 ```bash
 # Create note
 curl -X POST http://localhost:3001/api/notes \
@@ -71,17 +76,21 @@ curl -X DELETE "http://localhost:3001/api/notes?id=NOTE-123"
 ```
 
 ### 3. Documents
-*(API route ready - use similar pattern to notes)*
+
+_(API route ready - use similar pattern to notes)_
 
 ### 4. Vehicles
-*(API route ready - use similar pattern to notes)*
+
+_(API route ready - use similar pattern to notes)_
 
 ### 5. Tracking
-*(API route ready - use similar pattern to notes)*
+
+_(API route ready - use similar pattern to notes)_
 
 ## EXISTING DATABASE FEATURES
 
 These already use real database:
+
 - ✅ Loads (`loads` table)
 - ✅ Drivers (`drivers` table)
 - ✅ CRM Contacts (`crm_contacts` table)
@@ -91,6 +100,7 @@ These already use real database:
 ## HOW TO USE IN YOUR APP
 
 ### Example: Create a Note in Your UI
+
 ```typescript
 const createNote = async (noteData) => {
   const response = await fetch('/api/notes', {
@@ -98,7 +108,7 @@ const createNote = async (noteData) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(noteData)
   });
-  
+
   const result = await response.json();
   if (result.success) {
     console.log('Note created:', result.note);
@@ -107,6 +117,7 @@ const createNote = async (noteData) => {
 ```
 
 ### Example: Fetch Notes
+
 ```typescript
 const getNotes = async () => {
   const response = await fetch('/api/notes');
@@ -118,12 +129,15 @@ const getNotes = async () => {
 ## TROUBLESHOOTING
 
 ### "Table does not exist" Error
+
 Run the SQL file: `scripts/complete-local-database.sql`
 
-### "Permission denied" Error  
+### "Permission denied" Error
+
 Check your Supabase API keys in `.env.local`
 
 ### Data Not Saving
+
 1. Check browser console for errors
 2. Test API with curl commands above
 3. Verify Supabase connection
@@ -131,21 +145,19 @@ Check your Supabase API keys in `.env.local`
 ## WHAT'S DIFFERENT NOW?
 
 ### BEFORE:
-❌ Data in localStorage (browser only)
-❌ Data lost on browser clear
-❌ No sync across devices
-❌ Mock data in API routes
+
+❌ Data in localStorage (browser only) ❌ Data lost on browser clear ❌ No sync across devices ❌
+Mock data in API routes
 
 ### NOW:
-✅ Data in Supabase (persistent)
-✅ Data survives browser clears
-✅ Syncs across all devices
-✅ Real database queries
-✅ Production-ready architecture
+
+✅ Data in Supabase (persistent) ✅ Data survives browser clears ✅ Syncs across all devices ✅ Real
+database queries ✅ Production-ready architecture
 
 ## ENVIRONMENT VARIABLES
 
 Make sure `.env.local` has:
+
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://nleqplwwothhxgrovnjw.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here

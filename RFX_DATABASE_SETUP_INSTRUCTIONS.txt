@@ -1,0 +1,26 @@
+
+================================================================================
+📋 DATABASE SETUP INSTRUCTIONS
+================================================================================
+
+🔥 GO TO SUPABASE NOW AND RUN THIS SQL:
+
+1. Open: https://supabase.com/dashboard/project/nleqplwwothhxgrovnjw/editor
+
+2. Click 'SQL Editor' (left sidebar)
+
+3. Click 'New Query'
+
+4. Copy ALL the SQL from:
+   /Users/deedavis/FLEETFLOW/scripts/rfx-bid-tracking-schema.sql
+
+5. Paste it into the SQL editor
+
+6. Click 'RUN' (or press Cmd+Enter)
+
+7. You should see: 'Success. No rows returned'
+
+================================================================================
+✅ AFTER RUNNING THE SQL, YOUR SYSTEM WILL BE PRODUCTION-READY!
+================================================================================
+

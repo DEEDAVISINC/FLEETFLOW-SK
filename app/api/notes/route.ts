@@ -40,7 +40,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to fetch notes. Run scripts/complete-local-database.sql',
+          error:
+            'Failed to fetch notes. Run scripts/complete-local-database.sql',
           notes: [],
         },
         { status: 500 }
@@ -90,7 +91,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to create note. Run scripts/complete-local-database.sql',
+          error:
+            'Failed to create note. Run scripts/complete-local-database.sql',
         },
         { status: 500 }
       );
@@ -175,7 +177,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase.from('notes').delete().eq('note_id', noteId);
+    const { error } = await supabase
+      .from('notes')
+      .delete()
+      .eq('note_id', noteId);
 
     if (error) {
       console.error('Error deleting note:', error);

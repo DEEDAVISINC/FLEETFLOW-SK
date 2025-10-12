@@ -7,7 +7,7 @@ export default function FleetFlowDashLayout({
 }) {
   return (
     <div style={{ minHeight: '100vh' }}>
-      <main style={{ paddingTop: '64px' }}>{children}</main>
+      <main style={{ paddingTop: '120px' }}>{children}</main>
     </div>
   );
 }

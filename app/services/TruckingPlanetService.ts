@@ -74,7 +74,7 @@ export interface FreightBlasterCampaign {
 
 export interface TruckingPlanetFilters {
   equipmentType?: string[];
-  freightVolume?: 'high' | 'medium' | 'low';
+  freightVolume?: 'high' | 'medium' | 'low' | 'medium-high' | 'all';
   location?: {
     states?: string[];
     cities?: string[];
@@ -84,6 +84,14 @@ export interface TruckingPlanetFilters {
     maxTrucks?: number;
   };
   industries?: string[];
+  industryType?:
+    | 'healthcare'
+    | 'manufacturing'
+    | 'retail'
+    | 'food'
+    | 'automotive'
+    | 'general'; // Simplified industry filter
+  resultLimit?: number;
 }
 
 export interface TruckingPlanetMetrics {
@@ -125,8 +133,11 @@ export class TruckingPlanetService {
     password: process.env.TRUCKING_PLANET_PASSWORD || '',
   };
 
-  // High-value shipper database (verified TruckingPlanet data)
-  private shipperDatabase: TruckingPlanetShipper[] = [
+  private scrapeApiUrl = '/api/scrape/truckingplanet';
+  private scrapingInProgress = false;
+
+  // Fallback database (used if scraping fails)
+  private fallbackShipperDatabase: TruckingPlanetShipper[] = [
     {
       id: 'TP-SH-001',
       companyName: 'Global Automotive Components Inc',
@@ -235,21 +246,119 @@ export class TruckingPlanetService {
   ];
 
   constructor() {
-    if (this.credentials.username && this.credentials.password) {
-      console.info(
-        '🌐 TruckingPlanet Network service initialized - DEE DAVIS INC account active'
+    console.info('🌐 TruckingPlanet Service - Account: DEE DAVIS INC');
+    console.info('🕷️ Web scraping enabled for 70K+ shippers network');
+  }
+
+  /**
+   * Scrape TruckingPlanet website for real shipper data
+   */
+  private async scrapeShippers(
+    filters: TruckingPlanetFilters = {}
+  ): Promise<TruckingPlanetShipper[] | null> {
+    if (this.scrapingInProgress) {
+      console.warn('⚠️ Scraping already in progress, using fallback');
+      return null;
+    }
+
+    if (!this.credentials.username || !this.credentials.password) {
+      console.warn('⚠️ No credentials configured for scraping');
+      return null;
+    }
+
+    this.scrapingInProgress = true;
+
+    try {
+      console.info('🕷️ Starting TruckingPlanet web scrape...');
+
+      const timeoutPromise = new Promise<Response>((_, reject) => {
+        setTimeout(() => reject(new Error('Scraping timeout')), 45000); // 45 seconds for scraping
+      });
+
+      const fetchPromise = fetch(this.scrapeApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: this.credentials.username,
+          password: this.credentials.password,
+          filters: {
+            industryType: filters.industryType, // Healthcare, manufacturing, etc.
+            state: filters.location?.states?.[0],
+            equipmentType: filters.equipmentType?.[0],
+            freightVolume: filters.freightVolume,
+            limit: filters.resultLimit || 50,
+          },
+        }),
+      });
+
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.success && data.shippers) {
+          console.info(
+            `✅ LIVE SCRAPE: Retrieved ${data.shippers.length} REAL shippers from TruckingPlanet`
+          );
+          this.scrapingInProgress = false;
+          return data.shippers;
+        }
+      }
+
+      console.warn('⚠️ Scraping failed, using fallback data');
+      this.scrapingInProgress = false;
+      return null;
+    } catch (error: any) {
+      console.warn(
+        `⚠️ TruckingPlanet scraping error (${error.message}), using fallback data`
       );
+      this.scrapingInProgress = false;
+      return null;
     }
   }
 
+  /**
+   * Search shippers - attempts LIVE WEB SCRAPING first, falls back to demo data
+   */
   async searchShippers(
     filters: TruckingPlanetFilters = {}
   ): Promise<TruckingPlanetShipper[]> {
-    console.info('🔍 Searching TruckingPlanet shipper database:', filters);
+    console.info('🔍 Searching TruckingPlanet for shippers:', filters);
 
-    let results = [...this.shipperDatabase];
+    // Try live web scraping first
+    const scrapedShippers = await this.scrapeShippers(filters);
 
-    // Apply filters
+    if (scrapedShippers && scrapedShippers.length > 0) {
+      // Apply additional filters to scraped data
+      let results = scrapedShippers;
+
+      if (filters.equipmentType && filters.equipmentType.length > 0) {
+        results = results.filter((shipper) =>
+          filters.equipmentType!.some((eq) =>
+            shipper.equipmentTypes.includes(eq)
+          )
+        );
+      }
+
+      if (filters.freightVolume) {
+        results = results.filter(
+          (shipper) => shipper.freightVolume === filters.freightVolume
+        );
+      }
+
+      if (filters.resultLimit) {
+        results = results.slice(0, filters.resultLimit);
+      }
+
+      results.sort((a, b) => b.truckingPlanetScore - a.truckingPlanetScore);
+      return results;
+    }
+
+    // Fallback to demo database if scraping fails
+    console.info('📋 Using fallback shipper database (demo data)');
+    let results = [...this.fallbackShipperDatabase];
+
+    // Apply filters to fallback data
     if (filters.equipmentType && filters.equipmentType.length > 0) {
       results = results.filter((shipper) =>
         filters.equipmentType!.some((eq) => shipper.equipmentTypes.includes(eq))
@@ -268,8 +377,12 @@ export class TruckingPlanetService {
       );
     }
 
+    if (filters.resultLimit) {
+      results = results.slice(0, filters.resultLimit);
+    }
+
     results.sort((a, b) => b.truckingPlanetScore - a.truckingPlanetScore);
-    console.info(`✅ Found ${results.length} matching shippers`);
+    console.info(`✅ Found ${results.length} shippers (fallback mode)`);
     return results;
   }
 
