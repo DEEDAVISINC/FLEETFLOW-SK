@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+  <head>
+    <title>DEPOINTE Campaign Status Check</title>
+    <style>
+      body {
+        font-family: monospace;
+        padding: 20px;
+        background: #1a1a1a;
+        color: #0f0;
+      }
+      .section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #0f0;
+      }
+      .error {
+        color: #f00;
+      }
+      .success {
+        color: #0f0;
+      }
+      .warning {
+        color: #ff0;
+      }
+      h2 {
+        color: #0ff;
+      }
+      pre {
+        background: #000;
+        padding: 10px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔍 DEPOINTE CAMPAIGN STATUS CHECK</h1>
+
+    <div class="section">
+      <h2>📊 Campaign Tasks</h2>
+      <div id="tasks"></div>
+    </div>
+
+    <div class="section">
+      <h2>📋 Generated Leads</h2>
+      <div id="leads"></div>
+    </div>
+
+    <div class="section">
+      <h2>⚡ Activity Feed</h2>
+      <div id="activity"></div>
+    </div>
+
+    <div class="section">
+      <h2>🔧 Diagnostic Info</h2>
+      <div id="diagnostic"></div>
+    </div>
+
+    <script>
+      // Check Healthcare Tasks
+      function checkHealthcareTasks() {
+        const tasks = localStorage.getItem('depointe-healthcare-tasks');
+        if (!tasks)
+          return '<p class="warning">⚠️ No healthcare tasks found</p>';
+
+        const parsed = JSON.parse(tasks);
+        return `
+        <p class="success">✅ Found ${parsed.length} healthcare campaign(s)</p>
+        <pre>${JSON.stringify(parsed, null, 2)}</pre>
+      `;
+      }
+
+      // Check Shipper Tasks
+      function checkShipperTasks() {
+        const tasks = localStorage.getItem('depointe-shipper-tasks');
+        if (!tasks) return '<p class="warning">⚠️ No shipper tasks found</p>';
+
+        const parsed = JSON.parse(tasks);
+        return `
+        <p class="success">✅ Found ${parsed.length} shipper campaign(s)</p>
+        <pre>${JSON.stringify(parsed, null, 2)}</pre>
+      `;
+      }
+
+      // Check Desperate Prospects
+      function checkDesperateTasks() {
+        const tasks = localStorage.getItem(
+          'depointe-desperate-prospects-tasks'
+        );
+        if (!tasks)
+          return '<p class="warning">⚠️ No desperate prospects tasks found</p>';
+
+        const parsed = JSON.parse(tasks);
+        return `
+        <p class="success">✅ Found ${parsed.length} desperate prospects campaign(s)</p>
+        <pre>${JSON.stringify(parsed, null, 2)}</pre>
+      `;
+      }
+
+      // Check Leads
+      function checkLeads() {
+        const leads = localStorage.getItem('depointe-crm-leads');
+        if (!leads) return '<p class="error">❌ No leads generated yet</p>';
+
+        const parsed = JSON.parse(leads);
+
+        // Group by source
+        const bySource = {};
+        parsed.forEach((lead) => {
+          const source = lead.source || 'Unknown';
+          bySource[source] = (bySource[source] || 0) + 1;
+        });
+
+        let html = `<p class="success">✅ Total leads: ${parsed.length}</p>`;
+        html += '<p><strong>By Source:</strong></p><ul>';
+        Object.entries(bySource).forEach(([source, count]) => {
+          html += `<li>${source}: ${count} leads</li>`;
+        });
+        html += '</ul>';
+
+        // Show first 5 leads
+        html += '<p><strong>First 5 Leads:</strong></p>';
+        html += `<pre>${JSON.stringify(parsed.slice(0, 5), null, 2)}</pre>`;
+
+        return html;
+      }
+
+      // Check Activity
+      function checkActivity() {
+        const activity = localStorage.getItem('depointe-activity-feed');
+        if (!activity) return '<p class="error">❌ No activity recorded</p>';
+
+        const parsed = JSON.parse(activity);
+        return `
+        <p class="success">✅ Found ${parsed.length} activity entries</p>
+        <p><strong>Last 10 activities:</strong></p>
+        <pre>${JSON.stringify(parsed.slice(0, 10), null, 2)}</pre>
+      `;
+      }
+
+      // Diagnostic Info
+      function getDiagnostic() {
+        const allKeys = Object.keys(localStorage).filter((k) =>
+          k.startsWith('depointe-')
+        );
+
+        let html =
+          '<p><strong>All DEPOINTE localStorage keys:</strong></p><ul>';
+        allKeys.forEach((key) => {
+          const value = localStorage.getItem(key);
+          const size = value ? (value.length / 1024).toFixed(2) : '0';
+          html += `<li>${key} (${size} KB)</li>`;
+        });
+        html += '</ul>';
+
+        html += '<p><strong>Task Execution Service Status:</strong></p>';
+        html +=
+          '<p class="warning">⚠️ Service only runs when dashboard is open in browser!</p>';
+        html +=
+          '<p class="warning">⚠️ If you close the browser, campaign execution STOPS!</p>';
+
+        return html;
+      }
+
+      // Run checks
+      document.getElementById('tasks').innerHTML = `
+      <h3>Healthcare:</h3>${checkHealthcareTasks()}
+      <h3>Shipper:</h3>${checkShipperTasks()}
+      <h3>Desperate Prospects:</h3>${checkDesperateTasks()}
+    `;
+
+      document.getElementById('leads').innerHTML = checkLeads();
+      document.getElementById('activity').innerHTML = checkActivity();
+      document.getElementById('diagnostic').innerHTML = getDiagnostic();
+    </script>
+  </body>
+</html>
+
+

@@ -1941,7 +1941,7 @@ INDUSTRY CERTIFICATIONS:
       );
     } catch (error) {
       console.error('Error searching RFx opportunities:', error);
-      return this.getMockSearchResults(searchParams);
+      return []; // Return empty array instead of mock data
     }
   }
 
@@ -4954,16 +4954,42 @@ Contract Response Division`;
       );
     } catch (error) {
       console.error('InstantMarkets.com scraping error:', error);
-      return this.getMockInstantMarketsData();
+      // Return empty array instead of mock data
+      return [];
     }
   }
 
   // Web scraping method for transportation opportunities
   private async scrapeInstantMarketsTransportation(): Promise<RFxRequest[]> {
     try {
-      await this.simulateScrapingDelay(); // Rate limiting
+      console.info(
+        '🌐 Scraping InstantMarkets.com for transportation opportunities...'
+      );
 
-      return [
+      // REAL WEB SCRAPING with Puppeteer
+      // NOTE: Puppeteer cannot be used in client-side code - this needs to be moved to an API route
+      // Returning empty array until proper API route implementation
+      console.warn(
+        '⚠️ InstantMarkets scraping requires server-side implementation via API route'
+      );
+      return [];
+    } catch (error) {
+      console.error(
+        '❌ Failed to initialize Puppeteer for InstantMarkets scraping:',
+        error
+      );
+      console.warn('⚠️ Returning empty array - real scraping unavailable');
+      return [];
+    }
+  }
+
+  // DEPRECATED: Old mock data method - keeping for reference but not used
+  private async getInstantMarketsTransportationFALLBACK_MOCK(): Promise<
+    RFxRequest[]
+  > {
+    try {
+      // NO LONGER USED - This is just reference data for structure
+      const DEPRECATED_scrapedOpportunities: RFxRequest[] = [
         {
           id: 'IM-TX-2025-001',
           type: 'RFP' as const,
@@ -5001,11 +5027,132 @@ Contract Response Division`;
             category: 'Transportation Services',
             organization: 'Public Transit Authority',
             scrapedAt: new Date().toISOString(),
+            submissionMethod: 'email', // email, portal, or both
+            submissionInstructions:
+              'Submit proposals via email to procurement@metro.houston.gov with subject line "RFP IM-TX-2025-001 Response"',
+            portalUrl: null,
+            requiredDocuments: [
+              'Company profile',
+              'Insurance certificates',
+              'Safety records',
+              'Financial statements',
+            ],
+            bondRequired: true,
+            bondAmount: 850000,
+          },
+        },
+        {
+          id: 'IM-CA-2025-002',
+          type: 'RFP' as const,
+          shipperId: 'caltrans-district-7',
+          shipperName: 'California Department of Transportation - District 7',
+          title: 'Heavy Equipment Transport - Los Angeles County',
+          description:
+            'Transportation services for heavy construction equipment including bulldozers, excavators, and cranes. Specialized flatbed trailers and escort vehicles required.',
+          origin: 'Los Angeles, CA',
+          destination: 'Various LA County Sites',
+          equipment: 'Heavy Duty Flatbed',
+          commodity: 'Construction Equipment',
+          weight: 45000,
+          distance: 0, // Multiple destinations
+          pickupDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+          deliveryDate: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000),
+          requirements: [
+            'Heavy haul permits and pilot cars',
+            'Specialized rigging equipment',
+            'Commercial drivers license with hazardous materials endorsement',
+            'Proof of $5M cargo insurance',
+            'GPS tracking and real-time monitoring',
+          ],
+          deadline: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
+          status: 'OPEN' as const,
+          estimatedValue: 3200000,
+          priority: 'MEDIUM' as const,
+          contactInfo: {
+            name: 'Robert Chen',
+            email: 'contracts@dot.ca.gov',
+            phone: '(213) 482-0000',
+          },
+          metadata: {
+            source: 'InstantMarkets.com',
+            category: 'Heavy Equipment Transport',
+            organization: 'State DOT',
+            scrapedAt: new Date().toISOString(),
+            submissionMethod: 'portal', // email, portal, or both
+            submissionInstructions:
+              'All bids must be submitted through the California State Contracting Portal',
+            portalUrl: 'https://caleprocure.ca.gov/pages/index.aspx',
+            requiredDocuments: [
+              'Bid form',
+              'Insurance proof',
+              'Equipment certifications',
+              'Safety compliance records',
+            ],
+            bondRequired: true,
+            bondAmount: 320000,
+          },
+        },
+        {
+          id: 'IM-IL-2025-003',
+          type: 'RFQ' as const,
+          shipperId: 'chicago-dept-public-health',
+          shipperName: 'City of Chicago Department of Public Health',
+          title: 'Medical Supplies Distribution Network',
+          description:
+            'Distribution services for medical supplies, vaccines, and pharmaceuticals to 12 health clinics across Chicago metropolitan area. Temperature-controlled transport required.',
+          origin: 'Chicago, IL Distribution Center',
+          destination: '12 Health Clinics',
+          equipment: 'Refrigerated Van',
+          commodity: 'Medical Supplies',
+          weight: 2500,
+          distance: 50, // Average distance
+          pickupDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          deliveryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+          requirements: [
+            'Temperature-controlled vehicles (2-8°C)',
+            'Background checks for all drivers',
+            'GPS tracking with temperature monitoring',
+            'Emergency response capability',
+            'HIPAA compliance certification',
+          ],
+          deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          status: 'OPEN' as const,
+          estimatedValue: 1200000,
+          priority: 'HIGH' as const,
+          contactInfo: {
+            name: 'Dr. Sarah Johnson',
+            email: 'procurement@cityofchicago.org',
+            phone: '(312) 747-0000',
+          },
+          metadata: {
+            source: 'InstantMarkets.com',
+            category: 'Healthcare Logistics',
+            organization: 'Municipal Health Department',
+            scrapedAt: new Date().toISOString(),
+            submissionMethod: 'both', // email, portal, or both
+            submissionInstructions:
+              'Proposals accepted via email OR through the City of Chicago eProcurement portal. Email submissions must include digital signatures.',
+            portalUrl: 'https://chicago.procurement.opengov.com',
+            requiredDocuments: [
+              'W-9 form',
+              'HIPAA compliance certification',
+              'Vehicle inspection reports',
+              'Driver background checks',
+            ],
+            bondRequired: false,
+            bondAmount: 0,
           },
         },
       ];
+
+      await this.simulateScrapingDelay(); // Rate limiting
+      console.info(
+        `✅ DEPRECATED MOCK DATA - ${DEPRECATED_scrapedOpportunities.length} transportation opportunities`
+      );
+
+      return DEPRECATED_scrapedOpportunities;
     } catch (error) {
-      console.error('Transportation scraping error:', error);
+      console.error('DEPRECATED Transportation method error:', error);
       return [];
     }
   }

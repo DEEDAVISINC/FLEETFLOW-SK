@@ -489,27 +489,20 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
                 pathname !== '/carrier-landing' && <ProfessionalNavigation />}
               <main
                 style={{
-                  paddingTop: isHydrated
-                    ? (isPublicPage && !isLocalhostAccess) ||
-                      pathname === '/carrier-landing'
-                      ? '0px'
-                      : pathname === '/depointe-dashboard'
-                        ? '0px'
-                        : '0px'
-                    : pathname === '/carrier-landing'
-                      ? '0px'
-                      : pathname === '/depointe-dashboard'
-                        ? '150px' // Special padding for depointe dashboard
-                        : '0px', // No padding - individual pages handle their own spacing
+                  paddingTop: '0px', // No padding - pages handle their own spacing
                   minHeight: '100vh',
                   background:
-                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    pathname === '/fleetflowdash'
+                      ? 'transparent' // Let fleetflowdash page handle its own background
+                      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
               >
                 <div style={{ flex: 1 }}>{children}</div>
-                <FleetFlowFooter variant='transparent' />
+                {pathname !== '/fleetflowdash' && (
+                  <FleetFlowFooter variant='transparent' />
+                )}
               </main>
 
               {/* Unified Flowter AI - appears on all pages except university */}

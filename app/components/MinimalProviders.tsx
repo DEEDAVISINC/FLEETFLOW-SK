@@ -75,7 +75,7 @@ interface MinimalProvidersProps {
 export function MinimalProviders({ children }: MinimalProvidersProps) {
   console.log('🔧 MINIMAL PROVIDERS LOADING - WITH SAFE ORGANIZATION CONTEXT');
   return (
-    <SessionProvider>
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
       <MinimalOrganizationProvider>
         <LanguageProvider>{children}</LanguageProvider>
       </MinimalOrganizationProvider>

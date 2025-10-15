@@ -41,9 +41,10 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const id = searchParams.get('id');
+    const showTrash = searchParams.get('trash') === 'true';
 
     if (id) {
-      // Get single bid by ID
+      // Get single bid by ID (include deleted for recovery)
       const { data, error } = await supabase
         .from('rfx_bid_responses')
         .select('*')
@@ -73,6 +74,14 @@ export async function GET(request: NextRequest) {
       .select('*')
       .order('created_at', { ascending: false });
 
+    if (showTrash) {
+      // Show only deleted bids (trash view)
+      query = query.not('deleted_at', 'is', null);
+    } else {
+      // Show only active (non-deleted) bids by default
+      query = query.is('deleted_at', null);
+    }
+
     if (status) {
       query = query.eq('status', status);
     }
@@ -87,6 +96,7 @@ export async function GET(request: NextRequest) {
     console.log('📊 Retrieved bids from database:', {
       count: data?.length || 0,
       status: status || 'all',
+      showTrash,
     });
 
     return NextResponse.json({
@@ -272,11 +282,13 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE /api/rfx-bids?id=<id> - Delete bid response
+// DELETE /api/rfx-bids?id=<id>&permanent=true - Soft delete (or permanent delete)
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const permanent = searchParams.get('permanent') === 'true';
+    const restore = searchParams.get('restore') === 'true';
 
     if (!id) {
       return NextResponse.json(
@@ -290,12 +302,86 @@ export async function DELETE(request: NextRequest) {
 
     const supabase = getSupabaseClient();
 
-    console.log('🗑️ Deleting RFX bid response:', id);
+    // RESTORE from trash
+    if (restore) {
+      console.log('♻️ Restoring RFX bid response from trash:', id);
 
-    const { error } = await supabase
+      const { data, error } = await supabase
+        .from('rfx_bid_responses')
+        .update({
+          deleted_at: null,
+          deleted_by: null,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Database error:', error);
+        if (error.code === 'PGRST116') {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Bid not found',
+            },
+            { status: 404 }
+          );
+        }
+        throw error;
+      }
+
+      console.log('✅ Bid restored:', id);
+
+      return NextResponse.json({
+        success: true,
+        data,
+        message: 'Bid response restored successfully',
+      });
+    }
+
+    // PERMANENT DELETE
+    if (permanent) {
+      console.log('🗑️ PERMANENTLY deleting RFX bid response:', id);
+
+      const { error } = await supabase
+        .from('rfx_bid_responses')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('❌ Database error:', error);
+        if (error.code === 'PGRST116') {
+          return NextResponse.json(
+            {
+              success: false,
+              error: 'Bid not found',
+            },
+            { status: 404 }
+          );
+        }
+        throw error;
+      }
+
+      console.log('✅ Bid permanently deleted:', id);
+
+      return NextResponse.json({
+        success: true,
+        message: 'Bid response permanently deleted',
+      });
+    }
+
+    // SOFT DELETE (move to trash)
+    console.log('🗑️ Moving RFX bid response to trash:', id);
+
+    const { data, error } = await supabase
       .from('rfx_bid_responses')
-      .delete()
-      .eq('id', id);
+      .update({
+        deleted_at: new Date().toISOString(),
+        deleted_by: 'info@deedavis.biz', // TODO: Get from session
+      })
+      .eq('id', id)
+      .select()
+      .single();
 
     if (error) {
       console.error('❌ Database error:', error);
@@ -311,11 +397,12 @@ export async function DELETE(request: NextRequest) {
       throw error;
     }
 
-    console.log('✅ Bid deleted:', id);
+    console.log('✅ Bid moved to trash (recoverable for 30 days):', id);
 
     return NextResponse.json({
       success: true,
-      message: 'Bid response deleted successfully',
+      data,
+      message: 'Bid response moved to trash (recoverable for 30 days)',
     });
   } catch (error) {
     console.error('Error deleting RFX bid:', error);

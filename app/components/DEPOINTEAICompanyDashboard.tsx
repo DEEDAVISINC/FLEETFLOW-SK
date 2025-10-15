@@ -17,11 +17,16 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
+import AIStaffCrossTrainingNetwork from './AIStaffCrossTrainingNetwork';
+import AIStaffExternalIntegration from './AIStaffExternalIntegration';
 import AIStaffScheduler from './AIStaffScheduler';
 import AITaskAssignmentSystem from './AITaskAssignmentSystem';
 import CampaignTemplates from './CampaignTemplates';
 import DEPOINTELeadIntelligence from './DEPOINTELeadIntelligence';
+import DynamicCampaignOptimization from './DynamicCampaignOptimization';
+import GovernmentContractsFollowUps from './GovernmentContractsFollowUps';
 import GovernmentRFICampaign from './GovernmentRFICampaign';
+import PredictiveLeadScoring from './PredictiveLeadScoring';
 import ProcurementForecastCampaign from './ProcurementForecastCampaign';
 import TaskCreationInterface from './TaskCreationInterface';
 import TruckingPlanetIntelligence from './TruckingPlanetIntelligence';
@@ -64,11 +69,16 @@ export default function DEPOINTEAICompanyDashboard() {
     | 'overview'
     | 'scheduler'
     | 'assignments'
+    | 'training'
+    | 'optimization'
+    | 'scoring'
+    | 'integration'
     | 'performance'
     | 'templates'
     | 'leads'
     | 'procurement'
     | 'government'
+    | 'followups'
   >('overview');
   const [stats, setStats] = useState<CompanyStats>({
     totalRevenue: 847500,
@@ -527,9 +537,18 @@ export default function DEPOINTEAICompanyDashboard() {
           <div className='flex flex-wrap gap-2 overflow-x-auto'>
             {[
               { id: 'overview', label: 'Command Center', icon: BarChart3 },
+              { id: 'followups', label: 'Follow-Ups (Alexis)', icon: Calendar },
               { id: 'scheduler', label: 'AI Staff Scheduler', icon: Calendar },
               { id: 'assignments', label: 'Task Assignments', icon: Target },
-              { id: 'leads', label: 'Lead Intelligence', icon: Users },
+              { id: 'training', label: 'Cross-Training Network', icon: Users },
+              { id: 'optimization', label: 'Campaign Optimization', icon: Zap },
+              { id: 'scoring', label: 'Lead Intelligence', icon: Target },
+              {
+                id: 'integration',
+                label: 'External Integration',
+                icon: Activity,
+              },
+              { id: 'leads', label: 'CRM Integration', icon: Users },
               {
                 id: 'procurement',
                 label: 'Procurement Forecast',
@@ -891,6 +910,12 @@ export default function DEPOINTEAICompanyDashboard() {
           </div>
         )}
 
+        {activeView === 'followups' && (
+          <div className='rounded-xl bg-slate-800 p-6'>
+            <GovernmentContractsFollowUps />
+          </div>
+        )}
+
         {activeView === 'scheduler' && (
           <div className='rounded-xl bg-slate-800 p-6'>
             <AIStaffScheduler />
@@ -900,6 +925,30 @@ export default function DEPOINTEAICompanyDashboard() {
         {activeView === 'assignments' && (
           <div className='rounded-xl bg-slate-800 p-6'>
             <AITaskAssignmentSystem />
+          </div>
+        )}
+
+        {activeView === 'training' && (
+          <div className='rounded-xl bg-slate-800 p-6'>
+            <AIStaffCrossTrainingNetwork />
+          </div>
+        )}
+
+        {activeView === 'optimization' && (
+          <div className='rounded-xl bg-slate-800 p-6'>
+            <DynamicCampaignOptimization />
+          </div>
+        )}
+
+        {activeView === 'scoring' && (
+          <div className='rounded-xl bg-slate-800 p-6'>
+            <PredictiveLeadScoring />
+          </div>
+        )}
+
+        {activeView === 'integration' && (
+          <div className='rounded-xl bg-slate-800 p-6'>
+            <AIStaffExternalIntegration />
           </div>
         )}
 

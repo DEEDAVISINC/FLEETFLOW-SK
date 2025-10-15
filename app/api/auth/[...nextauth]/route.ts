@@ -5,6 +5,21 @@ import UserIdentifierService from '../../../services/user-identifier-service';
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt' as const,
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false, // Set to true in production with HTTPS
+      },
+    },
+  },
   providers: [
     // Only include GoogleProvider if credentials are available
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET

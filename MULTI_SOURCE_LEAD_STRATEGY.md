@@ -10,36 +10,37 @@
 
 ### Healthcare Campaigns (3 Sources):
 
-| Source            | Percentage | What You Get                                 |
-| ----------------- | ---------- | -------------------------------------------- |
-| 🕷️ TruckingPlanet | 50%        | Healthcare shippers, medical logistics       |
-| 🏛️ FMCSA          | 30%        | DOT-verified pharmaceutical/medical shippers |
-| 🏭 ThomasNet      | 20%        | Medical device manufacturers                 |
+| Source            | Percentage | What You Get                                                            |
+| ----------------- | ---------- | ----------------------------------------------------------------------- |
+| 🕷️ TruckingPlanet | 70%        | Healthcare shippers, medical logistics, pharma wholesalers, warehousing |
+| 🏛️ FMCSA          | 20%        | DOT-verified pharmaceutical/medical carriers                            |
+| 🏭 ThomasNet      | 10%        | Medical device manufacturers                                            |
 
-**Example:** Request 30 leads → Get 15 from TP + 9 from FMCSA + 6 from ThomasNet
+**Example:** Request 30 leads → Get 21 from TP + 6 from FMCSA + 3 from ThomasNet
 
 ---
 
-### Shipper Expansion Campaigns (2 Sources):
+### Shipper Expansion Campaigns (3 Sources):
 
 | Source            | Percentage | What You Get                                |
 | ----------------- | ---------- | ------------------------------------------- |
-| 🕷️ TruckingPlanet | 70%        | High-volume verified shippers               |
+| 🕷️ TruckingPlanet | 50%        | High-volume verified shippers               |
 | 🏛️ FMCSA          | 30%        | DOT-verified high annual shipment companies |
+| 🏭 ThomasNet      | 20%        | Expanding manufacturers needing logistics   |
 
-**Example:** Request 30 leads → Get 21 from TP + 9 from FMCSA
+**Example:** Request 30 leads → Get 15 from TP + 9 from FMCSA + 6 from TN
 
 ---
 
 ### Desperate Prospects Campaigns (3 Sources):
 
-| Source            | Percentage | What You Get                     |
-| ----------------- | ---------- | -------------------------------- |
-| 🕷️ TruckingPlanet | 40%        | Manufacturers from 70K database  |
-| 🏭 ThomasNet      | 40%        | High freight-score manufacturers |
-| 🏛️ FMCSA          | 20%        | Urgent/high-volume shippers      |
+| Source            | Percentage | What You Get                                             |
+| ----------------- | ---------- | -------------------------------------------------------- |
+| 🕷️ TruckingPlanet | 60%        | Manufacturers, wholesalers, warehousing, urgent shippers |
+| 🏭 ThomasNet      | 30%        | High freight-score manufacturers                         |
+| 🏛️ FMCSA          | 10%        | DOT-verified urgent shippers                             |
 
-**Example:** Request 30 leads → Get 12 from TP + 12 from ThomasNet + 6 from FMCSA
+**Example:** Request 30 leads → Get 18 from TP + 9 from ThomasNet + 3 from FMCSA
 
 ---
 
@@ -68,37 +69,39 @@
 ### Healthcare Campaign (3 sources):
 
 ```
-🎯 Multi-source healthcare lead generation: TP(15) + FMCSA(9) + TN(6)
+🎯 Multi-source healthcare lead generation: TP(21) + FMCSA(6) + TN(3)
 🏥 [1/3] TruckingPlanet healthcare shippers...
-✅ [1/3] 15 from TruckingPlanet
+✅ [1/3] 21 from TruckingPlanet
 🏛️ [2/3] FMCSA pharmaceutical/medical shippers...
-✅ [2/3] 9 from FMCSA
+✅ [2/3] 6 from FMCSA
 🏭 [3/3] ThomasNet medical manufacturers...
-✅ [3/3] 6 from ThomasNet
+✅ [3/3] 3 from ThomasNet
 🎯 TOTAL: 30 healthcare leads from 3 sources
 ```
 
-### Shipper Expansion (2 sources):
+### Shipper Expansion (3 sources):
 
 ```
-🎯 Multi-source shipper generation: TP(21) + FMCSA(9)
-🚛 [1/2] TruckingPlanet high-volume shippers...
-✅ [1/2] 21 from TruckingPlanet
-🏛️ [2/2] FMCSA verified shippers...
-✅ [2/2] 9 from FMCSA
-🎯 TOTAL: 30 shipper leads from 2 sources
+🎯 Multi-source shipper generation: TP(15) + FMCSA(9) + TN(6)
+🚛 [1/3] TruckingPlanet high-volume shippers...
+✅ [1/3] 15 from TruckingPlanet
+🏛️ [2/3] FMCSA verified shippers...
+✅ [2/3] 9 from FMCSA
+🏭 [3/3] ThomasNet expanding manufacturers...
+✅ [3/3] 6 from ThomasNet
+🎯 TOTAL: 30 shipper leads from 3 sources
 ```
 
 ### Desperate Prospects (3 sources):
 
 ```
-🎯 Multi-source desperate prospects: TP(12) + TN(12) + FMCSA(6)
+🎯 Multi-source desperate prospects: TP(18) + TN(9) + FMCSA(3)
 🏭 [1/3] TruckingPlanet manufacturers...
-✅ [1/3] 12 from TruckingPlanet
+✅ [1/3] 18 from TruckingPlanet
 🏭 [2/3] ThomasNet high-potential manufacturers...
-✅ [2/3] 12 from ThomasNet
+✅ [2/3] 9 from ThomasNet
 🏛️ [3/3] FMCSA urgent shippers...
-✅ [3/3] 6 from FMCSA
+✅ [3/3] 3 from FMCSA
 🎯 TOTAL: 30 desperate prospect leads from 3 sources
 ```
 
@@ -247,31 +250,34 @@ localStorage.removeItem('depointe-activity-feed');
 
 ### For Healthcare Campaigns:
 
-- **50% from TruckingPlanet** = Medical shippers with established routes
-- **30% from FMCSA** = DOT-compliant pharmaceutical transporters
-- **20% from ThomasNet** = Medical device manufacturers needing logistics
+- **70% from TruckingPlanet** = Medical logistics, pharma wholesalers, healthcare warehousing,
+  established shippers
+- **20% from FMCSA** = DOT-compliant pharmaceutical carriers and medical transporters
+- **10% from ThomasNet** = Medical device manufacturers needing specialized logistics
 
 ### For Shipper Expansion:
 
-- **70% from TruckingPlanet** = High-volume verified shippers
+- **50% from TruckingPlanet** = High-volume verified shippers across all sectors
 - **30% from FMCSA** = Government-verified high annual shipment companies
+- **20% from ThomasNet** = Manufacturers expanding their shipping operations
 
 ### For Desperate Prospects:
 
-- **40% from TruckingPlanet** = Manufacturers in 70K network
-- **40% from ThomasNet** = High freight-score manufacturers
-- **20% from FMCSA** = Urgent shippers with high volume
+- **60% from TruckingPlanet** = Manufacturers, wholesalers, warehousing companies, urgent shippers
+  across all sectors
+- **30% from ThomasNet** = High freight-score manufacturers with established production
+- **10% from FMCSA** = DOT-verified carriers with urgent/high-volume shipping needs
 
 ---
 
 ## 🎉 Key Takeaway
 
-**We're now using ALL available sources simultaneously!**
+**We're now using ALL available sources simultaneously with TruckingPlanet as the dominant source!**
 
-✅ TruckingPlanet (web scraping) → LIVE ✅ FMCSA (government data) → READY ✅ ThomasNet
-(manufacturer DB) → READY 🔜 LinkedIn (executive contacts) → PLANNED
+✅ TruckingPlanet (200K+ comprehensive database) → PRIMARY ✅ FMCSA (government data) → SPECIALIZED
+✅ ThomasNet (manufacturer DB) → TARGETED 🔜 LinkedIn (executive contacts) → PLANNED
 
-**Result:** Maximum lead coverage, diversity, and quality for every campaign! 🚀
+**Result:** Maximum lead coverage across all sectors with specialized supplements! 🚀
 
 ---
 

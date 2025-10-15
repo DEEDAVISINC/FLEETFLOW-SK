@@ -89,12 +89,15 @@ export interface FMCSAReverseResults {
 
 export class FMCSAReverseLeadService {
   /**
-   * Generate shipper leads by scanning FMCSA database
+   * Generate shipper leads by scanning FMCSA database with REAL DOT numbers
    */
   async generateShipperLeads(
     filters: FMCSAReverseFilters = {}
   ): Promise<FMCSAReverseResults> {
-    console.info('🔍 Starting FMCSA reverse shipper lead generation:', filters);
+    console.info(
+      '🔍 Starting REAL FMCSA lead generation (scanning actual DOT numbers):',
+      filters
+    );
 
     const startTime = Date.now();
     const leads: FMCSAShipperLead[] = [];
@@ -109,22 +112,35 @@ export class FMCSAReverseLeadService {
         regionalCarrier: 0,
       },
       geographicDistribution: {} as { [state: string]: number },
+      failedRequests: 0,
     };
 
-    // Since FMCSA doesn't have bulk search, we'll demonstrate with targeted company searches
-    // In production, this would be enhanced with database scanning capabilities
-    const targetCompanies = this.getHighValueTargetCompanies(filters);
+    // **SCAN REAL DOT NUMBERS** - Start from a recent range of active carriers
+    // DOT numbers are sequential, newer companies have higher numbers
+    // Range: 3000000 - 4000000 (recent active carriers)
+    const startDOT = 3000000 + Math.floor(Math.random() * 500000); // Random starting point
+    const maxScans = filters.desperateOnly ? 20 : 10; // Scan more for desperate leads
+    const maxLeads = 10; // Stop after finding 10 good leads
 
-    for (const target of targetCompanies) {
+    console.info(`📡 Scanning FMCSA DOT range starting from: ${startDOT}`);
+
+    for (let i = 0; i < maxScans && leads.length < maxLeads; i++) {
+      const dotNumber = (startDOT + i).toString();
+
       try {
         stats.totalScanned++;
 
-        const fmcsaResult = await FMCSAService.searchByName(target.name);
+        // **REAL FMCSA API CALL** - Search by actual DOT number
+        const fmcsaResult = await FMCSAService.lookupByDOTNumber(dotNumber);
 
         if (fmcsaResult.success && fmcsaResult.data) {
+          console.info(
+            `✅ Found REAL carrier: ${fmcsaResult.data.legalName} (DOT: ${dotNumber})`
+          );
+
           const shipperLead = this.analyzeCarrierAsShipper(
             fmcsaResult.data,
-            target.expectedType
+            undefined
           );
 
           if (shipperLead && this.meetsFilters(shipperLead, filters)) {
@@ -132,111 +148,36 @@ export class FMCSAReverseLeadService {
             stats.qualifiedLeads++;
 
             // Update statistics
-            stats.breakdownByType[
-              shipperLead.businessInfo.operationType
-                .toLowerCase()
-                .replace(' ', '') as keyof typeof stats.breakdownByType
-            ]++;
+            const opType = shipperLead.businessInfo.operationType
+              .toLowerCase()
+              .replace(' ', '') as keyof typeof stats.breakdownByType;
+
+            if (stats.breakdownByType[opType] !== undefined) {
+              stats.breakdownByType[opType]++;
+            }
 
             const state = shipperLead.contactInfo.state;
             stats.geographicDistribution[state] =
               (stats.geographicDistribution[state] || 0) + 1;
+
+            console.info(
+              `💰 QUALIFIED LEAD: ${shipperLead.companyName} | Score: ${shipperLead.leadScore} | ${shipperLead.shipperPotential} potential`
+            );
+          } else {
+            console.info(
+              `❌ Carrier ${fmcsaResult.data.legalName} did not meet filters`
+            );
           }
         }
 
-        // Rate limiting - space out requests
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        // Rate limiting - FMCSA allows reasonable request rates
+        await new Promise((resolve) => setTimeout(resolve, 200));
       } catch (error) {
-        console.warn(`Failed to analyze ${target.name}:`, error);
-      }
-    }
+        stats.failedRequests++;
+        console.warn(`Failed to scan DOT ${dotNumber}:`, error);
 
-    // If no real leads found, generate demo desperate leads for demonstration
-    if (leads.length === 0 && filters.desperateOnly) {
-      console.info(
-        '📋 Generating demo desperate shipper leads for demonstration...'
-      );
-
-      const demoDesperateLeads = [
-        {
-          name: 'Rapid Growth Manufacturing LLC',
-          demoData: {
-            dotNumber: '3456789',
-            powerUnits: 3,
-            drivers: 8,
-            crashTotal: 0,
-            safetyRating: '',
-            mcs150Mileage: 25000,
-            phone: '(555) 123-4567',
-            address: {
-              street: '123 Industrial Way',
-              city: 'Houston',
-              state: 'Texas',
-              zip: '77001',
-            },
-          },
-        },
-        {
-          name: 'Struggling Logistics Inc',
-          demoData: {
-            dotNumber: '2345678',
-            powerUnits: 8,
-            drivers: 12,
-            crashTotal: 2,
-            safetyRating: 'Conditional',
-            mcs150Mileage: 180000,
-            phone: '(555) 234-5678',
-            address: {
-              street: '456 Freight Blvd',
-              city: 'Atlanta',
-              state: 'Georgia',
-              zip: '30301',
-            },
-          },
-        },
-        {
-          name: 'New Authority Transport',
-          demoData: {
-            dotNumber: '4567890',
-            powerUnits: 2,
-            drivers: 3,
-            crashTotal: 0,
-            safetyRating: '',
-            mcs150Mileage: 12000,
-            phone: '(555) 345-6789',
-            address: {
-              street: '789 Startup Dr',
-              city: 'Phoenix',
-              state: 'Arizona',
-              zip: '85001',
-            },
-          },
-        },
-      ];
-
-      for (const demo of demoDesperateLeads) {
-        const fmcsaData = this.createDemoFMCSAData(demo.demoData, demo.name);
-        const shipperLead = this.analyzeCarrierAsShipper(
-          fmcsaData,
-          'Manufacturing'
-        );
-
-        if (shipperLead && this.meetsFilters(shipperLead, filters)) {
-          leads.push(shipperLead);
-          stats.qualifiedLeads++;
-          stats.totalScanned++;
-
-          // Update statistics
-          stats.breakdownByType[
-            shipperLead.businessInfo.operationType
-              .toLowerCase()
-              .replace(' ', '') as keyof typeof stats.breakdownByType
-          ]++;
-
-          const state = shipperLead.contactInfo.state;
-          stats.geographicDistribution[state] =
-            (stats.geographicDistribution[state] || 0) + 1;
-        }
+        // Continue scanning despite errors
+        continue;
       }
     }
 
@@ -257,9 +198,10 @@ export class FMCSAReverseLeadService {
     };
 
     const duration = Date.now() - startTime;
+
     console.info(
-      `🎉 FMCSA reverse lead generation completed in ${duration}ms:`,
-      stats
+      `🎉 REAL FMCSA lead generation completed in ${duration}ms:`,
+      `✅ ${stats.qualifiedLeads} qualified leads from ${stats.totalScanned} scanned | ❌ ${stats.failedRequests} failed`
     );
 
     return results;
@@ -803,9 +745,10 @@ export class FMCSAReverseLeadService {
   }
 
   /**
-   * Get DESPERATE shipper leads - low hanging fruit with urgent needs
+   * REMOVED - No longer using fake target companies
+   * System now scans real DOT numbers from FMCSA database
    */
-  private getHighValueTargetCompanies(filters: FMCSAReverseFilters) {
+  private getHighValueTargetCompanies_DEPRECATED(filters: FMCSAReverseFilters) {
     const desperateTargets = [
       // SMALL PRIVATE FLEETS WITH BIG SHIPPING NEEDS (Desperate for capacity)
       {
@@ -1068,9 +1011,10 @@ export class FMCSAReverseLeadService {
   }
 
   /**
-   * Create demo FMCSA data for demonstration purposes
+   * REMOVED - No longer creating demo data
+   * All data now comes from real FMCSA API calls
    */
-  private createDemoFMCSAData(
+  private createDemoFMCSAData_DEPRECATED(
     demoData: any,
     companyName: string
   ): FMCSACarrierInfo {

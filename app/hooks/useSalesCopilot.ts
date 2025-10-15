@@ -39,6 +39,37 @@ export interface SalesCopilotHookReturn {
   // Guidance management
   dismissGuidance: (guidanceId: string) => void;
   markGuidanceUsed: (guidanceId: string) => void;
+
+  // NEW ENHANCED FEATURES
+  // Before Call
+  researchProspect: (
+    prospectName?: string,
+    companyName?: string,
+    industry?: string
+  ) => Promise<any>;
+
+  // During Call
+  getSentimentAnalysis: (prospectStatements: string[]) => any;
+  getTalkToListenRatio: (agentTime: number, prospectTime: number) => number;
+
+  // After Call
+  generateCallInsights: (
+    callId: string,
+    transcript: string,
+    sentiment: any,
+    ratio: number
+  ) => Promise<any>;
+  startCallRecording: (callId: string) => Promise<any>;
+  generateTranscript: (recordingUrl: string) => Promise<string>;
+
+  // NEW REAL-TIME SPEECH PROCESSING
+  startRealTimeSpeechRecognition: (
+    callId: string,
+    config?: any
+  ) => Promise<boolean>;
+  stopRealTimeSpeechRecognition: (callId: string) => void;
+  getTranscriptionHistory: (callId: string) => any[];
+  getRealTalkToListenRatio: (callId: string) => number;
 }
 
 export function useSalesCopilot(agentId: string): SalesCopilotHookReturn {
@@ -203,6 +234,130 @@ export function useSalesCopilot(agentId: string): SalesCopilotHookReturn {
     [guidanceHistory]
   );
 
+  // NEW ENHANCED FEATURES IMPLEMENTATION
+
+  // Research prospect before call
+  const researchProspect = useCallback(
+    async (prospectName?: string, companyName?: string, industry?: string) => {
+      try {
+        setIsProcessing(true);
+        const research = await salesCopilotAI.researchProspect(
+          prospectName,
+          companyName,
+          industry
+        );
+        return research;
+      } catch (error) {
+        console.error('Failed to research prospect:', error);
+        return null;
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    []
+  );
+
+  // Get real-time sentiment analysis
+  const getSentimentAnalysis = useCallback((prospectStatements: string[]) => {
+    return salesCopilotAI.analyzeSentiment([], prospectStatements);
+  }, []);
+
+  // Calculate talk-to-listen ratio
+  const getTalkToListenRatio = useCallback(
+    (agentTime: number, prospectTime: number) => {
+      return salesCopilotAI.calculateTalkToListenRatio(agentTime, prospectTime);
+    },
+    []
+  );
+
+  // Generate call insights after call
+  const generateCallInsights = useCallback(
+    async (
+      callId: string,
+      transcript: string,
+      sentiment: any,
+      ratio: number
+    ) => {
+      try {
+        setIsProcessing(true);
+        const insights = await salesCopilotAI.generateCallInsights(
+          callId,
+          transcript,
+          sentiment,
+          ratio
+        );
+        return insights;
+      } catch (error) {
+        console.error('Failed to generate call insights:', error);
+        return null;
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    []
+  );
+
+  // Start call recording
+  const startCallRecording = useCallback(async (callId: string) => {
+    try {
+      setIsProcessing(true);
+      const recording = await salesCopilotAI.startCallRecording(callId);
+      return recording;
+    } catch (error) {
+      console.error('Failed to start call recording:', error);
+      return null;
+    } finally {
+      setIsProcessing(false);
+    }
+  }, []);
+
+  // Generate transcript
+  const generateTranscript = useCallback(async (recordingUrl: string) => {
+    try {
+      setIsProcessing(true);
+      const transcript = await salesCopilotAI.generateTranscript(recordingUrl);
+      return transcript;
+    } catch (error) {
+      console.error('Failed to generate transcript:', error);
+      return '';
+    } finally {
+      setIsProcessing(false);
+    }
+  }, []);
+
+  // NEW REAL-TIME SPEECH PROCESSING IMPLEMENTATIONS
+
+  const startRealTimeSpeechRecognition = useCallback(
+    async (callId: string, config?: any) => {
+      try {
+        setIsProcessing(true);
+        const success = await salesCopilotAI.startRealTimeSpeechRecognition(
+          callId,
+          config
+        );
+        return success;
+      } catch (error) {
+        console.error('Failed to start real-time speech recognition:', error);
+        return false;
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    []
+  );
+
+  const stopRealTimeSpeechRecognition = useCallback((callId: string) => {
+    salesCopilotAI.stopRealTimeSpeechRecognition(callId);
+  }, []);
+
+  const getTranscriptionHistory = useCallback((callId: string) => {
+    return salesCopilotAI.getTranscriptionHistory(callId);
+  }, []);
+
+  const getRealTalkToListenRatio = useCallback((callId: string) => {
+    return salesCopilotAI.calculateRealTalkToListenRatio(callId);
+  }, []);
+
   return {
     startCallGuidance,
     endCallGuidance,
@@ -215,5 +370,19 @@ export function useSalesCopilot(agentId: string): SalesCopilotHookReturn {
     connectionStatus,
     dismissGuidance,
     markGuidanceUsed,
+
+    // NEW ENHANCED FEATURES
+    researchProspect,
+    getSentimentAnalysis,
+    getTalkToListenRatio,
+    generateCallInsights,
+    startCallRecording,
+    generateTranscript,
+
+    // NEW REAL-TIME SPEECH PROCESSING
+    startRealTimeSpeechRecognition,
+    stopRealTimeSpeechRecognition,
+    getTranscriptionHistory,
+    getRealTalkToListenRatio,
   };
 }

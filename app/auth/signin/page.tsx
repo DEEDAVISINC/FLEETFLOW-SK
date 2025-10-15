@@ -31,8 +31,8 @@ export default function SignIn() {
         setError('Invalid credentials');
       } else if (result?.ok) {
         console.log('✅ Login successful! Redirecting...');
-        // Direct redirect to dashboard - bypass router to avoid session timing issues
-        router.push('/fleetflowdash');
+        // Force full page reload to ensure session is loaded
+        window.location.href = '/fleetflowdash';
       } else {
         console.warn('⚠️ Unexpected result:', result);
         setError('An unexpected error occurred');

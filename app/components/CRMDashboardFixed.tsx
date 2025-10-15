@@ -17,53 +17,8 @@ export default function CRMDashboardFixed() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const mockLeads: Lead[] = [
-    {
-      id: 'SL-001',
-      companyName: 'Midwest Manufacturing Corp',
-      serviceCategory: 'Logistics',
-      priority: 'hot',
-      estimatedValue: 480000,
-      status: 'proposal_sent',
-      urgency: 'high',
-    },
-    {
-      id: 'SL-002',
-      companyName: 'Pacific Coast Imports LLC',
-      serviceCategory: 'Warehousing',
-      priority: 'urgent',
-      estimatedValue: 360000,
-      status: 'demo_scheduled',
-      urgency: 'urgent',
-    },
-    {
-      id: 'SL-003',
-      companyName: 'Thunder Trucking LLC',
-      serviceCategory: 'Dispatching',
-      priority: 'high',
-      estimatedValue: 72000,
-      status: 'qualified',
-      urgency: 'medium',
-    },
-    {
-      id: 'SL-004',
-      companyName: 'Urban Retail Solutions Inc',
-      serviceCategory: 'Freight_Brokerage',
-      priority: 'hot',
-      estimatedValue: 750000,
-      status: 'negotiating',
-      urgency: 'high',
-    },
-    {
-      id: 'SL-005',
-      companyName: 'Southwest Food Distributors',
-      serviceCategory: 'Supply_Chain_Consulting',
-      priority: 'high',
-      estimatedValue: 180000,
-      status: 'contacted',
-      urgency: 'medium',
-    },
-  ];
+  // TODO: Replace with real lead data from CRM API
+  const mockLeads: Lead[] = [];
 
   useEffect(() => {
     const loadData = async () => {
@@ -349,6 +304,3 @@ export default function CRMDashboardFixed() {
     </div>
   );
 }
-
-
-

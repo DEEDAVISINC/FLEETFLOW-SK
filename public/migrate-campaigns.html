@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Migrate DEPOINTE Campaigns to Database</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 30px;
+      }
+      button {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      button:hover {
+        background: #059669;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      #status {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+      }
+      .success {
+        background: #d1fae5;
+        border: 1px solid #10b981;
+        color: #065f46;
+      }
+      .error {
+        background: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #991b1b;
+      }
+      .info {
+        background: #dbeafe;
+        border: 1px solid #3b82f6;
+        color: #1e40af;
+      }
+      pre {
+        background: #f9fafb;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Migrate Campaigns to Database</h1>
+      <p class="subtitle">
+        This will move your campaigns from browser storage to the server
+        database, so they run 24/7
+      </p>
+
+      <button id="migrateBtn" onclick="migrateCampaigns()">
+        Start Migration
+      </button>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      function showStatus(message, type, details) {
+        const statusDiv = document.getElementById('status');
+        statusDiv.className = type;
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = message;
+        if (details) {
+          statusDiv.innerHTML +=
+            '<pre>' + JSON.stringify(details, null, 2) + '</pre>';
+        }
+      }
+
+      async function migrateCampaigns() {
+        const btn = document.getElementById('migrateBtn');
+        btn.disabled = true;
+        btn.textContent = 'Migrating...';
+
+        try {
+          showStatus('🔍 Scanning localStorage for campaigns...', 'info');
+
+          // Gather all localStorage data
+          const campaigns = [];
+          const leads = JSON.parse(
+            localStorage.getItem('depointe-crm-leads') || '[]'
+          );
+          const activities = JSON.parse(
+            localStorage.getItem('depointe-activity-feed') || '[]'
+          );
+
+          // Get healthcare campaigns
+          const healthcare = JSON.parse(
+            localStorage.getItem('depointe-healthcare-tasks') || '[]'
+          );
+          healthcare.forEach((task) => {
+            campaigns.push({
+              id: task.id,
+              title: task.title,
+              description: task.description || '',
+              type: task.type || 'healthcare',
+              priority: task.priority || 'HIGH',
+              assigned_to: task.assignedTo || [],
+              status: task.status || 'in_progress',
+              target_quantity: task.targetQuantity || 25,
+              progress: task.progress || 0,
+              estimated_revenue: task.estimatedRevenue || 125000,
+              actual_revenue: task.actualRevenue || 0,
+              created_at: task.createdAt || new Date().toISOString(),
+              started_at: task.startedAt || new Date().toISOString(),
+              completed_at: task.completedAt,
+              campaign_type: 'healthcare',
+            });
+          });
+
+          // Get shipper campaigns
+          const shipper = JSON.parse(
+            localStorage.getItem('depointe-shipper-tasks') || '[]'
+          );
+          shipper.forEach((task) => {
+            campaigns.push({
+              id: task.id,
+              title: task.title,
+              description: task.description || '',
+              type: task.type || 'shipper',
+              priority: task.priority || 'HIGH',
+              assigned_to: task.assignedTo || [],
+              status: task.status || 'in_progress',
+              target_quantity: task.targetQuantity || 30,
+              progress: task.progress || 0,
+              estimated_revenue: task.estimatedRevenue || 75000,
+              actual_revenue: task.actualRevenue || 0,
+              created_at: task.createdAt || new Date().toISOString(),
+              started_at: task.startedAt || new Date().toISOString(),
+              completed_at: task.completedAt,
+              campaign_type: 'shipper',
+            });
+          });
+
+          // Get desperate prospects campaigns
+          const desperate = JSON.parse(
+            localStorage.getItem('depointe-desperate-prospects-tasks') || '[]'
+          );
+          desperate.forEach((task) => {
+            campaigns.push({
+              id: task.id,
+              title: task.title,
+              description: task.description || '',
+              type: task.type || 'desperate_prospects',
+              priority: task.priority || 'CRITICAL',
+              assigned_to: task.assignedTo || [],
+              status: task.status || 'in_progress',
+              target_quantity: task.targetQuantity || 20,
+              progress: task.progress || 0,
+              estimated_revenue: task.estimatedRevenue || 90000,
+              actual_revenue: task.actualRevenue || 0,
+              created_at: task.createdAt || new Date().toISOString(),
+              started_at: task.startedAt || new Date().toISOString(),
+              completed_at: task.completedAt,
+              campaign_type: 'desperate_prospects',
+            });
+          });
+
+          showStatus(
+            `📊 Found: ${campaigns.length} campaigns, ${leads.length} leads, ${activities.length} activities`,
+            'info'
+          );
+
+          if (campaigns.length === 0) {
+            showStatus(
+              '⚠️ No campaigns found to migrate. Deploy a campaign first from the dashboard.',
+              'error'
+            );
+            btn.disabled = false;
+            btn.textContent = 'Start Migration';
+            return;
+          }
+
+          // Transform leads for database
+          const dbLeads = leads.map((lead) => ({
+            id: lead.id,
+            task_id: lead.taskId,
+            company: lead.company,
+            contact_name: lead.contactName,
+            email: lead.email,
+            phone: lead.phone,
+            status: lead.status,
+            potential_value: lead.potentialValue,
+            source: lead.source,
+            priority: lead.priority,
+            created_at: lead.createdAt,
+            assigned_to: lead.assignedTo,
+            notes: lead.notes,
+          }));
+
+          showStatus('📤 Sending to database...', 'info');
+
+          // Send to migration API
+          const response = await fetch('/api/depointe/migrate-to-database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              campaigns,
+              leads: dbLeads,
+              activities,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showStatus(
+              `✅ Migration Complete!\n\n` +
+                `✓ ${result.migrated.campaigns} campaigns migrated\n` +
+                `✓ ${result.migrated.leads} leads migrated\n` +
+                `✓ ${result.migrated.activities} activities migrated\n\n` +
+                `Your campaigns are now running 24/7 on the server! 🚀`,
+              'success',
+              result
+            );
+            btn.textContent = 'Migration Complete!';
+
+            setTimeout(() => {
+              window.location.href = '/depointe-dashboard';
+            }, 3000);
+          } else {
+            throw new Error(result.error || 'Migration failed');
+          }
+        } catch (error) {
+          console.error('Migration error:', error);
+          showStatus('❌ Migration failed: ' + error.message, 'error');
+          btn.disabled = false;
+          btn.textContent = 'Try Again';
+        }
+      }
+    </script>
+  </body>
+</html>

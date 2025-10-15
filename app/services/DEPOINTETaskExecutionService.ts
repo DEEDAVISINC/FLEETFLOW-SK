@@ -277,15 +277,16 @@ class DEPOINTETaskExecutionService {
 
   /**
    * Get healthcare-specific leads - MULTI-SOURCE STRATEGY
-   * Combines: TruckingPlanet (50%) + FMCSA (30%) + ThomasNet (20%)
+   * Leverages TruckingPlanet's comprehensive medical logistics coverage
+   * Combines: TruckingPlanet (70%) + FMCSA (20%) + ThomasNet (10%)
    */
   private async getHealthcareLeads(count: number, task: Task): Promise<Lead[]> {
     const leads: Lead[] = [];
 
-    // Split across multiple sources for maximum coverage
-    const tpCount = Math.ceil(count * 0.5); // 50% TruckingPlanet
-    const fmcsaCount = Math.ceil(count * 0.3); // 30% FMCSA
-    const tnCount = Math.floor(count * 0.2); // 20% ThomasNet
+    // Leverage TruckingPlanet's comprehensive medical logistics coverage
+    const tpCount = Math.ceil(count * 0.7); // 70% TruckingPlanet (medical logistics, healthcare shippers, pharma)
+    const fmcsaCount = Math.ceil(count * 0.2); // 20% FMCSA (DOT-verified healthcare carriers)
+    const tnCount = Math.floor(count * 0.1); // 10% ThomasNet (medical manufacturers)
 
     console.info(
       `🎯 Multi-source healthcare lead generation: TP(${tpCount}) + FMCSA(${fmcsaCount}) + TN(${tnCount})`
@@ -403,16 +404,18 @@ class DEPOINTETaskExecutionService {
 
   /**
    * Get shipper leads - MULTI-SOURCE STRATEGY
-   * Combines: TruckingPlanet (70%) + FMCSA (30%)
+   * Leverages ThomasNet for new/expanding manufacturers
+   * Combines: TruckingPlanet (50%) + FMCSA (30%) + ThomasNet (20%)
    */
   private async getShipperLeads(count: number, task: Task): Promise<Lead[]> {
     const leads: Lead[] = [];
 
-    const tpCount = Math.ceil(count * 0.7); // 70% TruckingPlanet
-    const fmcsaCount = Math.floor(count * 0.3); // 30% FMCSA
+    const tpCount = Math.ceil(count * 0.5); // 50% TruckingPlanet (established shippers)
+    const fmcsaCount = Math.floor(count * 0.3); // 30% FMCSA (verified carriers)
+    const tnCount = Math.floor(count * 0.2); // 20% ThomasNet (expanding manufacturers)
 
     console.info(
-      `🎯 Multi-source shipper generation: TP(${tpCount}) + FMCSA(${fmcsaCount})`
+      `🎯 Multi-source shipper generation: TP(${tpCount}) + FMCSA(${fmcsaCount}) + TN(${tnCount})`
     );
 
     // SOURCE 1: TruckingPlanet
@@ -450,7 +453,7 @@ class DEPOINTETaskExecutionService {
 
     // SOURCE 2: FMCSA
     try {
-      console.info('🏛️ [2/2] FMCSA verified shippers...');
+      console.info('🏛️ [2/3] FMCSA verified shippers...');
       const fmcsaShippers = await this.fmcsaService.searchShippers({
         minAnnualShipments: 200,
         limit: fmcsaCount,
@@ -476,19 +479,55 @@ class DEPOINTETaskExecutionService {
         });
       }
       console.info(
-        `✅ [2/2] ${Math.min(fmcsaShippers.length, fmcsaCount)} from FMCSA`
+        `✅ [2/3] ${Math.min(fmcsaShippers.length, fmcsaCount)} from FMCSA`
       );
     } catch (error) {
-      console.error('[2/2] FMCSA error:', error);
+      console.error('[2/3] FMCSA error:', error);
     }
 
-    console.info(`🎯 TOTAL: ${leads.length} shipper leads from 2 sources`);
+    // SOURCE 3: ThomasNet (expanding manufacturers)
+    try {
+      console.info('🏭 [3/3] ThomasNet expanding manufacturers...');
+      const manufacturers =
+        await this.thomasNetService.searchHighPotentialManufacturers({
+          minFreightScore: 60, // Manufacturers with moderate to high freight potential
+          limit: tnCount,
+        });
+
+      for (const mfg of manufacturers.slice(0, tnCount)) {
+        leads.push({
+          id: `LEAD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          taskId: task.id,
+          company: mfg.companyName,
+          contactName: mfg.contactName || 'Operations Manager',
+          email:
+            mfg.email ||
+            `${mfg.companyName.toLowerCase().replace(/[^a-z0-9]/g, '')}@company.com`,
+          phone: mfg.phone || '(555) 000-0000',
+          status: 'new',
+          potentialValue: mfg.aiAnalysis?.spend === 'HIGH' ? 75000 : 55000,
+          source: `ThomasNet Manufacturer - ${task.title}`,
+          priority: task.priority,
+          createdAt: new Date().toISOString(),
+          assignedTo: task.assignedTo[0] || 'unassigned',
+          notes: `ThomasNet: ${mfg.companyName}. ${mfg.description || 'Manufacturer expanding logistics needs.'} Freight Score: ${mfg.freightScore || 'N/A'}`,
+        });
+      }
+      console.info(
+        `✅ [3/3] ${manufacturers.slice(0, tnCount).length} from ThomasNet`
+      );
+    } catch (error) {
+      console.error('[3/3] ThomasNet error:', error);
+    }
+
+    console.info(`🎯 TOTAL: ${leads.length} shipper leads from 3 sources`);
     return leads;
   }
 
   /**
    * Get desperate prospect leads - MULTI-SOURCE STRATEGY
-   * Combines: TruckingPlanet (40%) + ThomasNet (40%) + FMCSA (20%)
+   * Leverages TruckingPlanet's broad coverage of wholesalers, warehousing, manufacturers
+   * Combines: TruckingPlanet (60%) + ThomasNet (30%) + FMCSA (10%)
    */
   private async getDesperateProspectLeads(
     count: number,
@@ -496,9 +535,9 @@ class DEPOINTETaskExecutionService {
   ): Promise<Lead[]> {
     const leads: Lead[] = [];
 
-    const tpCount = Math.ceil(count * 0.4); // 40% TruckingPlanet
-    const tnCount = Math.ceil(count * 0.4); // 40% ThomasNet
-    const fmcsaCount = Math.floor(count * 0.2); // 20% FMCSA
+    const tpCount = Math.ceil(count * 0.6); // 60% TruckingPlanet (warehousing, wholesalers, manufacturers)
+    const tnCount = Math.ceil(count * 0.3); // 30% ThomasNet (industrial manufacturers)
+    const fmcsaCount = Math.floor(count * 0.1); // 10% FMCSA (urgent shippers)
 
     console.info(
       `🎯 Multi-source desperate prospects: TP(${tpCount}) + TN(${tnCount}) + FMCSA(${fmcsaCount})`

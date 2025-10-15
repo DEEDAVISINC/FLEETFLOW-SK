@@ -3,8 +3,10 @@
 // Force dynamic rendering to prevent build-time prerendering issues
 export const dynamic = 'force-dynamic';
 
+import AdaptiveLearningDashboard from '../components/AdaptiveLearningDashboard';
 import InternalAdaptiveLearning from '../components/InternalAdaptiveLearning';
 
+import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import AIStaffScheduler from '../components/AIStaffScheduler';
 import CampaignTemplates from '../components/CampaignTemplates';
@@ -935,6 +937,7 @@ export default function DEPOINTEDashboard() {
     | 'nemt-operations'
   >('overview');
   const [crmLeads, setCrmLeads] = useState<any[]>([]);
+  const [selectedLead, setSelectedLead] = useState<any>(null);
   const [followUpTasks, setFollowUpTasks] = useState<any[]>([]);
   const [liveActivities, setLiveActivities] = useState<any[]>([]);
   const [staffData, setStaffData] = useState(depointeStaff);
@@ -1230,16 +1233,75 @@ export default function DEPOINTEDashboard() {
       }
     }
 
-    // Load CRM leads from localStorage
-    const savedCrmLeads = localStorage.getItem('depointe-crm-leads');
-    if (savedCrmLeads) {
+    // Load CRM leads from Supabase database
+    const fetchCrmLeads = async () => {
       try {
-        const leads = JSON.parse(savedCrmLeads);
-        setCrmLeads(leads);
+        // Check if Supabase env vars are available
+        if (
+          typeof window === 'undefined' ||
+          !process.env.NEXT_PUBLIC_SUPABASE_URL
+        ) {
+          console.log(
+            '⚠️ Supabase not configured, using localStorage fallback'
+          );
+          const savedCrmLeads = localStorage.getItem('depointe-crm-leads');
+          if (savedCrmLeads) {
+            const leads = JSON.parse(savedCrmLeads);
+            setCrmLeads(leads);
+          }
+          return;
+        }
+
+        // Initialize Supabase client
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+
+        const { data, error } = await supabase
+          .from('depointe_leads')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching CRM leads from database:', error);
+          // Fallback to localStorage if database fails
+          const savedCrmLeads = localStorage.getItem('depointe-crm-leads');
+          if (savedCrmLeads) {
+            const leads = JSON.parse(savedCrmLeads);
+            setCrmLeads(leads);
+          }
+        } else if (data && data.length > 0) {
+          // Transform database format to match expected format
+          const transformedLeads = data.map((lead: any) => ({
+            id: lead.id,
+            company: lead.company_name,
+            contactName: lead.contact_name,
+            contactPhone: lead.contact_phone || lead.metadata?.phone,
+            estimatedValue: lead.estimated_value || 50000,
+            source: lead.source,
+            priority: lead.priority,
+            status: lead.status,
+            assignedTo: lead.assigned_to,
+            createdAt: lead.created_at,
+            lastContact: lead.metadata?.lastContact,
+            updatedAt: lead.metadata?.updatedAt,
+            campaignType: lead.metadata?.campaignType,
+            notes: lead.metadata?.notes ? [lead.metadata.notes] : [],
+          }));
+          setCrmLeads(transformedLeads);
+          console.log(
+            `✅ Loaded ${transformedLeads.length} leads from database`
+          );
+        } else {
+          console.log('ℹ️ No leads found in database');
+        }
       } catch (error) {
         console.error('Error loading CRM leads:', error);
       }
-    }
+    };
+
+    fetchCrmLeads();
 
     // Load follow-up tasks from localStorage
     const savedFollowUpTasks = localStorage.getItem('depointe-followup-tasks');
@@ -3402,6 +3464,9 @@ export default function DEPOINTEDashboard() {
               )}
             </div>
           </div>
+
+          {/* AI Adaptive Learning Dashboard */}
+          <AdaptiveLearningDashboard />
 
           {/* Live Campaign Deployments Section */}
           {(healthcareTasks.length > 0 ||
@@ -6535,339 +6600,459 @@ export default function DEPOINTEDashboard() {
             {crmLeads.length > 0 ? (
               <div
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                  gap: '20px',
+                  background: 'rgba(15, 23, 42, 0.8)',
+                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
                 }}
               >
-                {crmLeads.map((lead) => {
-                  const staff = staffData.find((s) => s.id === lead.assignedTo);
-                  const statusColors = {
-                    new: '#3b82f6',
-                    contacted: '#f59e0b',
-                    qualified: '#22c55e',
-                    'proposal-sent': '#8b5cf6',
-                    negotiating: '#ef4444',
-                    won: '#22c55e',
-                    lost: '#6b7280',
-                  };
-                  const statusColor =
-                    statusColors[lead.status as keyof typeof statusColors] ||
-                    '#6b7280';
-
-                  return (
-                    <div
-                      key={lead.id}
-                      style={{
-                        background: 'rgba(15, 23, 42, 0.8)',
-                        border: '1px solid rgba(148, 163, 184, 0.2)',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        transition: 'transform 0.3s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-4px)';
-                        e.currentTarget.style.boxShadow =
-                          '0 10px 25px rgba(0, 0, 0, 0.3)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      <div
+                <div style={{ overflowX: 'auto' }}>
+                  <table
+                    style={{
+                      width: '100%',
+                      borderCollapse: 'collapse',
+                      fontSize: '0.75rem',
+                    }}
+                  >
+                    <thead>
+                      <tr
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'flex-start',
-                          marginBottom: '12px',
+                          background: 'rgba(51, 65, 85, 0.8)',
+                          borderBottom: '2px solid rgba(148, 163, 184, 0.3)',
                         }}
                       >
-                        <div>
-                          <h4
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Company
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Contact
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Phone
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Value
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Source
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Priority
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Status
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Assigned
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'left',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                            borderRight: '1px solid rgba(148, 163, 184, 0.2)',
+                          }}
+                        >
+                          Added
+                        </th>
+                        <th
+                          style={{
+                            padding: '8px',
+                            textAlign: 'center',
+                            color: '#e2e8f0',
+                            fontWeight: '600',
+                          }}
+                        >
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {crmLeads.map((lead, idx) => {
+                        const staff = staffData.find(
+                          (s) => s.id === lead.assignedTo
+                        );
+                        const statusColors = {
+                          new: '#3b82f6',
+                          contacted: '#f59e0b',
+                          qualified: '#22c55e',
+                          'proposal-sent': '#8b5cf6',
+                          negotiating: '#ef4444',
+                          won: '#22c55e',
+                          lost: '#6b7280',
+                        };
+                        const statusColor =
+                          statusColors[
+                            lead.status as keyof typeof statusColors
+                          ] || '#6b7280';
+
+                        return (
+                          <tr
+                            key={lead.id}
+                            onClick={() => setSelectedLead(lead)}
                             style={{
-                              color: 'white',
-                              fontSize: '1.2rem',
-                              fontWeight: '700',
-                              margin: '0 0 4px 0',
+                              background:
+                                idx % 2 === 0
+                                  ? 'rgba(30, 41, 59, 0.4)'
+                                  : 'rgba(15, 23, 42, 0.4)',
+                              borderBottom:
+                                '1px solid rgba(148, 163, 184, 0.1)',
+                              cursor: 'pointer',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background =
+                                'rgba(59, 130, 246, 0.2)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background =
+                                idx % 2 === 0
+                                  ? 'rgba(30, 41, 59, 0.4)'
+                                  : 'rgba(15, 23, 42, 0.4)';
                             }}
                           >
-                            {lead.company}
-                          </h4>
-                          <p
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.7)',
-                              fontSize: '0.9rem',
-                              margin: '0 0 8px 0',
-                            }}
-                          >
-                            👤 {lead.contactName}
-                          </p>
-                          {lead.contactPhone && (
-                            <p
+                            <td
                               style={{
-                                color: 'rgba(255, 255, 255, 0.6)',
-                                fontSize: '0.85rem',
-                                margin: 0,
+                                padding: '8px',
+                                color: 'white',
+                                fontWeight: '600',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
                               }}
                             >
-                              📞 {lead.contactPhone}
-                            </p>
-                          )}
-                        </div>
-                        <span
-                          style={{
-                            background: `${statusColor}20`,
-                            color: statusColor,
-                            padding: '4px 8px',
-                            borderRadius: '6px',
-                            fontSize: '0.7rem',
-                            fontWeight: '600',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          {lead.status.replace('-', ' ')}
-                        </span>
-                      </div>
+                              {lead.company}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              {lead.contactName}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              {lead.contactPhone || 'N/A'}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                color: '#22c55e',
+                                fontWeight: '600',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              ${(lead.estimatedValue / 1000).toFixed(0)}K
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              {lead.source.replace('-', ' ')}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  background:
+                                    lead.priority === 'CRITICAL'
+                                      ? 'rgba(239, 68, 68, 0.2)'
+                                      : lead.priority === 'HIGH'
+                                        ? 'rgba(245, 158, 11, 0.2)'
+                                        : 'rgba(34, 197, 94, 0.2)',
+                                  color:
+                                    lead.priority === 'CRITICAL'
+                                      ? '#ef4444'
+                                      : lead.priority === 'HIGH'
+                                        ? '#f59e0b'
+                                        : '#22c55e',
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  fontSize: '0.65rem',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                {lead.priority}
+                              </span>
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              <span
+                                style={{
+                                  background: `${statusColor}20`,
+                                  color: statusColor,
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  fontSize: '0.65rem',
+                                  fontWeight: '600',
+                                  textTransform: 'uppercase',
+                                }}
+                              >
+                                {lead.status.replace('-', ' ')}
+                              </span>
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              {staff
+                                ? `${staff.avatar} ${staff.name}`
+                                : 'Unknown'}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '0.7rem',
+                                borderRight:
+                                  '1px solid rgba(148, 163, 184, 0.1)',
+                              }}
+                            >
+                              {new Date(lead.createdAt).toLocaleDateString()}
+                            </td>
+                            <td
+                              style={{
+                                padding: '8px',
+                                textAlign: 'center',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  gap: '4px',
+                                  justifyContent: 'center',
+                                  flexWrap: 'nowrap',
+                                }}
+                              >
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Update lead status
+                                    const updatedLeads = crmLeads.map((l) =>
+                                      l.id === lead.id
+                                        ? {
+                                            ...l,
+                                            status: 'contacted',
+                                            lastContact: new Date(),
+                                            updatedAt: new Date(),
+                                          }
+                                        : l
+                                    );
+                                    setCrmLeads(updatedLeads);
+                                    localStorage.setItem(
+                                      'depointe-crm-leads',
+                                      JSON.stringify(updatedLeads)
+                                    );
+                                  }}
+                                  style={{
+                                    background: 'rgba(34, 197, 94, 0.2)',
+                                    border: '1px solid rgba(34, 197, 94, 0.3)',
+                                    borderRadius: '4px',
+                                    padding: '4px 8px',
+                                    color: '#22c55e',
+                                    fontSize: '0.65rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  📞
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Create follow-up task
+                                    const followUpTask = {
+                                      id: `followup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                                      leadId: lead.id,
+                                      title: `Follow up with ${lead.company}`,
+                                      description: `Schedule next contact with ${lead.contactName}`,
+                                      dueDate: new Date(
+                                        Date.now() + 7 * 24 * 60 * 60 * 1000
+                                      ),
+                                      priority: lead.priority,
+                                      assignedTo: lead.assignedTo,
+                                      status: 'pending',
+                                      type: 'call',
+                                      createdAt: new Date(),
+                                    };
 
-                      <div style={{ marginBottom: '15px' }}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '15px',
-                            marginBottom: '8px',
-                          }}
-                        >
-                          <span
-                            style={{
-                              color: '#22c55e',
-                              fontSize: '0.9rem',
-                              fontWeight: '600',
-                            }}
-                          >
-                            💰 ${(lead.estimatedValue / 1000).toFixed(0)}K
-                          </span>
-                          <span
-                            style={{
-                              color: '#3b82f6',
-                              fontSize: '0.9rem',
-                              fontWeight: '600',
-                            }}
-                          >
-                            📋 {lead.source.replace('-', ' ')}
-                          </span>
-                          <span
-                            style={{
-                              color:
-                                lead.priority === 'CRITICAL'
-                                  ? '#ef4444'
-                                  : lead.priority === 'HIGH'
-                                    ? '#f59e0b'
-                                    : '#22c55e',
-                              fontSize: '0.8rem',
-                              fontWeight: '600',
-                            }}
-                          >
-                            🔥 {lead.priority}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            fontSize: '0.8rem',
-                            marginBottom: '4px',
-                          }}
-                        >
-                          Assigned to:{' '}
-                          <strong>
-                            {staff
-                              ? `${staff.avatar} ${staff.name}`
-                              : 'Unknown'}
-                          </strong>
-                        </div>
-                        <div
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.6)',
-                            fontSize: '0.8rem',
-                          }}
-                        >
-                          Added: {new Date(lead.createdAt).toLocaleDateString()}
-                        </div>
-                      </div>
+                                    const updatedTasks = [
+                                      ...followUpTasks,
+                                      followUpTask,
+                                    ];
+                                    setFollowUpTasks(updatedTasks);
+                                    localStorage.setItem(
+                                      'depointe-followup-tasks',
+                                      JSON.stringify(updatedTasks)
+                                    );
 
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button
-                          onClick={() => {
-                            // Update lead status
-                            const updatedLeads = crmLeads.map((l) =>
-                              l.id === lead.id
-                                ? {
-                                    ...l,
-                                    status: 'contacted',
-                                    lastContact: new Date(),
-                                    updatedAt: new Date(),
-                                  }
-                                : l
-                            );
-                            setCrmLeads(updatedLeads);
-                            localStorage.setItem(
-                              'depointe-crm-leads',
-                              JSON.stringify(updatedLeads)
-                            );
-                          }}
-                          style={{
-                            background: 'rgba(34, 197, 94, 0.2)',
-                            border: '1px solid rgba(34, 197, 94, 0.3)',
-                            borderRadius: '6px',
-                            padding: '6px 12px',
-                            color: '#22c55e',
-                            fontSize: '0.8rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          📞 Contact
-                        </button>
-                        <button
-                          onClick={() => {
-                            // Create follow-up task
-                            const followUpTask = {
-                              id: `followup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                              leadId: lead.id,
-                              title: `Follow up with ${lead.company}`,
-                              description: `Schedule next contact with ${lead.contactName}`,
-                              dueDate: new Date(
-                                Date.now() + 7 * 24 * 60 * 60 * 1000
-                              ),
-                              priority: lead.priority,
-                              assignedTo: lead.assignedTo,
-                              status: 'pending',
-                              type: 'call',
-                              createdAt: new Date(),
-                            };
-
-                            const updatedTasks = [
-                              ...followUpTasks,
-                              followUpTask,
-                            ];
-                            setFollowUpTasks(updatedTasks);
-                            localStorage.setItem(
-                              'depointe-followup-tasks',
-                              JSON.stringify(updatedTasks)
-                            );
-
-                            alert('Follow-up task created!');
-                          }}
-                          style={{
-                            background: 'rgba(139, 92, 246, 0.2)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
-                            borderRadius: '6px',
-                            padding: '6px 12px',
-                            color: '#8b5cf6',
-                            fontSize: '0.8rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          📅 Follow-up
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (
-                              confirm('Move this lead to qualified status?')
-                            ) {
-                              const updatedLeads = crmLeads.map((l) =>
-                                l.id === lead.id
-                                  ? {
-                                      ...l,
-                                      status: 'qualified',
-                                      updatedAt: new Date(),
+                                    alert('Follow-up task created!');
+                                  }}
+                                  style={{
+                                    background: 'rgba(139, 92, 246, 0.2)',
+                                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                                    borderRadius: '4px',
+                                    padding: '4px 8px',
+                                    color: '#8b5cf6',
+                                    fontSize: '0.65rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  📅
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (
+                                      confirm(
+                                        'Move this lead to qualified status?'
+                                      )
+                                    ) {
+                                      const updatedLeads = crmLeads.map((l) =>
+                                        l.id === lead.id
+                                          ? {
+                                              ...l,
+                                              status: 'qualified',
+                                              updatedAt: new Date(),
+                                            }
+                                          : l
+                                      );
+                                      setCrmLeads(updatedLeads);
+                                      localStorage.setItem(
+                                        'depointe-crm-leads',
+                                        JSON.stringify(updatedLeads)
+                                      );
                                     }
-                                  : l
-                              );
-                              setCrmLeads(updatedLeads);
-                              localStorage.setItem(
-                                'depointe-crm-leads',
-                                JSON.stringify(updatedLeads)
-                              );
-                            }
-                          }}
-                          style={{
-                            background: 'rgba(245, 158, 11, 0.2)',
-                            border: '1px solid rgba(245, 158, 11, 0.3)',
-                            borderRadius: '6px',
-                            padding: '6px 12px',
-                            color: '#f59e0b',
-                            fontSize: '0.8rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          ✅ Qualify
-                        </button>
-                      </div>
-
-                      {lead.notes && lead.notes.length > 0 && (
-                        <div
-                          style={{
-                            marginTop: '12px',
-                            padding: '10px',
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            borderRadius: '6px',
-                          }}
-                        >
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.8)',
-                              fontSize: '0.8rem',
-                              fontWeight: '600',
-                              marginBottom: '4px',
-                            }}
-                          >
-                            📝 Notes:
-                          </div>
-                          <div
-                            style={{
-                              color: 'rgba(255, 255, 255, 0.7)',
-                              fontSize: '0.8rem',
-                            }}
-                          >
-                            {lead.notes[lead.notes.length - 1]}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
+                                  }}
+                                  style={{
+                                    background: 'rgba(245, 158, 11, 0.2)',
+                                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                                    borderRadius: '4px',
+                                    padding: '4px 8px',
+                                    color: '#f59e0b',
+                                    fontSize: '0.65rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  ✅
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ) : (
               <div
                 style={{
                   textAlign: 'center',
-                  padding: '60px 20px',
-                  background: 'rgba(15, 23, 42, 0.3)',
-                  borderRadius: '12px',
-                  border: '1px dashed rgba(148, 163, 184, 0.3)',
+                  padding: '40px',
+                  color: 'rgba(255, 255, 255, 0.6)',
                 }}
               >
-                <div style={{ fontSize: '4rem', marginBottom: '20px' }}>🎯</div>
-                <h3
-                  style={{
-                    color: 'white',
-                    marginBottom: '10px',
-                    fontSize: '1.5rem',
-                  }}
-                >
-                  No Leads Yet
-                </h3>
-                <p
-                  style={{
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    fontSize: '1.1rem',
-                    marginBottom: '20px',
-                  }}
-                >
+                <p style={{ fontSize: '1.2rem', marginBottom: '8px' }}>
+                  🎯 No Leads Yet
+                </p>
+                <p style={{ fontSize: '0.9rem' }}>
                   Campaign connections will automatically appear here as your AI
                   teams make contact
                 </p>
@@ -6883,6 +7068,888 @@ export default function DEPOINTEDashboard() {
               </div>
             )}
           </div>
+
+          {/* Lead Detail Modal */}
+          {selectedLead && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 9999,
+                padding: '20px',
+              }}
+              onClick={() => setSelectedLead(null)}
+            >
+              <div
+                style={{
+                  background:
+                    'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(148, 163, 184, 0.3)',
+                  maxWidth: '800px',
+                  width: '100%',
+                  maxHeight: '90vh',
+                  overflow: 'auto',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Modal Header */}
+                <div
+                  style={{
+                    padding: '24px',
+                    borderBottom: '1px solid rgba(148, 163, 184, 0.2)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <h2
+                      style={{
+                        color: 'white',
+                        fontSize: '1.8rem',
+                        fontWeight: '700',
+                        margin: '0 0 8px 0',
+                      }}
+                    >
+                      {selectedLead.company}
+                    </h2>
+                    <div
+                      style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}
+                    >
+                      <span
+                        style={{
+                          background: (() => {
+                            const statusColors = {
+                              new: '#3b82f6',
+                              contacted: '#f59e0b',
+                              qualified: '#22c55e',
+                              'proposal-sent': '#8b5cf6',
+                              negotiating: '#ef4444',
+                              won: '#22c55e',
+                              lost: '#6b7280',
+                            };
+                            return `${statusColors[selectedLead.status as keyof typeof statusColors] || '#6b7280'}30`;
+                          })(),
+                          color: (() => {
+                            const statusColors = {
+                              new: '#3b82f6',
+                              contacted: '#f59e0b',
+                              qualified: '#22c55e',
+                              'proposal-sent': '#8b5cf6',
+                              negotiating: '#ef4444',
+                              won: '#22c55e',
+                              lost: '#6b7280',
+                            };
+                            return (
+                              statusColors[
+                                selectedLead.status as keyof typeof statusColors
+                              ] || '#6b7280'
+                            );
+                          })(),
+                          padding: '4px 12px',
+                          borderRadius: '6px',
+                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {selectedLead.status.replace('-', ' ')}
+                      </span>
+                      <span
+                        style={{
+                          background:
+                            selectedLead.priority === 'CRITICAL'
+                              ? 'rgba(239, 68, 68, 0.2)'
+                              : selectedLead.priority === 'HIGH'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : 'rgba(34, 197, 94, 0.2)',
+                          color:
+                            selectedLead.priority === 'CRITICAL'
+                              ? '#ef4444'
+                              : selectedLead.priority === 'HIGH'
+                                ? '#f59e0b'
+                                : '#22c55e',
+                          padding: '4px 12px',
+                          borderRadius: '6px',
+                          fontSize: '0.85rem',
+                          fontWeight: '600',
+                        }}
+                      >
+                        🔥 {selectedLead.priority} PRIORITY
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedLead(null)}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '8px',
+                      padding: '8px 16px',
+                      color: '#ef4444',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ✕ Close
+                  </button>
+                </div>
+
+                {/* Modal Content */}
+                <div style={{ padding: '24px' }}>
+                  {/* AGENT HANDOFF SECTION - MOST PROMINENT */}
+                  <div
+                    style={{
+                      background:
+                        'linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%)',
+                      border: '2px solid rgba(34, 197, 94, 0.5)',
+                      borderRadius: '12px',
+                      padding: '24px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '20px',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          color: '#22c55e',
+                          fontSize: '1.5rem',
+                          fontWeight: '700',
+                          margin: 0,
+                        }}
+                      >
+                        📞 LIVE AGENT HANDOFF
+                      </h3>
+                      <button
+                        onClick={() => {
+                          const info = `LEAD HANDOFF\n━━━━━━━━━━━━━\nCompany: ${selectedLead.company}\nContact: ${selectedLead.contactName || 'N/A'}\nPhone: ${selectedLead.contactPhone || 'N/A'}\nEmail: ${selectedLead.email || 'N/A'}\nValue: $${(selectedLead.estimatedValue / 1000).toFixed(0)}K\nPriority: ${selectedLead.priority}\nSource: ${selectedLead.source}`;
+                          navigator.clipboard.writeText(info);
+                          alert('✅ Copied to clipboard!');
+                        }}
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.3)',
+                          border: '1px solid #22c55e',
+                          borderRadius: '8px',
+                          padding: '8px 16px',
+                          color: '#22c55e',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        📋 Copy Info
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.4)',
+                        borderRadius: '10px',
+                        padding: '20px',
+                      }}
+                    >
+                      <div style={{ marginBottom: '20px' }}>
+                        <p
+                          style={{
+                            color: '#22c55e',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px',
+                          }}
+                        >
+                          🏢 COMPANY
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1.6rem',
+                            fontWeight: '700',
+                            margin: 0,
+                          }}
+                        >
+                          {selectedLead.company}
+                        </p>
+                      </div>
+
+                      <div style={{ marginBottom: '20px' }}>
+                        <p
+                          style={{
+                            color: '#22c55e',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                            marginBottom: '8px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px',
+                          }}
+                        >
+                          👤 CONTACT PERSON
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1.4rem',
+                            fontWeight: '700',
+                            margin: 0,
+                          }}
+                        >
+                          {selectedLead.contactName || 'Not provided'}
+                        </p>
+                      </div>
+
+                      <div
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '20px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <div>
+                          <p
+                            style={{
+                              color: '#22c55e',
+                              fontSize: '0.85rem',
+                              fontWeight: '600',
+                              marginBottom: '8px',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            📞 PHONE
+                          </p>
+                          <a
+                            href={`tel:${selectedLead.contactPhone || ''}`}
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '1.3rem',
+                              fontWeight: '700',
+                              textDecoration: 'none',
+                            }}
+                          >
+                            {selectedLead.contactPhone || 'Not provided'}
+                          </a>
+                        </div>
+                        <div>
+                          <p
+                            style={{
+                              color: '#22c55e',
+                              fontSize: '0.85rem',
+                              fontWeight: '600',
+                              marginBottom: '8px',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            📧 EMAIL
+                          </p>
+                          <a
+                            href={`mailto:${selectedLead.email || ''}`}
+                            style={{
+                              color: '#3b82f6',
+                              fontSize: '1.1rem',
+                              fontWeight: '600',
+                              textDecoration: 'none',
+                            }}
+                          >
+                            {selectedLead.email || 'Not provided'}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          paddingTop: '16px',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '12px',
+                            flexWrap: 'wrap',
+                          }}
+                        >
+                          <span
+                            style={{
+                              background: 'rgba(245, 158, 11, 0.3)',
+                              color: '#fbbf24',
+                              padding: '8px 16px',
+                              borderRadius: '6px',
+                              fontSize: '0.9rem',
+                              fontWeight: '700',
+                            }}
+                          >
+                            💰 $
+                            {(selectedLead.estimatedValue / 1000).toFixed(0)}K
+                            Deal Value
+                          </span>
+                          <span
+                            style={{
+                              background:
+                                selectedLead.priority === 'CRITICAL'
+                                  ? 'rgba(239, 68, 68, 0.3)'
+                                  : selectedLead.priority === 'HIGH'
+                                    ? 'rgba(245, 158, 11, 0.3)'
+                                    : 'rgba(34, 197, 94, 0.3)',
+                              color:
+                                selectedLead.priority === 'CRITICAL'
+                                  ? '#ef4444'
+                                  : selectedLead.priority === 'HIGH'
+                                    ? '#f59e0b'
+                                    : '#22c55e',
+                              padding: '8px 16px',
+                              borderRadius: '6px',
+                              fontSize: '0.9rem',
+                              fontWeight: '700',
+                            }}
+                          >
+                            🔥 {selectedLead.priority} PRIORITY
+                          </span>
+                          <span
+                            style={{
+                              background: 'rgba(139, 92, 246, 0.3)',
+                              color: '#a78bfa',
+                              padding: '8px 16px',
+                              borderRadius: '6px',
+                              fontSize: '0.9rem',
+                              fontWeight: '700',
+                            }}
+                          >
+                            📋 {selectedLead.source.replace('-', ' ')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: '#3b82f6',
+                        fontSize: '1.2rem',
+                        fontWeight: '600',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      👤 Contact Information
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '16px',
+                      }}
+                    >
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Contact Name
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {selectedLead.contactName}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Phone Number
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          📞 {selectedLead.contactPhone || 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Lead Source
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          📋 {selectedLead.source.replace('-', ' ')}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Assigned Staff
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {(() => {
+                            const staff = staffData.find(
+                              (s) => s.id === selectedLead.assignedTo
+                            );
+                            return staff
+                              ? `${staff.avatar} ${staff.name}`
+                              : 'Unassigned';
+                          })()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Deal Information */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: '#22c55e',
+                        fontSize: '1.2rem',
+                        fontWeight: '600',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      💰 Deal Information
+                    </h3>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '16px',
+                      }}
+                    >
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Estimated Value
+                        </p>
+                        <p
+                          style={{
+                            color: '#22c55e',
+                            fontSize: '1.5rem',
+                            fontWeight: '700',
+                          }}
+                        >
+                          ${(selectedLead.estimatedValue / 1000).toFixed(0)}K
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Campaign Type
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {selectedLead.campaignType || 'General'}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Added Date
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          📅{' '}
+                          {new Date(
+                            selectedLead.createdAt
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            fontSize: '0.85rem',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          Last Contact
+                        </p>
+                        <p
+                          style={{
+                            color: 'white',
+                            fontSize: '1rem',
+                            fontWeight: '600',
+                          }}
+                        >
+                          {selectedLead.lastContact
+                            ? new Date(
+                                selectedLead.lastContact
+                              ).toLocaleDateString()
+                            : 'Never'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Progress Timeline */}
+                  <div
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '12px',
+                      padding: '20px',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: '#8b5cf6',
+                        fontSize: '1.2rem',
+                        fontWeight: '600',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      📊 Progress Timeline
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: '#22c55e',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1rem',
+                          }}
+                        >
+                          ✓
+                        </div>
+                        <div>
+                          <p
+                            style={{
+                              color: 'white',
+                              fontWeight: '600',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            Lead Created
+                          </p>
+                          <p
+                            style={{
+                              color: 'rgba(255, 255, 255, 0.6)',
+                              fontSize: '0.85rem',
+                            }}
+                          >
+                            {new Date(selectedLead.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      {selectedLead.lastContact && (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              background: '#3b82f6',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '1rem',
+                            }}
+                          >
+                            📞
+                          </div>
+                          <div>
+                            <p
+                              style={{
+                                color: 'white',
+                                fontWeight: '600',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              Last Contact Attempt
+                            </p>
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '0.85rem',
+                              }}
+                            >
+                              {new Date(
+                                selectedLead.lastContact
+                              ).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {selectedLead.updatedAt && (
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '50%',
+                              background: '#f59e0b',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '1rem',
+                            }}
+                          >
+                            🔄
+                          </div>
+                          <div>
+                            <p
+                              style={{
+                                color: 'white',
+                                fontWeight: '600',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              Last Updated
+                            </p>
+                            <p
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.6)',
+                                fontSize: '0.85rem',
+                              }}
+                            >
+                              {new Date(
+                                selectedLead.updatedAt
+                              ).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Notes Section */}
+                  {selectedLead.notes && selectedLead.notes.length > 0 && (
+                    <div
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          color: '#f59e0b',
+                          fontSize: '1.2rem',
+                          fontWeight: '600',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        📝 Notes & Comments
+                      </h3>
+                      <div
+                        style={{
+                          background: 'rgba(0, 0, 0, 0.2)',
+                          borderRadius: '8px',
+                          padding: '16px',
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          lineHeight: '1.6',
+                        }}
+                      >
+                        {selectedLead.notes[selectedLead.notes.length - 1]}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '12px',
+                      marginTop: '24px',
+                      justifyContent: 'flex-end',
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        const updatedLeads = crmLeads.map((l) =>
+                          l.id === selectedLead.id
+                            ? {
+                                ...l,
+                                status: 'contacted',
+                                lastContact: new Date(),
+                                updatedAt: new Date(),
+                              }
+                            : l
+                        );
+                        setCrmLeads(updatedLeads);
+                        localStorage.setItem(
+                          'depointe-crm-leads',
+                          JSON.stringify(updatedLeads)
+                        );
+                        setSelectedLead({
+                          ...selectedLead,
+                          status: 'contacted',
+                          lastContact: new Date(),
+                        });
+                      }}
+                      style={{
+                        background: 'rgba(34, 197, 94, 0.2)',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        color: '#22c55e',
+                        fontSize: '0.95rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📞 Mark as Contacted
+                    </button>
+                    <button
+                      onClick={() => {
+                        const followUpTask = {
+                          id: `followup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                          leadId: selectedLead.id,
+                          title: `Follow up with ${selectedLead.company}`,
+                          description: `Schedule next contact with ${selectedLead.contactName}`,
+                          dueDate: new Date(
+                            Date.now() + 7 * 24 * 60 * 60 * 1000
+                          ),
+                          priority: selectedLead.priority,
+                          assignedTo: selectedLead.assignedTo,
+                          status: 'pending',
+                          type: 'call',
+                          createdAt: new Date(),
+                        };
+                        const updatedTasks = [...followUpTasks, followUpTask];
+                        setFollowUpTasks(updatedTasks);
+                        localStorage.setItem(
+                          'depointe-followup-tasks',
+                          JSON.stringify(updatedTasks)
+                        );
+                        alert('Follow-up task created!');
+                      }}
+                      style={{
+                        background: 'rgba(139, 92, 246, 0.2)',
+                        border: '1px solid rgba(139, 92, 246, 0.3)',
+                        borderRadius: '8px',
+                        padding: '12px 24px',
+                        color: '#8b5cf6',
+                        fontSize: '0.95rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📅 Create Follow-up
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -7097,86 +8164,131 @@ export default function DEPOINTEDashboard() {
                   gap: '16px',
                 }}
               >
-                <div style={{ textAlign: 'center' }}>
-                  <div
-                    style={{
-                      color: '#22c55e',
-                      fontSize: '2rem',
-                      fontWeight: '700',
-                      textShadow: '0 2px 8px #22c55e40',
-                    }}
-                  >
-                    0
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    New Leads Today
-                  </div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div
-                    style={{
-                      color: '#3b82f6',
-                      fontSize: '2rem',
-                      fontWeight: '700',
-                      textShadow: '0 2px 8px #3b82f640',
-                    }}
-                  >
-                    0
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    Qualified Leads
-                  </div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div
-                    style={{
-                      color: '#f59e0b',
-                      fontSize: '2rem',
-                      fontWeight: '700',
-                      textShadow: '0 2px 8px #f59e0b40',
-                    }}
-                  >
-                    0%
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    Conversion Rate
-                  </div>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div
-                    style={{
-                      color: '#a855f7',
-                      fontSize: '2rem',
-                      fontWeight: '700',
-                      textShadow: '0 2px 8px #a855f740',
-                    }}
-                  >
-                    $0K
-                  </div>
-                  <div
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.8)',
-                      fontSize: '0.9rem',
-                    }}
-                  >
-                    Est. Revenue
-                  </div>
-                </div>
+                {(() => {
+                  // Calculate real lead metrics from localStorage
+                  const storedLeads =
+                    typeof window !== 'undefined'
+                      ? localStorage.getItem('depointe-crm-leads')
+                      : null;
+                  let totalLeads = 0;
+                  let qualifiedLeads = 0;
+                  let conversionRate = 0;
+                  let estimatedRevenue = 0;
+
+                  if (storedLeads) {
+                    try {
+                      const parsedLeads = JSON.parse(storedLeads);
+                      totalLeads = parsedLeads.length;
+
+                      // Count qualified leads (those with high potential value or status)
+                      qualifiedLeads = parsedLeads.filter(
+                        (lead: any) =>
+                          lead.potentialValue && lead.potentialValue > 50000
+                      ).length;
+
+                      // Calculate conversion rate (qualified / total)
+                      conversionRate =
+                        totalLeads > 0
+                          ? Math.round((qualifiedLeads / totalLeads) * 100)
+                          : 0;
+
+                      // Estimate revenue from qualified leads
+                      estimatedRevenue =
+                        parsedLeads.reduce(
+                          (sum: number, lead: any) =>
+                            sum + (lead.potentialValue || 0),
+                          0
+                        ) / 1000; // Convert to K
+                    } catch (error) {
+                      console.warn('Error calculating lead metrics:', error);
+                    }
+                  }
+
+                  return (
+                    <>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            color: '#22c55e',
+                            fontSize: '2rem',
+                            fontWeight: '700',
+                            textShadow: '0 2px 8px #22c55e40',
+                          }}
+                        >
+                          {totalLeads}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          Total Generated Leads
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            color: '#3b82f6',
+                            fontSize: '2rem',
+                            fontWeight: '700',
+                            textShadow: '0 2px 8px #3b82f640',
+                          }}
+                        >
+                          {qualifiedLeads}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          High-Value Leads
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            color: '#f59e0b',
+                            fontSize: '2rem',
+                            fontWeight: '700',
+                            textShadow: '0 2px 8px #f59e0b40',
+                          }}
+                        >
+                          {conversionRate}%
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          Qualification Rate
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <div
+                          style={{
+                            color: '#a855f7',
+                            fontSize: '2rem',
+                            fontWeight: '700',
+                            textShadow: '0 2px 8px #a855f740',
+                          }}
+                        >
+                          ${Math.round(estimatedRevenue)}K
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.9rem',
+                          }}
+                        >
+                          Est. Revenue Potential
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 
@@ -7353,6 +8465,251 @@ export default function DEPOINTEDashboard() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Lead Source Breakdown */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.8)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                borderRadius: '12px',
+                padding: '20px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <h4
+                style={{
+                  color: 'white',
+                  fontSize: '1.1rem',
+                  fontWeight: '700',
+                  marginBottom: '16px',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                }}
+              >
+                📊 Lead Source Breakdown
+              </h4>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                {(() => {
+                  // Calculate source breakdown from localStorage
+                  const storedLeads =
+                    typeof window !== 'undefined'
+                      ? localStorage.getItem('depointe-crm-leads')
+                      : null;
+                  const sources = {
+                    truckingplanet: 0,
+                    fmcsa: 0,
+                    thomasnet: 0,
+                  };
+
+                  if (storedLeads) {
+                    try {
+                      const parsedLeads = JSON.parse(storedLeads);
+                      parsedLeads.forEach((lead: any) => {
+                        const source = lead.source?.toLowerCase() || '';
+                        if (source.includes('truckingplanet')) {
+                          sources.truckingplanet++;
+                        } else if (source.includes('fmcsa')) {
+                          sources.fmcsa++;
+                        } else if (source.includes('thomasnet')) {
+                          sources.thomasnet++;
+                        }
+                      });
+                    } catch (error) {
+                      console.warn(
+                        'Error calculating source breakdown:',
+                        error
+                      );
+                    }
+                  }
+
+                  const total =
+                    sources.truckingplanet + sources.fmcsa + sources.thomasnet;
+
+                  return (
+                    <>
+                      <div
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.1)',
+                          border: '1px solid rgba(59, 130, 246, 0.3)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                color: '#3b82f6',
+                                fontWeight: '600',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              🕷️ TruckingPlanet
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '0.8rem',
+                              }}
+                            >
+                              70K+ shippers database
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              background: '#3b82f6',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {sources.truckingplanet}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(34, 197, 94, 0.1)',
+                          border: '1px solid rgba(34, 197, 94, 0.3)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                color: '#22c55e',
+                                fontWeight: '600',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              🏛️ FMCSA
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '0.8rem',
+                              }}
+                            >
+                              Government verified carriers
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              background: '#22c55e',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {sources.fmcsa}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(245, 158, 11, 0.1)',
+                          border: '1px solid rgba(245, 158, 11, 0.3)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                color: '#f59e0b',
+                                fontWeight: '600',
+                                marginBottom: '2px',
+                              }}
+                            >
+                              🏭 ThomasNet
+                            </div>
+                            <div
+                              style={{
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                fontSize: '0.8rem',
+                              }}
+                            >
+                              Industrial manufacturers
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              background: '#f59e0b',
+                              color: 'white',
+                              padding: '4px 8px',
+                              borderRadius: '12px',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                            }}
+                          >
+                            {sources.thomasnet}
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.1)',
+                          borderRadius: '8px',
+                          padding: '12px',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <div
+                          style={{
+                            color: 'white',
+                            fontSize: '1.2rem',
+                            fontWeight: '700',
+                            marginBottom: '4px',
+                          }}
+                        >
+                          {total}
+                        </div>
+                        <div
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            fontSize: '0.8rem',
+                          }}
+                        >
+                          Total Leads Generated
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
 

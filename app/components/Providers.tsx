@@ -12,7 +12,7 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   console.log('🔧 PROVIDERS LOADING - CACHE CLEAR ACTIVE');
   return (
-    <SessionProvider>
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
       <SafeOrganizationProvider>
         <LanguageProvider>
           {/* CACHE BUSTER: Force fresh render */}

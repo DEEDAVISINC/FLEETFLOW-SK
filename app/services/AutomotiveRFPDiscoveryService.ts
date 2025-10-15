@@ -257,187 +257,19 @@ export class AutomotiveRFPDiscoveryService {
   private async scanSpecificOEMPortal(
     portal: OEMPortalConfig
   ): Promise<AutomotiveRFP[]> {
-    // This would implement portal-specific scraping/API integration
-    // For now, return mock data representative of each OEM
+    // TODO: Implement actual portal-specific scraping/API integration
+    // This would connect to real OEM supplier portals and extract live opportunities
 
-    const mockOpportunities: AutomotiveRFP[] = [];
-    const oemName = portal.name.split(' ')[0] as AutomotiveRFP['oem'];
+    console.info(`🔍 Scanning ${portal.name} for live opportunities...`);
 
-    // Generate realistic opportunities based on OEM characteristics
-    if (oemName === 'Ford') {
-      mockOpportunities.push({
-        id: `FORD-${Date.now()}`,
-        title: 'F-150 Lightning Parts Distribution Network',
-        company: 'Ford Motor Company',
-        oem: 'Ford',
-        contractType: 'Parts Transport',
-        estimatedValue: 2500000,
-        contractDuration: '3 years',
-        responseDeadline: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
-        requirements: {
-          equipment: ['Temperature Controlled', 'Liftgate', 'GPS Tracking'],
-          certifications: ['ISO 9001', 'TS 16949', 'C-TPAT'],
-          insurance: 2000000,
-          experience: '5+ years automotive parts transportation',
-          capacity: 'Minimum 50 loads per month',
-        },
-        locations: {
-          pickup: ['Dearborn, MI', 'Louisville, KY', 'Kansas City, MO'],
-          delivery: ['Dealer Network - Nationwide'],
-          plantCodes: ['DAP', 'KTP', 'KCP'],
-        },
-        specifications: {
-          isJIT: true,
-          isLongTerm: true,
-          requiresSpecializedEquipment: true,
-          tier1Supplier: false,
-          performanceMetrics: [
-            'On-time delivery 99.5%',
-            'Damage rate <0.1%',
-            'Communication response <2hrs',
-          ],
-        },
-        competitiveFactors: {
-          incumbentCarrier: 'Confidential',
-          expectedBidders: 8,
-          winProbability: 0.4,
-          keyDecisionFactors: [
-            'Cost',
-            'Reliability',
-            'Geographic Coverage',
-            'Technology Integration',
-          ],
-        },
-        source: 'Ford Supplier Portal',
-        portal: portal.baseUrl,
-        contactInfo: {
-          name: 'Sarah Johnson',
-          email: 'procurement.logistics@ford.com',
-          phone: '+1-313-555-0123',
-          department: 'Global Procurement - Logistics',
-        },
-      });
-    }
+    // For now, return empty array until real API integration is implemented
+    // Real implementation would:
+    // 1. Authenticate with portal using configured auth method
+    // 2. Search portal endpoints for active RFPs
+    // 3. Parse and structure opportunity data
+    // 4. Return array of AutomotiveRFP objects
 
-    if (oemName === 'GM') {
-      mockOpportunities.push({
-        id: `GM-${Date.now()}`,
-        title: 'Ultium Battery Plant Expedited Delivery Services',
-        company: 'General Motors',
-        oem: 'GM',
-        contractType: 'Expedite',
-        estimatedValue: 1800000,
-        contractDuration: '2 years with extensions',
-        responseDeadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-        requirements: {
-          equipment: [
-            'White Glove Service',
-            'Climate Control',
-            'Security Escorts',
-          ],
-          certifications: ['ISO 14001', 'IATF 16949', 'Hazmat Certified'],
-          insurance: 5000000,
-          experience: 'Battery/EV component transportation experience required',
-          capacity: '24/7 availability, emergency response <4hrs',
-        },
-        locations: {
-          pickup: ['Warren, MI', 'Spring Hill, TN', 'Lordstown, OH'],
-          delivery: ['Assembly Plants - Multiple States'],
-          plantCodes: ['WAR', 'SPH', 'LOR'],
-        },
-        specifications: {
-          isJIT: true,
-          isLongTerm: true,
-          requiresSpecializedEquipment: true,
-          tier1Supplier: true,
-          performanceMetrics: [
-            'Emergency response <4hrs',
-            'Perfect delivery record',
-            'Real-time tracking',
-          ],
-        },
-        competitiveFactors: {
-          expectedBidders: 5,
-          winProbability: 0.6,
-          keyDecisionFactors: [
-            'Speed',
-            'Reliability',
-            'EV Experience',
-            'Safety Record',
-          ],
-        },
-        source: 'GM SupplyPower',
-        portal: portal.baseUrl,
-        contactInfo: {
-          name: 'Michael Chen',
-          email: 'logistics.procurement@gm.com',
-          department: 'EV Supply Chain Operations',
-        },
-      });
-    }
-
-    if (oemName === 'Tesla') {
-      mockOpportunities.push({
-        id: `TESLA-${Date.now()}`,
-        title: 'Model Y Cross-Docking Operations - Austin Gigafactory',
-        company: 'Tesla, Inc.',
-        oem: 'Tesla',
-        contractType: 'Cross-Dock',
-        estimatedValue: 3200000,
-        contractDuration: '1 year renewable',
-        responseDeadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-        requirements: {
-          equipment: [
-            'Cross-dock facility',
-            'Automated systems',
-            'Tesla integration',
-          ],
-          certifications: [
-            'ISO 45001',
-            'Lean Six Sigma',
-            'Tesla Supplier Certified',
-          ],
-          insurance: 3000000,
-          experience: 'Automotive cross-docking, high-volume operations',
-          capacity: '500+ units daily processing',
-        },
-        locations: {
-          pickup: ['Austin, TX Gigafactory'],
-          delivery: ['Regional Distribution Centers'],
-          plantCodes: ['GF4-ATX'],
-        },
-        specifications: {
-          isJIT: true,
-          isLongTerm: false,
-          requiresSpecializedEquipment: true,
-          tier1Supplier: false,
-          performanceMetrics: [
-            'Zero defects',
-            '100% on-time',
-            'Sustainability metrics',
-          ],
-        },
-        competitiveFactors: {
-          expectedBidders: 4,
-          winProbability: 0.5,
-          keyDecisionFactors: [
-            'Innovation',
-            'Sustainability',
-            'Technology',
-            'Scalability',
-          ],
-        },
-        source: 'Tesla Supplier Network',
-        portal: portal.baseUrl,
-        contactInfo: {
-          name: 'Jennifer Rodriguez',
-          email: 'supply.chain@tesla.com',
-          department: 'Gigafactory Supply Chain',
-        },
-      });
-    }
-
-    return mockOpportunities;
+    return [];
   }
 
   /**
@@ -459,64 +291,15 @@ export class AutomotiveRFPDiscoveryService {
       'Lear Corporation',
     ];
 
-    const opportunities: AutomotiveRFP[] = [];
+    // TODO: Implement actual Tier 1 supplier network monitoring
+    // This would connect to supplier portals and procurement systems
+    // Real implementation would:
+    // 1. Monitor each supplier's procurement portal
+    // 2. Check for transportation/logistics RFPs
+    // 3. Parse opportunity details and requirements
+    // 4. Return structured AutomotiveRFP objects
 
-    // Mock Tier 1 supplier opportunities
-    opportunities.push({
-      id: `BOSCH-${Date.now()}`,
-      title: 'North American Parts Distribution Network',
-      company: 'Robert Bosch LLC',
-      oem: 'Other',
-      contractType: 'Parts Transport',
-      estimatedValue: 4500000,
-      contractDuration: '5 years',
-      responseDeadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      requirements: {
-        equipment: [
-          'Multi-temperature zones',
-          'Secure transport',
-          'EDI integration',
-        ],
-        certifications: ['ISO 9001', 'C-TPAT', 'IATF 16949'],
-        insurance: 2500000,
-        experience: 'Automotive Tier 1 supplier experience',
-        capacity: 'North American coverage, 200+ loads/month',
-      },
-      locations: {
-        pickup: ['Broadview, IL', 'Anderson, SC', 'Plymouth, MI'],
-        delivery: ['OEM Plants - Ford, GM, Stellantis'],
-      },
-      specifications: {
-        isJIT: true,
-        isLongTerm: true,
-        requiresSpecializedEquipment: true,
-        tier1Supplier: true,
-        performanceMetrics: [
-          '99.8% on-time',
-          'Zero quality incidents',
-          'Full traceability',
-        ],
-      },
-      competitiveFactors: {
-        expectedBidders: 6,
-        winProbability: 0.45,
-        keyDecisionFactors: [
-          'Global network',
-          'Quality systems',
-          'Cost efficiency',
-          'Technology',
-        ],
-      },
-      source: 'Tier 1 Supplier Network',
-      portal: 'https://suppliers.bosch.com',
-      contactInfo: {
-        name: 'Klaus Mueller',
-        email: 'procurement.na@bosch.com',
-        department: 'North American Procurement',
-      },
-    });
-
-    return opportunities;
+    return [];
   }
 
   /**
@@ -525,66 +308,15 @@ export class AutomotiveRFPDiscoveryService {
   private async searchProcurementPlatforms(): Promise<AutomotiveRFP[]> {
     console.info('🌐 Searching procurement platforms...');
 
-    // Mock procurement platform opportunities
-    return [
-      {
-        id: `ARIBA-AUTO-${Date.now()}`,
-        title: 'Multi-OEM Expedite Services Contract',
-        company: 'Automotive Consortium via Ariba',
-        oem: 'Other',
-        contractType: 'Expedite',
-        estimatedValue: 2800000,
-        contractDuration: '2 years',
-        responseDeadline: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000),
-        requirements: {
-          equipment: [
-            'Hot shot capability',
-            '24/7 dispatch',
-            'Real-time tracking',
-          ],
-          certifications: [
-            'DOT Compliance',
-            'Insurance verification',
-            'Background checks',
-          ],
-          insurance: 1500000,
-          experience: 'Automotive expedite services, emergency response',
-          capacity: 'National coverage, <6hr response time',
-        },
-        locations: {
-          pickup: ['Various OEM/Supplier locations'],
-          delivery: ['Emergency delivery locations nationwide'],
-        },
-        specifications: {
-          isJIT: true,
-          isLongTerm: false,
-          requiresSpecializedEquipment: false,
-          tier1Supplier: false,
-          performanceMetrics: [
-            'Response time <6hrs',
-            'Success rate 99%',
-            'Communication excellence',
-          ],
-        },
-        competitiveFactors: {
-          expectedBidders: 12,
-          winProbability: 0.35,
-          keyDecisionFactors: [
-            'Speed',
-            'Geographic coverage',
-            'Reliability',
-            'Cost',
-          ],
-        },
-        source: 'Ariba Network',
-        portal: 'https://ariba.com',
-        contactInfo: {
-          name: 'Procurement Team',
-          email: 'automotive.rfp@ariba.com',
-          department: 'Automotive Sourcing',
-        },
-      },
-    ];
+    // TODO: Implement actual procurement platform integration
+    // This would connect to platforms like Ariba, Jaggaer, Coupa, etc.
+    // Real implementation would:
+    // 1. Search automotive-related RFPs on major platforms
+    // 2. Filter for transportation/logistics opportunities
+    // 3. Extract opportunity details and requirements
+    // 4. Return structured AutomotiveRFP objects
+
+    return [];
   }
 
   /**
@@ -604,66 +336,15 @@ export class AutomotiveRFPDiscoveryService {
   private async checkGovernmentAutomotiveContracts(): Promise<AutomotiveRFP[]> {
     console.info('🏛️ Checking government automotive contracts...');
 
-    // Mock government automotive opportunity
-    return [
-      {
-        id: `USPS-AUTO-${Date.now()}`,
-        title: 'USPS Mail Truck Transportation Services',
-        company: 'United States Postal Service',
-        oem: 'Other',
-        contractType: 'Car Hauling',
-        estimatedValue: 1200000,
-        contractDuration: '1 year with options',
-        responseDeadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
-        requirements: {
-          equipment: [
-            'Car hauler trailers',
-            'Government security clearance',
-            'GPS tracking',
-          ],
-          certifications: [
-            'GSA Schedule',
-            'Security clearance',
-            'Government contractor certification',
-          ],
-          insurance: 2000000,
-          experience: 'Government contracting, vehicle transportation',
-          capacity: 'Multi-state routes, scheduled deliveries',
-        },
-        locations: {
-          pickup: ['Vehicle manufacturing facilities'],
-          delivery: ['USPS facilities nationwide'],
-        },
-        specifications: {
-          isJIT: false,
-          isLongTerm: true,
-          requiresSpecializedEquipment: true,
-          tier1Supplier: false,
-          performanceMetrics: [
-            'Security compliance',
-            'On-time delivery',
-            'Government reporting',
-          ],
-        },
-        competitiveFactors: {
-          expectedBidders: 15,
-          winProbability: 0.25,
-          keyDecisionFactors: [
-            'Price',
-            'Security clearance',
-            'Government experience',
-            'Geographic coverage',
-          ],
-        },
-        source: 'SAM.gov',
-        portal: 'https://sam.gov',
-        contactInfo: {
-          name: 'Contracting Officer',
-          email: 'contracting@usps.gov',
-          department: 'Procurement & Supply Management',
-        },
-      },
-    ];
+    // TODO: Implement actual government contract monitoring
+    // This would connect to SAM.gov, GSA, and other government procurement systems
+    // Real implementation would:
+    // 1. Search SAM.gov for automotive transportation contracts
+    // 2. Monitor GSA schedules for vehicle transport services
+    // 3. Check military/defense automotive logistics opportunities
+    // 4. Return structured AutomotiveRFP objects
+
+    return [];
   }
 
   /**

@@ -39,74 +39,49 @@ interface PricingData {
 
 export default function AISalesIntelligenceHub() {
   const [salesMetrics, setSalesMetrics] = useState<SalesMetrics>({
-    totalLeads: 2847,
-    qualifiedLeads: 1247,
-    conversionRate: 28.4,
-    avgDealSize: 185000,
-    pipelineValue: 12500000,
-    monthlyRevenue: 2340000,
-    activeProposals: 89,
-    closedDeals: 156,
+    totalLeads: 0,
+    qualifiedLeads: 0,
+    conversionRate: 0,
+    avgDealSize: 0,
+    pipelineValue: 0,
+    monthlyRevenue: 0,
+    activeProposals: 0,
+    closedDeals: 0,
   });
 
-  const [leads, setLeads] = useState<LeadData[]>([
-    {
-      id: 'lead-001',
-      company: 'Pfizer Global Supply Chain',
-      contact: 'Sarah Johnson (VP Logistics)',
-      source: 'TruckingPlanet',
-      score: 95,
-      status: 'proposal',
-      value: 2400000,
-      lastActivity: '2 hours ago',
-      nextAction: 'Follow up on proposal presentation',
-    },
-    {
-      id: 'lead-002',
-      company: 'Ford Motor Company',
-      contact: 'Michael Chen (Dir. Transportation)',
-      source: 'FMCSA',
-      score: 88,
-      status: 'negotiation',
-      value: 1800000,
-      lastActivity: '1 day ago',
-      nextAction: 'Contract terms discussion scheduled',
-    },
-    {
-      id: 'lead-003',
-      company: 'Amazon Distribution Centers',
-      contact: 'Jennifer Rodriguez (Logistics Manager)',
-      source: 'Cold Outreach',
-      score: 82,
-      status: 'qualified',
-      value: 3200000,
-      lastActivity: '3 hours ago',
-      nextAction: 'Schedule discovery call',
-    },
-  ]);
+  const [leads, setLeads] = useState<LeadData[]>([]);
 
   const [pricingData, setPricingData] = useState<PricingData>({
-    currentRate: 2.85,
-    marketRate: 3.12,
-    competitorRates: [2.95, 3.05, 3.18, 2.88, 3.22],
-    recommendedRate: 3.08,
-    margin: 22.5,
-    confidence: 87,
+    currentRate: 0,
+    marketRate: 0,
+    competitorRates: [],
+    recommendedRate: 0,
+    margin: 0,
+    confidence: 0,
   });
 
   const [selectedTab, setSelectedTab] = useState('dashboard');
 
   useEffect(() => {
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      setSalesMetrics((prev) => ({
-        ...prev,
-        totalLeads: prev.totalLeads + Math.floor(Math.random() * 3),
-        pipelineValue: prev.pipelineValue + Math.floor(Math.random() * 50000),
-      }));
-    }, 30000);
+    // TODO: Load real sales metrics from API
+    // This would fetch actual lead data, pipeline values, and conversion rates
+    // from your CRM system or database
 
-    return () => clearInterval(interval);
+    const loadRealSalesData = async () => {
+      try {
+        // Example API calls that would be implemented:
+        // const metricsResponse = await fetch('/api/sales/metrics');
+        // const leadsResponse = await fetch('/api/sales/leads');
+        // const pricingResponse = await fetch('/api/sales/pricing');
+        // setSalesMetrics(metricsResponse.data);
+        // setLeads(leadsResponse.data);
+        // setPricingData(pricingResponse.data);
+      } catch (error) {
+        console.error('Failed to load sales data:', error);
+      }
+    };
+
+    loadRealSalesData();
   }, []);
 
   const getStatusColor = (status: string) => {

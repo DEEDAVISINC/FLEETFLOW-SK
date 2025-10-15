@@ -12,7 +12,7 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <SessionProvider>
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
       <AuthProvider>
         <LoadProvider>
           <ShipperProvider>{children}</ShipperProvider>

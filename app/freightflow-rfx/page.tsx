@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import GovContractForecaster from '../components/GovContractForecaster';
 import RFxTaskPrioritizationPanel from '../components/RFxTaskPrioritizationPanel';
 
 // Enhanced RFx Request interface with document upload support
@@ -4044,6 +4045,12 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
               color: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
             },
             {
+              id: 'forecasting',
+              label: 'LRAF Forecasting',
+              icon: '🏛️',
+              color: 'linear-gradient(135deg, #14b8a6, #0d9488)',
+            },
+            {
               id: 'industry-sectors',
               label: 'Industry Sectors',
               icon: '🏭',
@@ -7518,6 +7525,13 @@ This response leverages verified shipper data from the TruckingPlanet Network, e
                 []
               )}
             </div>
+          </div>
+        )}
+
+        {/* LRAF Forecasting Tab */}
+        {activeTab === 'forecasting' && (
+          <div>
+            <GovContractForecaster />
           </div>
         )}
 

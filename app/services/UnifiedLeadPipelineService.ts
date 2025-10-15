@@ -104,8 +104,16 @@ export class UnifiedLeadPipelineService {
     try {
       // FMCSA Reverse Shipper Leads
       console.info('🏛️ Scanning FMCSA for shipper leads...');
-      const fmcsaLeads = await this.generateFMCSALeads();
-      allLeads.push(...fmcsaLeads);
+      try {
+        const fmcsaLeads = await this.generateFMCSALeads();
+        allLeads.push(...fmcsaLeads);
+        console.info(`✅ FMCSA: ${fmcsaLeads.length} leads generated`);
+      } catch (error) {
+        console.warn(
+          '⚠️ FMCSA lead generation unavailable, using other sources'
+        );
+        // Continue without FMCSA leads rather than failing entirely
+      }
 
       // TruckingPlanet Leads
       console.info('🚛 Scanning TruckingPlanet for carrier leads...');
@@ -220,12 +228,13 @@ export class UnifiedLeadPipelineService {
   private async generateFMCSALeads(): Promise<UnifiedLead[]> {
     try {
       const fmcsaService = new FMCSAReverseLeadService();
-      const shipperLeads = await fmcsaService.generateShipperLeads({
+      const results = await fmcsaService.generateShipperLeads({
         minPowerUnits: 10,
         states: ['CA', 'TX', 'FL', 'IL', 'NY'],
       });
 
-      return shipperLeads.map((lead) => ({
+      // results.leads contains the actual array of shipper leads
+      return results.leads.map((lead) => ({
         id: `fmcsa_${lead.id}`,
         source: 'FMCSA' as const,
         companyName: lead.companyName,

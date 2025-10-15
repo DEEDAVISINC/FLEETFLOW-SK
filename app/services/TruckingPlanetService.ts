@@ -136,114 +136,7 @@ export class TruckingPlanetService {
   private scrapeApiUrl = '/api/scrape/truckingplanet';
   private scrapingInProgress = false;
 
-  // Fallback database (used if scraping fails)
-  private fallbackShipperDatabase: TruckingPlanetShipper[] = [
-    {
-      id: 'TP-SH-001',
-      companyName: 'Global Automotive Components Inc',
-      contactName: 'Sarah Johnson',
-      email: 'sarah.johnson@globalac.com',
-      phone: '+1-248-555-0123',
-      address: '1500 Manufacturing Drive',
-      city: 'Detroit',
-      state: 'Michigan',
-      zipCode: '48201',
-      industry: 'Automotive Manufacturing',
-      freightVolume: 'high',
-      equipmentTypes: ['dry_van', 'flatbed'],
-      annualRevenue: '$250M - $500M',
-      employeeCount: '1,000-5,000',
-      primaryCommodities: ['Auto Parts', 'Components', 'Raw Materials'],
-      shippingFrequency: 'Daily - 50+ shipments/day',
-      lastUpdated: new Date().toISOString(),
-      truckingPlanetScore: 94,
-      leadPotential: 'HIGH',
-    },
-    {
-      id: 'TP-SH-002',
-      companyName: 'Midwest Steel Fabricators',
-      contactName: 'Michael Chen',
-      email: 'm.chen@midweststeel.com',
-      phone: '+1-312-555-0456',
-      address: '2200 Industrial Blvd',
-      city: 'Chicago',
-      state: 'Illinois',
-      zipCode: '60616',
-      industry: 'Steel Manufacturing',
-      freightVolume: 'high',
-      equipmentTypes: ['flatbed', 'step_deck', 'heavy_haul'],
-      annualRevenue: '$100M - $250M',
-      employeeCount: '500-1,000',
-      primaryCommodities: ['Steel Products', 'Heavy Machinery'],
-      shippingFrequency: 'Weekly - 20+ shipments/week',
-      lastUpdated: new Date().toISOString(),
-      truckingPlanetScore: 89,
-      leadPotential: 'HIGH',
-    },
-    {
-      id: 'TP-SH-003',
-      companyName: 'Texas Chemical Solutions',
-      contactName: 'Jennifer Rodriguez',
-      email: 'j.rodriguez@txchemical.com',
-      phone: '+1-713-555-0789',
-      address: '5500 Petrochemical Way',
-      city: 'Houston',
-      state: 'Texas',
-      zipCode: '77015',
-      industry: 'Chemical Manufacturing',
-      freightVolume: 'high',
-      equipmentTypes: ['tanker', 'hazmat'],
-      annualRevenue: '$500M+',
-      employeeCount: '2,000+',
-      primaryCommodities: ['Chemicals', 'Petroleum Products'],
-      shippingFrequency: 'Daily - 30+ shipments/day',
-      lastUpdated: new Date().toISOString(),
-      truckingPlanetScore: 96,
-      leadPotential: 'HIGH',
-    },
-    {
-      id: 'TP-SH-004',
-      companyName: 'Pacific Food Distributors',
-      contactName: 'David Kim',
-      email: 'd.kim@pacfooddist.com',
-      phone: '+1-415-555-0321',
-      address: '800 Distribution Center Dr',
-      city: 'San Francisco',
-      state: 'California',
-      zipCode: '94124',
-      industry: 'Food Distribution',
-      freightVolume: 'high',
-      equipmentTypes: ['refrigerated', 'dry_van'],
-      annualRevenue: '$150M - $300M',
-      employeeCount: '800-1,200',
-      primaryCommodities: ['Frozen Foods', 'Fresh Produce'],
-      shippingFrequency: 'Daily - 40+ shipments/day',
-      lastUpdated: new Date().toISOString(),
-      truckingPlanetScore: 88,
-      leadPotential: 'HIGH',
-    },
-    {
-      id: 'TP-SH-005',
-      companyName: 'Eastern Construction Materials',
-      contactName: 'Robert Thompson',
-      email: 'r.thompson@eastconstmat.com',
-      phone: '+1-404-555-0654',
-      address: '1200 Construction Ave',
-      city: 'Atlanta',
-      state: 'Georgia',
-      zipCode: '30309',
-      industry: 'Construction Materials',
-      freightVolume: 'medium',
-      equipmentTypes: ['flatbed', 'bulk', 'heavy_haul'],
-      annualRevenue: '$50M - $100M',
-      employeeCount: '200-500',
-      primaryCommodities: ['Concrete', 'Steel Rebar'],
-      shippingFrequency: 'Weekly - 15+ shipments/week',
-      lastUpdated: new Date().toISOString(),
-      truckingPlanetScore: 76,
-      leadPotential: 'MEDIUM',
-    },
-  ];
+  // NO FALLBACK DATABASE - System uses ONLY real data from TruckingPlanet web scraping
 
   constructor() {
     console.info('🌐 TruckingPlanet Service - Account: DEE DAVIS INC');
@@ -354,80 +247,24 @@ export class TruckingPlanetService {
       return results;
     }
 
-    // Fallback to demo database if scraping fails
-    console.info('📋 Using fallback shipper database (demo data)');
-    let results = [...this.fallbackShipperDatabase];
-
-    // Apply filters to fallback data
-    if (filters.equipmentType && filters.equipmentType.length > 0) {
-      results = results.filter((shipper) =>
-        filters.equipmentType!.some((eq) => shipper.equipmentTypes.includes(eq))
-      );
-    }
-
-    if (filters.freightVolume) {
-      results = results.filter(
-        (shipper) => shipper.freightVolume === filters.freightVolume
-      );
-    }
-
-    if (filters.location?.states && filters.location.states.length > 0) {
-      results = results.filter((shipper) =>
-        filters.location!.states!.includes(shipper.state.toLowerCase())
-      );
-    }
-
-    if (filters.resultLimit) {
-      results = results.slice(0, filters.resultLimit);
-    }
-
-    results.sort((a, b) => b.truckingPlanetScore - a.truckingPlanetScore);
-    console.info(`✅ Found ${results.length} shippers (fallback mode)`);
-    return results;
+    // NO FALLBACK - Return empty array if scraping fails
+    console.error('❌ TruckingPlanet scraping failed - NO MOCK DATA AVAILABLE');
+    console.error(
+      '⚠️ Please check TruckingPlanet credentials and network connectivity'
+    );
+    return [];
   }
 
   async searchCarriers(
     filters: TruckingPlanetFilters = {}
   ): Promise<TruckingPlanetCarrier[]> {
-    // Return mock carrier data for now
-    return [
-      {
-        id: 'TP-CR-001',
-        companyName: 'Interstate Logistics Corp',
-        contactName: 'Mark Wilson',
-        email: 'mark.wilson@intlogistics.com',
-        phone: '+1-469-555-0147',
-        address: '3000 Transport Way',
-        city: 'Dallas',
-        state: 'Texas',
-        mcNumber: 'MC-789012',
-        dotNumber: 'DOT-2345678',
-        truckCount: 250,
-        equipmentTypes: ['dry_van', 'refrigerated'],
-        safetyRating: 'SATISFACTORY',
-        lastUpdated: new Date().toISOString(),
-        truckingPlanetScore: 91,
-      },
-    ];
+    console.error('❌ Carrier search not implemented - NO MOCK DATA');
+    return [];
   }
 
   async searchBrokers(): Promise<TruckingPlanetBroker[]> {
-    return [
-      {
-        id: 'TP-BR-001',
-        companyName: 'National Freight Solutions',
-        contactName: 'Amanda Davis',
-        email: 'amanda.davis@natfreight.com',
-        phone: '+1-312-555-0741',
-        address: '1000 Broker Plaza',
-        city: 'Chicago',
-        state: 'Illinois',
-        mcNumber: 'MC-987654',
-        specializations: ['Automotive', 'Manufacturing'],
-        lastUpdated: new Date().toISOString(),
-        truckingPlanetScore: 89,
-      },
-    ];
+    console.error('❌ Broker search not implemented - NO MOCK DATA');
+    return [];
   }
 
   async convertToFleetFlowLeads(
@@ -506,7 +343,7 @@ export class TruckingPlanetService {
 
   getCurrentActivity() {
     return {
-      dataProcessing: `Processing ${this.shipperDatabase.length} verified shipper records`,
+      dataProcessing: 'Real-time web scraping from TruckingPlanet.com',
       networkStatus: '✅ Full network access active',
       membershipStatus: 'Lifetime membership - DEE DAVIS INC',
       lastSync: new Date().toISOString(),

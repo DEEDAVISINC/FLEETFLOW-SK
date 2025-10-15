@@ -20,6 +20,20 @@ export default function ClientLayoutWrapper({
 }: ClientLayoutWrapperProps) {
   const pathname = usePathname();
 
+  // Auth pages (signin, signup, etc) - NO layout, NO navigation
+  if (pathname?.startsWith('/auth/')) {
+    console.log(
+      `🔐 AUTH PAGE ${pathname}: Rendering without layout or navigation`
+    );
+    return (
+      <MinimalProviders>
+        <MaintenanceMode>
+          <SimpleErrorBoundary>{children}</SimpleErrorBoundary>
+        </MaintenanceMode>
+      </MinimalProviders>
+    );
+  }
+
   // Homepage gets navigation but NO auth requirements
   if (pathname === '/') {
     console.log(

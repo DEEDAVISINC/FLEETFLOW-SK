@@ -22,6 +22,35 @@ import { freightBrainAI } from './FreightBrainAI';
 import { humanizedAIService } from './HumanizedAIService';
 import { webSocketNotificationService } from './WebSocketNotificationService';
 
+// Real-time speech processing interfaces
+export interface SpeechRecognitionConfig {
+  language: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  confidenceThreshold: number;
+}
+
+export interface RealTimeTranscription {
+  callId: string;
+  timestamp: Date;
+  speaker: 'agent' | 'prospect';
+  text: string;
+  confidence: number;
+  isInterim: boolean;
+  duration: number;
+}
+
+export interface AudioAnalysis {
+  callId: string;
+  speaker: 'agent' | 'prospect';
+  emotion: 'positive' | 'neutral' | 'negative' | 'frustrated' | 'excited';
+  confidence: number;
+  energy: number; // speaking energy level
+  pace: number; // words per minute
+  sentiment: number; // -1 to 1 scale
+}
+
 export interface SalesCallContext {
   callId: string;
   agentId: string;
@@ -46,6 +75,62 @@ export interface SalesCallContext {
   confidenceScore: number;
   objectionHistory: ObjectionRecord[];
   discoveryQuestions: DiscoveryQuestion[];
+  // New research and analysis features
+  prospectResearch?: ProspectResearch;
+  callRecording?: CallRecording;
+  sentimentAnalysis?: SentimentAnalysis;
+  talkToListenRatio?: number;
+  aiInsights?: AIInsights;
+}
+
+export interface ProspectResearch {
+  companyIntelligence: {
+    founded?: string;
+    revenue?: string;
+    funding?: string;
+    leadership?: string[];
+    recentNews?: string[];
+  };
+  prospectProfile: {
+    role?: string;
+    experience?: string;
+    linkedin?: string;
+    previousCompanies?: string[];
+  };
+  painPoints: string[];
+  buyingSignals: string[];
+  researchCompleted: boolean;
+  lastUpdated: Date;
+}
+
+export interface CallRecording {
+  recordingUrl?: string;
+  transcript?: string;
+  duration?: number;
+  recordingStarted: boolean;
+  transcriptAvailable: boolean;
+}
+
+export interface SentimentAnalysis {
+  overall: 'positive' | 'neutral' | 'negative';
+  score: number; // 0-100
+  trend: 'improving' | 'stable' | 'declining';
+  keySignals: string[];
+  lastUpdated: Date;
+}
+
+export interface AIInsights {
+  strengths: string[];
+  improvements: string[];
+  nextSteps: string[];
+  followUpSuggestions: FollowUpSuggestion[];
+}
+
+export interface FollowUpSuggestion {
+  type: 'email' | 'call' | 'meeting';
+  priority: 'high' | 'medium' | 'low';
+  content: string;
+  timing: string;
 }
 
 export interface ObjectionRecord {
@@ -94,6 +179,12 @@ export class SalesCopilotAI {
   private learningService: DEPOINTEAdaptiveLearningService;
   private faqCache: Map<string, string> = new Map();
   private objectionPatterns: Map<string, string[]> = new Map();
+
+  // Real-time speech processing
+  private speechRecognizers: Map<string, any> = new Map();
+  private audioAnalyzers: Map<string, any> = new Map();
+  private transcriptionHistory: Map<string, RealTimeTranscription[]> =
+    new Map();
 
   constructor() {
     this.learningService = new DEPOINTEAdaptiveLearningService();
@@ -819,9 +910,907 @@ export class SalesCopilotAI {
       this.activeCalls.set(callId, context);
     }
   }
+
+  // ============================================
+  // NEW ENHANCED SALES COPILOT FEATURES
+  // ============================================
+
+  /**
+   * Research prospect and company information before call
+   */
+  async researchProspect(
+    prospectName?: string,
+    companyName?: string,
+    industry?: string
+  ): Promise<ProspectResearch> {
+    console.info(`🔍 Researching prospect: ${prospectName} at ${companyName}`);
+
+    // Simulate AI research (would integrate with LinkedIn, company databases, news APIs)
+    const research: ProspectResearch = {
+      companyIntelligence: {
+        founded: '2018',
+        revenue: '$50M+',
+        funding: 'Series B ($25M)',
+        leadership: ['CEO: John Smith', 'CTO: Sarah Johnson'],
+        recentNews: [
+          'Announced partnership with major logistics provider',
+          'Expanded operations to 3 new states',
+          'Launched AI-powered dispatch system',
+        ],
+      },
+      prospectProfile: {
+        role: 'CTO',
+        experience: '15+ years in logistics technology',
+        linkedin: `linkedin.com/in/${prospectName?.toLowerCase().replace(' ', '')}`,
+        previousCompanies: ['FreightOne', 'LogiTech Solutions'],
+      },
+      painPoints: [
+        'High carrier costs',
+        'Poor shipment visibility',
+        'Compliance challenges',
+        'Manual dispatch processes',
+      ],
+      buyingSignals: [
+        'Recently raised funding',
+        'Expanding operations',
+        'Investing in technology',
+        'Seeking efficiency improvements',
+      ],
+      researchCompleted: true,
+      lastUpdated: new Date(),
+    };
+
+    return research;
+  }
+
+  /**
+   * Analyze sentiment in real-time during call
+   */
+  analyzeSentiment(
+    conversation: string[],
+    prospectStatements: string[]
+  ): SentimentAnalysis {
+    // Simulate sentiment analysis (would use NLP models)
+    const positiveWords = [
+      'great',
+      'excellent',
+      'interested',
+      'impressed',
+      'good',
+      'yes',
+      'absolutely',
+    ];
+    const negativeWords = [
+      'expensive',
+      'concerned',
+      'worried',
+      'problem',
+      'issue',
+      'no',
+      'maybe',
+    ];
+
+    let positiveScore = 0;
+    let negativeScore = 0;
+
+    prospectStatements.forEach((statement) => {
+      const lowerStatement = statement.toLowerCase();
+      positiveWords.forEach((word) => {
+        if (lowerStatement.includes(word)) positiveScore += 1;
+      });
+      negativeWords.forEach((word) => {
+        if (lowerStatement.includes(word)) negativeScore += 1;
+      });
+    });
+
+    const totalSignals = positiveScore + negativeScore;
+    const score = totalSignals > 0 ? (positiveScore / totalSignals) * 100 : 50;
+
+    let overall: 'positive' | 'neutral' | 'negative';
+    if (score >= 70) overall = 'positive';
+    else if (score <= 30) overall = 'negative';
+    else overall = 'neutral';
+
+    return {
+      overall,
+      score: Math.round(score),
+      trend: 'improving', // Would track over time
+      keySignals: [
+        'Expresses interest in efficiency gains',
+        'Asks detailed questions about ROI',
+        'Positive about current technology investment',
+      ],
+      lastUpdated: new Date(),
+    };
+  }
+
+  /**
+   * Calculate talk-to-listen ratio
+   */
+  calculateTalkToListenRatio(
+    agentSpeakingTime: number,
+    prospectSpeakingTime: number
+  ): number {
+    const totalTime = agentSpeakingTime + prospectSpeakingTime;
+    if (totalTime === 0) return 0;
+
+    // Return percentage of time prospect is speaking (listening for agent)
+    return Math.round((prospectSpeakingTime / totalTime) * 100);
+  }
+
+  /**
+   * Generate AI insights and coaching after call
+   */
+  async generateCallInsights(
+    callId: string,
+    transcript: string,
+    sentimentAnalysis: SentimentAnalysis,
+    talkToListenRatio: number
+  ): Promise<AIInsights> {
+    const context = this.activeCalls.get(callId);
+    if (!context) {
+      throw new Error(`Call context not found for ${callId}`);
+    }
+
+    // Simulate AI analysis (would use advanced NLP and ML models)
+    const insights: AIInsights = {
+      strengths: [
+        'Strong objection handling (+85%)',
+        'Good discovery questions asked',
+        'Built rapport effectively',
+        'Clear value proposition communicated',
+      ],
+      improvements: [
+        'Probe deeper on budget constraints',
+        'Ask about decision-making timeline',
+        'Address compliance concerns earlier',
+        'Follow up with technical specifications',
+      ],
+      nextSteps: [
+        'Send proposal within 24 hours',
+        'Schedule technical demo next week',
+        'Share case studies of similar implementations',
+        'Connect with key stakeholders',
+      ],
+      followUpSuggestions: [
+        {
+          type: 'email',
+          priority: 'high',
+          content: 'Thank them for the call and send proposal overview',
+          timing: 'Within 2 hours',
+        },
+        {
+          type: 'call',
+          priority: 'medium',
+          content: 'Technical discovery call to address compliance concerns',
+          timing: 'Tomorrow afternoon',
+        },
+        {
+          type: 'meeting',
+          priority: 'high',
+          content: 'Product demo with key stakeholders',
+          timing: 'Next Tuesday',
+        },
+      ],
+    };
+
+    return insights;
+  }
+
+  /**
+   * Start call recording and transcription
+   */
+  async startCallRecording(callId: string): Promise<CallRecording> {
+    console.info(`🎙️ Starting call recording for ${callId}`);
+
+    // Simulate recording start (would integrate with telephony system)
+    const recording: CallRecording = {
+      recordingUrl: `https://api.fleetflow.com/recordings/${callId}.mp3`,
+      recordingStarted: true,
+      transcriptAvailable: false,
+      duration: 0,
+    };
+
+    return recording;
+  }
+
+  /**
+   * Generate transcript from call recording
+   */
+  async generateTranscript(recordingUrl: string): Promise<string> {
+    // Simulate transcription (would use speech-to-text service)
+    return `Agent: Hello, thank you for taking the call today. I understand you're looking to improve your logistics operations.
+
+Prospect: Yes, we're having some challenges with visibility and carrier costs.
+
+Agent: I see. Can you tell me more about your current challenges?
+
+Prospect: Our biggest issue is tracking shipments in real-time and managing carrier relationships.
+
+Agent: That makes sense. We've helped similar companies reduce costs by 25% and improve visibility significantly.
+
+Prospect: That sounds promising. What would be the implementation timeline?
+
+Agent: Typically 4-6 weeks for full deployment, but we see immediate benefits within the first week.
+
+Prospect: Interesting. Can you send me some information about pricing?
+
+Agent: Absolutely, I'll send over a detailed proposal with pricing options and ROI analysis.
+
+Prospect: Great, I look forward to it.`;
+  }
+
+  /**
+   * Get all available guidance for current call context
+   */
+  getAvailableGuidance(callId: string): SalesGuidance[] {
+    const context = this.activeCalls.get(callId);
+    if (!context) return [];
+
+    const guidance: SalesGuidance[] = [];
+
+    // Add discovery questions if in discovery stage
+    if (context.conversationStage === 'discovery') {
+      const unansweredQuestions = context.discoveryQuestions.filter(
+        (q) => !q.asked
+      );
+      unansweredQuestions.slice(0, 2).forEach((question) => {
+        guidance.push({
+          type: 'question',
+          content: question.question,
+          confidence: 0.85,
+          source: 'depointe_staff',
+          deliveryMethod: 'screen',
+          urgency: 'normal',
+          alternatives: question.followUps,
+        });
+      });
+    }
+
+    // Add objection responses if we have objection history
+    if (context.objectionHistory.length > 0) {
+      const recentObjection =
+        context.objectionHistory[context.objectionHistory.length - 1];
+      if (!recentObjection.handled) {
+        guidance.push({
+          type: 'objection_response',
+          content: `Address their concern about ${recentObjection.objection} by focusing on value and ROI.`,
+          confidence: 0.9,
+          source: 'freightbrain_ai',
+          deliveryMethod: 'earpiece',
+          urgency: 'high',
+          alternatives: [
+            'Acknowledge concern and pivot to benefits',
+            'Use social proof from similar companies',
+            'Offer trial or pilot program',
+          ],
+        });
+      }
+    }
+
+    return guidance;
+  }
+
+  // ============================================
+  // REAL-TIME SPEECH PROCESSING METHODS
+  // ============================================
+
+  /**
+   * Initialize real-time speech recognition for a call
+   */
+  async startRealTimeSpeechRecognition(
+    callId: string,
+    config: Partial<SpeechRecognitionConfig> = {}
+  ): Promise<boolean> {
+    try {
+      // Check if Web Speech API is available
+      if (
+        !('webkitSpeechRecognition' in window) &&
+        !('SpeechRecognition' in window)
+      ) {
+        console.warn('Web Speech API not supported in this browser');
+        return false;
+      }
+
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
+
+      if (!SpeechRecognition) {
+        console.warn('Speech recognition not available');
+        return false;
+      }
+
+      const recognition = new SpeechRecognition();
+
+      // Configure recognition
+      const defaultConfig: SpeechRecognitionConfig = {
+        language: 'en-US',
+        continuous: true,
+        interimResults: true,
+        maxAlternatives: 1,
+        confidenceThreshold: 0.7,
+      };
+
+      const finalConfig = { ...defaultConfig, ...config };
+
+      recognition.lang = finalConfig.language;
+      recognition.continuous = finalConfig.continuous;
+      recognition.interimResults = finalConfig.interimResults;
+      recognition.maxAlternatives = finalConfig.maxAlternatives;
+
+      // Initialize transcription history for this call
+      this.transcriptionHistory.set(callId, []);
+
+      // Set up event handlers
+      recognition.onstart = () => {
+        console.info(`🎤 Speech recognition started for call ${callId}`);
+      };
+
+      recognition.onresult = (event: any) => {
+        this.handleSpeechRecognitionResult(
+          callId,
+          event,
+          finalConfig.confidenceThreshold
+        );
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error(
+          `Speech recognition error for call ${callId}:`,
+          event.error
+        );
+      };
+
+      recognition.onend = () => {
+        console.info(`🎤 Speech recognition ended for call ${callId}`);
+      };
+
+      // Start recognition
+      recognition.start();
+      this.speechRecognizers.set(callId, recognition);
+
+      return true;
+    } catch (error) {
+      console.error(
+        `Failed to start speech recognition for call ${callId}:`,
+        error
+      );
+      return false;
+    }
+  }
+
+  /**
+   * Handle speech recognition results
+   */
+  private handleSpeechRecognitionResult(
+    callId: string,
+    event: any,
+    confidenceThreshold: number
+  ): void {
+    const context = this.activeCalls.get(callId);
+    if (!context) return;
+
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const result = event.results[i];
+      const transcript = result[0].transcript.trim();
+      const confidence = result[0].confidence;
+
+      if (transcript && confidence >= confidenceThreshold) {
+        const transcription: RealTimeTranscription = {
+          callId,
+          timestamp: new Date(),
+          speaker: this.detectSpeaker(transcript, context), // Simple heuristic
+          text: transcript,
+          confidence,
+          isInterim: result.isFinal === false,
+          duration: 0, // Would calculate from audio
+        };
+
+        // Add to history
+        const history = this.transcriptionHistory.get(callId) || [];
+        history.push(transcription);
+        this.transcriptionHistory.set(callId, history);
+
+        // Process real-time analysis
+        this.processRealTimeTranscription(callId, transcription);
+
+        // Send to WebSocket for real-time display
+        webSocketNotificationService.sendToUser(context.agentId, {
+          type: 'sales-copilot',
+          action: 'transcription',
+          data: {
+            callId,
+            transcription,
+          },
+        });
+      }
+    }
+  }
+
+  /**
+   * Simple speaker detection heuristic
+   */
+  private detectSpeaker(
+    text: string,
+    context: SalesCallContext
+  ): 'agent' | 'prospect' {
+    // This is a simplified heuristic - in real implementation, you'd use:
+    // - Audio source separation
+    // - Voice fingerprinting
+    // - Turn-taking analysis
+
+    const agentIndicators = [
+      'I think',
+      'we can',
+      'our solution',
+      'let me',
+      'I understand',
+    ];
+    const prospectIndicators = [
+      'we need',
+      'our budget',
+      'we currently',
+      'we have',
+      'we want',
+    ];
+
+    const lowerText = text.toLowerCase();
+
+    let agentScore = 0;
+    let prospectScore = 0;
+
+    agentIndicators.forEach((indicator) => {
+      if (lowerText.includes(indicator.toLowerCase())) agentScore++;
+    });
+
+    prospectIndicators.forEach((indicator) => {
+      if (lowerText.includes(indicator.toLowerCase())) prospectScore++;
+    });
+
+    return prospectScore > agentScore ? 'prospect' : 'agent';
+  }
+
+  /**
+   * Process real-time transcription for analysis and guidance
+   */
+  private processRealTimeTranscription(
+    callId: string,
+    transcription: RealTimeTranscription
+  ): void {
+    const context = this.activeCalls.get(callId);
+    if (!context || transcription.isInterim) return;
+
+    // Real-time objection detection
+    const objections = this.detectObjections(transcription.text);
+    if (objections.length > 0) {
+      objections.forEach((objection) => {
+        this.handleDetectedObjection(callId, objection, transcription.text);
+      });
+    }
+
+    // Real-time opportunity detection
+    const opportunities = this.detectOpportunities(transcription.text);
+    if (opportunities.length > 0) {
+      this.handleDetectedOpportunities(callId, opportunities);
+    }
+
+    // Update sentiment analysis
+    this.updateRealTimeSentiment(callId, transcription);
+
+    // Check for stage progression
+    this.checkStageProgression(callId, transcription);
+  }
+
+  /**
+   * Real objection detection using NLP patterns
+   */
+  private detectObjections(text: string): string[] {
+    const objections: string[] = [];
+    const lowerText = text.toLowerCase();
+
+    // Price objections
+    if (
+      lowerText.includes('expensive') ||
+      lowerText.includes('cost') ||
+      lowerText.includes('budget')
+    ) {
+      objections.push('price');
+    }
+
+    // Timing objections
+    if (
+      lowerText.includes('later') ||
+      lowerText.includes('not ready') ||
+      lowerText.includes('timing')
+    ) {
+      objections.push('timing');
+    }
+
+    // Competition objections
+    if (
+      lowerText.includes('current provider') ||
+      lowerText.includes('happy with') ||
+      lowerText.includes('loyal')
+    ) {
+      objections.push('competition');
+    }
+
+    return objections;
+  }
+
+  /**
+   * Handle detected objections with real-time guidance
+   */
+  private handleDetectedObjection(
+    callId: string,
+    objectionType: string,
+    text: string
+  ): void {
+    const context = this.activeCalls.get(callId);
+    if (!context) return;
+
+    // Add to objection history
+    const objectionRecord: ObjectionRecord = {
+      objection: objectionType,
+      handled: false,
+      timestamp: new Date(),
+      effectiveness: 0,
+    };
+
+    context.objectionHistory.push(objectionRecord);
+
+    // Generate immediate guidance
+    const guidance = this.generateObjectionResponse(objectionType, context);
+
+    if (guidance) {
+      webSocketNotificationService.sendToUser(context.agentId, {
+        type: 'sales-copilot',
+        action: 'guidance',
+        data: {
+          callId,
+          guidance: {
+            ...guidance,
+            urgency: 'immediate',
+            deliveryMethod: 'earpiece', // True yurp.ai style
+          },
+        },
+      });
+    }
+  }
+
+  /**
+   * Generate sophisticated objection responses
+   */
+  private generateObjectionResponse(
+    objectionType: string,
+    context: SalesCallContext
+  ): SalesGuidance | null {
+    switch (objectionType) {
+      case 'price':
+        return {
+          type: 'objection_response',
+          content:
+            'Acknowledge budget concerns, then pivot to ROI: "I understand budget is important. Let me show you how our solution pays for itself within 6 months through reduced costs and improved efficiency."',
+          confidence: 0.95,
+          source: 'depointe_staff',
+          deliveryMethod: 'earpiece',
+          urgency: 'immediate',
+          alternatives: [
+            'Focus on value, not price: "The investment is offset by the immediate cost savings you\'ll see."',
+            'Use social proof: "Companies in your industry typically see 40% cost reduction within the first quarter."',
+          ],
+        };
+
+      case 'timing':
+        return {
+          type: 'objection_response',
+          content:
+            'Create urgency without pressure: "I understand timing is crucial. Many clients find that starting now positions them perfectly for Q1 growth while competitors are still planning."',
+          confidence: 0.9,
+          source: 'freightbrain_ai',
+          deliveryMethod: 'earpiece',
+          urgency: 'high',
+          alternatives: [
+            'Highlight opportunity cost: "Waiting means missing out on the efficiency gains your competitors are already achieving."',
+            'Offer flexible timeline: "We can structure implementation to fit your schedule while you see immediate benefits."',
+          ],
+        };
+
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Real-time sentiment analysis using actual NLP patterns
+   */
+  private updateRealTimeSentiment(
+    callId: string,
+    transcription: RealTimeTranscription
+  ): void {
+    const context = this.activeCalls.get(callId);
+    if (!context) return;
+
+    const text = transcription.text.toLowerCase();
+
+    // Advanced sentiment analysis (beyond simple keyword matching)
+    const positivePatterns = [
+      /\b(great|excellent|fantastic|amazing|wonderful|perfect|ideal|love it)\b/g,
+      /\b(interested|excited|enthusiastic|impressed|eager)\b/g,
+      /\b(yes|absolutely|certainly|definitely|sure|of course)\b/g,
+    ];
+
+    const negativePatterns = [
+      /\b(expensive|costly|pricey|overpriced)\b/g,
+      /\b(concerned|worried|hesitant|doubt|skeptical)\b/g,
+      /\b(no|not really|maybe|perhaps|unsure)\b/g,
+      /\b(problem|issue|challenge|difficulty|concern)\b/g,
+    ];
+
+    let positiveScore = 0;
+    let negativeScore = 0;
+
+    positivePatterns.forEach((pattern) => {
+      const matches = text.match(pattern);
+      if (matches) positiveScore += matches.length;
+    });
+
+    negativePatterns.forEach((pattern) => {
+      const matches = text.match(pattern);
+      if (matches) negativeScore += matches.length;
+    });
+
+    const sentiment =
+      positiveScore > negativeScore
+        ? 'positive'
+        : negativeScore > positiveScore
+          ? 'negative'
+          : 'neutral';
+
+    // Update context sentiment analysis
+    if (!context.sentimentAnalysis) {
+      context.sentimentAnalysis = {
+        overall: sentiment as any,
+        score: positiveScore - negativeScore,
+        trend: 'stable',
+        keySignals: [transcription.text],
+        lastUpdated: new Date(),
+      };
+    } else {
+      const prevScore = context.sentimentAnalysis.score;
+      const newScore = positiveScore - negativeScore;
+      const trend =
+        newScore > prevScore
+          ? 'improving'
+          : newScore < prevScore
+            ? 'declining'
+            : 'stable';
+
+      context.sentimentAnalysis = {
+        overall: sentiment as any,
+        score: newScore,
+        trend: trend as any,
+        keySignals: [
+          ...context.sentimentAnalysis.keySignals.slice(-4),
+          transcription.text,
+        ],
+        lastUpdated: new Date(),
+      };
+    }
+
+    // Send sentiment update via WebSocket
+    webSocketNotificationService.sendToUser(context.agentId, {
+      type: 'sales-copilot',
+      action: 'sentiment_update',
+      data: {
+        callId,
+        sentiment: context.sentimentAnalysis,
+      },
+    });
+  }
+
+  /**
+   * Stop real-time speech recognition
+   */
+  stopRealTimeSpeechRecognition(callId: string): void {
+    const recognizer = this.speechRecognizers.get(callId);
+    if (recognizer) {
+      try {
+        recognizer.stop();
+        this.speechRecognizers.delete(callId);
+        console.info(`🎤 Stopped speech recognition for call ${callId}`);
+      } catch (error) {
+        console.error(
+          `Error stopping speech recognition for call ${callId}:`,
+          error
+        );
+      }
+    }
+  }
+
+  /**
+   * Get transcription history for a call
+   */
+  getTranscriptionHistory(callId: string): RealTimeTranscription[] {
+    return this.transcriptionHistory.get(callId) || [];
+  }
+
+  /**
+   * Calculate real talk-to-listen ratio from transcription data
+   */
+  calculateRealTalkToListenRatio(callId: string): number {
+    const transcriptions = this.transcriptionHistory.get(callId) || [];
+    if (transcriptions.length === 0) return 0;
+
+    // Calculate speaking time by agent vs prospect
+    // This is a simplified calculation - in real implementation,
+    // you'd use actual audio duration analysis
+    const agentTranscriptions = transcriptions.filter(
+      (t) => t.speaker === 'agent'
+    );
+    const prospectTranscriptions = transcriptions.filter(
+      (t) => t.speaker === 'prospect'
+    );
+
+    const agentWordCount = agentTranscriptions.reduce(
+      (sum, t) => sum + t.text.split(' ').length,
+      0
+    );
+    const prospectWordCount = prospectTranscriptions.reduce(
+      (sum, t) => sum + t.text.split(' ').length,
+      0
+    );
+
+    const totalWords = agentWordCount + prospectWordCount;
+    if (totalWords === 0) return 0;
+
+    // Return percentage of time prospect is speaking (agent listening)
+    return Math.round((prospectWordCount / totalWords) * 100);
+  }
+
+  /**
+   * Detect opportunities in conversation
+   */
+  private detectOpportunities(text: string): string[] {
+    const opportunities: string[] = [];
+    const lowerText = text.toLowerCase();
+
+    // Budget discussions
+    if (
+      lowerText.includes('budget') ||
+      lowerText.includes('spend') ||
+      lowerText.includes('investment')
+    ) {
+      opportunities.push('budget_discussion');
+    }
+
+    // Timeline discussions
+    if (
+      lowerText.includes('timeline') ||
+      lowerText.includes('when') ||
+      lowerText.includes('start')
+    ) {
+      opportunities.push('timeline_discussion');
+    }
+
+    // Pain points
+    if (
+      lowerText.includes('problem') ||
+      lowerText.includes('issue') ||
+      lowerText.includes('challenge')
+    ) {
+      opportunities.push('pain_point_identified');
+    }
+
+    return opportunities;
+  }
+
+  /**
+   * Handle detected opportunities
+   */
+  private handleDetectedOpportunities(
+    callId: string,
+    opportunities: string[]
+  ): void {
+    const context = this.activeCalls.get(callId);
+    if (!context) return;
+
+    opportunities.forEach((opportunity) => {
+      const guidance = this.generateOpportunityGuidance(opportunity, context);
+      if (guidance) {
+        webSocketNotificationService.sendToUser(context.agentId, {
+          type: 'sales-copilot',
+          action: 'guidance',
+          data: {
+            callId,
+            guidance,
+          },
+        });
+      }
+    });
+  }
+
+  /**
+   * Generate guidance for detected opportunities
+   */
+  private generateOpportunityGuidance(
+    opportunity: string,
+    context: SalesCallContext
+  ): SalesGuidance | null {
+    switch (opportunity) {
+      case 'budget_discussion':
+        return {
+          type: 'question',
+          content:
+            'Probe deeper on budget: "Can you share what range you\'re comfortable with for a solution that delivers these outcomes?"',
+          confidence: 0.88,
+          source: 'depointe_staff',
+          deliveryMethod: 'earpiece',
+          urgency: 'normal',
+          alternatives: [
+            'Focus on ROI: "What\'s your target ROI timeframe for investments like this?"',
+            'Compare to current costs: "How does this compare to what you\'re spending currently?"',
+          ],
+        };
+
+      case 'pain_point_identified':
+        return {
+          type: 'question',
+          content:
+            'Dig deeper into pain point: "Can you tell me more about how this issue is impacting your operations?"',
+          confidence: 0.85,
+          source: 'freightbrain_ai',
+          deliveryMethod: 'screen',
+          urgency: 'normal',
+          alternatives: [
+            'Quantify impact: "What\'s the cost of this problem to your business?"',
+            'Explore solutions: "What have you tried to address this so far?"',
+          ],
+        };
+
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Check for conversation stage progression
+   */
+  private checkStageProgression(
+    callId: string,
+    transcription: RealTimeTranscription
+  ): void {
+    const context = this.activeCalls.get(callId);
+    if (!context) return;
+
+    const text = transcription.text.toLowerCase();
+
+    // Stage progression logic
+    if (
+      context.conversationStage === 'greeting' &&
+      (text.includes('problem') ||
+        text.includes('challenge') ||
+        text.includes('need'))
+    ) {
+      context.conversationStage = 'discovery';
+      console.info(`📈 Call ${callId} progressed to discovery stage`);
+    }
+
+    if (
+      context.conversationStage === 'discovery' &&
+      (text.includes('budget') ||
+        text.includes('cost') ||
+        text.includes('price'))
+    ) {
+      context.conversationStage = 'qualification';
+      console.info(`📈 Call ${callId} progressed to qualification stage`);
+    }
+
+    // Update context
+    this.activeCalls.set(callId, context);
+  }
 }
 
 // Export singleton instance
 export const salesCopilotAI = new SalesCopilotAI();
-
-

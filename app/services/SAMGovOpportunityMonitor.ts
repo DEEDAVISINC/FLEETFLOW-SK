@@ -134,7 +134,7 @@ export class SAMGovOpportunityMonitor {
         'AS',
         'MP',
       ], // All US states, DC, and territories
-      naicsCodes: ['484', '485', '486', '487', '488', '492', '493', '541614'],
+      naicsCodes: [], // Empty by default - use keywords for broader search
       setAsideTypes: ['NONE', 'SBA', 'WOSB', 'SDVOSB', 'HUBZone'],
       notificationMethod: 'both',
       recipients: [
@@ -218,9 +218,13 @@ export class SAMGovOpportunityMonitor {
   private async fetchOpportunities(): Promise<OpportunityAlert[]> {
     const apiKey = process.env.SAMGOV_API_KEY;
     if (!apiKey) {
-      console.warn('⚠️ SAM.gov API key not configured, using mock data');
-      return this.getMockOpportunities();
+      console.error(
+        '❌ SAM.gov API key not configured - NO MOCK DATA WILL BE RETURNED'
+      );
+      return [];
     }
+
+    console.log('🔑 SAM.gov API key found, attempting real API call...');
 
     try {
       // Format dates as mm/dd/yyyy (SAM.gov requirement)
@@ -241,19 +245,60 @@ export class SAMGovOpportunityMonitor {
         offset: '0',
         postedFrom: fromDate,
         postedTo: toDate,
-        ncode: this.config.naicsCodes.join(','),
         ptype: 'o,r,s,k', // Enhanced: o=opportunities, r=sources sought, s=special notices, k=combined synopsis/solicitation
-        state: this.config.locations.join(','),
       });
 
-      // Add keywords if specified
+      // PRIORITIZE KEYWORD SEARCH - Add keywords if specified (REQUIRED)
       if (this.config.keywords.length > 0) {
         queryParams.append('title', this.config.keywords.join(' OR '));
+        console.log(
+          `🔍 Searching with keywords: ${this.config.keywords.join(' OR ')}`
+        );
       }
 
-      const response = await fetch(`${this.baseUrl}?${queryParams}`);
+      // Add NAICS codes only if specified (OPTIONAL - not required)
+      if (this.config.naicsCodes && this.config.naicsCodes.length > 0) {
+        queryParams.append('ncode', this.config.naicsCodes.join(','));
+        console.log(
+          `📋 Filtering by NAICS codes: ${this.config.naicsCodes.join(',')}`
+        );
+      }
+
+      // Add state filter only if specified (OPTIONAL)
+      if (
+        this.config.locations &&
+        this.config.locations.length > 0 &&
+        this.config.locations.length < 55
+      ) {
+        queryParams.append('state', this.config.locations.join(','));
+        console.log(
+          `📍 Filtering by states: ${this.config.locations.length} states`
+        );
+      } else {
+        console.log(`🌎 Searching nationwide (all states)`);
+      }
+
+      console.log(
+        `🌐 Calling SAM.gov API: ${this.baseUrl}?${queryParams.toString().substring(0, 100)}...`
+      );
+
+      const response = await fetch(`${this.baseUrl}?${queryParams}`, {
+        headers: {
+          'X-Api-Key': apiKey,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log(
+        `📡 SAM.gov API response status: ${response.status} ${response.statusText}`
+      );
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `❌ SAM.gov API error: ${response.status} ${response.statusText}`,
+          errorText.substring(0, 500)
+        );
         throw new Error(
           `SAM.gov API error: ${response.status} ${response.statusText}`
         );
@@ -261,8 +306,21 @@ export class SAMGovOpportunityMonitor {
 
       const data = await response.json();
 
+      console.log(
+        `📊 SAM.gov API returned ${data.opportunitiesData?.length || 0} opportunities`
+      );
+
       if (!data.opportunitiesData || !Array.isArray(data.opportunitiesData)) {
-        console.warn('⚠️ No opportunities data received from SAM.gov');
+        console.warn(
+          '⚠️ No opportunities data received from SAM.gov - returning empty array'
+        );
+        return [];
+      }
+
+      if (data.opportunitiesData.length === 0) {
+        console.warn(
+          '⚠️ SAM.gov returned 0 opportunities - no mock data fallback'
+        );
         return [];
       }
 
@@ -357,8 +415,11 @@ export class SAMGovOpportunityMonitor {
         };
       });
     } catch (error) {
-      console.error('Error fetching from SAM.gov:', error);
-      return this.getMockOpportunities();
+      console.error(
+        '❌ Error fetching from SAM.gov API - NO MOCK DATA FALLBACK:',
+        error
+      );
+      return [];
     }
   }
 
